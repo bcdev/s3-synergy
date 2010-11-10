@@ -1,0 +1,133 @@
+<project>
+   <modelVersion>4.0.0</modelVersion>
+
+   <groupId>int.esa.safe</groupId>
+   <artifactId>libSafe</artifactId>
+   <packaging>so</packaging>
+   <version>1-2-rc-1</version>
+
+   <parent>
+      <groupId>fr.gael</groupId>
+      <artifactId>maven</artifactId>
+      <version>1-0-rc-1</version>
+   </parent>
+
+   <name>SAFE C++ Wrapper I/O API</name>
+   <url>http://www.gael.fr/software/safe</url>
+   <inceptionYear>2004</inceptionYear>
+
+   <dependencies>
+      <!-- Warning: the project also depends of the xfdu-suite assembly for the C++
+           include headers. This dependency is not explicit here and has to be
+           specified/updated in the section below -->
+      <dependency>
+         <groupId>int.esa.xfdu</groupId>
+         <artifactId>libXfdu</artifactId>
+         <version>1-1-rc-6</version>
+         <type>so</type>
+      </dependency>
+   </dependencies>
+
+   <build>   
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>unpack</id>
+                  <phase>process-resources</phase>
+                  <goals>
+                     <goal>unpack</goal>
+                  </goals>
+                  <configuration>
+                     <artifactItems>
+                        <artifactItem>
+                           <groupId>int.esa.xfdu</groupId>
+                           <artifactId>xfdu-suite</artifactId>
+                           <version>1-1-rc-6</version>
+                           <type>zip</type>
+                           <classifier>bin</classifier>
+                           <overWrite>true</overWrite>
+                        </artifactItem>
+                     </artifactItems>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>native-maven-plugin</artifactId>
+            <extensions>true</extensions>
+            <configuration>
+               <compilerStartOptions>
+                  <compilerStartOption>-O2</compilerStartOption>
+                  <compilerStartOption>
+                     -fno-strict-aliasing</compilerStartOption>
+                  <compilerStartOption>
+                     -fPIC -pthread -D_REENTRANT</compilerStartOption>
+                  <compilerStartOption>-D_FILE_OFFSET_BITS=64</compilerStartOption>
+                  <compilerStartOption>-D_GNU_SOURCE</compilerStartOption>
+               </compilerStartOptions>
+               <javahOS>linux</javahOS>
+               <sources>
+                  <source>
+                     <directory>src/main/c++</directory>
+                     <includes>
+                        <include>*.cpp</include>
+                     </includes>
+                  </source>
+                  <!-- XFDU C++ Wrapper I/O include files -->
+                  <source>
+                     <directory>${project.build.directory}/dependency/xfdu-suite-1-1-rc-6/include
+                        </directory>
+                  </source>
+               </sources>
+               <linkerStartOptions>
+                  <linkerStartOption>-shared</linkerStartOption>
+                  <linkerStartOption>-z defs</linkerStartOption>
+                  <linkerStartOption>-Wl,-soname=${artifactId}.${packaging}</linkerStartOption>
+                  <linkerStartOption>-static-libgcc</linkerStartOption>
+                  <linkerStartOption>-lstdc++</linkerStartOption>
+                  <linkerStartOption>-L${java.home}/lib/i386/client</linkerStartOption>
+               </linkerStartOptions>
+            </configuration>
+         </plugin>
+         <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+               <execution>
+                  <phase>package</phase>
+                  <configuration>
+                     <tasks>
+                       <!--  @TODO: should be update to skip tasks if
+                             Doxygen is not installed -->
+                        <echo message="Generating C++ documentation"/>
+                        <echo message="If this phase does not work,"/>
+                        <echo message="please check that doxygen is"/>
+                        <echo message="installed on your system."/>
+                        <mkdir dir="${project.build.directory}/apidocs/c++"/>
+                        <exec executable="doxygen">
+                           <arg value="src/main/doxygen/Doxyfile"/>
+                        </exec>
+                     </tasks>
+                  </configuration>
+                  <goals>
+                     <goal>run</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <!-- <version>2.2-beta-5</version> -->
+            <configuration>
+               <descriptors>
+                  <descriptor>src/main/assembly/src.xml</descriptor>
+               </descriptors>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
+
+</project>
