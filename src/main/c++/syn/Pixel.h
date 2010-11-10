@@ -36,6 +36,11 @@ public:
     virtual double setDouble(const std::string& name, double value) = 0;
 
     /**
+     * Flag inquiry.
+     */
+    virtual bool isRaised(const std::string& name, int flagMask) = 0;
+
+    /**
      * Default destructor
      */
     virtual ~Pixel() { };

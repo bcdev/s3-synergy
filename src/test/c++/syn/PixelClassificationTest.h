@@ -26,8 +26,7 @@
 
 class PixelClassificationTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(PixelClassificationTest);
-    CPPUNIT_TEST(testMethod);
-    CPPUNIT_TEST(testFailedMethod);
+    CPPUNIT_TEST(testPixelClassification);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -37,9 +36,8 @@ public:
     void tearDown();
 
 private:
-    int *example;
-    void testMethod();
-    void testFailedMethod();
+    Pixel* pixel;
+
     void testPixelClassification();
 };
 

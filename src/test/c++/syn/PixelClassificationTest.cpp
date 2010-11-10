@@ -29,23 +29,16 @@ PixelClassificationTest::~PixelClassificationTest() {
 }
 
 void PixelClassificationTest::setUp() {
-    this->example = new int(1);
+    this->pixel = new Pixel();
 }
 
 void PixelClassificationTest::tearDown() {
-    delete this->example;
-}
-
-void PixelClassificationTest::testMethod() {
-    CPPUNIT_ASSERT(*example == 1);
+    delete this->pixel;
 }
 
 void PixelClassificationTest::testPixelClassification() {
     const PixelClassification pixelClassification;
-    Pixel pixel;
-    pixelClassification.classify(pixel);
-}
-
-void PixelClassificationTest::testFailedMethod() {
-    CPPUNIT_ASSERT(++*example == 1);
+    pixelClassification.classify(*pixel);
+    const bool land = pixel->isRaised("SYN_L2_Flags", 0x0010);
+    CPPUNIT_ASSERT(land);
 }
