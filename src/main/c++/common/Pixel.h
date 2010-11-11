@@ -17,6 +17,8 @@
 
 #include <string>
 
+class Segment;
+
 /**
  * \mainpage
  *
@@ -24,7 +26,15 @@
  */
 class Pixel
 {
+
 public:
+
+    /**
+     * Default destructor
+     */
+    virtual ~Pixel() {
+    };
+
     /**
      * Getter.
      */
@@ -33,17 +43,31 @@ public:
     /**
      * Setter.
      */
-    virtual double setDouble(const std::string& name, double value) = 0;
+    virtual void setDouble(const std::string& name, double value) = 0;
 
     /**
      * Flag inquiry.
      */
-    virtual bool isRaised(const std::string& name, int flagMask) = 0;
+    virtual bool isRaised(const std::string& name, int flagMask) const = 0;
 
     /**
-     * Default destructor
+     * Flag setter.
      */
-    virtual ~Pixel() { };
+    virtual void raise(const std::string& name, int flagMask) = 0;
+
+    /**
+     * Clears a flag.
+     * @param name the flag to clear
+     * @param flagMask the flag mask
+     */
+    virtual void clear(const std::string& name, int flagMask) = 0;
+
+    /**
+     * Getter for segment.
+     *
+     * @return the segment associated with this pixel.
+     */
+    virtual Segment& getSegment() const = 0;
 };
 
 #endif // PIXEL_H

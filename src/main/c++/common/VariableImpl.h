@@ -12,35 +12,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * File:   PixelClassificationTest.h
+ * File:   VariableImpl.h
  * Author: thomass
  *
- * Created on November 10, 2010, 3:45 PM
+ * Created on November 11, 2010, 11:33 AM
  */
 
-#ifndef PCLTEST_H
-#define	PCLTEST_H
+#ifndef VARIABLEIMPL_H
+#define	VARIABLEIMPL_H
 
-#include <cppunit/extensions/HelperMacros.h>
-#include "../../../main/c++/common/PixelClassification.h"
-#include "../../../main/c++/common/SegmentImpl.h"
+#include "Variable.h"
+#include <string>
 
-class PixelClassificationTest : public CPPUNIT_NS::TestFixture {
-    CPPUNIT_TEST_SUITE(PixelClassificationTest);
-    CPPUNIT_TEST(testPixelClassification);
-    CPPUNIT_TEST_SUITE_END();
-
+class VariableImpl : public Variable {
 public:
-    PixelClassificationTest();
-    virtual ~PixelClassificationTest();
-    void setUp();
-    void tearDown();
+    VariableImpl();
+    VariableImpl(const VariableImpl& orig);
+    virtual ~VariableImpl();
 
-private:
-    SegmentImpl segment;
+    std::string getName();
+    std::string getUnit();
 
-    void testPixelClassification();
 };
 
-#endif	/* PCLTEST_H */
+#endif	/* VARIABLEIMPL_H */
 

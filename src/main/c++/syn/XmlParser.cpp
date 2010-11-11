@@ -12,7 +12,6 @@
 
 using namespace std;
 using namespace xercesc_3_1;
-using namespace esa::S3L2PP::syn;
 
 XmlParser::XmlParser(string path) {
 	this->path = path;

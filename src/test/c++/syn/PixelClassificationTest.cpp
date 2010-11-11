@@ -19,26 +19,30 @@
  */
 
 #include "PixelClassificationTest.h"
+#include "../../../main/c++/common/PixelImpl.h"
+#include "../../../main/c++/common/SegmentImpl.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(PixelClassificationTest);
 
-PixelClassificationTest::PixelClassificationTest() {
+PixelClassificationTest::PixelClassificationTest() : segment() {
 }
 
 PixelClassificationTest::~PixelClassificationTest() {
 }
 
 void PixelClassificationTest::setUp() {
-    this->pixel = new Pixel();
+//    todo: create pixel with different masks for different flagbands
+//    and test these
+    segment.add("SYN_L2_Flags");
 }
 
 void PixelClassificationTest::tearDown() {
-    delete this->pixel;
 }
 
 void PixelClassificationTest::testPixelClassification() {
     const PixelClassification pixelClassification;
-    pixelClassification.classify(*pixel);
-    const bool land = pixel->isRaised("SYN_L2_Flags", 0x0010);
+    PixelImpl pixel = segment.createPixel("SYN_L2_Flags", 0, 0, 0);
+    pixelClassification.classify(segment.getPixel(0, 0, 0, pixel));
+    const bool land = pixel.isRaised("SYN_L2_Flags", 0x0010);
     CPPUNIT_ASSERT(land);
 }
