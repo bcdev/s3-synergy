@@ -15,6 +15,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 #include "PixelImpl.h"
 
 double PixelImpl::getDouble(const std::string& name) const {
@@ -26,7 +27,13 @@ double PixelImpl::getDouble(const std::string& name) const {
 bool PixelImpl::isRaised(const std::string& name, int flagMask) const {
     std::vector<int> samples = std::vector<int>();
     segment.getSamplesInt(name, samples);
+    if( samples.empty() ) {
+        std::cout << "\n\nsamples are empty!!\n\n";
+        return false;
+    }
     int mask = samples.at(position);
+    std::cout << "\nmask value is " << mask << "\n";
+    std::cout << "mask & flagMask = " << (mask & flagMask) << "\n";
     return (mask & flagMask ) == flagMask;
 }
 
@@ -35,6 +42,9 @@ void PixelImpl::setDouble(const std::string& name, double value) {
 }
 
 void PixelImpl::raise(const std::string& name, int flagMask) {
+    std::vector<int> samples;
+    samples.push_back( flagMask );
+    segment.setSamplesInt( name, samples );
 
 }
 
@@ -44,9 +54,4 @@ void PixelImpl::clear(const std::string& name, int flagMask) {
 
 Segment& PixelImpl::getSegment() const {
     return segment;
-}
-
-int PixelImpl::computePosition() {
-    //    int position = l * WIDTH_OF_INPUT_PRODUCT + m;
-    return l * m;
 }

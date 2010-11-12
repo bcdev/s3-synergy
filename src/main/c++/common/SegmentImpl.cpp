@@ -19,40 +19,54 @@
  */
 
 #include <vector>
+#include <iostream>
+#include <typeinfo>
 #include "SegmentImpl.h"
 
-SegmentImpl::SegmentImpl() : Segment() {
-
-}
+//SegmentImpl::SegmentImpl() : Segment() {
+//
+//}
 
 SegmentImpl::~SegmentImpl() {
 }
 
-void SegmentImpl::add(const std::string& var) {
-    std::vector<int> values = std::vector<int>();
-    values.push_back(0x0010);
-//    dataBufferMap.insert(std::make_pair(var, values));
+void SegmentImpl::addIntVariable(const std::string& var) {
+    int values[numValues];
+    for( int i = 0; i < numValues; i++ ) {
+        // todo define better no data value
+        values[i] = NO_DATA_VALUE;
+    }
+    dataBufferMap.insert(std::make_pair(var, values));
 }
 
 void SegmentImpl::remove(const std::string& varName) {
-
+    dataBufferMap.erase(varName);
 }
 
-Pixel& SegmentImpl::getPixel(int k, int l, int m, Pixel& pixel) {
-    return pixel;
-}
-
-PixelImpl SegmentImpl::createPixel(const std::string varName, int k, int l, int m) {
-    PixelImpl pixel(*this, k, l, m);
+Pixel* SegmentImpl::getPixel(int k, int l, int m, Pixel* pixel) {
+    int arrayPosition = computeArrayPosition(k, l, m);
+    pixel = new PixelImpl(*this, k, l, m, arrayPosition);
     return pixel;
 }
 
 void SegmentImpl::getSamplesInt(const std::string& varName, std::vector<int>& samples) {
-//    std::vector<int> values = (std::vector<int>)
-//    dataBufferMap.at(varName);
-//    samples.push_back( values.front() );
+    int* values = (int*)dataBufferMap.at(varName);
+    for( int i = 0; i < numValues; i++ ) {
+        samples.push_back( values[i] );
+    }
 }
 
-//void SegmentImpl::setSamplesInt(const std::string& varName, std::valarray<int>& samples) {
-//}
+void SegmentImpl::setSamplesInt(const std::string& varName, std::vector<int>& samples) {
+    int* values = (int*) dataBufferMap.at(varName);
+    for( int i = 0; i < numValues; i++ ) {
+        if( samples.size() < i ) {
+            values[i] = samples.at( i );
+        }
+    }
+}
 
+int SegmentImpl::computeArrayPosition(int k, int l, int m) {
+    // todo use something similar to:
+    // int position = k * l * WIDTH_OF_INPUT_PRODUCT + m;
+    return k * l * m;
+}

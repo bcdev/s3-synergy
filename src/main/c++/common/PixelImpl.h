@@ -27,11 +27,11 @@
 class PixelImpl : public Pixel {
 public:
 
-    PixelImpl(Segment& parent, int k, int l, int m) : Pixel(), segment(parent) {
+    PixelImpl(Segment& parent, int k, int l, int m, int arrayPosition) : Pixel(), segment(parent) {
         this->k = k;
         this->l = l;
         this->m = m;
-        position = computePosition();
+        this->position = arrayPosition;
     };
 
     /**
@@ -78,7 +78,6 @@ private:
     Segment& segment;
     int k, l, m;
     int position;
-    int computePosition();
 };
 
 #endif	/* PIXELIMPL_H */

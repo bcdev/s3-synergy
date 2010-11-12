@@ -29,8 +29,8 @@ PixelClassification::PixelClassification(const PixelClassification& orig) {
 PixelClassification::~PixelClassification() {
 }
 
-void PixelClassification::classify(Pixel& pixel) const {
-    pixel.raise( "SYN_L2_Flags", 0x0010 );
+void PixelClassification::classify(Pixel* pixel) const {
+    pixel->raise( "SYN_L2_Flags", 0x0111 );
 }
 
 

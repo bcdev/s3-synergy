@@ -28,7 +28,13 @@
 
 class SegmentImpl : public Segment {
 public:
-    SegmentImpl();
+    SegmentImpl(int xPos, int yPos, int width, int height) {
+        this->xPos = xPos;
+        this->yPos = yPos;
+        this->width = width;
+        this->height = height;
+        numValues = width * height;
+    }
 
 //    template<class T> void getSamples(const std::string& varName, std::valarray<T> samples);
 //    template<class T> void setSamples(const std::string& varName, std::valarray<T> samples);
@@ -36,19 +42,21 @@ public:
     ~SegmentImpl();
 
     void getSamplesInt(const std::string& varName, std::vector<int>& samples);
-//    void setSamplesInt(const std::string& varName, std::valarray<int>& samples);
+    void setSamplesInt(const std::string& varName, std::vector<int>& samples);
 
-    void add(const std::string& varName);
+    void addIntVariable(const std::string& varName);
     void remove(const std::string& varName);
-    Pixel& getPixel(int k, int l, int m, Pixel& pixel);
-    PixelImpl createPixel(const std::string varName, int k, int l, int m);
+    Pixel* getPixel(int k, int l, int m, Pixel* pixel);
 
 private:
     int xPos;
     int yPos;
     int width;
     int height;
-    std::map<std::string, void*> dataBufferMap;
+    int numValues;
+    const static int NO_DATA_VALUE = -999;
+    std::map<std::string, void* > dataBufferMap;
+    int computeArrayPosition( int k, int l, int m );
 };
 
 #endif	/* SEGMENTIMPL_H */

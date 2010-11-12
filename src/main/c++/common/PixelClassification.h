@@ -29,7 +29,7 @@ public:
     PixelClassification(const PixelClassification& orig);
     virtual ~PixelClassification();
 
-    void classify(Pixel& pixel) const;
+    void classify(Pixel* pixel) const;
 private:
 
 };

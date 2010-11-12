@@ -38,16 +38,25 @@ public:
 
     /**
      * Gets all int samples for a given variable name.
-     * @param varName the variable name to get the sampels for.
+     * @param varName the variable name to get the samples for.
      * @param samples an int-vector containing the result.
      */
     virtual void getSamplesInt(const std::string& varName, std::vector<int>& samples) = 0;
-//    virtual void setSamplesInt(const std::string& varName, std::valarray<int>& samples);
 
-    virtual void add(const std::string& varName) = 0;
+    /**
+     * Sets all int samples for a given variable name.
+     * @param varName the variable name to set the samples for.
+     * @param samples an int-vector containing the samples to set.
+     */
+    virtual void setSamplesInt(const std::string& varName, std::vector<int>& samples) = 0;
+
+    /**
+     * Adds a variable to the segment. However, no samples are set, this is done using setSamplesXXX().
+     * @param varName The name of the variable to add.
+     */
+    virtual void addIntVariable(const std::string& varName) = 0;
     virtual void remove(const std::string& varName) = 0;
-    virtual Pixel& getPixel(int k, int l, int m, Pixel& pixel) = 0;
-    virtual PixelImpl createPixel(const std::string varName, int k, int l, int m) = 0;
+    virtual Pixel* getPixel(int k, int l, int m, Pixel* pixel) = 0;
 
 };
 
