@@ -1,0 +1,66 @@
+<Ipf_Job_Order>
+	<Ipf_Conf>
+		<Processor_Name>S3L2PP</Processor_Name>
+		<Version>1.0</Version>
+		<Stdout_Log_Level>WARNING</Stdout_Log_Level> <!-- Default: INFO -->
+		<Stdout_Log_Level>DEBUG</Stdout_Log_Level> <!-- Default: INFO -->
+		<Test>true</Test>
+		<Breakpoint_Enable>false</Breakpoint_Enable>
+		<Acquisition_Station>Sledwaya</Acquisition_Station>
+		<Processing_Station>Mejis</Processing_Station>
+		<Config_Files/>
+		<Sensing_Time>
+			<Start>20101115_155310.1234</Start>
+			<Stop>19770504_111111.1234</Stop>
+		</Sensing_Time>
+		<Dynamic_Processing_Parameters>
+			<Processing_Parameter>
+				<Name>Center Latitude</Name>
+				<Value>82.54364</Value>
+			</Processing_Parameter>
+			<Processing_Parameter>
+				<Name>Center Longitude</Name>
+				<Value>62.54364</Value>
+			</Processing_Parameter>
+		</Dynamic_Processing_Parameters>		
+	</Ipf_Conf>
+	<List_of_Ipf_Procs>
+		<Ipf_Procs>
+			<Task_Name>Horst</Task_Name>
+			<Task_Version>02.00</Task_Version>
+			<BreakPoint>
+				<List_of_Brk_Files>
+					<Brk_File>
+						<Enable>ON</Enable>
+						<File_Type>NetCDF</File_Type>
+						<File_Name_Type>Logical</File_Name_Type> <!-- Default: Physical -->
+						<File_Name>breakpoint_horst.nc</File_Name>
+					</Brk_File>
+				</List_of_Brk_Files>
+			</BreakPoint>
+			<List_of_Inputs>
+				<Input>
+					<File_Type>NetCDF</File_Type>
+					<File_Name_Type>Directory</File_Name_Type> <!-- Default: Physical -->
+					<List_of_File_Names>
+						<File_Name>input_dieter.nc</File_Name>
+						<File_Name>input_karl-heinz.nc</File_Name>
+					</List_of_File_Names>
+					<List_of_Time_Intervals>
+						<Time_Interval>
+							<Start>20101115_161327123456</Start>
+							<Stop>20101115_181327123456</Stop>
+						</Time_Interval>
+					</List_of_Time_Intervals>
+				</Input>
+			</List_of_Inputs>
+			<List_of_Outputs>
+				<Output>
+					<File_Type>NetCDF</File_Type>
+					<File_Name_Type>Directory</File_Name_Type> <!-- Default: Physical -->
+					<File_Name>ergebnis.nc</File_Name>
+				</Output>
+			</List_of_Outputs>			
+		</Ipf_Procs>
+	</List_of_Ipf_Procs>
+</Ipf_Job_Order>
