@@ -49,10 +49,22 @@ Pixel* SegmentImpl::getPixel(int k, int l, int m, Pixel* pixel) {
     return pixel;
 }
 
+int SegmentImpl::getSampleInt(const std::string& varName, int position) {
+    int* values = (int*) dataBufferMap.at(varName);
+    return values[position];
+}
+
+void SegmentImpl::setSampleInt(const std::string& varName, int position, int value) {
+    int* values = (int*) dataBufferMap.at(varName);
+    values[position] = value;
+    dataBufferMap.insert( std::make_pair(varName, values) );
+}
+
 void SegmentImpl::getSamplesInt(const std::string& varName, std::vector<int>& samples) {
     int* values = (int*)dataBufferMap.at(varName);
     for( int i = 0; i < numValues; i++ ) {
-        samples.push_back( values[i] );
+        int value = values[i];
+        samples.push_back( value );
     }
 }
 
@@ -63,6 +75,7 @@ void SegmentImpl::setSamplesInt(const std::string& varName, std::vector<int>& sa
             values[i] = samples.at( i );
         }
     }
+    dataBufferMap.insert(std::make_pair( varName, &samples ));
 }
 
 int SegmentImpl::computeArrayPosition(int k, int l, int m) {

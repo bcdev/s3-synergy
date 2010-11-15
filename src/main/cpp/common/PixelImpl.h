@@ -10,64 +10,65 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
-#ifndef PIXEL_H
-#define PIXEL_H
-
-#include <string>
-
-class Segment;
-
-/**
- * \mainpage
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
- * Pixel interface.
+ * File:   PixelImpl.h
+ * Author: thomass
+ *
+ * Created on November 11, 2010, 8:45 AM
  */
-class Pixel
-{
 
+#ifndef PIXELIMPL_H
+#define	PIXELIMPL_H
+
+#include "Pixel.h"
+#include "Segment.h"
+
+class PixelImpl : public Pixel {
 public:
+
+    PixelImpl(Segment& parent, int k, int l, int m, int arrayPosition) : Pixel(), segment(parent) {
+        this->k = k;
+        this->l = l;
+        this->m = m;
+        this->position = arrayPosition;
+    };
 
     /**
      * Default destructor
      */
-    virtual ~Pixel() {
+    virtual ~PixelImpl() {
     };
-
-    /**
-     * Getter.
-     */
-    virtual double getDouble(const std::string& name) const = 0;
-
-    /**
-     * Setter.
-     */
-    virtual void setDouble(const std::string& name, double value) = 0;
 
     /**
      * Flag inquiry.
      */
-    virtual bool isFlagRaised(const std::string& name, int flagMask) const = 0;
+    bool isFlagRaised(const std::string& name, int flagMask) const;
 
     /**
      * Flag setter.
      */
-    virtual void raiseFlag(const std::string& name, int flagMask) = 0;
+    void raiseFlag(const std::string& name, int flagMask);
 
     /**
      * Clears a flag.
      * @param name the flag to clear
      * @param flagMask the flag mask
      */
-    virtual void clear(const std::string& name, int flagMask) = 0;
+    void clearFlag(const std::string& name, int flagMask);
 
     /**
      * Getter for segment.
      *
      * @return the segment associated with this pixel.
      */
-    virtual Segment& getSegment() const = 0;
+    Segment& getSegment() const;
+
+private:
+    Segment& segment;
+    int k, l, m;
+    int position;
 };
 
-#endif // PIXEL_H
+#endif	/* PIXELIMPL_H */
+

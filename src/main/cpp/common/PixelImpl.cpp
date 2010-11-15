@@ -11,36 +11,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- * File:   PixelClassificationTest.h
- * Author: thomass
- *
- * Created on November 10, 2010, 3:45 PM
  */
 
-#ifndef PCLTEST_H
-#define	PCLTEST_H
+#include <vector>
+#include <string>
+#include <iostream>
+#include "PixelImpl.h"
 
-#include <cppunit/extensions/HelperMacros.h>
-#include "../../../main/c++/common/PixelClassification.h"
-#include "../../../main/c++/common/SegmentImpl.h"
+bool PixelImpl::isFlagRaised(const std::string& name, int flagMask) const {
+    std::vector<int> samples = std::vector<int>();
+    int mask = segment.getSampleInt(name, position);
+    return (mask & flagMask ) == flagMask;
+}
 
-class PixelClassificationTest : public CPPUNIT_NS::TestFixture {
-    CPPUNIT_TEST_SUITE(PixelClassificationTest);
-    CPPUNIT_TEST(testPixelClassification);
-    CPPUNIT_TEST_SUITE_END();
+void PixelImpl::raiseFlag(const std::string& name, int flagMask) {
+    int mask = segment.getSampleInt(name, position);
+    mask = mask | flagMask;
+    segment.setSampleInt(name, position, mask);
+}
 
-public:
-    PixelClassificationTest();
-    virtual ~PixelClassificationTest();
-    void setUp();
-    void tearDown();
+void PixelImpl::clearFlag(const std::string& name, int flagMask) {
+    
+}
 
-private:
-    SegmentImpl segment;
-
-    void testPixelClassification();
-};
-
-#endif	/* PCLTEST_H */
-
+Segment& PixelImpl::getSegment() const {
+    return segment;
+}

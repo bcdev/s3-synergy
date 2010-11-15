@@ -21,7 +21,6 @@
 
 using namespace std;
 using namespace xercesc_3_1;
-using namespace esa::S3L2PP::syn;
 
 class XmlParser {
 

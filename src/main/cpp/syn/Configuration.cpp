@@ -10,19 +10,6 @@
 
 using namespace std;
 
-/**
- * General namespace for ESAs software.
- */
-namespace esa {
-/**
- * Namespace for S3L2PP software.
- */
-namespace S3L2PP {
-/**
- * Namespace for the SYN processing branch.
- */
-namespace syn {
-
 string Configuration::getId() const {
 	return id;
 }
@@ -101,6 +88,3 @@ string Configuration::boolToString( bool input ) {
 	}
 }
 
-}
-}
-}

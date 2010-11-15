@@ -19,7 +19,7 @@
  */
 
 #include "PixelClassificationTest.h"
-#include "../../../main/c++/common/PixelImpl.h"
+#include "../../../main/cpp/common/PixelImpl.h"
 #include <stdexcept>
 
 CPPUNIT_TEST_SUITE_REGISTRATION(PixelClassificationTest);

@@ -36,10 +36,10 @@ public:
         numValues = width * height;
     }
 
-//    template<class T> void getSamples(const std::string& varName, std::valarray<T> samples);
-//    template<class T> void setSamples(const std::string& varName, std::valarray<T> samples);
-
     ~SegmentImpl();
+
+    int getSampleInt(const std::string& varName, int position);
+    void setSampleInt(const std::string& varName, int position, int value);
 
     void getSamplesInt(const std::string& varName, std::vector<int>& samples);
     void setSamplesInt(const std::string& varName, std::vector<int>& samples);
@@ -54,7 +54,7 @@ private:
     int width;
     int height;
     int numValues;
-    const static int NO_DATA_VALUE = -999;
+    const static int NO_DATA_VALUE = 0;
     std::map<std::string, void* > dataBufferMap;
     int computeArrayPosition( int k, int l, int m );
 };
