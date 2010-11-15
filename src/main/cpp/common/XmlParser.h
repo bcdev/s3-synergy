@@ -19,32 +19,30 @@
 #include <list>
 #include "Configuration.h"
 
-using namespace std;
 using namespace xercesc_3_1;
 
 class XmlParser {
-
 private:
-	string path;
-	XercesDOMParser * parser;
-	DOMDocument * doc;
-	list<string> getNodeNames( DOMElement * root );
-	void parseId( Configuration * config, DOMElement * node );
+    std::string path;
+    XercesDOMParser * parser;
+    DOMDocument * doc;
+    list<std::string> getNodeNames(DOMElement * root);
+    void parseId(Configuration * config, DOMElement * node);
     void parseInputLocation(DOMElement * childNode, Configuration * config);
-    void parseDebugLevel( Configuration * config, DOMElement * node );
+    void parseDebugLevel(Configuration * config, DOMElement * node);
 
 protected:
-	DOMElement * root;
+    DOMElement * root;
 
 public:
-	XmlParser(string path);
-	void readXml();
-	void outputNodes();
-	void cleanUp();
-	string getTextContent( DOMNode * node );
-	string getNodeName( DOMElement * node );
-	string getNodeAttribute(DOMElement * node, string attributeName);
-	void* getNodeForExpression( string xPath );
+    XmlParser(std::string path);
+    void readXml();
+    void outputNodes();
+    void cleanUp();
+    std::string getTextContent(DOMNode * node);
+    std::string getNodeName(DOMElement * node);
+    std::string getNodeAttribute(DOMElement * node, std::string attributeName);
+    DOMXPathResult* evaluateXPathQuery(std::string expression);
 };
 
 #endif /* XMLPARSER_H_ */
