@@ -22,18 +22,18 @@ double PixelImpl::getDouble(const std::string& name) const {
 //    const std::valarray<double> samples = std::valarray<double>();
 //    segment.getSamplesDouble(name, samples );
 //    return samples.operator [](position);
+    return 0.0;
 }
 
-bool PixelImpl::isRaised(const std::string& name, int flagMask) const {
+bool PixelImpl::isFlagRaised(const std::string& name, int flagMask) const {
     std::vector<int> samples = std::vector<int>();
     segment.getSamplesInt(name, samples);
     if( samples.empty() ) {
+        // todo replace with logging
         std::cout << "\n\nsamples are empty!!\n\n";
         return false;
     }
     int mask = samples.at(position);
-    std::cout << "\nmask value is " << mask << "\n";
-    std::cout << "mask & flagMask = " << (mask & flagMask) << "\n";
     return (mask & flagMask ) == flagMask;
 }
 
@@ -41,11 +41,12 @@ void PixelImpl::setDouble(const std::string& name, double value) {
 
 }
 
-void PixelImpl::raise(const std::string& name, int flagMask) {
-    std::vector<int> samples;
-    samples.push_back( flagMask );
+void PixelImpl::raiseFlag(const std::string& name, int flagMask) {
+    std::vector<int> samples = std::vector<int>();
+    segment.getSamplesInt( name, samples );
+    int mask = samples.at(position);
+    mask = mask | flagMask;
     segment.setSamplesInt( name, samples );
-
 }
 
 void PixelImpl::clear(const std::string& name, int flagMask) {

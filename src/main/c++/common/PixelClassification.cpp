@@ -30,7 +30,7 @@ PixelClassification::~PixelClassification() {
 }
 
 void PixelClassification::classify(Pixel* pixel) const {
-    pixel->raise( "SYN_L2_Flags", 0x0111 );
+    pixel->raiseFlag( "SYN_L2_Flags", 0x0111 );
 }
 
 

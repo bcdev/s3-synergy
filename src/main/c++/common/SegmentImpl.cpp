@@ -59,7 +59,7 @@ void SegmentImpl::getSamplesInt(const std::string& varName, std::vector<int>& sa
 void SegmentImpl::setSamplesInt(const std::string& varName, std::vector<int>& samples) {
     int* values = (int*) dataBufferMap.at(varName);
     for( int i = 0; i < numValues; i++ ) {
-        if( samples.size() < i ) {
+        if( i < samples.size() ) {
             values[i] = samples.at( i );
         }
     }

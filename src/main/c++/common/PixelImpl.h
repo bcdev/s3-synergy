@@ -53,12 +53,12 @@ public:
     /**
      * Flag inquiry.
      */
-    bool isRaised(const std::string& name, int flagMask) const;
+    bool isFlagRaised(const std::string& name, int flagMask) const;
 
     /**
      * Flag setter.
      */
-    void raise(const std::string& name, int flagMask);
+    void raiseFlag(const std::string& name, int flagMask);
 
     /**
      * Clears a flag.

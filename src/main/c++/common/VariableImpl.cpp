@@ -30,10 +30,10 @@ VariableImpl::~VariableImpl() {
 }
 
 std::string VariableImpl::getName() {
-
+    return "";
 }
 
 std::string VariableImpl::getUnit() {
-    
+    return "";
 }
 

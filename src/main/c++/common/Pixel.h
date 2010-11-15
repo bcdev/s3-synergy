@@ -48,12 +48,12 @@ public:
     /**
      * Flag inquiry.
      */
-    virtual bool isRaised(const std::string& name, int flagMask) const = 0;
+    virtual bool isFlagRaised(const std::string& name, int flagMask) const = 0;
 
     /**
      * Flag setter.
      */
-    virtual void raise(const std::string& name, int flagMask) = 0;
+    virtual void raiseFlag(const std::string& name, int flagMask) = 0;
 
     /**
      * Clears a flag.

@@ -2,6 +2,10 @@ project (SYN)
 set (SYN_VERSION_MAJOR 1)
 set (SYN_VERSION_MINOR 0)
 
+set(CMAKE_CXX_FLAGS "-g -Wall")
+set(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
+
+
 cmake_minimum_required (VERSION 2.8)
 
 include_directories(${JAVA_HOME}/include ${JAVA_HOME}/include/linux ${SAFE_HOME}/include /usr/local/include /usr/include)
