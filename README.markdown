@@ -1,0 +1,26 @@
+# About S3L2PP
+
+The Sentinel-3 Level 2 Prototype Processing (S3L2PP) project aims at defining
+the products and prototyping the production algorithms used for ESA's Sentinel-3
+Mission.
+
+The sources in this project consider the SYN branch of the S3L2PP processing. The
+SYN branch produces the following products:
+
+1. Aerosol and surface directional reflectance retrieved from both OLCI and SLSTR
+observations
+2. VGT-Continuity VGT-P
+3. VGT-Continuity VGT-S
+
+
+# Contact Information
+
+Ralf Quast
+Brockmann Consult
+21502 Geesthacht, Germany
+ralf.quast@brockmann-consult.de
+
+Thomas Storm
+Brockmann Consult
+21502 Geesthacht, Germany
+thomas.storm@brockmann-consult.de
