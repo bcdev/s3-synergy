@@ -29,6 +29,5 @@ JobOrderParser::~JobOrderParser() {
 
 Configuration JobOrderParser::readConfig() {
     Configuration config;
-    xercesc_3_1::DOMXPathResult* result = evaluateXPathQuery("/Ipf_Job_Order");
     return config;
 }

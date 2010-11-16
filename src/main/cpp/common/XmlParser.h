@@ -16,10 +16,11 @@
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/dom/DOMNodeList.hpp>
 #include "xercesc/dom/DOMXPathResult.hpp"
+#include <xalanc/XPath/XPathEvaluator.hpp>
 #include <list>
 #include "Configuration.h"
 
-using namespace xercesc_3_1;
+using namespace xercesc;
 
 class XmlParser {
 private:
@@ -37,6 +38,7 @@ protected:
 public:
     XmlParser(std::string path);
     void readXml();
+    void readXml2( xalanc::XPath& path);
     void outputNodes();
     void cleanUp();
     std::string getTextContent(DOMNode * node);

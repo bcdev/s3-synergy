@@ -5,17 +5,82 @@
  *      Author: thomass
  */
 
+#include <cstddef>
+#include <exception>
 #include <iostream>
-#include <typeinfo>
-#include "XmlParser.h"
-#include <xercesc/dom/DOMXPathException.hpp>
-#include <xercesc/dom/DOMXPathExpression.hpp>
-#include <cstdlib>
+#include <xercesc/dom/DOM.hpp>
+#include <xercesc/parsers/XercesDOMParser.hpp>
+#include <xercesc/sax2/DefaultHandler.hpp>
+#include <xercesc/util/PlatformUtils.hpp>
+#include <xalanc/DOMSupport/XalanDocumentPrefixResolver.hpp>
+#include <xalanc/XalanTransformer/XercesDOMWrapperParsedSource.hpp>
+#include <xalanc/XercesParserLiaison/XercesParserLiaison.hpp>
+#include <xalanc/XercesParserLiaison/XercesDOMSupport.hpp>
+#include <xalanc/XPath/XObject.hpp>
+#include "XPathInitializer.h"
 
-using namespace xercesc_3_1;
+#include "XmlParser.h"
+
+using namespace std;
+using namespace xercesc;
+using namespace xalanc;
 
 XmlParser::XmlParser(std::string path) {
     this->path = path;
+}
+
+void XmlParser::readXml2(XPath& expression) {
+    try {
+        // Initialize Xerces and XPath and construct a DOM parser.
+        XPathInitializer init;
+
+        parser->setValidationScheme(XercesDOMParser::Val_Always);
+        parser->setCreateEntityReferenceNodes(false);
+        parser->setIncludeIgnorableWhitespace(false);
+
+        // todo - register error handler
+        // parser.setErrorHandler(&errorHandler);
+
+        // Parse animals.xml.
+        parser->parse(path.c_str());
+        DOMDocument* doc = parser->getDocument();
+        root = doc->getDocumentElement();
+
+        // Create a XalanDocument based on doc.
+        XercesDOMSupport support;
+        XercesParserLiaison liaison(support);
+        XercesDOMWrapperParsedSource src(doc, liaison, support);
+        XalanDocument* xalanDoc = src.getDocument();
+
+        // Evaluate an XPath expression to obtain a list
+        // of text nodes containing animals' names
+        XPathEvaluator evaluator;
+        XalanDocumentPrefixResolver resolver(xalanDoc);
+        XObjectPtr result =
+                evaluator.evaluate(
+                support, // DOMSupport
+                xalanDoc, // context node
+                expression, // XPath expr
+                resolver); // Namespace resolver
+        const NodeRefListBase& nodeset = result->nodeset();
+
+
+        // Iterate through the node list, printing the animals' names
+        for (size_t i = 0,
+                len = nodeset.getLength();
+                i < len;
+                ++i) {
+            const XMLCh* name =
+                    nodeset.item(i)->getNodeValue().c_str();
+            // std::cout << toNative(name) << "\n";
+        }
+    } catch (const DOMException& e) {
+        // cout << "xml error: " << toNative(e.getMessage()) << "\n";
+        // return EXIT_FAILURE;
+    } catch (const exception& e) {
+        // cout << e.what() << "\n";
+        // return EXIT_FAILURE;
+    }
 }
 
 void XmlParser::readXml() {
@@ -43,13 +108,13 @@ void XmlParser::readXml() {
 
 DOMXPathResult* XmlParser::evaluateXPathQuery(std::string expression) {
     try {
-        DOMXPathExpression* xPathExpression = doc->createExpression(XMLString::transcode(expression.c_str()), NULL);
+        const DOMXPathExpression* xPathExpression = doc->createExpression(XMLString::transcode(expression.c_str()), NULL);
         DOMXPathResult* result;
         xPathExpression->evaluate(root, DOMXPathResult::ANY_TYPE, result);
         return result;
     } catch (DOMXPathException toCatch) {
         // todo replace with logging
-        cerr << "\n" << XMLString::transcode(toCatch.getMessage()) << "\n";
+        //cerr << "\n" << XMLString::transcode(toCatch.getMessage()) << "\n";
     }
     return 0;
 }

@@ -48,12 +48,12 @@ void JobOrderParseTest::testParsing() {
 
 void JobOrderParseTest::initializeXerces() {
     try {
-        xercesc_3_1::XMLPlatformUtils::Initialize();
-    } catch (const XMLException& toCatch) {
+        xercesc::XMLPlatformUtils::Initialize();
+    } catch (const xercesc::XMLException& toCatch) {
         std::cout << "\n" << toCatch.getMessage() << "\n";
     }
 }
 
 void JobOrderParseTest::terminateXerces() {
-    xercesc_3_1::XMLPlatformUtils::Terminate();
+    xercesc::XMLPlatformUtils::Terminate();
 }

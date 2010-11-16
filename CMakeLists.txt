@@ -18,8 +18,8 @@ file(GLOB SYN_TEST_SOURCES src/test/cpp/syn/*.cpp)
 add_executable(syn ${SYN_SOURCES} ${COMMON_SOURCES})
 add_executable(syn_test ${SYN_TEST_SOURCES} ${COMMON_SOURCES})
 
-target_link_libraries(syn netcdf netcdf_c++ Safe xerces-c-3.1)
-target_link_libraries(syn_test cppunit xerces-c-3.1)
+target_link_libraries(syn netcdf netcdf_c++ Safe xerces-c xalan-c)
+target_link_libraries(syn_test cppunit xerces-c xalan-c)
 
 set_property(TARGET syn PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 set_property(TARGET syn_test PROPERTY RUNTIME_OUTPUT_DIRECTORY target)

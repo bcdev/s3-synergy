@@ -8,7 +8,7 @@ extern "C" {
 #include <xercesc/util/PlatformUtils.hpp>
 
 using namespace std;
-using namespace xercesc_3_1;
+using namespace xercesc_2_8;
 
 void initializeXerces() {
     try {
