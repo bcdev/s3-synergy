@@ -20,25 +20,24 @@ class XmlParser {
 private:
     string path;
     XercesDOMParser* parser;
-    DOMDocument* doc;
     list<string> getNodeNames(DOMElement * root);
     void parseId(Configuration * config, DOMElement * node);
     void parseInputLocation(DOMElement * childNode, Configuration * config);
     void parseDebugLevel(Configuration * config, DOMElement * node);
 
 protected:
+    DOMDocument* doc;
     DOMElement* root;
 
 public:
     XmlParser(string path);
     void readXml();
-    void readXml2(XPath& path);
     void outputNodes();
     void cleanUp();
     string getTextContent(DOMNode* node);
     string getNodeName(DOMElement* node);
     string getNodeAttribute(DOMElement* node, string attributeName);
-    DOMXPathResult* evaluateXPathQuery(string expression);
+    void evaluateXPathQuery(string& expression);
 };
 
 #endif /* XMLPARSER_H_ */

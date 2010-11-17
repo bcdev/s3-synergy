@@ -15,6 +15,7 @@ using std::string;
 class Configuration {
 private:
     string id;
+    string processorName;
     string debugLevel;
     string inputFileLocation;
     string synFileLocation;
@@ -31,6 +32,8 @@ public:
 
     string getId() const;
     void setId(string id);
+    string getProcessorName();
+    void setProcessorName(string processorName);
     bool getExportSyn() const;
     void setExportSyn(bool exportSyn);
     bool getExportVgt() const;

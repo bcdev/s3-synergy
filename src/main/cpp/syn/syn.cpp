@@ -5,7 +5,7 @@ extern "C" {
 #include <netcdfcpp.h>
 #include <Safe.h>
 
-#include "ConfigParser.h"
+#include "../common/JobOrderParser.h"
 #include "../common/Segment.h"
 #include "../common/Reader.h"
 #include "../common/PixelClassification.h"
@@ -18,11 +18,9 @@ using std::list;
 int main() {
     const XPathInitializer initializer;
 
-    string path = "/home/thomass/Desktop/test.xml";
+    string path = "/mnt/hgfs/S3L2PP/src/test/resources/syn/JobOrder.Test_1.xml";
 
-    ConfigParser parser = ConfigParser(path);
-    parser.readXml();
-    //	DOMNode * perfExp = (DOMNode *)parser.getNodeForExpression( "syn/exportSyn/performExport" );
+    JobOrderParser parser = JobOrderParser(path);
     Configuration configuration = parser.parseConfiguration();
     configuration.print();
 

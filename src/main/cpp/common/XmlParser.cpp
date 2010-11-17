@@ -21,7 +21,7 @@ XmlParser::XmlParser(string path) {
     this->path = path;
 }
 
-void XmlParser::readXml2(XPath& expression) {
+void XmlParser::evaluateXPathQuery(string& expression) {
     try {
         // Initialize Xerces and XPath and construct a DOM parser.
         XPathInitializer init;
@@ -48,24 +48,14 @@ void XmlParser::readXml2(XPath& expression) {
         // of text nodes containing animals' names
         XPathEvaluator evaluator;
         XalanDocumentPrefixResolver resolver(xalanDoc);
-        XObjectPtr result =
-                evaluator.evaluate(
-                support, // DOMSupport
-                xalanDoc, // context node
-                expression, // XPath expr
-                resolver); // Namespace resolver
+
+        // todo transform this into valid expression
+        XalanDOMChar* expr;
+        XObjectPtr result = evaluator.evaluate( support, xalanDoc, expr,  resolver);
         const NodeRefListBase& nodeset = result->nodeset();
 
-
-        // Iterate through the node list, printing the animals' names
-        for (size_t i = 0,
-                len = nodeset.getLength();
-                i < len;
-                ++i) {
-            const XMLCh* name =
-                    nodeset.item(i)->getNodeValue().c_str();
-            // std::cout << toNative(name) << "\n";
-        }
+//        return nodeset;
+ 
     } catch (const DOMException& e) {
         // cout << "xml error: " << toNative(e.getMessage()) << "\n";
         // return EXIT_FAILURE;
@@ -96,19 +86,6 @@ void XmlParser::readXml() {
         cout << "Exception message is: \n" << message << "\n";
         XMLString::release(&message);
     }
-}
-
-DOMXPathResult* XmlParser::evaluateXPathQuery(std::string expression) {
-    try {
-        const DOMXPathExpression* xPathExpression = doc->createExpression(XMLString::transcode(expression.c_str()), NULL);
-        DOMXPathResult* result;
-        xPathExpression->evaluate(root, DOMXPathResult::ANY_TYPE, result);
-        return result;
-    } catch (DOMXPathException toCatch) {
-        // todo replace with logging
-        //cerr << "\n" << XMLString::transcode(toCatch.getMessage()) << "\n";
-    }
-    return 0;
 }
 
 std::string XmlParser::getNodeName(DOMElement * node) {

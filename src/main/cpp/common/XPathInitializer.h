@@ -21,12 +21,14 @@
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
+#include <xalanc/XPath/XPath.hpp>
 #include <xalanc/XPath/XPathEvaluator.hpp>
 #include <xalanc/DOMSupport/XalanDocumentPrefixResolver.hpp>
 #include <xalanc/XalanTransformer/XercesDOMWrapperParsedSource.hpp>
 #include <xalanc/XercesParserLiaison/XercesParserLiaison.hpp>
 #include <xalanc/XercesParserLiaison/XercesDOMSupport.hpp>
 #include <xalanc/XPath/XObject.hpp>
+#include <xalanc/XPath/XPathFactory.hpp>
 
 using xercesc::DOMDocument;
 using xercesc::DOMElement;
@@ -50,6 +52,8 @@ using xalanc::XercesParserLiaison;
 using xalanc::XObjectPtr;
 using xalanc::XPath;
 using xalanc::XPathEvaluator;
+using xalanc::XPathFactory;
+using xalanc::XalanDOMChar;
 
 class XPathInitializer {
 public:

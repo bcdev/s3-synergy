@@ -13,6 +13,13 @@ using std::cout;
 using std::endl;
 using std::string;
 
+string Configuration::getProcessorName() {
+    return processorName;
+}
+void Configuration::setProcessorName(string processorName) {
+    this->processorName = processorName;
+}
+
 string Configuration::getId() const {
     return id;
 }
@@ -64,6 +71,7 @@ void Configuration::setVgtFileLocation(string vgtFileLocation) {
 void Configuration::print() {
 
     cout << "id = " << getId() << "\n";
+    cout << "processorName = " << getProcessorName() << "\n";
     cout << "debugLevel = " << getDebugLevel() << "\n";
     cout << "exportSyn = " << boolToString(getExportSyn()) << "\n";
     cout << "exportVgt = " << boolToString(getExportVgt()) << "\n";

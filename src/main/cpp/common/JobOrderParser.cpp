@@ -18,10 +18,13 @@
  * Created on November 15, 2010, 4:31 PM
  */
 
+#include <iostream>
+
 #include "Configuration.h"
 #include "JobOrderParser.h"
 
 using std::string;
+using std::cout;
 
 JobOrderParser::JobOrderParser(string path) : XmlParser(path) {
 }
@@ -29,7 +32,18 @@ JobOrderParser::JobOrderParser(string path) : XmlParser(path) {
 JobOrderParser::~JobOrderParser() {
 }
 
-Configuration JobOrderParser::readConfig() {
+Configuration JobOrderParser::parseConfiguration() {
+    readXml();
     Configuration config;
+    string bla = "/Ipf_Job_Order/Ipf_Conf//Processor_Name";
+//    NodeRefListBase& nodeset = evaluateXPathQuery( bla );
+//    // Iterate through the node list, printing the animals' names
+//    for (size_t i = 0, len = nodeset.getLength(); i < len; ++i) {
+//        const XMLCh* name = nodeset.item(i)->getNodeValue().c_str();
+//        cout << XMLString::transcode( name ) << "\n";
+//    }
+    evaluateXPathQuery(bla);
+    string processorName = "";
+    config.setProcessorName( processorName );
     return config;
 }
