@@ -18,10 +18,12 @@
  * Created on November 15, 2010, 4:31 PM
  */
 
+#include "Configuration.h"
 #include "JobOrderParser.h"
-#include <xercesc/dom/DOMXPathResult.hpp>
 
-JobOrderParser::JobOrderParser(std::string path) : XmlParser(path) {
+using std::string;
+
+JobOrderParser::JobOrderParser(string path) : XmlParser(path) {
 }
 
 JobOrderParser::~JobOrderParser() {

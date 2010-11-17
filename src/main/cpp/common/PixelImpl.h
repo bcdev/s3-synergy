@@ -24,6 +24,8 @@
 #include "Pixel.h"
 #include "Segment.h"
 
+using std::string;
+
 class PixelImpl : public Pixel {
 public:
 
@@ -43,19 +45,19 @@ public:
     /**
      * Flag inquiry.
      */
-    bool isFlagRaised(const std::string& name, int flagMask) const;
+    bool isFlagRaised(const string& name, int flagMask) const;
 
     /**
      * Flag setter.
      */
-    void raiseFlag(const std::string& name, int flagMask);
+    void raiseFlag(const string& name, int flagMask);
 
     /**
      * Clears a flag.
      * @param name the flag to clear
      * @param flagMask the flag mask
      */
-    void clearFlag(const std::string& name, int flagMask);
+    void clearFlag(const string& name, int flagMask);
 
     /**
      * Getter for segment.

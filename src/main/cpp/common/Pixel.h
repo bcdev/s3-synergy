@@ -17,6 +17,8 @@
 
 #include <string>
 
+using std::string;
+
 class Segment;
 
 /**
@@ -38,19 +40,19 @@ public:
     /**
      * Flag inquiry.
      */
-    virtual bool isFlagRaised(const std::string& name, int flagMask) const = 0;
+    virtual bool isFlagRaised(const string& name, int flagMask) const = 0;
 
     /**
      * Flag setter.
      */
-    virtual void raiseFlag(const std::string& name, int flagMask) = 0;
+    virtual void raiseFlag(const string& name, int flagMask) = 0;
 
     /**
      * Clears a flag.
      * @param name the flag to clear
      * @param flagMask the flag mask
      */
-    virtual void clearFlag(const std::string& name, int flagMask) = 0;
+    virtual void clearFlag(const string& name, int flagMask) = 0;
 
     /**
      * Getter for segment.

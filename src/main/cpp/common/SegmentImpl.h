@@ -21,10 +21,15 @@
 #ifndef SEGMENTIMPL_H
 #define	SEGMENTIMPL_H
 
-#include <valarray>
 #include <map>
+#include <valarray>
+
 #include "Segment.h"
 #include "PixelImpl.h"
+
+using std::map;
+using std::string;
+using std::vector;
 
 class SegmentImpl : public Segment {
 public:
@@ -38,14 +43,14 @@ public:
 
     ~SegmentImpl();
 
-    int getSampleInt(const std::string& varName, int position);
-    void setSampleInt(const std::string& varName, int position, int value);
+    int getSampleInt(const string& varName, int position);
+    void setSampleInt(const string& varName, int position, int value);
 
-    void getSamplesInt(const std::string& varName, std::vector<int>& samples);
-    void setSamplesInt(const std::string& varName, std::vector<int>& samples);
+    void getSamplesInt(const string& varName, vector<int>& samples);
+    void setSamplesInt(const string& varName, vector<int>& samples);
 
-    void addIntVariable(const std::string& varName);
-    void remove(const std::string& varName);
+    void addIntVariable(const string& varName);
+    void remove(const string& varName);
     Pixel* getPixel(int k, int l, int m, Pixel* pixel);
 
 private:
@@ -55,7 +60,7 @@ private:
     int height;
     int numValues;
     const static int NO_DATA_VALUE = 0;
-    std::map<std::string, void* > dataBufferMap;
+    map<string, void* > dataBufferMap;
     int computeArrayPosition( int k, int l, int m );
 };
 

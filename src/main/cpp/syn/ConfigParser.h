@@ -10,14 +10,13 @@
 
 #include "../common/XmlParser.h"
 
-
 class ConfigParser : public XmlParser {
 public:
-	ConfigParser( std::string path );
-	virtual ~ConfigParser();
-	Configuration parseConfiguration();
+    ConfigParser(std::string path);
+    virtual ~ConfigParser();
+    Configuration parseConfiguration();
 private:
-	void parseSubConfigs( Configuration * config, DOMElement * node, bool isSyn );
+    void parseSubConfigs(Configuration * config, DOMElement * node, bool isSyn);
 };
 
 #endif /* CONFIGPARSER_H_ */

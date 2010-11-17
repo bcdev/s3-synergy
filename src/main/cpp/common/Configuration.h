@@ -8,9 +8,9 @@
 #ifndef CONFIGURATION_H_
 #define CONFIGURATION_H_
 
-#include <iostream>
+#include <string>
 
-using namespace std;
+using std::string;
 
 class Configuration {
 private:

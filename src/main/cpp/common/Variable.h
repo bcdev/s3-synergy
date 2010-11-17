@@ -23,10 +23,12 @@
 
 #include <string>
 
+using std::string;
+
 class Variable {
 public:
-    virtual std::string getName() = 0;
-    virtual std::string getUnit() = 0;
+    virtual string getName() = 0;
+    virtual string getUnit() = 0;
     virtual ~Variable() { };
 
 };

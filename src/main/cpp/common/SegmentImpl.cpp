@@ -18,28 +18,26 @@
  * Created on November 11, 2010, 10:04 AM
  */
 
-#include <vector>
 #include <iostream>
 #include <typeinfo>
+
 #include "SegmentImpl.h"
 
-//SegmentImpl::SegmentImpl() : Segment() {
-//
-//}
+using std::make_pair;
 
 SegmentImpl::~SegmentImpl() {
 }
 
-void SegmentImpl::addIntVariable(const std::string& var) {
+void SegmentImpl::addIntVariable(const string& var) {
     int values[numValues];
     for( int i = 0; i < numValues; i++ ) {
         // todo define better no data value
         values[i] = NO_DATA_VALUE;
     }
-    dataBufferMap.insert(std::make_pair(var, values));
+    dataBufferMap.insert(make_pair(var, values));
 }
 
-void SegmentImpl::remove(const std::string& varName) {
+void SegmentImpl::remove(const string& varName) {
     dataBufferMap.erase(varName);
 }
 
@@ -49,18 +47,18 @@ Pixel* SegmentImpl::getPixel(int k, int l, int m, Pixel* pixel) {
     return pixel;
 }
 
-int SegmentImpl::getSampleInt(const std::string& varName, int position) {
+int SegmentImpl::getSampleInt(const string& varName, int position) {
     int* values = (int*) dataBufferMap.at(varName);
     return values[position];
 }
 
-void SegmentImpl::setSampleInt(const std::string& varName, int position, int value) {
+void SegmentImpl::setSampleInt(const string& varName, int position, int value) {
     int* values = (int*) dataBufferMap.at(varName);
     values[position] = value;
-    dataBufferMap.insert( std::make_pair(varName, values) );
+    dataBufferMap.insert( make_pair(varName, values) );
 }
 
-void SegmentImpl::getSamplesInt(const std::string& varName, std::vector<int>& samples) {
+void SegmentImpl::getSamplesInt(const string& varName, vector<int>& samples) {
     int* values = (int*)dataBufferMap.at(varName);
     for( int i = 0; i < numValues; i++ ) {
         int value = values[i];
@@ -68,14 +66,14 @@ void SegmentImpl::getSamplesInt(const std::string& varName, std::vector<int>& sa
     }
 }
 
-void SegmentImpl::setSamplesInt(const std::string& varName, std::vector<int>& samples) {
+void SegmentImpl::setSamplesInt(const string& varName, vector<int>& samples) {
     int* values = (int*) dataBufferMap.at(varName);
     for( int i = 0; i < numValues; i++ ) {
         if( i < samples.size() ) {
             values[i] = samples.at( i );
         }
     }
-    dataBufferMap.insert(std::make_pair( varName, &samples ));
+    dataBufferMap.insert(make_pair( varName, &samples ));
 }
 
 int SegmentImpl::computeArrayPosition(int k, int l, int m) {

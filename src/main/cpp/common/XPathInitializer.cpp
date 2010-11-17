@@ -8,12 +8,12 @@
 #include "XPathInitializer.h"
 
 XPathInitializer::XPathInitializer() {
-    xercesc::XMLPlatformUtils::Initialize();
-    xalanc::XPathEvaluator::initialize();
+    XMLPlatformUtils::Initialize();
+    XPathEvaluator::initialize();
 }
 
 XPathInitializer::~XPathInitializer() {
-    xercesc::XMLPlatformUtils::Terminate();
-    xalanc::XPathEvaluator::terminate();
+    XMLPlatformUtils::Terminate();
+    XPathEvaluator::terminate();
 }
 

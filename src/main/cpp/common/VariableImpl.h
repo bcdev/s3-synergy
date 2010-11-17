@@ -22,7 +22,6 @@
 #define	VARIABLEIMPL_H
 
 #include "Variable.h"
-#include <string>
 
 class VariableImpl : public Variable {
 public:
@@ -30,8 +29,8 @@ public:
     VariableImpl(const VariableImpl& orig);
     virtual ~VariableImpl();
 
-    std::string getName();
-    std::string getUnit();
+    string getName();
+    string getUnit();
 
 };
 

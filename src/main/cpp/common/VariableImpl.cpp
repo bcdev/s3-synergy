@@ -18,6 +18,8 @@
  * Created on November 11, 2010, 11:33 AM
  */
 
+#include <string>
+
 #include "VariableImpl.h"
 
 VariableImpl::VariableImpl() {
@@ -29,11 +31,11 @@ VariableImpl::VariableImpl(const VariableImpl& orig) {
 VariableImpl::~VariableImpl() {
 }
 
-std::string VariableImpl::getName() {
+string VariableImpl::getName() {
     return "";
 }
 
-std::string VariableImpl::getUnit() {
+string VariableImpl::getUnit() {
     return "";
 }
 

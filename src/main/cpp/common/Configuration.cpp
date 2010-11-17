@@ -5,10 +5,13 @@
  *      Author: thomass
  */
 
-#include "Configuration.h"
 #include <iostream>
 
-using namespace std;
+#include "Configuration.h"
+
+using std::cout;
+using std::endl;
+using std::string;
 
 string Configuration::getId() const {
     return id;

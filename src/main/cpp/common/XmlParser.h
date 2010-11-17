@@ -8,27 +8,13 @@
 #ifndef XMLPARSER_H_
 #define XMLPARSER_H_
 
-#include <xercesc/parsers/XercesDOMParser.hpp>
-#include <xercesc/dom/DOMElement.hpp>
-#include <xercesc/dom/DOMDocument.hpp>
-#include <xercesc/dom/DOMNode.hpp>
-#include <xercesc/util/XMLException.hpp>
-#include <xercesc/util/XMLString.hpp>
-#include <xercesc/dom/DOMNodeList.hpp>
-#include "xercesc/dom/DOMXPathResult.hpp"
-#include <xalanc/XPath/XPathEvaluator.hpp>
 #include <list>
+
 #include "Configuration.h"
+#include "XPathInitializer.h"
 
 using std::string;
-
-using xalanc::XPath;
-
-using xercesc::DOMDocument;
-using xercesc::DOMElement;
-using xercesc::DOMNode;
-using xercesc::DOMXPathResult;
-using xercesc::XercesDOMParser;
+using std::list;
 
 class XmlParser {
 private:

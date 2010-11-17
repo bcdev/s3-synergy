@@ -23,6 +23,8 @@ Coding Conventions
 2. Declare pointer variables as 'type* name' not 'type *name' or 'type * name'
 3. Do not use global 'using <namespace>' directives; use specific
    'using <namespace>::<class>' directives instead
+4. Include system header files before project header files
+
 
 
 Contact Information

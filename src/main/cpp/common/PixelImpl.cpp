@@ -13,24 +13,24 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <vector>
 #include <string>
-#include <iostream>
+
 #include "PixelImpl.h"
 
-bool PixelImpl::isFlagRaised(const std::string& name, int flagMask) const {
-    std::vector<int> samples = std::vector<int>();
+using std::string;
+
+bool PixelImpl::isFlagRaised(const string& name, int flagMask) const {
     int mask = segment.getSampleInt(name, position);
     return (mask & flagMask ) == flagMask;
 }
 
-void PixelImpl::raiseFlag(const std::string& name, int flagMask) {
+void PixelImpl::raiseFlag(const string& name, int flagMask) {
     int mask = segment.getSampleInt(name, position);
     mask = mask | flagMask;
     segment.setSampleInt(name, position, mask);
 }
 
-void PixelImpl::clearFlag(const std::string& name, int flagMask) {
+void PixelImpl::clearFlag(const string& name, int flagMask) {
     
 }
 

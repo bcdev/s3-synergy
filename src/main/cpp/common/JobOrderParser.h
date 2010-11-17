@@ -21,12 +21,14 @@
 #ifndef JOBORDERPARSER_H
 #define	JOBORDERPARSER_H
 
-#include "XmlParser.h"
 #include "Configuration.h"
+#include "XmlParser.h"
+
+using std::string;
 
 class JobOrderParser : public XmlParser {
 public:
-    JobOrderParser(std::string path);
+    JobOrderParser(string path);
     virtual ~JobOrderParser();
     Configuration readConfig();
 private:

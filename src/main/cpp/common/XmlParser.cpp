@@ -8,35 +8,14 @@
 #include <cstddef>
 #include <exception>
 #include <iostream>
-#include <xercesc/dom/DOM.hpp>
-#include <xercesc/parsers/XercesDOMParser.hpp>
-#include <xercesc/sax2/DefaultHandler.hpp>
-#include <xercesc/util/PlatformUtils.hpp>
-#include <xalanc/DOMSupport/XalanDocumentPrefixResolver.hpp>
-#include <xalanc/XalanTransformer/XercesDOMWrapperParsedSource.hpp>
-#include <xalanc/XercesParserLiaison/XercesParserLiaison.hpp>
-#include <xalanc/XercesParserLiaison/XercesDOMSupport.hpp>
-#include <xalanc/XPath/XObject.hpp>
 #include <valarray>
-#include "XPathInitializer.h"
 
 #include "XmlParser.h"
 
-using xercesc::DOMException;
-using xercesc::DOMNodeList;
-using xercesc::DOMXPathException;
-using xercesc::DOMXPathExpression;
-using xercesc::XMLException;
-using xercesc::XMLString;
-
-using xalanc::NodeRefListBase;
-using xalanc::XalanDocument;
-using xalanc::XalanDocumentPrefixResolver;
-using xalanc::XercesDOMSupport;
-using xalanc::XercesDOMWrapperParsedSource;
-using xalanc::XercesParserLiaison;
-using xalanc::XPathEvaluator;
-using xalanc::XObjectPtr;
+using std::cout;
+using std::exception;
+using std::list;
+using std::string;
 
 XmlParser::XmlParser(string path) {
     this->path = path;
@@ -90,7 +69,7 @@ void XmlParser::readXml2(XPath& expression) {
     } catch (const DOMException& e) {
         // cout << "xml error: " << toNative(e.getMessage()) << "\n";
         // return EXIT_FAILURE;
-    } catch (const exception& e) {
+    } catch (const std::exception& e) {
         // cout << e.what() << "\n";
         // return EXIT_FAILURE;
     }

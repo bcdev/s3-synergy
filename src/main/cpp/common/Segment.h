@@ -24,6 +24,9 @@
 #include <string>
 #include <vector>
 
+using std::string;
+using std::vector;
+
 class Pixel;
 class PixelImpl;
 
@@ -33,16 +36,13 @@ public:
     virtual ~Segment() {
     };
 
-    //    template<class T> virtual void getSamples(const std::string& varName, std::valarray<T> samples) = 0;
-    //    template<class T> virtual void setSamples(const std::string& varName, std::valarray<T> samples) = 0;
-
     /**
      * Gets the sample for a given variable and position.
      * @param varName the variable to get the sample for.
      * @param position the position to get the sample for.
      * @return the sample value.
      */
-    virtual int getSampleInt( const std::string& varName, int position ) = 0;
+    virtual int getSampleInt(const string& varName, int position) = 0;
 
     /**
      * Sets the sample for a given variable and position.
@@ -50,28 +50,28 @@ public:
      * @param position the position to set the sample for.
      * @param value the sample value.
      */
-    virtual void setSampleInt(const std::string& varName, int position, int value) = 0;
+    virtual void setSampleInt(const string& varName, int position, int value) = 0;
 
     /**
      * Gets all int samples for a given variable name.
      * @param varName the variable name to get the samples for.
      * @param samples an int-vector containing the result.
      */
-    virtual void getSamplesInt(const std::string& varName, std::vector<int>& samples) = 0;
+    virtual void getSamplesInt(const string& varName, vector<int>& samples) = 0;
 
     /**
      * Sets all int samples for a given variable name.
      * @param varName the variable name to set the samples for.
      * @param samples an int-vector containing the samples to set.
      */
-    virtual void setSamplesInt(const std::string& varName, std::vector<int>& samples) = 0;
+    virtual void setSamplesInt(const string& varName, vector<int>& samples) = 0;
 
     /**
      * Adds a variable to the segment and sets all values to 0.
      * @param varName The name of the variable to add.
      */
-    virtual void addIntVariable(const std::string& varName) = 0;
-    virtual void remove(const std::string& varName) = 0;
+    virtual void addIntVariable(const string& varName) = 0;
+    virtual void remove(const string& varName) = 0;
     virtual Pixel* getPixel(int k, int l, int m, Pixel* pixel) = 0;
 
 };
