@@ -5,8 +5,6 @@
  *      Author: thomass
  */
 
-#include <xercesc/parsers/XercesDOMParser.hpp>
-
 #include "ConfigParser.h"
 
 using xercesc::DOMNodeList;

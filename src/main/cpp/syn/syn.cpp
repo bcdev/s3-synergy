@@ -2,32 +2,16 @@ extern "C" {
 #include <netcdf.h>
 }
 #include <netcdfcpp.h>
-#include "/usr/local/safe-suite/include/Safe.h"
+#include <Safe.h>"
 #include "ConfigParser.h"
-#include <xercesc/dom/DOMNode.hpp>
-#include <xercesc/util/PlatformUtils.hpp>
 
-using namespace std;
-using namespace xercesc_2_8;
-
-void initializeXerces() {
-    try {
-        XMLPlatformUtils::Initialize();
-    } catch (const XMLException& toCatch) {
-        // Do your failure processing here
-    }
-}
-
-void terminateXerces() {
-    XMLPlatformUtils::Terminate();
-}
 
 /**
  * Generates three empty files: two netCDF files and a SAFE archive.
  */
 int main() {
+    const XPathInitializer initializer;
 
-    initializeXerces();
     string path = "/home/thomass/Desktop/test.xml";
 
     ConfigParser parser = ConfigParser(path);
@@ -47,6 +31,4 @@ int main() {
 //    	Safe safeFile((char*) "hello3.safe",
 //    			(char*) "esa/safe/1.2/envisat/meris/fr/level-2");
 //    	safeFile.save();
-
-    terminateXerces();
 }

@@ -24,6 +24,9 @@ Coding Conventions
 3. Do not use global 'using <namespace>' directives; use specific
    'using <namespace>::<class>' directives instead
 4. Include system header files before project header files
+5. Order include directives alphabetically
+6. Order 'using ...' directives alphabetically
+7. In class declarations the public part comes before the private part
 
 
 
