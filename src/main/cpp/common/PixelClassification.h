@@ -21,16 +21,18 @@
 #ifndef PIXELCLASSIFICATION_H
 #define	PIXELCLASSIFICATION_H
 
+#include "Module.h"
 #include "Pixel.h"
 
-class PixelClassification {
+class PixelClassification : public Module {
 public:
     PixelClassification();
-    PixelClassification(const PixelClassification& orig);
     virtual ~PixelClassification();
-
-    void classify(Pixel* pixel) const;
+    void start();
+    void stop();
+    void processSegment(Segment& source, Segment& target);
 private:
+    void classify(Pixel* pixel) const;
 
 };
 

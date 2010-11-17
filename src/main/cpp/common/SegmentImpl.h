@@ -33,15 +33,19 @@ using std::vector;
 
 class SegmentImpl : public Segment {
 public:
-    SegmentImpl(int xPos, int yPos, int width, int height) {
-        this->xPos = xPos;
-        this->yPos = yPos;
-        this->width = width;
-        this->height = height;
-        numValues = width * height;
-    }
-
+    /**
+     * Constructs a new segment object.
+     *
+     * @param k the camera count.
+     * @param l the number of pixels in a line.
+     * @param m the number of pixels in a column.
+     */
+    SegmentImpl(size_t k, size_t l, size_t m);
     ~SegmentImpl();
+
+    size_t getK();
+    size_t getL();
+    size_t getM();
 
     int getSampleInt(const string& varName, int position);
     void setSampleInt(const string& varName, int position, int value);
@@ -54,11 +58,11 @@ public:
     Pixel* getPixel(int k, int l, int m, Pixel* pixel);
 
 private:
-    int xPos;
-    int yPos;
-    int width;
-    int height;
-    int numValues;
+    const size_t K;
+    const size_t L;
+    const size_t M;
+    const size_t valueCount;
+    
     const static int NO_DATA_VALUE = 0;
     map<string, void* > dataBufferMap;
     int computeArrayPosition( int k, int l, int m );

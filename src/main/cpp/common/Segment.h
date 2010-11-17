@@ -37,6 +37,24 @@ public:
     };
 
     /**
+     * Gets the camera count.
+     * @return the camera count.
+     */
+    virtual size_t getK() = 0;
+
+    /**
+     * Gets the number of pixels in a line.
+     * @return the number of pixels in a line.
+     */
+    virtual size_t getL() = 0;
+
+    /**
+     * Gets the number of pixels in a column.
+     * @return the number of pixels in a column.
+     */
+    virtual size_t getM() = 0;
+
+    /**
      * Gets the sample for a given variable and position.
      * @param varName the variable to get the sample for.
      * @param position the position to get the sample for.
@@ -71,6 +89,11 @@ public:
      * @param varName The name of the variable to add.
      */
     virtual void addIntVariable(const string& varName) = 0;
+
+    /**
+     * Removes a variable.
+     * @param varName The name of the variable to remove.
+     */
     virtual void remove(const string& varName) = 0;
     virtual Pixel* getPixel(int k, int l, int m, Pixel* pixel) = 0;
 
