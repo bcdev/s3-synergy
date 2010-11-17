@@ -17,15 +17,28 @@
 #include <xalanc/XercesParserLiaison/XercesParserLiaison.hpp>
 #include <xalanc/XercesParserLiaison/XercesDOMSupport.hpp>
 #include <xalanc/XPath/XObject.hpp>
+#include <valarray>
 #include "XPathInitializer.h"
 
 #include "XmlParser.h"
 
-using namespace std;
-using namespace xercesc;
-using namespace xalanc;
+using xercesc::DOMException;
+using xercesc::DOMNodeList;
+using xercesc::DOMXPathException;
+using xercesc::DOMXPathExpression;
+using xercesc::XMLException;
+using xercesc::XMLString;
 
-XmlParser::XmlParser(std::string path) {
+using xalanc::NodeRefListBase;
+using xalanc::XalanDocument;
+using xalanc::XalanDocumentPrefixResolver;
+using xalanc::XercesDOMSupport;
+using xalanc::XercesDOMWrapperParsedSource;
+using xalanc::XercesParserLiaison;
+using xalanc::XPathEvaluator;
+using xalanc::XObjectPtr;
+
+XmlParser::XmlParser(string path) {
     this->path = path;
 }
 
