@@ -13,9 +13,12 @@ Processor::Processor() : modules() {
 Processor::~Processor() {
 }
 
-void Processor::process(Segment& segment) {
+void Processor::process(ProcessorContext& context) {
     for (size_t i = 0; i < modules.size(); i++) {
-        modules[i]->processSegment(segment, segment);
+        Segment* target = modules[i]->processSegment(context);
+        if (!processorContext.contains(target)) {
+           processorContext.add(modules[i].getTargetId(), target);
+        }
     }
 }
 

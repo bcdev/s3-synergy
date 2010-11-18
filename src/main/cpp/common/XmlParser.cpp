@@ -21,11 +21,15 @@ XmlParser::XmlParser(string path) {
     this->path = path;
 }
 
-void XmlParser::evaluateXPathQuery(string& expression) {
-    try {
-        // Initialize Xerces and XPath and construct a DOM parser.
-        XPathInitializer init;
+XmlParser::~XmlParser() {
+}
 
+string XmlParser::evaluateXPathQuery(string& expression) {
+    try {
+
+        // construct a DOM parser
+
+        parser = new XercesDOMParser();
         parser->setValidationScheme(XercesDOMParser::Val_Always);
         parser->setCreateEntityReferenceNodes(false);
         parser->setIncludeIgnorableWhitespace(false);
@@ -33,10 +37,22 @@ void XmlParser::evaluateXPathQuery(string& expression) {
         // todo - register error handler
         // parser.setErrorHandler(&errorHandler);
 
-        // Parse animals.xml.
-        parser->parse(path.c_str());
-        DOMDocument* doc = parser->getDocument();
-        root = doc->getDocumentElement();
+        // Parse xml
+        try {
+            parser->parse(path.c_str());
+            doc = parser->getDocument();
+            if (doc == 0) {
+                // todo replace with logging
+                std::cerr << "\nPath " << path << " does not point to a valid xml file. System will exit.";
+                std::exit(2);
+            }
+            root = doc->getDocumentElement();
+        } catch (const XMLException& toCatch) {
+            char* message = XMLString::transcode(toCatch.getMessage());
+            // todo replace with logging
+            cout << "Exception message is: \n" << message << "\n";
+            XMLString::release(&message);
+        }
 
         // Create a XalanDocument based on doc.
         XercesDOMSupport support;
@@ -44,24 +60,24 @@ void XmlParser::evaluateXPathQuery(string& expression) {
         XercesDOMWrapperParsedSource src(doc, liaison, support);
         XalanDocument* xalanDoc = src.getDocument();
 
-        // Evaluate an XPath expression to obtain a list
-        // of text nodes containing animals' names
+        // Evaluate an XPath expression to obtain the text node and its content
         XPathEvaluator evaluator;
-        XalanDocumentPrefixResolver resolver(xalanDoc);
+        XalanDOMChar* expr = XMLString::transcode(expression.c_str());
+        XObjectPtr result = evaluator.evaluate(support, xalanDoc, expr);
+        const xalanc::XalanDOMString& resultString = result->str();
 
-        // todo transform this into valid expression
-        XalanDOMChar* expr;
-        XObjectPtr result = evaluator.evaluate( support, xalanDoc, expr,  resolver);
-        const NodeRefListBase& nodeset = result->nodeset();
+        // cleaning up
+        XMLString::release(&expr);
+        delete parser;
 
-//        return nodeset;
- 
+        return XMLString::transcode( resultString.data() );
+
     } catch (const DOMException& e) {
-        // cout << "xml error: " << toNative(e.getMessage()) << "\n";
-        // return EXIT_FAILURE;
+        cout << "xml error: " << XMLString::transcode(e.getMessage()) << "\n";
+        std::exit(2);
     } catch (const std::exception& e) {
-        // cout << e.what() << "\n";
-        // return EXIT_FAILURE;
+        cout << e.what() << "\n";
+        std::exit(2);
     }
 }
 
@@ -130,11 +146,4 @@ list<std::string> XmlParser::getNodeNames(DOMElement * root) {
         }
     }
     return names;
-}
-
-/**
- * todo: put into destructor
- */
-void XmlParser::cleanUp() {
-    delete parser;
 }

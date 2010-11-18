@@ -37,7 +37,6 @@ public:
     void tearDown();
 
 private:
-    SegmentImpl segment;
 
     void testPixelClassification();
 };

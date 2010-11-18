@@ -8,16 +8,17 @@
 #ifndef READER_H
 #define	READER_H
 
-#include "Segment.h"
+//#include "Segment.h"
+
+class Segment;
 
 class Reader {
 public:
 
-    Reader();
-    ~Reader();
+    virtual ~Reader() {
+    };
 
-    bool hasNextSegment();
-    Segment& getNextSegment();
+    virtual Segment* getNextSegment() = 0;
 };
 
 #endif	/* READER_H */

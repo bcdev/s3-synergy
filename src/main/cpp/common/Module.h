@@ -14,7 +14,9 @@ class Module {
 public:
     virtual void start() = 0;
     virtual void stop() = 0;
-    virtual void processSegment(Segment& source, Segment& target) = 0;
+
+    virtual string getTargetSegmentId() = 0;
+    virtual Segment* processSegment(ProcessorContext& context) = 0;
 };
 
 #endif	/* MODULE_H */

@@ -31,13 +31,14 @@ protected:
 
 public:
     XmlParser(string path);
+    ~XmlParser();
     void readXml();
     void outputNodes();
     void cleanUp();
     string getTextContent(DOMNode* node);
     string getNodeName(DOMElement* node);
     string getNodeAttribute(DOMElement* node, string attributeName);
-    void evaluateXPathQuery(string& expression);
+    string evaluateXPathQuery(string& expression);
 };
 
 #endif /* XMLPARSER_H_ */

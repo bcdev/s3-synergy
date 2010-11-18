@@ -13,7 +13,7 @@ XPathInitializer::XPathInitializer() {
 }
 
 XPathInitializer::~XPathInitializer() {
-    XMLPlatformUtils::Terminate();
     XPathEvaluator::terminate();
+    XMLPlatformUtils::Terminate();
 }
 

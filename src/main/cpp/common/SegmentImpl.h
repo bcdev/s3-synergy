@@ -37,10 +37,11 @@ public:
      * Constructs a new segment object.
      *
      * @param k the camera count.
-     * @param l the number of pixels in a line.
-     * @param m the number of pixels in a column.
+     * @param l the number of lines per camera image.
+     * @param m the number of pixels per camera image line.
      */
     SegmentImpl(size_t k, size_t l, size_t m);
+
     ~SegmentImpl();
 
     size_t getK();
@@ -50,22 +51,30 @@ public:
     int getSampleInt(const string& varName, int position);
     void setSampleInt(const string& varName, int position, int value);
 
-    void getSamplesInt(const string& varName, vector<int>& samples);
-    void setSamplesInt(const string& varName, vector<int>& samples);
-
     void addIntVariable(const string& varName);
-    void remove(const string& varName);
-    Pixel* getPixel(int k, int l, int m, Pixel* pixel);
+
+    Reader* getReader();
+    void setReader(Reader* reader);
+
+    Segment* getPrevious();
+    void setPrevious(Segment* previous);
+
+    Segment* getNext();
+    void setNext(Segment* next);
 
 private:
+    int computeArrayPosition(int k, int l, int m);
+
     const size_t K;
     const size_t L;
     const size_t M;
     const size_t valueCount;
-    
-    const static int NO_DATA_VALUE = 0;
-    map<string, void* > dataBufferMap;
-    int computeArrayPosition( int k, int l, int m );
+
+    Reader* reader;
+    SegmentImpl* previous;
+    SegmentImpl* next;
+
+    map<string, void* > dataMap;
 };
 
 #endif	/* SEGMENTIMPL_H */

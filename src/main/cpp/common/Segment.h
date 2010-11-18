@@ -28,34 +28,37 @@ using std::string;
 using std::vector;
 
 class Pixel;
-class PixelImpl;
+class Reader;
 
 class Segment {
 public:
 
+    /**
+     * Destructor.
+     */
     virtual ~Segment() {
     };
 
     /**
-     * Gets the camera count.
+     * Returns the camera count.
      * @return the camera count.
      */
     virtual size_t getK() = 0;
 
     /**
-     * Gets the number of pixels in a line.
-     * @return the number of pixels in a line.
+     * Returns the number of lines per camera image.
+     * @return the number of lines per camera image.
      */
     virtual size_t getL() = 0;
 
     /**
-     * Gets the number of pixels in a column.
-     * @return the number of pixels in a column.
+     * Returns the number of pixels per camera image line.
+     * @return the number of pixels per camera image line.
      */
     virtual size_t getM() = 0;
 
     /**
-     * Gets the sample for a given variable and position.
+     * Returns the sample for a given variable and position.
      * @param varName the variable to get the sample for.
      * @param position the position to get the sample for.
      * @return the sample value.
@@ -71,32 +74,28 @@ public:
     virtual void setSampleInt(const string& varName, int position, int value) = 0;
 
     /**
-     * Gets all int samples for a given variable name.
-     * @param varName the variable name to get the samples for.
-     * @param samples an int-vector containing the result.
-     */
-    virtual void getSamplesInt(const string& varName, vector<int>& samples) = 0;
-
-    /**
-     * Sets all int samples for a given variable name.
-     * @param varName the variable name to set the samples for.
-     * @param samples an int-vector containing the samples to set.
-     */
-    virtual void setSamplesInt(const string& varName, vector<int>& samples) = 0;
-
-    /**
      * Adds a variable to the segment and sets all values to 0.
      * @param varName The name of the variable to add.
      */
     virtual void addIntVariable(const string& varName) = 0;
 
     /**
-     * Removes a variable.
-     * @param varName The name of the variable to remove.
+     * Returns the reader that has created this segment.
+     * @return the reader that has created this segment.
      */
-    virtual void remove(const string& varName) = 0;
-    virtual Pixel* getPixel(int k, int l, int m, Pixel* pixel) = 0;
+    virtual Reader* getReader() = 0;
 
+    /**
+     * Gets the previous segment.
+     * @return the previous segment.
+     */
+    virtual Segment* getPrevious() = 0;
+
+    /**
+     * Sets the next segment.
+     * @return the next segment.
+     */
+    virtual Segment* getNext() = 0;
 };
 
 #endif	/* SEGMENT_H */

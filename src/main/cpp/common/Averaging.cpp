@@ -1,4 +1,4 @@
-/*
+/* 
  * Copyright (C) 2010 by Brockmann Consult (info@brockmann-consult.de)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -11,28 +11,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- * File:   PixelClassification.h
+ * 
+ * File:   Averaging.cpp
  * Author: thomass
- *
- * Created on November 10, 2010, 4:26 PM
+ * 
+ * Created on November 18, 2010, 5:17 PM
  */
 
-#ifndef PIXELCLASSIFICATION_H
-#define	PIXELCLASSIFICATION_H
+#include "Averaging.h"
 
-#include "Module.h"
-#include "Pixel.h"
+Averaging::Averaging() {
+}
 
-class PixelClassification : public Module {
-public:
-    PixelClassification();
-    virtual ~PixelClassification();
-    void start();
-    void stop();
-    Segment* processSegment(Segment* source);
+Averaging::Averaging(const Averaging& orig) {
+}
 
-};
+Averaging::~Averaging() {
+}
 
-#endif	/* PIXELCLASSIFICATION_H */
+Segment* Averaging::processSegment(Segment* segment) {
+    Segment* target = new SegmentImpl(segment.getK(), segment.getL() / 8, segment.getM() / 8);
 
+    // mach ...
+
+    return target;
+}

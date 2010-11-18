@@ -18,14 +18,14 @@
  * Created on November 11, 2010, 10:04 AM
  */
 
-#include <iostream>
-#include <typeinfo>
-
 #include "SegmentImpl.h"
+#include "Reader.h"
 
 using std::make_pair;
 
-SegmentImpl::SegmentImpl(size_t k, size_t l, size_t m) : K(k), L(l), M(m), valueCount(k * l * m) {
+SegmentImpl::SegmentImpl(size_t k, size_t l, size_t m)
+: K(k), L(l), M(m), valueCount(k * l * m) {
+    previous = next = 0;
 }
 
 SegmentImpl::~SegmentImpl() {
@@ -45,52 +45,44 @@ size_t SegmentImpl::getM() {
 
 void SegmentImpl::addIntVariable(const string& var) {
     int values[valueCount];
-    for( size_t i = 0; i < valueCount; i++ ) {
+    for (size_t i = 0; i < valueCount; i++) {
         // todo define better no data value
         values[i] = NO_DATA_VALUE;
     }
-    dataBufferMap.insert(make_pair(var, values));
-}
-
-void SegmentImpl::remove(const string& varName) {
-    dataBufferMap.erase(varName);
-}
-
-Pixel* SegmentImpl::getPixel(int k, int l, int m, Pixel* pixel) {
-    int arrayPosition = computeArrayPosition(k, l, m);
-    pixel = new PixelImpl(*this, k, l, m, arrayPosition);
-    return pixel;
+    dataMap.insert(make_pair(var, values));
 }
 
 int SegmentImpl::getSampleInt(const string& varName, int position) {
-    int* values = (int*) dataBufferMap.at(varName);
+    int* values = (int*) dataMap.at(varName);
     return values[position];
 }
 
 void SegmentImpl::setSampleInt(const string& varName, int position, int value) {
-    int* values = (int*) dataBufferMap.at(varName);
+    int* values = (int*) dataMap.at(varName);
     values[position] = value;
-    dataBufferMap.insert( make_pair(varName, values) );
-}
-
-void SegmentImpl::getSamplesInt(const string& varName, vector<int>& samples) {
-    int* values = (int*)dataBufferMap.at(varName);
-    for( size_t i = 0; i < valueCount; i++ ) {
-        int value = values[i];
-        samples.push_back( value );
-    }
-}
-
-void SegmentImpl::setSamplesInt(const string& varName, vector<int>& samples) {
-    int* values = (int*) dataBufferMap.at(varName);
-    for( size_t i = 0; i < valueCount; i++ ) {
-        if( i < samples.size() ) {
-            values[i] = samples.at( i );
-        }
-    }
-    dataBufferMap.insert(make_pair( varName, &samples ));
+    dataMap.insert(make_pair(varName, values));
 }
 
 int SegmentImpl::computeArrayPosition(int k, int l, int m) {
     return m + l * M + k * L * M;
+}
+
+Segment* SegmentImpl::getPrevious() {
+    return previous;
+}
+
+void SegmentImpl::setPrevious(Segment* previous) {
+    this->previous = previous;
+}
+
+Segment* SegmentImpl::getNext() {
+    if (next == 0) {
+        next = reader->readNextSegment();
+    }
+
+    return next;
+}
+
+void SegmentImpl::setNext(Segment* next) {
+    this->next = next;
 }

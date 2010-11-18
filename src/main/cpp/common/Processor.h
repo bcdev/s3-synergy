@@ -16,7 +16,7 @@ public:
     Processor();
     ~Processor();
 
-    void process(Segment& segment);
+    void process(ProcessorContext& context);
     void addModule(Module& module);
 
 private:

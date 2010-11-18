@@ -24,31 +24,19 @@
 
 CPPUNIT_TEST_SUITE_REGISTRATION(PixelClassificationTest);
 
-PixelClassificationTest::PixelClassificationTest() : segment(5, 10, 10) {
+PixelClassificationTest::PixelClassificationTest() {
 }
 
 PixelClassificationTest::~PixelClassificationTest() {
 }
 
 void PixelClassificationTest::setUp() {
-    //    todo: create pixel with different masks for different flagbands
-    //    and test these
-    segment.addIntVariable("SYN_L2_Flags");
+    // TODO - implement
 }
 
 void PixelClassificationTest::tearDown() {
 }
 
 void PixelClassificationTest::testPixelClassification() {
-    const PixelClassification pixelClassification;
-    Pixel* pixel;
-    pixel = segment.getPixel(0, 0, 0, pixel);
-//    pixelClassification.classify(pixel);
-    bool land = pixel->isFlagRaised("SYN_L2_Flags", 0x0010);
-    bool water = pixel->isFlagRaised("SYN_L2_Flags", 0x0111);
-    bool chewingGum = pixel->isFlagRaised("SYN_L2_Flags", 0x0120);
-    CPPUNIT_ASSERT(land);
-    CPPUNIT_ASSERT(water);
-    CPPUNIT_ASSERT(!chewingGum);
-    delete pixel;
+    // TODO - implement
 }

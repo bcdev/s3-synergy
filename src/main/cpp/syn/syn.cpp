@@ -7,7 +7,7 @@ extern "C" {
 
 #include "../common/JobOrderParser.h"
 #include "../common/Segment.h"
-#include "../common/Reader.h"
+#include "../common/MockReader.h"
 #include "../common/PixelClassification.h"
 #include "../common/Processor.h"
 #include "../common/Writer.h"
@@ -16,7 +16,9 @@ extern "C" {
 using std::list;
 
 int main() {
-    const XPathInitializer initializer;
+
+    // Initialize Xerces and XPath
+    XPathInitializer init;
 
     string path = "/mnt/hgfs/S3L2PP/src/test/resources/syn/JobOrder.Test_1.xml";
 
@@ -31,12 +33,13 @@ int main() {
     processor.addModule(pixelClassification);
     processor.addModule(writer);
 
-    Reader reader;
+    MockReader reader(4, 1, 8, 8);
 
-    while (reader.hasNextSegment()) {
-        Segment& segment = reader.getNextSegment();
+    Segment* segment = 0;
+    do {
+        segment = reader.getNextSegment();
         processor.process(segment);
-    }
+    } while(segment != 0);
 
     //    	// create a netCDF file using the C++ API
     //    	const NcFile dataFile("hello1.nc", NcFile::Replace, 0, 0, NcFile::Netcdf4);
