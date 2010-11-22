@@ -17,10 +17,7 @@ public:
     ~Processor();
 
     void process(ProcessorContext& context);
-    void addModule(Module& module);
 
-private:
-    vector<Module*> modules;
 };
 
 #endif	/* PROCESSOR_H */

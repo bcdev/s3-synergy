@@ -8,8 +8,9 @@
 #ifndef MODULE_H
 #define	MODULE_H
 
-#include "ProcessorContext.h"
 #include "Segment.h"
+
+class ProcessorContext;
 
 class Module {
 public:
@@ -17,7 +18,8 @@ public:
     virtual void stop() = 0;
 
     // virtual string getTargetSegmentId() = 0;
-    virtual Segment* processSegment(ProcessorContext& context) = 0;
+    virtual Segment& processSegment(ProcessorContext& context) = 0;
+    virtual string getId() = 0;
 };
 
 #endif	/* MODULE_H */

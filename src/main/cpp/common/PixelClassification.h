@@ -30,8 +30,8 @@ public:
     virtual ~PixelClassification();
     void start();
     void stop();
-    Segment* processSegment(ProcessorContext& context);
-
+    Segment& processSegment(ProcessorContext& context);
+    string getId();
 };
 
 #endif	/* PIXELCLASSIFICATION_H */

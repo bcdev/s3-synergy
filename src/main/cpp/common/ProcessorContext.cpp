@@ -18,6 +18,9 @@
  * Created on November 22, 2010, 10:58 AM
  */
 
+#include <stdexcept>
+
+#include "Module.h"
 #include "ProcessorContext.h"
 
 ProcessorContext::ProcessorContext() {
@@ -26,6 +29,39 @@ ProcessorContext::ProcessorContext() {
 ProcessorContext::~ProcessorContext() {
 }
 
-Segment* ProcessorContext::getSource(string id) {
+Segment& ProcessorContext::getSegment(string id) const {
 }
 
+Module& ProcessorContext::getModule(string moduleId) const {
+    for( size_t i = 0; i < modules.size(); i++ ) {
+        Module* currentModule = modules.at(i);
+        if( currentModule->getId().compare( moduleId ) == 0 ) {
+            return *currentModule;
+        }
+    }
+    throw std::invalid_argument("no module for moduleId " + moduleId);
+}
+
+const vector<Module*>& ProcessorContext::getModules() const {
+    return modules;
+}
+
+void ProcessorContext::addModule(Module& module) {
+    modules.push_back(&module);
+}
+
+void ProcessorContext::setMaxComputedLine(Segment& segment, Module& module, size_t line) {
+
+}
+
+size_t ProcessorContext::getMaxComputedLine(Segment& segment, Module& module) const {
+
+}
+
+size_t ProcessorContext::getOverlap(Segment& segment) const {
+
+}
+
+void ProcessorContext::setOverlap(Segment& segment, size_t overlap) {
+
+}

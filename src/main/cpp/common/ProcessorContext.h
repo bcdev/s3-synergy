@@ -22,18 +22,31 @@
 #define	PROCESSORCONTEXT_H
 
 #include <string>
+#include <vector>
 
+//#include "Module.h"
 #include "Segment.h"
 
+using std::vector;
 using std::string;
+
+class Module;
 
 class ProcessorContext {
 public:
     ProcessorContext();
     virtual ~ProcessorContext();
-    Segment* getSource(string id);
-private:
+    Module& getModule(string moduleId) const;
+    const vector<Module*>& getModules() const;
+    Segment& getSegment(string segmentId) const;
+    void addModule(Module& module);
+    void setMaxComputedLine( Segment& segment, Module& module, size_t line );
+    size_t getMaxComputedLine( Segment& segment, Module& module ) const;
+    size_t getOverlap( Segment& segment ) const;
+    void setOverlap( Segment& segment, size_t overlap );
 
+private:
+    vector<Module*> modules;
 };
 
 #endif	/* PROCESSORCONTEXT_H */

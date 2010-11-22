@@ -5,23 +5,25 @@
  * Created on November 17, 2010, 5:14 PM
  */
 
-#include "Processor.h"
+#include <vector>
 
-Processor::Processor() : modules() {
+#include "Processor.h"
+#include "ProcessorContext.h"
+
+using std::vector;
+
+Processor::Processor() {
 }
 
 Processor::~Processor() {
 }
 
 void Processor::process(ProcessorContext& context) {
+    vector<Module*> modules = context.getModules();
     for (size_t i = 0; i < modules.size(); i++) {
         //Segment* target = modules[i]->processSegment(context);
         //if (!context.contains(target)) {
            //context.add(modules[i].getTargetId(), target);
         //}
     }
-}
-
-void Processor::addModule(Module& module) {
-    modules.push_back(&module);
 }

@@ -10,6 +10,7 @@ extern "C" {
 #include "../common/MockReader.h"
 #include "../common/PixelClassification.h"
 #include "../common/Processor.h"
+#include "../common/ProcessorContext.h"
 #include "../common/Writer.h"
 #include "../common/SynL2Writer.h"
 
@@ -30,10 +31,10 @@ int main() {
     PixelClassification pixelClassification;
 
     Processor processor;
-    processor.addModule(pixelClassification);
-    processor.addModule(writer);
 
     ProcessorContext context;
+    context.addModule(pixelClassification);
+    context.addModule(writer);
 
     MockReader reader(4, 1, 8, 8);
 

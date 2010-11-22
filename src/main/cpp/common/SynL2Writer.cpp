@@ -23,6 +23,10 @@ void SynL2Writer::stop() {
 
 }
 
-Segment* SynL2Writer::processSegment(ProcessorContext& context) {
+string SynL2Writer::getId() {
+    return "SynL2Writer";
+}
+
+Segment& SynL2Writer::processSegment(ProcessorContext& context) {
 
 }

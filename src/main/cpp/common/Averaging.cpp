@@ -26,5 +26,5 @@ Averaging::Averaging() {
 Averaging::~Averaging() {
 }
 
-Segment* Averaging::processSegment(ProcessorContext& context) {
+Segment& Averaging::processSegment(ProcessorContext& context) {
 }
