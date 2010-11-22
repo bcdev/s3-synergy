@@ -30,7 +30,7 @@ public:
     virtual ~PixelClassification();
     void start();
     void stop();
-    Segment* processSegment(Segment* source);
+    Segment* processSegment(ProcessorContext& context);
 
 };
 

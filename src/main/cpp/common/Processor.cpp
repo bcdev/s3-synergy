@@ -15,10 +15,10 @@ Processor::~Processor() {
 
 void Processor::process(ProcessorContext& context) {
     for (size_t i = 0; i < modules.size(); i++) {
-        Segment* target = modules[i]->processSegment(context);
-        if (!processorContext.contains(target)) {
-           processorContext.add(modules[i].getTargetId(), target);
-        }
+        //Segment* target = modules[i]->processSegment(context);
+        //if (!context.contains(target)) {
+           //context.add(modules[i].getTargetId(), target);
+        //}
     }
 }
 

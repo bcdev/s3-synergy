@@ -17,7 +17,7 @@ public:
     ~SynL2Writer();
     void start();
     void stop();
-    void processSegment(Segment* source, Segment* target);
+    Segment* processSegment(ProcessorContext& context);
 };
 
 #endif	/* SYNL2WRITER_H */

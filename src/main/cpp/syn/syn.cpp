@@ -33,12 +33,14 @@ int main() {
     processor.addModule(pixelClassification);
     processor.addModule(writer);
 
+    ProcessorContext context;
+
     MockReader reader(4, 1, 8, 8);
 
     Segment* segment = 0;
     do {
         segment = reader.getNextSegment();
-        processor.process(segment);
+        processor.process(context);
     } while(segment != 0);
 
     //    	// create a netCDF file using the C++ API

@@ -21,11 +21,13 @@
 #ifndef AVERAGING_H
 #define	AVERAGING_H
 
+#include "Module.h"
+
 class Averaging : public Module {
 public:
     Averaging();
-    Averaging(const Averaging& orig);
     virtual ~Averaging();
+    Segment* processSegment(ProcessorContext& context);
 private:
 
 };

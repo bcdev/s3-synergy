@@ -24,30 +24,42 @@
 using std::make_pair;
 
 SegmentImpl::SegmentImpl(size_t k, size_t l, size_t m)
-: K(k), L(l), M(m), valueCount(k * l * m) {
-    previous = next = 0;
+: maxK(k), maxL(l), maxM(m), valueCount(k * l * m) {
 }
 
 SegmentImpl::~SegmentImpl() {
 }
 
-size_t SegmentImpl::getK() {
-    return K;
+size_t SegmentImpl::getMaxK() {
+    return maxK;
 }
 
-size_t SegmentImpl::getL() {
-    return L;
+size_t SegmentImpl::getMinK() {
+    return 0;
 }
 
-size_t SegmentImpl::getM() {
-    return M;
+size_t SegmentImpl::getMaxL() {
+    return maxL;
+}
+
+size_t SegmentImpl::getMinL() {
+    return 0;
+}
+
+size_t SegmentImpl::getMaxM() {
+    return maxM;
+}
+
+size_t SegmentImpl::getMinM() {
+    return 0;
 }
 
 void SegmentImpl::addIntVariable(const string& var) {
+    // todo - won't work
     int values[valueCount];
     for (size_t i = 0; i < valueCount; i++) {
         // todo define better no data value
-        values[i] = NO_DATA_VALUE;
+        values[i] = 0;
     }
     dataMap.insert(make_pair(var, values));
 }
@@ -64,25 +76,5 @@ void SegmentImpl::setSampleInt(const string& varName, int position, int value) {
 }
 
 int SegmentImpl::computeArrayPosition(int k, int l, int m) {
-    return m + l * M + k * L * M;
-}
-
-Segment* SegmentImpl::getPrevious() {
-    return previous;
-}
-
-void SegmentImpl::setPrevious(Segment* previous) {
-    this->previous = previous;
-}
-
-Segment* SegmentImpl::getNext() {
-    if (next == 0) {
-        next = reader->readNextSegment();
-    }
-
-    return next;
-}
-
-void SegmentImpl::setNext(Segment* next) {
-    this->next = next;
+    return m + l * maxM + k * maxL * maxM;
 }

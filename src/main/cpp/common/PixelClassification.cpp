@@ -34,12 +34,13 @@ void PixelClassification::stop() {
 
 }
 
-Segment* PixelClassification::processSegment(Segment* source) {
-    for (size_t k = 0; k < source->getK(); k++) {
+Segment* PixelClassification::processSegment(ProcessorContext& context) {
+    Segment* source = context.getSource("ID");
+    for (size_t k = 0; k < source->getMaxK(); k++) {
         // TODO - parallelize
-        for (size_t l = 0; l < source->getL(); l++) {
-            for (size_t m = 0; m < source->getM(); m++) {
-                const size_t pos = m + l * source->getM() + k * source->getL();
+        for (size_t l = 0; l < source->getMaxL(); l++) {
+            for (size_t m = 0; m < source->getMaxM(); m++) {
+                const size_t pos = m + l * source->getMaxM() + k * source->getMaxL();
                 int olcFlags = source->getSampleInt("F_OLC", pos);
                 int slnFlags = source->getSampleInt("F_SLN", pos);
                 int sloFlags = source->getSampleInt("F_SLO", pos);

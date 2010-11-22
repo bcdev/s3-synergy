@@ -23,16 +23,8 @@
 Averaging::Averaging() {
 }
 
-Averaging::Averaging(const Averaging& orig) {
-}
-
 Averaging::~Averaging() {
 }
 
-Segment* Averaging::processSegment(Segment* segment) {
-    Segment* target = new SegmentImpl(segment.getK(), segment.getL() / 8, segment.getM() / 8);
-
-    // mach ...
-
-    return target;
+Segment* Averaging::processSegment(ProcessorContext& context) {
 }

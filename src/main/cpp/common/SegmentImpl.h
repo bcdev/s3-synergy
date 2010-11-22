@@ -44,35 +44,25 @@ public:
 
     ~SegmentImpl();
 
-    size_t getK();
-    size_t getL();
-    size_t getM();
+    size_t getMaxK();
+    size_t getMinK();
+    size_t getMaxL();
+    size_t getMinL();
+    size_t getMaxM();
+    size_t getMinM();
 
     int getSampleInt(const string& varName, int position);
     void setSampleInt(const string& varName, int position, int value);
 
     void addIntVariable(const string& varName);
 
-    Reader* getReader();
-    void setReader(Reader* reader);
-
-    Segment* getPrevious();
-    void setPrevious(Segment* previous);
-
-    Segment* getNext();
-    void setNext(Segment* next);
-
 private:
     int computeArrayPosition(int k, int l, int m);
 
-    const size_t K;
-    const size_t L;
-    const size_t M;
-    const size_t valueCount;
-
-    Reader* reader;
-    SegmentImpl* previous;
-    SegmentImpl* next;
+    size_t maxK;
+    size_t maxL;
+    size_t maxM;
+    size_t valueCount;
 
     map<string, void* > dataMap;
 };

@@ -20,8 +20,6 @@ MockReader::~MockReader() {
 
 Segment* MockReader::getNextSegment() {
     SegmentImpl* segment= new SegmentImpl(k, l, m);
-    previous->setNext(segment);
-    segment->setPrevious(previous);
     previous = segment;
     segmentCount--;
     return segment;

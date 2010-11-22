@@ -23,6 +23,6 @@ void SynL2Writer::stop() {
 
 }
 
-void SynL2Writer::processSegment(Segment* source, Segment* target) {
+Segment* SynL2Writer::processSegment(ProcessorContext& context) {
 
 }

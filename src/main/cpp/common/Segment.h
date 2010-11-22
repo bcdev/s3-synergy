@@ -40,22 +40,40 @@ public:
     };
 
     /**
-     * Returns the camera count.
-     * @return the camera count.
+     * Returns the maximum camera index.
+     * @return the maximum camera index.
      */
-    virtual size_t getK() = 0;
+    virtual size_t getMaxK() = 0;
 
     /**
-     * Returns the number of lines per camera image.
-     * @return the number of lines per camera image.
+     * Returns the minimum camera index.
+     * @return the minimum camera index.
      */
-    virtual size_t getL() = 0;
+    virtual size_t getMinK() = 0;
 
     /**
-     * Returns the number of pixels per camera image line.
-     * @return the number of pixels per camera image line.
+     * Returns the maximum line index.
+     * @return the maximum line index.
      */
-    virtual size_t getM() = 0;
+    virtual size_t getMaxL() = 0;
+
+    /**
+     * Returns the minimum line index.
+     * @return the minimum line index.
+     */
+    virtual size_t getMinL() = 0;
+
+    /**
+     * Returns the maximum column index.
+     * @return the maximum column index.
+     */
+    virtual size_t getMaxM() = 0;
+
+    /**
+     * Returns the minimum column index.
+     * @return the minimum column index.
+     */
+    virtual size_t getMinM() = 0;
 
     /**
      * Returns the sample for a given variable and position.
@@ -78,24 +96,6 @@ public:
      * @param varName The name of the variable to add.
      */
     virtual void addIntVariable(const string& varName) = 0;
-
-    /**
-     * Returns the reader that has created this segment.
-     * @return the reader that has created this segment.
-     */
-    virtual Reader* getReader() = 0;
-
-    /**
-     * Gets the previous segment.
-     * @return the previous segment.
-     */
-    virtual Segment* getPrevious() = 0;
-
-    /**
-     * Sets the next segment.
-     * @return the next segment.
-     */
-    virtual Segment* getNext() = 0;
 };
 
 #endif	/* SEGMENT_H */
