@@ -24,11 +24,9 @@ XmlParser::XmlParser(string path) {
 XmlParser::~XmlParser() {
 }
 
-string XmlParser::evaluateXPathQuery(string& expression) {
+const XObject* XmlParser::evaluateXPathQuery(string& expression) {
     try {
-
         // construct a DOM parser
-
         parser = new XercesDOMParser();
         parser->setValidationScheme(XercesDOMParser::Val_Always);
         parser->setCreateEntityReferenceNodes(false);
@@ -64,13 +62,13 @@ string XmlParser::evaluateXPathQuery(string& expression) {
         XPathEvaluator evaluator;
         XalanDOMChar* expr = XMLString::transcode(expression.c_str());
         XObjectPtr result = evaluator.evaluate(support, xalanDoc, expr);
-        const xalanc::XalanDOMString& resultString = result->str();
 
         // cleaning up
         XMLString::release(&expr);
-        delete parser;
 
-        return XMLString::transcode( resultString.data() );
+        // result is destroyed, and therefore the returned object, too --> SF
+
+        return result.get();
 
     } catch (const DOMException& e) {
         cout << "xml error: " << XMLString::transcode(e.getMessage()) << "\n";

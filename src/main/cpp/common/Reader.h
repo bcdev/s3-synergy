@@ -15,8 +15,7 @@ class Segment;
 class Reader {
 public:
 
-    virtual ~Reader() {
-    };
+    virtual ~Reader() {};
 
     virtual Segment* getNextSegment() = 0;
 };

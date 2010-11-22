@@ -22,7 +22,6 @@
 #define	SEGMENTIMPL_H
 
 #include <map>
-#include <valarray>
 
 #include "Segment.h"
 #include "PixelImpl.h"

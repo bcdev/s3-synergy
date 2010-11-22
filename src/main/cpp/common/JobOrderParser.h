@@ -32,7 +32,8 @@ public:
     virtual ~JobOrderParser();
     Configuration parseConfiguration();
 private:
-
+    bool stringToBool(string in);
+    string getStringFromNode(const XObject* result);
 };
 
 #endif	/* JOBORDERPARSER_H */

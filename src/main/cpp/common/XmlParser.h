@@ -19,13 +19,13 @@ using std::list;
 class XmlParser {
 private:
     string path;
-    XercesDOMParser* parser;
     list<string> getNodeNames(DOMElement * root);
     void parseId(Configuration * config, DOMElement * node);
     void parseInputLocation(DOMElement * childNode, Configuration * config);
     void parseDebugLevel(Configuration * config, DOMElement * node);
 
 protected:
+    XercesDOMParser* parser;
     DOMDocument* doc;
     DOMElement* root;
 
@@ -38,7 +38,7 @@ public:
     string getTextContent(DOMNode* node);
     string getNodeName(DOMElement* node);
     string getNodeAttribute(DOMElement* node, string attributeName);
-    string evaluateXPathQuery(string& expression);
+    const XObject* evaluateXPathQuery(string& expression);
 };
 
 #endif /* XMLPARSER_H_ */

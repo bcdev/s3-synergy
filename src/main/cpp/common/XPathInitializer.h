@@ -50,6 +50,7 @@ using xalanc::XercesDOMSupport;
 using xalanc::XercesDOMWrapperParsedSource;
 using xalanc::XercesParserLiaison;
 using xalanc::XObjectPtr;
+using xalanc::XObject;
 using xalanc::XPath;
 using xalanc::XPathEvaluator;
 using xalanc::XPathFactory;
