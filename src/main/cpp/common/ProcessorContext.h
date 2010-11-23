@@ -48,6 +48,7 @@ public:
     void setMaxComputedLine(const Segment& segment, const Module& module, size_t line);
     void setMinRequiredLine(const Segment& segment, size_t line);
 
+    size_t getNextMinL(const Segment& segment);
 private:
     vector<Segment*> segments;
 

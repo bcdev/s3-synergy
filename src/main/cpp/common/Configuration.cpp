@@ -47,7 +47,7 @@ void Configuration::print() {
         cout << "config file " << i + 1 << ": " << getConfigFileNames().at(i) << "\n";
     }
     for (size_t i = 0; i < getProcessingParameters().size(); i++) {
-        getProcessingParameters().at(i).print();
+        getProcessingParameters().at(i)->print();
     }
 }
 
@@ -131,11 +131,11 @@ string Configuration::getStandardLogLevel() const {
     return standardLogLevel;
 }
 
-void Configuration::setProcessingParameters(vector<ProcessingParameter> processingParameters) {
+void Configuration::setProcessingParameters(vector<ProcessingParameter*> processingParameters) {
     this->processingParameters = processingParameters;
 }
 
-vector<ProcessingParameter> Configuration::getProcessingParameters() const {
+vector<ProcessingParameter*> Configuration::getProcessingParameters() const {
     return processingParameters;
 }
 

@@ -35,16 +35,16 @@ public:
     JobOrder parseJobOrder();
 private:
     Configuration parseConfiguration();
-    vector<ProcessorConfiguration> parseProcessorConfigurations();
-    ProcessorConfiguration parseProcessorConfiguration(int index);
+    vector<ProcessorConfiguration*> parseProcessorConfigurations();
+    ProcessorConfiguration* parseProcessorConfiguration(int index);
     bool stringToBool(string in);
     string getStringFromNode(const XObject* result);
-    vector<BreakpointFile> parseBreakpointFiles(string baseQuery);
-    BreakpointFile parseBreakpointFile(string baseQuery);
-    vector<Input> parseInputs(string baseQuery);
-    Input parseInput(string baseQuery);
-    vector<Output> parseOutputs(string baseQuery);
-    Output parseOutput(string baseQuery);
+    vector<BreakpointFile*> parseBreakpointFiles(string baseQuery);
+    BreakpointFile* parseBreakpointFile(string baseQuery);
+    vector<Input*> parseInputs(string baseQuery);
+    Input* parseInput(string baseQuery);
+    vector<Output*> parseOutputs(string baseQuery);
+    Output* parseOutput(string baseQuery);
     string intToString(int toConvert);
 };
 

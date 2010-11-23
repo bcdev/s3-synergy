@@ -38,7 +38,7 @@ JobOrderParser::~JobOrderParser() {
 
 JobOrder JobOrderParser::parseJobOrder() {
     Configuration config = parseConfiguration();
-    vector<ProcessorConfiguration> processorConfigurations = parseProcessorConfigurations();
+    vector<ProcessorConfiguration*> processorConfigurations = parseProcessorConfigurations();
     JobOrder jobOrder = JobOrder(config, processorConfigurations);
     return jobOrder;
 }
@@ -86,9 +86,9 @@ Configuration JobOrderParser::parseConfiguration() {
     string query2 = "/Ipf_Job_Order/Ipf_Conf/Dynamic_Processing_Parameters/Processing_Parameter/Value/child::text()";
     vector<string> keys = evaluateToStringList(query);
     vector<string> values = evaluateToStringList(query2);
-    vector<ProcessingParameter> parameters;
+    vector<ProcessingParameter*> parameters;
     for (size_t i = 0; i < keys.size(); i++) {
-        parameters.push_back(ProcessingParameter(keys.at(i), values.at(i)));
+        parameters.push_back(new ProcessingParameter(keys.at(i), values.at(i)));
     }
     config.setProcessingParameters(parameters);
 
@@ -99,8 +99,8 @@ Configuration JobOrderParser::parseConfiguration() {
     return config;
 }
 
-vector<ProcessorConfiguration> JobOrderParser::parseProcessorConfigurations() {
-    vector<ProcessorConfiguration> result;
+vector<ProcessorConfiguration*> JobOrderParser::parseProcessorConfigurations() {
+    vector<ProcessorConfiguration*> result;
     string query = "/Ipf_Job_Order/List_of_Ipf_Procs/Ipf_Procs";
     vector<string> values = evaluateToStringList(query);
     int numberOfProcConfigurations = values.size();
@@ -110,7 +110,7 @@ vector<ProcessorConfiguration> JobOrderParser::parseProcessorConfigurations() {
     return result;
 }
 
-ProcessorConfiguration JobOrderParser::parseProcessorConfiguration(int index) {
+ProcessorConfiguration* JobOrderParser::parseProcessorConfiguration(int index) {
     string baseQuery = "/Ipf_Job_Order/List_of_Ipf_Procs/Ipf_Procs[";
     baseQuery.append(intToString(index));
     baseQuery.append("]");
@@ -121,12 +121,12 @@ ProcessorConfiguration JobOrderParser::parseProcessorConfiguration(int index) {
     string taskVersionQuery = baseQuery + "/Task_Version";
     string taskVersion = evaluateToString(taskVersionQuery);
 
-    vector<BreakpointFile> breakpointFiles = parseBreakpointFiles(baseQuery);
+    vector<BreakpointFile*> breakpointFiles = parseBreakpointFiles(baseQuery);
 
-    vector<Input> inputList = parseInputs(baseQuery);
-    vector<Output> outputList = parseOutputs(baseQuery);
-    ProcessorConfiguration config(taskName, taskVersion, breakpointFiles,
-            inputList, outputList);
+    vector<Input*> inputList = parseInputs(baseQuery);
+    vector<Output*> outputList = parseOutputs(baseQuery);
+    ProcessorConfiguration* config = new ProcessorConfiguration(taskName,
+            taskVersion, breakpointFiles, inputList, outputList);
     return config;
 }
 
@@ -136,8 +136,8 @@ string JobOrderParser::intToString(int toConvert) {
     return temp.str();
 }
 
-vector<BreakpointFile> JobOrderParser::parseBreakpointFiles(string baseQuery) {
-    vector<BreakpointFile> breakpointFiles;
+vector<BreakpointFile*> JobOrderParser::parseBreakpointFiles(string baseQuery) {
+    vector<BreakpointFile*> breakpointFiles;
     string breakPointFilesQuery = baseQuery + "/BreakPoint/List_of_Brk_Files/Brk_File";
     int breakPointFilesCount = evaluateToStringList(breakPointFilesQuery).size();
     for (int i = 1; i <= breakPointFilesCount; i++) {
@@ -147,7 +147,7 @@ vector<BreakpointFile> JobOrderParser::parseBreakpointFiles(string baseQuery) {
     return breakpointFiles;
 }
 
-BreakpointFile JobOrderParser::parseBreakpointFile(string baseQuery) {
+BreakpointFile* JobOrderParser::parseBreakpointFile(string baseQuery) {
     string enableQuery = baseQuery + "/Enable";
     string enable = evaluateToString(enableQuery);
 
@@ -163,12 +163,12 @@ BreakpointFile JobOrderParser::parseBreakpointFile(string baseQuery) {
     string fileNameQuery = baseQuery + "/File_Name";
     string fileName = evaluateToString(fileNameQuery);
 
-    BreakpointFile breakpointFile = BreakpointFile(enable, fileType, fileNameType, fileName);
+    BreakpointFile* breakpointFile = new BreakpointFile(enable, fileType, fileNameType, fileName);
     return breakpointFile;
 }
 
-vector<Input> JobOrderParser::parseInputs(string baseQuery) {
-    vector<Input> inputs;
+vector<Input*> JobOrderParser::parseInputs(string baseQuery) {
+    vector<Input*> inputs;
     string inputQuery = baseQuery + "/List_of_Inputs/Input";
     int inputCount = evaluateToStringList(inputQuery).size();
     for (int i = 1; i <= inputCount; i++) {
@@ -178,7 +178,7 @@ vector<Input> JobOrderParser::parseInputs(string baseQuery) {
     return inputs;
 }
 
-Input JobOrderParser::parseInput(string baseQuery) {
+Input* JobOrderParser::parseInput(string baseQuery) {
     string fileTypeQuery = baseQuery + "/File_Type";
     string fileType = evaluateToString(fileTypeQuery);
 
@@ -196,7 +196,7 @@ Input JobOrderParser::parseInput(string baseQuery) {
         fileNames.push_back(evaluateToString(fileNameQuery));
     }
 
-    vector<TimeInterval> timeIntervals;
+    vector<TimeInterval*> timeIntervals;
     string timeIntervalsQuery = baseQuery + "/List_of_Time_Intervals/Time_Interval";
     int timeIntervalsCount = evaluateToStringList(timeIntervalsQuery).size();
     for (int i = 1; i <= timeIntervalsCount; i++) {
@@ -204,16 +204,16 @@ Input JobOrderParser::parseInput(string baseQuery) {
         string timeIntervalsStopQuery = timeIntervalsQuery + "[" + intToString(i) + "]/Stop";
         string start = evaluateToString(timeIntervalsStartQuery);
         string stop = evaluateToString(timeIntervalsStopQuery);
-        TimeInterval timeInterval = TimeInterval(start, stop);
+        TimeInterval* timeInterval = new TimeInterval(start, stop);
         timeIntervals.push_back(timeInterval);
     }
 
-    Input input = Input(fileType, fileNameType, fileNames, timeIntervals);
+    Input* input = new Input(fileType, fileNameType, fileNames, timeIntervals);
     return input;
 }
 
-vector<Output> JobOrderParser::parseOutputs(string baseQuery) {
-    vector<Output> outputs;
+vector<Output*> JobOrderParser::parseOutputs(string baseQuery) {
+    vector<Output*> outputs;
     string outputQuery = baseQuery + "/List_of_Outputs/Output";
     int outputCount = evaluateToStringList(outputQuery).size();
     for (int i = 1; i <= outputCount; i++) {
@@ -223,7 +223,7 @@ vector<Output> JobOrderParser::parseOutputs(string baseQuery) {
     return outputs;
 }
 
-Output JobOrderParser::parseOutput(string baseQuery) {
+Output* JobOrderParser::parseOutput(string baseQuery) {
     string fileTypeQuery = baseQuery + "/File_Type";
     string fileType = evaluateToString(fileTypeQuery);
 
@@ -236,7 +236,7 @@ Output JobOrderParser::parseOutput(string baseQuery) {
     string fileNameQuery = baseQuery + "/File_Name";
     string fileName = evaluateToString(fileNameQuery);
 
-    Output output = Output(fileType, fileNameType, fileName);
+    Output* output = new Output(fileType, fileNameType, fileName);
     return output;
 }
 

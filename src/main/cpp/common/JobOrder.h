@@ -30,14 +30,14 @@ using std::vector;
 
 class JobOrder {
 public:
-    JobOrder(Configuration config, vector<ProcessorConfiguration> processorConfigs);
+    JobOrder(Configuration config, vector<ProcessorConfiguration*> processorConfigs);
     virtual ~JobOrder();
     Configuration getConfig() const;
-    vector<ProcessorConfiguration> getProcessorList() const;
+    vector<ProcessorConfiguration*> getProcessorList() const;
     void print();
 private:
     Configuration config;
-    vector<ProcessorConfiguration> processorConfigs;
+    vector<ProcessorConfiguration*> processorConfigs;
 };
 
 #endif	/* JOBORDER_H */

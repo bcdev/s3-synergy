@@ -24,7 +24,7 @@
 
 using std::cout;
 
-JobOrder::JobOrder(Configuration config, vector<ProcessorConfiguration> processorConfigs) {
+JobOrder::JobOrder(Configuration config, vector<ProcessorConfiguration*> processorConfigs) {
     this->config = config;
     this->processorConfigs = processorConfigs;
 }
@@ -36,11 +36,11 @@ void JobOrder::print() {
     config.print();
     for (size_t i = 0; i < processorConfigs.size(); i++) {
         cout << "processor config " << i + 1 << ":\n";
-        processorConfigs.at(i).print();
+        processorConfigs.at(i)->print();
     }
 }
 
-vector<ProcessorConfiguration> JobOrder::getProcessorList() const {
+vector<ProcessorConfiguration*> JobOrder::getProcessorList() const {
     return processorConfigs;
 }
 

@@ -31,10 +31,10 @@ int main() {
     MockReader reader(60000);
     size_t lineCount = 2000;
 
-    do {
-        size_t minL = context.getNextMinL(segment);
-        size_t maxL = minL + lineCount - 1;
-        Segment segment = reader.readSegment(minL, maxL);
-        processor.process(context);
-    } while (segment != 0);
+//    do {
+//        size_t minL = context.getNextMinL(segment);
+//        size_t maxL = minL + lineCount - 1;
+//        Segment segment = reader.readSegment(minL, maxL);
+//        processor.process(context);
+//    } while (segment != 0);
 }

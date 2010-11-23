@@ -29,8 +29,8 @@ using std::cout;
  */
 
 ProcessorConfiguration::ProcessorConfiguration(string taskName,
-        string taskVersion, vector<BreakpointFile> breakpointFiles,
-        vector<Input> inputList, vector<Output> outputList) {
+        string taskVersion, vector<BreakpointFile*> breakpointFiles,
+        vector<Input*> inputList, vector<Output*> outputList) {
     this->taskVersion = taskVersion;
     this->taskName = taskName;
     this->breakpointFiles = breakpointFiles;
@@ -41,15 +41,15 @@ ProcessorConfiguration::ProcessorConfiguration(string taskName,
 ProcessorConfiguration::~ProcessorConfiguration() {
 }
 
-vector<Output> ProcessorConfiguration::getOutputList() const {
+vector<Output*> ProcessorConfiguration::getOutputList() const {
     return outputList;
 }
 
-vector<Input> ProcessorConfiguration::getInputList() const {
+vector<Input*> ProcessorConfiguration::getInputList() const {
     return inputList;
 }
 
-vector<BreakpointFile> ProcessorConfiguration::getBreakpointFiles() const {
+vector<BreakpointFile*> ProcessorConfiguration::getBreakpointFiles() const {
     return breakpointFiles;
 }
 
@@ -66,15 +66,15 @@ void ProcessorConfiguration::print() {
     cout << "taskVersion = " << taskVersion << "\n";
     for (size_t i = 0; i < breakpointFiles.size(); i++) {
         cout << "breakpointFile " << i + 1 << ":\n";
-        breakpointFiles.at(i).print();
+        breakpointFiles.at(i)->print();
     }
     for (size_t i = 0; i < inputList.size(); i++) {
         cout << "input " << i + 1 << ":\n";
-        inputList.at(i).print();
+        inputList.at(i)->print();
     }
     for (size_t i = 0; i < outputList.size(); i++) {
         cout << "output " << i + 1 << ":\n";
-        outputList.at(i).print();
+        outputList.at(i)->print();
     }
 }
 
@@ -119,7 +119,7 @@ string BreakpointFile::getEnable() const {
  * implementation of Input
  */
 
-Input::Input(string fileType, string fileNameType, vector<string> fileNames, vector<TimeInterval> timeIntervals) {
+Input::Input(string fileType, string fileNameType, vector<string> fileNames, vector<TimeInterval*> timeIntervals) {
     this->fileType = fileType;
     this->fileNameType = fileNameType;
     this->fileNames = fileNames;
@@ -133,11 +133,11 @@ void Input::print() const {
         cout << "fileName " << i + 1 << ": " << fileNames.at(i) << "\n";
     }
     for (size_t i = 0; i < timeIntervals.size(); i++) {
-        timeIntervals.at(i).print();
+        timeIntervals.at(i)->print();
     }
 }
 
-vector<TimeInterval> Input::getTimeIntervals() const {
+vector<TimeInterval*> Input::getTimeIntervals() const {
     return timeIntervals;
 }
 

@@ -29,7 +29,7 @@ private:
     string sensingTimeStart;
     string sensingTimeStop;
     vector<string> configFileNames;
-    vector<ProcessingParameter> processingParameters;
+    vector<ProcessingParameter*> processingParameters;
 
     string boolToString(bool input);
 public:
@@ -61,8 +61,8 @@ public:
     string getErrorLogLevel() const;
     void setStandardLogLevel(string standardLogLevel);
     string getStandardLogLevel() const;
-    void setProcessingParameters(vector<ProcessingParameter> processingParameters);
-    vector<ProcessingParameter> getProcessingParameters() const;
+    void setProcessingParameters(vector<ProcessingParameter*> processingParameters);
+    vector<ProcessingParameter*> getProcessingParameters() const;
 };
 
 class ProcessingParameter {
