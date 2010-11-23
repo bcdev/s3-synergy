@@ -1,9 +1,4 @@
-extern "C" {
-#include <netcdf.h>
-}
 #include <vector>
-#include <netcdfcpp.h>
-#include <Safe.h>
 
 #include "../common/JobOrderParser.h"
 #include "../common/Segment.h"
@@ -31,28 +26,15 @@ int main() {
     PixelClassification pixelClassification;
 
     Processor processor;
-
+    processor.addModule(pixelClassification);
     ProcessorContext context;
-    context.addModule(pixelClassification);
-    context.addModule(writer);
+    MockReader reader(60000);
+    size_t lineCount = 2000;
 
-    MockReader reader(4, 1, 8, 8);
-
-    Segment* segment = 0;
     do {
-        segment = reader.getNextSegment();
+        size_t minL = context.getNextMinL(segment);
+        size_t maxL = minL + lineCount - 1;
+        Segment segment = reader.readSegment(minL, maxL);
         processor.process(context);
-    } while(segment != 0);
-
-    //    	// create a netCDF file using the C++ API
-    //    	const NcFile dataFile("hello1.nc", NcFile::Replace, 0, 0, NcFile::Netcdf4);
-    //    	// create a netCDF file using the C API
-    //    	int ncid;
-    //    	nc_create((char*) "hello2.nc", NC_CLOBBER | NC_NETCDF4, &ncid);
-    //    	nc_close(ncid);
-    //
-    //    	// create a SAFE archive using the C++ API
-    //    	Safe safeFile((char*) "hello3.safe",
-    //    			(char*) "esa/safe/1.2/envisat/meris/fr/level-2");
-    //    	safeFile.save();
+    } while (segment != 0);
 }
