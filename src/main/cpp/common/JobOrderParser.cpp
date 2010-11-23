@@ -37,40 +37,54 @@ Configuration JobOrderParser::parseConfiguration() {
     Configuration config;
 
     string query = "/Ipf_Job_Order/Ipf_Conf/Processor_Name";
-    string value = getStringFromNode( evaluateXPathQuery(query) );
+    string value = evaluateToString(query);
     config.setProcessorName(value);
 
     query = "/Ipf_Job_Order/Ipf_Conf/Version";
-    value = getStringFromNode(evaluateXPathQuery(query));
+    value = evaluateToString(query);
     config.setVersion(value);
 
     query = "/Ipf_Job_Order/Ipf_Conf/Stdout_Log_Level";
-    value = getStringFromNode(evaluateXPathQuery(query));
+    value = evaluateToString(query);
     config.setStandardLogLevel(value);
 
     query = "/Ipf_Job_Order/Ipf_Conf/Stderr_Log_Level";
-    value = getStringFromNode(evaluateXPathQuery(query));
+    value = evaluateToString(query);
     config.setVersion(value);
 
     query = "/Ipf_Job_Order/Ipf_Conf/Test";
-    value = getStringFromNode(evaluateXPathQuery(query));
+    value = evaluateToString(query);
     config.setTest(stringToBool(value));
 
     query = "/Ipf_Job_Order/Ipf_Conf/Acquisition_Station";
-    value = getStringFromNode(evaluateXPathQuery(query));
+    value = evaluateToString(query);
     config.setAcquisitionStation(value);
 
     query = "/Ipf_Job_Order/Ipf_Conf/Processing_Station";
-    value = getStringFromNode(evaluateXPathQuery(query));
+    value = evaluateToString(query);
     config.setProcessingStation(value);
 
     query = "/Ipf_Job_Order/Ipf_Conf/Sensing_Time/Start";
-    value = getStringFromNode(evaluateXPathQuery(query));
+    value = evaluateToString(query);
     config.setSensingTimeStart(value);
 
     query = "/Ipf_Job_Order/Ipf_Conf/Sensing_Time/Stop";
-    value = getStringFromNode(evaluateXPathQuery(query));
+    value = evaluateToString(query);
     config.setSensingTimeStop(value);
+
+    query = "/Ipf_Job_Order/Ipf_Conf/Dynamic_Processing_Parameters/Processing_Parameter/Name/child::text()";
+    string query2 = "/Ipf_Job_Order/Ipf_Conf/Dynamic_Processing_Parameters/Processing_Parameter/Value/child::text()";
+    vector<string> keys = evaluateToStringList(query);
+    vector<string> values = evaluateToStringList(query2);
+    vector<ProcessingParameter> parameters;
+    for (int i = 0; i < keys.size(); i++) {
+        parameters.push_back( ProcessingParameter(keys.at(i), values.at(i)) );
+    }
+    config.setProcessingParameters(parameters);
+
+    query = "/Ipf_Job_Order/Ipf_Conf/Config_Files/Conf_File_Name/child::text()";
+    vector<string> strings = evaluateToStringList(query);
+    config.setConfigFileNames(strings);
 
     return config;
 }
@@ -81,9 +95,4 @@ bool JobOrderParser::stringToBool(string in) {
         return true;
     }
     return false;
-}
-
-string JobOrderParser::getStringFromNode(const XObject* result) {
-    const xalanc::XalanDOMString& resultString = result->str();
-    return XMLString::transcode(resultString.data());
 }
