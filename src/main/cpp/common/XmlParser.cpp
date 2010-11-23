@@ -64,7 +64,6 @@ const vector<string> XmlParser::evaluateToStringList(string& expression) {
 
     vector<string> output;
     for (size_t i = 0; i < nodeSet.getLength(); i++) {
-//        const XMLCh* name = nodeSet.item(i)->getNodeValue().c_str();
         const XMLCh* name = nodeSet.item(i)->getNodeValue().data();
         char* value = XMLString::transcode(name);
         output.push_back(value);

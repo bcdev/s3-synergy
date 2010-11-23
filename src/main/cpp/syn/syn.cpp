@@ -24,8 +24,8 @@ int main() {
     string path = "/mnt/hgfs/S3L2PP/src/test/resources/syn/JobOrder.Test_1.xml";
 
     JobOrderParser parser = JobOrderParser(path);
-    Configuration configuration = parser.parseConfiguration();
-    configuration.print();
+    JobOrder jobOrder = parser.parseJobOrder();
+    jobOrder.print();
 
     SynL2Writer writer;
     PixelClassification pixelClassification;

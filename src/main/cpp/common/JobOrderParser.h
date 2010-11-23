@@ -22,6 +22,8 @@
 #define	JOBORDERPARSER_H
 
 #include "Configuration.h"
+#include "JobOrder.h"
+#include "ProcessorConfiguration.h"
 #include "XmlParser.h"
 
 using std::string;
@@ -30,10 +32,20 @@ class JobOrderParser : public XmlParser {
 public:
     JobOrderParser(string path);
     virtual ~JobOrderParser();
-    Configuration parseConfiguration();
+    JobOrder parseJobOrder();
 private:
+    Configuration parseConfiguration();
+    vector<ProcessorConfiguration> parseProcessorConfigurations();
+    ProcessorConfiguration parseProcessorConfiguration(int index);
     bool stringToBool(string in);
     string getStringFromNode(const XObject* result);
+    vector<BreakpointFile> parseBreakpointFiles(string baseQuery);
+    BreakpointFile parseBreakpointFile(string baseQuery);
+    vector<Input> parseInputs(string baseQuery);
+    Input parseInput(string baseQuery);
+    vector<Output> parseOutputs(string baseQuery);
+    Output parseOutput(string baseQuery);
+    string intToString(int toConvert);
 };
 
 #endif	/* JOBORDERPARSER_H */

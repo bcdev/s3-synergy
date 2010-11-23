@@ -44,7 +44,7 @@ void Configuration::print() {
     cout << "start time = " << getSensingTimeStart() << "\n";
     cout << "stop time = " << getSensingTimeStop() << "\n";
     for (size_t i = 0; i < getConfigFileNames().size(); i++) {
-        cout << "config file " << i << ": " << getConfigFileNames().at(i) << "\n";
+        cout << "config file " << i + 1 << ": " << getConfigFileNames().at(i) << "\n";
     }
     for (size_t i = 0; i < getProcessingParameters().size(); i++) {
         getProcessingParameters().at(i).print();
@@ -130,9 +130,11 @@ void Configuration::setStandardLogLevel(string standardLogLevel) {
 string Configuration::getStandardLogLevel() const {
     return standardLogLevel;
 }
+
 void Configuration::setProcessingParameters(vector<ProcessingParameter> processingParameters) {
     this->processingParameters = processingParameters;
 }
+
 vector<ProcessingParameter> Configuration::getProcessingParameters() const {
     return processingParameters;
 }
@@ -145,7 +147,7 @@ string Configuration::boolToString(bool input) {
     }
 }
 
-ProcessingParameter::ProcessingParameter( string name, string value ) {
+ProcessingParameter::ProcessingParameter(string name, string value) {
     this->name = name;
     this->value = value;
 }
