@@ -27,6 +27,6 @@ string SynL2Writer::getId() {
     return "SynL2Writer";
 }
 
-Segment& SynL2Writer::processSegment(ProcessorContext& context) {
+Segment* SynL2Writer::processSegment(ProcessorContext& context) {
 
 }

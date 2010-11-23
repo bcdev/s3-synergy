@@ -5,24 +5,33 @@
  * Created on November 18, 2010, 2:08 PM
  */
 
+#include <algorithm>
+
 #include "MockReader.h"
 #include "SegmentImpl.h"
 
-MockReader::MockReader(size_t segmentCount, size_t k, size_t l, size_t m) : Reader() {
-    this->segmentCount = segmentCount;
-    this->k = k;
-    this->l = l;
-    this->m = m;
+using std::min;
+
+MockReader::MockReader(size_t l) : Reader(), lineCount(l) {
+    this->segment = 0;
 }
 
 MockReader::~MockReader() {
+    if (segment != 0) {
+
+    }
 }
 
-Segment* MockReader::getNextSegment() {
-    if (segmentCount > 0) {
-        SegmentImpl* segment = new SegmentImpl(k, l, m);
-        previous = segment;
-        segmentCount--;
+Segment* MockReader::readSegment(size_t minL, size_t maxL) {
+    if (maxL < minL) {
+        return 0;
+    }
+    if (minL < this->lineCount) {
+        if (segment == 0) {
+            segment = new SegmentImpl("SYN_COLLOCATED", minL, min(maxL, minL + this->lineCount - 1));
+            // TODO - create variable etc.
+        }
+        // TODO - modify segment
         return segment;
     } else {
         return 0;

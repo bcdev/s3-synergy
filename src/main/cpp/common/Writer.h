@@ -11,11 +11,6 @@
 #include "Module.h"
 
 class Writer : public Module{
-public:
-    virtual void start() = 0;
-    virtual void stop() = 0;
-    virtual Segment& processSegment(ProcessorContext& context) = 0;
-private:
 
 };
 

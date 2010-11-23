@@ -27,7 +27,7 @@ class Averaging : public Module {
 public:
     Averaging();
     virtual ~Averaging();
-    Segment& processSegment(ProcessorContext& context);
+    Segment* processSegment(ProcessorContext& context);
 private:
 
 };

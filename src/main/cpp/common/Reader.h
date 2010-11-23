@@ -14,10 +14,9 @@ class Segment;
 
 class Reader {
 public:
-
     virtual ~Reader() {};
 
-    virtual Segment* getNextSegment() = 0;
+    virtual Segment* readSegment(size_t minL, size_t maxL) = 0;
 };
 
 #endif	/* READER_H */

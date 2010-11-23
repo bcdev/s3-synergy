@@ -14,12 +14,13 @@ class ProcessorContext;
 
 class Module {
 public:
+    virtual ~Module() {
+    };
+
+    virtual string getId() = 0;
     virtual void start() = 0;
     virtual void stop() = 0;
-
-    // virtual string getTargetSegmentId() = 0;
-    virtual Segment& processSegment(ProcessorContext& context) = 0;
-    virtual string getId() = 0;
+    virtual Segment* processSegment(ProcessorContext& context) = 0;
 };
 
 #endif	/* MODULE_H */

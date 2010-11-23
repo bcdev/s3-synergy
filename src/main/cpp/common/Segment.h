@@ -22,13 +22,8 @@
 #define	SEGMENT_H
 
 #include <string>
-#include <vector>
 
 using std::string;
-using std::vector;
-
-class Pixel;
-class Reader;
 
 class Segment {
 public:
@@ -40,62 +35,77 @@ public:
     };
 
     /**
+     * Adds a variable to the segment and sets all values to 0.
+     * @param varName The name of the variable to add.
+     */
+    virtual void addIntVariable(const string& varName) = 0;
+
+    /**
+     * Computes the position for a pixel of interest.
+     * @param k The pixel's camera coordinate.
+     * @param l The pixel's line in camera image coordinate.
+     * @param m The pixel's column in camera image line coordinate.
+     * @return the pixel's position.
+     */
+    virtual size_t computePosition(size_t k, size_t l, size_t m) const = 0;
+
+    /**
+     * Returns the segment ID.
+     * @return the segment ID.
+     */
+    virtual const string& getId() const = 0;
+
+    /**
      * Returns the maximum camera index.
      * @return the maximum camera index.
      */
-    virtual size_t getMaxK() = 0;
+    virtual size_t getMaxK() const = 0;
 
     /**
      * Returns the minimum camera index.
      * @return the minimum camera index.
      */
-    virtual size_t getMinK() = 0;
+    virtual size_t getMinK() const = 0;
 
     /**
      * Returns the maximum line index.
      * @return the maximum line index.
      */
-    virtual size_t getMaxL() = 0;
+    virtual size_t getMaxL() const = 0;
 
     /**
      * Returns the minimum line index.
      * @return the minimum line index.
      */
-    virtual size_t getMinL() = 0;
+    virtual size_t getMinL() const = 0;
 
     /**
      * Returns the maximum column index.
      * @return the maximum column index.
      */
-    virtual size_t getMaxM() = 0;
+    virtual size_t getMaxM() const = 0;
 
     /**
      * Returns the minimum column index.
      * @return the minimum column index.
      */
-    virtual size_t getMinM() = 0;
+    virtual size_t getMinM() const = 0;
 
     /**
-     * Returns the sample for a given variable and position.
-     * @param varName the variable to get the sample for.
-     * @param position the position to get the sample for.
+     * Returns the sample value of a variable at a position of interest.
+     * @param varName The name of the variable of interest.
+     * @param position The position of interest.
      * @return the sample value.
      */
-    virtual int getSampleInt(const string& varName, int position) = 0;
+    virtual int getSampleInt(const string& varName, size_t position) const = 0;
 
     /**
-     * Sets the sample for a given variable and position.
-     * @param varName the variable to set the sample for.
-     * @param position the position to set the sample for.
-     * @param value the sample value.
+     * Sets the sample value of a variable at a position of interest.
+     * @param varName The name of the variable of interest.
+     * @param position The position of interest.
+     * @param value The sample value.
      */
-    virtual void setSampleInt(const string& varName, int position, int value) = 0;
-
-    /**
-     * Adds a variable to the segment and sets all values to 0.
-     * @param varName The name of the variable to add.
-     */
-    virtual void addIntVariable(const string& varName) = 0;
+    virtual void setSampleInt(const string& varName, size_t position, int value) = 0;
 };
 
 #endif	/* SEGMENT_H */

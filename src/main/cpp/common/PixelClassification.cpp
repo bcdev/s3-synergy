@@ -39,22 +39,24 @@ string PixelClassification::getId() {
     return "PixelClassification";
 }
 
-Segment& PixelClassification::processSegment(ProcessorContext& context) {
-    Segment& source = context.getSegment("ID");
-    for (size_t k = 0; k < source.getMaxK(); k++) {
-        // TODO - parallelize
-        for (size_t l = 0; l < source.getMaxL(); l++) {
-            for (size_t m = 0; m < source.getMaxM(); m++) {
-                const size_t pos = m + l * source.getMaxM() + k * source.getMaxL();
-                int olcFlags = source.getSampleInt("F_OLC", pos);
-                int slnFlags = source.getSampleInt("F_SLN", pos);
-                int sloFlags = source.getSampleInt("F_SLO", pos);
-                bool olcLand = (olcFlags & 0x1000) != 0;
-                bool slnLand = (slnFlags & 0x0800) != 0;
-                bool sloLand = (sloFlags & 0x0800) != 0;
-                bool slnCloud = (slnFlags & 0x00400000) != 0;
-                bool sloCloud = (sloFlags & 0x00400000) != 0;
+Segment* PixelClassification::processSegment(ProcessorContext& context) {
+    Segment& source = context.getSegment("SYN_COLLOCATED");
+    // TODO - parallelize
+    for (size_t l = source.getMinL(); l <= source.getMaxL(); l++) {
+        for (size_t k = source.getMinK(); k <= source.getMaxK(); k++) {
+            for (size_t m = source.getMinM(); m <= source.getMaxM(); m++) {
+                const size_t p = source.computePosition(k, l, m);
+                const int olcFlags = source.getSampleInt("F_OLC", p);
+                const int slnFlags = source.getSampleInt("F_SLN", p);
+                const int sloFlags = source.getSampleInt("F_SLO", p);
+                const bool olcLand = (olcFlags & 0x1000) != 0;
+                const bool slnLand = (slnFlags & 0x0800) != 0;
+                const bool sloLand = (sloFlags & 0x0800) != 0;
+                const bool slnCloud = (slnFlags & 0x00400000) != 0;
+                const bool sloCloud = (sloFlags & 0x00400000) != 0;
+
                 // TODO - OLCI L2 Pixel classification
+
                 int synFlags = 0;
                 if (olcLand && slnLand && sloLand) {
                     synFlags |= 0x0020;
@@ -62,9 +64,12 @@ Segment& PixelClassification::processSegment(ProcessorContext& context) {
                 if (slnCloud || sloCloud) {
                     synFlags |= 0x0001;
                 }
-                source.setSampleInt("F_SYN", pos, synFlags);
+                source.setSampleInt("F_SYN", p, synFlags);
             }
         }
     }
-    return source;
+    context.setMaxComputedLine(source, *this, source.getMaxL());
+    context.setMinRequiredLine(source, source.getMaxL() + 1);
+    
+    return &source;
 }

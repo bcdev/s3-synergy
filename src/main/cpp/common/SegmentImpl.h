@@ -24,46 +24,41 @@
 #include <map>
 
 #include "Segment.h"
-#include "PixelImpl.h"
 
 using std::map;
 using std::string;
-using std::vector;
 
 class SegmentImpl : public Segment {
 public:
-    /**
-     * Constructs a new segment object.
-     *
-     * @param k the camera count.
-     * @param l the number of lines per camera image.
-     * @param m the number of pixels per camera image line.
-     */
-    SegmentImpl(size_t k, size_t l, size_t m);
-
+    SegmentImpl(const string& segmentId, size_t minL, size_t maxL, size_t minK = 0, size_t maxK = 4, size_t minM = 0, size_t maxM = 760);
     ~SegmentImpl();
 
-    size_t getMaxK();
-    size_t getMinK();
-    size_t getMaxL();
-    size_t getMinL();
-    size_t getMaxM();
-    size_t getMinM();
-
-    int getSampleInt(const string& varName, int position);
-    void setSampleInt(const string& varName, int position, int value);
-
     void addIntVariable(const string& varName);
+    size_t computePosition(size_t k, size_t l, size_t m) const;
+    const string& getId() const;
+    size_t getMaxK() const;
+    size_t getMinK() const;
+    size_t getMaxL() const;
+    size_t getMinL() const;
+    size_t getMaxM() const;
+    size_t getMinM() const;
+
+    int getSampleInt(const string& varName, size_t position) const;
+    void setSampleInt(const string& varName, size_t position, int value);
 
 private:
-    int computeArrayPosition(int k, int l, int m);
+    size_t getValueCount() const;
 
-    size_t maxK;
+    const string id;
+    
+    size_t minL;
     size_t maxL;
+    size_t minK;
+    size_t maxK;
+    size_t minM;
     size_t maxM;
-    size_t valueCount;
 
-    map<string, void* > dataMap;
+    map<const string*, void*> dataMap;
 };
 
 #endif	/* SEGMENTIMPL_H */

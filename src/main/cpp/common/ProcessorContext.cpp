@@ -18,50 +18,53 @@
  * Created on November 22, 2010, 10:58 AM
  */
 
+#include <algorithm>
 #include <stdexcept>
 
 #include "Module.h"
 #include "ProcessorContext.h"
 
-ProcessorContext::ProcessorContext() {
+using std::find;
+
+ProcessorContext::ProcessorContext() : segments() {
+    maxComputedLine = 0;
+    minRequiredLine = 0;
 }
 
 ProcessorContext::~ProcessorContext() {
 }
 
-Segment& ProcessorContext::getSegment(string id) const {
+void ProcessorContext::addSegment(Segment& segment) {
+    if (!containsSegment(segment)) {
+        segments.push_back(&segment);
+    }
 }
 
-Module& ProcessorContext::getModule(string moduleId) const {
-    for( size_t i = 0; i < modules.size(); i++ ) {
-        Module* currentModule = modules.at(i);
-        if( currentModule->getId().compare( moduleId ) == 0 ) {
-            return *currentModule;
+bool ProcessorContext::containsSegment(const Segment& segment) const {
+    return find(segments.begin(), segments.end(), &segment) != segments.end();
+}
+
+Segment& ProcessorContext::getSegment(const string& segmentId) const {
+    for (size_t i = 0; i < segments.size(); i++) {
+        Segment& segment = *segments[i];
+        if (segment.getId().compare(segmentId) == 0) {
+            return segment;
         }
     }
-    throw std::invalid_argument("no module for moduleId " + moduleId);
 }
 
-const vector<Module*>& ProcessorContext::getModules() const {
-    return modules;
+size_t ProcessorContext::getMaxComputedLine(const Segment& segment, const Module& module) const {
+    return maxComputedLine;
 }
 
-void ProcessorContext::addModule(Module& module) {
-    modules.push_back(&module);
+size_t ProcessorContext::getMinRequiredLine(const Segment& segment) const {
+    return minRequiredLine;
 }
 
-void ProcessorContext::setMaxComputedLine(Segment& segment, Module& module, size_t line) {
-
+void ProcessorContext::setMaxComputedLine(const Segment& segment, const Module& module, size_t line) {
+    maxComputedLine = line;
 }
 
-size_t ProcessorContext::getMaxComputedLine(Segment& segment, Module& module) const {
-
-}
-
-size_t ProcessorContext::getOverlap(Segment& segment) const {
-
-}
-
-void ProcessorContext::setOverlap(Segment& segment, size_t overlap) {
-
+void ProcessorContext::setMinRequiredLine(const Segment& segment, size_t line) {
+    minRequiredLine = line;
 }

@@ -18,12 +18,15 @@ Processor::Processor() {
 Processor::~Processor() {
 }
 
+void Processor::addModule(Module& module) {
+    modules.push_back(&module);
+}
+
 void Processor::process(ProcessorContext& context) {
-    vector<Module*> modules = context.getModules();
     for (size_t i = 0; i < modules.size(); i++) {
-        //Segment* target = modules[i]->processSegment(context);
-        //if (!context.contains(target)) {
-           //context.add(modules[i].getTargetId(), target);
-        //}
+        Segment* target = modules[i]->processSegment(context);
+        if (target != 0 && !context.containsSegment(*target)) {
+           context.addSegment(*target);
+        }
     }
 }

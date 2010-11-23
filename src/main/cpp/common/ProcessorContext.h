@@ -21,14 +21,16 @@
 #ifndef PROCESSORCONTEXT_H
 #define	PROCESSORCONTEXT_H
 
+#include <map>
 #include <string>
 #include <vector>
 
-//#include "Module.h"
 #include "Segment.h"
 
-using std::vector;
+using std::map;
+using std::pair;
 using std::string;
+using std::vector;
 
 class Module;
 
@@ -36,17 +38,22 @@ class ProcessorContext {
 public:
     ProcessorContext();
     virtual ~ProcessorContext();
-    Module& getModule(string moduleId) const;
-    const vector<Module*>& getModules() const;
-    Segment& getSegment(string segmentId) const;
-    void addModule(Module& module);
-    void setMaxComputedLine( Segment& segment, Module& module, size_t line );
-    size_t getMaxComputedLine( Segment& segment, Module& module ) const;
-    size_t getOverlap( Segment& segment ) const;
-    void setOverlap( Segment& segment, size_t overlap );
+
+    void addSegment(Segment& segment);
+    bool containsSegment(const Segment& segment) const;
+    size_t getMaxComputedLine(const Segment& segment, const Module& module) const;
+    size_t getMinRequiredLine(const Segment& segment) const;
+    Segment& getSegment(const string& segmentId) const;
+
+    void setMaxComputedLine(const Segment& segment, const Module& module, size_t line);
+    void setMinRequiredLine(const Segment& segment, size_t line);
 
 private:
-    vector<Module*> modules;
+    vector<Segment*> segments;
+
+    size_t maxComputedLine;
+    size_t minRequiredLine;
+    
 };
 
 #endif	/* PROCESSORCONTEXT_H */

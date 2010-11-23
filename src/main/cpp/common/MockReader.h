@@ -15,15 +15,15 @@
 
 class MockReader : public Reader {
 public:
-    MockReader(size_t segmentCount, size_t k, size_t l, size_t m);
+    MockReader(size_t lineCount);
     virtual ~MockReader();
-    Segment* getNextSegment();
+    
+    Segment* readSegment(size_t minL, size_t maxL);
+
 private:
-    size_t segmentCount;
-    size_t k;
-    size_t l;
-    size_t m;
-    SegmentImpl* previous;
+    const size_t lineCount;
+    
+    SegmentImpl* segment;
 };
 
 #endif	/* MOCKREADER_H */

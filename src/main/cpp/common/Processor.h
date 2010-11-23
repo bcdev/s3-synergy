@@ -8,7 +8,11 @@
 #ifndef PROCESSOR_H
 #define	PROCESSOR_H
 
+#include <vector>
+
 #include "Module.h"
+
+using std::vector;
 
 class Processor {
 public:
@@ -16,8 +20,11 @@ public:
     Processor();
     ~Processor();
 
+    void addModule(Module& module);
     void process(ProcessorContext& context);
 
+private:
+    vector<Module*> modules;
 };
 
 #endif	/* PROCESSOR_H */

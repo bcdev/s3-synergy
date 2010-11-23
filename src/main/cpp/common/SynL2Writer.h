@@ -15,10 +15,11 @@ class SynL2Writer : public Writer {
 public:
     SynL2Writer();
     ~SynL2Writer();
+
+    string getId();
     void start();
     void stop();
-    Segment& processSegment(ProcessorContext& context);
-    string getId();
+    Segment* processSegment(ProcessorContext& context);
 };
 
 #endif	/* SYNL2WRITER_H */

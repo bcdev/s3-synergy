@@ -19,62 +19,74 @@
  */
 
 #include "SegmentImpl.h"
-#include "Reader.h"
 
 using std::make_pair;
 
-SegmentImpl::SegmentImpl(size_t k, size_t l, size_t m)
-: maxK(k), maxL(l), maxM(m), valueCount(k * l * m) {
+SegmentImpl::SegmentImpl(const string& segmentId, 
+        size_t minL, 
+        size_t maxL, 
+        size_t minK, 
+        size_t maxK, 
+        size_t minM, 
+        size_t maxM) : id(segmentId) {
+    this->minL = minL;
+    this->maxL = maxL;
+    this->minK = minK;
+    this->maxL = maxK;
+    this->minM = minM;
+    this->maxM = maxM;
 }
 
 SegmentImpl::~SegmentImpl() {
 }
 
-size_t SegmentImpl::getMaxK() {
+void SegmentImpl::addIntVariable(const string& varName) {
+    // TODO - allocate and initialize array
+    int* values = 0;
+    dataMap.insert(make_pair(&varName, values));
+}
+
+size_t SegmentImpl::computePosition(size_t k, size_t l, size_t m) const {
+    return (m - minM) + ((l - minL) + (k - minK) * (maxL - minL + 1)) * (maxM - minM + 1);
+}
+
+const string& SegmentImpl::getId() const {
+    return id;
+}
+
+size_t SegmentImpl::getMaxK() const {
     return maxK;
 }
 
-size_t SegmentImpl::getMinK() {
-    return 0;
+size_t SegmentImpl::getMinK() const {
+    return minK;
 }
 
-size_t SegmentImpl::getMaxL() {
+size_t SegmentImpl::getMaxL() const {
     return maxL;
 }
 
-size_t SegmentImpl::getMinL() {
-    return 0;
+size_t SegmentImpl::getMinL() const {
+    return minL;
 }
 
-size_t SegmentImpl::getMaxM() {
+size_t SegmentImpl::getMaxM() const {
     return maxM;
 }
 
-size_t SegmentImpl::getMinM() {
+size_t SegmentImpl::getMinM() const {
+    return minM;
+}
+
+int SegmentImpl::getSampleInt(const string& varName, size_t position) const {
+    // TODO - check type and get sample value
     return 0;
 }
 
-void SegmentImpl::addIntVariable(const string& var) {
-    // todo - won't work
-    int values[valueCount];
-    for (size_t i = 0; i < valueCount; i++) {
-        // todo define better no data value
-        values[i] = 0;
-    }
-    dataMap.insert(make_pair(var, values));
+void SegmentImpl::setSampleInt(const string& varName, size_t position, int value) {
+    // TODO - check type and set sample value
 }
 
-int SegmentImpl::getSampleInt(const string& varName, int position) {
-    int* values = (int*) dataMap.at(varName);
-    return values[position];
-}
-
-void SegmentImpl::setSampleInt(const string& varName, int position, int value) {
-    int* values = (int*) dataMap.at(varName);
-    values[position] = value;
-    dataMap.insert(make_pair(varName, values));
-}
-
-int SegmentImpl::computeArrayPosition(int k, int l, int m) {
-    return m + l * maxM + k * maxL * maxM;
+size_t SegmentImpl::getValueCount() const {
+    return (maxL - minL + 1) * (maxK - minK + 1) * (maxM - minM + 1);
 }
