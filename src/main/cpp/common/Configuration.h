@@ -14,6 +14,8 @@
 using std::string;
 using std::vector;
 
+class ProcessingParameter;
+
 class Configuration {
 private:
     string processorName;
@@ -27,6 +29,7 @@ private:
     string sensingTimeStart;
     string sensingTimeStop;
     vector<string> configFileNames;
+    vector<ProcessingParameter> processingParameters;
 
     string boolToString(bool input);
 public:
@@ -36,7 +39,7 @@ public:
 
     string getProcessorName();
     void setProcessorName(string processorName);
-    
+
     void print();
     void setVersion(string version);
     string getVersion() const;
@@ -58,6 +61,23 @@ public:
     string getErrorLogLevel() const;
     void setStandardLogLevel(string standardLogLevel);
     string getStandardLogLevel() const;
+    void setProcessingParameters(vector<ProcessingParameter> processingParameters);
+    vector<ProcessingParameter> getProcessingParameters() const;
+};
+
+class ProcessingParameter {
+public:
+    ProcessingParameter(string name, string value);
+    ~ProcessingParameter();
+    void setValue(string value);
+    string getValue() const;
+    void setName(string name);
+    string getName() const;
+    void print() const;
+
+private:
+    string name;
+    string value;
 };
 
 #endif /* CONFIGURATION_H_ */

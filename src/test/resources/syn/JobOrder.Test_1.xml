@@ -36,8 +36,14 @@
 					<Brk_File>
 						<Enable>ON</Enable>
 						<File_Type>NetCDF</File_Type>
-						<File_Name_Type>Logical</File_Name_Type> <!-- Default: Physical -->
+						<File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
 						<File_Name>breakpoint_horst.nc</File_Name>
+					</Brk_File>
+					<Brk_File>
+						<Enable>OFF</Enable>
+						<File_Type>HDF</File_Type>
+						<!--<File_Name_Type>Logical</File_Name_Type>--> <!-- Default: Physical -->
+						<File_Name>second_breakpoint_horst.nc</File_Name>
 					</Brk_File>
 				</List_of_Brk_Files>
 			</BreakPoint>
@@ -62,6 +68,61 @@
 					<File_Type>NetCDF</File_Type>
 					<File_Name_Type>Directory</File_Name_Type> <!-- Default: Physical -->
 					<File_Name>ergebnis.nc</File_Name>
+				</Output>
+			</List_of_Outputs>			
+		</Ipf_Procs>
+		<Ipf_Procs>
+			<Task_Name>Hans</Task_Name>
+			<Task_Version>03.00</Task_Version>
+			<BreakPoint>
+				<List_of_Brk_Files>
+					<Brk_File>
+						<Enable>OFF</Enable>
+						<File_Type>NetCDF</File_Type>
+						<File_Name_Type>Logical</File_Name_Type> <!-- Default: Physical -->
+						<File_Name>breakpoint_hans.nc</File_Name>
+					</Brk_File>
+				</List_of_Brk_Files>
+			</BreakPoint>
+			<List_of_Inputs>
+				<Input>
+					<File_Type>NetCDF</File_Type>
+					<File_Name_Type>Directory</File_Name_Type> <!-- Default: Physical -->
+					<List_of_File_Names>
+						<File_Name>input_joe.nc</File_Name>
+						<File_Name>input_frank.nc</File_Name>
+					</List_of_File_Names>
+					<List_of_Time_Intervals>
+						<Time_Interval>
+							<Start>20401115_161327123456</Start>
+							<Stop>20401115_181327123456</Stop>
+						</Time_Interval>
+						<Time_Interval>
+							<Start>19721115_161327123456</Start>
+							<Stop>20121115_181327123456</Stop>
+						</Time_Interval>
+					</List_of_Time_Intervals>
+				</Input>
+				<Input>
+					<File_Type>NetCDF</File_Type>
+					<File_Name_Type>Directory</File_Name_Type> <!-- Default: Physical -->
+					<List_of_File_Names>
+						<File_Name>input_carl.nc</File_Name>
+						<File_Name>input_bob.nc</File_Name>
+					</List_of_File_Names>
+					<List_of_Time_Intervals>
+						<Time_Interval>
+							<Start>20401115_161327123456</Start>
+							<Stop>20401115_181327123456</Stop>
+						</Time_Interval>
+					</List_of_Time_Intervals>
+				</Input>
+			</List_of_Inputs>
+			<List_of_Outputs>
+				<Output>
+					<File_Type>NetCDF</File_Type>
+					<File_Name_Type>Directory</File_Name_Type> <!-- Default: Physical -->
+					<File_Name>result.nc</File_Name>
 				</Output>
 			</List_of_Outputs>			
 		</Ipf_Procs>

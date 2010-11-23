@@ -42,7 +42,7 @@ void JobOrderParseTest::tearDown() {
 
 void JobOrderParseTest::testParsing() {
     parser.readXml();
-    parser.parseConfiguration();
+    parser.parseJobOrder();
     CPPUNIT_ASSERT(true);
 }
 

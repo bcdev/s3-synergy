@@ -23,6 +23,7 @@ private:
     void parseId(Configuration * config, DOMElement * node);
     void parseInputLocation(DOMElement * childNode, Configuration * config);
     void parseDebugLevel(Configuration * config, DOMElement * node);
+    void parse();
 
 protected:
     XercesDOMParser* parser;
@@ -38,7 +39,8 @@ public:
     string getTextContent(DOMNode* node);
     string getNodeName(DOMElement* node);
     string getNodeAttribute(DOMElement* node, string attributeName);
-    const XObject* evaluateXPathQuery(string& expression);
+    const string evaluateToString(string& expression);
+    const vector<string> evaluateToStringList(string& expression);
 };
 
 #endif /* XMLPARSER_H_ */
