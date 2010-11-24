@@ -12,38 +12,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
- * File:   JobOrder.cpp
+ * File:   StringUtils.cpp
  * Author: thomass
  * 
- * Created on November 23, 2010, 1:35 PM
+ * Created on November 24, 2010, 5:33 PM
  */
 
 #include <iostream>
+#include <sstream>
 
-#include "JobOrder.h"
+#include "StringUtils.h"
 
-using std::cout;
+using std::stringstream;
 
-JobOrder::JobOrder(Configuration config, vector<ProcessorConfiguration*> processorConfigs) {
-    this->config = config;
-    this->processorConfigs = processorConfigs;
+StringUtils::StringUtils() {
 }
 
-JobOrder::~JobOrder() {
-}
-
-void JobOrder::print() {
-    config.print();
-    for (size_t i = 0; i < processorConfigs.size(); i++) {
-        cout << "processor config " << i + 1 << ":\n";
-        processorConfigs.at(i)->print();
-    }
-}
-
-vector<ProcessorConfiguration*> JobOrder::getProcessorList() const {
-    return processorConfigs;
-}
-
-Configuration JobOrder::getConfig() const {
-    return config;
+StringUtils::~StringUtils() {
 }

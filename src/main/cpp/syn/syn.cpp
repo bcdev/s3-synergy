@@ -8,6 +8,8 @@
 #include "../common/ProcessorContext.h"
 #include "../common/SynL2Writer.h"
 
+#include <iostream>
+
 using std::list;
 
 int main() {
@@ -19,7 +21,7 @@ int main() {
 
     JobOrderParser parser = JobOrderParser(path);
     JobOrder jobOrder = parser.parseJobOrder();
-    jobOrder.print();
+//    jobOrder.print();
 
     MockReader reader;
     PixelClassification pixelClassification;
@@ -27,7 +29,12 @@ int main() {
     Processor processor;
     processor.addModule(reader);
     processor.addModule(pixelClassification);
-    ProcessorContext context;
+
+    Logger logger = Logger(
+            jobOrder.getConfig().getStandardLogLevel(),
+            jobOrder.getConfig().getStandardLogLevel());
+
+    ProcessorContext context = ProcessorContext(logger);
 
     while (!processor.isCompleted()) {
         processor.process(context);

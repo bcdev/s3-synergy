@@ -18,16 +18,12 @@
  * Created on November 15, 2010, 4:31 PM
  */
 
-#include <iostream>
-#include <sstream>
-
 #include "Configuration.h"
 #include "JobOrderParser.h"
 #include "ProcessorConfiguration.h"
+#include "StringUtils.h"
 
 using std::string;
-using std::stringstream;
-using std::cout;
 
 JobOrderParser::JobOrderParser(string path) : XmlParser(path) {
 }
@@ -56,15 +52,21 @@ Configuration JobOrderParser::parseConfiguration() {
 
     query = "/Ipf_Job_Order/Ipf_Conf/Stdout_Log_Level";
     value = evaluateToString(query);
+    if( value.empty() ) {
+        value = "INFO";  // default value
+    }
     config.setStandardLogLevel(value);
 
     query = "/Ipf_Job_Order/Ipf_Conf/Stderr_Log_Level";
     value = evaluateToString(query);
-    config.setVersion(value);
+    if (value.empty()) {
+        value = "INFO"; // default value
+    }
+    config.setErrorLogLevel(value);
 
     query = "/Ipf_Job_Order/Ipf_Conf/Test";
     value = evaluateToString(query);
-    config.setTest(stringToBool(value));
+    config.setTest(StringUtils::stringToBool(value));
 
     query = "/Ipf_Job_Order/Ipf_Conf/Acquisition_Station";
     value = evaluateToString(query);
@@ -112,7 +114,7 @@ vector<ProcessorConfiguration*> JobOrderParser::parseProcessorConfigurations() {
 
 ProcessorConfiguration* JobOrderParser::parseProcessorConfiguration(int index) {
     string baseQuery = "/Ipf_Job_Order/List_of_Ipf_Procs/Ipf_Procs[";
-    baseQuery.append(intToString(index));
+    baseQuery.append(StringUtils::intToString(index));
     baseQuery.append("]");
 
     string taskNameQuery = baseQuery + "/Task_Name";
@@ -130,18 +132,12 @@ ProcessorConfiguration* JobOrderParser::parseProcessorConfiguration(int index) {
     return config;
 }
 
-string JobOrderParser::intToString(int toConvert) {
-    stringstream temp;
-    temp << toConvert;
-    return temp.str();
-}
-
 vector<BreakpointFile*> JobOrderParser::parseBreakpointFiles(string baseQuery) {
     vector<BreakpointFile*> breakpointFiles;
     string breakPointFilesQuery = baseQuery + "/BreakPoint/List_of_Brk_Files/Brk_File";
     int breakPointFilesCount = evaluateToStringList(breakPointFilesQuery).size();
     for (int i = 1; i <= breakPointFilesCount; i++) {
-        string query = breakPointFilesQuery + "[" + intToString(i) + "]";
+        string query = breakPointFilesQuery + "[" + StringUtils::intToString(i) + "]";
         breakpointFiles.push_back(parseBreakpointFile(query));
     }
     return breakpointFiles;
@@ -172,7 +168,7 @@ vector<Input*> JobOrderParser::parseInputs(string baseQuery) {
     string inputQuery = baseQuery + "/List_of_Inputs/Input";
     int inputCount = evaluateToStringList(inputQuery).size();
     for (int i = 1; i <= inputCount; i++) {
-        string query = inputQuery + "[" + intToString(i) + "]";
+        string query = inputQuery + "[" + StringUtils::intToString(i) + "]";
         inputs.push_back(parseInput(query));
     }
     return inputs;
@@ -192,7 +188,7 @@ Input* JobOrderParser::parseInput(string baseQuery) {
     string fileNamesQuery = baseQuery + "/List_of_File_Names/File_Name";
     int fileNameCount = evaluateToStringList(fileNamesQuery).size();
     for (int i = 1; i <= fileNameCount; i++) {
-        string fileNameQuery = fileNamesQuery + "[" + intToString(i) + "]";
+        string fileNameQuery = fileNamesQuery + "[" + StringUtils::intToString(i) + "]";
         fileNames.push_back(evaluateToString(fileNameQuery));
     }
 
@@ -200,8 +196,8 @@ Input* JobOrderParser::parseInput(string baseQuery) {
     string timeIntervalsQuery = baseQuery + "/List_of_Time_Intervals/Time_Interval";
     int timeIntervalsCount = evaluateToStringList(timeIntervalsQuery).size();
     for (int i = 1; i <= timeIntervalsCount; i++) {
-        string timeIntervalsStartQuery = timeIntervalsQuery + "[" + intToString(i) + "]/Start";
-        string timeIntervalsStopQuery = timeIntervalsQuery + "[" + intToString(i) + "]/Stop";
+        string timeIntervalsStartQuery = timeIntervalsQuery + "[" + StringUtils::intToString(i) + "]/Start";
+        string timeIntervalsStopQuery = timeIntervalsQuery + "[" + StringUtils::intToString(i) + "]/Stop";
         string start = evaluateToString(timeIntervalsStartQuery);
         string stop = evaluateToString(timeIntervalsStopQuery);
         TimeInterval* timeInterval = new TimeInterval(start, stop);
@@ -217,7 +213,7 @@ vector<Output*> JobOrderParser::parseOutputs(string baseQuery) {
     string outputQuery = baseQuery + "/List_of_Outputs/Output";
     int outputCount = evaluateToStringList(outputQuery).size();
     for (int i = 1; i <= outputCount; i++) {
-        string query = outputQuery + "[" + intToString(i) + "]";
+        string query = outputQuery + "[" + StringUtils::intToString(i) + "]";
         outputs.push_back(parseOutput(query));
     }
     return outputs;
@@ -238,12 +234,4 @@ Output* JobOrderParser::parseOutput(string baseQuery) {
 
     Output* output = new Output(fileType, fileNameType, fileName);
     return output;
-}
-
-bool JobOrderParser::stringToBool(string in) {
-    if (in.compare("true") == 0 || in.compare("True") == 0
-            || in.compare("TRUE")) {
-        return true;
-    }
-    return false;
 }

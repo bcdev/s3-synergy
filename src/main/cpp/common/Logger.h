@@ -12,38 +12,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
- * File:   JobOrder.cpp
+ * File:   Logger.h
  * Author: thomass
- * 
- * Created on November 23, 2010, 1:35 PM
+ *
+ * Created on November 24, 2010, 4:08 PM
  */
 
-#include <iostream>
+#ifndef LOGGER_H
+#define	LOGGER_H
 
-#include "JobOrder.h"
+#include <string>
 
-using std::cout;
+using std::string;
 
-JobOrder::JobOrder(Configuration config, vector<ProcessorConfiguration*> processorConfigs) {
-    this->config = config;
-    this->processorConfigs = processorConfigs;
-}
+class Logger {
+public:
+    Logger(string outLogLevel, string errLogLevel);
+    string outLogLevel;
+    string errLogLevel;
+    void logDebug(string message);
+    void logInfo(string message);
+    void logProgress(string message);
+    void logWarning(string message);
+    void logError(string message);
+private:
+    void logToError(string message);
+    void logToStdout(string message);
+    string getTimeString();
+};
 
-JobOrder::~JobOrder() {
-}
+#endif	/* LOGGER_H */
 
-void JobOrder::print() {
-    config.print();
-    for (size_t i = 0; i < processorConfigs.size(); i++) {
-        cout << "processor config " << i + 1 << ":\n";
-        processorConfigs.at(i)->print();
-    }
-}
-
-vector<ProcessorConfiguration*> JobOrder::getProcessorList() const {
-    return processorConfigs;
-}
-
-Configuration JobOrder::getConfig() const {
-    return config;
-}

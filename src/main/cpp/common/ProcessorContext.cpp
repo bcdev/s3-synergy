@@ -27,7 +27,7 @@
 using std::invalid_argument;
 using std::find;
 
-ProcessorContext::ProcessorContext() : segments() {
+ProcessorContext::ProcessorContext(Logger logger) : logger(logger.outLogLevel, logger.errLogLevel), segments() {
     maxLine = 0;
     maxLineComputed = 0;
     minLineRequired = 0;
@@ -56,7 +56,8 @@ bool ProcessorContext::containsSegment(const string& segmentId) const {
     return false;
 }
 
-Segment& ProcessorContext::getSegment(const string& segmentId) const {
+Segment& ProcessorContext::getSegment(const string& segmentId) {
+    logger.logError("invalid segment ID '" + segmentId + "'.");
     for (size_t i = 0; i < segments.size(); i++) {
         Segment* segment = segments[i];
         if (segment->getId().compare(segmentId) == 0) {
@@ -88,4 +89,8 @@ void ProcessorContext::setMaxLineComputed(const Segment& segment, const Module& 
 
 void ProcessorContext::setMinLineRequired(const Segment& segment, size_t line) {
     minLineRequired = line;
+}
+
+Logger ProcessorContext::getLogger() {
+    return logger;
 }

@@ -25,6 +25,7 @@
 #include <string>
 #include <vector>
 
+#include "Logger.h"
 #include "Segment.h"
 
 using std::map;
@@ -36,7 +37,7 @@ class Module;
 
 class ProcessorContext {
 public:
-    ProcessorContext();
+    ProcessorContext(Logger logger);
     virtual ~ProcessorContext();
 
     void addSegment(Segment& segment);
@@ -45,13 +46,16 @@ public:
     size_t getMaxLine(const Segment& segment) const;
     size_t getMaxLineComputed(const Segment& segment, const Module& module) const;
     size_t getMinLineRequired(const Segment& segment) const;
-    Segment& getSegment(const string& segmentId) const;
+    Segment& getSegment(const string& segmentId);
 
     void setMaxLine(const Segment& segment, size_t line);
     void setMaxLineComputed(const Segment& segment, const Module& module, size_t line);
     void setMinLineRequired(const Segment& segment, size_t line);
+    Logger getLogger();
 
 private:
+    Logger logger;
+
     vector<Segment*> segments;
 
     size_t maxLine;

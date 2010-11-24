@@ -12,38 +12,44 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
- * File:   JobOrder.cpp
+ * File:   StringUtils.h
  * Author: thomass
- * 
- * Created on November 23, 2010, 1:35 PM
+ *
+ * Created on November 24, 2010, 5:33 PM
  */
 
+#ifndef STRINGUTILS_H
+#define	STRINGUTILS_H
+
+
 #include <iostream>
+#include <string>
+#include <sstream>
 
-#include "JobOrder.h"
+using std::string;
+using std::stringstream;
 
-using std::cout;
+class StringUtils {
+public:
+    StringUtils();
+    virtual ~StringUtils();
 
-JobOrder::JobOrder(Configuration config, vector<ProcessorConfiguration*> processorConfigs) {
-    this->config = config;
-    this->processorConfigs = processorConfigs;
-}
-
-JobOrder::~JobOrder() {
-}
-
-void JobOrder::print() {
-    config.print();
-    for (size_t i = 0; i < processorConfigs.size(); i++) {
-        cout << "processor config " << i + 1 << ":\n";
-        processorConfigs.at(i)->print();
+    static bool stringToBool(string in) {
+        if (in.compare("true") == 0 || in.compare("True") == 0
+                || in.compare("TRUE")) {
+            return true;
+        }
+        return false;
     }
-}
 
-vector<ProcessorConfiguration*> JobOrder::getProcessorList() const {
-    return processorConfigs;
-}
+    static string intToString(int toConvert) {
+        stringstream temp;
+        temp << toConvert;
+        return temp.str();
+    }
+private:
 
-Configuration JobOrder::getConfig() const {
-    return config;
-}
+};
+
+#endif	/* STRINGUTILS_H */
+
