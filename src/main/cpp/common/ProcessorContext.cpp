@@ -24,11 +24,13 @@
 #include "Module.h"
 #include "ProcessorContext.h"
 
+using std::invalid_argument;
 using std::find;
 
 ProcessorContext::ProcessorContext() : segments() {
-    maxComputedLine = 0;
-    minRequiredLine = 0;
+    maxLine = 0;
+    maxLineComputed = 0;
+    minLineRequired = 0;
 }
 
 ProcessorContext::~ProcessorContext() {
@@ -44,27 +46,46 @@ bool ProcessorContext::containsSegment(const Segment& segment) const {
     return find(segments.begin(), segments.end(), &segment) != segments.end();
 }
 
-Segment& ProcessorContext::getSegment(const string& segmentId) const {
+bool ProcessorContext::containsSegment(const string& segmentId) const {
     for (size_t i = 0; i < segments.size(); i++) {
-        Segment& segment = *segments[i];
-        if (segment.getId().compare(segmentId) == 0) {
-            return segment;
+        Segment* segment = segments[i];
+        if (segment->getId().compare(segmentId) == 0) {
+            return true;
         }
     }
+    return false;
 }
 
-size_t ProcessorContext::getMaxComputedLine(const Segment& segment, const Module& module) const {
-    return maxComputedLine;
+Segment& ProcessorContext::getSegment(const string& segmentId) const {
+    for (size_t i = 0; i < segments.size(); i++) {
+        Segment* segment = segments[i];
+        if (segment->getId().compare(segmentId) == 0) {
+            return *segment;
+        }
+    }
+    throw invalid_argument("invalid segment ID '" + segmentId + "'.");
 }
 
-size_t ProcessorContext::getMinRequiredLine(const Segment& segment) const {
-    return minRequiredLine;
+size_t ProcessorContext::getMaxLine(const Segment& segment) const {
+    return maxLine;
 }
 
-void ProcessorContext::setMaxComputedLine(const Segment& segment, const Module& module, size_t line) {
-    maxComputedLine = line;
+size_t ProcessorContext::getMaxLineComputed(const Segment& segment, const Module& module) const {
+    return maxLineComputed;
 }
 
-void ProcessorContext::setMinRequiredLine(const Segment& segment, size_t line) {
-    minRequiredLine = line;
+size_t ProcessorContext::getMinLineRequired(const Segment& segment) const {
+    return minLineRequired;
+}
+
+void ProcessorContext::setMaxLine(const Segment& segment, size_t line) {
+    maxLine = line;
+}
+
+void ProcessorContext::setMaxLineComputed(const Segment& segment, const Module& module, size_t line) {
+    maxLineComputed = line;
+}
+
+void ProcessorContext::setMinLineRequired(const Segment& segment, size_t line) {
+    minLineRequired = line;
 }

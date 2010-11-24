@@ -8,17 +8,15 @@
 #ifndef MOCKREADER_H
 #define	MOCKREADER_H
 
-#include <cstddef>
-
-#include "Reader.h"
+#include "AbstractModule.h"
 #include "SegmentImpl.h"
 
-class MockReader : public Reader {
+class MockReader : public AbstractModule {
 public:
-    MockReader(size_t lineCount);
+    MockReader(size_t lineCount = 60000);
     virtual ~MockReader();
-    
-    Segment* readSegment(size_t minL, size_t maxL);
+
+    Segment* processSegment(ProcessorContext& context);
 
 private:
     const size_t lineCount;

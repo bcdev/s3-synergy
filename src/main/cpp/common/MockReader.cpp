@@ -9,10 +9,11 @@
 
 #include "MockReader.h"
 #include "SegmentImpl.h"
+#include "ProcessorContext.h"
 
 using std::min;
 
-MockReader::MockReader(size_t l) : Reader(), lineCount(l) {
+MockReader::MockReader(size_t l) : AbstractModule("READ"), lineCount(l) {
     this->segment = 0;
 }
 
@@ -22,7 +23,13 @@ MockReader::~MockReader() {
     }
 }
 
-Segment* MockReader::readSegment(size_t minL, size_t maxL) {
+Segment* MockReader::processSegment(ProcessorContext& context) {
+    if (context.containsSegment("SYN_COLLOCATED")) {
+        // TODO - modify segment
+    } else {
+        // TODO - create segment, see below
+    }
+    /*
     if (maxL < minL) {
         return 0;
     }
@@ -36,4 +43,5 @@ Segment* MockReader::readSegment(size_t minL, size_t maxL) {
     } else {
         return 0;
     }
+     */
 }

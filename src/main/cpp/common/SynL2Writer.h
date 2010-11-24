@@ -8,17 +8,14 @@
 #ifndef SYNL2WRITER_H
 #define	SYNL2WRITER_H
 
-#include "Writer.h"
+#include "AbstractModule.h"
 
 
-class SynL2Writer : public Writer {
+class SynL2Writer : public AbstractModule {
 public:
     SynL2Writer();
     ~SynL2Writer();
 
-    string getId();
-    void start();
-    void stop();
     Segment* processSegment(ProcessorContext& context);
 };
 

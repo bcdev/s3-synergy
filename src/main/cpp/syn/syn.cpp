@@ -6,7 +6,6 @@
 #include "../common/PixelClassification.h"
 #include "../common/Processor.h"
 #include "../common/ProcessorContext.h"
-#include "../common/Writer.h"
 #include "../common/SynL2Writer.h"
 
 using std::list;
@@ -22,19 +21,15 @@ int main() {
     JobOrder jobOrder = parser.parseJobOrder();
     jobOrder.print();
 
-    SynL2Writer writer;
+    MockReader reader;
     PixelClassification pixelClassification;
 
     Processor processor;
+    processor.addModule(reader);
     processor.addModule(pixelClassification);
     ProcessorContext context;
-    MockReader reader(60000);
-    size_t lineCount = 2000;
 
-//    do {
-//        size_t minL = context.getNextMinL(segment);
-//        size_t maxL = minL + lineCount - 1;
-//        Segment segment = reader.readSegment(minL, maxL);
-//        processor.process(context);
-//    } while (segment != 0);
+    while (!processor.isCompleted()) {
+        processor.process(context);
+    };
 }

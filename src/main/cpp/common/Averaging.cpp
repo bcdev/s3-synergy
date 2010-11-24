@@ -20,7 +20,7 @@
 
 #include "Averaging.h"
 
-Averaging::Averaging() {
+Averaging::Averaging() : AbstractModule("AVE") {
 }
 
 Averaging::~Averaging() {

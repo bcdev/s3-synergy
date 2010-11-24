@@ -41,20 +41,22 @@ public:
 
     void addSegment(Segment& segment);
     bool containsSegment(const Segment& segment) const;
-    size_t getMaxComputedLine(const Segment& segment, const Module& module) const;
-    size_t getMinRequiredLine(const Segment& segment) const;
+    bool containsSegment(const string& segmentId) const;
+    size_t getMaxLine(const Segment& segment) const;
+    size_t getMaxLineComputed(const Segment& segment, const Module& module) const;
+    size_t getMinLineRequired(const Segment& segment) const;
     Segment& getSegment(const string& segmentId) const;
 
-    void setMaxComputedLine(const Segment& segment, const Module& module, size_t line);
-    void setMinRequiredLine(const Segment& segment, size_t line);
+    void setMaxLine(const Segment& segment, size_t line);
+    void setMaxLineComputed(const Segment& segment, const Module& module, size_t line);
+    void setMinLineRequired(const Segment& segment, size_t line);
 
-    size_t getNextMinL(const Segment& segment);
 private:
     vector<Segment*> segments;
 
-    size_t maxComputedLine;
-    size_t minRequiredLine;
-    
+    size_t maxLine;
+    size_t maxLineComputed;
+    size_t minLineRequired;
 };
 
 #endif	/* PROCESSORCONTEXT_H */

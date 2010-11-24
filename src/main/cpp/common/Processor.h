@@ -22,8 +22,12 @@ public:
 
     void addModule(Module& module);
     void process(ProcessorContext& context);
+    bool isCompleted() const;
 
 private:
+    void setCompleted(bool completed);
+    
+    bool completed;
     vector<Module*> modules;
 };
 

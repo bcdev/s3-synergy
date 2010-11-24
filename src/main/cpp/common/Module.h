@@ -17,7 +17,7 @@ public:
     virtual ~Module() {
     };
 
-    virtual string getId() = 0;
+    virtual const string& getId() = 0;
     virtual void start() = 0;
     virtual void stop() = 0;
     virtual Segment* processSegment(ProcessorContext& context) = 0;

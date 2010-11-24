@@ -21,22 +21,10 @@
 #include "PixelClassification.h"
 #include "ProcessorContext.h"
 
-PixelClassification::PixelClassification() : Module() {
+PixelClassification::PixelClassification() : AbstractModule("PCL") {
 }
 
 PixelClassification::~PixelClassification() {
-}
-
-void PixelClassification::start() {
-
-}
-
-void PixelClassification::stop() {
-
-}
-
-string PixelClassification::getId() {
-    return "PixelClassification";
 }
 
 Segment* PixelClassification::processSegment(ProcessorContext& context) {
@@ -68,8 +56,8 @@ Segment* PixelClassification::processSegment(ProcessorContext& context) {
             }
         }
     }
-    context.setMaxComputedLine(source, *this, source.getMaxL());
-    context.setMinRequiredLine(source, source.getMaxL() + 1);
+    context.setMaxLineComputed(source, *this, source.getMaxL());
+    context.setMinLineRequired(source, source.getMaxL() + 1);
     
     return &source;
 }

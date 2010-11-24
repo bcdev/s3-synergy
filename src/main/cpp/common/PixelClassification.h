@@ -21,17 +21,14 @@
 #ifndef PIXELCLASSIFICATION_H
 #define	PIXELCLASSIFICATION_H
 
-#include "Module.h"
-#include "Pixel.h"
+#include "AbstractModule.h"
 
-class PixelClassification : public Module {
+class PixelClassification : public AbstractModule {
 public:
     PixelClassification();
     virtual ~PixelClassification();
-    void start();
-    void stop();
+
     Segment* processSegment(ProcessorContext& context);
-    string getId();
 };
 
 #endif	/* PIXELCLASSIFICATION_H */
