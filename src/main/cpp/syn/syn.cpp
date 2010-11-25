@@ -21,7 +21,7 @@ int main() {
 
     JobOrderParser parser = JobOrderParser(path);
     JobOrder jobOrder = parser.parseJobOrder();
-//    jobOrder.print();
+    //    jobOrder.print();
 
     MockReader reader;
     PixelClassification pixelClassification;
@@ -35,8 +35,7 @@ int main() {
             jobOrder.getConfig().getStandardLogLevel());
 
     ProcessorContext context = ProcessorContext(logger);
+    processor.process(context);
 
-    while (!processor.isCompleted()) {
-        processor.process(context);
-    };
+    logger.writeLogFile(jobOrder.getConfig().getOrderId());
 }

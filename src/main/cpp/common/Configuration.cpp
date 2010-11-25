@@ -33,6 +33,7 @@ void Configuration::setProcessorName(string processorName) {
 }
 
 void Configuration::print() {
+    cout << "order_id = " << getOrderId() << "\n";
     cout << "processorName = " << getProcessorName() << "\n";
     cout << "version = " << getVersion() << "\n";
     cout << "stdLogLevel = " << getStandardLogLevel() << "\n";
@@ -137,6 +138,12 @@ void Configuration::setProcessingParameters(vector<ProcessingParameter*> process
 
 vector<ProcessingParameter*> Configuration::getProcessingParameters() const {
     return processingParameters;
+}
+void Configuration::setOrderId(string orderId) {
+    this->orderId = orderId;
+}
+string Configuration::getOrderId() const {
+    return orderId;
 }
 
 string Configuration::boolToString(bool input) {

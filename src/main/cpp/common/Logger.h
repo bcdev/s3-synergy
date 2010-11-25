@@ -22,23 +22,28 @@
 #define	LOGGER_H
 
 #include <string>
+#include <vector>
 
 using std::string;
+using std::vector;
 
 class Logger {
 public:
     Logger(string outLogLevel, string errLogLevel);
     string outLogLevel;
     string errLogLevel;
-    void logDebug(string message);
-    void logInfo(string message);
-    void logProgress(string message);
-    void logWarning(string message);
-    void logError(string message);
+    void logDebug(string message, string moduleName, string moduleVersion);
+    void logInfo(string message, string moduleName, string moduleVersion);
+    void logProgress(string message, string moduleName, string moduleVersion);
+    void logWarning(string message, string moduleName, string moduleVersion);
+    void logError(string message, string moduleName, string moduleVersion);
+    void writeLogFile(string orderId);
 private:
-    void logToError(string message);
-    void logToStdout(string message);
+    string createMessageHeader(string moduleName, string moduleVersion);
+    void logToError(string message, string moduleName, string moduleVersion);
+    void logToStdout(string message, string moduleName, string moduleVersion, string logType);
     string getTimeString();
+    vector<string> messageBuffer;
 };
 
 #endif	/* LOGGER_H */

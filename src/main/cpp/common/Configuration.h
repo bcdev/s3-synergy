@@ -18,6 +18,7 @@ class ProcessingParameter;
 
 class Configuration {
 private:
+    string orderId;
     string processorName;
     string version;
     string standardLogLevel;
@@ -40,6 +41,8 @@ public:
     string getProcessorName();
     void setProcessorName(string processorName);
 
+    void setOrderId(string orderId);
+    string getOrderId() const;
     void print();
     void setVersion(string version);
     string getVersion() const;

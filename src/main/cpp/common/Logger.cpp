@@ -18,6 +18,7 @@
  * Created on November 24, 2010, 4:08 PM
  */
 
+#include <fstream>
 #include <iostream>
 #include <time.h>
 #include <unistd.h>
@@ -27,54 +28,91 @@
 
 using std::cout;
 using std::cerr;
+using std::ofstream;
 
 Logger::Logger(string outLogLevel, string errLogLevel) {
     this->outLogLevel = outLogLevel;
     this->errLogLevel = errLogLevel;
 }
 
-void Logger::logDebug(string message) {
-
+void Logger::logDebug(string message, string moduleName, string moduleVersion) {
+    if (this->outLogLevel.compare("DEBUG") == 0) {
+        logToStdout(message, moduleName, moduleVersion, "[D]");
+    }
 }
 
-void Logger::logInfo(string message) {
-
+void Logger::logInfo(string message, string moduleName, string moduleVersion) {
+    if (this->outLogLevel.compare("DEBUG") == 0 ||
+            this->outLogLevel.compare("INFO") == 0) {
+        logToStdout(message, moduleName, moduleVersion, "[I]");
+    }
 }
 
-void Logger::logProgress(string message) {
-
+void Logger::logProgress(string message, string moduleName, string moduleVersion) {
+    if (this->outLogLevel.compare("DEBUG") == 0 ||
+            this->outLogLevel.compare("INFO") == 0 ||
+            this->outLogLevel.compare("PROGRESS") == 0) {
+    logToStdout(message, moduleName, moduleVersion, "[P]");
+    }
 }
 
-void Logger::logWarning(string message) {
-
+void Logger::logWarning(string message, string moduleName, string moduleVersion) {
+    if (this->outLogLevel.compare("DEBUG") == 0 ||
+            this->outLogLevel.compare("INFO") == 0 ||
+            this->outLogLevel.compare("PROGRESS") == 0 ||
+            this->outLogLevel.compare("WARNING") == 0) {
+    logToStdout(message, moduleName, moduleVersion, "[W]");
+    }
 }
 
-void Logger::logError(string message) {
-    logToError(message);
+void Logger::logError(string message, string moduleName, string moduleVersion) {
+    logToError(message, moduleName, moduleVersion);
 }
 
-void Logger::logToError(string message) {
+void Logger::writeLogFile(string orderId) {
+    ofstream logFile;
+    string fileName = "LOG.";
+    fileName.append(orderId);
+    logFile.open(fileName.c_str());
+    for( size_t i = 0; i < messageBuffer.size(); i++ ) {
+        logFile << messageBuffer.at(i) << "\n";
+    }
+    logFile.close();
+}
+
+string Logger::createMessageHeader(string moduleName, string moduleVersion) {
     char nodeNameBuffer [80];
     gethostname(nodeNameBuffer, 80);
+    string header = getTimeString();
+    header.append(" ");
+    header.append(nodeNameBuffer);
+    header.append(" ");
+    header.append(moduleName);
+    header.append(" ");
+    header.append(moduleVersion);
+    header.append(" [");
+    header.append(StringUtils::intToString((int) getpid()));
+    header.append("]: ");
+    return header;
+}
 
-    string outputMessage = getTimeString();
-    outputMessage.append(" ");
-    outputMessage.append(nodeNameBuffer);
-    outputMessage.append(" ");
-    outputMessage.append("processor_name");
-    outputMessage.append(" ");
-    outputMessage.append("processor_version");
-    outputMessage.append(" [");
-    outputMessage.append( StringUtils::intToString( (int)getpid() ) );
-    outputMessage.append("]: ");
+void Logger::logToError(string message, string moduleName, string moduleVersion) {
+    string outputMessage = createMessageHeader(moduleName, moduleVersion);
     outputMessage.append("[E] ");
     outputMessage.append(message);
 
-    cerr << outputMessage;
+    messageBuffer.push_back(outputMessage);
+    cerr << outputMessage << "\n";
 }
 
-void Logger::logToStdout(string message) {
-    cout << message;
+void Logger::logToStdout(string message, string moduleName, string moduleVersion, string logType) {
+    string outputMessage = createMessageHeader(moduleName, moduleVersion);
+    outputMessage.append(logType);
+    outputMessage.append(" ");
+    outputMessage.append(message);
+
+    messageBuffer.push_back(outputMessage);
+    cout << outputMessage << "\n";
 }
 
 string Logger::getTimeString() {
