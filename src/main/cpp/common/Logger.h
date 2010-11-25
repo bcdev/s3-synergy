@@ -47,7 +47,7 @@ private:
     void logToStdout(string message, string moduleName, string moduleVersion, string logType);
     string getTimeString();
     vector<string*> messageBuffer;
-    static Logger *instanz;
+    static Logger *instance;
     string outLogLevel;
     string errLogLevel;
     Logger(const Logger&);

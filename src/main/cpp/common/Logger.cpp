@@ -135,10 +135,10 @@ string Logger::getTimeString() {
     return timeBuffer;
 }
 
-Logger* Logger::instanz = 0;
+Logger* Logger::instance = 0;
 
 Logger* Logger::get() {
-    if (instanz == 0)
-        instanz = new Logger();
-    return instanz;
+    if (instance == 0)
+        instance = new Logger();
+    return instance;
 }
