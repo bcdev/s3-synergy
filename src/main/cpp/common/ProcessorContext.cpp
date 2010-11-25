@@ -27,8 +27,7 @@
 using std::invalid_argument;
 using std::find;
 
-ProcessorContext::ProcessorContext(Logger* logger) : segments() {
-    this->logger = logger;
+ProcessorContext::ProcessorContext() : segments() {
     maxLine = 0;
     maxLineComputed = 0;
     minLineRequired = 0;
@@ -89,8 +88,4 @@ void ProcessorContext::setMaxLineComputed(const Segment& segment, const Module& 
 
 void ProcessorContext::setMinLineRequired(const Segment& segment, size_t line) {
     minLineRequired = line;
-}
-
-Logger* ProcessorContext::getLogger() {
-    return logger;
 }

@@ -38,6 +38,7 @@ Segment* MockReader::processSegment(ProcessorContext& context) {
         if (minL < this->lineCount) {
             if (segment == 0) {
                 segment = new SegmentImpl("SYN_COLLOCATED", minL, min(maxL, minL + this->lineCount - 1));
+                // TODO - replace by sensible code
                 context.setMaxLine( *segment, 100 );
                 // TODO - create variable etc.
             }

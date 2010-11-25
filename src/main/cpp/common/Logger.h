@@ -29,9 +29,7 @@ using std::vector;
 
 class Logger {
 public:
-    Logger(string outLogLevel, string errLogLevel);
-    string outLogLevel;
-    string errLogLevel;
+    static Logger* get();
     void logDebug(string message, string moduleName, string moduleVersion);
     void logInfo(string message, string moduleName, string moduleVersion);
     void logProgress(string message, string moduleName, string moduleVersion);
@@ -39,12 +37,20 @@ public:
     void logError(string message, string moduleName, string moduleVersion);
     void writeLogFile(string orderId);
     vector<string*> getMessageBuffer() const;
+    void setOutLogLevel(string outLogLevel);
+    void setErrLogLevel(string errLogLevel);
+protected:
+    Logger();
 private:
     string createMessageHeader(string moduleName, string moduleVersion);
     void logToError(string message, string moduleName, string moduleVersion);
     void logToStdout(string message, string moduleName, string moduleVersion, string logType);
     string getTimeString();
     vector<string*> messageBuffer;
+    static Logger *instanz;
+    string outLogLevel;
+    string errLogLevel;
+    Logger(const Logger&);
 };
 
 #endif	/* LOGGER_H */

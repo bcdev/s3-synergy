@@ -30,9 +30,7 @@ using std::cout;
 using std::cerr;
 using std::ofstream;
 
-Logger::Logger(string outLogLevel, string errLogLevel) : messageBuffer() {
-    this->outLogLevel = outLogLevel;
-    this->errLogLevel = errLogLevel;
+Logger::Logger() : messageBuffer() {
 }
 
 void Logger::logDebug(string message, string moduleName, string moduleVersion) {
@@ -52,7 +50,7 @@ void Logger::logProgress(string message, string moduleName, string moduleVersion
     if (this->outLogLevel.compare("DEBUG") == 0 ||
             this->outLogLevel.compare("INFO") == 0 ||
             this->outLogLevel.compare("PROGRESS") == 0) {
-    logToStdout(message, moduleName, moduleVersion, "[P]");
+        logToStdout(message, moduleName, moduleVersion, "[P]");
     }
 }
 
@@ -61,7 +59,7 @@ void Logger::logWarning(string message, string moduleName, string moduleVersion)
             this->outLogLevel.compare("INFO") == 0 ||
             this->outLogLevel.compare("PROGRESS") == 0 ||
             this->outLogLevel.compare("WARNING") == 0) {
-    logToStdout(message, moduleName, moduleVersion, "[W]");
+        logToStdout(message, moduleName, moduleVersion, "[W]");
     }
 }
 
@@ -74,13 +72,20 @@ void Logger::writeLogFile(string orderId) {
     string fileName = "LOG.";
     fileName.append(orderId);
     logFile.open(fileName.c_str());
-    for( size_t i = 0; i < messageBuffer.size(); i++ ) {
+    for (size_t i = 0; i < messageBuffer.size(); i++) {
         logFile << *(messageBuffer.at(i)) << "\n";
     }
     logFile.close();
 }
+
 vector<string*> Logger::getMessageBuffer() const {
     return messageBuffer;
+}
+void Logger::setOutLogLevel(string outLogLevel) {
+    this->outLogLevel = outLogLevel;
+}
+void Logger::setErrLogLevel(string errLogLevel) {
+    this->errLogLevel = errLogLevel;
 }
 
 string Logger::createMessageHeader(string moduleName, string moduleVersion) {
@@ -100,17 +105,18 @@ string Logger::createMessageHeader(string moduleName, string moduleVersion) {
 }
 
 void Logger::logToError(string message, string moduleName, string moduleVersion) {
-    string outputMessage = createMessageHeader(moduleName, moduleVersion);
-    outputMessage.append("[E] ");
-    outputMessage.append(message);
+    string* logMessage = new string();
+    logMessage->append(createMessageHeader(moduleName, moduleVersion));
+    logMessage->append("[E] ");
+    logMessage->append(message);
 
-    messageBuffer.push_back(&outputMessage);
-    cerr << outputMessage << "\n";
+    messageBuffer.push_back(logMessage);
+    cerr << *logMessage << "\n";
 }
 
 void Logger::logToStdout(string message, string moduleName, string moduleVersion, string logType) {
     string* logMessage = new string();
-    logMessage->append( createMessageHeader(moduleName, moduleVersion) );
+    logMessage->append(createMessageHeader(moduleName, moduleVersion));
     logMessage->append(logType);
     logMessage->append(" ");
     logMessage->append(message);
@@ -127,4 +133,12 @@ string Logger::getTimeString() {
     timer = localtime(&rawtime);
     strftime(timeBuffer, 80, "%Y-%m-%dT%H:%M:%S.000000", timer);
     return timeBuffer;
+}
+
+Logger* Logger::instanz = 0;
+
+Logger* Logger::get() {
+    if (instanz == 0)
+        instanz = new Logger();
+    return instanz;
 }
