@@ -21,6 +21,10 @@
 #include "PixelClassification.h"
 #include "ProcessorContext.h"
 
+#include <iostream>
+
+using std::cout;
+
 PixelClassification::PixelClassification() : AbstractModule("PCL") {
 }
 
@@ -28,8 +32,12 @@ PixelClassification::~PixelClassification() {
 }
 
 Segment* PixelClassification::processSegment(ProcessorContext& context) {
-    Segment& source = context.getSegment("SYN_COLLOCATED");
+    string segmentId = "SYN_COLLOCATED";
+    Segment& source = context.getSegment(segmentId);
+
+    context.getLogger().logProgress( "Starting to process segment " + segmentId, getId(), getVersion() );
     // TODO - parallelize
+
     for (size_t l = source.getMinL(); l <= source.getMaxL(); l++) {
         for (size_t k = source.getMinK(); k <= source.getMaxK(); k++) {
             for (size_t m = source.getMinM(); m <= source.getMaxM(); m++) {

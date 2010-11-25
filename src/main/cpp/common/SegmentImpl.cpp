@@ -32,7 +32,7 @@ SegmentImpl::SegmentImpl(const string& segmentId,
     this->minL = minL;
     this->maxL = maxL;
     this->minK = minK;
-    this->maxL = maxK;
+    this->maxK = maxK;
     this->minM = minM;
     this->maxM = maxM;
 }

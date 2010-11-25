@@ -57,7 +57,6 @@ bool ProcessorContext::containsSegment(const string& segmentId) const {
 }
 
 Segment& ProcessorContext::getSegment(const string& segmentId) {
-    logger.logError("invalid segment ID '" + segmentId + "'.");
     for (size_t i = 0; i < segments.size(); i++) {
         Segment* segment = segments[i];
         if (segment->getId().compare(segmentId) == 0) {

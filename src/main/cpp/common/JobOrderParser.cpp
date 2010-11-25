@@ -42,6 +42,10 @@ JobOrder JobOrderParser::parseJobOrder() {
 Configuration JobOrderParser::parseConfiguration() {
     Configuration config;
 
+    size_t firstDotIndex = path.find_first_of(".");
+    string orderIdWithExt = path.substr(firstDotIndex + 1);
+    config.setOrderId( orderIdWithExt.substr( 0, orderIdWithExt.length() - 4 ) );
+
     string query = "/Ipf_Job_Order/Ipf_Conf/Processor_Name";
     string value = evaluateToString(query);
     config.setProcessorName(value);
@@ -52,14 +56,22 @@ Configuration JobOrderParser::parseConfiguration() {
 
     query = "/Ipf_Job_Order/Ipf_Conf/Stdout_Log_Level";
     value = evaluateToString(query);
-    if( value.empty() ) {
+    if( value.empty() && value.compare( "INFO" ) != 0 &&
+            value.compare("DEBUG") != 0 &&
+            value.compare("WARNING") != 0 &&
+            value.compare("PROGRESS") != 0 &&
+            value.compare("ERROR") != 0 ) {
         value = "INFO";  // default value
     }
     config.setStandardLogLevel(value);
 
     query = "/Ipf_Job_Order/Ipf_Conf/Stderr_Log_Level";
     value = evaluateToString(query);
-    if (value.empty()) {
+    if (value.empty() && value.compare("INFO") != 0 &&
+            value.compare("DEBUG") != 0 &&
+            value.compare("WARNING") != 0 &&
+            value.compare("PROGRESS") != 0 &&
+            value.compare("ERROR") != 0 ) {
         value = "INFO"; // default value
     }
     config.setErrorLogLevel(value);

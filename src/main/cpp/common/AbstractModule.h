@@ -25,7 +25,10 @@
 
 class AbstractModule : public Module {
 public:
-    AbstractModule(const string& moduleId) : id(moduleId) {
+    AbstractModule(const string& moduleId) : id(moduleId), version("1.0-SNAPSHOT") {
+    };
+
+    AbstractModule(const string& moduleId, string version) : id(moduleId), version(version) {
     };
 
     virtual ~AbstractModule() {
@@ -35,6 +38,10 @@ public:
         return id;
     };
 
+    const string& getVersion() {
+        return version;
+    }
+
     virtual void start() {
     };
 
@@ -43,6 +50,7 @@ public:
 
 private:
     const string id;
+    const string version;
 };
 
 #endif	/* ABSTRACTMODULE_H */
