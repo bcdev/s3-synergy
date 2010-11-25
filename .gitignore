@@ -5,3 +5,4 @@ target/
 Makefile-S3L2PP.mk
 nbproject/
 .dep.inc
+LOG.*
