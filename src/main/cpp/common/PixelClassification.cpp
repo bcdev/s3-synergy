@@ -21,10 +21,6 @@
 #include "PixelClassification.h"
 #include "ProcessorContext.h"
 
-#include <iostream>
-
-using std::cout;
-
 PixelClassification::PixelClassification() : AbstractModule("PCL") {
 }
 
