@@ -31,7 +31,7 @@ Segment* PixelClassification::processSegment(ProcessorContext& context) {
     string segmentId = "SYN_COLLOCATED";
     Segment& source = context.getSegment(segmentId);
 
-    context.getLogger().logProgress( "Starting to process segment " + segmentId, getId(), getVersion() );
+    context.getLogger()->logProgress( "Starting to process segment " + source.toString(), getId(), getVersion() );
     // TODO - parallelize
 
     for (size_t l = source.getMinL(); l <= source.getMaxL(); l++) {

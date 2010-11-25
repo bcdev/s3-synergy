@@ -37,7 +37,7 @@ class Module;
 
 class ProcessorContext {
 public:
-    ProcessorContext(Logger logger);
+    ProcessorContext(Logger* logger);
     virtual ~ProcessorContext();
 
     void addSegment(Segment& segment);
@@ -51,10 +51,10 @@ public:
     void setMaxLine(const Segment& segment, size_t line);
     void setMaxLineComputed(const Segment& segment, const Module& module, size_t line);
     void setMinLineRequired(const Segment& segment, size_t line);
-    Logger getLogger();
+    Logger* getLogger();
 
 private:
-    Logger logger;
+    Logger* logger;
 
     vector<Segment*> segments;
 

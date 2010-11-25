@@ -106,6 +106,12 @@ public:
      * @param value The sample value.
      */
     virtual void setSampleInt(const string& varName, size_t position, int value) = 0;
+
+    /**
+     * Returns a string representation of this object.
+     * @return A string representation of this object.
+     */
+    virtual string toString() const = 0;
 };
 
 #endif	/* SEGMENT_H */

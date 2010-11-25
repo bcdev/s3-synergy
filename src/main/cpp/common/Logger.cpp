@@ -30,7 +30,7 @@ using std::cout;
 using std::cerr;
 using std::ofstream;
 
-Logger::Logger(string outLogLevel, string errLogLevel) {
+Logger::Logger(string outLogLevel, string errLogLevel) : messageBuffer() {
     this->outLogLevel = outLogLevel;
     this->errLogLevel = errLogLevel;
 }
@@ -75,9 +75,12 @@ void Logger::writeLogFile(string orderId) {
     fileName.append(orderId);
     logFile.open(fileName.c_str());
     for( size_t i = 0; i < messageBuffer.size(); i++ ) {
-        logFile << messageBuffer.at(i) << "\n";
+        logFile << *(messageBuffer.at(i)) << "\n";
     }
     logFile.close();
+}
+vector<string*> Logger::getMessageBuffer() const {
+    return messageBuffer;
 }
 
 string Logger::createMessageHeader(string moduleName, string moduleVersion) {
@@ -101,18 +104,19 @@ void Logger::logToError(string message, string moduleName, string moduleVersion)
     outputMessage.append("[E] ");
     outputMessage.append(message);
 
-    messageBuffer.push_back(outputMessage);
+    messageBuffer.push_back(&outputMessage);
     cerr << outputMessage << "\n";
 }
 
 void Logger::logToStdout(string message, string moduleName, string moduleVersion, string logType) {
-    string outputMessage = createMessageHeader(moduleName, moduleVersion);
-    outputMessage.append(logType);
-    outputMessage.append(" ");
-    outputMessage.append(message);
+    string* logMessage = new string();
+    logMessage->append( createMessageHeader(moduleName, moduleVersion) );
+    logMessage->append(logType);
+    logMessage->append(" ");
+    logMessage->append(message);
 
-    messageBuffer.push_back(outputMessage);
-    cout << outputMessage << "\n";
+    messageBuffer.push_back(logMessage);
+    cout << *logMessage << "\n";
 }
 
 string Logger::getTimeString() {

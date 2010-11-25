@@ -19,6 +19,7 @@
  */
 
 #include "SegmentImpl.h"
+#include "StringUtils.h"
 
 using std::make_pair;
 
@@ -76,6 +77,31 @@ size_t SegmentImpl::getMaxM() const {
 
 size_t SegmentImpl::getMinM() const {
     return minM;
+}
+
+string SegmentImpl::toString() const {
+    string result;
+    result.append( "id: " );
+    result.append( id );
+    result.append( ", " );
+    result.append( "minL: " );
+    result.append( StringUtils::intToString(minL) );
+    result.append( ", " );
+    result.append( "maxL: " );
+    result.append( StringUtils::intToString(maxL ) );
+    result.append( ", " );
+    result.append( "minK: " );
+    result.append( StringUtils::intToString(minK ) );
+    result.append( ", " );
+    result.append( "maxK: " );
+    result.append( StringUtils::intToString(maxK ) );
+    result.append( ", " );
+    result.append( "minM: " );
+    result.append( StringUtils::intToString(minM ) );
+    result.append( ", " );
+    result.append( "maxM: " );
+    result.append( StringUtils::intToString(maxM ) );
+    return result;
 }
 
 int SegmentImpl::getSampleInt(const string& varName, size_t position) const {

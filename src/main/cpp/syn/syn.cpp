@@ -30,12 +30,13 @@ int main() {
     processor.addModule(reader);
     processor.addModule(pixelClassification);
 
-    Logger logger = Logger(
+    Logger* logger = new Logger(
             jobOrder.getConfig().getStandardLogLevel(),
-            jobOrder.getConfig().getStandardLogLevel());
+            jobOrder.getConfig().getStandardLogLevel()
+            );
 
     ProcessorContext context = ProcessorContext(logger);
     processor.process(context);
 
-    logger.writeLogFile(jobOrder.getConfig().getOrderId());
+    logger->writeLogFile(jobOrder.getConfig().getOrderId());
 }

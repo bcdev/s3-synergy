@@ -43,6 +43,8 @@ public:
     size_t getMaxM() const;
     size_t getMinM() const;
 
+    string toString() const;
+
     int getSampleInt(const string& varName, size_t position) const;
     void setSampleInt(const string& varName, size_t position, int value);
 

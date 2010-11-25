@@ -38,12 +38,13 @@ public:
     void logWarning(string message, string moduleName, string moduleVersion);
     void logError(string message, string moduleName, string moduleVersion);
     void writeLogFile(string orderId);
+    vector<string*> getMessageBuffer() const;
 private:
     string createMessageHeader(string moduleName, string moduleVersion);
     void logToError(string message, string moduleName, string moduleVersion);
     void logToStdout(string message, string moduleName, string moduleVersion, string logType);
     string getTimeString();
-    vector<string> messageBuffer;
+    vector<string*> messageBuffer;
 };
 
 #endif	/* LOGGER_H */

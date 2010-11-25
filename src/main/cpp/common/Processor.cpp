@@ -34,8 +34,8 @@ void Processor::process(ProcessorContext& context) {
             if (target != 0 && !context.containsSegment(*target)) {
                 context.addSegment(*target);
             }
-            processingCompleted = processingCompleted
-                    && context.getMaxLineComputed(*target, *modules[i]) == context.getMaxLine(*target);
+            bool maxLinesEqual = context.getMaxLineComputed(*target, *modules[i]) == context.getMaxLine(*target);
+            processingCompleted = processingCompleted && maxLinesEqual;
         }
         setCompleted(processingCompleted);
     }
