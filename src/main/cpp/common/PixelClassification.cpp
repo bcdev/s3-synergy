@@ -28,13 +28,10 @@ PixelClassification::~PixelClassification() {
 }
 
 Segment* PixelClassification::processSegment(ProcessorContext& context) {
-    string segmentId = "SYN_COLLOCATED";
-    Segment& source = context.getSegment(segmentId);
-
-    Logger::get()->logProgress( "Starting to process segment " + source.toString(), getId(), getVersion() );
+    Segment& source = context.getSegment("SYN_COLLOCATED");
+    // Logger::get()->logProgress( "Starting to process segment " + source.toString(), getId(), getVersion() );
     // TODO - parallelize
-
-    for (size_t l = source.getMinL(); l <= source.getMaxL(); l++) {
+    for (size_t l = getMinLineNotComputed(source, context); l <= source.getMaxL(); l++) {
         for (size_t k = source.getMinK(); k <= source.getMaxK(); k++) {
             for (size_t m = source.getMinM(); m <= source.getMaxM(); m++) {
                 const size_t p = source.computePosition(k, l, m);
@@ -61,7 +58,6 @@ Segment* PixelClassification::processSegment(ProcessorContext& context) {
         }
     }
     context.setMaxLineComputed(source, *this, source.getMaxL());
-    context.setMinLineRequired(source, source.getMaxL() + 1);
     
     return &source;
 }

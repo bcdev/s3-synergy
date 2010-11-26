@@ -21,7 +21,12 @@
 #ifndef ABSTRACTMODULE_H
 #define	ABSTRACTMODULE_H
 
+#include <algorithm>
+
 #include "Module.h"
+#include "ProcessorContext.h"
+
+using std::max;
 
 class AbstractModule : public Module {
 public:
@@ -34,11 +39,11 @@ public:
     virtual ~AbstractModule() {
     };
 
-    const string& getId() {
+    const string& getId() const {
         return id;
     };
 
-    const string& getVersion() {
+    const string& getVersion() const {
         return version;
     }
 
@@ -49,6 +54,17 @@ public:
     virtual void stop() {
     };
 
+    virtual size_t getMinLineRequired(size_t line) const {
+        return line;
+    }
+
+    virtual size_t getMinLineNotComputed(Segment& segment, ProcessorContext& context) const {
+        if (context.hasMaxLineComputed(segment, *this)) {
+            return max(segment.getMinL(), context.getMaxLineComputed(segment, *this) + 1);
+        } else {
+            return segment.getMinL();
+        }
+    }
 private:
     const string id;
     const string version;

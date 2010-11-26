@@ -37,6 +37,6 @@ int main() {
     ProcessorContext context = ProcessorContext();
     processor.process(context);
 
-    logger->writeLogFile(jobOrder.getConfig().getOrderId());
+    //logger->writeLogFile(jobOrder.getConfig().getOrderId());
     delete logger;
 }

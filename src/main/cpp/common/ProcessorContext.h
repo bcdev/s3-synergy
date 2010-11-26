@@ -43,22 +43,56 @@ public:
     void addSegment(Segment& segment);
     bool containsSegment(const Segment& segment) const;
     bool containsSegment(const string& segmentId) const;
+    /**
+     * Returns the maximum line in the product data associated with a certain
+     * segment, which is going to be processed in this context.
+     * @param segment The segment.
+     * @return the maximum line in the product data to be processed.
+     */
     size_t getMaxLine(const Segment& segment) const;
+    /**
+     * Returns the maximum line in the product data associated with a certain
+     * segment, which has been computed by a certain module.
+     * @param segment The segment.
+     * @param module The module.
+     * @return the maximum line in the product data, which has been computed by
+     * the module.
+     */
     size_t getMaxLineComputed(const Segment& segment, const Module& module) const;
+    /**
+     * Returns the minimum line in the product data associated with a certain
+     * segment, which is required for processing lines succeeding the maximum
+     * computed line.
+     * @param segment The segment.
+     * @return the minimum line in the product data required for processing
+     * lines beyond the maximum computed line.
+     */
     size_t getMinLineRequired(const Segment& segment) const;
-    Segment& getSegment(const string& segmentId);
+    /**
+     * Returns the segment associated with a given segment ID.
+     * @param segmentId The segment ID.
+     * @return the segment associated with the ID.
+     */
+    Segment& getSegment(const string& segmentId) const;
+    bool hasMaxLineComputed(const Segment& segment, const Module& module) const;
+    bool hasMinLineRequired(const Segment& segment) const;
 
     void setMaxLine(const Segment& segment, size_t line);
     void setMaxLineComputed(const Segment& segment, const Module& module, size_t line);
-    void setMinLineRequired(const Segment& segment, size_t line);
     Logger* getLogger();
 
 private:
+    template <class K, class V>
+    bool exists(const map<K, V>& map, const K& key) const {
+        return map.find(key) != map.end();
+    }
+
     vector<Segment*> segments;
 
+    typedef map<const Module*, size_t> ModuleLineMap;
+    map<const Segment*, ModuleLineMap> maxLineComputedMap;
+
     size_t maxLine;
-    size_t maxLineComputed;
-    size_t minLineRequired;
 };
 
 #endif	/* PROCESSORCONTEXT_H */
