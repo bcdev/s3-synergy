@@ -18,7 +18,6 @@
  * Created on November 24, 2010, 4:08 PM
  */
 
-#include <fstream>
 #include <iostream>
 #include <time.h>
 #include <unistd.h>
@@ -28,25 +27,48 @@
 
 using std::cout;
 using std::cerr;
-using std::ofstream;
 
-Logger::Logger() : messageBuffer() {
+Logger::Logger() {
 }
 
-void Logger::logDebug(string message, string moduleName, string moduleVersion) {
+Logger::~Logger() {
+    logFile.close();
+}
+
+void Logger::debug(string message, string moduleName) {
+    debug(message, moduleName, "1.0-SNAPSHOT");
+}
+
+void Logger::info(string message, string moduleName) {
+    info(message, moduleName, "1.0-SNAPSHOT");
+}
+
+void Logger::progress(string message, string moduleName) {
+    progress(message, moduleName, "1.0-SNAPSHOT");
+}
+
+void Logger::warning(string message, string moduleName) {
+    warning(message, moduleName, "1.0-SNAPSHOT");
+}
+
+void Logger::error(string message, string moduleName) {
+    logToError(message, moduleName, "1.0-SNAPSHOT");
+}
+
+void Logger::debug(string message, string moduleName, string moduleVersion) {
     if (this->outLogLevel.compare("DEBUG") == 0) {
         logToStdout(message, moduleName, moduleVersion, "[D]");
     }
 }
 
-void Logger::logInfo(string message, string moduleName, string moduleVersion) {
+void Logger::info(string message, string moduleName, string moduleVersion) {
     if (this->outLogLevel.compare("DEBUG") == 0 ||
             this->outLogLevel.compare("INFO") == 0) {
         logToStdout(message, moduleName, moduleVersion, "[I]");
     }
 }
 
-void Logger::logProgress(string message, string moduleName, string moduleVersion) {
+void Logger::progress(string message, string moduleName, string moduleVersion) {
     if (this->outLogLevel.compare("DEBUG") == 0 ||
             this->outLogLevel.compare("INFO") == 0 ||
             this->outLogLevel.compare("PROGRESS") == 0) {
@@ -54,7 +76,7 @@ void Logger::logProgress(string message, string moduleName, string moduleVersion
     }
 }
 
-void Logger::logWarning(string message, string moduleName, string moduleVersion) {
+void Logger::warning(string message, string moduleName, string moduleVersion) {
     if (this->outLogLevel.compare("DEBUG") == 0 ||
             this->outLogLevel.compare("INFO") == 0 ||
             this->outLogLevel.compare("PROGRESS") == 0 ||
@@ -63,29 +85,22 @@ void Logger::logWarning(string message, string moduleName, string moduleVersion)
     }
 }
 
-void Logger::logError(string message, string moduleName, string moduleVersion) {
+void Logger::error(string message, string moduleName, string moduleVersion) {
     logToError(message, moduleName, moduleVersion);
 }
 
-void Logger::writeLogFile(string orderId) {
-    ofstream logFile;
-    string fileName = "LOG.";
-    fileName.append(orderId);
-    logFile.open(fileName.c_str());
-    for (size_t i = 0; i < messageBuffer.size(); i++) {
-        logFile << *(messageBuffer.at(i)) << "\n";
-    }
-    logFile.close();
-}
-
-vector<string*> Logger::getMessageBuffer() const {
-    return messageBuffer;
-}
 void Logger::setOutLogLevel(string outLogLevel) {
     this->outLogLevel = outLogLevel;
 }
+
 void Logger::setErrLogLevel(string errLogLevel) {
     this->errLogLevel = errLogLevel;
+}
+
+void Logger::init(string orderId) {
+    string fileName = "LOG.";
+    fileName.append(orderId);
+    logFile.open(fileName.c_str());
 }
 
 string Logger::createMessageHeader(string moduleName, string moduleVersion) {
@@ -110,7 +125,7 @@ void Logger::logToError(string message, string moduleName, string moduleVersion)
     logMessage->append("[E] ");
     logMessage->append(message);
 
-    messageBuffer.push_back(logMessage);
+    logFile << *logMessage << "\n";
     cerr << *logMessage << "\n";
 }
 
@@ -121,7 +136,7 @@ void Logger::logToStdout(string message, string moduleName, string moduleVersion
     logMessage->append(" ");
     logMessage->append(message);
 
-    messageBuffer.push_back(logMessage);
+    logFile << *logMessage << "\n";
     cout << *logMessage << "\n";
 }
 

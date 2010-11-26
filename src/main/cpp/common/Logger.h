@@ -21,24 +21,33 @@
 #ifndef LOGGER_H
 #define	LOGGER_H
 
+#include <fstream>
 #include <string>
 #include <vector>
 
 using std::string;
 using std::vector;
+using std::ofstream;
 
 class Logger {
 public:
+    ~Logger();
     static Logger* get();
-    void logDebug(string message, string moduleName, string moduleVersion);
-    void logInfo(string message, string moduleName, string moduleVersion);
-    void logProgress(string message, string moduleName, string moduleVersion);
-    void logWarning(string message, string moduleName, string moduleVersion);
-    void logError(string message, string moduleName, string moduleVersion);
+    void debug(string message, string moduleName, string moduleVersion);
+    void info(string message, string moduleName, string moduleVersion);
+    void progress(string message, string moduleName, string moduleVersion);
+    void warning(string message, string moduleName, string moduleVersion);
+    void error(string message, string moduleName, string moduleVersion);
+    void debug(string message, string moduleName);
+    void info(string message, string moduleName);
+    void progress(string message, string moduleName);
+    void warning(string message, string moduleName);
+    void error(string message, string moduleName);
     void writeLogFile(string orderId);
     vector<string*> getMessageBuffer() const;
     void setOutLogLevel(string outLogLevel);
     void setErrLogLevel(string errLogLevel);
+    void init(string orderId);
 protected:
     Logger();
 private:
@@ -46,11 +55,12 @@ private:
     void logToError(string message, string moduleName, string moduleVersion);
     void logToStdout(string message, string moduleName, string moduleVersion, string logType);
     string getTimeString();
-    vector<string*> messageBuffer;
     static Logger *instance;
     string outLogLevel;
     string errLogLevel;
+    string orderId;
     Logger(const Logger&);
+    ofstream logFile;
 };
 
 #endif	/* LOGGER_H */
