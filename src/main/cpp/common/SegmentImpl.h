@@ -42,11 +42,14 @@ public:
     size_t getMinL() const;
     size_t getMaxM() const;
     size_t getMinM() const;
+    void setMaxL(size_t maxL);
+    void setMinL(size_t minL);
 
     string toString() const;
 
     int getSampleInt(const string& varName, size_t position) const;
     void setSampleInt(const string& varName, size_t position, int value);
+    void setSamplesInt( const string& varName, int* values );
 
 private:
     size_t getValueCount() const;

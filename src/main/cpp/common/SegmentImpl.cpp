@@ -116,3 +116,13 @@ void SegmentImpl::setSampleInt(const string& varName, size_t position, int value
 size_t SegmentImpl::getValueCount() const {
     return (maxL - minL + 1) * (maxK - minK + 1) * (maxM - minM + 1);
 }
+
+void SegmentImpl::setSamplesInt(const string& varName, int* values) {
+    dataMap[&varName] = values;
+}
+void SegmentImpl::setMaxL(size_t maxL) {
+    this->maxL = maxL;
+}
+void SegmentImpl::setMinL(size_t minL) {
+    this->minL = minL;
+}

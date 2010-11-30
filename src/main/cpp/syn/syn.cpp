@@ -33,6 +33,7 @@ int main() {
     Logger* logger = Logger::get();
     logger->setErrLogLevel(jobOrder.getConfig().getErrorLogLevel());
     logger->setOutLogLevel(jobOrder.getConfig().getStandardLogLevel());
+//    logger->init(jobOrder.getConfig().getOrderId());
 
     ProcessorContext context = ProcessorContext();
     processor.process(context);

@@ -92,6 +92,18 @@ public:
     virtual size_t getMinM() const = 0;
 
     /**
+     * Sets the minimum line index.
+     * @param minL The minimum line index.
+     */
+    virtual void setMinL(size_t minL) = 0;
+
+    /**
+     * Sets the maximum line index.
+     * @param maxL The maximum line index.
+     */
+    virtual void setMaxL(size_t maxL) = 0;
+
+    /**
      * Returns the sample value of a variable at a position of interest.
      * @param varName The name of the variable of interest.
      * @param position The position of interest.
@@ -106,6 +118,14 @@ public:
      * @param value The sample value.
      */
     virtual void setSampleInt(const string& varName, size_t position, int value) = 0;
+
+    /**
+     * Sets all sample values of a variable.
+     * 
+     * @param varName The name of the variable of interest.
+     * @param values The sample values, given as int array.
+     */
+    virtual void setSamplesInt(const string& varName, int* values) = 0;
 
     /**
      * Returns a string representation of this object.

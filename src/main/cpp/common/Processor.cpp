@@ -5,6 +5,7 @@
  * Created on November 17, 2010, 5:14 PM
  */
 
+#include <iostream>
 #include <vector>
 
 #include "Processor.h"
@@ -34,7 +35,11 @@ void Processor::process(ProcessorContext& context) {
             if (target != 0 && !context.containsSegment(*target)) {
                 context.addSegment(*target);
             }
-            bool maxLinesEqual = context.getMaxLineComputed(*target, *modules[i]) == context.getMaxLine(*target);
+            size_t maxLineComputed = 0;
+            if( context.hasMaxLineComputed(*target, *modules[i]) ) {
+                maxLineComputed = context.getMaxLineComputed(*target, *modules[i]);
+            }
+            bool maxLinesEqual = maxLineComputed == context.getMaxLine(*target);
             processingCompleted = processingCompleted && maxLinesEqual;
         }
         setCompleted(processingCompleted);

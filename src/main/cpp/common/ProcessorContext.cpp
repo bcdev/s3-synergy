@@ -72,7 +72,10 @@ size_t ProcessorContext::getMaxLine(const Segment& segment) const {
 }
 
 size_t ProcessorContext::getMaxLineComputed(const Segment& segment, const Module& module) const {
-    return maxLineComputedMap.at(&segment).at(&module);
+    if (hasMaxLineComputed(segment, module)) {
+        return maxLineComputedMap.at(&segment).at(&module);
+    }
+    return 0;
 }
 
 bool ProcessorContext::hasMaxLineComputed(const Segment& segment, const Module& module) const {

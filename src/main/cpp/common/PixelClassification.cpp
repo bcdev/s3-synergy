@@ -28,16 +28,16 @@ PixelClassification::~PixelClassification() {
 }
 
 Segment* PixelClassification::processSegment(ProcessorContext& context) {
-    Segment& source = context.getSegment("SYN_COLLOCATED");
-    // Logger::get()->logProgress( "Starting to process segment " + source.toString(), getId(), getVersion() );
+    Segment& segment = context.getSegment("SYN_COLLOCATED");
+     Logger::get()->progress( "Starting to process segment " + segment.toString(), getId(), getVersion() );
     // TODO - parallelize
-    for (size_t l = getMinLineNotComputed(source, context); l <= source.getMaxL(); l++) {
-        for (size_t k = source.getMinK(); k <= source.getMaxK(); k++) {
-            for (size_t m = source.getMinM(); m <= source.getMaxM(); m++) {
-                const size_t p = source.computePosition(k, l, m);
-                const int olcFlags = source.getSampleInt("F_OLC", p);
-                const int slnFlags = source.getSampleInt("F_SLN", p);
-                const int sloFlags = source.getSampleInt("F_SLO", p);
+    for (size_t l = getMinLineNotComputed(segment, context); l <= segment.getMaxL(); l++) {
+        for (size_t k = segment.getMinK(); k <= segment.getMaxK(); k++) {
+            for (size_t m = segment.getMinM(); m <= segment.getMaxM(); m++) {
+                const size_t p = segment.computePosition(k, l, m);
+                const int olcFlags = segment.getSampleInt("F_OLC", p);
+                const int slnFlags = segment.getSampleInt("F_SLN", p);
+                const int sloFlags = segment.getSampleInt("F_SLO", p);
                 const bool olcLand = (olcFlags & 0x1000) != 0;
                 const bool slnLand = (slnFlags & 0x0800) != 0;
                 const bool sloLand = (sloFlags & 0x0800) != 0;
@@ -53,11 +53,11 @@ Segment* PixelClassification::processSegment(ProcessorContext& context) {
                 if (slnCloud || sloCloud) {
                     synFlags |= 0x0001;
                 }
-                source.setSampleInt("F_SYN", p, synFlags);
+                segment.setSampleInt("F_SYN", p, synFlags);
             }
         }
     }
-    context.setMaxLineComputed(source, *this, source.getMaxL());
+    context.setMaxLineComputed(segment, *this, segment.getMaxL());
     
-    return &source;
+    return &segment;
 }
