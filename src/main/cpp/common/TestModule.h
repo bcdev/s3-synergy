@@ -22,6 +22,7 @@
 #define	TESTMODULE_H
 
 #include "AbstractModule.h"
+#include "Variable.h"
 
 class TestModule : public AbstractModule {
 public:
@@ -34,6 +35,11 @@ public:
 
 private:
     static const size_t overlap = 100;
+    Variable* createTestVariable();
+    Attribute<void*>* createIntAttribute(string key, int value);
+    Attribute<void*>* createShortAttribute(string key, int value);
+    Attribute<void*>* createStringAttribute(string key, string value);
+    Attribute<void*>* createFloatAttribute(string key, float value);
 };
 
 #endif	/* TESTMODULE_H */

@@ -30,8 +30,11 @@ using std::find;
 using std::min;
 using std::numeric_limits;
 
-ProcessorContext::ProcessorContext() : segments() {
+ProcessorContext::ProcessorContext(JobOrder jobOrder) : segments(), jobOrder(jobOrder) {
     maxLine = 0;
+}
+JobOrder ProcessorContext::getJobOrder() const {
+    return jobOrder;
 }
 
 ProcessorContext::~ProcessorContext() {

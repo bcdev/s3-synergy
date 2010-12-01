@@ -21,6 +21,9 @@ MockReader::~MockReader() {
 }
 
 Segment* MockReader::processSegment(ProcessorContext& context) {
+
+    // TODO - for all input variables do:
+
     if (context.containsSegment("SYN_COLLOCATED")) {
         // modifying segment bounds
         Segment& segment = context.getSegment("SYN_COLLOCATED");

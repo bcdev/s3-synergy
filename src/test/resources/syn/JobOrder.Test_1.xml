@@ -29,7 +29,7 @@
 	</Ipf_Conf>
 	<List_of_Ipf_Procs>
 		<Ipf_Procs>
-			<Task_Name>Horst</Task_Name>
+			<Task_Name>syn</Task_Name>
 			<Task_Version>02.00</Task_Version>
 			<BreakPoint>
 				<List_of_Brk_Files>
@@ -66,13 +66,13 @@
 			<List_of_Outputs>
 				<Output>
 					<File_Type>NetCDF</File_Type>
-					<File_Name_Type>Directory</File_Name_Type> <!-- Default: Physical -->
-					<File_Name>ergebnis.nc</File_Name>
+					<File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
+					<File_Name>l2_syn.safe</File_Name>
 				</Output>
 			</List_of_Outputs>			
 		</Ipf_Procs>
 		<Ipf_Procs>
-			<Task_Name>Hans</Task_Name>
+			<Task_Name>vgt-p</Task_Name>
 			<Task_Version>03.00</Task_Version>
 			<BreakPoint>
 				<List_of_Brk_Files>

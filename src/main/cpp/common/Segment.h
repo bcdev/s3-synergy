@@ -23,6 +23,8 @@
 
 #include <string>
 
+#include "Variable.h"
+
 using std::string;
 
 class Segment {
@@ -39,6 +41,12 @@ public:
      * @param varName The name of the variable to add.
      */
     virtual void addIntVariable(const string& varName) = 0;
+
+    /**
+     * Adds a variable to the segment and sets all values to 0.
+     * @param variable The variable to add.
+     */
+    virtual void addIntVariable(Variable* variable) = 0;
 
     /**
      * Computes the position for a pixel of interest.
@@ -121,7 +129,7 @@ public:
 
     /**
      * Sets all sample values of a variable.
-     * 
+     *
      * @param varName The name of the variable of interest.
      * @param values The sample values, given as int array.
      */
@@ -132,6 +140,7 @@ public:
      * @return A string representation of this object.
      */
     virtual string toString() const = 0;
+    
 };
 
 #endif	/* SEGMENT_H */

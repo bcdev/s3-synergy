@@ -22,20 +22,14 @@
 
 #include "VariableImpl.h"
 
-VariableImpl::VariableImpl() {
+VariableImpl::VariableImpl(string id) : Variable(id) {}
+
+VariableImpl::~VariableImpl() {}
+
+void VariableImpl::addAttribute(Attribute<void*>* attribute) {
+    this->attributes.push_back(attribute);
 }
 
-VariableImpl::VariableImpl(const VariableImpl& orig) {
+string VariableImpl::getId() {
+    return id;
 }
-
-VariableImpl::~VariableImpl() {
-}
-
-string VariableImpl::getName() {
-    return "";
-}
-
-string VariableImpl::getUnit() {
-    return "";
-}
-

@@ -18,11 +18,13 @@
  * Created on November 23, 2010, 1:35 PM
  */
 
+#include <stdexcept>
 #include <iostream>
 
 #include "JobOrder.h"
 
 using std::cout;
+using std::invalid_argument;
 
 JobOrder::JobOrder(Configuration config, vector<ProcessorConfiguration*> processorConfigs) {
     this->config = config;
@@ -42,6 +44,15 @@ void JobOrder::print() {
 
 vector<ProcessorConfiguration*> JobOrder::getProcessorList() const {
     return processorConfigs;
+}
+
+ProcessorConfiguration& JobOrder::getProcessorConfiguration(string& id) const {
+    for (size_t i = 0; i < processorConfigs.size(); i++) {
+        if( processorConfigs[i]->getTaskName().compare( id ) == 0 ) {
+            return *processorConfigs[i];
+        }
+    }
+    throw invalid_argument("no processor configuration with name " + id + ".");
 }
 
 Configuration JobOrder::getConfig() const {

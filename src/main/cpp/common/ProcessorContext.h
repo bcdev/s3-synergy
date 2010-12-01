@@ -25,6 +25,7 @@
 #include <string>
 #include <vector>
 
+#include "JobOrder.h"
 #include "Logger.h"
 #include "Segment.h"
 
@@ -37,7 +38,7 @@ class Module;
 
 class ProcessorContext {
 public:
-    ProcessorContext();
+    ProcessorContext(JobOrder jobOrder);
     virtual ~ProcessorContext();
 
     void addSegment(Segment& segment);
@@ -80,6 +81,7 @@ public:
     void setMaxLine(const Segment& segment, size_t line);
     void setMaxLineComputed(const Segment& segment, const Module& module, size_t line);
     Logger* getLogger();
+    JobOrder getJobOrder() const;
 
 private:
     template <class K, class V>
@@ -93,6 +95,8 @@ private:
     map<const Segment*, ModuleLineMap> maxLineComputedMap;
 
     size_t maxLine;
+
+    JobOrder jobOrder;
 };
 
 #endif	/* PROCESSORCONTEXT_H */

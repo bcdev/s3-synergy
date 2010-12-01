@@ -34,6 +34,7 @@ public:
     ~SegmentImpl();
 
     void addIntVariable(const string& varName);
+    void addIntVariable(Variable* variable);
     size_t computePosition(size_t k, size_t l, size_t m) const;
     const string& getId() const;
     size_t getMaxK() const;

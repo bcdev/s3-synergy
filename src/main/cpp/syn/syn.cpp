@@ -1,7 +1,6 @@
 #include <vector>
 
 #include "../common/JobOrderParser.h"
-#include "../common/Segment.h"
 #include "../common/MockReader.h"
 #include "../common/PixelClassification.h"
 #include "../common/Processor.h"
@@ -10,8 +9,6 @@
 #include "../common/TestModule.h"
 
 #include <iostream>
-
-using std::list;
 
 int main() {
 
@@ -27,18 +24,20 @@ int main() {
     MockReader reader;
     PixelClassification pixelClassification;
     TestModule test;
+    SynL2Writer writer;
 
     Processor processor;
     processor.addModule(reader);
     processor.addModule(pixelClassification);
     processor.addModule(test);
+    processor.addModule(writer);
 
     Logger* logger = Logger::get();
     logger->setErrLogLevel(jobOrder.getConfig().getErrorLogLevel());
     logger->setOutLogLevel(jobOrder.getConfig().getStandardLogLevel());
 //    logger->init(jobOrder.getConfig().getOrderId());
 
-    ProcessorContext context = ProcessorContext();
+    ProcessorContext context = ProcessorContext(jobOrder);
     processor.process(context);
 
     //logger->writeLogFile(jobOrder.getConfig().getOrderId());

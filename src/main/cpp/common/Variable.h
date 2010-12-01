@@ -21,16 +21,66 @@
 #ifndef VARIABLE_H
 #define	VARIABLE_H
 
+#include <ncvalues.h>
 #include <string>
+#include <vector>
 
 using std::string;
+using std::vector;
+
+template <class T> class Attribute;
+class Dimension;
 
 class Variable {
 public:
-    virtual string getName() = 0;
-    virtual string getUnit() = 0;
-    virtual ~Variable() { };
+    Variable(string id) : id(id) {};
+    virtual ~Variable() {};
 
+    virtual void addAttribute(Attribute<void*>* attribute) = 0;
+    virtual string getId() = 0;
+
+protected:
+    vector<Attribute<void*>*> attributes;
+    string id;
+private:
+    NcType type;
+    vector<Dimension*> dims;
+};
+
+template <class T> class Attribute {
+public:
+    Attribute(string key) : key(key) {
+    }
+
+    void setValue(T value) {
+        this->value = value;
+    }
+    T getValue() const {
+        return value;
+    }
+    void setUnit(string unit) {
+        this->unit = unit;
+    }
+    string getUnit() const {
+        return unit;
+    }
+
+private:
+    string key;
+    string unit;
+    T value;
+};
+
+class Dimension {
+public:
+
+    Dimension(string name, NcType type) : key(key), type(type), range(range) {
+    }
+
+private:
+    string key;
+    NcType type;
+    int range;
 };
 
 #endif	/* VARIABLE_H */

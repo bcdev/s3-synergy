@@ -25,13 +25,10 @@
 
 class VariableImpl : public Variable {
 public:
-    VariableImpl();
-    VariableImpl(const VariableImpl& orig);
-    virtual ~VariableImpl();
-
-    string getName();
-    string getUnit();
-
+    VariableImpl(string id);
+    ~VariableImpl();
+    void addAttribute(Attribute<void*>* attribute);
+    string getId();
 };
 
 #endif	/* VARIABLEIMPL_H */

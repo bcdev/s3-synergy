@@ -42,9 +42,13 @@ SegmentImpl::~SegmentImpl() {
 }
 
 void SegmentImpl::addIntVariable(const string& varName) {
-    // TODO - allocate and initialize array
     int* values = 0;
     dataMap.insert(make_pair(&varName, values));
+}
+
+void SegmentImpl::addIntVariable(Variable* variable) {
+    int* values = 0;
+    dataMap.insert(make_pair(&variable->getId(), values));
 }
 
 size_t SegmentImpl::computePosition(size_t k, size_t l, size_t m) const {
