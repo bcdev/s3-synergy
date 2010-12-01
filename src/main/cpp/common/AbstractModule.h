@@ -54,6 +54,13 @@ public:
     virtual void stop() {
     };
 
+    /**
+     * Returns the minimum line of the input product, which is needed for the
+     * module to compute the line given as parameter. Method may be subclassed.
+     * 
+     * @param line The index of a line to be computed.
+     * @return The corresponding input line needed for the computation.
+     */
     virtual size_t getMinLineRequired(size_t line) const {
         return line;
     }
@@ -65,6 +72,7 @@ public:
             return segment.getMinL();
         }
     }
+    
 private:
     const string id;
     const string version;

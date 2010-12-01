@@ -22,19 +22,26 @@ MockReader::~MockReader() {
 
 Segment* MockReader::processSegment(ProcessorContext& context) {
     if (context.containsSegment("SYN_COLLOCATED")) {
+        // modifying segment bounds
         Segment& segment = context.getSegment("SYN_COLLOCATED");
         size_t minRequiredLine = context.getMinLineRequired(segment);
-        size_t maxComputedLine = context.getMaxLineComputed(segment, *this);
-        size_t newMinL = min(minRequiredLine, maxComputedLine);
-        size_t newMaxL = newMinL + stepSize;
-        if( newMaxL >= lineCount ) {
-            newMaxL = lineCount;
-        }
-        segment.setMinL(newMinL);
-        segment.setMaxL(newMaxL);
+        segment.setMinL(minRequiredLine);
+        segment.setMaxL(minRequiredLine + stepSize);
+
+        // modifying segment values
         Logger::get()->progress("Reading data for segment [" + segment.toString() + "]", "MockReader");
-        // TODO - fill segment with data from newMinL to newMaxL
-        context.setMaxLineComputed(segment, *this, newMaxL);
+        size_t startLine = context.getMaxLineComputed(segment, *this);
+        size_t endLine = segment.getMaxL();
+        for( size_t l = startLine; l < endLine; l++ ) {
+            for( size_t m = segment.getMinM(); m < segment.getMaxM(); m++) {
+                for( size_t k = segment.getMinK(); k < segment.getMaxK(); k++ ) {
+//                    TODO - read values
+//                    segment.setSampleInt();
+                }
+            }
+        }
+
+        context.setMaxLineComputed(segment, *this, segment.getMaxL());
         return &context.getSegment("SYN_COLLOCATED");
     } else {
         // initial reading

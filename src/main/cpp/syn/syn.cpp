@@ -7,6 +7,7 @@
 #include "../common/Processor.h"
 #include "../common/ProcessorContext.h"
 #include "../common/SynL2Writer.h"
+#include "../common/TestModule.h"
 
 #include <iostream>
 
@@ -25,10 +26,12 @@ int main() {
 
     MockReader reader;
     PixelClassification pixelClassification;
+    TestModule test;
 
     Processor processor;
     processor.addModule(reader);
     processor.addModule(pixelClassification);
+    processor.addModule(test);
 
     Logger* logger = Logger::get();
     logger->setErrLogLevel(jobOrder.getConfig().getErrorLogLevel());
