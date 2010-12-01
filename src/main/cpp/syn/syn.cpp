@@ -43,4 +43,5 @@ int main() {
 
     //logger->writeLogFile(jobOrder.getConfig().getOrderId());
     delete logger;
+    return 0;
 }
