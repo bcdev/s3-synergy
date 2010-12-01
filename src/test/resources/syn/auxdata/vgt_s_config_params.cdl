@@ -1,0 +1,27 @@
+netcdf syn_config_params {
+dimensions:
+	NDV_channel_dim = 2 ; // dimension needed for variable 'NDV_channel'
+variables:
+	int NDV_channel(NDV_channel_dim) ;
+		NDV_channel:valid_min = 1 ;
+		NDV_channel:valid_max = 4 ;
+
+// global attributes:
+		:Conventions = "CF-1.4" ;
+		:title = "syn config parameters" ;
+		:institution = "Brockmann Consult" ;	// TBD
+		:source = "The method of production of data" ;	// TBD
+		:history = "audit trail for modifications of the data" ;	// TBD
+		:comment = "??" ;
+		:references = "When delivered: reference to ATBD and DPM" ;
+		:contact = "{ralf.quast, thomas.storm}@brockmann-consult.de" ;
+		:netCDF_version = "netCDF-4" ;
+		:dataset_name = "syn_config_params.nc" ;
+		:creation_time = "20101130T161206Z" ;
+		:validity_start = "???" ;
+		:validity_stop = "???" ;
+data:
+
+ NDV_channel = 2, 3 ;
+ 
+}

@@ -1,0 +1,54 @@
+netcdf vgt_p_spectral_response_function {
+dimensions:
+	AMIN = 40 ;
+	ADA = 10 ;
+	B0_wavelength = TBD ;
+	B2_wavelength = TBD ;
+	B3_wavelength = TBD ;
+	MIR_wavelength = TBD ;
+
+variables:
+	float B0_wavelength(B0_wavelength) ;
+		B0_wavelength:units = "nm" ;
+		B0_wavelength:valid_min = 410.0 ;
+		B0_wavelength:valid_max = 500.0 ;
+	float B2_wavelength(B2_wavelength) ;
+		B2_wavelength:units = "nm" ;
+		B2_wavelength:valid_min = 560.0 ;
+		B2_wavelength:valid_max = 780.0 ;
+	float B3_wavelength(B3_wavelength) ;
+		B3_wavelength:units = "nm" ;
+		B3_wavelength:valid_min = 700.0 ;
+		B3_wavelength:valid_max = 1000.0 ;
+	float MIR_wavelength(MIR_wavelength) ;
+		MIR_wavelength:units = "nm" ;
+		MIR_wavelength:valid_min = 1500.0 ;
+		MIR_wavelength:valid_max = 1800.0 ;
+	float B0_SRF(B0_wavelength) ;
+		B0_SRF:valid_min = TBD ;
+		B0_SRF:valid_max = TBD ;
+	float B2_SRF(B2_wavelength) ;
+		B2_SRF:valid_min = TBD ;
+		B2_SRF:valid_max = TBD ;
+	float B3_SRF(B3_wavelength) ;
+		B3_SRF:valid_min = TBD ;
+		B3_SRF:valid_max = TBD ;
+	float MIR_SRF(MIR_wavelength) ;
+		MIR_wavelength:valid_min = TBD ;
+		MIR_wavelength:valid_max = TBD ;
+
+// global attributes:
+		:Conventions = "CF-1.4" ;
+		:title = "VGT-P auxiliary data" ;
+		:institution = "Brockmann Consult" ;	// TBD
+		:source = "The method of production of data" ;	// TBD
+		:history = "audit trail for modifications of the data" ;	// TBD
+		:comment = "??" ;
+		:references = "When delivered: reference to ATBD and DPM" ;
+		:contact = "{ralf.quast, thomas.storm}@brockmann-consult.de" ;
+		:netCDF_version = "netCDF-4" ;
+		:dataset_name = "vgt_p_spectral_response.nc" ;
+		:creation_time = "20101130T161206Z" ;
+		:validity_start = "???" ;
+		:validity_stop = "???" ;
+}

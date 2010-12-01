@@ -53,8 +53,8 @@ variables:
 		water_vapour:valid_max = 5.f ;
 	int AMIN(AMIN) ;
 		AMIN:long_name = "Aerosol model index number" ;
-		AMIN:valid_min = 1.f ;
-		AMIN:valid_max = 40.f ;
+		AMIN:valid_min = 1 ;
+		AMIN:valid_max = 40 ;
 	float T550(T550) ;
 		T550:long_name = "Aerosol optical thickness" ;
 		T550:valid_min = 0.f ;
@@ -118,9 +118,9 @@ variables:
 // global attributes:
 		:Conventions = "CF-1.4" ;
 		:title = "syn auxiliary data" ;
-		:institution = "Brockmann Consult" ;
-		:source = "The method of production of data" ;
-		:history = "audit trail for modifications of the data" ;
+		:institution = "Brockmann Consult" ;	// TBD
+		:source = "The method of production of data" ;	// TBD
+		:history = "audit trail for modifications of the data" ;	// TBD
 		:comment = "??" ;
 		:references = "When delivered: reference to ATBD and DPM" ;
 		:contact = "{ralf.quast, thomas.storm}@brockmann-consult.de" ;
