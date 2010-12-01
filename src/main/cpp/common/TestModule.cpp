@@ -18,9 +18,10 @@
  * Created on December 1, 2010, 11:30 AM
  */
 
-#include "TestModule.h"
+#include <iostream>
 
 #include "ProcessorContext.h"
+#include "TestModule.h"
 
 TestModule::TestModule() : AbstractModule("TestModule") {
 }
@@ -38,7 +39,11 @@ Segment* TestModule::processSegment(ProcessorContext& context) {
             }
         }
     }
-    context.setMaxLineComputed(segment, *this, segment.getMaxL() - overlap );
+    if (segment.getMaxL() != context.getMaxLine(segment)) {
+        context.setMaxLineComputed(segment, *this, segment.getMaxL() - overlap);
+    } else {
+        context.setMaxLineComputed(segment, *this, segment.getMaxL());
+    }
 
     return &segment;
 }

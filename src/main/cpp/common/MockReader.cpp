@@ -26,7 +26,7 @@ Segment* MockReader::processSegment(ProcessorContext& context) {
         Segment& segment = context.getSegment("SYN_COLLOCATED");
         size_t minRequiredLine = context.getMinLineRequired(segment);
         segment.setMinL(minRequiredLine);
-        segment.setMaxL(minRequiredLine + stepSize);
+        segment.setMaxL(min(minRequiredLine + stepSize, lineCount));
 
         // modifying segment values
         Logger::get()->progress("Reading data for segment [" + segment.toString() + "]", "MockReader");

@@ -13,7 +13,7 @@
 
 class MockReader : public AbstractModule {
 public:
-    MockReader(size_t lineCount = 60000, size_t stepSize = 1000);
+    MockReader(size_t lineCount = 10000, size_t stepSize = 1000);
     virtual ~MockReader();
 
     Segment* processSegment(ProcessorContext& context);
