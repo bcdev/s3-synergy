@@ -35,6 +35,8 @@ Logger::~Logger() {
     logFile.close();
 }
 
+// TODO - remove module version and replace by processor version
+
 void Logger::debug(string message, string moduleName) {
     debug(message, moduleName, "1.0-SNAPSHOT");
 }

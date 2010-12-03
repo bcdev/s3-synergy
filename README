@@ -44,3 +44,8 @@ Thomas Storm
 Brockmann Consult
 21502 Geesthacht, Germany
 thomas.storm@brockmann-consult.de
+
+    // // create a SAFE archive using the C++ API
+    // Safe safeFile((char*) "hello3.safe",
+    // (char*) "esa/safe/1.2/envisat/meris/fr/level-2");
+    // safeFile.save();

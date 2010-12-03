@@ -46,12 +46,12 @@ Segment* SynL2Writer::processSegment(ProcessorContext& context) {
         for (size_t k = segment.getMinK(); k < segment.getMaxK(); k++) {
             for (size_t m = minM; m < maxM; m++) {
                 size_t position = 0;
-                values[position] = segment.getSampleInt(variableName, segment.computePosition(k, l, m));
+//                values[position] = segment.getSampleInt(variableName, segment.computePosition(k, l, m));
             }
         }
     }
 
-    ncVar->put_rec(values);
+//    ncVar->put_rec(values);
 
     context.setMaxLineComputed(segment, *this, segment.getMaxL());
     return &segment;
@@ -90,6 +90,8 @@ NcVar* SynL2Writer::getNcVar(NcFile* dataFile, Variable* var) {
         size_t dimCount = var->getDimensions().size();
         NcType type = var->getType();
         NcVar* ncVar = dataFile->add_var(varId, type, dimCount, ncDims);
+        if( dataFile->get_var("hans") == 0) {
+        }
         addedVariables[var] = ncVar;
         return ncVar;
     } else {

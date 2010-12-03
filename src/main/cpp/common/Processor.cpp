@@ -35,6 +35,7 @@ void Processor::process(ProcessorContext& context) {
             if (target != 0 && !context.containsSegment(*target)) {
                 context.addSegment(*target);
             }
+            // TODO - check
             size_t maxLineComputed = 0;
             if( context.hasMaxLineComputed(*target, *modules[i]) ) {
                 maxLineComputed = context.getMaxLineComputed(*target, *modules[i]);

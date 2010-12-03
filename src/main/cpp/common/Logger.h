@@ -43,7 +43,6 @@ public:
     void progress(string message, string moduleName);
     void warning(string message, string moduleName);
     void error(string message, string moduleName);
-    void writeLogFile(string orderId);
     vector<string*> getMessageBuffer() const;
     void setOutLogLevel(string outLogLevel);
     void setErrLogLevel(string errLogLevel);

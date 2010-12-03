@@ -32,6 +32,9 @@ public:
      */
     virtual size_t getMinLineRequired(size_t line) const = 0;
     virtual Segment* processSegment(ProcessorContext& context) = 0;
+
+protected:
+    virtual Variable* createVariable(string id) = 0;
 };
 
 #endif	/* MODULE_H */

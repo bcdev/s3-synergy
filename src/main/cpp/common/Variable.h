@@ -28,42 +28,26 @@
 using std::string;
 using std::vector;
 
-template <class T> class Attribute;
 class Dimension;
-
-class Variable {
-public:
-    Variable(string id, NcType type) : id(id), type(type) {};
-    virtual ~Variable() {};
-
-    virtual void addAttribute(Attribute<void*>* attribute) = 0;
-    virtual void addDimension(Dimension* dimension) = 0;
-    virtual string getId() const = 0;
-    virtual NcType getType() const = 0;
-    virtual vector<Dimension*> getDimensions() const = 0;
-    virtual vector<Attribute<void*>*> getAttributes() const = 0;
-
-protected:
-    vector<Attribute<void*>*> attributes;
-    vector<Dimension*> dims;
-    string id;
-    NcType type;
-};
 
 template <class T> class Attribute {
 public:
+
     Attribute(string key) : key(key) {
     }
 
     void setValue(T value) {
         this->value = value;
     }
+
     T getValue() const {
         return value;
     }
+
     void setUnit(string unit) {
         this->unit = unit;
     }
+
     string getUnit() const {
         return unit;
     }
@@ -74,14 +58,72 @@ private:
     T value;
 };
 
+// TODO - check attributes
+class Variable {
+public:
+
+    Variable(string id, NcType type) : id(id), type(type) {
+    };
+
+    virtual ~Variable() {
+    };
+
+    virtual void addAttribute(Attribute<void*>* attribute) = 0;
+    virtual void addDimension(Dimension* dimension) = 0;
+    virtual string getId() const = 0;
+    virtual NcType getType() const = 0;
+    virtual vector<Dimension*> getDimensions() const = 0;
+    virtual vector<Attribute<void*>*> getAttributes() const = 0;
+
+    static Attribute<void*>* createIntAttribute(string key, int value) {
+        Attribute<void*>* attribute = new Attribute<void*>(key);
+        int valueArray[1];
+        valueArray[0] = value;
+        attribute->setValue(valueArray);
+        return attribute;
+    }
+
+    static Attribute<void*>* createShortAttribute(string key, int value) {
+        Attribute<void*>* attribute = new Attribute<void*>(key);
+        short valueArray[1];
+        valueArray[0] = value;
+        attribute->setValue(valueArray);
+        return attribute;
+    }
+
+    static Attribute<void*>* createFloatAttribute(string key, float value) {
+        Attribute<void*>* attribute = new Attribute<void*>(key);
+        float valueArray[1];
+        valueArray[0] = value;
+        attribute->setValue(valueArray);
+        return attribute;
+    }
+
+    static Attribute<void*>* createStringAttribute(string key, string value) {
+        Attribute<void*>* attribute = new Attribute<void*>(key);
+        string valueArray[1];
+        valueArray[0] = value;
+        attribute->setValue(valueArray);
+        return attribute;
+    }
+
+protected:
+    vector<Attribute<void*>*> attributes;
+    vector<Dimension*> dims;
+    string id;
+    NcType type;
+};
+
 class Dimension {
 public:
 
     Dimension(string name, int range) : name(name), range(range) {
     }
+
     int getRange() const {
         return range;
     }
+
     string getName() const {
         return name;
     }

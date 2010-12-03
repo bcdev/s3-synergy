@@ -67,7 +67,7 @@ private:
     size_t minM;
     size_t maxM;
 
-    map<const string*, void*> dataMap;
+    map<const string*, int*> intDataMap;
     set<Variable*> variables;
 };
 

@@ -35,11 +35,6 @@ public:
 
 private:
     static const size_t overlap = 100;
-    Variable* createSDR_1Variable();
-    Attribute<void*>* createIntAttribute(string key, int value);
-    Attribute<void*>* createShortAttribute(string key, int value);
-    Attribute<void*>* createStringAttribute(string key, string value);
-    Attribute<void*>* createFloatAttribute(string key, float value);
 };
 
 #endif	/* TESTMODULE_H */

@@ -45,14 +45,16 @@ SegmentImpl::~SegmentImpl() {
 }
 
 void SegmentImpl::addIntVariable(const string& varName) {
+    // TODO - allocate memory etc.
     int* values = 0;
-    dataMap[&varName] = values;
+    intDataMap[&varName] = values;
 }
 
 void SegmentImpl::addIntVariable(Variable* variable) {
+    // TODO - allocate memory etc.
     int* values = 0;
     variables.insert(variable);
-    dataMap.insert(make_pair(&(variable->getId()), values));
+    intDataMap.insert(make_pair(&(variable->getId()), values));
 }
 
 Variable* SegmentImpl::getIntVariable(const string& varName) {
@@ -122,10 +124,10 @@ string SegmentImpl::toString() const {
 }
 
 int SegmentImpl::getSampleInt(const string& varName, size_t position) {
-    //    for(map<const string*, void*>::iterator iter = dataMap.begin(); iter != dataMap.end(); iter++) {
-    //    }
-    //    dataMap.at(&varName);
-    return 0;
+    // TODO - this is wrong
+    map<const string*, int*>::iterator iter = intDataMap.find(&varName);
+    int* values = iter->second;
+    return values[position];
 }
 
 void SegmentImpl::setSampleInt(const string& varName, size_t position, int value) {
@@ -137,7 +139,7 @@ size_t SegmentImpl::getValueCount() const {
 }
 
 void SegmentImpl::setSamplesInt(const string& varName, int* values) {
-    dataMap[&varName] = values;
+    intDataMap[&varName] = values;
 }
 
 void SegmentImpl::setMaxL(size_t maxL) {

@@ -29,8 +29,11 @@ PixelClassification::~PixelClassification() {
 
 Segment* PixelClassification::processSegment(ProcessorContext& context) {
     Segment& segment = context.getSegment("SYN_COLLOCATED");
-     Logger::get()->progress( "Starting to process segment " + segment.toString(), getModuleId(), getVersion() );
-    // TODO - parallelize
+    if (segment.getIntVariable("SYN_flags") == 0) {
+    // TODO replace by segment.createVariable("SYN_flags");
+        segment.addIntVariable(createSYN_flagsVariable());
+    }
+    Logger::get()->progress( "Starting to process segment " + segment.toString(), getModuleId(), getVersion() );
     for (size_t l = getMinLineNotComputed(segment, context); l <= segment.getMaxL(); l++) {
         for (size_t k = segment.getMinK(); k <= segment.getMaxK(); k++) {
             for (size_t m = segment.getMinM(); m <= segment.getMaxM(); m++) {
@@ -57,7 +60,27 @@ Segment* PixelClassification::processSegment(ProcessorContext& context) {
             }
         }
     }
+    // TODO - check if needed here; don't want to set this explicitly for a pixel processor
     context.setMaxLineComputed(segment, *this, segment.getMaxL());
     
     return &segment;
+}
+
+Variable* PixelClassification::createSYN_flagsVariable() {
+    Variable* var = new VariableImpl("SYN_flags", ncInt);
+    var->addDimension(new Dimension("N_CAM", 5)); // Number of OLCI camera modules
+    var->addDimension(new Dimension("N_LINE_OLC", 10000)); // Number of lines in OLCI camera image - TODO - replace with correct value
+    var->addDimension(new Dimension("N_DET_CAM", 760)); // Number of pixels per line in OLCI camera image - TODO - replace with correct value
+    var->addAttribute(Variable::createStringAttribute("standard_name", "surface_directional_reflectance"));
+    var->addAttribute(Variable::createStringAttribute("long_name", "Surface directional reflectance for SYN channel 1"));
+    var->addAttribute(Variable::createFloatAttribute("_FillValue", -10.000));
+    var->addAttribute(Variable::createFloatAttribute("scale_factor", 0.0001));
+    var->addAttribute(Variable::createShortAttribute("valid_min", 0));
+    var->addAttribute(Variable::createShortAttribute("valid_max", 10000));
+    var->addAttribute(Variable::createStringAttribute("ancillary_variables", "SDR_1_er"));
+    var->addAttribute(Variable::createShortAttribute("channel", 1));
+    var->addAttribute(Variable::createFloatAttribute("central_wavelength", 400));
+    var->addAttribute(Variable::createFloatAttribute("min_wavelength", 100));
+    var->addAttribute(Variable::createFloatAttribute("max_wavelength", 700));
+    return var;
 }
