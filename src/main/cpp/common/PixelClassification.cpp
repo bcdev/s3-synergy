@@ -29,7 +29,7 @@ PixelClassification::~PixelClassification() {
 
 Segment* PixelClassification::processSegment(ProcessorContext& context) {
     Segment& segment = context.getSegment("SYN_COLLOCATED");
-     Logger::get()->progress( "Starting to process segment " + segment.toString(), getId(), getVersion() );
+     Logger::get()->progress( "Starting to process segment " + segment.toString(), getModuleId(), getVersion() );
     // TODO - parallelize
     for (size_t l = getMinLineNotComputed(segment, context); l <= segment.getMaxL(); l++) {
         for (size_t k = segment.getMinK(); k <= segment.getMaxK(); k++) {

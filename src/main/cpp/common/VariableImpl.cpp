@@ -22,14 +22,30 @@
 
 #include "VariableImpl.h"
 
-VariableImpl::VariableImpl(string id) : Variable(id) {}
+VariableImpl::VariableImpl(string id, NcType type) : Variable(id, type) {}
 
 VariableImpl::~VariableImpl() {}
 
 void VariableImpl::addAttribute(Attribute<void*>* attribute) {
-    this->attributes.push_back(attribute);
+    attributes.push_back(attribute);
 }
 
-string VariableImpl::getId() {
+void VariableImpl::addDimension(Dimension* dimension) {
+    dims.push_back(dimension);
+}
+
+string VariableImpl::getId() const {
     return id;
+}
+
+NcType VariableImpl::getType() const {
+    return type;
+}
+
+vector<Dimension*> VariableImpl::getDimensions() const {
+    return dims;
+}
+
+vector<Attribute<void*>*> VariableImpl::getAttributes() const {
+    return attributes;
 }

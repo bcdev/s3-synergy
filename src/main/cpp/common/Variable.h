@@ -33,18 +33,21 @@ class Dimension;
 
 class Variable {
 public:
-    Variable(string id) : id(id) {};
+    Variable(string id, NcType type) : id(id), type(type) {};
     virtual ~Variable() {};
 
     virtual void addAttribute(Attribute<void*>* attribute) = 0;
-    virtual string getId() = 0;
+    virtual void addDimension(Dimension* dimension) = 0;
+    virtual string getId() const = 0;
+    virtual NcType getType() const = 0;
+    virtual vector<Dimension*> getDimensions() const = 0;
+    virtual vector<Attribute<void*>*> getAttributes() const = 0;
 
 protected:
     vector<Attribute<void*>*> attributes;
-    string id;
-private:
-    NcType type;
     vector<Dimension*> dims;
+    string id;
+    NcType type;
 };
 
 template <class T> class Attribute {
@@ -74,12 +77,17 @@ private:
 class Dimension {
 public:
 
-    Dimension(string name, NcType type) : key(key), type(type), range(range) {
+    Dimension(string name, int range) : name(name), range(range) {
+    }
+    int getRange() const {
+        return range;
+    }
+    string getName() const {
+        return name;
     }
 
 private:
-    string key;
-    NcType type;
+    string name;
     int range;
 };
 

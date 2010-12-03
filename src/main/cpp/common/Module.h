@@ -18,7 +18,7 @@ public:
     virtual ~Module() {
     };
 
-    virtual const string& getId() const = 0;
+    virtual const string& getModuleId() const = 0;
     virtual const string& getVersion() const = 0;
     virtual void start() = 0;
     virtual void stop() = 0;

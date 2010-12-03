@@ -33,8 +33,10 @@ TestModule::~TestModule() {
 
 Segment* TestModule::processSegment(ProcessorContext& context) {
     Segment& segment = context.getSegment("SYN_COLLOCATED");
-    segment.addIntVariable(createTestVariable());
-    Logger::get()->progress("Starting to process segment " + segment.toString(), getId(), getVersion());
+    if (segment.getIntVariable("SDR_1") == 0 ) {
+        segment.addIntVariable(createSDR_1Variable());
+    }
+    Logger::get()->progress("Starting to process segment " + segment.toString(), getModuleId(), getVersion());
     for (size_t l = getMinLineNotComputed(segment, context); l <= segment.getMaxL() - overlap; l++) {
         for (size_t k = segment.getMinK(); k <= segment.getMaxK(); k++) {
             for (size_t m = segment.getMinM(); m <= segment.getMaxM(); m++) {
@@ -55,8 +57,11 @@ size_t TestModule::getMinLineRequired(size_t line) const {
     return line - overlap;
 }
 
-Variable* TestModule::createTestVariable() {
-    Variable* var = new VariableImpl("SDR_1");
+Variable* TestModule::createSDR_1Variable() {
+    Variable* var = new VariableImpl("SDR_1", ncInt);
+    var->addDimension(new Dimension("N_CAM", 5)); // Number of OLCI camera modules
+    var->addDimension(new Dimension("N_LINE_OLC", 10000)); // Number of lines in OLCI camera image - TODO - replace with correct value
+    var->addDimension(new Dimension("N_DET_OLC", 760)); // Number of pixels per line in OLCI camera image - TODO - replace with correct value
     var->addAttribute(createStringAttribute("standard_name", "surface_directional_reflectance"));
     var->addAttribute(createStringAttribute("long_name", "Surface directional reflectance for SYN channel 1"));
     var->addAttribute(createFloatAttribute("_FillValue", -10.000));

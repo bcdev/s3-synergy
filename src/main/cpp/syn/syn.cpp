@@ -30,7 +30,7 @@ int main() {
     processor.addModule(reader);
     processor.addModule(pixelClassification);
     processor.addModule(test);
-    processor.addModule(writer);
+//    processor.addModule(writer);
 
     Logger* logger = Logger::get();
     logger->setErrLogLevel(jobOrder.getConfig().getErrorLogLevel());

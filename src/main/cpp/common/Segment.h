@@ -37,16 +37,23 @@ public:
     };
 
     /**
-     * Adds a variable to the segment and sets all values to 0.
+     * Adds an integer variable to the segment and sets all values to 0.
      * @param varName The name of the variable to add.
      */
     virtual void addIntVariable(const string& varName) = 0;
 
     /**
-     * Adds a variable to the segment and sets all values to 0.
+     * Adds an integer variable to the segment and sets all values to 0.
      * @param variable The variable to add.
      */
     virtual void addIntVariable(Variable* variable) = 0;
+
+    /**
+     * Getter for an integer variable, given by its Id.
+     * @param varName The Id of the variable to return.
+     * @return The variable with the given Id.
+     */
+    virtual Variable* getIntVariable(const string& varName) = 0;
 
     /**
      * Computes the position for a pixel of interest.
@@ -117,7 +124,7 @@ public:
      * @param position The position of interest.
      * @return the sample value.
      */
-    virtual int getSampleInt(const string& varName, size_t position) const = 0;
+    virtual int getSampleInt(const string& varName, size_t position) = 0;
 
     /**
      * Sets the sample value of a variable at a position of interest.

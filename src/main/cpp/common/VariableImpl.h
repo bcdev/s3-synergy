@@ -25,10 +25,14 @@
 
 class VariableImpl : public Variable {
 public:
-    VariableImpl(string id);
+    VariableImpl(string id, NcType type);
     ~VariableImpl();
     void addAttribute(Attribute<void*>* attribute);
-    string getId();
+    void addDimension(Dimension* dimension);
+    string getId() const;
+    NcType getType() const;
+    vector<Dimension*> getDimensions() const;
+    vector<Attribute<void*>*> getAttributes() const;
 };
 
 #endif	/* VARIABLEIMPL_H */

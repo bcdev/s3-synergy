@@ -39,7 +39,7 @@ public:
     virtual ~AbstractModule() {
     };
 
-    const string& getId() const {
+    const string& getModuleId() const {
         return id;
     };
 

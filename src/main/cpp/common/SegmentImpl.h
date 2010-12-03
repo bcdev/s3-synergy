@@ -22,11 +22,13 @@
 #define	SEGMENTIMPL_H
 
 #include <map>
+#include <set>
 
 #include "Segment.h"
 
 using std::map;
 using std::string;
+using std::set;
 
 class SegmentImpl : public Segment {
 public:
@@ -35,6 +37,7 @@ public:
 
     void addIntVariable(const string& varName);
     void addIntVariable(Variable* variable);
+    Variable* getIntVariable(const string& varName);
     size_t computePosition(size_t k, size_t l, size_t m) const;
     const string& getId() const;
     size_t getMaxK() const;
@@ -48,7 +51,7 @@ public:
 
     string toString() const;
 
-    int getSampleInt(const string& varName, size_t position) const;
+    int getSampleInt(const string& varName, size_t position);
     void setSampleInt(const string& varName, size_t position, int value);
     void setSamplesInt( const string& varName, int* values );
 
@@ -65,6 +68,7 @@ private:
     size_t maxM;
 
     map<const string*, void*> dataMap;
+    set<Variable*> variables;
 };
 
 #endif	/* SEGMENTIMPL_H */

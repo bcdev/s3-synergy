@@ -14,21 +14,24 @@
  *
  * File:   SegmentImpl.cpp
  * Author: thomass
- * 
+ *
  * Created on November 11, 2010, 10:04 AM
  */
 
+#include <stdexcept>
+
 #include "SegmentImpl.h"
 #include "StringUtils.h"
+#include "Logger.h"
 
 using std::make_pair;
 
-SegmentImpl::SegmentImpl(const string& segmentId, 
-        size_t minL, 
-        size_t maxL, 
-        size_t minK, 
-        size_t maxK, 
-        size_t minM, 
+SegmentImpl::SegmentImpl(const string& segmentId,
+        size_t minL,
+        size_t maxL,
+        size_t minK,
+        size_t maxK,
+        size_t minM,
         size_t maxM) : id(segmentId) {
     this->minL = minL;
     this->maxL = maxL;
@@ -43,12 +46,22 @@ SegmentImpl::~SegmentImpl() {
 
 void SegmentImpl::addIntVariable(const string& varName) {
     int* values = 0;
-    dataMap.insert(make_pair(&varName, values));
+    dataMap[&varName] = values;
 }
 
 void SegmentImpl::addIntVariable(Variable* variable) {
     int* values = 0;
-    dataMap.insert(make_pair(&variable->getId(), values));
+    variables.insert(variable);
+    dataMap.insert(make_pair(&(variable->getId()), values));
+}
+
+Variable* SegmentImpl::getIntVariable(const string& varName) {
+    for (set<Variable*>::const_iterator iter = variables.begin(); iter != variables.end(); iter++) {
+        if ((*iter)->getId().compare(varName) == 0) {
+            return *iter;
+        }
+    }
+    return 0;
 }
 
 size_t SegmentImpl::computePosition(size_t k, size_t l, size_t m) const {
@@ -85,31 +98,33 @@ size_t SegmentImpl::getMinM() const {
 
 string SegmentImpl::toString() const {
     string result;
-    result.append( "id: " );
-    result.append( id );
-    result.append( ", " );
-    result.append( "minL: " );
-    result.append( StringUtils::intToString(minL) );
-    result.append( ", " );
-    result.append( "maxL: " );
-    result.append( StringUtils::intToString(maxL ) );
-    result.append( ", " );
-    result.append( "minK: " );
-    result.append( StringUtils::intToString(minK ) );
-    result.append( ", " );
-    result.append( "maxK: " );
-    result.append( StringUtils::intToString(maxK ) );
-    result.append( ", " );
-    result.append( "minM: " );
-    result.append( StringUtils::intToString(minM ) );
-    result.append( ", " );
-    result.append( "maxM: " );
-    result.append( StringUtils::intToString(maxM ) );
+    result.append("id: ");
+    result.append(id);
+    result.append(", ");
+    result.append("minL: ");
+    result.append(StringUtils::intToString(minL));
+    result.append(", ");
+    result.append("maxL: ");
+    result.append(StringUtils::intToString(maxL));
+    result.append(", ");
+    result.append("minK: ");
+    result.append(StringUtils::intToString(minK));
+    result.append(", ");
+    result.append("maxK: ");
+    result.append(StringUtils::intToString(maxK));
+    result.append(", ");
+    result.append("minM: ");
+    result.append(StringUtils::intToString(minM));
+    result.append(", ");
+    result.append("maxM: ");
+    result.append(StringUtils::intToString(maxM));
     return result;
 }
 
-int SegmentImpl::getSampleInt(const string& varName, size_t position) const {
-    // TODO - check type and get sample value
+int SegmentImpl::getSampleInt(const string& varName, size_t position) {
+    //    for(map<const string*, void*>::iterator iter = dataMap.begin(); iter != dataMap.end(); iter++) {
+    //    }
+    //    dataMap.at(&varName);
     return 0;
 }
 
@@ -124,9 +139,11 @@ size_t SegmentImpl::getValueCount() const {
 void SegmentImpl::setSamplesInt(const string& varName, int* values) {
     dataMap[&varName] = values;
 }
+
 void SegmentImpl::setMaxL(size_t maxL) {
     this->maxL = maxL;
 }
+
 void SegmentImpl::setMinL(size_t minL) {
     this->minL = minL;
 }
