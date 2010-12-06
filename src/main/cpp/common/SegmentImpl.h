@@ -46,6 +46,7 @@ public:
     size_t getMinL() const;
     size_t getMaxM() const;
     size_t getMinM() const;
+    size_t getValueCount() const;
     void setMaxL(size_t maxL);
     void setMinL(size_t minL);
 
@@ -56,8 +57,6 @@ public:
     void setSamplesInt( const string& varName, int* values );
 
 private:
-    size_t getValueCount() const;
-
     const string id;
     
     size_t minL;

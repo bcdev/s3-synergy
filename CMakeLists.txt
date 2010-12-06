@@ -7,8 +7,15 @@ set(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
 
 cmake_minimum_required (VERSION 2.8)
 
-include_directories(${JAVA_HOME}/include ${JAVA_HOME}/include/linux ${SAFE_HOME}/include /usr/local/include /usr/include)
-link_directories(${SYN_SOURCES} ${JAVA_HOME}/jre/lib/${OS_ARCH} ${JAVA_HOME}/jre/lib/${OS_ARCH}/client ${JAVA_HOME}/jre/lib/${OS_ARCH}/server ${SAFE_HOME}/lib/c++/LINUX /usr/lib /usr/local/lib)
+include_directories(${JAVA_HOME}/include})
+include_directories(${JAVA_HOME}/include/linux)
+include_directories(${SAFE_HOME}/include)
+include_directories(SYSTEM /usr/local/include /usr/include)
+link_directories(${SYN_SOURCES})
+link_directories(${JAVA_HOME}/jre/lib/${OS_ARCH})
+link_directories(${JAVA_HOME}/jre/lib/${OS_ARCH}/client ${JAVA_HOME}/jre/lib/${OS_ARCH}/server)
+link_directories(${SAFE_HOME}/lib/c++/LINUX)
+link_directories(/usr/lib /usr/local/lib)
 
 file(GLOB COMMON_SOURCES src/main/cpp/common/*.cpp)
 file(GLOB SYN_SOURCES src/main/cpp/syn/*.cpp)

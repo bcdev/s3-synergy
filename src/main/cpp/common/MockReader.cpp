@@ -21,7 +21,6 @@ MockReader::~MockReader() {
 }
 
 Segment* MockReader::processSegment(ProcessorContext& context) {
-
     if (!context.containsSegment("SYN_COLLOCATED")) {
         // initial reading
         size_t minL = 0;
