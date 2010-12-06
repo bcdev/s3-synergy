@@ -26,6 +26,7 @@
 #include "Variable.h"
 
 using std::string;
+using std::vector;
 
 class Segment {
 public:
@@ -37,10 +38,10 @@ public:
     };
 
     /**
-     * Adds an integer variable to the segment and sets all values to 0.
+     * Adds an integer variable to the segment and allocates memory.
      * @param varName The name of the variable to add.
      */
-    virtual void addIntVariable(const string& varName) = 0;
+    virtual void addIntVariable(const string& varName, size_t valueCount) = 0;
 
     /**
      * Adds an integer variable to the segment and sets all values to 0.
@@ -140,7 +141,7 @@ public:
      * @param varName The name of the variable of interest.
      * @param values The sample values, given as int array.
      */
-    virtual void setSamplesInt(const string& varName, int* values) = 0;
+    virtual void setSamplesInt(const string& varName, vector<int>* values) = 0;
 
     /**
      * Returns a string representation of this object.

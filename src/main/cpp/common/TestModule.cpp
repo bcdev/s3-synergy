@@ -35,7 +35,7 @@ Segment* TestModule::processSegment(ProcessorContext& context) {
     if (segment.getIntVariable("SDR_1") == 0 ) {
         segment.addIntVariable(createVariable("SDR_1"));
     }
-    Logger::get()->progress("Starting to process segment " + segment.toString(), getModuleId(), getVersion());
+    Logger::get()->progress("Starting to process segment [" + segment.toString() + "]", getModuleId(), getVersion());
     for (size_t l = getMinLineNotComputed(segment, context); l <= segment.getMaxL() - overlap; l++) {
         for (size_t k = segment.getMinK(); k <= segment.getMaxK(); k++) {
             for (size_t m = segment.getMinM(); m <= segment.getMaxM(); m++) {

@@ -34,7 +34,7 @@ public:
     size_t getMinLineRequired(size_t line) const;
 
 private:
-    static const size_t overlap = 100;
+    static const size_t overlap = 1;
 };
 
 #endif	/* TESTMODULE_H */

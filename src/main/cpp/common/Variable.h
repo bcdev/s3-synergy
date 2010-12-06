@@ -117,10 +117,10 @@ protected:
 class Dimension {
 public:
 
-    Dimension(string name, int range) : name(name), range(range) {
+    Dimension(string name, size_t range) : name(name), range(range) {
     }
 
-    int getRange() const {
+    size_t getRange() const {
         return range;
     }
 
@@ -130,7 +130,7 @@ public:
 
 private:
     string name;
-    int range;
+    size_t range;
 };
 
 #endif	/* VARIABLE_H */

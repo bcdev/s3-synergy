@@ -14,7 +14,7 @@
  *
  * File:   PixelClassification.cpp
  * Author: thomass
- * 
+ *
  * Created on November 10, 2010, 4:26 PM
  */
 
@@ -30,12 +30,11 @@ PixelClassification::~PixelClassification() {
 Segment* PixelClassification::processSegment(ProcessorContext& context) {
     Segment& segment = context.getSegment("SYN_COLLOCATED");
     if (segment.getIntVariable("SYN_flags") == 0) {
-    // TODO replace by segment.createVariable("SYN_flags");
         segment.addIntVariable(createSYN_flagsVariable());
     }
-    Logger::get()->progress( "Starting to process segment " + segment.toString(), getModuleId(), getVersion() );
-    for (size_t l = getMinLineNotComputed(segment, context); l <= segment.getMaxL(); l++) {
-        for (size_t k = segment.getMinK(); k <= segment.getMaxK(); k++) {
+    Logger::get()->progress("Starting to process segment [" + segment.toString() + "]", getModuleId(), getVersion());
+    for (size_t k = segment.getMinK(); k <= segment.getMaxK(); k++) {
+        for (size_t l = getMinLineNotComputed(segment, context); l <= segment.getMaxL(); l++) {
             for (size_t m = segment.getMinM(); m <= segment.getMaxM(); m++) {
                 const size_t p = segment.computePosition(k, l, m);
                 const int olcFlags = segment.getSampleInt("F_OLC", p);
@@ -56,13 +55,14 @@ Segment* PixelClassification::processSegment(ProcessorContext& context) {
                 if (slnCloud || sloCloud) {
                     synFlags |= 0x0001;
                 }
-                segment.setSampleInt("F_SYN", p, synFlags);
+                //                std::cout << "position: " << p << "\n";
+                segment.setSampleInt("SYN_flags", p, synFlags);
             }
         }
     }
     // TODO - check if needed here; don't want to set this explicitly for a pixel processor
     context.setMaxLineComputed(segment, *this, segment.getMaxL());
-    
+
     return &segment;
 }
 

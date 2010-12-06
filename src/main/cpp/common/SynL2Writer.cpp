@@ -28,9 +28,9 @@ Segment* SynL2Writer::processSegment(ProcessorContext& context) {
     // TODO - for all variables to be written, do:
 
     string variableName = "SDR_1";
-    NcFile* dataFile = getDataFile(variableName);
+    NcFile*     ncFile = getDataFile(variableName);
     Variable* var = context.getSegment(segmentId).getIntVariable(variableName);
-    NcVar* ncVar = getNcVar(dataFile, var);
+    NcVar* ncVar = getNcVar(    ncFile, var);
 
     size_t minL = context.getMaxLineComputed(segment, *this);
     size_t maxL = segment.getMaxL();
@@ -53,6 +53,8 @@ Segment* SynL2Writer::processSegment(ProcessorContext& context) {
 
 //    ncVar->put_rec(values);
 
+    ncFile->sync();
+    delete[] values;
     context.setMaxLineComputed(segment, *this, segment.getMaxL());
     return &segment;
 }
@@ -90,8 +92,6 @@ NcVar* SynL2Writer::getNcVar(NcFile* dataFile, Variable* var) {
         size_t dimCount = var->getDimensions().size();
         NcType type = var->getType();
         NcVar* ncVar = dataFile->add_var(varId, type, dimCount, ncDims);
-        if( dataFile->get_var("hans") == 0) {
-        }
         addedVariables[var] = ncVar;
         return ncVar;
     } else {

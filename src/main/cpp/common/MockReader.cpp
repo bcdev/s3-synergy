@@ -31,30 +31,27 @@ Segment* MockReader::processSegment(ProcessorContext& context) {
         }
         if (minL < this->lineCount) {
             if (segment == 0) {
-                segment = new SegmentImpl("SYN_COLLOCATED", minL, min(maxL, minL + lineCount - 1));
+                const size_t columnCount = 760; // TODO - replace with correct value
+                const size_t camCount = 5; // TODO - replace with correct value
+                segment = new SegmentImpl("SYN_COLLOCATED", minL, min(maxL - 1, minL + lineCount - 1), 0, camCount - 1, 0, columnCount - 1 );
                 Logger::get()->progress("Reading data for segment [" + segment->toString() + "]", "MockReader");
 
                 // TODO - for all variables do {
 
                 // creating variables
-                const size_t columnCount = 760;
-                const size_t camCount = 5;
-                segment->addIntVariable("F_OLC");
-                segment->addIntVariable("F_SLN");
-                segment->addIntVariable("F_SLO");
+                const size_t valueCount = segment->getMaxL() * columnCount * camCount;
+                segment->addIntVariable("F_OLC", valueCount);
+                segment->addIntVariable("F_SLN", valueCount);
+                segment->addIntVariable("F_SLO", valueCount);
 
                 // TODO - fill segment with correct data
-                const size_t valueCount = segment->getMaxL() * columnCount * camCount;
-                int* olciFlagValues = new int[valueCount];
                 for (size_t i = 0; i < valueCount; i++) {
-                    olciFlagValues[i] = 0x0010;
+                    segment->setSampleInt("F_OLC", i, 0x0010);
                 }
-
-                segment->setSamplesInt("F_OLC", olciFlagValues);
 
                 // }
             }
-            context.setMaxLine(*segment, lineCount);
+            context.setMaxLine(*segment, lineCount - 1);
             context.setMaxLineComputed(*segment, *this, segment->getMaxL());
             return segment;
         } else {
@@ -65,7 +62,7 @@ Segment* MockReader::processSegment(ProcessorContext& context) {
         Segment& segment = context.getSegment("SYN_COLLOCATED");
         size_t minRequiredLine = context.getMinLineRequired(segment);
         segment.setMinL(minRequiredLine);
-        segment.setMaxL(min(minRequiredLine + stepSize, lineCount));
+        segment.setMaxL(min(minRequiredLine + stepSize - 1, lineCount - 1));
 
         // modifying segment values
         Logger::get()->progress("Reading data for segment [" + segment.toString() + "]", "MockReader");

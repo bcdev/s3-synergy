@@ -19,6 +19,7 @@
  */
 
 #include <stdexcept>
+#include <netcdfcpp.h>
 
 #include "SegmentImpl.h"
 #include "StringUtils.h"
@@ -44,17 +45,18 @@ SegmentImpl::SegmentImpl(const string& segmentId,
 SegmentImpl::~SegmentImpl() {
 }
 
-void SegmentImpl::addIntVariable(const string& varName) {
-    // TODO - allocate memory etc.
-    int* values = 0;
-    intDataMap[&varName] = values;
+void SegmentImpl::addIntVariable(const string& varName, size_t valueCount) {
+    intDataMap[varName] = new vector<int>(valueCount);
 }
 
 void SegmentImpl::addIntVariable(Variable* variable) {
-    // TODO - allocate memory etc.
-    int* values = 0;
     variables.insert(variable);
-    intDataMap.insert(make_pair(&(variable->getId()), values));
+    size_t valueCount = 0;
+    vector<Dimension*> dims = variable->getDimensions();
+    for( size_t i = 0; i < dims.size(); i++ ) {
+        valueCount += dims[i]->getRange();
+    }
+    intDataMap[variable->getId()] = new vector<int>(valueCount);
 }
 
 Variable* SegmentImpl::getIntVariable(const string& varName) {
@@ -124,22 +126,31 @@ string SegmentImpl::toString() const {
 }
 
 int SegmentImpl::getSampleInt(const string& varName, size_t position) {
-    // TODO - this is wrong
-    map<const string*, int*>::iterator iter = intDataMap.find(&varName);
-    int* values = iter->second;
-    return values[position];
+    // TODO - these lines are evil for an unknown reason
+//    vector<int>* values = intDataMap[varName];
+//    if (values == 0) {
+//        // TODO - replace with logging
+//        throw std::invalid_argument("No data for variable " + varName);
+//    }
+//    return (*values)[position];
 }
 
 void SegmentImpl::setSampleInt(const string& varName, size_t position, int value) {
-    // TODO - check type and set sample value
+    // TODO - these lines are evil for an unknown reason
+//    vector<int>* values = intDataMap[varName];
+//    if (values == 0) {
+//        // TODO - replace with logging
+//        throw std::invalid_argument("No data for variable " + varName);
+//    }
+//    (*values)[position] = value;
 }
 
 size_t SegmentImpl::getValueCount() const {
     return (maxL - minL + 1) * (maxK - minK + 1) * (maxM - minM + 1);
 }
 
-void SegmentImpl::setSamplesInt(const string& varName, int* values) {
-    intDataMap[&varName] = values;
+void SegmentImpl::setSamplesInt(const string& varName, vector<int>* values) {
+    intDataMap[varName] = values;
 }
 
 void SegmentImpl::setMaxL(size_t maxL) {

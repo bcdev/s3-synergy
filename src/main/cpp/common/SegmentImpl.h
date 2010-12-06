@@ -35,7 +35,7 @@ public:
     SegmentImpl(const string& segmentId, size_t minL, size_t maxL, size_t minK = 0, size_t maxK = 4, size_t minM = 0, size_t maxM = 760);
     ~SegmentImpl();
 
-    void addIntVariable(const string& varName);
+    void addIntVariable(const string& varName, size_t valueCount);
     void addIntVariable(Variable* variable);
     Variable* getIntVariable(const string& varName);
     size_t computePosition(size_t k, size_t l, size_t m) const;
@@ -54,11 +54,11 @@ public:
 
     int getSampleInt(const string& varName, size_t position);
     void setSampleInt(const string& varName, size_t position, int value);
-    void setSamplesInt( const string& varName, int* values );
+    void setSamplesInt(const string& varName, vector<int>* values);
 
 private:
     const string id;
-    
+
     size_t minL;
     size_t maxL;
     size_t minK;
@@ -66,7 +66,7 @@ private:
     size_t minM;
     size_t maxM;
 
-    map<const string*, int*> intDataMap;
+    map<string, vector<int>* > intDataMap;
     set<Variable*> variables;
 };
 

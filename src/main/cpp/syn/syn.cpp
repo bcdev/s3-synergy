@@ -15,7 +15,7 @@ int main() {
     // Initialize Xerces and XPath
     XPathInitializer init;
 
-    // this line ensures that errors regarding netcdf don't cause a system exit.
+    // this line ensures that errors in netcdf don't cause a system exit.
     NcError ncError = NcError(NcError::verbose_nonfatal);
 
     // TODO - needed as argument
@@ -24,7 +24,7 @@ int main() {
     // TODO - error handler needed
     JobOrderParser parser = JobOrderParser(jobOrderXml);
     JobOrder jobOrder = parser.parseJobOrder();
-    jobOrder.print();
+//    jobOrder.print();
 
     // set up logger
     // TODO - use argument for log file name/path
@@ -44,8 +44,8 @@ int main() {
     Processor processor;
     processor.addModule(reader);
     processor.addModule(pixelClassification);
-    processor.addModule(test);
-    processor.addModule(writer);
+//    processor.addModule(test);
+//    processor.addModule(writer);
 
     ProcessorContext context = ProcessorContext(jobOrder);
     processor.process(context);
