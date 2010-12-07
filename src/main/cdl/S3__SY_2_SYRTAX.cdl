@@ -122,7 +122,7 @@ variables:
 		:Conventions = "CF-1.4" ;
 		:title = "SYN L2 radiative transfer simulation dataset" ;
 		:institution = "Brockmann Consult GmbH" ;
-		:source = "TBD" ;
+		:source = "" ;
 		:history = "" ;
 		:comment = "" ;
 		:references = "S3-L2-SD-08-S-BC-IODD" ;
