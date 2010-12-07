@@ -32,7 +32,6 @@ Logger::Logger() {
 }
 
 Logger::~Logger() {
-    logFile.close();
 }
 
 // TODO - remove module version and replace by processor version
@@ -158,4 +157,8 @@ Logger* Logger::get() {
     if (instance == 0)
         instance = new Logger();
     return instance;
+}
+
+void Logger::close() {
+    logFile.close();
 }

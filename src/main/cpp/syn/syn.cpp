@@ -78,7 +78,7 @@ int main() {
 
     logger->info(createProcessingTimeMessage(start), "Main");
     logger->info("Processing complete. Exit code: 0", "Main");
-    delete logger;
+    logger->close();
     return 0;
 }
 

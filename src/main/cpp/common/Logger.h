@@ -47,6 +47,7 @@ public:
     void setOutLogLevel(string outLogLevel);
     void setErrLogLevel(string errLogLevel);
     void init(string orderId);
+    void close();
 protected:
     Logger();
 private:
