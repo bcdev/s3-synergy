@@ -1,4 +1,4 @@
-netcdf dataset {
+netcdf s3__sy_2_vsrtax {
 dimensions:
 	AMIN = 40 ;
 	ADA = 31 ;

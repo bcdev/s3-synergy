@@ -1,4 +1,4 @@
-netcdf vgt_p_auxdata {
+netcdf s3__sy_2_vprtax {
 dimensions:
 	AMIN = 1 ;
 	ADA = 10 ;

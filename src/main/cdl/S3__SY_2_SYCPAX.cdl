@@ -1,4 +1,4 @@
-netcdf syn_config_params {
+netcdf s3__sy_2_sycpax {
 dimensions:
 	N_AMIN = 40 ;
 	SYN_channel = 30 ;

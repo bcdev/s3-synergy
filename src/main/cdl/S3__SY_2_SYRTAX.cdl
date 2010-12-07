@@ -1,4 +1,4 @@
-netcdf syn_auxdata {
+netcdf s3__sy_2_syrtax {
 dimensions:
 	AMIN = 40 ;
 	ADA = 31 ;
