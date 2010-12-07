@@ -35,7 +35,7 @@ variables:
 		water_vapour:units = "g cm-2" ;
 		water_vapour:valid_min = 0.f ;
 		water_vapour:valid_max = 5.f ;
-	int AMIN(AMIN) ;
+	short AMIN(AMIN) ;
 		AMIN:long_name = "Aerosol model index number" ;
 		AMIN:valid_min = 1 ;
 		AMIN:valid_max = 40 ;
@@ -44,11 +44,11 @@ variables:
 		T550:valid_min = 0.f ;
 		T550:valid_max = 4.f ;
 		T550:standard_name = "atmosphere_optical_thickness_due_to_aerosol" ;
-	int channel(channel) ;
+	short channel(channel) ;
 		channel:long_name = "Channel index number" ;
 		channel:valid_min = 1 ;
 		channel:valid_max = 4 ;
-	uc VGT_R_atm(ADA, SZA, VZA, air_pressure, water_vap., T550, AMIN, channel) ;
+	ubyte VGT_R_atm(ADA, SZA, VZA, air_pressure, water_vapour, T550, AMIN, channel) ;
 		VGT_R_atm:long_name = "Atmospheric scattering term" ;
 		VGT_R_atm:scale_factor = 0.004;
 		VGT_R_atm:valid_min = 0 ;

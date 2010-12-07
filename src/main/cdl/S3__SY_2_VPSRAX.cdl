@@ -17,8 +17,8 @@ variables:
 		B3_SRF:valid_min = 0.0 ;
 		B3_SRF:valid_max = 1.0 ;
 	float MIR_SRF(wavelength) ;
-		MIR_wavelength:valid_min = 0.0 ;
-		MIR_wavelength:valid_max = 1.0 ;
+		MIR_SRF:valid_min = 0.0 ;
+		MIR_SRF:valid_max = 1.0 ;
 	float solar_irradiance(wavelength) ;
 	    solar_irradiance:units = "mW m-2 nm-1";
 		solar_irradiance:valid_min = 0.0 ;
