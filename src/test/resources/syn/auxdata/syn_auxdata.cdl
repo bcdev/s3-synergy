@@ -13,7 +13,7 @@ dimensions:
 	SLN_channel = 6 ;
 	SLO_channel = 6 ;
 	SYN_channel = 30 ;
-	delta_rt = 1 ;
+	SLS_band = 6 ;
 variables:
 	float ADA(ADA) ;
 		ADA:long_name = "Azimuth difference angle" ;
@@ -51,7 +51,7 @@ variables:
 		water_vapour:units = "g cm-2" ;
 		water_vapour:valid_min = 0.f ;
 		water_vapour:valid_max = 5.f ;
-	int AMIN(AMIN) ;
+	short AMIN(AMIN) ;
 		AMIN:long_name = "Aerosol model index number" ;
 		AMIN:valid_min = 1 ;
 		AMIN:valid_max = 40 ;
@@ -60,46 +60,49 @@ variables:
 		T550:valid_min = 0.f ;
 		T550:valid_max = 4.f ;
 		T550:standard_name = "atmosphere_optical_thickness_due_to_aerosol" ;
-	int OLC_channel(OLC_channel) ;
+	short OLC_channel(OLC_channel) ;
 		OLC_channel:long_name = "SYN channel index number" ;
 		OLC_channel:valid_min = 1.f ;
 		OLC_channel:valid_max = 18.f ;
-	int SLN_channel(SLN_channel) ;
+	short SLN_channel(SLN_channel) ;
 		SLN_channel:long_name = "SYN channel index number" ;
 		SLN_channel:valid_min = 19.f ;
 		SLN_channel:valid_max = 24.f ;
-	int SLO_channel(SLO_channel) ;
+	short SLO_channel(SLO_channel) ;
 		SLO_channel:long_name = "SYN channel index number" ;
 		SLO_channel:valid_min = 25.f ;
 		SLO_channel:valid_max = 30.f ;
-	int SYN_channel(SYN_channel) ;
+	short SYN_channel(SYN_channel) ;
 		SYN_channel:long_name = "SYN channel index number" ;
 		SYN_channel:valid_min = 1.f ;
 		SYN_channel:valid_max = 30.f ;
-	uc OLC_R_atm(OLC_channel, T550, water_vapour, air_pressure, OLC_VZA, SZA, ADA, AMIN) ;
+	short SLS_band(SLS_band) ;
+		SLS_band:valid_min = 1 ;
+		SLS_band:valid_max = 6 ;
+	ubyte OLC_R_atm(ADA, SZA, OLC_VZA, air_pressure, water_vapour, T550, AMIN, OLC_channel) ;
 		OLC_R_atm:long_name = "Atmospheric scattering term" ;
 		OLC_R_atm:scale_factor = 0.004;
 		OLC_R_atm:valid_min = 0 ;
 		OLC_R_atm:valid_max = 250 ;
-	uc SLN_R_atm(SLN_channel, T550, water_vapour, air_pressure, SLN_VZA, SZA, ADA, AMIN) ;
+	ubyte SLN_R_atm(ADA, SZA, SLN_VZA, air_pressure, water_vapour, T550, AMIN, SLN_channel) ;
 		SLN_R_atm:long_name = "Atmospheric scattering term" ;
 		SLN_R_atm:scale_factor = 0.004;
 		SLN_R_atm:valid_min = 0 ;
 		SLN_R_atm:valid_max = 250 ;
-	uc SLO_R_atm(SLO_channel, T550, water_vapour, air_pressure, SLO_VZA, SZA, ADA, AMIN) ;
+	ubyte SLO_R_atm(ADA, SZA, SLO_VZA, air_pressure, water_vapour, T550, AMIN, SLO_channel) ;
 		SLO_R_atm:long_name = "Atmospheric scattering term" ;
 		SLO_R_atm:scale_factor = 0.004;
 		SLO_R_atm:valid_min = 0 ;
 		SLO_R_atm:valid_max = 250 ;
-	float t(SYN_channel, T550, water_vapour, air_pressure, SZA, AMIN) ;
+	float t(SZA, air_pressure, water_vapour, T550, AMIN, SYN_channel) ;
 		t:long_name = "Atmospheric transmission" ;
 		t:valid_min = 0.0 ;
 		t:valid_max = 1.0 ;
-	float rho_atm(SYN_channel, T550, water_vapour, air_pressure, AMIN) ;
+	float rho_atm(air_pressure, water_vapour, T550, AMIN, SYN_channel) ;
 		rho_atm:long_name = "Atmospheric bihemispherical Albedo" ;
 		rho_atm:valid_min = 0.0 ;
 		rho_atm:valid_max = 1.0 ;
-	float D(SYN_channel, T550, air_pressure, SZA, AMIN) ;
+	float D(SZA, air_pressure, T550, AMIN, SLS_band) ;
 		D:long_name = "Fraction of diffuse irradiance" ;
 		D:valid_min = 0.0 ;
 		D:valid_max = 1.0 ;
@@ -111,24 +114,24 @@ variables:
 		A550:standard_name = "aerosol_angstrom_exponent" ;
 		A550:valid_min = -0.5 ;
 		A550:valid_max = 2.5 ;
-	float delta_rt(delta_rt) ;
+	float delta_rt ;
 		delta_rt:valid_min = 0.0 ;
 		delta_rt:valid_max = 1.0 ;
 
 // global attributes:
 		:Conventions = "CF-1.4" ;
-		:title = "syn auxiliary data" ;
-		:institution = "Brockmann Consult" ;	// TBD
-		:source = "The method of production of data" ;	// TBD
-		:history = "audit trail for modifications of the data" ;	// TBD
-		:comment = "??" ;
-		:references = "When delivered: reference to ATBD and DPM" ;
-		:contact = "{ralf.quast, thomas.storm}@brockmann-consult.de" ;
+		:title = "SYN L2 radiative transfer simulation dataset" ;
+		:institution = "Brockmann Consult GmbH" ;
+		:source = "TBD" ;
+		:history = "" ;
+		:comment = "" ;
+		:references = "S3-L2-SD-08-S-BC-IODD" ;
+		:contact = "info@brockmann-consult.de" ;
 		:netCDF_version = "netCDF-4" ;
-		:dataset_name = "syn_auxdata.nc" ;
-		:creation_time = "20101130T161206Z" ;
-		:validity_start = "???" ;
-		:validity_stop = "???" ;
+		:dataset_name = "S3__SY_2_SYRTAX_20101201T000000_20120101T000000_20101207T120000__BC__D_NT_AUX_01.nc" ;
+		:creation_time = "20101207T120000Z" ;
+		:validity_start = "20101201T000000Z" ;
+		:validity_stop = "20120101T000000Z" ;
 data:
 
  ADA = 0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90, 96, 102, 

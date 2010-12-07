@@ -8,18 +8,18 @@ variables:
 
 // global attributes:
 		:Conventions = "CF-1.4" ;
-		:title = "syn config parameters" ;
-		:institution = "Brockmann Consult" ;	// TBD
-		:source = "The method of production of data" ;	// TBD
-		:history = "audit trail for modifications of the data" ;	// TBD
-		:comment = "??" ;
-		:references = "When delivered: reference to ATBD and DPM" ;
-		:contact = "{ralf.quast, thomas.storm}@brockmann-consult.de" ;
+		:title = "SYN L2 radiative transfer simulation dataset" ;
+		:institution = "Brockmann Consult GmbH" ;
+		:source = "TBD" ;
+		:history = "" ;
+		:comment = "" ;
+		:references = "S3-L2-SD-08-S-BC-IODD" ;
+		:contact = "info@brockmann-consult.de" ;
 		:netCDF_version = "netCDF-4" ;
-		:dataset_name = "syn_config_params.nc" ;
-		:creation_time = "20101130T161206Z" ;
-		:validity_start = "???" ;
-		:validity_stop = "???" ;
+		:dataset_name = "S3__SY_2_SYRTAX_20101201T000000_20120101T000000_20101207T120000__BC__D_NT_AUX_01.nc" ;
+		:creation_time = "20101207T120000Z" ;
+		:validity_start = "20101201T000000Z" ;
+		:validity_stop = "20120101T000000Z" ;
 data:
 
  NDV_channel = 2, 3 ;
