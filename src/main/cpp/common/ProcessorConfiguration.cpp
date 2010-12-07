@@ -68,15 +68,15 @@ void ProcessorConfiguration::log() {
     logger->debug("taskName = " + taskName, "JobOrder" );
     logger->debug("taskVersion = " + taskVersion, "JobOrder");
     for (size_t i = 0; i < breakpointFiles.size(); i++) {
-        logger->debug("breakpointFile " + (i + 1), "JobOrder");
+        logger->debug("parsing breakpointFile " + StringUtils::intToString(i + 1) + ": ", "JobOrder");
         breakpointFiles.at(i)->log();
     }
     for (size_t i = 0; i < inputList.size(); i++) {
-        logger->debug("input " + (i + 1), "JobOrder");
+        logger->debug("parsing input " + StringUtils::intToString(i + 1) + ": ", "JobOrder");
         inputList.at(i)->log();
     }
     for (size_t i = 0; i < outputList.size(); i++) {
-        logger->debug("output " + (i + 1), "JobOrder");
+        logger->debug("parsing output " + StringUtils::intToString(i + 1) + ": ", "JobOrder");
         outputList.at(i)->log();
     }
 }
