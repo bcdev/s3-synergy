@@ -145,9 +145,9 @@ void Logger::logToStdout(string message, string moduleName, string moduleVersion
 string Logger::getTimeString() {
     time_t rawtime;
     tm* timer;
-    char timeBuffer [80];
     time(&rawtime);
     timer = localtime(&rawtime);
+    char timeBuffer [80];
     strftime(timeBuffer, 80, "%Y-%m-%dT%H:%M:%S.000000", timer);
     return timeBuffer;
 }

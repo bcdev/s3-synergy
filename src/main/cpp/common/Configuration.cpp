@@ -8,6 +8,8 @@
 #include <iostream>
 
 #include "Configuration.h"
+#include "Logger.h"
+#include "StringUtils.h"
 
 using std::cout;
 using std::endl;
@@ -32,23 +34,24 @@ void Configuration::setProcessorName(string processorName) {
     this->processorName = processorName;
 }
 
-void Configuration::print() {
-    cout << "order_id = " << getOrderId() << "\n";
-    cout << "processorName = " << getProcessorName() << "\n";
-    cout << "version = " << getVersion() << "\n";
-    cout << "stdLogLevel = " << getStandardLogLevel() << "\n";
-    cout << "errorLogLevel = " << getErrorLogLevel() << "\n";
-    cout << "Test = " << boolToString(isTest()) << "\n";
-    cout << "breakpoint enabled = " << boolToString(isBreakpointEnable()) << "\n";
-    cout << "acquisition station = " << getAcquisitionStation() << "\n";
-    cout << "processing station = " << getProcessingStation() << "\n";
-    cout << "start time = " << getSensingTimeStart() << "\n";
-    cout << "stop time = " << getSensingTimeStop() << "\n";
+void Configuration::log() {
+    Logger* logger = Logger::get();
+    logger->debug("order_id = " + getOrderId(), "JobOrder");
+    logger->debug("processorName = " + getProcessorName(), "JobOrder");
+    logger->debug("version = " + getVersion(), "JobOrder");
+    logger->debug("stdLogLevel = " + getStandardLogLevel(), "JobOrder");
+    logger->debug("errorLogLevel = " + getErrorLogLevel(), "JobOrder");
+    logger->debug("Test = " + boolToString(isTest()), "JobOrder");
+    logger->debug("breakpoint enabled = " + boolToString(isBreakpointEnable()), "JobOrder");
+    logger->debug("acquisition station = " + getAcquisitionStation(), "JobOrder");
+    logger->debug("processing station = " + getProcessingStation(), "JobOrder");
+    logger->debug("start time = " + getSensingTimeStart(), "JobOrder");
+    logger->debug("stop time = " + getSensingTimeStop(), "JobOrder");
     for (size_t i = 0; i < getConfigFileNames().size(); i++) {
-        cout << "config file " << i + 1 << ": " << getConfigFileNames().at(i) << "\n";
+        logger->debug("config file " + StringUtils::intToString(i + 1) + ": " + getConfigFileNames().at(i), "JobOrder");
     }
     for (size_t i = 0; i < getProcessingParameters().size(); i++) {
-        getProcessingParameters().at(i)->print();
+        getProcessingParameters().at(i)->log();
     }
 }
 
@@ -179,6 +182,6 @@ string ProcessingParameter::getName() const {
     return name;
 }
 
-void ProcessingParameter::print() const {
-    cout << getName() << " = " << getValue() << "\n";
+void ProcessingParameter::log() const {
+    Logger::get()->debug(getName() + " = " + getValue(), "JobOrder");
 }

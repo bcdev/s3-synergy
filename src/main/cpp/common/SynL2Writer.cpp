@@ -28,7 +28,7 @@ Segment* SynL2Writer::processSegment(ProcessorContext& context) {
     // TODO - for all variables to be written, do:
 
     string variableName = "SDR_1";
-    NcFile*     ncFile = getDataFile(variableName);
+    NcFile* ncFile = getDataFile(variableName);
     Variable* var = context.getSegment(segmentId).getIntVariable(variableName);
     NcVar* ncVar = getNcVar(    ncFile, var);
 

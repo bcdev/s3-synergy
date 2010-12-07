@@ -13,7 +13,7 @@
 
 using std::vector;
 
-Processor::Processor() {
+Processor::Processor() : completed(false) {
 }
 
 Processor::~Processor() {

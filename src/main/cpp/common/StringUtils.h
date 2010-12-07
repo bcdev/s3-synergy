@@ -42,7 +42,7 @@ public:
         return false;
     }
 
-    static string intToString(int toConvert) {
+    static string intToString(long toConvert) {
         stringstream temp;
         temp << toConvert;
         return temp.str();

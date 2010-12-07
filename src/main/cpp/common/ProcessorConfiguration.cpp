@@ -21,6 +21,8 @@
 #include <iostream>
 
 #include "ProcessorConfiguration.h"
+#include "Logger.h"
+#include "StringUtils.h"
 
 using std::cout;
 
@@ -61,20 +63,21 @@ string ProcessorConfiguration::getTaskName() const {
     return taskName;
 }
 
-void ProcessorConfiguration::print() {
-    cout << "taskName = " << taskName << "\n";
-    cout << "taskVersion = " << taskVersion << "\n";
+void ProcessorConfiguration::log() {
+    Logger* logger = Logger::get();
+    logger->debug("taskName = " + taskName, "JobOrder" );
+    logger->debug("taskVersion = " + taskVersion, "JobOrder");
     for (size_t i = 0; i < breakpointFiles.size(); i++) {
-        cout << "breakpointFile " << i + 1 << ":\n";
-        breakpointFiles.at(i)->print();
+        logger->debug("breakpointFile " + (i + 1), "JobOrder");
+        breakpointFiles.at(i)->log();
     }
     for (size_t i = 0; i < inputList.size(); i++) {
-        cout << "input " << i + 1 << ":\n";
-        inputList.at(i)->print();
+        logger->debug("input " + (i + 1), "JobOrder");
+        inputList.at(i)->log();
     }
     for (size_t i = 0; i < outputList.size(); i++) {
-        cout << "output " << i + 1 << ":\n";
-        outputList.at(i)->print();
+        logger->debug("output " + (i + 1), "JobOrder");
+        outputList.at(i)->log();
     }
 }
 
@@ -92,11 +95,12 @@ BreakpointFile::BreakpointFile(string enable, string fileType, string fileNameTy
 BreakpointFile::~BreakpointFile() {
 }
 
-void BreakpointFile::print() const {
-    cout << "enable = " << enable << "\n";
-    cout << "fileType = " << fileType << "\n";
-    cout << "fileNameType = " << fileNameType << "\n";
-    cout << "fileName = " << fileName << "\n";
+void BreakpointFile::log() const {
+    Logger* logger = Logger::get();
+    logger->debug("enable = " + enable, "JobOrder");
+    logger->debug("fileType = " + fileType, "JobOrder");
+    logger->debug("fileNameType = " + fileNameType, "JobOrder");
+    logger->debug("fileName = " + fileName, "JobOrder");
 }
 
 string BreakpointFile::getFileName() const {
@@ -126,14 +130,15 @@ Input::Input(string fileType, string fileNameType, vector<string> fileNames, vec
     this->timeIntervals = timeIntervals;
 }
 
-void Input::print() const {
-    cout << "fileType = " << fileType << "\n";
-    cout << "fileNameType = " << fileNameType << "\n";
+void Input::log() const {
+    Logger* logger = Logger::get();
+    logger->debug("fileType = " + fileType, "JobOrder");
+    logger->debug("fileNameType = " + fileNameType, "JobOrder");
     for (size_t i = 0; i < fileNames.size(); i++) {
-        cout << "fileName " << i + 1 << ": " << fileNames.at(i) << "\n";
+        logger->debug("fileName " + StringUtils::intToString(i + 1) + ": " + fileNames.at(i), "JobOrder");
     }
     for (size_t i = 0; i < timeIntervals.size(); i++) {
-        timeIntervals.at(i)->print();
+        timeIntervals.at(i)->log();
     }
 }
 
@@ -172,10 +177,11 @@ string Output::getFileType() const {
     return fileType;
 }
 
-void Output::print() const {
-    cout << "fileType = " << fileType << "\n";
-    cout << "fileNameType = " << fileNameType << "\n";
-    cout << "fileName = " << fileName << "\n";
+void Output::log() const {
+    Logger* logger = Logger::get();
+    logger->debug( "fileType = " + fileType, "JobOrder");
+    logger->debug( "fileNameType = " + fileNameType, "JobOrder");
+    logger->debug( "fileName = " + fileName, "JobOrder");
 }
 
 /*
@@ -195,7 +201,8 @@ string TimeInterval::getStart() const {
     return start;
 }
 
-void TimeInterval::print() const {
-    cout << "start = " << start << "\n";
-    cout << "stop = " << stop << "\n";
+void TimeInterval::log() const {
+    Logger* logger = Logger::get();
+    logger->debug("start = " + start, "JobOrder");
+    logger->debug("stop = " + stop, "JobOrder");
 }

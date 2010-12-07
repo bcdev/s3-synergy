@@ -22,6 +22,8 @@
 #include <iostream>
 
 #include "JobOrder.h"
+#include "Logger.h"
+#include "StringUtils.h"
 
 using std::cout;
 using std::invalid_argument;
@@ -34,11 +36,11 @@ JobOrder::JobOrder(Configuration config, vector<ProcessorConfiguration*> process
 JobOrder::~JobOrder() {
 }
 
-void JobOrder::print() {
-    config.print();
+void JobOrder::log() {
+    config.log();
     for (size_t i = 0; i < processorConfigs.size(); i++) {
-        cout << "processor config " << i + 1 << ":\n";
-        processorConfigs.at(i)->print();
+        Logger::get()->debug("parsing processor config " + StringUtils::intToString(i + 1) + ":", "JobOrder");
+        processorConfigs.at(i)->log();
     }
 }
 
