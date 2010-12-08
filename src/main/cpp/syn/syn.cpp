@@ -28,7 +28,7 @@ int main() {
     NcError ncError = NcError(NcError::verbose_nonfatal);
 
     // TODO - needed as argument
-    string jobOrderXml = "/mnt/hgfs/S3L2PP/src/test/resources/syn/JobOrder.Test_1.xml";
+    string jobOrderXml = "/mnt/hgfs/S3L2PP/src/test/resources/syn/JobOrder.1.xml";
 
     // TODO - error handler needed
     JobOrderParser parser = JobOrderParser(jobOrderXml);
