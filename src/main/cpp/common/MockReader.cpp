@@ -31,15 +31,13 @@ Segment* MockReader::processSegment(ProcessorContext& context) {
         }
         if (minL < this->lineCount) {
             if (segment == 0) {
-                const size_t columnCount = 760; // TODO - replace with correct value
-                const size_t camCount = 5; // TODO - replace with correct value
-                segment = new SegmentImpl("SYN_COLLOCATED", minL, min(maxL - 1, minL + lineCount - 1), 0, camCount - 1, 0, columnCount - 1 );
+                segment = new SegmentImpl("SYN_COLLOCATED", minL, min(maxL - 1, minL + lineCount - 1));
                 Logger::get()->progress("Reading data for segment [" + segment->toString() + "]", "MockReader");
 
                 // TODO - for all variables do {
 
                 // creating variables
-                const size_t valueCount = segment->getMaxL() * columnCount * camCount;
+                const size_t valueCount = segment->getValueCount();
                 segment->addIntVariable("F_OLC", valueCount);
                 segment->addIntVariable("F_SLN", valueCount);
                 segment->addIntVariable("F_SLO", valueCount);

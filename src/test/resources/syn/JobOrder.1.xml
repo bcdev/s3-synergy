@@ -16,6 +16,10 @@
 			<Stop>20101214_235959.9999</Stop>
 		</Sensing_Time>
 		<Dynamic_Processing_Parameters>
+            <Processing_Parameter>
+                <Name>Segment Line Count</Name>
+                <Value>400</Value> <!-- Value range: [8, 2000], Default: 2000 -->
+            </Processing_Parameter>
 			<Processing_Parameter>
 				<Name>VGT Northernmost Latitude</Name>
 				<Value>75.0</Value> <!-- Value range: [-56.0, 75.0], Default: 75.0 -->

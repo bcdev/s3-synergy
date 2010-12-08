@@ -2,8 +2,8 @@ project (SYN)
 set (SYN_VERSION_MAJOR 1)
 set (SYN_VERSION_MINOR 0)
 
-set(CMAKE_CXX_FLAGS "-g -Wall")
-set(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
+set(CMAKE_CXX_FLAGS "-O3")
+set(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g -Wall")
 
 cmake_minimum_required (VERSION 2.8)
 

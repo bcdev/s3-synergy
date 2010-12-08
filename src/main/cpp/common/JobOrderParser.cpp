@@ -116,7 +116,7 @@ Configuration JobOrderParser::parseConfiguration() {
 
 vector<ProcessorConfiguration*> JobOrderParser::parseProcessorConfigurations() {
     vector<ProcessorConfiguration*> result;
-    string query = "/Ipf_Job_Order/List_of_Ipf_Procs/Ipf_Procs";
+    string query = "/Ipf_Job_Order/List_of_Ipf_Procs/Ipf_Proc";
     vector<string> values = evaluateToStringList(query);
     int numberOfProcConfigurations = values.size();
     for (int i = 1; i <= numberOfProcConfigurations; i++) {
@@ -126,7 +126,7 @@ vector<ProcessorConfiguration*> JobOrderParser::parseProcessorConfigurations() {
 }
 
 ProcessorConfiguration* JobOrderParser::parseProcessorConfiguration(int index) {
-    string baseQuery = "/Ipf_Job_Order/List_of_Ipf_Procs/Ipf_Procs[";
+    string baseQuery = "/Ipf_Job_Order/List_of_Ipf_Procs/Ipf_Proc[";
     baseQuery.append(StringUtils::intToString(index));
     baseQuery.append("]");
 
