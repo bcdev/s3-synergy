@@ -43,7 +43,7 @@ public:
 
     void setOrderId(string orderId);
     string getOrderId() const;
-    void print();
+    void log();
     void setVersion(string version);
     string getVersion() const;
     void setConfigFileNames(vector<string> configFileNames);
@@ -76,7 +76,7 @@ public:
     string getValue() const;
     void setName(string name);
     string getName() const;
-    void print() const;
+    void log() const;
 
 private:
     string name;

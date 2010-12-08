@@ -35,7 +35,7 @@ public:
     Configuration getConfig() const;
     vector<ProcessorConfiguration*> getProcessorList() const;
     ProcessorConfiguration& getProcessorConfiguration(string& id) const;
-    void print();
+    void log();
 private:
     Configuration config;
     vector<ProcessorConfiguration*> processorConfigs;

@@ -43,7 +43,7 @@ public:
     vector<BreakpointFile*> getBreakpointFiles() const;
     vector<Input*> getInputList() const;
     vector<Output*> getOutputList() const;
-    void print();
+    void log();
 private:
     string taskName;
     string taskVersion;
@@ -60,7 +60,7 @@ public:
     string getFileNameType() const;
     string getFileType() const;
     string getEnable() const;
-    void print() const;
+    void log() const;
 private:
     string enable;
     string fileType;
@@ -75,7 +75,7 @@ public:
     vector<string> getFileNames() const;
     string getFileNameType() const;
     string getFileType() const;
-    void print() const;
+    void log() const;
 private:
     string fileType;
     string fileNameType;
@@ -86,7 +86,7 @@ private:
 class Output {
 public:
     Output(string fileType, string fileNameType, string fileName);
-    void print() const;
+    void log() const;
     string getFileName() const;
     string getFileNameType() const;
     string getFileType() const;
@@ -101,7 +101,7 @@ private:
     string start;
     string stop;
 public:
-    void print() const;
+    void log() const;
     TimeInterval(string start, string stop);
     string getStop() const;
     string getStart() const;

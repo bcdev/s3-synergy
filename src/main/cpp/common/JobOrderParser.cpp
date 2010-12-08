@@ -22,6 +22,7 @@
 #include "JobOrderParser.h"
 #include "ProcessorConfiguration.h"
 #include "StringUtils.h"
+#include "Logger.h"
 
 using std::string;
 
@@ -41,27 +42,14 @@ JobOrder JobOrderParser::parseJobOrder() {
 
 Configuration JobOrderParser::parseConfiguration() {
     Configuration config;
-
-    size_t firstDotIndex = path.find_first_of(".");
-    string orderIdWithExt = path.substr(firstDotIndex + 1);
-    config.setOrderId( orderIdWithExt.substr( 0, orderIdWithExt.length() - 4 ) );
-
-    string query = "/Ipf_Job_Order/Ipf_Conf/Processor_Name";
+    string query = "/Ipf_Job_Order/Ipf_Conf/Stdout_Log_Level";
     string value = evaluateToString(query);
-    config.setProcessorName(value);
-
-    query = "/Ipf_Job_Order/Ipf_Conf/Version";
-    value = evaluateToString(query);
-    config.setVersion(value);
-
-    query = "/Ipf_Job_Order/Ipf_Conf/Stdout_Log_Level";
-    value = evaluateToString(query);
-    if( value.empty() && value.compare( "INFO" ) != 0 &&
+    if (value.empty() && value.compare("INFO") != 0 &&
             value.compare("DEBUG") != 0 &&
             value.compare("WARNING") != 0 &&
             value.compare("PROGRESS") != 0 &&
-            value.compare("ERROR") != 0 ) {
-        value = "INFO";  // default value
+            value.compare("ERROR") != 0) {
+        value = "INFO"; // default value
     }
     config.setStandardLogLevel(value);
 
@@ -71,10 +59,23 @@ Configuration JobOrderParser::parseConfiguration() {
             value.compare("DEBUG") != 0 &&
             value.compare("WARNING") != 0 &&
             value.compare("PROGRESS") != 0 &&
-            value.compare("ERROR") != 0 ) {
+            value.compare("ERROR") != 0) {
         value = "INFO"; // default value
     }
     config.setErrorLogLevel(value);
+
+    size_t firstDotIndex = path.find_first_of(".");
+    string orderIdWithExt = path.substr(firstDotIndex + 1);
+    config.setOrderId(orderIdWithExt.substr(0, orderIdWithExt.length() - 4));
+
+    query = "/Ipf_Job_Order/Ipf_Conf/Processor_Name";
+    value = evaluateToString(query);
+    config.setProcessorName(value);
+
+    query = "/Ipf_Job_Order/Ipf_Conf/Version";
+    value = evaluateToString(query);
+    config.setVersion(value);
+
 
     query = "/Ipf_Job_Order/Ipf_Conf/Test";
     value = evaluateToString(query);
@@ -136,9 +137,9 @@ ProcessorConfiguration* JobOrderParser::parseProcessorConfiguration(int index) {
     string taskVersion = evaluateToString(taskVersionQuery);
 
     vector<BreakpointFile*> breakpointFiles = parseBreakpointFiles(baseQuery);
-
     vector<Input*> inputList = parseInputs(baseQuery);
     vector<Output*> outputList = parseOutputs(baseQuery);
+
     ProcessorConfiguration* config = new ProcessorConfiguration(taskName,
             taskVersion, breakpointFiles, inputList, outputList);
     return config;

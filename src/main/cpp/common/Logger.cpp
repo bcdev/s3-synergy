@@ -32,7 +32,6 @@ Logger::Logger() {
 }
 
 Logger::~Logger() {
-    logFile.close();
 }
 
 // TODO - remove module version and replace by processor version
@@ -145,9 +144,9 @@ void Logger::logToStdout(string message, string moduleName, string moduleVersion
 string Logger::getTimeString() {
     time_t rawtime;
     tm* timer;
-    char timeBuffer [80];
     time(&rawtime);
     timer = localtime(&rawtime);
+    char timeBuffer [80];
     strftime(timeBuffer, 80, "%Y-%m-%dT%H:%M:%S.000000", timer);
     return timeBuffer;
 }
@@ -158,4 +157,8 @@ Logger* Logger::get() {
     if (instance == 0)
         instance = new Logger();
     return instance;
+}
+
+void Logger::close() {
+    logFile.close();
 }
