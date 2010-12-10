@@ -17,15 +17,33 @@ The SYN branch produces the following products:
 Coding Conventions
 ==================
 
-1. Use camel-case style for class and variable names, where the former begin
-   with a capital letter and the latter begin with a lower case letter
-2. Declare pointer variables as 'type* name' not 'type *name' or 'type * name'
-3. Do not use global 'using <namespace>' directives; use specific
-   'using <namespace>::<class>' directives instead
-4. Include system header files before project header files
-5. Order include directives alphabetically
-6. Order 'using ...' directives alphabetically
-7. In class declarations the public part comes before the private part
+1.  Use camel-case style for class and variable names, where the former begin
+    with a capital letter and the latter begin with a lower case letter
+2.  Declare pointer variables as 'type* name' not 'type *name' or 'type * name'
+3.  Do not use global 'using <namespace>' directives; use specific
+    'using <namespace>::<class>' directives instead
+4.  Include system header files before project header files
+5.  Order include directives alphabetically
+6.  Order 'using ...' directives alphabetically
+7.  In class declarations the public part comes before the private part
+8.  If a variable shall not be modified or is not modified, declare it as a
+    constant
+9.  Use references instead of pointers whenever feasible
+10. Do not use pointers as argument when 0 is considered as an illegal argument,
+    use references instead
+11. Do not use pointers as return value when 0 is an illegal return value,
+    use references instead
+12. Do not use 'new' for assigning field values, if feasible
+13. Do not use 'new' for creating a new object, unless the object must be used
+    outside of its declaring scope
+14. Use 'valarray<T>' instead of 'vector<T>' for primitive vector or matrix-like
+    data
+15. Write Doxygen compliant API documentation for important methods, classes
+    and interfaces
+16. Write Doxygen compliant API documentation for important unit tests
+17. Write brief but clear and precise API documentation
+18. Write '(x)' but not '( x )'
+19. Write 'a = b', 'a + b' etc. but not 'a=b', 'a+b' etc.
 
 
 
