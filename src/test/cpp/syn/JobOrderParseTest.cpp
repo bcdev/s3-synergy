@@ -29,7 +29,7 @@ JobOrderParseTest::JobOrderParseTest() {
 JobOrderParseTest::~JobOrderParseTest() {
 }
 
-JobOrderParser parser = JobOrderParser("/mnt/hgfs/S3L2PP/src/test/resources/syn/JobOrder.Test_1.xml");
+JobOrderParser parser = JobOrderParser("/mnt/hgfs/S3L2PP/src/test/resources/syn/JobOrder.1.xml");
 
 void JobOrderParseTest::setUp() {
     initializeXerces();
