@@ -33,6 +33,10 @@ class AccessorInstantiationTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(testInstantiateIntAccessor);
     CPPUNIT_TEST(testInstantiateLongAccessor);
     CPPUNIT_TEST(testInstantiateShortAccessor);
+    CPPUNIT_TEST(testInstantiateUByteAccessor);
+    CPPUNIT_TEST(testInstantiateUIntAccessor);
+    CPPUNIT_TEST(testInstantiateULongAccessor);
+    CPPUNIT_TEST(testInstantiateUShortAccessor);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -49,6 +53,10 @@ private:
     void testInstantiateIntAccessor();
     void testInstantiateLongAccessor();
     void testInstantiateShortAccessor();
+    void testInstantiateUByteAccessor();
+    void testInstantiateUIntAccessor();
+    void testInstantiateULongAccessor();
+    void testInstantiateUShortAccessor();
 };
 
 #endif	/* ACCESSORINSTANTIATIONTEST_H */

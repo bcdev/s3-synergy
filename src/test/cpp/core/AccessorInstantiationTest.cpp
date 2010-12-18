@@ -19,12 +19,7 @@
  */
 
 #include "AccessorInstantiationTest.h"
-#include "../../../main/cpp/core/ByteAccessor.h"
-#include "../../../main/cpp/core/DoubleAccessor.h"
-#include "../../../main/cpp/core/FloatAccessor.h"
-#include "../../../main/cpp/core/IntAccessor.h"
-#include "../../../main/cpp/core/LongAccessor.h"
-#include "../../../main/cpp/core/ShortAccessor.h"
+#include "../../../main/cpp/core/Accessors.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(AccessorInstantiationTest);
 
@@ -78,4 +73,28 @@ void AccessorInstantiationTest::testInstantiateShortAccessor() {
     accessor = new ShortAccessor(1);
     CPPUNIT_ASSERT(accessor != 0);
     CPPUNIT_ASSERT_NO_THROW(accessor->getShortData());
+}
+
+void AccessorInstantiationTest::testInstantiateUByteAccessor() {
+    accessor = new UByteAccessor(1);
+    CPPUNIT_ASSERT(accessor != 0);
+    CPPUNIT_ASSERT_NO_THROW(accessor->getUByteData());
+}
+
+void AccessorInstantiationTest::testInstantiateUIntAccessor() {
+    accessor = new UIntAccessor(1);
+    CPPUNIT_ASSERT(accessor != 0);
+    CPPUNIT_ASSERT_NO_THROW(accessor->getUIntData());
+}
+
+void AccessorInstantiationTest::testInstantiateULongAccessor() {
+    accessor = new ULongAccessor(1);
+    CPPUNIT_ASSERT(accessor != 0);
+    CPPUNIT_ASSERT_NO_THROW(accessor->getULongData());
+}
+
+void AccessorInstantiationTest::testInstantiateUShortAccessor() {
+    accessor = new UShortAccessor(1);
+    CPPUNIT_ASSERT(accessor != 0);
+    CPPUNIT_ASSERT_NO_THROW(accessor->getUShortData());
 }

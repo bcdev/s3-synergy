@@ -22,13 +22,8 @@
 #include <limits>
 #include <sstream>
 
+#include "Accessors.h"
 #include "SegmentImpl.h"
-#include "ByteAccessor.h"
-#include "DoubleAccessor.h"
-#include "FloatAccessor.h"
-#include "IntAccessor.h"
-#include "LongAccessor.h"
-#include "ShortAccessor.h"
 
 using std::invalid_argument;
 using std::min;
@@ -87,19 +82,31 @@ void SegmentImpl::addVariableShort(const string& varName) {
 }
 
 void SegmentImpl::addVariableUByte(const string& varName) {
-
+    check(varName);
+    Accessor* accessor = new UByteAccessor(grid.getSize());
+    accessorMap[varName] = accessor;
+    accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableUInt(const string& varName) {
-
+    check(varName);
+    Accessor* accessor = new UIntAccessor(grid.getSize());
+    accessorMap[varName] = accessor;
+    accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableULong(const string& varName) {
-
+    check(varName);
+    Accessor* accessor = new ULongAccessor(grid.getSize());
+    accessorMap[varName] = accessor;
+    accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableUShort(const string& varName) {
-
+    check(varName);
+    Accessor* accessor = new UShortAccessor(grid.getSize());
+    accessorMap[varName] = accessor;
+    accessorList.push_back(accessor);
 }
 
 inline
