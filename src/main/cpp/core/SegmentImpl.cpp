@@ -34,76 +34,76 @@ SegmentImpl::SegmentImpl(const string& s, size_t l) : id(s), grid(N_CAM, l, N_DE
 }
 
 SegmentImpl::~SegmentImpl() {
-    for (int i = accessorList.size(); i-- > 0;) {
+    for (size_t i = accessorList.size(); i-- > 0;) {
         delete accessorList[i];
     }
 }
 
 void SegmentImpl::addVariableByte(const string& varName) {
-    check(varName);
+    unique(varName);
     Accessor* accessor = new ByteAccessor(grid.getSize());
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableDouble(const string& varName) {
-    check(varName);
+    unique(varName);
     Accessor* accessor = new DoubleAccessor(grid.getSize());
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableFloat(const string& varName) {
-    check(varName);
+    unique(varName);
     Accessor* accessor = new FloatAccessor(grid.getSize());
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableInt(const string& varName) {
-    check(varName);
+    unique(varName);
     Accessor* accessor = new IntAccessor(grid.getSize());
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableLong(const string& varName) {
-    check(varName);
+    unique(varName);
     Accessor* accessor = new LongAccessor(grid.getSize());
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableShort(const string& varName) {
-    check(varName);
+    unique(varName);
     Accessor* accessor = new ShortAccessor(grid.getSize());
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableUByte(const string& varName) {
-    check(varName);
+    unique(varName);
     Accessor* accessor = new UByteAccessor(grid.getSize());
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableUInt(const string& varName) {
-    check(varName);
+    unique(varName);
     Accessor* accessor = new UIntAccessor(grid.getSize());
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableULong(const string& varName) {
-    check(varName);
+    unique(varName);
     Accessor* accessor = new ULongAccessor(grid.getSize());
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableUShort(const string& varName) {
-    check(varName);
+    unique(varName);
     Accessor* accessor = new UShortAccessor(grid.getSize());
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
@@ -129,7 +129,7 @@ string SegmentImpl::toString() const {
     return oss.str();
 }
 
-void SegmentImpl::check(const string& varName) const {
+void SegmentImpl::unique(const string& varName) const {
     if (accessorMap.find(varName) == accessorMap.end()) {
         throw invalid_argument("variable '" + varName + "' has already been added to segment '" + id + "'.");
     }

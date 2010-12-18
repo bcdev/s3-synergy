@@ -30,19 +30,19 @@ public:
     virtual ~GridImpl();
 
     size_t getStartK() const {
-        return k;
+        return startK;
     }
 
     size_t getStartL() const {
-        return l;
+        return startL;
     }
 
     void setStartL(size_t l) {
-        this->l = l;
+        this->startL = l;
     }
 
     size_t getStartM() const {
-        return m;
+        return startM;
     }
 
     size_t getSizeK() const {
@@ -76,9 +76,9 @@ public:
     size_t getIndex(size_t k, size_t l, size_t m) const throw (out_of_range);
 
 private:
-    size_t k;
-    size_t l;
-    size_t m;
+    size_t startK;
+    size_t startL;
+    size_t startM;
 
     size_t sizeK;
     size_t sizeL;

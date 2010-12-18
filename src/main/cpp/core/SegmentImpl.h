@@ -53,7 +53,7 @@ public:
     string toString() const;
 
 private:
-    void check(const string& varName) const;
+    void unique(const string& varName) const;
 
     static const string className;
 
