@@ -25,36 +25,40 @@
 
 class GridImpl : public virtual Grid {
 public:
-    GridImpl(uint8_t sizeK, uint16_t sizeL, uint16_t sizeM);
+    GridImpl(size_t sizeK, size_t sizeL, size_t sizeM);
     GridImpl(const Grid& bounds);
     virtual ~GridImpl();
 
-    uint8_t getK() const {
+    size_t getStartK() const {
         return k;
     }
 
-    uint16_t getL() const {
+    size_t getStartL() const {
         return l;
     }
 
-    void setL(uint16_t l) {
+    void setStartL(size_t l) {
         this->l = l;
     }
 
-    uint16_t getM() const {
+    size_t getStartM() const {
         return m;
     }
 
-    uint8_t getSizeK() const {
+    size_t getSizeK() const {
         return sizeK;
     }
 
-    uint16_t getSizeL() const {
+    size_t getSizeL() const {
         return sizeL;
     }
 
-    uint16_t getSizeM() const {
+    size_t getSizeM() const {
         return sizeM;
+    }
+
+    size_t getSize() const {
+        return sizeM * sizeL * sizeK;
     }
 
     size_t getStrideK() const {
@@ -69,15 +73,16 @@ public:
         return strideM;
     }
 
+    size_t getIndex(size_t k, size_t l, size_t m) const throw (out_of_range);
+
 private:
+    size_t k;
+    size_t l;
+    size_t m;
 
-    uint8_t k;
-    uint16_t l;
-    uint16_t m;
-
-    uint8_t sizeK;
-    uint16_t sizeL;
-    uint16_t sizeM;
+    size_t sizeK;
+    size_t sizeL;
+    size_t sizeM;
 
     size_t strideK;
     size_t strideL;

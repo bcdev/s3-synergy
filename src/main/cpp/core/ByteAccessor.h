@@ -26,13 +26,13 @@
 class ByteAccessor : public virtual AbstractAccessor<int8_t> {
 public:
 
-    ByteAccessor(const Grid& g) : AbstractAccessor<int8_t>(g) {
+    ByteAccessor(size_t n) : AbstractAccessor<int8_t>(n) {
     }
 
     virtual ~ByteAccessor() {
     }
 
-    valarray<int8_t>& getByteData() const {
+    valarray<int8_t>& getByteData() const throw (bad_cast) {
         return getData();
     }
 };

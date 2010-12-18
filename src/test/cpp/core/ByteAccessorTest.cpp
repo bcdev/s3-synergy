@@ -22,7 +22,6 @@
 
 #include "ByteAccessorTest.h"
 #include "../../../main/cpp/core/ByteAccessor.h"
-#include "../../../main/cpp/core/GridImpl.h"
 
 using std::bad_cast;
 
@@ -35,66 +34,70 @@ ByteAccessorTest::~ByteAccessorTest() {
 }
 
 void ByteAccessorTest::setUp() {
-    this->accessor = new ByteAccessor(GridImpl(1, 1, 1));
+    this->accessor = new ByteAccessor(1);
 }
 
 void ByteAccessorTest::tearDown() {
     delete this->accessor;
 }
 
+void ByteAccessorTest::testGetSampleCount() {
+    CPPUNIT_ASSERT(accessor->getSampleCount() == 1);
+}
+
 void ByteAccessorTest::testSetByteGetByte() {
-    accessor->setByte(0, 0, 0, 127.0);
-    CPPUNIT_ASSERT(accessor->getByte(0, 0, 0) == 127);
+    accessor->setByte(0, 127.0);
+    CPPUNIT_ASSERT(accessor->getByte(0) == 127);
 
-    accessor->setByte(0, 0, 0, -128.0);
-    CPPUNIT_ASSERT(accessor->getByte(0, 0, 0) == -128);
+    accessor->setByte(0, -128.0);
+    CPPUNIT_ASSERT(accessor->getByte(0) == -128);
 
-    CPPUNIT_ASSERT_THROW(accessor->setByte(0, 0, 1, 0), out_of_range);
-    CPPUNIT_ASSERT_THROW(accessor->getByte(0, 0, 1), out_of_range);
+    CPPUNIT_ASSERT_THROW(accessor->setByte(1, 0), out_of_range);
+    CPPUNIT_ASSERT_THROW(accessor->getByte(1), out_of_range);
 }
 
 void ByteAccessorTest::testSetDoubleGetByte() {
-    accessor->setDouble(0, 0, 0, 127.0);
-    CPPUNIT_ASSERT(accessor->getByte(0, 0, 0) == 127);
+    accessor->setDouble(0, 127.0);
+    CPPUNIT_ASSERT(accessor->getByte(0) == 127);
 
-    accessor->setDouble(0, 0, 0, -128.0);
-    CPPUNIT_ASSERT(accessor->getByte(0, 0, 0) == -128);
+    accessor->setDouble(0, -128.0);
+    CPPUNIT_ASSERT(accessor->getByte(0) == -128);
 
-    accessor->setDouble(0, 0, 0, 1.5);
-    CPPUNIT_ASSERT(accessor->getByte(0, 0, 0) == 1);
+    accessor->setDouble(0, 1.5);
+    CPPUNIT_ASSERT(accessor->getByte(0) == 1);
 
-    accessor->setDouble(0, 0, 0, -1.5);
-    CPPUNIT_ASSERT(accessor->getByte(0, 0, 0) == -1);
+    accessor->setDouble(0, -1.5);
+    CPPUNIT_ASSERT(accessor->getByte(0) == -1);
 }
 
 void ByteAccessorTest::testSetFloatGetByte() {
-    accessor->setFloat(0, 0, 0, 127.0f);
-    CPPUNIT_ASSERT(accessor->getByte(0, 0, 0) == 127);
+    accessor->setFloat(0, 127.0f);
+    CPPUNIT_ASSERT(accessor->getByte(0) == 127);
 
-    accessor->setFloat(0, 0, 0, -128.0f);
-    CPPUNIT_ASSERT(accessor->getByte(0, 0, 0) == -128);
+    accessor->setFloat(0, -128.0f);
+    CPPUNIT_ASSERT(accessor->getByte(0) == -128);
 
-    accessor->setFloat(0, 0, 0, 1.5f);
-    CPPUNIT_ASSERT(accessor->getByte(0, 0, 0) == 1);
+    accessor->setFloat(0, 1.5f);
+    CPPUNIT_ASSERT(accessor->getByte(0) == 1);
 
-    accessor->setFloat(0, 0, 0, -1.5f);
-    CPPUNIT_ASSERT(accessor->getByte(0, 0, 0) == -1);
+    accessor->setFloat(0, -1.5f);
+    CPPUNIT_ASSERT(accessor->getByte(0) == -1);
 }
 
 void ByteAccessorTest::testSetIntGetByte() {
-    accessor->setInt(0, 0, 0, 127);
-    CPPUNIT_ASSERT(accessor->getByte(0, 0, 0) == 127);
+    accessor->setInt(0, 127);
+    CPPUNIT_ASSERT(accessor->getByte(0) == 127);
 
-    accessor->setInt(0, 0, 0, -128);
-    CPPUNIT_ASSERT(accessor->getByte(0, 0, 0) == -128);
+    accessor->setInt(0, -128);
+    CPPUNIT_ASSERT(accessor->getByte(0) == -128);
 }
 
 void ByteAccessorTest::testSetUByteGetByte() {
-    accessor->setUByte(0, 0, 0, 127);
-    CPPUNIT_ASSERT(accessor->getByte(0, 0, 0) == 127);
+    accessor->setUByte(0, 127);
+    CPPUNIT_ASSERT(accessor->getByte(0) == 127);
 
-    accessor->setUByte(0, 0, 0, 255);
-    CPPUNIT_ASSERT(accessor->getByte(0, 0, 0) == -1);
+    accessor->setUByte(0, 255);
+    CPPUNIT_ASSERT(accessor->getByte(0) == -1);
 }
 
 void ByteAccessorTest::testGetByteData() {

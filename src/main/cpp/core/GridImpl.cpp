@@ -21,7 +21,7 @@
 #include "GridImpl.h"
 #include "Constants.h"
 
-GridImpl::GridImpl(uint8_t sizeK, uint16_t sizeL, uint16_t sizeM) : Grid() {
+GridImpl::GridImpl(size_t sizeK, size_t sizeL, size_t sizeM) : Grid() {
     this->k = 0;
     this->l = 0;
     this->m = 0;
@@ -34,9 +34,9 @@ GridImpl::GridImpl(uint8_t sizeK, uint16_t sizeL, uint16_t sizeM) : Grid() {
 }
 
 GridImpl::GridImpl(const Grid& b) : Grid() {
-    this->k = b.getK();
-    this->l = b.getL();
-    this->m = b.getM();
+    this->k = b.getStartK();
+    this->l = b.getStartL();
+    this->m = b.getStartM();
     this->sizeK = b.getSizeK();
     this->sizeL = b.getSizeL();
     this->sizeM = b.getSizeM();
@@ -48,3 +48,15 @@ GridImpl::GridImpl(const Grid& b) : Grid() {
 GridImpl::~GridImpl() {
 }
 
+size_t GridImpl::getIndex(size_t k, size_t l, size_t m) const throw (out_of_range) {
+    if (k < this->k || k + 1 > this->k + sizeK) {
+        throw out_of_range("index k is out of range.");
+    }
+    if (l < this->l || l + 1 > this->l + sizeL) {
+        throw out_of_range("index l is out of range.");
+    }
+    if (m < this->m || m + 1 > this->m + sizeM) {
+        throw out_of_range("index m is out of range.");
+    }
+    return (k - this->k) * strideK + (l - this->l) * strideL + (m - this->m) * strideM;
+}

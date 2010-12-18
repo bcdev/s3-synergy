@@ -27,6 +27,7 @@
 
 class ByteAccessorTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(ByteAccessorTest);
+    CPPUNIT_TEST(testGetSampleCount);
     CPPUNIT_TEST(testSetByteGetByte);
     CPPUNIT_TEST(testSetDoubleGetByte);
     CPPUNIT_TEST(testSetFloatGetByte);
@@ -44,6 +45,7 @@ public:
 
 private:
     Accessor* accessor;
+    void testGetSampleCount();
     void testSetByteGetByte();
     void testSetDoubleGetByte();
     void testSetFloatGetByte();

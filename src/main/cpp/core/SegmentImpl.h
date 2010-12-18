@@ -21,13 +21,19 @@
 #ifndef SEGMENTIMPL_H
 #define	SEGMENTIMPL_H
 
+#include <map>
+#include <vector>
+
 #include "Constants.h"
 #include "GridImpl.h"
 #include "Segment.h"
 
+using std::map;
+using std::vector;
+
 class SegmentImpl : public virtual Segment {
 public:
-    SegmentImpl(const string& id, uint16_t sizeL);
+    SegmentImpl(const string& id, size_t sizeL);
     virtual ~SegmentImpl();
 
     void addVariableByte(const string& varName);
@@ -42,17 +48,19 @@ public:
     void addVariableUShort(const string& varName);
 
     const string& getId() const;
-
     const Grid& getGrid() const;
-    const Grid& setGridL(uint16_t l);
-    
+
     string toString() const;
 
 private:
+    void check(const string& varName) const;
+
     static const string className;
 
     const string id;
     GridImpl grid;
+    map<string, Accessor*> accessorMap;
+    vector<Accessor*> accessorList;
 };
 
 #endif	/* SEGMENTIMPL_H */

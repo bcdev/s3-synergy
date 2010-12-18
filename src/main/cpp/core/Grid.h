@@ -22,23 +22,27 @@
 #define	GRID_H
 
 #include <cstddef>
-#include <cstdint>
+#include <stdexcept>
+
+using std::out_of_range;
 
 class Grid {
 public:
     virtual ~Grid() {
     }
 
-    virtual uint8_t getK() const = 0;
-    virtual uint16_t getL() const = 0;
-    virtual uint16_t getM() const = 0;
-    virtual uint8_t getSizeK() const = 0;
-    virtual uint16_t getSizeL() const = 0;
-    virtual uint16_t getSizeM() const = 0;
+    virtual size_t getStartK() const = 0;
+    virtual size_t getStartL() const = 0;
+    virtual void setStartL(size_t l) = 0;
+    virtual size_t getStartM() const = 0;
+    virtual size_t getSizeK() const = 0;
+    virtual size_t getSizeL() const = 0;
+    virtual size_t getSizeM() const = 0;
+    virtual size_t getSize() const = 0;
     virtual size_t getStrideK() const = 0;
     virtual size_t getStrideL() const = 0;
     virtual size_t getStrideM() const = 0;
-
+    virtual size_t getIndex(size_t k, size_t l, size_t m) const throw(out_of_range) = 0;
 };
 
 #endif	/* GRID_H */

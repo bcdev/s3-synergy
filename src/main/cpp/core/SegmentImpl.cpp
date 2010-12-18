@@ -23,39 +23,67 @@
 #include <sstream>
 
 #include "SegmentImpl.h"
+#include "ByteAccessor.h"
+#include "DoubleAccessor.h"
+#include "FloatAccessor.h"
+#include "IntAccessor.h"
+#include "LongAccessor.h"
+#include "ShortAccessor.h"
 
+using std::invalid_argument;
 using std::min;
 using std::numeric_limits;
 using std::ostringstream;
 
-SegmentImpl::SegmentImpl(const string& s, uint16_t r) : id(s), grid(N_CAM, r, N_DET_CAM) {
+SegmentImpl::SegmentImpl(const string& s, size_t l) : id(s), grid(N_CAM, l, N_DET_CAM), accessorMap() {
 }
 
 SegmentImpl::~SegmentImpl() {
+    for (int i = accessorList.size(); i-- > 0;) {
+        delete accessorList[i];
+    }
 }
 
 void SegmentImpl::addVariableByte(const string& varName) {
-
+    check(varName);
+    Accessor* accessor = new ByteAccessor(grid.getSize());
+    accessorMap[varName] = accessor;
+    accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableDouble(const string& varName) {
-
+    check(varName);
+    Accessor* accessor = new DoubleAccessor(grid.getSize());
+    accessorMap[varName] = accessor;
+    accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableFloat(const string& varName) {
-
-}
-
-void SegmentImpl::addVariableLong(const string& varName) {
-
+    check(varName);
+    Accessor* accessor = new FloatAccessor(grid.getSize());
+    accessorMap[varName] = accessor;
+    accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableInt(const string& varName) {
+    check(varName);
+    Accessor* accessor = new IntAccessor(grid.getSize());
+    accessorMap[varName] = accessor;
+    accessorList.push_back(accessor);
+}
 
+void SegmentImpl::addVariableLong(const string& varName) {
+    check(varName);
+    Accessor* accessor = new LongAccessor(grid.getSize());
+    accessorMap[varName] = accessor;
+    accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableShort(const string& varName) {
-
+    check(varName);
+    Accessor* accessor = new ShortAccessor(grid.getSize());
+    accessorMap[varName] = accessor;
+    accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableUByte(const string& varName) {
@@ -84,19 +112,20 @@ const Grid& SegmentImpl::getGrid() const {
     return grid;
 }
 
-inline
-const Grid& SegmentImpl::setGridL(uint16_t l) {
-    // todo - implement
-}
-
 string SegmentImpl::toString() const {
     std::ostringstream oss;
     oss << className << "[";
     oss << "id = " << getId() << ", ";
-    oss << "l = " << getGrid().getL() << ", ";
-    oss << "rowCount = " << getGrid().getSizeL() << "]";
+    oss << "startL = " << getGrid().getStartL() << ", ";
+    oss << "sizeL = " << getGrid().getSizeL() << "]";
 
     return oss.str();
+}
+
+void SegmentImpl::check(const string& varName) const {
+    if (accessorMap.find(varName) == accessorMap.end()) {
+        throw invalid_argument("variable '" + varName + "' has already been added to segment '" + id + "'.");
+    }
 }
 
 const string SegmentImpl::className = "SegmentImpl";

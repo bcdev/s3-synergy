@@ -118,13 +118,6 @@ public:
     virtual const Grid& getGrid() const = 0;
 
     /**
-     * Moves the segment grid to a given target row index. On return
-     * the segment grid starts with the target row index.
-     * @param l The target row index.
-     */
-    virtual const Grid& setGridL(uint16_t l) = 0;
-
-    /**
      * Returns an accessor to a variable's samples.
      * @param varName The name of the variable to be accessed.
      * @return the accessor.

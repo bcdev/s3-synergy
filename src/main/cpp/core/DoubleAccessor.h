@@ -26,13 +26,13 @@
 class DoubleAccessor : public virtual AbstractAccessor<double> {
 public:
 
-    DoubleAccessor(const Grid& g) : AbstractAccessor<double>(g) {
+    DoubleAccessor(size_t n) : AbstractAccessor<double>(n) {
     }
 
     virtual ~DoubleAccessor() {
     }
 
-    valarray<double>& getDoubleData() const {
+    valarray<double>& getDoubleData() const throw (bad_cast) {
         return getData();
     }
 };

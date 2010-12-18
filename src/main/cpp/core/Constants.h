@@ -21,10 +21,10 @@
 #ifndef CONSTANTS_H
 #define	CONSTANTS_H
 
-#include <cstdint>
+#include <cstddef>
 
-const uint8_t N_CAM = 5;
-const uint16_t N_DET_CAM = 760;
+const size_t N_CAM = 5;
+const size_t N_DET_CAM = 760;
 
 #endif	/* CONSTANTS_H */
 

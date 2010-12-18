@@ -26,13 +26,13 @@
 class FloatAccessor : public virtual AbstractAccessor<float> {
 public:
 
-    FloatAccessor(const Grid& g) : AbstractAccessor<float>(g) {
+    FloatAccessor(size_t n) : AbstractAccessor<float>(n) {
     }
 
     virtual ~FloatAccessor() {
     }
 
-    valarray<float>& getFloatData() const {
+    valarray<float>& getFloatData() const throw (bad_cast) {
         return getData();
     }
 };

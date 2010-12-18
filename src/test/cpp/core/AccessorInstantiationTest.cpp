@@ -25,7 +25,6 @@
 #include "../../../main/cpp/core/IntAccessor.h"
 #include "../../../main/cpp/core/LongAccessor.h"
 #include "../../../main/cpp/core/ShortAccessor.h"
-#include "../../../main/cpp/core/GridImpl.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(AccessorInstantiationTest);
 
@@ -46,37 +45,37 @@ void AccessorInstantiationTest::tearDown() {
 }
 
 void AccessorInstantiationTest::testInstantiateByteAccessor() {
-    accessor = new ByteAccessor(GridImpl(1, 1, 1));
+    accessor = new ByteAccessor(1);
     CPPUNIT_ASSERT(accessor != 0);
     CPPUNIT_ASSERT_NO_THROW(accessor->getByteData());
 }
 
 void AccessorInstantiationTest::testInstantiateDoubleAccessor() {
-    accessor = new DoubleAccessor(GridImpl(1, 1, 1));
+    accessor = new DoubleAccessor(1);
     CPPUNIT_ASSERT(accessor != 0);
     CPPUNIT_ASSERT_NO_THROW(accessor->getDoubleData());
 }
 
 void AccessorInstantiationTest::testInstantiateFloatAccessor() {
-    accessor = new FloatAccessor(GridImpl(1, 1, 1));
+    accessor = new FloatAccessor(1);
     CPPUNIT_ASSERT(accessor != 0);
     CPPUNIT_ASSERT_NO_THROW(accessor->getFloatData());
 }
 
 void AccessorInstantiationTest::testInstantiateIntAccessor() {
-    accessor = new IntAccessor(GridImpl(1, 1, 1));
+    accessor = new IntAccessor(1);
     CPPUNIT_ASSERT(accessor != 0);
     CPPUNIT_ASSERT_NO_THROW(accessor->getIntData());
 }
 
 void AccessorInstantiationTest::testInstantiateLongAccessor() {
-    accessor = new LongAccessor(GridImpl(1, 1, 1));
+    accessor = new LongAccessor(1);
     CPPUNIT_ASSERT(accessor != 0);
     CPPUNIT_ASSERT_NO_THROW(accessor->getLongData());
 }
 
 void AccessorInstantiationTest::testInstantiateShortAccessor() {
-    accessor = new ShortAccessor(GridImpl(1, 1, 1));
+    accessor = new ShortAccessor(1);
     CPPUNIT_ASSERT(accessor != 0);
     CPPUNIT_ASSERT_NO_THROW(accessor->getShortData());
 }

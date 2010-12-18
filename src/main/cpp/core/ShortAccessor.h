@@ -24,13 +24,13 @@
 class ShortAccessor : public virtual AbstractAccessor<int16_t> {
 public:
 
-    ShortAccessor(const Grid& g) : AbstractAccessor<int16_t>(g) {
+    ShortAccessor(size_t n) : AbstractAccessor<int16_t>(n) {
     }
 
     virtual ~ShortAccessor() {
     }
 
-    valarray<int16_t>& getShortData() const {
+    valarray<int16_t>& getShortData() const throw (bad_cast) {
         return getData();
     }
 };

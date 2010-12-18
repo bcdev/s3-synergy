@@ -24,13 +24,13 @@
 class LongAccessor : public virtual AbstractAccessor<int64_t> {
 public:
 
-    LongAccessor(const Grid& g) : AbstractAccessor<int64_t>(g) {
+    LongAccessor(size_t n) : AbstractAccessor<int64_t>(n) {
     }
 
     virtual ~LongAccessor() {
     }
 
-    valarray<int64_t>& getLongData() const {
+    valarray<int64_t>& getLongData() const throw (bad_cast) {
         return getData();
     }
 };

@@ -24,13 +24,13 @@
 class IntAccessor : public virtual AbstractAccessor<int32_t> {
 public:
 
-    IntAccessor(const Grid& g) : AbstractAccessor<int32_t>(g) {
+    IntAccessor(size_t n) : AbstractAccessor<int32_t>(n) {
     }
 
     virtual ~IntAccessor() {
     }
 
-    valarray<int32_t>& getIntData() const {
+    valarray<int32_t>& getIntData() const throw (bad_cast) {
         return getData();
     }
 };

@@ -24,7 +24,6 @@
 #include <typeinfo>
 
 #include "Accessor.h"
-#include "GridImpl.h"
 
 using std::bad_cast;
 
@@ -32,133 +31,133 @@ template<class T>
 class AbstractAccessor : public virtual Accessor {
 public:
 
-    int8_t getByte(uint8_t k, uint16_t l, uint16_t m) const throw (out_of_range) {
-        return data[index(k, l, m)];
+    int8_t getByte(size_t i) const throw (out_of_range) {
+        return data[at(i)];
     }
 
-    void setByte(uint8_t k, uint16_t l, uint16_t m, int8_t value) throw (out_of_range) {
-        data[index(k, l, m)] = value;
+    void setByte(size_t i, int8_t value) throw (out_of_range) {
+        data[at(i)] = value;
     }
 
-    double getDouble(uint8_t k, uint16_t l, uint16_t m) const throw (out_of_range) {
-        return data[index(k, l, m)];
+    double getDouble(size_t i) const throw (out_of_range) {
+        return data[at(i)];
     }
 
-    void setDouble(uint8_t k, uint16_t l, uint16_t m, double value) throw (out_of_range) {
-        data[index(k, l, m)] = value;
+    void setDouble(size_t i, double value) throw (out_of_range) {
+        data[at(i)] = value;
     }
 
-    float getFloat(uint8_t k, uint16_t l, uint16_t m) const throw (out_of_range) {
-        return data[index(k, l, m)];
+    float getFloat(size_t i) const throw (out_of_range) {
+        return data[at(i)];
     }
 
-    void setFloat(uint8_t k, uint16_t l, uint16_t m, float value) throw (out_of_range) {
-        data[index(k, l, m)] = value;
+    void setFloat(size_t i, float value) throw (out_of_range) {
+        data[at(i)] = value;
     }
 
-    int32_t getInt(uint8_t k, uint16_t l, uint16_t m) const throw (out_of_range) {
-        return data[index(k, l, m)];
+    int32_t getInt(size_t i) const throw (out_of_range) {
+        return data[at(i)];
     }
 
-    void setInt(uint8_t k, uint16_t l, uint16_t m, int32_t value) throw (out_of_range) {
-        data[index(k, l, m)] = value;
+    void setInt(size_t i, int32_t value) throw (out_of_range) {
+        data[at(i)] = value;
     }
 
-    int64_t getLong(uint8_t k, uint16_t l, uint16_t m) const throw (out_of_range) {
-        return data[index(k, l, m)];
+    int64_t getLong(size_t i) const throw (out_of_range) {
+        return data[at(i)];
     }
 
-    void setLong(uint8_t k, uint16_t l, uint16_t m, int64_t value) throw (out_of_range) {
-        data[index(k, l, m)] = value;
+    void setLong(size_t i, int64_t value) throw (out_of_range) {
+        data[at(i)] = value;
     }
 
-    int16_t getShort(uint8_t k, uint16_t l, uint16_t m) const throw (out_of_range) {
-        return data[index(k, l, m)];
+    int16_t getShort(size_t i) const throw (out_of_range) {
+        return data[at(i)];
     }
 
-    void setShort(uint8_t k, uint16_t l, uint16_t m, int16_t value) throw (out_of_range) {
-        data[index(k, l, m)] = value;
+    void setShort(size_t i, int16_t value) throw (out_of_range) {
+        data[at(i)] = value;
     }
 
-    uint8_t getUByte(uint8_t k, uint16_t l, uint16_t m) const throw (out_of_range) {
-        return data[index(k, l, m)];
+    uint8_t getUByte(size_t i) const throw (out_of_range) {
+        return data[at(i)];
     }
 
-    void setUByte(uint8_t k, uint16_t l, uint16_t m, uint8_t value) throw (out_of_range) {
-        data[index(k, l, m)] = value;
+    void setUByte(size_t i, uint8_t value) throw (out_of_range) {
+        data[at(i)] = value;
     }
 
-    uint32_t getUInt(uint8_t k, uint16_t l, uint16_t m) const throw (out_of_range) {
-        return data[index(k, l, m)];
+    uint32_t getUInt(size_t i) const throw (out_of_range) {
+        return data[at(i)];
     }
 
-    void setUInt(uint8_t k, uint16_t l, uint16_t m, uint32_t value) throw (out_of_range) {
-        data[index(k, l, m)] = value;
+    void setUInt(size_t i, uint32_t value) throw (out_of_range) {
+        data[at(i)] = value;
     }
 
-    uint64_t getULong(uint8_t k, uint16_t l, uint16_t m) const throw (out_of_range) {
-        return data[index(k, l, m)];
+    uint64_t getULong(size_t i) const throw (out_of_range) {
+        return data[at(i)];
     }
 
-    void setULong(uint8_t k, uint16_t l, uint16_t m, uint64_t value) throw (out_of_range) {
-        data[index(k, l, m)] = value;
+    void setULong(size_t i, uint64_t value) throw (out_of_range) {
+        data[at(i)] = value;
     }
 
-    uint16_t getUShort(uint8_t k, uint16_t l, uint16_t m) const throw (out_of_range) {
-        return data[index(k, l, m)];
+    uint16_t getUShort(size_t i) const throw (out_of_range) {
+        return data[at(i)];
     }
 
-    void setUShort(uint8_t k, uint16_t l, uint16_t m, uint16_t value) throw (out_of_range) {
-        data[index(k, l, m)] = value;
+    void setUShort(size_t i, uint16_t value) throw (out_of_range) {
+        data[at(i)] = value;
     }
 
-    virtual valarray<int8_t>& getByteData() const {
+    const size_t getSampleCount() const {
+        return data.size();
+    }
+
+    virtual valarray<int8_t>& getByteData() const throw (bad_cast) {
         throw bad_cast();
     }
 
-    virtual valarray<double>& getDoubleData() const {
+    virtual valarray<double>& getDoubleData() const throw (bad_cast) {
         throw bad_cast();
     }
 
-    virtual valarray<float>& getFloatData() const {
+    virtual valarray<float>& getFloatData() const throw (bad_cast) {
         throw bad_cast();
     }
 
-    virtual valarray<int32_t>& getIntData() const {
+    virtual valarray<int32_t>& getIntData() const throw (bad_cast) {
         throw bad_cast();
     }
 
-    virtual valarray<int64_t>& getLongData() const {
+    virtual valarray<int64_t>& getLongData() const throw (bad_cast) {
         throw bad_cast();
     }
 
-    virtual valarray<int16_t>& getShortData() const {
+    virtual valarray<int16_t>& getShortData() const throw (bad_cast) {
         throw bad_cast();
     }
 
-    virtual valarray<uint8_t>& getUByteData() const {
+    virtual valarray<uint8_t>& getUByteData() const throw (bad_cast) {
         throw bad_cast();
     }
 
-    virtual valarray<uint32_t>& getUIntData() const {
+    virtual valarray<uint32_t>& getUIntData() const throw (bad_cast) {
         throw bad_cast();
     }
 
-    virtual valarray<uint64_t>& getULongData() const {
+    virtual valarray<uint64_t>& getULongData() const throw (bad_cast) {
         throw bad_cast();
     }
 
-    virtual valarray<uint16_t>& getUShortData() const {
+    virtual valarray<uint16_t>& getUShortData() const throw (bad_cast) {
         throw bad_cast();
-    }
-
-    const Grid& getGrid() const {
-        return grid;
     }
 
 protected:
 
-    AbstractAccessor(const Grid& g) : Accessor(), grid(g), data(g.getSizeK() * g.getSizeL() * g.getSizeM()) {
+    AbstractAccessor(size_t n) : Accessor(), data(n) {
     }
 
     virtual ~AbstractAccessor() {
@@ -170,27 +169,13 @@ protected:
 
 private:
 
-    size_t index(uint8_t k, uint16_t l, uint16_t m) const {
-        const size_t minK = grid.getK();
-        const size_t minL = grid.getL();
-        const size_t minM = grid.getM();
-        const size_t sizeK = grid.getSizeK();
-        const size_t sizeL = grid.getSizeL();
-        const size_t sizeM = grid.getSizeM();
-
-        if (k < minK || k > minK + sizeK - 1) {
-            throw out_of_range("camera index is out of range.");
+    size_t at(size_t i) const {
+        if (i < data.size()) {
+            return i;
         }
-        if (l < minL || l > minL + sizeL - 1) {
-            throw out_of_range("row index is out of range.");
-        }
-        if (m < minM || m > minM + sizeM - 1) {
-            throw out_of_range("column index is out of range.");
-        }
-        return m * grid.getStrideM() + l * grid.getStrideL() + k * grid.getStrideK();
+        throw out_of_range("index i is out of range.");
     }
 
-    const GridImpl& grid;
     valarray<T> data;
 };
 
