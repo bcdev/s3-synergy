@@ -24,7 +24,6 @@
 #include <map>
 #include <vector>
 
-#include "Constants.h"
 #include "GridImpl.h"
 #include "Segment.h"
 
@@ -36,16 +35,18 @@ public:
     SegmentImpl(const string& id, size_t sizeL);
     virtual ~SegmentImpl();
 
-    void addVariableByte(const string& varName);
-    void addVariableDouble(const string& varName);
-    void addVariableFloat(const string& varName);
-    void addVariableInt(const string& varName);
-    void addVariableLong(const string& varName);
-    void addVariableShort(const string& varName);
-    void addVariableUByte(const string& varName);
-    void addVariableUInt(const string& varName);
-    void addVariableULong(const string& varName);
-    void addVariableUShort(const string& varName);
+    void addVariableByte(const string& varName) throw (logic_error);
+    void addVariableDouble(const string& varName) throw (logic_error);
+    void addVariableFloat(const string& varName) throw (logic_error);
+    void addVariableInt(const string& varName) throw (logic_error);
+    void addVariableLong(const string& varName) throw (logic_error);
+    void addVariableShort(const string& varName) throw (logic_error);
+    void addVariableUByte(const string& varName) throw (logic_error);
+    void addVariableUInt(const string& varName) throw (logic_error);
+    void addVariableULong(const string& varName) throw (logic_error);
+    void addVariableUShort(const string& varName) throw (logic_error);
+
+    bool hasVariable(const string& varName) const;
 
     const string& getId() const;
     const Grid& getGrid() const;
@@ -53,7 +54,7 @@ public:
     string toString() const;
 
 private:
-    void unique(const string& varName) const;
+    void unique(const string& varName) const throw (logic_error);
 
     static const string className;
 

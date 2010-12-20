@@ -21,10 +21,13 @@
 #ifndef SEGMENT_H
 #define	SEGMENT_H
 
+#include <stdexcept>
 #include <string>
 
 #include "Accessor.h"
+#include "Grid.h"
 
+using std::logic_error;
 using std::string;
 
 /**
@@ -43,61 +46,61 @@ public:
      * Adds a variable of type {@code int8_t} to the segment.
      * @param varName The name of the variable being added.
      */
-    virtual void addVariableByte(const string& varName) = 0;
+    virtual void addVariableByte(const string& varName) throw(logic_error) = 0;
 
     /**
      * Adds a variable of type {@code uint8_t} to the segment.
      * @param varName The name of the variable being added.
      */
-    virtual void addVariableUByte(const string& varName) = 0;
+    virtual void addVariableUByte(const string& varName) throw (logic_error) = 0;
 
     /**
      * Adds a variable of type {@code int16_t} to the segment.
      * @param varName The name of the variable being added.
      */
-    virtual void addVariableShort(const string& varName) = 0;
+    virtual void addVariableShort(const string& varName) throw (logic_error) = 0;
 
     /**
      * Adds a variable of type {@code uint16_t} to the segment.
      * @param varName The name of the variable being added.
      */
-    virtual void addVariableUShort(const string& varName) = 0;
+    virtual void addVariableUShort(const string& varName) throw (logic_error) = 0;
 
     /**
      * Adds a variable of type {@code int32_t} to the segment.
      * @param varName The name of the variable being added.
      */
-    virtual void addVariableInt(const string& varName) = 0;
+    virtual void addVariableInt(const string& varName) throw (logic_error) = 0;
 
     /**
      * Adds a variable of type {@code uint32_t} to the segment.
      * @param varName The name of the variable being added.
      */
-    virtual void addVariableUInt(const string& varName) = 0;
+    virtual void addVariableUInt(const string& varName) throw (logic_error) = 0;
 
     /**
      * Adds a variable of type {@code int64_t} to the segment.
      * @param varName The name of the variable being added.
      */
-    virtual void addVariableLong(const string& varName) = 0;
+    virtual void addVariableLong(const string& varName) throw (logic_error) = 0;
 
     /**
      * Adds a variable of type {@code uint64_t} to the segment.
      * @param varName The name of the variable being added.
      */
-    virtual void addVariableULong(const string& varName) = 0;
+    virtual void addVariableULong(const string& varName) throw (logic_error) = 0;
 
     /**
      * Adds a variable of type {@code float} to the segment.
      * @param varName The name of the variable being added.
      */
-    virtual void addVariableFloat(const string& varName) = 0;
+    virtual void addVariableFloat(const string& varName) throw (logic_error) = 0;
 
     /**
      * Adds a variable of type {@code double} to the segment.
      * @param varName The name of the variable being added.
      */
-    virtual void addVariableDouble(const string& varName) = 0;
+    virtual void addVariableDouble(const string& varName) throw (logic_error) = 0;
 
     /**
      * Tests whether a variable of interest has been added to the the segment

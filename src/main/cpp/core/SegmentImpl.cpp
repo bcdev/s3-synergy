@@ -21,16 +21,18 @@
 #include <algorithm>
 #include <limits>
 #include <sstream>
+#include <stdexcept>
 
 #include "Accessors.h"
+#include "Constants.h"
 #include "SegmentImpl.h"
 
-using std::invalid_argument;
+using std::logic_error;
 using std::min;
 using std::numeric_limits;
 using std::ostringstream;
 
-SegmentImpl::SegmentImpl(const string& s, size_t l) : id(s), grid(N_CAM, l, N_DET_CAM), accessorMap() {
+SegmentImpl::SegmentImpl(const string& s, size_t l) : id(s), grid(Constants::N_CAM, l, Constants::N_DET_CAM), accessorMap() {
 }
 
 SegmentImpl::~SegmentImpl() {
@@ -39,74 +41,79 @@ SegmentImpl::~SegmentImpl() {
     }
 }
 
-void SegmentImpl::addVariableByte(const string& varName) {
+void SegmentImpl::addVariableByte(const string& varName) throw (logic_error) {
     unique(varName);
     Accessor* accessor = new ByteAccessor(grid.getSize());
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableDouble(const string& varName) {
+void SegmentImpl::addVariableDouble(const string& varName) throw (logic_error) {
     unique(varName);
     Accessor* accessor = new DoubleAccessor(grid.getSize());
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableFloat(const string& varName) {
+void SegmentImpl::addVariableFloat(const string& varName) throw (logic_error) {
     unique(varName);
     Accessor* accessor = new FloatAccessor(grid.getSize());
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableInt(const string& varName) {
+void SegmentImpl::addVariableInt(const string& varName) throw (logic_error) {
     unique(varName);
     Accessor* accessor = new IntAccessor(grid.getSize());
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableLong(const string& varName) {
+void SegmentImpl::addVariableLong(const string& varName) throw (logic_error) {
     unique(varName);
     Accessor* accessor = new LongAccessor(grid.getSize());
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableShort(const string& varName) {
+void SegmentImpl::addVariableShort(const string& varName) throw (logic_error) {
     unique(varName);
     Accessor* accessor = new ShortAccessor(grid.getSize());
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableUByte(const string& varName) {
+void SegmentImpl::addVariableUByte(const string& varName) throw (logic_error) {
     unique(varName);
     Accessor* accessor = new UByteAccessor(grid.getSize());
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableUInt(const string& varName) {
+void SegmentImpl::addVariableUInt(const string& varName) throw (logic_error) {
     unique(varName);
     Accessor* accessor = new UIntAccessor(grid.getSize());
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableULong(const string& varName) {
+void SegmentImpl::addVariableULong(const string& varName) throw (logic_error) {
     unique(varName);
     Accessor* accessor = new ULongAccessor(grid.getSize());
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableUShort(const string& varName) {
+void SegmentImpl::addVariableUShort(const string& varName) throw (logic_error) {
     unique(varName);
     Accessor* accessor = new UShortAccessor(grid.getSize());
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
+}
+
+inline
+bool SegmentImpl::hasVariable(const string& varName) const {
+    return accessorMap.find(varName) != accessorMap.end();
 }
 
 inline
@@ -129,9 +136,9 @@ string SegmentImpl::toString() const {
     return oss.str();
 }
 
-void SegmentImpl::unique(const string& varName) const {
-    if (accessorMap.find(varName) == accessorMap.end()) {
-        throw invalid_argument("variable '" + varName + "' has already been added to segment '" + id + "'.");
+void SegmentImpl::unique(const string& varName) const throw (logic_error) {
+    if (hasVariable(varName)) {
+        throw logic_error("variable '" + varName + "' has already been added to segment '" + id + "'.");
     }
 }
 

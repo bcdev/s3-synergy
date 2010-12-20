@@ -23,8 +23,10 @@
 
 #include <cstddef>
 
-const size_t N_CAM = 5;
-const size_t N_DET_CAM = 760;
+struct Constants {
+    static const size_t N_CAM = 5;
+    static const size_t N_DET_CAM = 760;
+};
 
 #endif	/* CONSTANTS_H */
 
