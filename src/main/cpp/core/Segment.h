@@ -27,6 +27,9 @@
 
 using std::string;
 
+/**
+ * A container for variables, which exhibit the same {@link Grid}.
+ */
 class Segment {
 public:
 
