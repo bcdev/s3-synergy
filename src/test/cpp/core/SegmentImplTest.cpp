@@ -1,0 +1,114 @@
+/*
+ * Copyright (C) 2010 by Brockmann Consult (info@brockmann-consult.de)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation. This program is distributed in the hope it will
+ * be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
+ *
+ * File:   SegmentImplTest.cpp
+ * Author: ralf
+ *
+ * Created on December 20, 2010, 11:17 AM
+ */
+
+#include "SegmentImplTest.h"
+#include "../../../main/cpp/core/SegmentImpl.h"
+
+CPPUNIT_TEST_SUITE_REGISTRATION(SegmentImplTest);
+
+SegmentImplTest::SegmentImplTest() {
+}
+
+SegmentImplTest::~SegmentImplTest() {
+}
+
+void SegmentImplTest::setUp() {
+    segment = new SegmentImpl("TEST", 2000);
+}
+
+void SegmentImplTest::tearDown() {
+    delete segment;
+}
+
+void SegmentImplTest::testAddVariable() {
+    CPPUNIT_ASSERT(segment->hasVariable("V") == false);
+    segment->addVariableByte("V");
+    CPPUNIT_ASSERT(segment->hasVariable("V") == true);
+
+    CPPUNIT_ASSERT_THROW(segment->addVariableByte("V"), logic_error);
+    CPPUNIT_ASSERT_THROW(segment->addVariableDouble("V"), logic_error);
+    CPPUNIT_ASSERT_THROW(segment->addVariableFloat("V"), logic_error);
+    CPPUNIT_ASSERT_THROW(segment->addVariableInt("V"), logic_error);
+    CPPUNIT_ASSERT_THROW(segment->addVariableLong("V"), logic_error);
+    CPPUNIT_ASSERT_THROW(segment->addVariableShort("V"), logic_error);
+    CPPUNIT_ASSERT_THROW(segment->addVariableUByte("V"), logic_error);
+    CPPUNIT_ASSERT_THROW(segment->addVariableUInt("V"), logic_error);
+    CPPUNIT_ASSERT_THROW(segment->addVariableULong("V"), logic_error);
+    CPPUNIT_ASSERT_THROW(segment->addVariableUShort("V"), logic_error);
+}
+
+void SegmentImplTest::testGetId() {
+    CPPUNIT_ASSERT(segment->getId() == "TEST");
+}
+
+void SegmentImplTest::testGetGrid() {
+    const Grid& grid = segment->getGrid();
+
+    CPPUNIT_ASSERT(grid.getStartK() == 0);
+    CPPUNIT_ASSERT(grid.getStartL() == 0);
+    CPPUNIT_ASSERT(grid.getStartM() == 0);
+    CPPUNIT_ASSERT(grid.getSizeK() == 5);
+    CPPUNIT_ASSERT(grid.getSizeL() == 2000);
+    CPPUNIT_ASSERT(grid.getSizeM() == 760);
+}
+
+void SegmentImplTest::testGetAccessor() {
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("B"), out_of_range);
+    segment->addVariableByte("B");
+    CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("B").getByteData());
+    CPPUNIT_ASSERT(segment->getAccessor("B").getByteData().size() == 5 * 2000 * 760);
+
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("D"), out_of_range);
+    segment->addVariableDouble("D");
+    CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("D").getDoubleData());
+
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("F"), out_of_range);
+    segment->addVariableFloat("F");
+    CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("F").getFloatData());
+
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("I"), out_of_range);
+    segment->addVariableInt("I");
+    CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("I").getIntData());
+
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("L"), out_of_range);
+    segment->addVariableLong("L");
+    CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("L").getLongData());
+
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("S"), out_of_range);
+    segment->addVariableShort("S");
+    CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("S").getShortData());
+
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("UB"), out_of_range);
+    segment->addVariableUByte("UB");
+    CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("UB").getUByteData());
+
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("UI"), out_of_range);
+    segment->addVariableUInt("UI");
+    CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("UI").getUIntData());
+
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("UL"), out_of_range);
+    segment->addVariableULong("UL");
+    CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("UL").getULongData());
+
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("US"), out_of_range);
+    segment->addVariableUShort("US");
+    CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("US").getUShortData());
+}
+
