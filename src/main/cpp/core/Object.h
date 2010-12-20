@@ -39,6 +39,12 @@ public:
      * @return the ID of this object.
      */
     virtual const string& getId() const = 0;
+
+    /**
+     * Returns a clone of this object.
+     * @return a clone of this object.
+     */
+    virtual Object* clone() = 0;
 };
 
 #endif	/* OBJECT_H */
