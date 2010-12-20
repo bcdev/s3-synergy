@@ -34,11 +34,11 @@ ByteAccessorTest::~ByteAccessorTest() {
 }
 
 void ByteAccessorTest::setUp() {
-    this->accessor = new ByteAccessor(1);
+    accessor = new ByteAccessor(1);
 }
 
 void ByteAccessorTest::tearDown() {
-    delete this->accessor;
+    delete accessor;
 }
 
 void ByteAccessorTest::testGetSampleCount() {

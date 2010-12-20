@@ -50,7 +50,8 @@ public:
 
     const string& getId() const;
     const Grid& getGrid() const;
-
+    Accessor& getAccessor(const string& varName) const;
+    
     string toString() const;
 
 private:

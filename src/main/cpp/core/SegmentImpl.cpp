@@ -126,6 +126,10 @@ const Grid& SegmentImpl::getGrid() const {
     return grid;
 }
 
+Accessor& SegmentImpl::getAccessor(const string& varName) const {
+    return *accessorMap.at(varName);
+}
+
 string SegmentImpl::toString() const {
     std::ostringstream oss;
     oss << className << "[";
