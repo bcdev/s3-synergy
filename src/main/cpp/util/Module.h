@@ -8,7 +8,8 @@
 #ifndef MODULE_H
 #define	MODULE_H
 
-#include "Segment.h"
+#include "../core/Segment.h"
+#include "../util/Variable.h"
 
 class ProcessorContext;
 

@@ -27,7 +27,7 @@
 
 #include "JobOrder.h"
 #include "Logger.h"
-#include "Segment.h"
+#include "../core/Segment.h"
 
 using std::map;
 using std::pair;

@@ -41,6 +41,10 @@ public:
         this->startL = l;
     }
 
+    void setSizeL(size_t l) {
+        this->sizeL = l;
+    }
+
     size_t getStartM() const {
         return startM;
     }

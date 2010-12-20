@@ -22,7 +22,7 @@
 
 #include "ProcessorContext.h"
 #include "TestModule.h"
-#include "SegmentImpl.h"
+#include "../core/Segment.h"
 
 TestModule::TestModule() : AbstractModule("TestModule") {
 }
@@ -32,21 +32,23 @@ TestModule::~TestModule() {
 
 Segment* TestModule::processSegment(ProcessorContext& context) {
     Segment& segment = context.getSegment("SYN_COLLOCATED");
-    if (segment.getIntVariable("SDR_1") == 0 ) {
-        segment.addIntVariable(createVariable("SDR_1"));
+    if (!segment.hasVariable("SDR_1")) {
+        segment.addVariableInt("SDR_1");
     }
+    Grid& grid = segment.getGrid();
     Logger::get()->progress("Starting to process segment [" + segment.toString() + "]", getModuleId(), getVersion());
-    for (size_t l = getMinLineNotComputed(segment, context); l <= segment.getRowCount() - overlap; l++) {
-        for (size_t k = segment.getMinK(); k <= segment.getCamCount(); k++) {
-            for (size_t m = segment.getM(); m <= segment.getColCount(); m++) {
-                segment.setSampleInt("SDR_1", segment.computePosition(k, l, m), 666);
+    for (size_t line = getMinLineNotComputed(segment, context); line <= segment.getGrid().getSizeL() - overlap; line++) {
+        for (size_t cam = grid.getStartK(); cam <= grid.getSizeK(); cam++) {
+            for (size_t col = grid.getStartM(); col <= grid.getSizeM(); col++) {
+                segment.getAccessor("SDR_1").setInt( grid.getIndex(cam, line, col), 101);
             }
         }
     }
-    if (segment.getRowCount() != context.getMaxLine(segment)) {
-        context.setMaxLineComputed(segment, *this, segment.getRowCount() - overlap);
+    size_t rowCount = grid.getSizeL();
+    if (rowCount != context.getMaxLine(segment)) {
+        context.setMaxLineComputed(segment, *this, rowCount - overlap);
     } else {
-        context.setMaxLineComputed(segment, *this, segment.getRowCount());
+        context.setMaxLineComputed(segment, *this, rowCount);
     }
 
     return &segment;

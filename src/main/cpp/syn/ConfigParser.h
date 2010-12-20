@@ -8,7 +8,7 @@
 #ifndef CONFIGPARSER_H_
 #define CONFIGPARSER_H_
 
-#include "../common/XmlParser.h"
+#include "../util/XmlParser.h"
 
 class ConfigParser : public XmlParser {
 public:

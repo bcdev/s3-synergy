@@ -50,10 +50,10 @@ public:
     bool hasVariable(const string& varName) const;
 
     const string& getId() const;
-    const Grid& getGrid() const;
+    Grid& getGrid();
     Accessor& getAccessor(const string& varName) const;
     
-    string toString() const;
+    const string toString();
 
 private:
     void unique(const string& varName) const throw (logic_error);

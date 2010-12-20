@@ -2,14 +2,14 @@
 #include <unistd.h>
 #include <vector>
 
-#include "../common/JobOrderParser.h"
-#include "../common/MockReader.h"
-#include "../common/PixelClassification.h"
-#include "../common/Processor.h"
-#include "../common/ProcessorContext.h"
-#include "../common/StringUtils.h"
-#include "../common/SynL2Writer.h"
-#include "../common/TestModule.h"
+#include "../util/JobOrderParser.h"
+#include "../util/Reader.h"
+#include "../util/PixelClassification.h"
+#include "../util/Processor.h"
+#include "../util/ProcessorContext.h"
+#include "../util/StringUtils.h"
+#include "../util/SynL2Writer.h"
+#include "../util/TestModule.h"
 
 #include <iostream>
 
@@ -50,19 +50,19 @@ int main() {
         for (size_t i = 0; i < inputList.size(); i++) {
             for (size_t j = 0; j < inputList[i]->getFileNames().size(); j++) {
                 string message = "Input file: " + inputList[i]->getFileNames()[j];
-                logger->info(message, "JobOrderParser");
+                logger->info(message, "JobOrder");
             }
         }
         vector<Output*> outputList = processorList[h]->getOutputList();
         for (size_t i = 0; i < outputList.size(); i++) {
             string message = "Output file: " + outputList[i]->getFileName();
-            logger->info(message, "JobOrderParser");
+            logger->info(message, "JobOrder");
         }
     }
 
     // configure modules
     // TODO - use job order for configuration
-    MockReader reader;
+    Reader reader;
     PixelClassification pixelClassification;
     TestModule test;
     SynL2Writer writer;

@@ -69,9 +69,9 @@ public:
 
     virtual size_t getMinLineNotComputed(Segment& segment, ProcessorContext& context) const {
         if (context.hasMaxLineComputed(segment, *this)) {
-            return max(segment.getL(), context.getMaxLineComputed(segment, *this) + 1);
+            return max(segment.getGrid().getStartL(), context.getMaxLineComputed(segment, *this) + 1);
         } else {
-            return segment.getL();
+            return segment.getGrid().getStartL();
         }
     }
 

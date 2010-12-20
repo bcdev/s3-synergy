@@ -10,7 +10,7 @@
 
 #include <vector>
 
-#include "Module.h"
+#include "../util/Module.h"
 
 using std::vector;
 

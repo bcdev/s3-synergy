@@ -29,33 +29,34 @@ Segment* SynL2Writer::processSegment(ProcessorContext& context) {
 
     string variableName = "SDR_1";
     NcFile* ncFile = getDataFile(variableName);
-    Variable* var = context.getSegment(segmentId).getIntVariable(variableName);
-    NcVar* ncVar = getNcVar(    ncFile, var);
+    Accessor& accessor = context.getSegment(segmentId).getAccessor(variableName);
+//    NcVar* ncVar = getNcVar(ncFile, accessor);
 
     size_t minL = context.getMaxLineComputed(segment, *this);
-    size_t maxL = segment.getRowCount();
-    size_t minM = segment.getM();
-    size_t maxM = segment.getColCount();
+    Grid& grid = segment.getGrid();
+    size_t maxL = grid.getSizeL();
+    size_t minM = grid.getStartM();
+    size_t maxM = grid.getSizeM();
     long lines = maxL - minL + 1;
-    long cameras = segment.getCamCount() - segment.getMinK() + 1;
+    long cameras = grid.getSizeK() - grid.getStartK() + 1;
     long columns = maxM - minM + 1;
 
     int* values = new int[cameras * lines * columns];
 
     for (size_t l = minL; l < maxL; l++) {
-        for (size_t k = segment.getMinK(); k < segment.getCamCount(); k++) {
+        for (size_t k = grid.getStartK(); k < grid.getSizeK(); k++) {
             for (size_t m = minM; m < maxM; m++) {
                 size_t position = 0;
-//                values[position] = segment.getSampleInt(variableName, segment.computePosition(k, l, m));
+                //                values[position] = segment.getSampleInt(variableName, segment.computePosition(k, l, m));
             }
         }
     }
 
-//    ncVar->put_rec(values);
+    //    ncVar->put_rec(values);
 
     ncFile->sync();
     delete[] values;
-    context.setMaxLineComputed(segment, *this, segment.getRowCount());
+    context.setMaxLineComputed(segment, *this, grid.getSizeL());
     return &segment;
 }
 

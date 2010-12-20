@@ -29,17 +29,18 @@ PixelClassification::~PixelClassification() {
 
 Segment* PixelClassification::processSegment(ProcessorContext& context) {
     Segment& segment = context.getSegment("SYN_COLLOCATED");
-    if (segment.getIntVariable("SYN_flags") == 0) {
-        segment.addIntVariable(createSYN_flagsVariable());
+    if (!segment.hasVariable("SYN_flags")) {
+        segment.addVariableInt("SYN_flags");
     }
     Logger::get()->progress("Starting to process segment [" + segment.toString() + "]", getModuleId(), getVersion());
-    for (size_t k = segment.getMinK(); k <= segment.getCamCount(); k++) {
-        for (size_t l = getMinLineNotComputed(segment, context); l <= segment.getRowCount(); l++) {
-            for (size_t m = segment.getM(); m <= segment.getColCount(); m++) {
-                const size_t p = segment.computePosition(k, l, m);
-                const int olcFlags = segment.getSampleInt("F_OLC", p);
-                const int slnFlags = segment.getSampleInt("F_SLN", p);
-                const int sloFlags = segment.getSampleInt("F_SLO", p);
+    const Grid& grid = segment.getGrid();
+    for (size_t cam = grid.getStartK(); cam <= grid.getSizeK(); cam++) {
+        for (size_t line = getMinLineNotComputed(segment, context); line <= grid.getSizeL(); line++) {
+            for (size_t col = grid.getStartM(); col <= grid.getSizeM(); col++) {
+                const size_t p = grid.getIndex(cam, line, col);
+                const int olcFlags = segment.getAccessor("F_OLC").getInt(p);
+                const int slnFlags = segment.getAccessor("F_SLN").getInt(p);
+                const int sloFlags = segment.getAccessor("F_SLO").getInt(p);
                 const bool olcLand = (olcFlags & 0x1000) != 0;
                 const bool slnLand = (slnFlags & 0x0800) != 0;
                 const bool sloLand = (sloFlags & 0x0800) != 0;
@@ -55,13 +56,12 @@ Segment* PixelClassification::processSegment(ProcessorContext& context) {
                 if (slnCloud || sloCloud) {
                     synFlags |= 0x0001;
                 }
-                //                std::cout << "position: " << p << "\n";
-                segment.setSampleInt("SYN_flags", p, synFlags);
+                segment.getAccessor("SYN_flags").setInt(p, synFlags);
             }
         }
     }
     // TODO - check if needed here; don't want to set this explicitly for a pixel processor
-    context.setMaxLineComputed(segment, *this, segment.getRowCount());
+    context.setMaxLineComputed(segment, *this, grid.getSizeL());
 
     return &segment;
 }

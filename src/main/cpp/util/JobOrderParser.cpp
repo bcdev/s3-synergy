@@ -76,7 +76,6 @@ Configuration JobOrderParser::parseConfiguration() {
     value = evaluateToString(query);
     config.setVersion(value);
 
-
     query = "/Ipf_Job_Order/Ipf_Conf/Test";
     value = evaluateToString(query);
     config.setTest(StringUtils::stringToBool(value));

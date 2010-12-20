@@ -59,6 +59,12 @@ public:
     virtual void setStartL(size_t l) = 0;
 
     /**
+     * Sets the last value of the row index dimension to a new value.
+     * @param l The new last value of the row index dimension.
+     */
+    virtual void setSizeL(size_t l) = 0;
+
+    /**
      * Returns the start value of the column index dimension.
      * @return the start value of the column index dimension.
      */
