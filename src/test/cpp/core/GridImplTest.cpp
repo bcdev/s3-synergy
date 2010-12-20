@@ -65,3 +65,13 @@ void GridImplTest::testGetIndex() {
     CPPUNIT_ASSERT_THROW(grid->getIndex(0, 60000, 0), out_of_range);
     CPPUNIT_ASSERT_THROW(grid->getIndex(0, 0, 760), out_of_range);
 }
+
+void GridImplTest::testSetGetStartL() {
+    CPPUNIT_ASSERT(grid->getStartL() == 0);
+    grid->setStartL(1);
+    CPPUNIT_ASSERT(grid->getStartL() == 1);
+    grid->setStartL(60000);
+    CPPUNIT_ASSERT(grid->getStartL() == 60000);
+    grid->setStartL(0);
+    CPPUNIT_ASSERT(grid->getStartL() == 0);
+}
