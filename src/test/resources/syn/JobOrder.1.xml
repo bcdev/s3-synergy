@@ -51,7 +51,8 @@
 					<File_Type>S3L1C</File_Type>
 					<File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
 					<List_of_File_Names count="1">
-						<File_Name>input.safe</File_Name>
+						<File_Name>/mnt/hgfs/S3L2PP/src/test/resources/syn/SY_1_SYN/OLC_RADIANCE_O1.nc</File_Name>
+<!--						<File_Name>Input_1.safe</File_Name> -->
 					</List_of_File_Names>
 				</Input>
 			</List_of_Inputs>
