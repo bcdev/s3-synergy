@@ -24,6 +24,7 @@
 #include <map>
 #include <vector>
 
+#include "Constants.h"
 #include "GridImpl.h"
 #include "Segment.h"
 
@@ -32,7 +33,7 @@ using std::vector;
 
 class SegmentImpl : public virtual Segment {
 public:
-    SegmentImpl(const string& id, size_t sizeL);
+    SegmentImpl(const string& id, size_t sizeL, size_t sizeM = Constants::N_DET_CAM, size_t sizeK = Constants::N_CAM);
     virtual ~SegmentImpl();
 
     void addVariableByte(const string& varName) throw (logic_error);

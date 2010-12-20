@@ -24,7 +24,6 @@
 #include <stdexcept>
 
 #include "Accessors.h"
-#include "Constants.h"
 #include "SegmentImpl.h"
 
 using std::logic_error;
@@ -32,7 +31,7 @@ using std::min;
 using std::numeric_limits;
 using std::ostringstream;
 
-SegmentImpl::SegmentImpl(const string& s, size_t l) : id(s), grid(Constants::N_CAM, l, Constants::N_DET_CAM), accessorMap() {
+SegmentImpl::SegmentImpl(const string& s, size_t l, size_t m, size_t k) : id(s), grid(k, l, m), accessorMap() {
 }
 
 SegmentImpl::~SegmentImpl() {
