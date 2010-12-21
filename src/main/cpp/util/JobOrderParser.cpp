@@ -26,7 +26,7 @@
 
 using std::string;
 
-JobOrderParser::JobOrderParser(string path) : XmlParser(path) {
+JobOrderParser::JobOrderParser(string path) : path(path) {
 }
 
 JobOrderParser::~JobOrderParser() {

@@ -21,7 +21,7 @@
 		<attribute>
 			<name>long_name</name>
 			<type>string</type>
-			<value>Synergy flags</value>
+			<value>Synergy_flags</value>
 		</attribute>
 		<attribute>
 			<name>_FillValue</name>

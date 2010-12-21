@@ -43,27 +43,23 @@ void ReaderTest::tearDown() {
 void ReaderTest::testReading_OLCI_1() {
     Reader reader;
     NcFile* dataFile = new NcFile("/mnt/hgfs/S3L2PP/src/test/resources/syn/SY_1_SYN/OLC_RADIANCE_O1.nc", NcFile::ReadOnly);
-    short* data = (short*)reader.readData(dataFile, 5, 740, "TOA_Radiance_Meas");
+    short* data = (short*)reader.readData(dataFile, 1000, 5, 740, "TOA_Radiance_Meas");
     CPPUNIT_ASSERT(data[0] == 1);
     CPPUNIT_ASSERT(data[1] == 2);
     CPPUNIT_ASSERT(data[2] == 3);
     CPPUNIT_ASSERT(data[3] == 4);
     CPPUNIT_ASSERT(data[4] == 5);
     CPPUNIT_ASSERT(data[5] == 0);
-//    for( size_t i = 0; i < 3750000; i++ ) {
-//        std::cout << "i = " << i << "; data[i] = " << data[i] << "\n";
-//    }
-//    CPPUNIT_ASSERT_THROW(data[37000000] == 0, out_of_range);
 }
 
 void ReaderTest::testReading_OLCI_2() {
     Reader reader;
     NcFile* dataFile = new NcFile("/mnt/hgfs/S3L2PP/src/test/resources/syn/SY_1_SYN/OLC_RADIANCE_O1.nc", NcFile::ReadOnly);
-    short* data = (short*)reader.readData(dataFile, 5, 740, "error_estimates");
-    CPPUNIT_ASSERT(data[0] == 0);
-    CPPUNIT_ASSERT(data[1] == 0);
-    CPPUNIT_ASSERT(data[2] == 0);
-    CPPUNIT_ASSERT(data[3] == 0);
-    CPPUNIT_ASSERT(data[4] == 0);
+    short* data = (short*)reader.readData(dataFile, 1000, 5, 740, "error_estimates");
+    CPPUNIT_ASSERT(data[0] == 5);
+    CPPUNIT_ASSERT(data[1] == 4);
+    CPPUNIT_ASSERT(data[2] == 3);
+    CPPUNIT_ASSERT(data[3] == 2);
+    CPPUNIT_ASSERT(data[4] == 1);
     CPPUNIT_ASSERT(data[5] == 0);
 }

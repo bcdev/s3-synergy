@@ -22,8 +22,8 @@ public:
     Segment* processSegment(ProcessorContext& context);
 
 private:
-    NcFile* getDataFile(string variableName);
-    NcFile* getDataFileByFileName(string fileName);
+    NcFile* getNcFile(string variableName);
+    NcFile* getNcFileByFileName(string fileName);
     map<string, NcFile*> ncFileMap;
     map<Variable*, NcVar*> addedVariables;
     const NcDim** createNcDims( NcFile* dataFile, vector<Dimension*> dims );

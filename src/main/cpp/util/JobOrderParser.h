@@ -33,10 +33,15 @@ public:
     JobOrderParser(string path);
     virtual ~JobOrderParser();
     JobOrder parseJobOrder();
+protected:
+    string path;
 private:
     Configuration parseConfiguration();
     vector<ProcessorConfiguration*> parseProcessorConfigurations();
     ProcessorConfiguration* parseProcessorConfiguration(int index);
+    void parseId(Configuration* config, DOMElement* node);
+    void parseDebugLevel(Configuration* config, DOMElement* node);
+    void parseInputLocation(DOMElement* childNode, Configuration* config);
     bool stringToBool(string in);
     string getStringFromNode(const XObject* result);
     vector<BreakpointFile*> parseBreakpointFiles(string baseQuery);

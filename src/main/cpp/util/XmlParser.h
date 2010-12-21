@@ -19,19 +19,16 @@ using std::list;
 class XmlParser {
 private:
     list<string> getNodeNames(DOMElement * root);
-    void parseId(Configuration * config, DOMElement * node);
-    void parseInputLocation(DOMElement * childNode, Configuration * config);
-    void parseDebugLevel(Configuration * config, DOMElement * node);
     void parse();
 
 protected:
+    XmlParser();
     string path;
     XercesDOMParser* parser;
     DOMDocument* doc;
     DOMElement* root;
 
 public:
-    XmlParser(string path);
     ~XmlParser();
     void readXml();
     void outputNodes();
