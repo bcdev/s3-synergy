@@ -49,13 +49,13 @@ GridImpl::~GridImpl() {
 }
 
 size_t GridImpl::getIndex(size_t k, size_t l, size_t m) const throw (out_of_range) {
-    if (k < startK || k > startK + sizeK) {
+    if (k < startK || k > startK + sizeK - 1) {
         throw out_of_range("index k is out of range.");
     }
-    if (l < startL || l > startL + sizeL) {
+    if (l < startL || l > startL + sizeL - 1) {
         throw out_of_range("index l is out of range.");
     }
-    if (m < startM || m  > startM + sizeM) {
+    if (m < startM || m  > startM + sizeM - 1) {
         throw out_of_range("index m is out of range.");
     }
     return (k - startK) * strideK + (l - startL) * strideL + (m - startM) * strideM;
