@@ -17,8 +17,8 @@ using std::exception;
 using std::list;
 using std::string;
 
-XmlParser::XmlParser(string path) {
-    this->path = path;
+XmlParser::XmlParser() {
+
 }
 
 XmlParser::~XmlParser() {
