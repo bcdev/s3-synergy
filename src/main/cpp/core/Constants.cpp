@@ -12,34 +12,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
- * File:   Constants.h
+ * File:   Constants.cpp
  * Author: ralf
- *
- * Created on December 15, 2010, 5:39 PM
+ * 
+ * Created on December 21, 2010, 9:42 AM
  */
 
-#ifndef CONSTANTS_H
-#define	CONSTANTS_H
+#include "Constants.h"
 
-#include <cstddef>
-#include <string>
-
-using std::string;
-
-class Constants {
-public:
-    static const size_t N_CAM = 5;
-    static const size_t N_DET_CAM = 760;
-
-    static const string PROCESSOR_VERSION;
-
-private:
-    Constants() {
-    }
-
-    ~Constants() {
-    }
-};
-
-#endif	/* CONSTANTS_H */
-
+const string Constants::PROCESSOR_VERSION = "1.0-SNAPSHOT";

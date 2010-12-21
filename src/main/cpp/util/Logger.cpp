@@ -36,75 +36,60 @@ Logger::~Logger() {
 
 // TODO - remove module version and replace by processor version
 
-void Logger::debug(string message, string moduleName) {
-    debug(message, moduleName, "1.0-SNAPSHOT");
-}
-
-void Logger::info(string message, string moduleName) {
-    info(message, moduleName, "1.0-SNAPSHOT");
-}
-
-void Logger::progress(string message, string moduleName) {
-    progress(message, moduleName, "1.0-SNAPSHOT");
-}
-
-void Logger::warning(string message, string moduleName) {
-    warning(message, moduleName, "1.0-SNAPSHOT");
-}
-
-void Logger::error(string message, string moduleName) {
-    logToError(message, moduleName, "1.0-SNAPSHOT");
-}
-
-void Logger::debug(string message, string moduleName, string moduleVersion) {
+void Logger::debug(const string& message, const string& moduleName,
+        const string& processorVersion) {
     if (this->outLogLevel.compare("DEBUG") == 0) {
-        logToStdout(message, moduleName, moduleVersion, "[D]");
+        logToStdout(message, moduleName, processorVersion, "[D]");
     }
 }
 
-void Logger::info(string message, string moduleName, string moduleVersion) {
+void Logger::info(const string& message, const string& moduleName,
+        const string& processorVersion) {
     if (this->outLogLevel.compare("DEBUG") == 0 ||
             this->outLogLevel.compare("INFO") == 0) {
-        logToStdout(message, moduleName, moduleVersion, "[I]");
+        logToStdout(message, moduleName, processorVersion, "[I]");
     }
 }
 
-void Logger::progress(string message, string moduleName, string moduleVersion) {
+void Logger::progress(const string& message, const string& moduleName,
+        const string& processorVersion) {
     if (this->outLogLevel.compare("DEBUG") == 0 ||
             this->outLogLevel.compare("INFO") == 0 ||
             this->outLogLevel.compare("PROGRESS") == 0) {
-        logToStdout(message, moduleName, moduleVersion, "[P]");
+        logToStdout(message, moduleName, processorVersion, "[P]");
     }
 }
 
-void Logger::warning(string message, string moduleName, string moduleVersion) {
+void Logger::warning(const string& message, const string& moduleName,
+        const string& processorVersion) {
     if (this->outLogLevel.compare("DEBUG") == 0 ||
             this->outLogLevel.compare("INFO") == 0 ||
             this->outLogLevel.compare("PROGRESS") == 0 ||
             this->outLogLevel.compare("WARNING") == 0) {
-        logToStdout(message, moduleName, moduleVersion, "[W]");
+        logToStdout(message, moduleName, processorVersion, "[W]");
     }
 }
 
-void Logger::error(string message, string moduleName, string moduleVersion) {
-    logToError(message, moduleName, moduleVersion);
+void Logger::error(const string& message, const string& moduleName,
+        const string& processorVersion) {
+    logToError(message, moduleName, processorVersion);
 }
 
-void Logger::setOutLogLevel(string outLogLevel) {
+void Logger::setOutLogLevel(const string& outLogLevel) {
     this->outLogLevel = outLogLevel;
 }
 
-void Logger::setErrLogLevel(string errLogLevel) {
+void Logger::setErrLogLevel(const string& errLogLevel) {
     this->errLogLevel = errLogLevel;
 }
 
-void Logger::init(string orderId) {
+void Logger::init(const string& orderId) {
     string fileName = "LOG.";
     fileName.append(orderId);
     logFile.open(fileName.c_str());
 }
 
-string Logger::createMessageHeader(string moduleName, string moduleVersion) {
+string Logger::createMessageHeader(const string& moduleName, const string& moduleVersion) {
     char nodeNameBuffer [80];
     gethostname(nodeNameBuffer, 80);
     string header = getTimeString();
@@ -120,7 +105,7 @@ string Logger::createMessageHeader(string moduleName, string moduleVersion) {
     return header;
 }
 
-void Logger::logToError(string message, string moduleName, string moduleVersion) {
+void Logger::logToError(const string& message, const string& moduleName, const string& moduleVersion) {
     string* logMessage = new string();
     logMessage->append(createMessageHeader(moduleName, moduleVersion));
     logMessage->append("[E] ");
@@ -130,7 +115,7 @@ void Logger::logToError(string message, string moduleName, string moduleVersion)
     cerr << *logMessage << "\n";
 }
 
-void Logger::logToStdout(string message, string moduleName, string moduleVersion, string logType) {
+void Logger::logToStdout(const string& message, const string& moduleName, const string& moduleVersion, const string& logType) {
     string* logMessage = new string();
     logMessage->append(createMessageHeader(moduleName, moduleVersion));
     logMessage->append(logType);

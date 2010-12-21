@@ -25,35 +25,36 @@
 #include <string>
 #include <vector>
 
-using std::string;
+#include "../core/Logging.h"
+
 using std::vector;
 using std::ofstream;
 
-class Logger {
+class Logger : public virtual Logging {
 public:
     ~Logger();
     static Logger* get();
-    void debug(string message, string moduleName, string moduleVersion);
-    void info(string message, string moduleName, string moduleVersion);
-    void progress(string message, string moduleName, string moduleVersion);
-    void warning(string message, string moduleName, string moduleVersion);
-    void error(string message, string moduleName, string moduleVersion);
-    void debug(string message, string moduleName);
-    void info(string message, string moduleName);
-    void progress(string message, string moduleName);
-    void warning(string message, string moduleName);
-    void error(string message, string moduleName);
+    void debug(const string& message, const string& moduleName,
+            const string& processorVersion = Constants::PROCESSOR_VERSION);
+    void info(const string& message, const string& moduleName,
+            const string& processorVersion = Constants::PROCESSOR_VERSION);
+    void progress(const string& message, const string& moduleName,
+            const string& processorVersion = Constants::PROCESSOR_VERSION);
+    void warning(const string& message, const string& moduleName,
+            const string& processorVersion = Constants::PROCESSOR_VERSION);
+    void error(const string& message, const string& moduleName,
+            const string& processorVersion = Constants::PROCESSOR_VERSION);
+    void setOutLogLevel(const string& outLogLevel);
+    void setErrLogLevel(const string& errLogLevel);
     vector<string*> getMessageBuffer() const;
-    void setOutLogLevel(string outLogLevel);
-    void setErrLogLevel(string errLogLevel);
-    void init(string orderId);
+    void init(const string& orderId);
     void close();
 protected:
     Logger();
 private:
-    string createMessageHeader(string moduleName, string moduleVersion);
-    void logToError(string message, string moduleName, string moduleVersion);
-    void logToStdout(string message, string moduleName, string moduleVersion, string logType);
+    string createMessageHeader(const string& moduleName, const string& moduleVersion);
+    void logToError(const string& message, const string& moduleName, const string& moduleVersion);
+    void logToStdout(const string& message, const string& moduleName, const string& moduleVersion, const string& logType);
     string getTimeString();
     static Logger *instance;
     string outLogLevel;
