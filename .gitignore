@@ -2,7 +2,6 @@ CMakeFiles/
 cmake_install.cmake
 Makefile
 auxdata/
-config/
 target/
 Makefile-S3L2PP.mk
 nbproject/
