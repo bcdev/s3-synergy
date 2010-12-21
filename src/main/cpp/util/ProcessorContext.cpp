@@ -33,6 +33,7 @@ using std::numeric_limits;
 ProcessorContext::ProcessorContext(JobOrder jobOrder) : segments(), jobOrder(jobOrder) {
     maxLine = 0;
 }
+
 JobOrder ProcessorContext::getJobOrder() const {
     return jobOrder;
 }

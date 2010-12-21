@@ -25,10 +25,11 @@ Segment* SynL2Writer::processSegment(ProcessorContext& context) {
     Segment& segment = context.getSegment(segmentId);
     Logger::get()->progress("Starting to write segment [" + segment.toString() + "]", getModuleId());
 
-    // TODO - for all variables to be written, do:
+    // variables = get variables to be written from dictionary
+    // for all variables do:
 
     string variableName = "SDR_1";
-    NcFile* ncFile = getDataFile(variableName);
+    NcFile* ncFile = getNcFile(variableName);
     Accessor& accessor = context.getSegment(segmentId).getAccessor(variableName);
 //    NcVar* ncVar = getNcVar(ncFile, accessor);
 
@@ -43,16 +44,24 @@ Segment* SynL2Writer::processSegment(ProcessorContext& context) {
 
     int* values = new int[cameras * lines * columns];
 
+    // switch for all data types:
+    // for each variable do:
+    // if variable.getType == "short" do:
+
     for (size_t l = minL; l < maxL; l++) {
         for (size_t k = grid.getStartK(); k < grid.getSizeK(); k++) {
             for (size_t m = minM; m < maxM; m++) {
-                size_t position = 0;
-                //                values[position] = segment.getSampleInt(variableName, segment.computePosition(k, l, m));
+                size_t position = segment.getGrid().getIndex(k, l, m);
+                values[position] = accessor.getShort(position);
             }
         }
     }
 
-    //    ncVar->put_rec(values);
+    // else if variable.getType == "float" do:
+
+    // ... end for.
+
+//    ncVar->put_rec(values);
 
     ncFile->sync();
     delete[] values;
@@ -60,14 +69,14 @@ Segment* SynL2Writer::processSegment(ProcessorContext& context) {
     return &segment;
 }
 
-NcFile* SynL2Writer::getDataFile(string variableName) {
+NcFile* SynL2Writer::getNcFile(string variableName) {
     if (boost::starts_with(variableName, "SDR_")) {
-        return getDataFileByFileName("l2_syn_surface_direction_reflectance.nc");
+        return getNcFileByFileName("l2_syn_surface_direction_reflectance.nc");
     }
     throw invalid_argument("SynL2Writer::getDataFile: no variable with name " + variableName + " allowed.");
 }
 
-NcFile* SynL2Writer::getDataFileByFileName(string fileName) {
+NcFile* SynL2Writer::getNcFileByFileName(string fileName) {
     if (ncFileMap[fileName] == 0) {
         NcFile* dataFile = new NcFile(fileName.c_str(), NcFile::Replace, 0, 0, NcFile::Netcdf4);
         ncFileMap[fileName] = dataFile;
@@ -75,15 +84,6 @@ NcFile* SynL2Writer::getDataFileByFileName(string fileName) {
     } else {
         return ncFileMap[fileName];
     }
-}
-
-const NcDim** SynL2Writer::createNcDims(NcFile* dataFile, vector<Dimension*> dims) {
-    const NcDim** ncDims = new const NcDim* [dims.size()];
-    for (size_t i = 0; i < dims.size(); i++) {
-        dataFile->add_dim(dims[i]->getName().c_str(), dims[i]->getRange());
-        ncDims[i] = dataFile->get_dim(dims[i]->getName().c_str());
-    }
-    return ncDims;
 }
 
 NcVar* SynL2Writer::getNcVar(NcFile* dataFile, Variable* var) {
@@ -98,4 +98,13 @@ NcVar* SynL2Writer::getNcVar(NcFile* dataFile, Variable* var) {
     } else {
         return addedVariables[var];
     }
+}
+
+const NcDim** SynL2Writer::createNcDims(NcFile* dataFile, vector<Dimension*> dims) {
+    const NcDim** ncDims = new const NcDim* [dims.size()];
+    for (size_t i = 0; i < dims.size(); i++) {
+        dataFile->add_dim(dims[i]->getName().c_str(), dims[i]->getRange());
+        ncDims[i] = dataFile->get_dim(dims[i]->getName().c_str());
+    }
+    return ncDims;
 }

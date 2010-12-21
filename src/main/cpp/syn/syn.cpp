@@ -69,8 +69,8 @@ int main() {
 
     Processor processor;
     processor.addModule(reader);
-    processor.addModule(pixelClassification);
-    processor.addModule(test);
+//    processor.addModule(pixelClassification);
+//    processor.addModule(test);
     processor.addModule(writer);
 
     ProcessorContext context = ProcessorContext(jobOrder);
