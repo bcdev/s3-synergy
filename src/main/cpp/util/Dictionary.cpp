@@ -18,11 +18,54 @@
  * Created on December 21, 2010, 1:55 PM
  */
 
+
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/fstream.hpp>
+
 #include "Dictionary.h"
 
-Dictionary::Dictionary() {
+using namespace boost::filesystem;
+
+Dictionary::Dictionary(string config) : configFile(config) {
 }
 
 Dictionary::~Dictionary() {
 }
 
+void Dictionary::parseInputFiles() {
+    string query = "/Config/Variable_Definition_Files_Path";
+    string variableDefPath = evaluateToString(configFile, query);
+
+    if (exists(variableDefPath)) {
+        directory_iterator end;
+        for (directory_iterator iter(variableDefPath); iter != end; ++iter) {
+            iter.basic_directory_iterator()->
+            if (is_directory(*iter)) {
+                std::cout << iter->native_directory_string() << " (directory)\n";
+            } else {
+                std::cout << iter->native_file_string() << " (file)\n";
+            }
+        }
+    }
+
+    //    for all input files do:
+
+    //    query = "/variables/name";
+    //    string path = "/variables/name";
+    //    string value = evaluateToString(path, query);
+}
+
+set<Variable*> Dictionary::getVariablesToBeWritten() const {
+    // TODO - implement
+    return variables;
+}
+
+set<Variable*> Dictionary::getNeededVariables(Module& module) const {
+    // TODO - implement
+    return variables;
+}
+
+set<Variable*> Dictionary::getVariablesToBeComputed(Module& module) const {
+    // TODO - implement
+    return variables;
+}

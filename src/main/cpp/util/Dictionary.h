@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2010 by Brockmann Consult (info@brockmann-consult.de)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  * File:   Dictionary.h
  * Author: thomass
  *
@@ -21,11 +21,27 @@
 #ifndef DICTIONARY_H
 #define	DICTIONARY_H
 
-class Dictionary {
+#include <set>
+
+#include "Module.h"
+#include "Variable.h"
+#include "XmlParser.h"
+
+using std::set;
+
+class Dictionary : XmlParser {
 public:
-    Dictionary();
+    Dictionary(string configFile);
     virtual ~Dictionary();
+    void parseInputFiles();
+    set<Variable*> getVariablesToBeWritten() const;
+    set<Variable*> getVariablesToBeComputed(Module& module) const;
+    set<Variable*> getNeededVariables(Module& module) const;
+protected:
+    string path;
 private:
+    string configFile;
+    set<Variable*> variables;
 };
 
 #endif	/* DICTIONARY_H */

@@ -16,7 +16,7 @@
 
 using std::min;
 
-Reader::Reader() : AbstractModule("READ"), stepSize(100) {
+Reader::Reader() : AbstractModule("READ"), stepSize(721) {
     this->segment = 0;
 }
 
@@ -70,7 +70,7 @@ Segment* Reader::processSegment(ProcessorContext& context) {
         // modifying segment values
         Logger::get()->progress("Reading data for segment [" + segment.toString() + "]", "Reader");
         size_t startLine = context.getMaxLineComputed(segment, *this) + 1;
-        size_t endLine = grid.getSizeL() + startLine;
+        size_t endLine = minRequiredLine + grid.getSizeL();
 
         size_t lines = endLine - startLine;
         short* data = (short*) readData(dataFile, lines, camCount, colCount, "TOA_Radiance_Meas");

@@ -10,10 +10,12 @@
 #include "../util/StringUtils.h"
 #include "../util/SynL2Writer.h"
 #include "../util/TestModule.h"
+#include "../util/Dictionary.h"
 
 #include <iostream>
 
 static string createProcessingTimeMessage(time_t start);
+void logIOParameters(JobOrder& jobOrder, Logger* logger);
 
 int main() {
 
@@ -44,6 +46,35 @@ int main() {
     logger->info("Main process started.", "Main");
     jobOrder.log();
 
+    logIOParameters(jobOrder, logger);
+
+    // TODO - get config file correct for current processor, not simply the first
+    Dictionary dictionary(jobOrder.getConfig().getConfigFileNames()[0]);
+    dictionary.parseInputFiles();
+
+    // configure modules
+    // TODO - use job order for configuration
+    Reader reader;
+    PixelClassification pixelClassification;
+    TestModule test;
+    SynL2Writer writer;
+
+    Processor processor;
+    processor.addModule(reader);
+    //    processor.addModule(pixelClassification);
+    //    processor.addModule(test);
+    //    processor.addModule(writer);
+
+    ProcessorContext context = ProcessorContext(jobOrder);
+    processor.process(context);
+
+    logger->info(createProcessingTimeMessage(start), "Main");
+    logger->info("Processing complete. Exit code: 0", "Main");
+    logger->close();
+    return 0;
+}
+
+void logIOParameters( JobOrder& jobOrder, Logger* logger ) {
     vector<ProcessorConfiguration*> processorList = jobOrder.getProcessorList();
     for (size_t h = 0; h < processorList.size(); h++) {
         vector<Input*> inputList = processorList[h]->getInputList();
@@ -59,27 +90,6 @@ int main() {
             logger->info(message, "JobOrder");
         }
     }
-
-    // configure modules
-    // TODO - use job order for configuration
-    Reader reader;
-    PixelClassification pixelClassification;
-    TestModule test;
-    SynL2Writer writer;
-
-    Processor processor;
-    processor.addModule(reader);
-//    processor.addModule(pixelClassification);
-//    processor.addModule(test);
-    processor.addModule(writer);
-
-    ProcessorContext context = ProcessorContext(jobOrder);
-    processor.process(context);
-
-    logger->info(createProcessingTimeMessage(start), "Main");
-    logger->info("Processing complete. Exit code: 0", "Main");
-    logger->close();
-    return 0;
 }
 
 static string createProcessingTimeMessage(time_t start) {

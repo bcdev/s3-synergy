@@ -9,7 +9,7 @@
 		<Acquisition_Station>unknown</Acquisition_Station>
 		<Processing_Station>unknown</Processing_Station>
 		<Config_Files>
-			<Conf_File_Name>config/config.xml</Conf_File_Name>
+			<Conf_File_Name>/mnt/hgfs/S3L2PP/src/test/resources/syn/config/config.xml</Conf_File_Name>
 		</Config_Files>
 		<Sensing_Time>
 			<Start>20101214_000000.0000</Start>
