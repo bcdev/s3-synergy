@@ -12,39 +12,36 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
- * File:   Context.cpp
+ * File:   ContextTest.h
  * Author: ralf
- * 
- * Created on December 20, 2010, 12:34 PM
+ *
+ * Created on December 21, 2010, 1:08 PM
  */
 
-#include "Context.h"
+#ifndef CONTEXTTEST_H
+#define	CONTEXTTEST_H
 
-Context::Context() : moduleList(), objectMap(), segmentMap(), segmentList() {
-    dictionary = 0;
-    jobOrder = 0;
-    logging = 0;
-}
+#include <cppunit/extensions/HelperMacros.h>
 
-Context::~Context() {
-}
+#include "../../../main/cpp/core/Context.h"
 
-void Context::addModule(Module& module) {
-    moduleList.push_back(&module);
-}
+class ContextTest : public CPPUNIT_NS::TestFixture {
+    CPPUNIT_TEST_SUITE(ContextTest);
+    CPPUNIT_TEST(testInitialState);
+    CPPUNIT_TEST(testAddModule);
+    CPPUNIT_TEST_SUITE_END();
 
-Dictionary* Context::getDictionary() const {
-    return dictionary;
-}
+public:
+    ContextTest();
+    virtual ~ContextTest();
+    void setUp();
+    void tearDown();
 
-JobOrder* Context::getJobOrder() const {
-    return jobOrder;
-}
+private:
+    Context* context;
+    void testInitialState();
+    void testAddModule();
+};
 
-Logging* Context::getLogging() const {
-    return logging;
-}
+#endif	/* CONTEXTTEST_H */
 
-vector<Module*> Context::getModules() const {
-    return moduleList;
-}

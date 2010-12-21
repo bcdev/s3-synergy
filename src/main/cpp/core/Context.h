@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2010 by Brockmann Consult (info@brockmann-consult.de)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "Constants.h"
+#include "Logging.h"
 #include "Segment.h"
 #include "Object.h"
 
@@ -33,7 +34,6 @@ using std::vector;
 
 class Dictionary;
 class JobOrder;
-class Logging;
 class Module;
 
 /**
@@ -45,18 +45,23 @@ public:
      * Constructs a new instance of this class.
      */
     Context();
-    
+
     /**
      * Destructor.
      */
     ~Context();
 
     /**
+     * Adds a module to the context.
+     * @param module The module.
+     */
+    void addModule(Module& module);
+
+    /**
      * Adds an object to the context.
      * @param object The object.
-     * @return a reference to the object added.
      */
-    Object& addObject(Object& object);
+    void addObject(Object& object);
 
     /**
      * Adds a segement to the context.
@@ -69,22 +74,46 @@ public:
     Segment& addSegment(const string& id, size_t sizeL, size_t sizeM = Constants::N_DET_CAM, size_t sizeK = Constants::N_CAM);
 
     /**
+     * Returns a list of modules, which have been added to the context.
+     * @return a list of modules, which have been added to the context.
+     */
+    vector<Module*> getModules() const;
+
+    /**
      * Returns the dictionary.
      * @return the dictionary.
      */
-    Dictionary& getDictionary() const;
+    Dictionary* getDictionary() const;
+
+    /**
+     * Sets the dictionary.
+     * @param dictionary The dictionary.
+     */
+    void setDictionary(Dictionary* dictionary);
 
     /**
      * Returns the job order.
      * @return the job order.
      */
-    JobOrder& getJobOrder() const;
+    JobOrder* getJobOrder() const;
+
+    /**
+     * Sets the job order.
+     * @param jobOrder The job order.
+     */
+    void setJobOrder(JobOrder* jobOrder);
 
     /**
      * Returns the logging.
      * @return the logging.
      */
-    Logging& getLogging() const;
+    Logging* getLogging() const;
+
+    /**
+     * Sets the logging.
+     * @param logging The logging.
+     */
+    void setLogging(Logging* logging);
 
     /**
      * Returns the object associated with the supplied object ID.
@@ -163,22 +192,44 @@ public:
      */
     size_t getMinLRequired(const Segment& segment, size_t l) const;
 
+    /**
+     * Inquires the context about an object.
+     * @param id The object ID.
+     * @return {@code true} if an object with the given ID has been added to
+     *         the context, {@code false} otherwise.
+     */
     bool hasObject(const string& id) const;
+
+    /**
+     * Inquires the context about a segment.
+     * @param id The segment ID.
+     * @return {@code true} if a segement with the given ID has been added to
+     *         the context, {@code false} otherwise.
+     */
     bool hasSegment(const string& id) const;
 
-    bool hasMaxLineComputed(const Segment& segment, const Module& module) const;
-    bool hasMinLineRequired(const Segment& segment) const;
+    /**
+     * Inquires the context about the index of the maximum row in a segment,
+     * which has been computed by a certain module.
+     * @param segment The segment.
+     * @param module The module.
+     * @return {@code true} if the context has the requested information,
+     *         {@code false} otherwise.
+     */
+    bool hasMaxLComputed(const Segment& segment, const Module& module) const;
 
 private:
     void removeObject(Object& object);
     void removeSegment(Segment& segment);
 
-    map<string, Object*> objectMap;
-    vector<Object*> objectList;
+    Dictionary* dictionary;
+    JobOrder* jobOrder;
+    Logging* logging;
 
+    vector<Module*> moduleList;
+    map<string, Object*> objectMap;
     map<string, Segment*> segmentMap;
     vector<Segment*> segmentList;
 };
 
 #endif	/* CONTEXT_H */
-
