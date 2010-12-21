@@ -12,38 +12,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
- * File:   ContextTest.h
+ * File:   TestObject.h
  * Author: ralf
  *
- * Created on December 21, 2010, 1:08 PM
+ * Created on December 21, 2010, 4:49 PM
  */
 
-#ifndef CONTEXTTEST_H
-#define	CONTEXTTEST_H
+#ifndef TESTOBJECT_H
+#define	TESTOBJECT_H
 
-#include <cppunit/extensions/HelperMacros.h>
+#include "../../../main/cpp/core/Object.h"
 
-#include "../../../main/cpp/core/Context.h"
-
-class ContextTest : public CPPUNIT_NS::TestFixture {
-    CPPUNIT_TEST_SUITE(ContextTest);
-    CPPUNIT_TEST(testInitialState);
-    CPPUNIT_TEST(testAddModule);
-    CPPUNIT_TEST(testAddObject);
-    CPPUNIT_TEST_SUITE_END();
-
+class TestObject : public Object {
 public:
-    ContextTest();
-    virtual ~ContextTest();
-    void setUp();
-    void tearDown();
+
+    TestObject(const string& objectId) : Object(), id(objectId) {
+    }
+
+    ~TestObject() {
+    }
+
+    const string& getId() const {
+        return id;
+    }
 
 private:
-    Context* context;
-    void testInitialState();
-    void testAddModule();
-    void testAddObject();
+    const string id;
 };
 
-#endif	/* CONTEXTTEST_H */
-
+#endif	/* TESTOBJECT_H */

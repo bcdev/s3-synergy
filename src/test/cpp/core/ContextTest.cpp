@@ -22,6 +22,7 @@
 
 #include "ContextTest.h"
 #include "../../../main/cpp/core/DefaultModule.h"
+#include "TestObject.h"
 
 using std::auto_ptr;
 
@@ -57,6 +58,14 @@ void ContextTest::testAddModule() {
     CPPUNIT_ASSERT(modules.size() == 2);
     CPPUNIT_ASSERT(modules[0] == a.get());
     CPPUNIT_ASSERT(modules[1] == b.get());
+}
+
+void ContextTest::testAddObject() {
+    const auto_ptr<Object> o(new TestObject("O"));
+    CPPUNIT_ASSERT(context->hasObject(o->getId()) == false);
+    context->addObject(*o);
+    CPPUNIT_ASSERT(context->hasObject(o->getId()));
+    CPPUNIT_ASSERT_THROW(context->addObject(*o), logic_error);
 }
 
 

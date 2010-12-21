@@ -33,6 +33,13 @@ void Context::addModule(Module& module) {
     moduleList.push_back(&module);
 }
 
+void Context::addObject(Object& object) throw (logic_error) {
+    if (hasObject(object.getId())) {
+        throw logic_error("an object with '" + object.getId() + "' has already been added to the context.");
+    }
+    objectMap[object.getId()] = &object;
+}
+
 Dictionary* Context::getDictionary() const {
     return dictionary;
 }
@@ -47,4 +54,9 @@ Logging* Context::getLogging() const {
 
 vector<Module*> Context::getModules() const {
     return moduleList;
+}
+
+inline
+bool Context::hasObject(const string& id) const {
+    return objectMap.find(id) != objectMap.end();
 }

@@ -22,6 +22,7 @@
 #define	CONTEXT_H
 
 #include <map>
+#include <stdexcept>
 #include <vector>
 
 #include "Constants.h"
@@ -30,6 +31,7 @@
 #include "Object.h"
 
 using std::map;
+using std::logic_error;
 using std::vector;
 
 class Dictionary;
@@ -61,7 +63,7 @@ public:
      * Adds an object to the context.
      * @param object The object.
      */
-    void addObject(Object& object);
+    void addObject(Object& object) throw (logic_error);
 
     /**
      * Adds a segement to the context.

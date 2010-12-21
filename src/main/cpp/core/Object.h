@@ -21,6 +21,10 @@
 #ifndef OBJECT_H
 #define	OBJECT_H
 
+#include <string>
+
+using std::string;
+
 /**
  * Interface for a general object exhibiting an ID. Implementing
  * classes shall implement the copy contructor.
