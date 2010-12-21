@@ -18,7 +18,7 @@ public:
     Reader();
     virtual ~Reader();
     Segment* processSegment(ProcessorContext& context);
-    void* readData(NcFile* dataFile, size_t camCount, size_t colCount, string varName);
+    void* readData(NcFile* dataFile, size_t lines, size_t camCount, size_t colCount, string varName);
 
 private:
     const size_t stepSize;
