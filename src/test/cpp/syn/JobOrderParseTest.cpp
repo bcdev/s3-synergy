@@ -41,7 +41,6 @@ void JobOrderParseTest::tearDown() {
 }
 
 void JobOrderParseTest::testParsing() {
-    parser.readXml();
     parser.parseJobOrder();
 }
 

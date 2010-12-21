@@ -24,8 +24,8 @@ XmlParser::XmlParser() {
 XmlParser::~XmlParser() {
 }
 
-const string XmlParser::evaluateToString(string& expression) {
-    parse();
+const string XmlParser::evaluateToString(string& path, string& expression) {
+    parse(path);
     // Create a XalanDocument based on doc.
     XercesDOMSupport support;
     XercesParserLiaison liaison(support);
@@ -44,8 +44,8 @@ const string XmlParser::evaluateToString(string& expression) {
     return XMLString::transcode(resultString.data());
 }
 
-const vector<string> XmlParser::evaluateToStringList(string& expression) {
-    parse();
+const vector<string> XmlParser::evaluateToStringList(string& path, string& expression) {
+    parse(path);
     // Create a XalanDocument based on doc.
     XercesDOMSupport support;
     XercesParserLiaison liaison(support);
@@ -71,7 +71,7 @@ const vector<string> XmlParser::evaluateToStringList(string& expression) {
     return output;
 }
 
-void XmlParser::parse() {
+void XmlParser::parse(string& path) {
     try {
         // construct a DOM parser
         parser = new XercesDOMParser();
@@ -104,29 +104,6 @@ void XmlParser::parse() {
         std::exit(2);
     }
 
-}
-
-void XmlParser::readXml() {
-    parser = new XercesDOMParser();
-    parser->setValidationScheme(XercesDOMParser::Val_Always);
-    parser->setCreateEntityReferenceNodes(false);
-    parser->setIncludeIgnorableWhitespace(false);
-
-    try {
-        parser->parse(path.c_str());
-        doc = parser->getDocument();
-        if (doc == 0) {
-            // todo replace with logging
-            std::cerr << "\nPath " << path << " does not point to a valid xml file. System will exit.";
-            std::exit(2);
-        }
-        root = doc->getDocumentElement();
-    } catch (const XMLException& toCatch) {
-        char* message = XMLString::transcode(toCatch.getMessage());
-        // todo replace with logging
-        cout << "Exception message is: \n" << message << "\n";
-        XMLString::release(&message);
-    }
 }
 
 std::string XmlParser::getNodeName(DOMElement * node) {

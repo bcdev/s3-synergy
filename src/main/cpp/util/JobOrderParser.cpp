@@ -26,7 +26,8 @@
 
 using std::string;
 
-JobOrderParser::JobOrderParser(string path) : path(path) {
+JobOrderParser::JobOrderParser(string path) {
+    this->path = path;
 }
 
 JobOrderParser::~JobOrderParser() {
@@ -43,7 +44,7 @@ JobOrder JobOrderParser::parseJobOrder() {
 Configuration JobOrderParser::parseConfiguration() {
     Configuration config;
     string query = "/Ipf_Job_Order/Ipf_Conf/Stdout_Log_Level";
-    string value = evaluateToString(query);
+    string value = evaluateToString(path, query);
     if (value.empty() && value.compare("INFO") != 0 &&
             value.compare("DEBUG") != 0 &&
             value.compare("WARNING") != 0 &&
@@ -54,7 +55,7 @@ Configuration JobOrderParser::parseConfiguration() {
     config.setStandardLogLevel(value);
 
     query = "/Ipf_Job_Order/Ipf_Conf/Stderr_Log_Level";
-    value = evaluateToString(query);
+    value = evaluateToString(path, query);
     if (value.empty() && value.compare("INFO") != 0 &&
             value.compare("DEBUG") != 0 &&
             value.compare("WARNING") != 0 &&
@@ -69,37 +70,37 @@ Configuration JobOrderParser::parseConfiguration() {
     config.setOrderId(orderIdWithExt.substr(0, orderIdWithExt.length() - 4));
 
     query = "/Ipf_Job_Order/Ipf_Conf/Processor_Name";
-    value = evaluateToString(query);
+    value = evaluateToString(path, query);
     config.setProcessorName(value);
 
     query = "/Ipf_Job_Order/Ipf_Conf/Version";
-    value = evaluateToString(query);
+    value = evaluateToString(path, query);
     config.setVersion(value);
 
     query = "/Ipf_Job_Order/Ipf_Conf/Test";
-    value = evaluateToString(query);
+    value = evaluateToString(path, query);
     config.setTest(StringUtils::stringToBool(value));
 
     query = "/Ipf_Job_Order/Ipf_Conf/Acquisition_Station";
-    value = evaluateToString(query);
+    value = evaluateToString(path, query);
     config.setAcquisitionStation(value);
 
     query = "/Ipf_Job_Order/Ipf_Conf/Processing_Station";
-    value = evaluateToString(query);
+    value = evaluateToString(path, query);
     config.setProcessingStation(value);
 
     query = "/Ipf_Job_Order/Ipf_Conf/Sensing_Time/Start";
-    value = evaluateToString(query);
+    value = evaluateToString(path, query);
     config.setSensingTimeStart(value);
 
     query = "/Ipf_Job_Order/Ipf_Conf/Sensing_Time/Stop";
-    value = evaluateToString(query);
+    value = evaluateToString(path, query);
     config.setSensingTimeStop(value);
 
     query = "/Ipf_Job_Order/Ipf_Conf/Dynamic_Processing_Parameters/Processing_Parameter/Name/child::text()";
     string query2 = "/Ipf_Job_Order/Ipf_Conf/Dynamic_Processing_Parameters/Processing_Parameter/Value/child::text()";
-    vector<string> keys = evaluateToStringList(query);
-    vector<string> values = evaluateToStringList(query2);
+    vector<string> keys = evaluateToStringList(path, query);
+    vector<string> values = evaluateToStringList(path, query2);
     vector<ProcessingParameter*> parameters;
     for (size_t i = 0; i < keys.size(); i++) {
         parameters.push_back(new ProcessingParameter(keys.at(i), values.at(i)));
@@ -107,7 +108,7 @@ Configuration JobOrderParser::parseConfiguration() {
     config.setProcessingParameters(parameters);
 
     query = "/Ipf_Job_Order/Ipf_Conf/Config_Files/Conf_File_Name/child::text()";
-    vector<string> strings = evaluateToStringList(query);
+    vector<string> strings = evaluateToStringList(path, query);
     config.setConfigFileNames(strings);
 
     return config;
@@ -116,7 +117,7 @@ Configuration JobOrderParser::parseConfiguration() {
 vector<ProcessorConfiguration*> JobOrderParser::parseProcessorConfigurations() {
     vector<ProcessorConfiguration*> result;
     string query = "/Ipf_Job_Order/List_of_Ipf_Procs/Ipf_Proc";
-    vector<string> values = evaluateToStringList(query);
+    vector<string> values = evaluateToStringList(path, query);
     int numberOfProcConfigurations = values.size();
     for (int i = 1; i <= numberOfProcConfigurations; i++) {
         result.push_back(parseProcessorConfiguration(i));
@@ -130,10 +131,10 @@ ProcessorConfiguration* JobOrderParser::parseProcessorConfiguration(int index) {
     baseQuery.append("]");
 
     string taskNameQuery = baseQuery + "/Task_Name";
-    string taskName = evaluateToString(taskNameQuery);
+    string taskName = evaluateToString(path, taskNameQuery);
 
     string taskVersionQuery = baseQuery + "/Task_Version";
-    string taskVersion = evaluateToString(taskVersionQuery);
+    string taskVersion = evaluateToString(path, taskVersionQuery);
 
     vector<BreakpointFile*> breakpointFiles = parseBreakpointFiles(baseQuery);
     vector<Input*> inputList = parseInputs(baseQuery);
@@ -147,7 +148,7 @@ ProcessorConfiguration* JobOrderParser::parseProcessorConfiguration(int index) {
 vector<BreakpointFile*> JobOrderParser::parseBreakpointFiles(string baseQuery) {
     vector<BreakpointFile*> breakpointFiles;
     string breakPointFilesQuery = baseQuery + "/BreakPoint/List_of_Brk_Files/Brk_File";
-    int breakPointFilesCount = evaluateToStringList(breakPointFilesQuery).size();
+    int breakPointFilesCount = evaluateToStringList(path, breakPointFilesQuery).size();
     for (int i = 1; i <= breakPointFilesCount; i++) {
         string query = breakPointFilesQuery + "[" + StringUtils::intToString(i) + "]";
         breakpointFiles.push_back(parseBreakpointFile(query));
@@ -157,19 +158,19 @@ vector<BreakpointFile*> JobOrderParser::parseBreakpointFiles(string baseQuery) {
 
 BreakpointFile* JobOrderParser::parseBreakpointFile(string baseQuery) {
     string enableQuery = baseQuery + "/Enable";
-    string enable = evaluateToString(enableQuery);
+    string enable = evaluateToString(path, enableQuery);
 
     string fileTypeQuery = baseQuery + "/File_Type";
-    string fileType = evaluateToString(fileTypeQuery);
+    string fileType = evaluateToString(path, fileTypeQuery);
 
     string fileNameTypeQuery = baseQuery + "/File_Name_Type";
-    string fileNameType = evaluateToString(fileNameTypeQuery);
+    string fileNameType = evaluateToString(path, fileNameTypeQuery);
     if (fileNameType.compare("") == 0) {
         fileNameType = "Physical";
     }
 
     string fileNameQuery = baseQuery + "/File_Name";
-    string fileName = evaluateToString(fileNameQuery);
+    string fileName = evaluateToString(path, fileNameQuery);
 
     BreakpointFile* breakpointFile = new BreakpointFile(enable, fileType, fileNameType, fileName);
     return breakpointFile;
@@ -178,7 +179,7 @@ BreakpointFile* JobOrderParser::parseBreakpointFile(string baseQuery) {
 vector<Input*> JobOrderParser::parseInputs(string baseQuery) {
     vector<Input*> inputs;
     string inputQuery = baseQuery + "/List_of_Inputs/Input";
-    int inputCount = evaluateToStringList(inputQuery).size();
+    int inputCount = evaluateToStringList(path, inputQuery).size();
     for (int i = 1; i <= inputCount; i++) {
         string query = inputQuery + "[" + StringUtils::intToString(i) + "]";
         inputs.push_back(parseInput(query));
@@ -188,30 +189,30 @@ vector<Input*> JobOrderParser::parseInputs(string baseQuery) {
 
 Input* JobOrderParser::parseInput(string baseQuery) {
     string fileTypeQuery = baseQuery + "/File_Type";
-    string fileType = evaluateToString(fileTypeQuery);
+    string fileType = evaluateToString(path, fileTypeQuery);
 
     string fileNameTypeQuery = baseQuery + "/File_Name_Type";
-    string fileNameType = evaluateToString(fileNameTypeQuery);
+    string fileNameType = evaluateToString(path, fileNameTypeQuery);
     if (fileNameType.compare("") == 0) {
         fileNameType = "Physical";
     }
 
     vector<string> fileNames;
     string fileNamesQuery = baseQuery + "/List_of_File_Names/File_Name";
-    int fileNameCount = evaluateToStringList(fileNamesQuery).size();
+    int fileNameCount = evaluateToStringList(path, fileNamesQuery).size();
     for (int i = 1; i <= fileNameCount; i++) {
         string fileNameQuery = fileNamesQuery + "[" + StringUtils::intToString(i) + "]";
-        fileNames.push_back(evaluateToString(fileNameQuery));
+        fileNames.push_back(evaluateToString(path, fileNameQuery));
     }
 
     vector<TimeInterval*> timeIntervals;
     string timeIntervalsQuery = baseQuery + "/List_of_Time_Intervals/Time_Interval";
-    int timeIntervalsCount = evaluateToStringList(timeIntervalsQuery).size();
+    int timeIntervalsCount = evaluateToStringList(path, timeIntervalsQuery).size();
     for (int i = 1; i <= timeIntervalsCount; i++) {
         string timeIntervalsStartQuery = timeIntervalsQuery + "[" + StringUtils::intToString(i) + "]/Start";
         string timeIntervalsStopQuery = timeIntervalsQuery + "[" + StringUtils::intToString(i) + "]/Stop";
-        string start = evaluateToString(timeIntervalsStartQuery);
-        string stop = evaluateToString(timeIntervalsStopQuery);
+        string start = evaluateToString(path, timeIntervalsStartQuery);
+        string stop = evaluateToString(path, timeIntervalsStopQuery);
         TimeInterval* timeInterval = new TimeInterval(start, stop);
         timeIntervals.push_back(timeInterval);
     }
@@ -223,7 +224,7 @@ Input* JobOrderParser::parseInput(string baseQuery) {
 vector<Output*> JobOrderParser::parseOutputs(string baseQuery) {
     vector<Output*> outputs;
     string outputQuery = baseQuery + "/List_of_Outputs/Output";
-    int outputCount = evaluateToStringList(outputQuery).size();
+    int outputCount = evaluateToStringList(path, outputQuery).size();
     for (int i = 1; i <= outputCount; i++) {
         string query = outputQuery + "[" + StringUtils::intToString(i) + "]";
         outputs.push_back(parseOutput(query));
@@ -233,16 +234,16 @@ vector<Output*> JobOrderParser::parseOutputs(string baseQuery) {
 
 Output* JobOrderParser::parseOutput(string baseQuery) {
     string fileTypeQuery = baseQuery + "/File_Type";
-    string fileType = evaluateToString(fileTypeQuery);
+    string fileType = evaluateToString(path, fileTypeQuery);
 
     string fileNameTypeQuery = baseQuery + "/File_Name_Type";
-    string fileNameType = evaluateToString(fileNameTypeQuery);
+    string fileNameType = evaluateToString(path, fileNameTypeQuery);
     if (fileNameType.compare("") == 0) {
         fileNameType = "Physical";
     }
 
     string fileNameQuery = baseQuery + "/File_Name";
-    string fileName = evaluateToString(fileNameQuery);
+    string fileName = evaluateToString(path, fileNameQuery);
 
     Output* output = new Output(fileType, fileNameType, fileName);
     return output;
