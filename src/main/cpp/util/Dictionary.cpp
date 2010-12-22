@@ -19,12 +19,12 @@
  */
 
 
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/fstream.hpp>
+//#include <boost/filesystem/operations.hpp>
+//#include <boost/filesystem/fstream.hpp>
 
 #include "Dictionary.h"
 
-using namespace boost::filesystem;
+//using namespace boost::filesystem;
 
 Dictionary::Dictionary(string config) : configFile(config) {
 }
@@ -36,17 +36,17 @@ void Dictionary::parseInputFiles() {
     string query = "/Config/Variable_Definition_Files_Path";
     string variableDefPath = evaluateToString(configFile, query);
 
-    if (exists(variableDefPath)) {
-        directory_iterator end;
-        for (directory_iterator iter(variableDefPath); iter != end; ++iter) {
-            iter.basic_directory_iterator()->
-            if (is_directory(*iter)) {
-                std::cout << iter->native_directory_string() << " (directory)\n";
-            } else {
-                std::cout << iter->native_file_string() << " (file)\n";
-            }
-        }
-    }
+//    if (exists(variableDefPath)) {
+//        directory_iterator end;
+//        for (directory_iterator iter(variableDefPath); iter != end; ++iter) {
+//            iter.basic_directory_iterator()->
+//            if (is_directory(*iter)) {
+//                std::cout << iter->native_directory_string() << " (directory)\n";
+//            } else {
+//                std::cout << iter->native_file_string() << " (file)\n";
+//            }
+//        }
+//    }
 
     //    for all input files do:
 
