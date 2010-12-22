@@ -19,6 +19,7 @@
  */
 
 #include "Context.h"
+#include "SegmentImpl.h"
 
 Context::Context() : moduleList(), objectMap(), segmentMap(), segmentList() {
     dictionary = 0;
@@ -27,6 +28,9 @@ Context::Context() : moduleList(), objectMap(), segmentMap(), segmentList() {
 }
 
 Context::~Context() {
+    for (size_t i = segmentList.size(); i-- > 0;) {
+        delete segmentList[i];
+    }
 }
 
 void Context::addModule(Module& module) {
@@ -35,9 +39,20 @@ void Context::addModule(Module& module) {
 
 void Context::addObject(Object& object) throw (logic_error) {
     if (hasObject(object.getId())) {
-        throw logic_error("an object with '" + object.getId() + "' has already been added to the context.");
+        throw logic_error("an object with ID '" + object.getId() + "' has already been added to the context.");
     }
     objectMap[object.getId()] = &object;
+}
+
+Segment& Context::addSegment(const string& id, size_t sizeL, size_t sizeM, size_t sizeK) throw (logic_error) {
+    if (hasSegment(id)) {
+        throw logic_error("a segment with ID '" + id + "' has already been added to the context.");
+    }
+    Segment* segment = new SegmentImpl(id, sizeL, sizeM, sizeK);
+    segmentMap[id] = segment;
+    segmentList.push_back(segment);
+
+    return *segment;
 }
 
 Dictionary* Context::getDictionary() const {
@@ -56,7 +71,14 @@ vector<Module*> Context::getModules() const {
     return moduleList;
 }
 
-inline
+Segment& Context::getSegment(const string& id) const {
+    return *segmentMap.at(id);
+}
+
 bool Context::hasObject(const string& id) const {
     return objectMap.find(id) != objectMap.end();
+}
+
+bool Context::hasSegment(const string& id) const {
+    return segmentMap.find(id) != segmentMap.end();
 }

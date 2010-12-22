@@ -68,4 +68,10 @@ void ContextTest::testAddObject() {
     CPPUNIT_ASSERT_THROW(context->addObject(*o), logic_error);
 }
 
-
+void ContextTest::testAddSegment() {
+    CPPUNIT_ASSERT(context->hasSegment("TEST") == false);
+    Segment& segment = context->addSegment("TEST", 2000);
+    CPPUNIT_ASSERT(context->hasSegment("TEST"));
+    CPPUNIT_ASSERT(&context->getSegment("TEST") == &segment);
+    CPPUNIT_ASSERT_THROW(context->addSegment("TEST", 1000), logic_error);
+}

@@ -30,6 +30,7 @@ class ContextTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(testInitialState);
     CPPUNIT_TEST(testAddModule);
     CPPUNIT_TEST(testAddObject);
+    CPPUNIT_TEST(testAddSegment);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -43,6 +44,7 @@ private:
     void testInitialState();
     void testAddModule();
     void testAddObject();
+    void testAddSegment();
 };
 
 #endif	/* CONTEXTTEST_H */
