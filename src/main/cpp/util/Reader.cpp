@@ -18,7 +18,7 @@
 
 using std::min;
 
-Reader::Reader() : DefaultModule("READ"), stepSize(721) {
+Reader::Reader() : DefaultModule("READ"), stepSize(500) {
 }
 
 Reader::~Reader() {

@@ -142,7 +142,7 @@ void SegmentImpl::setStartL(size_t l) {
         throw invalid_argument(className + ": l < grid.getStartL().");
     }
     for (int i = 0; i < accessorList.size(); i++) {
-        accessorList[i]->shift(l - grid.getStartL(), grid.getStrideK(), grid.getStrideL());
+        accessorList[i]->shift(min(l - grid.getStartL(), grid.getMaxL()), grid.getStrideK(), grid.getStrideL());
     }
     grid.setStartL(l);
 }

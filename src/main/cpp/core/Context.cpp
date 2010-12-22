@@ -18,8 +18,18 @@
  * Created on December 20, 2010, 12:34 PM
  */
 
+#include <algorithm>
+#include <limits>
+#include <stdexcept>
+
 #include "Context.h"
+#include "DefaultModule.h"
 #include "SegmentImpl.h"
+
+using std::invalid_argument;
+using std::find;
+using std::min;
+using std::numeric_limits;
 
 Context::Context() : moduleList(), objectMap(), segmentMap(), segmentList() {
     dictionary = 0;
@@ -100,19 +110,41 @@ bool Context::hasSegment(const string& id) const {
 }
 
 bool Context::isCompleted() const {
-    return false;
+    if( segmentList.empty() ) {
+        return false;
+    }
+    for( size_t i = 0; i < moduleList.size(); i++ ) {
+        for( size_t j = 0; j < segmentList.size(); j++ ) {
+            size_t maxLComputed = getMaxLComputed(*(segmentList[j]), *(moduleList[i]));
+            if( maxLComputed != segmentList[j]->getGrid().getMaxL() - 1 ) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 size_t Context::getMaxLComputed(const Segment& segment, const Module& module) const {
-    // todo - implement
+    if (hasMaxLComputed(segment, module)) {
+        return maxLineComputedMap.at(&segment).at(&module);
+    }
     return 0;
 }
 
-void Context::setMaxLComputed(const Segment& segment, const Module& module, size_t l) {
-    // todo - implement
+bool Context::hasMaxLComputed(const Segment& segment, const Module& module) const {
+    return exists(maxLineComputedMap, &segment)
+            && exists(maxLineComputedMap.at(&segment), &module);
+}
+
+void Context::setMaxLComputed(const Segment& segment, const Module& module, size_t line) {
+    maxLineComputedMap[&segment][&module] = line;
 }
 
 size_t Context::getMinLRequired(const Segment& segment, size_t l) const {
-    // todo - implement
-    return l;
+    size_t minLineRequired = numeric_limits<size_t>::max();
+    const ModuleLineMap& moduleLineMap = maxLineComputedMap.at(&segment);
+    for (ModuleLineMap::const_iterator i = moduleLineMap.begin(); i != moduleLineMap.end(); i++) {
+        minLineRequired = min(minLineRequired, i->first->getMinLRequired(i->second + 1));
+    }
+    return minLineRequired;
 }
