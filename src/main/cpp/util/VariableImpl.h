@@ -30,6 +30,7 @@ public:
     void addAttribute(Attribute<void*>* attribute);
     void addDimension(Dimension* dimension);
     string getId() const;
+    string getNcName() const;
     NcType getType() const;
     vector<Dimension*> getDimensions() const;
     vector<Attribute<void*>*> getAttributes() const;

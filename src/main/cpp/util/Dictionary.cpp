@@ -18,13 +18,12 @@
  * Created on December 21, 2010, 1:55 PM
  */
 
-
-//#include <boost/filesystem/operations.hpp>
-//#include <boost/filesystem/fstream.hpp>
+#include <iostream>
+#include <map>
 
 #include "Dictionary.h"
 
-//using namespace boost::filesystem;
+using namespace boost::filesystem;
 
 Dictionary::Dictionary(string config) : configFile(config) {
 }
@@ -34,38 +33,51 @@ Dictionary::~Dictionary() {
 
 void Dictionary::parseInputFiles() {
     string query = "/Config/Variable_Definition_Files_Path";
-    string variableDefPath = evaluateToString(configFile, query);
+    string variableDefPath = delegate.evaluateToString(configFile, query);
 
-//    if (exists(variableDefPath)) {
-//        directory_iterator end;
-//        for (directory_iterator iter(variableDefPath); iter != end; ++iter) {
-//            iter.basic_directory_iterator()->
-//            if (is_directory(*iter)) {
-//                std::cout << iter->native_directory_string() << " (directory)\n";
-//            } else {
-//                std::cout << iter->native_file_string() << " (file)\n";
-//            }
-//        }
-//    }
+    vector<string> childFolders = getChildFolders(variableDefPath);
+    query = "/variable/name";
+    for (size_t i = 0; i < childFolders.size(); i++) {
+        string path = variableDefPath + "/" + (childFolders[i]);
+        string value = delegate.evaluateToString(path, query);
+        std::cout << value << "\n";
+    }
 
-    //    for all input files do:
+}
 
-    //    query = "/variables/name";
-    //    string path = "/variables/name";
-    //    string value = evaluateToString(path, query);
+vector<string> Dictionary::getChildFolders(string& path) {
+    vector<string> files;
+    if (is_directory(path)) {
+        for (directory_iterator iter(path); iter != directory_iterator(); ++iter) {
+            string fileName = iter->path().filename();
+            if (!is_directory(fileName)) {
+//                files.push_back(fileName);
+            }
+        }
+    }
+
+    return files;
 }
 
 set<Variable*> Dictionary::getVariablesToBeWritten() const {
     // TODO - implement
-    return variables;
+    return *(new set<Variable*>());
 }
 
-set<Variable*> Dictionary::getNeededVariables(Module& module) const {
-    // TODO - implement
-    return variables;
+Variable& Dictionary::getVariable(const string& varId) {
+    map<string*, Variable*>::iterator iter;
+    for (iter = variables.begin(); iter != variables.end(); iter++) {
+        if (iter->second->getId() == varId) {
+            return *(iter->second);
+        }
+    }
+    throw std::invalid_argument("No variable with id " + varId);
 }
 
-set<Variable*> Dictionary::getVariablesToBeComputed(Module& module) const {
-    // TODO - implement
-    return variables;
+Variable& Dictionary::getVariableForNcVarName(const string& ncVarName) {
+
+}
+
+const string& Dictionary::getNcVarName(const string& varId) const {
+
 }

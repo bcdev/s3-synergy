@@ -21,6 +21,7 @@
 #ifndef ABSTRACTACCESSOR_H
 #define	ABSTRACTACCESSOR_H
 
+#include <algorithm>
 #include <typeinfo>
 
 #include "Accessor.h"
@@ -153,6 +154,13 @@ public:
 
     virtual valarray<uint16_t>& getUShortData() const throw (bad_cast) {
         throw bad_cast();
+    }
+
+    void shift(size_t n, size_t strideK, size_t strideL) {
+        for (size_t i = 0; i < data.size(); i += strideK) {
+            std::copy(&data[i + n * strideL], &data[i + strideK], &data[i]);
+            std::fill(&data[i + strideK - n * strideL], &data[i + strideK], T(0));
+        }
     }
 
 protected:

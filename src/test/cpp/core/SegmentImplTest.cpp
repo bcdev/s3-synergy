@@ -112,3 +112,33 @@ void SegmentImplTest::testGetAccessor() {
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("US").getUShortData());
 }
 
+void SegmentImplTest::testShift() {
+    segment->addVariableInt("I");
+    valarray<int>& data = segment->getAccessor("I").getIntData();
+
+    const Grid& grid = segment->getGrid();
+    for (size_t k = 0; k < grid.getSizeK(); k++) {
+        for (size_t l = 0; l < grid.getSizeL(); l++) {
+            for (size_t m = 0; m < grid.getSizeM(); m++) {
+                const size_t i = grid.getIndex(k, l, m);
+                data[i] = l;
+            }
+        }
+    }
+
+    segment->setStartL(200);
+    CPPUNIT_ASSERT(segment->getGrid().getStartL() == 200);
+
+    for (size_t k = 0; k < grid.getSizeK(); k++) {
+        for (size_t l = grid.getStartL(); l < grid.getStartL() + grid.getSizeL(); l++) {
+            for (size_t m = 0; m < grid.getSizeM(); m++) {
+                const size_t i = grid.getIndex(k, l, m);
+                if (l < grid.getStartL() + grid.getSizeL() - 200) {
+                    CPPUNIT_ASSERT(data[i] == l);
+                } else {
+                    CPPUNIT_ASSERT(data[i] == 0);
+                }
+            }
+        }
+    }
+}

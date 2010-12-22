@@ -29,9 +29,9 @@ add_executable(util_test ${UTIL_MAIN_SOURCES} ${UTIL_TEST_SOURCES} ${CORE_MAIN_S
 add_executable(syn ${SYN_MAIN_SOURCES} ${CORE_MAIN_SOURCES} ${UTIL_MAIN_SOURCES})
 # add_executable(syn_test ${SYN_TEST_SOURCES} ${UTIL_MAIN_SOURCES})
 
-target_link_libraries(core_test cppunit netcdf netcdf_c++ Xfdu xerces-c xalan-c boost_system)
-target_link_libraries(util_test cppunit netcdf netcdf_c++ Xfdu xerces-c xalan-c boost_system)
-target_link_libraries(syn netcdf netcdf_c++ Safe Xfdu xerces-c xalan-c boost_system)
+target_link_libraries(core_test cppunit netcdf netcdf_c++ Xfdu xerces-c xalan-c boost_system boost_filesystem-mt)
+target_link_libraries(util_test cppunit netcdf netcdf_c++ Xfdu xerces-c xalan-c boost_system boost_filesystem-mt)
+target_link_libraries(syn netcdf netcdf_c++ Safe Xfdu xerces-c xalan-c boost_system boost_filesystem-mt)
 # target_link_libraries(syn_test netcdf netcdf_c++ Safe Xfdu cppunit xerces-c xalan-c)
 
 set_property(TARGET core_test PROPERTY RUNTIME_OUTPUT_DIRECTORY target)

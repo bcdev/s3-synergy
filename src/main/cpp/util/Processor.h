@@ -8,9 +8,7 @@
 #ifndef PROCESSOR_H
 #define	PROCESSOR_H
 
-#include <vector>
-
-#include "../util/Module.h"
+#include "../core/Context.h"
 
 using std::vector;
 
@@ -20,15 +18,13 @@ public:
     Processor();
     ~Processor();
 
-    void addModule(Module& module);
-    void process(ProcessorContext& context);
+    void process(Context& context);
     bool isCompleted() const;
 
 private:
     void setCompleted(bool completed);
     
     bool completed;
-    vector<Module*> modules;
 };
 
 #endif	/* PROCESSOR_H */

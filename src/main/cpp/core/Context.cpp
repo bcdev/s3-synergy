@@ -98,3 +98,21 @@ bool Context::hasObject(const string& id) const {
 bool Context::hasSegment(const string& id) const {
     return segmentMap.find(id) != segmentMap.end();
 }
+
+bool Context::isCompleted() const {
+    return false;
+}
+
+size_t Context::getMaxLComputed(const Segment& segment, const Module& module) const {
+    // todo - implement
+    return 0;
+}
+
+void Context::setMaxLComputed(const Segment& segment, const Module& module, size_t l) {
+    // todo - implement
+}
+
+size_t Context::getMinLRequired(const Segment& segment, size_t l) const {
+    // todo - implement
+    return l;
+}

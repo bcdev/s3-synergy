@@ -188,6 +188,8 @@ public:
      */
     bool hasMaxLComputed(const Segment& segment, const Module& module) const;
 
+    bool isCompleted() const;
+
 private:
     void removeObject(Object& object);
     void removeSegment(Segment& segment);

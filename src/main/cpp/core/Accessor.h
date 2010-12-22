@@ -258,6 +258,8 @@ public:
      * @return the container of sample values.
      */
     virtual valarray<double>& getDoubleData() const throw (bad_cast) = 0;
+
+    virtual void shift(size_t n, size_t strideK, size_t strideL) = 0;
 };
 
 #endif	/* ACCESSOR_H */

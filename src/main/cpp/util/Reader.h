@@ -10,20 +10,19 @@
 
 #include <netcdfcpp.h>
 
-#include "AbstractModule.h"
-#include "../core/SegmentImpl.h"
+#include "../core/Context.h"
+#include "../core/DefaultModule.h"
 
-class Reader : public AbstractModule {
+class Reader : public DefaultModule {
 public:
     Reader();
     virtual ~Reader();
-    Segment* processSegment(ProcessorContext& context);
-    void* readData(NcFile* dataFile, size_t lines, size_t camCount, size_t colCount, string varName);
+    void process(Context& context);
+    void readData(NcFile* dataFile, size_t lines, size_t camCount, size_t colCount, string varName, short* data);
 
 private:
     const size_t stepSize;
-    SegmentImpl* segment;
-    string getFileName(ProcessorContext& context, string processorName);
+    string getFileName(Context& context, string processorName);
 };
 
 #endif	/* READER_H */

@@ -4,13 +4,14 @@
 
 #include "../util/JobOrderParser.h"
 #include "../util/Reader.h"
-#include "../util/PixelClassification.h"
+// #include "../util/PixelClassification.h"
 #include "../util/Processor.h"
-#include "../util/ProcessorContext.h"
+// #include "../util/ProcessorContext.h"
 #include "../util/StringUtils.h"
-#include "../util/SynL2Writer.h"
-#include "../util/TestModule.h"
+// #include "../util/SynL2Writer.h"
+// #include "../util/TestModule.h"
 #include "../util/Dictionary.h"
+#include "../util/Logger.h"
 
 #include <iostream>
 
@@ -55,17 +56,15 @@ int main() {
     // configure modules
     // TODO - use job order for configuration
     Reader reader;
-    PixelClassification pixelClassification;
-    TestModule test;
-    SynL2Writer writer;
+    //PixelClassification pixelClassification;
+    //TestModule test;
+    //SynL2Writer writer;
 
     Processor processor;
-    processor.addModule(reader);
-    //    processor.addModule(pixelClassification);
-    //    processor.addModule(test);
-    //    processor.addModule(writer);
 
-    ProcessorContext context = ProcessorContext(jobOrder);
+    Context context;
+    context.setJobOrder(&jobOrder);
+    context.addModule(reader);
     processor.process(context);
 
     logger->info(createProcessingTimeMessage(start), "Main");

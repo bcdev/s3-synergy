@@ -111,6 +111,7 @@ protected:
     vector<Attribute<void*>*> attributes;
     vector<Dimension*> dims;
     string id;
+    string ncName;
     NcType type;
 };
 

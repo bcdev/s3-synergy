@@ -21,27 +21,68 @@
 #ifndef DICTIONARY_H
 #define	DICTIONARY_H
 
+#include <boost/filesystem.hpp>
+#include <map>
 #include <set>
+#include <vector>
 
 #include "Module.h"
 #include "Variable.h"
 #include "XmlParser.h"
 
+using std::map;
 using std::set;
+using std::vector;
 
-class Dictionary : XmlParser {
+class Dictionary {
 public:
     Dictionary(string configFile);
     virtual ~Dictionary();
+
+    /**
+     * Parses the input files and thus initialises the dictionary.
+     */
     void parseInputFiles();
+
+    /**
+     * Returns the subset of variables, which are to be written.
+     * @return
+     */
     set<Variable*> getVariablesToBeWritten() const;
-    set<Variable*> getVariablesToBeComputed(Module& module) const;
-    set<Variable*> getNeededVariables(Module& module) const;
+
+    /**
+     * Returns a variable for a given symbolic name. To be used by modules in
+     * order to get needed attributes for the variable.
+     * @param varId The symbolic name of the variable to return.
+     * @return The variable with the given symbolic name.
+     */
+    Variable& getVariable(const string& varId);
+
+    /**
+     * Returns a variable for a given netCDF-name. To be used by the reader in
+     * order to fill the variable with attributes, dimensions, type and symbolic
+     * name.
+     * @param ncVarName The netCDF-name of the variable to return.
+     * @return The variable with the given netCDF-name.
+     */
+    Variable& getVariableForNcVarName(const string& ncVarName);
+
+    /**
+     * Returns the netCDF-name for a given symbolic name. To be used by the
+     * writer.
+     * @param varId The symbolic name to get the netCDF-name for.
+     * @return The netCDF-name.
+     */
+    const string& getNcVarName(const string& varId) const;
+
 protected:
-    string path;
+    string filePath;
 private:
+    vector<string> getChildFolders(string& p);
+
+    XmlParser delegate;
     string configFile;
-    set<Variable*> variables;
+    map<string*, Variable*> variables;
 };
 
 #endif	/* DICTIONARY_H */

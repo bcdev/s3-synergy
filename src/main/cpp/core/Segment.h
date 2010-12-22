@@ -46,7 +46,7 @@ public:
      * Adds a variable of type {@code int8_t} to the segment.
      * @param varName The name of the variable being added.
      */
-    virtual void addVariableByte(const string& varName) throw(logic_error) = 0;
+    virtual void addVariableByte(const string& varName) throw (logic_error) = 0;
 
     /**
      * Adds a variable of type {@code uint8_t} to the segment.
@@ -137,6 +137,12 @@ public:
     virtual const string toString() = 0;
 
     /**
+     * Shifts the segment's grid and its accessor(s) to the given line.
+     * @param l The line to shift the segment to.
+     */
+    virtual void setStartL(size_t l) = 0;
+
+    /**
      * Equal to operator.
      * @param that A segment.
      * @return {@code true} if {@code this} and {@code that} segment are the
@@ -145,6 +151,7 @@ public:
     virtual bool operator==(const Segment& that) const {
         return this == &that;
     }
+
 };
 
 #endif	/* SEGMENT_H */

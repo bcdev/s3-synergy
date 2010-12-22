@@ -43,7 +43,8 @@ void ReaderTest::tearDown() {
 void ReaderTest::testReading_OLCI_1() {
     Reader reader;
     NcFile* dataFile = new NcFile("/mnt/hgfs/S3L2PP/src/test/resources/syn/SY_1_SYN/OLC_RADIANCE_O1.nc", NcFile::ReadOnly);
-    short* data = (short*)reader.readData(dataFile, 1000, 5, 740, "TOA_Radiance_Meas");
+    short* data;
+    reader.readData(dataFile, 1000, 5, 740, "TOA_Radiance_Meas", data);
     CPPUNIT_ASSERT(data[0] == 1);
     CPPUNIT_ASSERT(data[1] == 2);
     CPPUNIT_ASSERT(data[2] == 3);
@@ -55,7 +56,8 @@ void ReaderTest::testReading_OLCI_1() {
 void ReaderTest::testReading_OLCI_2() {
     Reader reader;
     NcFile* dataFile = new NcFile("/mnt/hgfs/S3L2PP/src/test/resources/syn/SY_1_SYN/OLC_RADIANCE_O1.nc", NcFile::ReadOnly);
-    short* data = (short*)reader.readData(dataFile, 1000, 5, 740, "error_estimates");
+    short* data;
+    reader.readData(dataFile, 1000, 5, 740, "error_estimates", data);
     CPPUNIT_ASSERT(data[0] == 5);
     CPPUNIT_ASSERT(data[1] == 4);
     CPPUNIT_ASSERT(data[2] == 3);

@@ -26,6 +26,7 @@
 #include "Accessors.h"
 #include "SegmentImpl.h"
 
+using std::invalid_argument;
 using std::logic_error;
 using std::min;
 using std::numeric_limits;
@@ -134,6 +135,16 @@ string const SegmentImpl::toString() {
     oss << "sizeL = " << getGrid().getSizeL() << "]";
 
     return oss.str();
+}
+
+void SegmentImpl::setStartL(size_t l) {
+    if (l < grid.getStartL()) {
+        throw invalid_argument(className + ": l < grid.getStartL().");
+    }
+    for (int i = 0; i < accessorList.size(); i++) {
+        accessorList[i]->shift(l - grid.getStartL(), grid.getStrideK(), grid.getStrideL());
+    }
+    grid.setStartL(l);
 }
 
 void SegmentImpl::unique(const string& varName) const throw (logic_error) {

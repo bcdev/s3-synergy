@@ -38,6 +38,10 @@ string VariableImpl::getId() const {
     return id;
 }
 
+string VariableImpl::getNcName() const {
+    return ncName;
+}
+
 NcType VariableImpl::getType() const {
     return type;
 }
