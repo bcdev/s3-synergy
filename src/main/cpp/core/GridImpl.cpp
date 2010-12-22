@@ -18,10 +18,20 @@
  * Created on December 16, 2010, 3:47 PM
  */
 
+#include <stdexcept>
+
 #include "GridImpl.h"
 #include "Constants.h"
 
-GridImpl::GridImpl(size_t sizeK, size_t sizeL, size_t sizeM) : Grid() {
+using std::invalid_argument;
+
+GridImpl::GridImpl(size_t sizeK, size_t sizeL, size_t sizeM, size_t minL, size_t maxL) : Grid() {
+    if (minL > maxL) {
+        throw invalid_argument("minL > maxL");
+    }
+    if (sizeL - 1 > maxL) {
+        throw invalid_argument("sizeL - 1 > maxL");
+    }
     this->startK = 0;
     this->startL = 0;
     this->startM = 0;
@@ -31,6 +41,8 @@ GridImpl::GridImpl(size_t sizeK, size_t sizeL, size_t sizeM) : Grid() {
     this->strideK = sizeM * sizeL;
     this->strideL = sizeM;
     this->strideM = 1;
+    this->minL = minL;
+    this->maxL = maxL;
 }
 
 GridImpl::GridImpl(const Grid& b) : Grid() {

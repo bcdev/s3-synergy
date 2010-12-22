@@ -135,6 +135,16 @@ public:
      * @return a string representation of the segment.
      */
     virtual const string toString() = 0;
+
+    /**
+     * Equal to operator.
+     * @param that A segment.
+     * @return {@code true} if {@code this} and {@code that} segment are the
+     *         same, {@code false} otherwise.
+     */
+    virtual bool operator==(const Segment& that) const {
+        return this == &that;
+    }
 };
 
 #endif	/* SEGMENT_H */

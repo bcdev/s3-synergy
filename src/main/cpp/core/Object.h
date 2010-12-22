@@ -43,6 +43,16 @@ public:
      * @return the ID of this object.
      */
     virtual const string& getId() const = 0;
+
+    /**
+     * Equal to operator.
+     * @param that An object.
+     * @return {@code true} if {@code this} and {@code that} object are the
+     *         same, {@code false} otherwise.
+     */
+    virtual bool operator==(const Object& that) const {
+        return this == &that;
+    }
 };
 
 #endif	/* OBJECT_H */

@@ -65,7 +65,7 @@ Segment* Reader::processSegment(ProcessorContext& context) {
         size_t minRequiredLine = context.getMinLineRequired(segment);
         Grid& grid = segment.getGrid();
         grid.setStartL(minRequiredLine);
-        grid.setSizeL(min(stepSize, lineCount - minRequiredLine));
+        // grid.setSizeL(min(stepSize, lineCount - minRequiredLine));
 
         // modifying segment values
         Logger::get()->progress("Reading data for segment [" + segment.toString() + "]", "Reader");

@@ -25,7 +25,7 @@
 
 class GridImpl : public virtual Grid {
 public:
-    GridImpl(size_t sizeK, size_t sizeL, size_t sizeM);
+    GridImpl(size_t sizeK, size_t sizeL, size_t sizeM, size_t minL, size_t maxL);
     GridImpl(const Grid& bounds);
     virtual ~GridImpl();
 
@@ -38,11 +38,10 @@ public:
     }
 
     void setStartL(size_t l) {
+        if (l + sizeL - 1 > maxL) {
+            l = maxL - sizeL + 1;
+        }
         this->startL = l;
-    }
-
-    void setSizeL(size_t l) {
-        this->sizeL = l;
     }
 
     size_t getStartM() const {
@@ -79,6 +78,14 @@ public:
 
     size_t getIndex(size_t k, size_t l, size_t m) const throw (out_of_range);
 
+    size_t getMinL() const {
+        return minL;
+    }
+
+    size_t getMaxL() const {
+        return maxL;
+    }
+
 private:
     size_t startK;
     size_t startL;
@@ -91,6 +98,9 @@ private:
     size_t strideK;
     size_t strideL;
     size_t strideM;
+
+    size_t minL;
+    size_t maxL;
 };
 
 #endif	/* GRIDIMPL_H */

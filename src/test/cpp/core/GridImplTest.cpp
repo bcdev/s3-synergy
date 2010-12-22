@@ -30,7 +30,7 @@ GridImplTest::~GridImplTest() {
 }
 
 void GridImplTest::setUp() {
-    grid = new GridImpl(5, 60000, 760);
+    grid = new GridImpl(5, 2000, 760, 0, 59999);
 }
 
 void GridImplTest::tearDown() {
@@ -45,33 +45,33 @@ void GridImplTest::testStarts() {
 
 void GridImplTest::testSizes() {
     CPPUNIT_ASSERT(grid->getSizeK() == 5);
-    CPPUNIT_ASSERT(grid->getSizeL() == 60000);
+    CPPUNIT_ASSERT(grid->getSizeL() == 2000);
     CPPUNIT_ASSERT(grid->getSizeM() == 760);
-    CPPUNIT_ASSERT(grid->getSize() == 5 * 60000 * 760);
+    CPPUNIT_ASSERT(grid->getSize() == 5 * 2000 * 760);
 }
 
 void GridImplTest::testStrides() {
-    CPPUNIT_ASSERT(grid->getStrideK() == 60000 * 760);
+    CPPUNIT_ASSERT(grid->getStrideK() == 2000 * 760);
     CPPUNIT_ASSERT(grid->getStrideL() == 760);
     CPPUNIT_ASSERT(grid->getStrideM() == 1);
 }
 
 void GridImplTest::testGetIndex() {
     CPPUNIT_ASSERT(grid->getIndex(0, 0, 0) == 0);
-    CPPUNIT_ASSERT(grid->getIndex(4, 59999, 759) == 4 * 60000 * 760 + 59999 * 760 + 759 * 1);
-    CPPUNIT_ASSERT(grid->getIndex(2, 17341, 467) == 2 * 60000 * 760 + 17341 * 760 + 467 * 1);
+    CPPUNIT_ASSERT(grid->getIndex(4, 1999, 759) == 4 * 2000 * 760 + 1999 * 760 + 759 * 1);
+    CPPUNIT_ASSERT(grid->getIndex(2, 1734, 467) == 2 * 2000 * 760 + 1734 * 760 + 467 * 1);
 
     CPPUNIT_ASSERT_THROW(grid->getIndex(5, 0, 0), out_of_range);
-    CPPUNIT_ASSERT_THROW(grid->getIndex(0, 60000, 0), out_of_range);
+    CPPUNIT_ASSERT_THROW(grid->getIndex(0, 2000, 0), out_of_range);
     CPPUNIT_ASSERT_THROW(grid->getIndex(0, 0, 760), out_of_range);
 }
 
 void GridImplTest::testSetGetStartL() {
     CPPUNIT_ASSERT(grid->getStartL() == 0);
-    grid->setStartL(1);
-    CPPUNIT_ASSERT(grid->getStartL() == 1);
+    grid->setStartL(1000);
+    CPPUNIT_ASSERT(grid->getStartL() == 1000);
     grid->setStartL(60000);
-    CPPUNIT_ASSERT(grid->getStartL() == 60000);
+    CPPUNIT_ASSERT(grid->getStartL() == 58000);
     grid->setStartL(0);
     CPPUNIT_ASSERT(grid->getStartL() == 0);
 }

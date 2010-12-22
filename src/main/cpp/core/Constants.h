@@ -30,7 +30,7 @@ class Constants {
 public:
     static const size_t N_CAM = 5;
     static const size_t N_DET_CAM = 760;
-
+    static const size_t N_LINE_OLC = 60000;
     static const string PROCESSOR_VERSION;
 
 private:

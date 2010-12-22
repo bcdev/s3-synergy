@@ -59,16 +59,32 @@ Dictionary* Context::getDictionary() const {
     return dictionary;
 }
 
+void Context::setDictionary(Dictionary* dictionary) {
+    this->dictionary = dictionary;
+}
+
 JobOrder* Context::getJobOrder() const {
     return jobOrder;
+}
+
+void Context::setJobOrder(JobOrder* jobOrder) {
+    this->jobOrder = jobOrder;
 }
 
 Logging* Context::getLogging() const {
     return logging;
 }
 
+void Context::setLogging(Logging* logging) {
+    this->logging = logging;
+}
+
 vector<Module*> Context::getModules() const {
     return moduleList;
+}
+
+Object& Context::getObject(const string& id) const {
+    return *objectMap.at(id);
 }
 
 Segment& Context::getSegment(const string& id) const {

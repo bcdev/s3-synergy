@@ -31,7 +31,7 @@ using std::min;
 using std::numeric_limits;
 using std::ostringstream;
 
-SegmentImpl::SegmentImpl(const string& s, size_t l, size_t m, size_t k) : id(s), grid(k, l, m), accessorMap() {
+SegmentImpl::SegmentImpl(const string& s, size_t l, size_t m, size_t k, size_t minL, size_t maxL) : id(s), grid(k, l, m, minL, maxL), accessorMap() {
 }
 
 SegmentImpl::~SegmentImpl() {
@@ -110,17 +110,14 @@ void SegmentImpl::addVariableUShort(const string& varName) throw (logic_error) {
     accessorList.push_back(accessor);
 }
 
-inline
 bool SegmentImpl::hasVariable(const string& varName) const {
     return accessorMap.find(varName) != accessorMap.end();
 }
 
-inline
 const string& SegmentImpl::getId() const {
     return id;
 }
 
-inline
 Grid& SegmentImpl::getGrid() {
     return grid;
 }

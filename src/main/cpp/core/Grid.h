@@ -59,12 +59,6 @@ public:
     virtual void setStartL(size_t l) = 0;
 
     /**
-     * Sets the last value of the row index dimension to a new value.
-     * @param l The new last value of the row index dimension.
-     */
-    virtual void setSizeL(size_t l) = 0;
-
-    /**
      * Returns the start value of the column index dimension.
      * @return the start value of the column index dimension.
      */
@@ -94,7 +88,7 @@ public:
      * @return the plain size of the grid.
      */
     virtual size_t getSize() const = 0;
-    
+
     /**
      * Returns the stride for the camera index dimension.
      * @return the stride for the camera index dimension.
@@ -122,6 +116,18 @@ public:
      * @return the plain index.
      */
     virtual size_t getIndex(size_t k, size_t l, size_t m) const throw (out_of_range) = 0;
+
+    /**
+     * Returns the minimum valid value of the row index dimension.
+     * @return the minimum valid value of the row index dimension.
+     */
+    virtual size_t getMinL() const = 0;
+
+    /**
+     * Returns the maxiimum valid value of the row index dimension.
+     * @return the maxiimum valid value of the row index dimension.
+     */
+    virtual size_t getMaxL() const = 0;
 };
 
 #endif	/* GRID_H */

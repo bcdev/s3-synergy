@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2010 by Brockmann Consult (info@brockmann-consult.de)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,6 +31,11 @@ class ContextTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(testAddModule);
     CPPUNIT_TEST(testAddObject);
     CPPUNIT_TEST(testAddSegment);
+    CPPUNIT_TEST(testSetGetDictionary);
+    CPPUNIT_TEST(testSetGetJobOrder);
+    CPPUNIT_TEST(testSetGetLogging);
+    CPPUNIT_TEST(testGetUnknownObject);
+    CPPUNIT_TEST(testGetUnknownSegment);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -45,6 +50,11 @@ private:
     void testAddModule();
     void testAddObject();
     void testAddSegment();
+    void testSetGetDictionary();
+    void testSetGetJobOrder();
+    void testSetGetLogging();
+    void testGetUnknownObject();
+    void testGetUnknownSegment();
 };
 
 #endif	/* CONTEXTTEST_H */

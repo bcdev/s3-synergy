@@ -132,38 +132,6 @@ public:
     Segment& getSegment(const string& id) const;
 
     /**
-     * Returns the index of the minimum row in a segment, which will be
-     * processed in this context.
-     * @param segment The segment.
-     * @return the index of the minimum row, which will be processed.
-     */
-    size_t getMinL(const Segment& segment) const;
-
-    /**
-     * Sets the index of the minimum row in a segment, which will be
-     * processed in this context.
-     * @param segment The segment.
-     * @param l The index of the minimum row, which will be processed.
-     */
-    void setMinL(const Segment& segment, size_t l);
-
-    /**
-     * Returns the index of the maximum row in a segment, which will be
-     * processed in this context.
-     * @param segment The segment.
-     * @return the index of the maximum row, which will be processed.
-     */
-    size_t getMaxL(const Segment& segment) const;
-
-    /**
-     * Sets the index of the maximum row in a segment, which will be
-     * processed in this context.
-     * @param segment The segment.
-     * @param l The index of the maximum row, which will be processed.
-     */
-    void setMaxL(const Segment& segment, size_t l);
-
-    /**
      * Returns the index of the maximum row in a segment, which has been
      * computed by a certain module.
      * @param segment The segment.
