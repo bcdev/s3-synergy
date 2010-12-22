@@ -44,11 +44,11 @@ void Context::addObject(Object& object) throw (logic_error) {
     objectMap[object.getId()] = &object;
 }
 
-Segment& Context::addSegment(const string& id, size_t sizeL, size_t sizeM, size_t sizeK) throw (logic_error) {
+Segment& Context::addSegment(const string& id, size_t sizeL, size_t sizeM, size_t sizeK, size_t minL, size_t maxL) throw (logic_error) {
     if (hasSegment(id)) {
         throw logic_error("a segment with ID '" + id + "' has already been added to the context.");
     }
-    Segment* segment = new SegmentImpl(id, sizeL, sizeM, sizeK);
+    Segment* segment = new SegmentImpl(id, sizeL, sizeM, sizeK, minL, maxL);
     segmentMap[id] = segment;
     segmentList.push_back(segment);
 

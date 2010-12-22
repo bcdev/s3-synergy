@@ -73,7 +73,7 @@ public:
      * @param sizeK The size of the segment's camara index dimension.
      * @return a reference to the segment added.
      */
-    Segment& addSegment(const string& id, size_t sizeL, size_t sizeM = Constants::N_DET_CAM, size_t sizeK = Constants::N_CAM) throw (logic_error);
+    Segment& addSegment(const string& id, size_t sizeL, size_t sizeM = Constants::N_DET_CAM, size_t sizeK = Constants::N_CAM, size_t minL = 0, size_t maxL = Constants::N_LINE_OLC - 1) throw (logic_error);
 
     /**
      * Returns a list of modules, which have been added to the context.
