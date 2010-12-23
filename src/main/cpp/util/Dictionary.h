@@ -22,7 +22,6 @@
 #define	DICTIONARY_H
 
 #include <boost/filesystem.hpp>
-#include <map>
 #include <set>
 #include <vector>
 
@@ -65,24 +64,28 @@ public:
      * @param ncVarName The netCDF-name of the variable to return.
      * @return The variable with the given netCDF-name.
      */
-    Variable& getVariableForNcVarName(const string& ncVarName);
+//    Variable& getVariableForNcVarName(const string& ncVarName);
 
     /**
-     * Returns the netCDF-name for a given symbolic name. To be used by the
-     * writer.
-     * @param varId The symbolic name to get the netCDF-name for.
-     * @return The netCDF-name.
+     * Returns the name of the netCDF-file for a given variable name.
+     * To be used by the writer.
+     * @param varId The variable name to get the name of the netCDF-file for.
+     * @return The netCDF-filename.
      */
-    const string& getNcVarName(const string& varId) const;
+    const string getNcFileName(const string& varId) const;
 
 protected:
     string filePath;
 private:
-    vector<string> getChildFolders(string& p);
+    vector<string> getFiles(string& directory);
+    void parseVariablesFile(string& variableDefPath, string& file);
+    vector<Dimension*> parseDimensions(string& file, string& variableName);
+    vector<Attribute*> parseAttributes(string& file, string& variableName);
+    NcType mapToNcType(const string& type);
 
-    XmlParser delegate;
+    XmlParser xmlParser;
     string configFile;
-    map<string*, Variable*> variables;
+    set<Variable*> variables;
 };
 
 #endif	/* DICTIONARY_H */

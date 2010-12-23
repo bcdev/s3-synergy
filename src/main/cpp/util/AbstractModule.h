@@ -75,27 +75,6 @@ public:
         }
     }
 
-protected:
-    // TODO - move to Segment.h
-    Variable* createVariable(string id) {
-        Variable* var = new VariableImpl("SDR_1", ncInt);
-        var->addDimension(new Dimension("N_CAM", 5)); // Number of OLCI camera modules
-        var->addDimension(new Dimension("N_LINE_OLC", 10000)); // Number of lines in OLCI camera image - TODO - replace with correct value
-        var->addDimension(new Dimension("N_DET_OLC", 760)); // Number of pixels per line in OLCI camera image - TODO - replace with correct value
-        var->addAttribute(Variable::createStringAttribute("standard_name", "surface_directional_reflectance"));
-        var->addAttribute(Variable::createStringAttribute("long_name", "Surface directional reflectance for SYN channel 1"));
-        var->addAttribute(Variable::createFloatAttribute("_FillValue", -10000));
-        var->addAttribute(Variable::createFloatAttribute("scale_factor", 0.0001));
-        var->addAttribute(Variable::createShortAttribute("valid_min", 0));
-        var->addAttribute(Variable::createShortAttribute("valid_max", 10000));
-        var->addAttribute(Variable::createStringAttribute("ancillary_variables", "SDR_1_er"));
-        var->addAttribute(Variable::createShortAttribute("channel", 1));
-        var->addAttribute(Variable::createFloatAttribute("central_wavelength", 400));
-        var->addAttribute(Variable::createFloatAttribute("min_wavelength", 100));
-        var->addAttribute(Variable::createFloatAttribute("max_wavelength", 700));
-        return var;
-    }
-
 private:
     const string id;
     const string version;

@@ -18,15 +18,17 @@
  * Created on November 11, 2010, 11:33 AM
  */
 
+#include <iosfwd>
 #include <string>
+#include <stdexcept>
 
 #include "VariableImpl.h"
 
-VariableImpl::VariableImpl(string id, NcType type) : Variable(id, type) {}
+VariableImpl::VariableImpl(string ncName, NcType type) : Variable(ncName, type) {}
 
 VariableImpl::~VariableImpl() {}
 
-void VariableImpl::addAttribute(Attribute<void*>* attribute) {
+void VariableImpl::addAttribute(Attribute* attribute) {
     attributes.push_back(attribute);
 }
 
@@ -34,8 +36,12 @@ void VariableImpl::addDimension(Dimension* dimension) {
     dims.push_back(dimension);
 }
 
-string VariableImpl::getId() const {
-    return id;
+void VariableImpl::setFileName(string fileName) {
+    this->fileName = fileName;
+}
+
+string VariableImpl::getFileName() const {
+    return fileName;
 }
 
 string VariableImpl::getNcName() const {
@@ -50,6 +56,36 @@ vector<Dimension*> VariableImpl::getDimensions() const {
     return dims;
 }
 
-vector<Attribute<void*>*> VariableImpl::getAttributes() const {
+vector<Attribute*> VariableImpl::getAttributes() const {
     return attributes;
 }
+
+Attribute& VariableImpl::getAttribute(string& name) const {
+    for( size_t i = 0; i < attributes.size(); i++ ) {
+        if( attributes[i]->getKey().compare( name ) == 0 ) {
+            return *attributes[i];
+        }
+    }
+    throw std::invalid_argument( "No attribute with name " + name + "." );
+}
+
+string VariableImpl::toString() const {
+    std::ostringstream oss;
+    oss << "VariableImpl " << "[";
+    oss << "ncName = " << ncName << ", ";
+    oss << "type = " << getType() << ", ";
+    oss << "fileName = " << getFileName() << ", ";
+    oss << "dimensions = [";
+    for (size_t i = 0; i < dims.size(); i++) {
+        oss << dims[i]->toString() << ", ";
+    }
+    oss << "], ";
+    oss << "attributes = [";
+    for( size_t i = 0; i < attributes.size(); i++ ) {
+        oss << attributes[i]->toString() << ", ";
+    }
+    oss << "]";
+    oss << "]";
+
+    return oss.str();
+};

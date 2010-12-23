@@ -26,8 +26,10 @@ public:
     string getTextContent(DOMNode* node);
     string getNodeName(DOMElement* node);
     string getNodeAttribute(DOMElement* node, string attributeName);
+    const string evaluateToString(string& path, const char* expression);
     const string evaluateToString(string& path, string& expression);
     const vector<string> evaluateToStringList(string& path, string& expression);
+    const vector<string> evaluateToStringList(string& path, const char* expression);
     
 protected:
     XercesDOMParser* parser;

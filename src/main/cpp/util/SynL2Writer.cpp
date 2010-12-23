@@ -89,7 +89,7 @@ NcFile* SynL2Writer::getNcFileByFileName(string fileName) {
 NcVar* SynL2Writer::getNcVar(NcFile* dataFile, Variable* var) {
     if (addedVariables.find(var) == addedVariables.end()) {
         const NcDim** ncDims = createNcDims(dataFile, var->getDimensions());
-        const char* varId = var->getId().c_str();
+        const char* varId = var->getNcName().c_str();
         size_t dimCount = var->getDimensions().size();
         NcType type = var->getType();
         NcVar* ncVar = dataFile->add_var(varId, type, dimCount, ncDims);

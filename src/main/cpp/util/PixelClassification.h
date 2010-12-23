@@ -30,8 +30,6 @@ public:
 
     Segment* processSegment(ProcessorContext& context);
 
-private:
-    Variable* createSYN_flagsVariable();
 };
 
 #endif	/* PIXELCLASSIFICATION_H */

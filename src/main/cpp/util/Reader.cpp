@@ -10,6 +10,7 @@
 #include <iostream>
 #include <vector>
 #include <valarray>
+#include <stdexcept>
 
 
 #include "JobOrder.h"
@@ -75,6 +76,7 @@ string Reader::getFileName(Context& context, string processorId) {
             return inputFileNames[i];
         }
     }
+    throw std::invalid_argument( "No input file for processor " + processorId + "." );
 }
 
 void Reader::readData(NcFile* dataFile, size_t lines, size_t camCount, size_t colCount, string varName, short* data) {

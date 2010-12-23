@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2010 by Brockmann Consult (info@brockmann-consult.de)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -11,19 +11,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  * File:   Dictionary.cpp
  * Author: thomass
- * 
+ *
  * Created on December 21, 2010, 1:55 PM
  */
 
 #include <iostream>
 #include <map>
+#include <boost/lexical_cast.hpp>
+#include <stdexcept>
 
 #include "Dictionary.h"
+#include "VariableImpl.h"
 
-using namespace boost::filesystem;
+using boost::filesystem::is_directory;
+using boost::filesystem::directory_iterator;
+using boost::filesystem::path;
 
 Dictionary::Dictionary(string config) : configFile(config) {
 }
@@ -32,26 +37,22 @@ Dictionary::~Dictionary() {
 }
 
 void Dictionary::parseInputFiles() {
-    string query = "/Config/Variable_Definition_Files_Path";
-    string variableDefPath = delegate.evaluateToString(configFile, query);
+    string variableDefPath = xmlParser.evaluateToString(configFile, "/Config/Variable_Definition_Files_Path");
 
-    vector<string> childFolders = getChildFolders(variableDefPath);
-    query = "/variable/name";
+    vector<string> childFolders = getFiles(variableDefPath);
     for (size_t i = 0; i < childFolders.size(); i++) {
-        string path = variableDefPath + "/" + (childFolders[i]);
-        string value = delegate.evaluateToString(path, query);
-        std::cout << value << "\n";
+        parseVariablesFile(variableDefPath, childFolders[i]);
     }
 
 }
 
-vector<string> Dictionary::getChildFolders(string& path) {
+vector<string> Dictionary::getFiles(string& directory) {
     vector<string> files;
-    if (is_directory(path)) {
-        for (directory_iterator iter(path); iter != directory_iterator(); ++iter) {
-            string fileName = iter->path().filename();
-            if (!is_directory(fileName)) {
-//                files.push_back(fileName);
+    if (is_directory(directory)) {
+        for (directory_iterator iter(directory); iter != directory_iterator(); ++iter) {
+            path file = iter->path();
+            if (!is_directory(file)) {
+                files.push_back(file.filename());
             }
         }
     }
@@ -59,25 +60,92 @@ vector<string> Dictionary::getChildFolders(string& path) {
     return files;
 }
 
+void Dictionary::parseVariablesFile(string& variableDefPath, string& file) {
+    string path = variableDefPath + "/" + file;
+    const vector<string> variableNames = xmlParser.evaluateToStringList(path, "/dataset/variables/variable/name/child::text()");
+
+    for (size_t i = 0; i < variableNames.size(); i++) {
+        string variableName = variableNames[i];
+        string query = "/dataset/variables/variable[name=\"" + variableName + "\"]/type";
+        NcType type = mapToNcType(xmlParser.evaluateToString(path, query));
+        Variable* var = new VariableImpl(variableName, type);
+        var->setFileName(xmlParser.evaluateToString(path, "/dataset/global_attributes/attribute[name=\"dataset_name\"]/value"));
+        vector<Dimension*> dimensions = parseDimensions(path, variableName);
+        for (size_t j = 0; j < dimensions.size(); j++) {
+            var->addDimension(dimensions[j]);
+        }
+        vector<Attribute*> attributes = parseAttributes(path, variableName);
+        for (size_t k = 0; k < attributes.size(); k++) {
+            var->addAttribute(attributes[k]);
+        }
+//        std::cout << "\n" << var->toString() << "\n";
+        variables.insert(var);
+    }
+}
+
+vector<Dimension*> Dictionary::parseDimensions(string& file, string& variableName) {
+    string query = "/dataset/variables/variable[name=\"" + variableName + "\"]/dimensions/dimension/name/child::text()";
+    const vector<string> dimensionNames = xmlParser.evaluateToStringList(file, query);
+    vector<Dimension*> dimensions;
+    for (size_t i = 0; i < dimensionNames.size(); i++) {
+        query = "/dataset/variables/variable[name=\"" + variableName + "\"]/dimensions/dimension[name=\"" + dimensionNames[i] + "\"]/range";
+        size_t range = boost::lexical_cast<int>(xmlParser.evaluateToString(file, query));
+        dimensions.push_back(new Dimension(dimensionNames[i], range));
+    }
+    return dimensions;
+}
+
+vector<Attribute*> Dictionary::parseAttributes(string& file, string& variableName) {
+    string query = "/dataset/variables/variable[name=\"" + variableName + "\"]/attributes/attribute/name/child::text()";
+    const vector<string> attributeNames = xmlParser.evaluateToStringList(file, query);
+    vector<Attribute*> attributes;
+    for (size_t i = 0; i < attributeNames.size(); i++) {
+        string attributeName = attributeNames[i];
+        query = "/dataset/variables/variable[name=\"" + variableName + "\"]/attributes/attribute[name=\"" + attributeName + "\"]/type";
+        string type = xmlParser.evaluateToString(file, query);
+        query = "/dataset/variables/variable[name=\"" + variableName + "\"]/attributes/attribute[name=\"" + attributeName + "\"]/value";
+        string value = xmlParser.evaluateToString(file, query);
+        attributes.push_back(new Attribute(type, attributeName, value));
+    }
+    return attributes;
+}
+
 set<Variable*> Dictionary::getVariablesToBeWritten() const {
     // TODO - implement
     return *(new set<Variable*>());
 }
 
-Variable& Dictionary::getVariable(const string& varId) {
-    map<string*, Variable*>::iterator iter;
+Variable& Dictionary::getVariable(const string& ncName) {
+    set<Variable*>::iterator iter;
     for (iter = variables.begin(); iter != variables.end(); iter++) {
-        if (iter->second->getId() == varId) {
-            return *(iter->second);
+        if ((*iter)->getNcName().compare(ncName) == 0) {
+            return **iter;
         }
     }
-    throw std::invalid_argument("No variable with id " + varId);
+    throw std::invalid_argument("No variable with id " + ncName);
 }
 
-Variable& Dictionary::getVariableForNcVarName(const string& ncVarName) {
+//Variable& Dictionary::getVariableForNcVarName(const string& ncVarName) {}
 
+const string Dictionary::getNcFileName(const string& ncName) const {
+    set<Variable*>::iterator iter;
+    for (iter = variables.begin(); iter != variables.end(); iter++) {
+        if ((*iter)->getNcName().compare(ncName) == 0) {
+            return (*iter)->getFileName();
+        }
+    }
+    throw std::invalid_argument("No filename for variable " + ncName);
 }
 
-const string& Dictionary::getNcVarName(const string& varId) const {
-
+NcType Dictionary::mapToNcType(const string& type) {
+    if (type.compare("short") == 0) {
+        return ncShort;
+    } else if (type.compare("uShort") == 0) {
+        return ncInt;
+    } else if (type.compare("float") == 0) {
+        return ncFloat;
+    } else if (type.compare("uChar") == 0) {
+        return ncChar;
+    }
+    return ncFloat;
 }

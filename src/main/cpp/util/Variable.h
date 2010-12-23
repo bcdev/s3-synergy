@@ -30,88 +30,71 @@ using std::vector;
 
 class Dimension;
 
-template <class T> class Attribute {
+class Attribute {
 public:
 
-    Attribute(string key) : key(key) {
+    Attribute(string type, string key, string value) : type(type), key(key), value(value) {
     }
 
-    void setValue(T value) {
+    void setValue(string& value) {
         this->value = value;
     }
 
-    T getValue() const {
+    string getValue() const {
         return value;
     }
 
-    void setUnit(string unit) {
-        this->unit = unit;
+    string getType() const {
+        return type;
     }
 
-    string getUnit() const {
-        return unit;
+    string getKey() const {
+        return key;
+    }
+
+    string toString() {
+        std::ostringstream oss;
+        oss << "Attribute: " << "[";
+        oss << "key = " << key << ", ";
+        oss << "type = " << type << "]";
+        return oss.str();
     }
 
 private:
+    string type;
     string key;
-    string unit;
-    T value;
+    string value;
 };
 
 // TODO - check attributes
+
 class Variable {
 public:
 
-    Variable(string id, NcType type) : id(id), type(type) {
+    Variable(string ncName, NcType type) : ncName(ncName), type(type) {
     };
 
     virtual ~Variable() {
     };
 
-    virtual void addAttribute(Attribute<void*>* attribute) = 0;
+    virtual void addAttribute(Attribute* attribute) = 0;
     virtual void addDimension(Dimension* dimension) = 0;
-    virtual string getId() const = 0;
+
+    virtual void setFileName(string fileName) = 0;
+    virtual string getFileName() const = 0;
+    virtual string getNcName() const = 0;
     virtual NcType getType() const = 0;
     virtual vector<Dimension*> getDimensions() const = 0;
-    virtual vector<Attribute<void*>*> getAttributes() const = 0;
+    virtual vector<Attribute*> getAttributes() const = 0;
+    virtual Attribute& getAttribute(string& name) const = 0;
 
-    static Attribute<void*>* createIntAttribute(string key, int value) {
-        Attribute<void*>* attribute = new Attribute<void*>(key);
-        int valueArray[1];
-        valueArray[0] = value;
-        attribute->setValue(valueArray);
-        return attribute;
-    }
-
-    static Attribute<void*>* createShortAttribute(string key, int value) {
-        Attribute<void*>* attribute = new Attribute<void*>(key);
-        short valueArray[1];
-        valueArray[0] = value;
-        attribute->setValue(valueArray);
-        return attribute;
-    }
-
-    static Attribute<void*>* createFloatAttribute(string key, float value) {
-        Attribute<void*>* attribute = new Attribute<void*>(key);
-        float valueArray[1];
-        valueArray[0] = value;
-        attribute->setValue(valueArray);
-        return attribute;
-    }
-
-    static Attribute<void*>* createStringAttribute(string key, string value) {
-        Attribute<void*>* attribute = new Attribute<void*>(key);
-        string valueArray[1];
-        valueArray[0] = value;
-        attribute->setValue(valueArray);
-        return attribute;
-    }
+    virtual string toString() const = 0;
 
 protected:
-    vector<Attribute<void*>*> attributes;
+    vector<Attribute*> attributes;
     vector<Dimension*> dims;
-    string id;
     string ncName;
+    string fileName;
     NcType type;
 };
 
@@ -127,6 +110,14 @@ public:
 
     string getName() const {
         return name;
+    }
+
+    string toString() {
+        std::ostringstream oss;
+        oss << "Dimension: " << "[";
+        oss << "name = " << name << ", ";
+        oss << "range = " << range << "]";
+        return oss.str();
     }
 
 private:
