@@ -2,8 +2,8 @@
 <dataset>
 <variables>
 	<variable>
-		<name>SDR_1</name>
-		<type>short</type>
+		<name>latitude</name>
+		<type>sl</type>
 		<dimensions>
 			<dimension>
 				<name>N_CAM</name>
@@ -22,63 +22,38 @@
 			<attribute>
 				<name>long_name</name>
 				<type>string</type>
-				<value>Surface directional reflectance for SYN channel 1</value>
+				<value>DEM-corrected latitude</value>
 			</attribute>
 			<attribute>
 				<name>standard_name</name>
 				<type>string</type>
-				<value>surface_directional_reflectance</value>
+				<value>latitude</value>
 			</attribute>
 			<attribute>
-				<name>_FillValue</name>
-				<type>float</type>
-				<value>-10000</value>
+				<name>units</name>
+				<type>string</type>
+				<value>degrees_north</value>
 			</attribute>
 			<attribute>
 				<name>scale_factor</name>
 				<type>float</type>
-				<value>0.0001</value>
+				<value>0.000001</value>
 			</attribute>
 			<attribute>
 				<name>valid_min</name>
-				<type>float</type>
-				<value>0</value>
+				<type>int</type>
+				<value>-90000000</value>
 			</attribute>
 			<attribute>
 				<name>valid_max</name>
-				<type>float</type>
-				<value>10000</value>
-			</attribute>
-			<attribute>
-				<name>ancillary_variables</name>
-				<type>string</type>
-				<value>SDR_1_er</value>
-			</attribute>
-			<attribute>
-				<name>channel</name>
-				<type>uShort</type>
-				<value>1</value>
-			</attribute>
-			<attribute>
-				<name>central_wavelength</name>
-				<type>float</type>
-				<value>400</value>
-			</attribute>
-			<attribute>
-				<name>min_wavelength</name>
-				<type>float</type>
-				<value>100</value>
-			</attribute>
-			<attribute>
-				<name>max_wavelength</name>
-				<type>float</type>
-				<value>700</value>
+				<type>int</type>
+				<value>90000000</value>
 			</attribute>
 		</attributes>
 	</variable>
 	<variable>
-		<name>SDR_1_er</name>
-		<type>short</type>
+		<name>longitude</name>
+		<type>sl</type>
 		<dimensions>
 			<dimension>
 				<name>N_CAM</name>
@@ -97,60 +72,90 @@
 			<attribute>
 				<name>long_name</name>
 				<type>string</type>
-				<value>Surface directional reflectance standard error for SYN channel 1</value>
+				<value>DEM-corrected longitude</value>
 			</attribute>
 			<attribute>
 				<name>standard_name</name>
 				<type>string</type>
-				<value>surface_directional_reflectance_standard_error</value>
+				<value>longitude</value>
 			</attribute>
 			<attribute>
-				<name>_FillValue</name>
-				<type>float</type>
-				<value>-10000</value>
+				<name>units</name>
+				<type>string</type>
+				<value>degrees_east</value>
 			</attribute>
 			<attribute>
 				<name>scale_factor</name>
 				<type>float</type>
-				<value>0.0001</value>
+				<value>0.000001</value>
 			</attribute>
 			<attribute>
 				<name>valid_min</name>
-				<type>float</type>
-				<value>0</value>
+				<type>int</type>
+				<value>-180000000</value>
 			</attribute>
 			<attribute>
 				<name>valid_max</name>
-				<type>float</type>
-				<value>10000</value>
-			</attribute>
-			<attribute>
-				<name>channel</name>
-				<type>uShort</type>
-				<value>1</value>
-			</attribute>
-			<attribute>
-				<name>central_wavelength</name>
-				<type>float</type>
-				<value>400</value>
-			</attribute>
-			<attribute>
-				<name>min_wavelength</name>
-				<type>float</type>
-				<value>100</value>
-			</attribute>
-			<attribute>
-				<name>max_wavelength</name>
-				<type>float</type>
-				<value>700</value>
+				<type>int</type>
+				<value>180000000</value>
 			</attribute>
 		</attributes>
 	</variable>
+	<variable>
+		<name>altitude</name>
+		<type>ss</type>
+		<dimensions>
+			<dimension>
+				<name>N_CAM</name>
+				<range>5</range>
+			</dimension>
+			<dimension>
+				<name>N_LINE_OLC</name>
+				<range>60000</range>
+			</dimension>
+			<dimension>
+				<name>N_DET_CAM</name>
+				<range>740</range>
+			</dimension>
+		</dimensions>
+		<attributes>
+			<attribute>
+				<name>long_name</name>
+				<type>string</type>
+				<value>DEM-corrected altitude</value>
+			</attribute>
+			<attribute>
+				<name>standard_name</name>
+				<type>string</type>
+				<value>altitude</value>
+			</attribute>
+			<attribute>
+				<name>units</name>
+				<type>string</type>
+				<value>meters</value>
+			</attribute>
+			<attribute>
+				<name>positive</name>
+				<type>string</type>
+				<value>up</value>
+			</attribute>			
+			<attribute>
+				<name>valid_min</name>
+				<type>ss</type>
+				<value>-1000</value>
+			</attribute>
+			<attribute>
+				<name>valid_max</name>
+				<type>ss</type>
+				<value>9000</value>
+			</attribute>
+		</attributes>
+	</variable>	
 </variables>
 <global_attributes>
 	<attribute>
 		<name>dataset_name</name>
-		<value>L2_SYN_surface_directional_reflectance</value>
+		<value>L2_SYN_geo-location</value>
 		<type>string</type>
 	</attribute>	
 </global_attributes>

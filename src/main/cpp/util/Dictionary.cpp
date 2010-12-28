@@ -78,7 +78,6 @@ void Dictionary::parseVariablesFile(string& variableDefPath, string& file) {
         for (size_t k = 0; k < attributes.size(); k++) {
             var->addAttribute(attributes[k]);
         }
-//        std::cout << "\n" << var->toString() << "\n";
         variables.insert(var);
     }
 }
@@ -112,7 +111,7 @@ vector<Attribute*> Dictionary::parseAttributes(string& file, string& variableNam
 
 set<Variable*> Dictionary::getVariablesToBeWritten() const {
     // TODO - implement
-    return *(new set<Variable*>());
+    return variables;
 }
 
 Variable& Dictionary::getVariable(const string& ncName) {
@@ -125,8 +124,6 @@ Variable& Dictionary::getVariable(const string& ncName) {
     throw std::invalid_argument("No variable with id " + ncName);
 }
 
-//Variable& Dictionary::getVariableForNcVarName(const string& ncVarName) {}
-
 const string Dictionary::getNcFileName(const string& ncName) const {
     set<Variable*>::iterator iter;
     for (iter = variables.begin(); iter != variables.end(); iter++) {
@@ -138,14 +135,21 @@ const string Dictionary::getNcFileName(const string& ncName) const {
 }
 
 NcType Dictionary::mapToNcType(const string& type) {
-    if (type.compare("short") == 0) {
-        return ncShort;
-    } else if (type.compare("uShort") == 0) {
-        return ncInt;
-    } else if (type.compare("float") == 0) {
+
+    // see S3-L2-SD-08-G-ARG-IODD, page 41
+
+    if (type.compare("sc") == 0 || type.compare("uc") == 0) {
+        return ncChar; // signed char (8-bit signed)
+    } else if (type.compare("ss") == 0) {
+        return ncShort; // 16-bit signed
+    } else if (type.compare("us") == 0 || type.compare("sl") == 0) {
+        return ncInt; // 32-bit signed
+    } else if (type.compare("fl") == 0) {
         return ncFloat;
-    } else if (type.compare("uChar") == 0) {
-        return ncChar;
+    } else if (type.compare("db") == 0 || type.compare("sll") == 0 || type.compare("ul") == 0) {
+        return ncDouble;
     }
-    return ncFloat;
+
+    // fallback
+    return ncDouble;
 }

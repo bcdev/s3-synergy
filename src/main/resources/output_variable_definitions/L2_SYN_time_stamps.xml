@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+<variables>
+	<variable>
+		<name>time</name>
+		<type>sll</type>
+		<dimensions>
+			<dimension>
+				<name>N_CAM</name>
+				<range>5</range>
+			</dimension>
+		</dimensions>
+		<attributes>
+			<attribute>
+				<name>standard_name</name>
+				<type>string</type>
+				<value>time</value>
+			</attribute>
+			<attribute>
+				<name>units</name>
+				<type>string</type>
+				<value>microseconds since 2000-1-1 0:0:0</value>
+			</attribute>
+			<attribute>
+				<name>_FillValue</name>
+				<type>double</type>
+				<value>-1</value>
+			</attribute>			
+			<attribute>
+				<name>valid_min</name>
+				<type>double</type>
+				<value>0.0</value>
+			</attribute>
+			<attribute>
+				<name>valid_max</name>
+				<type>double</type>
+				<value>4294967295.0</value>
+			</attribute>
+		</attributes>
+	</variable>
+</variables>
+<global_attributes>
+	<attribute>
+		<name>dataset_name</name>
+		<value>L2_SYN_time_stamps</value>
+		<type>string</type>
+	</attribute>	
+</global_attributes>
+</dataset>
