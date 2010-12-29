@@ -18,8 +18,8 @@
  * Created on December 21, 2010, 12:24 PM
  */
 
-#ifndef ABSTRACTMODULE_H
-#define	ABSTRACTMODULE_H
+#ifndef DEFAULTMODULE_H
+#define	DEFAULTMODULE_H
 
 #include "Context.h"
 #include "Module.h"
@@ -51,13 +51,13 @@ public:
         return version;
     }
 
-    virtual void start(Context& constext) {
+    virtual void start(Context& context) {
     };
 
-    virtual void stop(Context& constext) {
+    virtual void stop(Context& context) {
     };
 
-    virtual void process(Context& constext) {
+    virtual void process(Context& context) {
     };
 
     virtual size_t getMinLRequired(size_t line) const {
@@ -88,5 +88,5 @@ private:
     const string version;
 };
 
-#endif	/* ABSTRACTMODULE_H */
+#endif	/* DEFAULTMODULE_H */
 
