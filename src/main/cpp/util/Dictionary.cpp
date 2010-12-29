@@ -19,7 +19,7 @@
  */
 
 #include <iostream>
-#include <map>
+#include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include <stdexcept>
 

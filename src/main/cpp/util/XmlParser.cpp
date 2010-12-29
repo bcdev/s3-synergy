@@ -18,7 +18,6 @@ using std::list;
 using std::string;
 
 XmlParser::XmlParser() {
-
 }
 
 XmlParser::~XmlParser() {

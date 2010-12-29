@@ -26,6 +26,7 @@
 #include <vector>
 
 #include "Constants.h"
+#include "../util/Dictionary.h"
 #include "Logging.h"
 #include "Segment.h"
 #include "Object.h"
@@ -34,7 +35,6 @@ using std::map;
 using std::logic_error;
 using std::vector;
 
-class Dictionary;
 class JobOrder;
 class Module;
 

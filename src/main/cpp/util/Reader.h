@@ -16,6 +16,7 @@
 class Reader : public DefaultModule {
 public:
     Reader();
+//    Reader(Dictionary& dict);
     virtual ~Reader();
     void process(Context& context);
     void readData(NcFile* dataFile, size_t lines, size_t camCount, size_t colCount, string varName, short* data);

@@ -21,15 +21,12 @@
 #ifndef DICTIONARY_H
 #define	DICTIONARY_H
 
-#include <boost/filesystem.hpp>
 #include <set>
 #include <vector>
 
-#include "Module.h"
 #include "Variable.h"
 #include "XmlParser.h"
 
-using std::map;
 using std::set;
 using std::vector;
 

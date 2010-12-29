@@ -65,6 +65,7 @@ int main() {
     Context context;
     context.setJobOrder(&jobOrder);
     context.addModule(reader);
+    context.setDictionary(new Dictionary(jobOrder.getConfig().getConfigFileNames()[0]));
     processor.process(context);
 
     logger->info(createProcessingTimeMessage(start), "Main");
