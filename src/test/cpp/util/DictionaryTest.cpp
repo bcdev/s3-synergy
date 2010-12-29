@@ -31,6 +31,10 @@ void DictionaryTest::setUp() {
     // Initialize Xerces and XPath
     XPathInitializer init;
     dict.parseInputFiles();
+    set<Variable*> vars = dict.getVariablesToBeWritten();
+//    for (set<Variable*>::iterator iter = vars.begin(); iter != vars.end(); iter++) {
+//        std::cout << "\n" << (*iter)->toString() << "\n";
+//    }
 }
 
 void DictionaryTest::tearDown() {
@@ -46,6 +50,18 @@ void DictionaryTest::testDictionaryParsing() {
     testLatitudeVariable(dict.getVariable("latitude"));
     testSLN_flagsVariable(dict.getVariable("SLN_flags"));
     testTimeVariable(dict.getVariable("time"));
+    testAGVariable(dict.getVariable("AG"));
+    testB0_PVariable(dict.getVariable("B0_P"));
+    testB0_SVariable(dict.getVariable("B0_S"));
+    testLatVariable(dict.getVariable("lat"));
+    testMIR_PVariable(dict.getVariable("MIR_P"));
+    testMIR_SVariable(dict.getVariable("MIR_S"));
+    testNDVIVariable(dict.getVariable("NDVI"));
+    testOGVariable(dict.getVariable("OG"));
+    testSAA_PVariable(dict.getVariable("SAA_P"));
+    testSAA_SVariable(dict.getVariable("SAA_S"));
+    testTGVariable(dict.getVariable("TG"));
+    testWVGVariable(dict.getVariable("WVG"));
 }
 
 void DictionaryTest::testSDRVariable(Variable& var) {
@@ -173,4 +189,52 @@ void DictionaryTest::testStandardDims(Variable& var) {
     CPPUNIT_ASSERT(5 == boost::lexical_cast<int>(var.getDimensions()[0]->getRange()));
     CPPUNIT_ASSERT(60000 == boost::lexical_cast<int>(var.getDimensions()[1]->getRange()));
     CPPUNIT_ASSERT(740 == boost::lexical_cast<int>(var.getDimensions()[2]->getRange()));
+}
+
+void DictionaryTest::testLatVariable(Variable& var) {
+    var.getNcName();
+}
+
+void DictionaryTest::testB0_PVariable(Variable& var) {
+
+}
+
+void DictionaryTest::testB0_SVariable(Variable& var) {
+
+}
+
+void DictionaryTest::testMIR_PVariable(Variable& var) {
+
+}
+
+void DictionaryTest::testMIR_SVariable(Variable& var) {
+
+}
+
+void DictionaryTest::testSAA_PVariable(Variable& var) {
+
+}
+
+void DictionaryTest::testSAA_SVariable(Variable& var) {
+
+}
+
+void DictionaryTest::testAGVariable(Variable& var) {
+
+}
+
+void DictionaryTest::testOGVariable(Variable& var) {
+
+}
+
+void DictionaryTest::testWVGVariable(Variable& var) {
+
+}
+
+void DictionaryTest::testNDVIVariable(Variable& var) {
+
+}
+
+void DictionaryTest::testTGVariable(Variable& var) {
+
 }

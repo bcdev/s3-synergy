@@ -67,12 +67,12 @@
 			<attribute>
 				<name>min_wavelength</name>
 				<type>float</type>
-				<value>-1</value>
+				<value>392.5</value>
 			</attribute>
 			<attribute>
 				<name>max_wavelength</name>
 				<type>float</type>
-				<value>-1</value>
+				<value>407.5</value>
 			</attribute>
 		</attributes>
 	</variable>
@@ -137,12 +137,12 @@
 			<attribute>
 				<name>min_wavelength</name>
 				<type>float</type>
-				<value>-1</value>
+				<value>392.5</value>
 			</attribute>
 			<attribute>
 				<name>max_wavelength</name>
 				<type>float</type>
-				<value>-1</value>
+				<value>407.5</value>
 			</attribute>
 		</attributes>
 	</variable>

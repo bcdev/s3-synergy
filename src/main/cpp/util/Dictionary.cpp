@@ -88,7 +88,11 @@ vector<Dimension*> Dictionary::parseDimensions(string& file, string& variableNam
     vector<Dimension*> dimensions;
     for (size_t i = 0; i < dimensionNames.size(); i++) {
         query = "/dataset/variables/variable[name=\"" + variableName + "\"]/dimensions/dimension[name=\"" + dimensionNames[i] + "\"]/range";
-        size_t range = boost::lexical_cast<int>(xmlParser.evaluateToString(file, query));
+        string result = xmlParser.evaluateToString(file, query);
+        if( result.empty() ) {
+            throw std::runtime_error("Dimension " + dimensionNames[i] + " of Variable " + variableName + " has no range." );
+        }
+        size_t range = boost::lexical_cast<int>(result);
         dimensions.push_back(new Dimension(dimensionNames[i], range));
     }
     return dimensions;

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+<variables>
+<!-- Global Variables Start -->
+	<variable>
+		<name>lat</name>
+		<type>db</type>
+		<dimensions>
+			<dimension>
+				<name>lat</name>
+				<range>360000</range> <!-- replace by correct value -->
+			</dimension>
+		</dimensions>
+		<attributes>
+			<attribute>
+				<name>standard_name</name>
+				<type>string</type>
+				<value>latitude</value>
+			</attribute>
+			<attribute>
+				<name>units</name>
+				<type>string</type>
+				<value>degrees_north</value>
+			</attribute>		
+			<attribute>
+				<name>valid_min</name>
+				<type>double</type>
+				<value>-180.0</value>
+			</attribute>
+			<attribute>
+				<name>valid_max</name>
+				<type>double</type>
+				<value>180.0</value>
+			</attribute>
+			<attribute>
+				<name>bounds</name>
+				<type>string</type>
+				<value>lat_bnds</value>
+			</attribute>			
+		</attributes>
+	</variable>
+	<variable>
+		<name>lon</name>
+		<type>db</type>
+		<dimensions>
+			<dimension>
+				<name>lat</name>
+				<range>180000</range> <!-- replace by correct value -->
+			</dimension>
+		</dimensions>
+		<attributes>
+			<attribute>
+				<name>standard_name</name>
+				<type>string</type>
+				<value>longitude</value>
+			</attribute>
+			<attribute>
+				<name>units</name>
+				<type>string</type>
+				<value>degrees_east</value>
+			</attribute>		
+			<attribute>
+				<name>valid_min</name>
+				<type>double</type>
+				<value>-56.0</value>
+			</attribute>
+			<attribute>
+				<name>valid_max</name>
+				<type>double</type>
+				<value>75.0</value>
+			</attribute>
+			<attribute>
+				<name>bounds</name>
+				<type>string</type>
+				<value>lon_bnds</value>
+			</attribute>			
+		</attributes>
+	</variable>
+	<variable>
+		<name>crs</name>
+		<type>us</type> <!-- according to IODD, type must be 'string'; however, the C++ netCDF-API does not allow that. Thus, an id is used, provided in datatype 'ushort'. -->
+		<attributes>
+			<attribute>
+				<name>grid_mapping_name</name>
+				<type>string</type>
+				<value>latitude_longitude</value>
+			</attribute>
+			<attribute>
+				<name>longitude_of_prime_meridian</name>
+				<type>double</type>
+				<value>0.0</value>
+			</attribute>		
+			<attribute>
+				<name>semi_major_axis</name>
+				<type>double</type>
+				<value>6378137.0</value>
+			</attribute>
+			<attribute>
+				<name>inverse_flattening</name>
+				<type>double</type>
+				<value>298.257223563</value>
+			</attribute>
+			<attribute>
+				<name>bounds</name>
+				<type>string</type>
+				<value>lon_bnds</value>
+			</attribute>			
+		</attributes>
+	</variable>
+	<variable>
+		<name>lat_bnds</name>
+		<type>db</type>
+		<dimensions>
+			<dimension>
+				<name>lat</name>
+				<range>180000</range> <!-- replace by correct value -->
+			</dimension>
+			<dimension>
+				<name>nv</name>
+				<range>2</range>
+			</dimension>			
+		</dimensions>
+	</variable>
+	<variable>
+		<name>lon_bnds</name>
+		<type>db</type>
+		<dimensions>
+			<dimension>
+				<name>lon</name>
+				<range>90000</range> <!-- replace by correct value -->
+			</dimension>
+			<dimension>
+				<name>nv</name>
+				<range>2</range>
+			</dimension>			
+		</dimensions>
+	</variable>	
+	
+<!-- Global Variables End -->	
+
+	<variable>
+		<name>VZA_S</name>
+		<type>sc</type>
+		<dimensions>
+			<dimension>
+				<name>lat</name>
+				<range>180000</range> <!-- replace by correct value -->
+			</dimension>
+			<dimension>
+				<name>lon</name>
+				<range>90000</range> <!-- replace by correct value -->
+			</dimension>			
+		</dimensions>
+		<attributes>
+			<attribute>
+				<name>long_name</name>
+				<type>string</type>
+				<value>View zenith angle</value>
+			</attribute>		
+			<attribute>
+				<name>units</name>
+				<type>string</type>
+				<value>degrees</value>
+			</attribute>
+			<attribute>
+				<name>scale_factor</name>
+				<type>float</type>
+				<value>0.5</value>
+			</attribute>
+			<attribute>
+				<name>valid_min</name>
+				<type>short</type>
+				<value>0</value>
+			</attribute>
+			<attribute>
+				<name>valid_max</name>
+				<type>short</type>
+				<value>180</value>
+			</attribute>
+			<attribute>
+				<name>grid_mapping</name>
+				<type>string</type>
+				<value>crs</value>
+			</attribute>			
+		</attributes>
+	</variable>
+</variables>
+<global_attributes>
+	<attribute>
+		<name>dataset_name</name>
+		<value>VGT_S_view_zenith_angle</value>
+		<type>string</type>
+	</attribute>	
+</global_attributes>
+</dataset>

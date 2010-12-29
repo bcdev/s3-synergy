@@ -49,6 +49,18 @@ private:
     void testTimeVariable(Variable& var);
     void testAir_pressureVariable(Variable& var);
     void testSLN_VAAVariable(Variable& var);
+    void testLatVariable(Variable& var);
+    void testB0_PVariable(Variable& var);
+    void testB0_SVariable(Variable& var);
+    void testMIR_PVariable(Variable& var);
+    void testMIR_SVariable(Variable& var);
+    void testSAA_PVariable(Variable& var);
+    void testSAA_SVariable(Variable& var);
+    void testAGVariable(Variable& var);
+    void testOGVariable(Variable& var);
+    void testWVGVariable(Variable& var);
+    void testNDVIVariable(Variable& var);
+    void testTGVariable(Variable& var);
     void testStandardDims(Variable& var);
     Dictionary dict;
 
