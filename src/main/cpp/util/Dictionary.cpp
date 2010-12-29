@@ -142,9 +142,9 @@ NcType Dictionary::mapToNcType(const string& type) {
 
     // see S3-L2-SD-08-G-ARG-IODD, page 41
 
-    if (type.compare("sc") == 0 || type.compare("uc") == 0) {
-        return ncChar; // signed char (8-bit signed)
-    } else if (type.compare("ss") == 0) {
+    if (type.compare("sc") == 0 ) {
+        return ncByte; // signed char (8-bit signed)
+    } else if (type.compare("ss") == 0 || type.compare("uc") == 0) {
         return ncShort; // 16-bit signed
     } else if (type.compare("us") == 0 || type.compare("sl") == 0) {
         return ncInt; // 32-bit signed
