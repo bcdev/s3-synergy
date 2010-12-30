@@ -43,9 +43,9 @@ void DictionaryTest::tearDown() {
 
 void DictionaryTest::testGetNcVarName() {
     string symbolicName = "SDR_1";
-    string symbolicName2 = "L1c_OLC_RADIANCE_O1_TOA_Radiance_Meas";
-    string fileNameExt = "L1c_OLC_RADIANCE_O1.nc";
-    string fileName = "L1c_OLC_RADIANCE_O1";
+    string symbolicName2 = "OLC_RADIANCE_O1_TOA_Radiance_Meas";
+    string fileNameExt = "OLC_RADIANCE_O1.nc";
+    string fileName = "OLC_RADIANCE_O1";
     
     string varName1 = dict.getNcVarName(symbolicName, fileNameExt);
     string varName2 = dict.getNcVarName(symbolicName, fileName);
