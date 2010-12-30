@@ -22,6 +22,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include <stdexcept>
+#include <boost/algorithm/string/predicate.hpp>
 
 #include "Dictionary.h"
 #include "VariableImpl.h"
@@ -36,7 +37,7 @@ Dictionary::Dictionary(string config) : configFile(config) {
 Dictionary::~Dictionary() {
 }
 
-void Dictionary::parseInputFiles() {
+void Dictionary::parse() {
     string variableDefPath = xmlParser.evaluateToString(configFile, "/Config/Variable_Definition_Files_Path");
 
     vector<string> childFolders = getFiles(variableDefPath);
@@ -44,6 +45,49 @@ void Dictionary::parseInputFiles() {
         parseVariablesFile(variableDefPath, childFolders[i]);
     }
 
+}
+
+set<Variable*> Dictionary::getVariables() const {
+    return variables;
+}
+
+Variable& Dictionary::getVariable(const string& ncName) {
+    set<Variable*>::iterator iter;
+    for (iter = variables.begin(); iter != variables.end(); iter++) {
+        if ((*iter)->getNcName().compare(ncName) == 0) {
+            return **iter;
+        }
+    }
+    throw std::invalid_argument("No variable with id " + ncName + ".");
+}
+
+const string Dictionary::getNcFileName(const string& ncName) const {
+    set<Variable*>::iterator iter;
+    for (iter = variables.begin(); iter != variables.end(); iter++) {
+        if ((*iter)->getNcName().compare(ncName) == 0) {
+            return (*iter)->getFileName();
+        }
+    }
+    throw std::invalid_argument("No filename for variable " + ncName + ".");
+}
+
+string Dictionary::getNcVarName(const string& symbolicName, const string& fileName) {
+    string fileNameMod = fileName;
+    if (boost::ends_with(fileName, ".nc")) {
+        fileNameMod = fileName.substr(0, fileName.find_last_of(".nc") - 2);
+    }
+    fileNameMod = fileNameMod.substr( fileNameMod.find_last_of('/') + 1, fileNameMod.size() );
+    set<Variable*>::iterator iter;
+    for (iter = variables.begin(); iter != variables.end(); iter++) {
+        if ((*iter)->getNcName().compare(symbolicName) == 0) {
+            string result = symbolicName;
+            if (boost::starts_with(result, fileNameMod)) {
+                result = result.replace(0, fileNameMod.size() + 1, "");
+            }
+            return result;
+        }
+    }
+    throw std::invalid_argument("No netcdf-name for variable " + symbolicName + " and file " + fileName + " found.");
 }
 
 vector<string> Dictionary::getFiles(string& directory) {
@@ -89,8 +133,8 @@ vector<Dimension*> Dictionary::parseDimensions(string& file, string& variableNam
     for (size_t i = 0; i < dimensionNames.size(); i++) {
         query = "/dataset/variables/variable[name=\"" + variableName + "\"]/dimensions/dimension[name=\"" + dimensionNames[i] + "\"]/range";
         string result = xmlParser.evaluateToString(file, query);
-        if( result.empty() ) {
-            throw std::runtime_error("Dimension " + dimensionNames[i] + " of Variable " + variableName + " has no range." );
+        if (result.empty()) {
+            throw std::runtime_error("Dimension " + dimensionNames[i] + " of Variable " + variableName + " has no range.");
         }
         size_t range = boost::lexical_cast<int>(result);
         dimensions.push_back(new Dimension(dimensionNames[i], range));
@@ -113,36 +157,11 @@ vector<Attribute*> Dictionary::parseAttributes(string& file, string& variableNam
     return attributes;
 }
 
-set<Variable*> Dictionary::getVariablesToBeWritten() const {
-    // TODO - implement
-    return variables;
-}
-
-Variable& Dictionary::getVariable(const string& ncName) {
-    set<Variable*>::iterator iter;
-    for (iter = variables.begin(); iter != variables.end(); iter++) {
-        if ((*iter)->getNcName().compare(ncName) == 0) {
-            return **iter;
-        }
-    }
-    throw std::invalid_argument("No variable with id " + ncName);
-}
-
-const string Dictionary::getNcFileName(const string& ncName) const {
-    set<Variable*>::iterator iter;
-    for (iter = variables.begin(); iter != variables.end(); iter++) {
-        if ((*iter)->getNcName().compare(ncName) == 0) {
-            return (*iter)->getFileName();
-        }
-    }
-    throw std::invalid_argument("No filename for variable " + ncName);
-}
-
 NcType Dictionary::mapToNcType(const string& type) {
 
     // see S3-L2-SD-08-G-ARG-IODD, page 41
 
-    if (type.compare("sc") == 0 ) {
+    if (type.compare("sc") == 0) {
         return ncByte; // signed char (8-bit signed)
     } else if (type.compare("ss") == 0 || type.compare("uc") == 0) {
         return ncShort; // 16-bit signed

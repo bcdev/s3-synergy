@@ -30,6 +30,14 @@
 using std::set;
 using std::vector;
 
+/**
+ * A dictionary serves as source for static information about variables, i.e. 
+ * the name, type, dimensions, and attributes of variables both to be written
+ * and read.
+ *
+ * @param configFile The file comprising the path to the output variable
+ * definitions
+ */
 class Dictionary {
 public:
     Dictionary(string configFile);
@@ -38,13 +46,13 @@ public:
     /**
      * Parses the input files and thus initialises the dictionary.
      */
-    void parseInputFiles();
+    void parse();
 
     /**
      * Returns the subset of variables, which are to be written.
      * @return
      */
-    set<Variable*> getVariablesToBeWritten() const;
+    set<Variable*> getVariables() const;
 
     /**
      * Returns a variable for a given symbolic name. To be used by modules in
@@ -64,12 +72,23 @@ public:
 //    Variable& getVariableForNcVarName(const string& ncVarName);
 
     /**
+     * Returns the name of the given variable as it appears in the source
+     * netcdf-file given by fileName. To be used by the reader in order to read
+     * data from the variable from a file and to store the data in structures
+     * addressed by the (unique) symbolic name.
+     * @param symbolicName The symbolic name to get the netcdf-name for.
+     * @param fileName The name of the netcdf-file comprising the variable.
+     * @return The netcdf-name.
+     */
+    string getNcVarName(const string& symbolicName, const string& fileName);
+
+    /**
      * Returns the name of the netCDF-file for a given variable name.
      * To be used by the writer.
-     * @param varId The variable name to get the name of the netCDF-file for.
+     * @param ncName The (netcdf-) variable name to get the name of the netCDF-file for.
      * @return The netCDF-filename.
      */
-    const string getNcFileName(const string& varId) const;
+    const string getNcFileName(const string& ncName) const;
 
 protected:
     string filePath;
