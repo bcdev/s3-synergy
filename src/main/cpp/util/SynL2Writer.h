@@ -11,6 +11,7 @@
 #include <netcdfcpp.h>
 
 #include "../core/DefaultModule.h"
+#include "WriterUtils.h"
 
 using std::map;
 
@@ -20,15 +21,15 @@ public:
     ~SynL2Writer();
     void process(Context& context);
     void start(Context& context);
+    void setWriterUtils(WriterUtils writerUtils);
 
 private:
     NcFile* getNcFile(string fileName);
-    map<string, NcFile*> ncFileMap;
-    map<Variable*, NcVar*> addedVariables;
     const NcDim** createNcDims( NcFile* dataFile, vector<Dimension*> dims );
-    NcVar* getNcVar(NcFile* dataFile, Variable* var);
+    NcVar* getNcVar(NcFile* dataFile, Variable* var, Dictionary& dict);
     static const string OLC_TOA_RADIANCE_MEAS_1; // to be deleted
     vector<string> variablesToWrite;
+    WriterUtils writerUtils;
 };
 
 #endif	/* SYNL2WRITER_H */

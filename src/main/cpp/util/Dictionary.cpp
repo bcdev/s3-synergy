@@ -51,14 +51,14 @@ set<Variable*> Dictionary::getVariables() const {
     return variables;
 }
 
-Variable& Dictionary::getVariable(const string& ncName) {
+Variable& Dictionary::getVariable(const string& symbolicName) {
     set<Variable*>::iterator iter;
     for (iter = variables.begin(); iter != variables.end(); iter++) {
-        if ((*iter)->getNcName().compare(ncName) == 0) {
+        if ((*iter)->getNcName().compare(symbolicName) == 0) {
             return **iter;
         }
     }
-    throw std::invalid_argument("No variable with id " + ncName + ".");
+    throw std::invalid_argument("No variable with id " + symbolicName + ".");
 }
 
 const string Dictionary::getNcFileName(const string& ncName) const {

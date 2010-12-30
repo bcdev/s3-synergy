@@ -60,7 +60,7 @@ public:
      * @param varId The symbolic name of the variable to return.
      * @return The variable with the given symbolic name.
      */
-    Variable& getVariable(const string& varId);
+    Variable& getVariable(const string& symbolicName);
 
     /**
      * Returns a variable for a given netCDF-name. To be used by the reader in

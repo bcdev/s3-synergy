@@ -18,10 +18,11 @@
 #include "Reader.h"
 
 using std::min;
+using std::max;
 
 const string Reader::OLC_TOA_RADIANCE_MEAS_1 = "OLC_RADIANCE_O1_TOA_Radiance_Meas";
 
-Reader::Reader() : DefaultModule("READ"), stepSize(500) {
+Reader::Reader() : DefaultModule("READ"), stepSize(2) {
 }
 
 Reader::~Reader() {
@@ -50,7 +51,7 @@ void Reader::process(Context& context) {
             size_t sizeL = min(stepSize, lineCount);
             // initial reading
 
-            Segment& segment = context.addSegment("SYN_COLLOCATED", sizeL, colCount, camCount, 0, lineCount);
+            Segment& segment = context.addSegment("SYN_COLLOCATED", sizeL, colCount, camCount, 0, lineCount - 1);
             Logger::get()->progress("Reading data for segment [" + segment.toString() + "]", getId());
 
             vector<string>::iterator iter = variablesToRead.begin();
@@ -59,7 +60,7 @@ void Reader::process(Context& context) {
 
                 // creating variables
                 segment.addVariableShort(variable);
-                readData(dataFile, sizeL, camCount, colCount, dict.getNcVarName(variable, fileName), &segment.getAccessor(variable).getShortData()[0]);
+                readData(dataFile, sizeL - 1, camCount, colCount, dict.getNcVarName(variable, fileName), &segment.getAccessor(variable).getShortData()[0]);
             }
 
             context.setMaxLComputed(segment, *this, sizeL - 1);
@@ -72,15 +73,15 @@ void Reader::process(Context& context) {
 
             // modifying segment values
             Logger::get()->progress("Reading data for segment [" + segment.toString() + "]", getId());
-            size_t startLine = context.getMaxLComputed(segment, *this) + 1;
-            size_t endLine = minRequiredLine + grid.getSizeL() - 1;
+            size_t startLine = getStartL(context, segment);
+            size_t endLine = getDefaultEndL(startLine, grid);
             size_t lines = endLine - startLine + 1;
 
             vector<string>::iterator iter = variablesToRead.begin();
             for (; iter != variablesToRead.end(); iter++) {
                 string variable = *iter;
                 for (size_t k = 0; k < camCount; k++) {
-                    readData(dataFile, lines, 1, colCount, dict.getNcVarName(variable, fileName), &segment.getAccessor(variable).getShortData()[grid.getIndex(k, startLine, 0)]);
+                    readData(dataFile, lines, k, colCount, dict.getNcVarName(variable, fileName), &segment.getAccessor(variable).getShortData()[grid.getIndex(k, startLine, 0)]);
                 }
             }
             context.setMaxLComputed(segment, *this, endLine);

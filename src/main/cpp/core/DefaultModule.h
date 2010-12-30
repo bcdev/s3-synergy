@@ -71,7 +71,7 @@ protected:
      * of segment data.
      * @param context The context of this module.
      * @param segment The segment data.
-     * @return the index of the row where this module shall start the processing
+     * @return The index of the row where this module shall start the processing
      *         of the {@code segment}.
      */
     size_t getStartL(Context& context, Segment& segment) const {
@@ -80,6 +80,22 @@ protected:
                     context.getMaxLComputed(segment, *this) + 1);
         } else {
             return segment.getGrid().getStartL();
+        }
+    }
+
+    /**
+     * Returns the index of the row where this module shall stop the processing
+     * of segment data.
+     * @param startLine The start line to compute the end line for.
+     * @param grid The segment's grid.
+     * @return The index of the row were this module shall stop the processing
+     *         of segment data.
+     */
+    size_t getDefaultEndL(size_t startLine, Grid& grid) const {
+        if (startLine + grid.getSizeL() - 1 > grid.getMaxL() - 1) {
+            return grid.getMaxL();
+        } else {
+            return startLine + grid.getSizeL() - 1;
         }
     }
 

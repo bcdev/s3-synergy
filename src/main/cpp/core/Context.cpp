@@ -144,11 +144,6 @@ void Context::setMaxLComputed(const Segment& segment, const Module& module, size
 
 size_t Context::getMinLRequired(const Segment& segment, size_t l) const {
     size_t minLineRequired = numeric_limits<size_t>::max();
-//    const ModuleLineMap& moduleLineMap = maxLineComputedMap.at(&segment);
-//    for (ModuleLineMap::const_iterator i = moduleLineMap.begin(); i != moduleLineMap.end(); i++) {
-//        minLineRequired = min(minLineRequired, i->first->getMinLRequired(i->second + 1));
-//    }
-
     for(size_t i = 0; i < moduleList.size(); i++) {
         minLineRequired = min(minLineRequired, moduleList[i]->getMinLRequired(l));
     }

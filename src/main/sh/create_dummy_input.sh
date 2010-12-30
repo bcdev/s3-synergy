@@ -1,1 +1,2 @@
 ncgen -k3 -o ../../test/resources/syn/SY_1_SYN/OLC_RADIANCE_O1.nc ../../test/resources/syn/SY_1_SYN/cdl/OLC_RADIANCE_O1.cdl
+ncgen -k3 -o ../../test/resources/syn/SY_1_SYN/test.nc ../../test/resources/syn/SY_1_SYN/cdl/test.cdl

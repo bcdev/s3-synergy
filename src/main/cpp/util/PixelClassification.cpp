@@ -21,47 +21,54 @@
 #include "PixelClassification.h"
 #include "ProcessorContext.h"
 
-PixelClassification::PixelClassification() : AbstractModule("PCL") {
+PixelClassification::PixelClassification() : DefaultModule("PCL") {
 }
 
 PixelClassification::~PixelClassification() {
 }
 
-Segment* PixelClassification::processSegment(ProcessorContext& context) {
+void PixelClassification::process(Context& context) {
     Segment& segment = context.getSegment("SYN_COLLOCATED");
+    context.getDictionary()->getVariable("SYN_flags");
     if (!segment.hasVariable("SYN_flags")) {
         segment.addVariableInt("SYN_flags");
     }
-    Logger::get()->progress("Starting to process segment [" + segment.toString() + "]", getModuleId(), getVersion());
-    const Grid& grid = segment.getGrid();
-    for (size_t cam = grid.getStartK(); cam <= grid.getSizeK(); cam++) {
-        for (size_t line = getMinLineNotComputed(segment, context); line <= grid.getSizeL(); line++) {
-            for (size_t col = grid.getStartM(); col <= grid.getSizeM(); col++) {
+    Logger::get()->progress("Starting to process segment [" + segment.toString() + "]", getId(), getVersion());
+    Grid& grid = segment.getGrid();
+
+    size_t startLine = getStartL(context, segment);
+    size_t endLine = getDefaultEndL(startLine, grid);
+
+    for (size_t cam = grid.getStartK(); cam < grid.getSizeK(); cam++) {
+        for (size_t line = startLine; line <= endLine; line++) {
+            for (size_t col = grid.getStartM(); col < grid.getSizeM(); col++) {
                 const size_t p = grid.getIndex(cam, line, col);
-                const int olcFlags = segment.getAccessor("F_OLC").getInt(p);
-                const int slnFlags = segment.getAccessor("F_SLN").getInt(p);
-                const int sloFlags = segment.getAccessor("F_SLO").getInt(p);
-                const bool olcLand = (olcFlags & 0x1000) != 0;
-                const bool slnLand = (slnFlags & 0x0800) != 0;
-                const bool sloLand = (sloFlags & 0x0800) != 0;
-                const bool slnCloud = (slnFlags & 0x00400000) != 0;
-                const bool sloCloud = (sloFlags & 0x00400000) != 0;
+                const int olcFlags = segment.getAccessor("OLC_RADIANCE_O1_TOA_Radiance_Meas").getInt(p);
+                const int slnFlags = segment.getAccessor("OLC_RADIANCE_O1_TOA_Radiance_Meas").getInt(p);
+                const int sloFlags = segment.getAccessor("OLC_RADIANCE_O1_TOA_Radiance_Meas").getInt(p);
+//                const int olcFlags = segment.getAccessor("F_OLC").getInt(p);
+//                const int slnFlags = segment.getAccessor("F_SLN").getInt(p);
+//                const int sloFlags = segment.getAccessor("F_SLO").getInt(p);
+//                const bool olcLand = (olcFlags & 0x1000) != 0;
+//                const bool slnLand = (slnFlags & 0x0800) != 0;
+//                const bool sloLand = (sloFlags & 0x0800) != 0;
+//                const bool slnCloud = (slnFlags & 0x00400000) != 0;
+//                const bool sloCloud = (sloFlags & 0x00400000) != 0;
+//
+//                // TODO - OLCI L2 Pixel classification
+//
+//                int synFlags = 0;
+//                if (olcLand && slnLand && sloLand) {
+//                    synFlags |= 0x0020;
+//                }
+//                if (slnCloud || sloCloud) {
+//                    synFlags |= 0x0001;
+//                }
+//                segment.getAccessor("SYN_flags").setInt(p, synFlags);
 
-                // TODO - OLCI L2 Pixel classification
-
-                int synFlags = 0;
-                if (olcLand && slnLand && sloLand) {
-                    synFlags |= 0x0020;
-                }
-                if (slnCloud || sloCloud) {
-                    synFlags |= 0x0001;
-                }
-                segment.getAccessor("SYN_flags").setInt(p, synFlags);
+                segment.getAccessor("SYN_flags").setInt(p, p);
             }
         }
     }
-    // TODO - check if needed here; don't want to set this explicitly for a pixel processor
-    context.setMaxLineComputed(segment, *this, grid.getSizeL());
-
-    return &segment;
+    context.setMaxLComputed(segment, *this, endLine);
 }
