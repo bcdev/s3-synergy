@@ -29,4 +29,7 @@ void Processor::process(Context& context) {
             modules[i]->process(context);
         }
     }
+    for (size_t i = 0; i < modules.size(); i++) {
+        modules[i]->stop(context);
+    }
 }

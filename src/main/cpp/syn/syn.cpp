@@ -8,7 +8,7 @@
 #include "../util/Processor.h"
 // #include "../util/ProcessorContext.h"
 #include "../util/StringUtils.h"
-// #include "../util/SynL2Writer.h"
+ #include "../util/SynL2Writer.h"
 // #include "../util/TestModule.h"
 #include "../util/Dictionary.h"
 #include "../util/Logger.h"
@@ -51,21 +51,24 @@ int main() {
 
     // TODO - get config file correct for current processor, not simply the first
     Dictionary dictionary(jobOrder.getConfig().getConfigFileNames()[0]);
-    dictionary.parseInputFiles();
+    dictionary.parse();
 
     // configure modules
     // TODO - use job order for configuration
     Reader reader;
     //PixelClassification pixelClassification;
     //TestModule test;
-    //SynL2Writer writer;
+    SynL2Writer writer;
 
     Processor processor;
 
     Context context;
     context.setJobOrder(&jobOrder);
     context.addModule(reader);
-    context.setDictionary(new Dictionary(jobOrder.getConfig().getConfigFileNames()[0]));
+    context.addModule(writer);
+    Dictionary* dict = new Dictionary(jobOrder.getConfig().getConfigFileNames()[0]);
+    dict->parse();
+    context.setDictionary(dict);
     processor.process(context);
 
     logger->info(createProcessingTimeMessage(start), "Main");

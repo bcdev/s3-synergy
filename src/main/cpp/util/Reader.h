@@ -16,14 +16,15 @@
 class Reader : public DefaultModule {
 public:
     Reader();
-//    Reader(Dictionary& dict);
     virtual ~Reader();
     void process(Context& context);
+    void start(Context& context);
     void readData(NcFile* dataFile, size_t lines, size_t camCount, size_t colCount, string varName, short* data);
 
 private:
     const size_t stepSize;
-    string getFileName(Context& context, string processorName);
+    static const string OLC_TOA_RADIANCE_MEAS_1;
+    vector<string> variablesToRead;
 };
 
 #endif	/* READER_H */

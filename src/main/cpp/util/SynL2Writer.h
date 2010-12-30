@@ -10,24 +10,25 @@
 
 #include <netcdfcpp.h>
 
-#include "AbstractModule.h"
+#include "../core/DefaultModule.h"
 
 using std::map;
 
-class SynL2Writer : public AbstractModule {
+class SynL2Writer : public DefaultModule {
 public:
     SynL2Writer();
     ~SynL2Writer();
-
-    Segment* processSegment(ProcessorContext& context);
+    void process(Context& context);
+    void start(Context& context);
 
 private:
-    NcFile* getNcFile(string variableName);
-    NcFile* getNcFileByFileName(string fileName);
+    NcFile* getNcFile(string fileName);
     map<string, NcFile*> ncFileMap;
     map<Variable*, NcVar*> addedVariables;
     const NcDim** createNcDims( NcFile* dataFile, vector<Dimension*> dims );
     NcVar* getNcVar(NcFile* dataFile, Variable* var);
+    static const string OLC_TOA_RADIANCE_MEAS_1; // to be deleted
+    vector<string> variablesToWrite;
 };
 
 #endif	/* SYNL2WRITER_H */
