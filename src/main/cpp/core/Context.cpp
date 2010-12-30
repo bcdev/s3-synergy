@@ -22,6 +22,8 @@
 #include <limits>
 #include <stdexcept>
 
+#include <iostream>
+
 #include "Context.h"
 #include "DefaultModule.h"
 #include "SegmentImpl.h"
@@ -110,13 +112,13 @@ bool Context::hasSegment(const string& id) const {
 }
 
 bool Context::isCompleted() const {
-    if( segmentList.empty() ) {
+    if (segmentList.empty()) {
         return false;
     }
-    for( size_t i = 0; i < moduleList.size(); i++ ) {
-        for( size_t j = 0; j < segmentList.size(); j++ ) {
+    for (size_t i = 0; i < moduleList.size(); i++) {
+        for (size_t j = 0; j < segmentList.size(); j++) {
             size_t maxLComputed = getMaxLComputed(*(segmentList[j]), *(moduleList[i]));
-            if( maxLComputed != segmentList[j]->getGrid().getMaxL() - 1 ) {
+            if (maxLComputed != segmentList[j]->getGrid().getMaxL() - 1) {
                 return false;
             }
         }
@@ -142,9 +144,14 @@ void Context::setMaxLComputed(const Segment& segment, const Module& module, size
 
 size_t Context::getMinLRequired(const Segment& segment, size_t l) const {
     size_t minLineRequired = numeric_limits<size_t>::max();
-    const ModuleLineMap& moduleLineMap = maxLineComputedMap.at(&segment);
-    for (ModuleLineMap::const_iterator i = moduleLineMap.begin(); i != moduleLineMap.end(); i++) {
-        minLineRequired = min(minLineRequired, i->first->getMinLRequired(i->second + 1));
+//    const ModuleLineMap& moduleLineMap = maxLineComputedMap.at(&segment);
+//    for (ModuleLineMap::const_iterator i = moduleLineMap.begin(); i != moduleLineMap.end(); i++) {
+//        minLineRequired = min(minLineRequired, i->first->getMinLRequired(i->second + 1));
+//    }
+
+    for(size_t i = 0; i < moduleList.size(); i++) {
+        minLineRequired = min(minLineRequired, moduleList[i]->getMinLRequired(l));
     }
+
     return minLineRequired;
 }
