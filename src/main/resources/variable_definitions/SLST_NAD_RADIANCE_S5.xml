@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+  <variables>
+    <variable>
+      <name>SLST_NAD_RADIANCE_S5_TOA_Radiance_Meas</name>
+      <type>us</type>
+      <dimensions>
+        <dimension>
+          <name>N_SCAN_SLST_NAD_05km_L1C</name>
+          <range>1</range>
+          <!-- TODO - replace with correct value -->
+        </dimension>
+        <dimension>
+          <name>N_PIX_SLST_NAD_05km_L1C</name>
+          <range>1</range>
+          <!-- TODO - replace with correct value -->
+        </dimension>
+      </dimensions>
+    </variable>
+    <variable>
+      <name>SLST_NAD_RADIANCE_S5_exception</name>
+      <type>us</type>
+      <dimensions>
+        <dimension>
+          <name>N_SCAN_SLST_NAD_05km_L1C</name>
+          <range>1</range>
+          <!-- TODO - replace with correct value -->
+        </dimension>
+        <dimension>
+          <name>N_PIX_SLST_NAD_05km_L1C</name>
+          <range>1</range>
+          <!-- TODO - replace with correct value -->
+        </dimension>
+      </dimensions>
+    </variable>
+  </variables>
+  <global_attributes>
+    <attribute>
+      <name>dataset_name</name>
+      <value>SLST_NAD_RADIANCE_S5</value>
+      <type>string</type>
+    </attribute>
+  </global_attributes>
+</dataset>
+
