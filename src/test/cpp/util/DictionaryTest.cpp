@@ -30,8 +30,8 @@ DictionaryTest::~DictionaryTest() {
 void DictionaryTest::setUp() {
     // Initialize Xerces and XPath
     XPathInitializer init;
-    dict.parseInputFiles();
-    set<Variable*> vars = dict.getVariablesToBeWritten();
+    dict.parse();
+//    set<Variable*> vars = dict.getVariables();
 //    for (set<Variable*>::iterator iter = vars.begin(); iter != vars.end(); iter++) {
 //        std::cout << "\n" << (*iter)->toString() << "\n";
 //    }
@@ -39,6 +39,23 @@ void DictionaryTest::setUp() {
 
 void DictionaryTest::tearDown() {
 
+}
+
+void DictionaryTest::testGetNcVarName() {
+    string symbolicName = "SDR_1";
+    string symbolicName2 = "L1c_OLC_RADIANCE_O1_TOA_Radiance_Meas";
+    string fileNameExt = "L1c_OLC_RADIANCE_O1.nc";
+    string fileName = "L1c_OLC_RADIANCE_O1";
+    
+    string varName1 = dict.getNcVarName(symbolicName, fileNameExt);
+    string varName2 = dict.getNcVarName(symbolicName, fileName);
+    string varName3 = dict.getNcVarName(symbolicName2, fileNameExt);
+    string varName4 = dict.getNcVarName(symbolicName2, fileName);
+
+    CPPUNIT_ASSERT( varName1.compare("SDR_1") == 0 );
+    CPPUNIT_ASSERT( varName2.compare("SDR_1") == 0 );
+    CPPUNIT_ASSERT( varName3.compare("TOA_Radiance_Meas") == 0 );
+    CPPUNIT_ASSERT( varName4.compare("TOA_Radiance_Meas") == 0 );
 }
 
 void DictionaryTest::testDictionaryParsing() {
