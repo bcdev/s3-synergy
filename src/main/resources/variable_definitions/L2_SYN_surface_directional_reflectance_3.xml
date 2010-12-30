@@ -2,7 +2,7 @@
 <dataset>
   <variables>
     <variable>
-      <name>SDR_10</name>
+      <name>SDR_3</name>
       <type>ss</type>
       <dimensions>
         <dimension>
@@ -22,7 +22,7 @@
         <attribute>
           <name>long_name</name>
           <type>string</type>
-          <value>Surface directional reflectance for SYN channel 10</value>
+          <value>Surface directional reflectance for SYN channel 3</value>
         </attribute>
         <attribute>
           <name>standard_name</name>
@@ -52,33 +52,33 @@
         <attribute>
           <name>ancillary_variables</name>
           <type>string</type>
-          <value>SDR_10_er</value>
+          <value>SDR_3_er</value>
         </attribute>
         <attribute>
           <name>channel</name>
           <type>short</type>
-          <value>10</value>
+          <value>3</value>
         </attribute>
         <attribute>
           <name>central_wavelength</name>
           <type>float</type>
-          <value>681.0</value>
+          <value>442.5</value>
         </attribute>
         <attribute>
           <name>min_wavelength</name>
           <type>float</type>
-          <value>25.0</value>
+          <value>437.5</value>
         </attribute>
         <attribute>
           <name>max_wavelength</name>
           <type>float</type>
-          <value>677.5</value>
+          <value>447.5</value>
         </attribute>
       </attributes>
     </variable>
     <variable>
-      <name>SDR_10_er</name>
-      <type>short</type>
+      <name>SDR_3_er</name>
+      <type>ss</type>
       <dimensions>
         <dimension>
           <name>N_CAM</name>
@@ -97,7 +97,7 @@
         <attribute>
           <name>long_name</name>
           <type>string</type>
-          <value>Surface directional reflectance standard error for SYN channel 10</value>
+          <value>Surface directional reflectance standard error for SYN channel 3</value>
         </attribute>
         <attribute>
           <name>standard_name</name>
@@ -127,22 +127,22 @@
         <attribute>
           <name>channel</name>
           <type>short</type>
-          <value>10</value>
+          <value>3</value>
         </attribute>
         <attribute>
           <name>wavelength</name>
           <type>float</type>
-          <value>681.0</value>
+          <value>442.5</value>
         </attribute>
         <attribute>
           <name>min_wavelength</name>
           <type>float</type>
-          <value>25.0</value>
+          <value>437.5</value>
         </attribute>
         <attribute>
           <name>max_wavelength</name>
           <type>float</type>
-          <value>677.5</value>
+          <value>447.5</value>
         </attribute>
       </attributes>
     </variable>
@@ -150,7 +150,7 @@
   <global_attributes>
     <attribute>
       <name>dataset_name</name>
-      <value>L2_SYN_surface_directional_reflectance_10</value>
+      <value>L2_SYN_surface_directional_reflectance_3</value>
       <type>string</type>
     </attribute>
   </global_attributes>

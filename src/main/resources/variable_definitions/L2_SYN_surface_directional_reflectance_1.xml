@@ -78,7 +78,7 @@
 	</variable>
 	<variable>
 		<name>SDR_1_er</name>
-		<type>short</type>
+		<type>ss</type>
 		<dimensions>
 			<dimension>
 				<name>N_CAM</name>
