@@ -27,14 +27,15 @@ public class TestDataGenerator {
 
     private static void generateDummyOlciRadianceDatasets() throws Exception {
         generateDatasets(1, 21, "OLC_RADIANCE_O", "testdata/cdl/dummy", "testdata/nc/dummy");
-     }
+    }
 
-   private static void generateDummySlstrRadianceDatasets() throws Exception {
-       generateDatasets(1, 6, "SLST_NAD_RADIANCE_S", "testdata/cdl/dummy", "testdata/nc/dummy");
-       generateDatasets(1, 6, "SLST_ALT_RADIANCE_S", "testdata/cdl/dummy", "testdata/nc/dummy");
-   }
+    private static void generateDummySlstrRadianceDatasets() throws Exception {
+        generateDatasets(1, 6, "SLST_NAD_RADIANCE_S", "testdata/cdl/dummy", "testdata/nc/dummy");
+        generateDatasets(1, 6, "SLST_ALT_RADIANCE_S", "testdata/cdl/dummy", "testdata/nc/dummy");
+    }
 
-    private static void generateDatasets(int first, int last, String template, String cdlPath, String ncPath) throws Exception {
+    private static void generateDatasets(int first, int last, String template, String cdlPath,
+                                         String ncPath) throws Exception {
         for (int i = first; i <= last; i++) {
             final File cdlFile = new File(cdlPath, template + i + ".cdl");
             BufferedReader reader = null;
