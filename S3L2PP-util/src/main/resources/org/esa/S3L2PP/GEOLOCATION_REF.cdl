@@ -1,0 +1,42 @@
+netcdf GEOLOCATION_REF {
+dimensions:
+	N_LINE_OLC = 60000 ;
+	N_DET_CAM = 740 ;
+	N_CAM = 5 ;
+variables:
+	long Geodetic_Latitude(N_CAM, N_LINE_OLC, N_DET_CAM) ;
+		Geodetic_Latitude:long_name = "DEM_corrected_geodetic_latitude" ;
+		Geodetic_Latitude:units = "degrees_north" ;
+		Geodetic_Latitude:valid_min = -90000000 ;
+		Geodetic_Latitude:valid_max = 90000000 ;
+	long Longitude(N_CAM, N_LINE_OLC, N_DET_CAM) ;
+		Longitude:long_name = "DEM_corrected_longitude" ;
+		Longitude:units = "degrees_east" ;
+		Longitude:valid_min = -180000000 ;
+		Longitude:valid_max = 180000000 ;
+	short Altitude(N_CAM, N_LINE_OLC, N_DET_CAM) ;
+		Altitude:long_name = "DEM_corrected_altitude" ;
+		Altitude:units = "m" ;
+		Altitude:valid_min = -1000 ;
+		Altitude:valid_max = 9000 ;
+	ushort error_estimates(N_CAM, N_LINE_OLC, N_DET_CAM) ;
+		error_estimates:long_name = "error_estimates_Oa${ii}" ;
+		error_estimates:units = "mW.m-2.sr-1.nm-1" ;
+		error_estimates:add_offset = 0.f ;
+		error_estimates:scale_factor = 1.f ;
+		error_estimates:valid_min = 1 ;
+		error_estimates:valid_max = 65535 ;
+		error_estimates:_FillValue = 0US ;
+
+// global attributes:
+		:Conventions = "CF-1.4" ;
+		:title = "SYN L1c dummy test data" ;
+		:institution = "Brockmann Consult GmbH" ;
+		:source = "Sentinel-3 SYN" ;
+		:history = "" ;
+		:comment = "" ;
+		:references = "S3-RS-TAF-SY-01247" ;
+		:contact = "info@brockmann-consult.de" ;
+		:netCDF_version = "netCDF-4" ;
+		:Data_set_name = "GEOLOCATION_REF.nc" ;
+}
