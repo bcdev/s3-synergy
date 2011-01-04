@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+  <variables>
+    <variable>
+      <name>TOA_Radiance_Meas</name>
+      <symbolic_name>L_20</symbolic_name>
+    </variable>
+    <variable>
+      <name>exception</name>
+      <symbolic_name>SLN_exception_2</symbolic_name>
+    </variable>
+  </variables>
+  <global_attributes>
+    <attribute>
+      <name>dataset_name</name>
+      <value>SLST_NAD_RADIANCE_S2</value>
+    </attribute>
+  </global_attributes>
+</dataset>
+

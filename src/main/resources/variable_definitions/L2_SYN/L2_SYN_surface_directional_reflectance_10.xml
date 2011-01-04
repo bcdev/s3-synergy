@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+  <variables>
+    <variable>
+      <name>SDR_10</name>
+      
+      
+      <attributes>
+        <attribute>
+          <name>long_name</name>
+          
+          <value>Surface directional reflectance for SYN channel 10</value>
+        </attribute>
+        <attribute>
+          <name>standard_name</name>
+          
+          <value>surface_directional_reflectance</value>
+        </attribute>
+        <attribute>
+          <name>_FillValue</name>
+          
+          <value>-10000</value>
+        </attribute>
+        <attribute>
+          <name>scale_factor</name>
+          
+          <value>0.0001</value>
+        </attribute>
+        <attribute>
+          <name>valid_min</name>
+          
+          <value>0</value>
+        </attribute>
+        <attribute>
+          <name>valid_max</name>
+          
+          <value>10000</value>
+        </attribute>
+        <attribute>
+          <name>ancillary_variables</name>
+          
+          <value>SDR_10_er</value>
+        </attribute>
+        <attribute>
+          <name>channel</name>
+          
+          <value>10</value>
+        </attribute>
+        <attribute>
+          <name>central_wavelength</name>
+          
+          <value>681.0</value>
+        </attribute>
+        <attribute>
+          <name>min_wavelength</name>
+          
+          <value>25.0</value>
+        </attribute>
+        <attribute>
+          <name>max_wavelength</name>
+          
+          <value>677.5</value>
+        </attribute>
+      </attributes>
+    </variable>
+    <variable>
+      <name>SDR_10_er</name>
+      
+      
+      <attributes>
+        <attribute>
+          <name>long_name</name>
+          
+          <value>Surface directional reflectance standard error for SYN channel 10</value>
+        </attribute>
+        <attribute>
+          <name>standard_name</name>
+          
+          <value>surface_directional_reflectance_standard_error</value>
+        </attribute>
+        <attribute>
+          <name>_FillValue</name>
+          
+          <value>-10000</value>
+        </attribute>
+        <attribute>
+          <name>scale_factor</name>
+          
+          <value>0.0001</value>
+        </attribute>
+        <attribute>
+          <name>valid_min</name>
+          
+          <value>0</value>
+        </attribute>
+        <attribute>
+          <name>valid_max</name>
+          
+          <value>10000</value>
+        </attribute>
+        <attribute>
+          <name>channel</name>
+          
+          <value>10</value>
+        </attribute>
+        <attribute>
+          <name>wavelength</name>
+          
+          <value>681.0</value>
+        </attribute>
+        <attribute>
+          <name>min_wavelength</name>
+          
+          <value>25.0</value>
+        </attribute>
+        <attribute>
+          <name>max_wavelength</name>
+          
+          <value>677.5</value>
+        </attribute>
+      </attributes>
+    </variable>
+  </variables>
+  <global_attributes>
+    <attribute>
+      <name>dataset_name</name>
+      <value>L2_SYN_surface_directional_reflectance_10</value>
+      
+    </attribute>
+  </global_attributes>
+</dataset>
+

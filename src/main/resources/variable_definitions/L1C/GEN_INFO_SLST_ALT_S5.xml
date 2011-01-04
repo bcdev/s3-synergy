@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+  <variables>
+    <variable>
+      <name>band_centre</name>
+      <symbolic_name>wavelength_29</symbolic_name>
+    </variable>
+    <variable>
+      <name>bandwidth</name>
+      <symbolic_name>bandwidth_29</symbolic_name>
+    </variable>
+    <variable>
+      <name>solar_irradiance</name>
+      <symbolic_name>solar_irradiance_29</symbolic_name>
+    </variable>
+  </variables>
+  <global_attributes>
+    <attribute>
+      <name>dataset_name</name>
+      <value>GEN_INFO_SLST_ALT_S5</value>
+    </attribute>
+  </global_attributes>
+</dataset>
+

@@ -26,6 +26,7 @@
 #include <vector>
 
 #include "Constants.h"
+#include "../util/Dictionary.h"
 #include "Logging.h"
 #include "Segment.h"
 #include "Object.h"
@@ -34,7 +35,6 @@ using std::map;
 using std::logic_error;
 using std::vector;
 
-class Dictionary;
 class JobOrder;
 class Module;
 
@@ -188,6 +188,8 @@ public:
      */
     bool hasMaxLComputed(const Segment& segment, const Module& module) const;
 
+    bool isCompleted() const;
+
 private:
     void removeObject(Object& object);
     void removeSegment(Segment& segment);
@@ -200,6 +202,14 @@ private:
     map<string, Object*> objectMap;
     map<string, Segment*> segmentMap;
     vector<Segment*> segmentList;
+
+    typedef map<const Module*, size_t> ModuleLineMap;
+    map<const Segment*, ModuleLineMap> maxLineComputedMap;
+
+    template <class K, class V>
+    bool exists(const map<K, V>& map, const K& key) const {
+        return map.find(key) != map.end();
+    }
 };
 
 #endif	/* CONTEXT_H */

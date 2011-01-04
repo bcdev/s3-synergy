@@ -18,13 +18,16 @@ using std::list;
 using std::string;
 
 XmlParser::XmlParser() {
-
 }
 
 XmlParser::~XmlParser() {
 }
 
 const string XmlParser::evaluateToString(string& path, string& expression) {
+    return evaluateToString(path, expression.c_str());
+}
+
+const string XmlParser::evaluateToString(string& path, const char* expression) {
     parse(path);
     // Create a XalanDocument based on doc.
     XercesDOMSupport support;
@@ -34,7 +37,7 @@ const string XmlParser::evaluateToString(string& path, string& expression) {
 
     // Evaluate an XPath expression to obtain the text node and its content
     XPathEvaluator evaluator;
-    XalanDOMChar* expr = XMLString::transcode(expression.c_str());
+    XalanDOMChar* expr = XMLString::transcode(expression);
     XObjectPtr result = evaluator.evaluate(support, xalanDoc, expr);
 
     // cleaning up
@@ -45,6 +48,10 @@ const string XmlParser::evaluateToString(string& path, string& expression) {
 }
 
 const vector<string> XmlParser::evaluateToStringList(string& path, string& expression) {
+    return evaluateToStringList(path, expression.c_str());
+}
+
+const vector<string> XmlParser::evaluateToStringList(string& path, const char* expression) {
     parse(path);
     // Create a XalanDocument based on doc.
     XercesDOMSupport support;
@@ -54,7 +61,7 @@ const vector<string> XmlParser::evaluateToStringList(string& path, string& expre
 
     // Evaluate an XPath expression to obtain the text node and its content
     XPathEvaluator evaluator;
-    XalanDOMChar* expr = XMLString::transcode(expression.c_str());
+    XalanDOMChar* expr = XMLString::transcode(expression);
     XObjectPtr result = evaluator.evaluate(support, xalanDoc, expr);
 
     // cleaning up

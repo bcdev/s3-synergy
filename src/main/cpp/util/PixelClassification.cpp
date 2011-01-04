@@ -21,22 +21,26 @@
 #include "PixelClassification.h"
 #include "ProcessorContext.h"
 
-PixelClassification::PixelClassification() : AbstractModule("PCL") {
+PixelClassification::PixelClassification() : DefaultModule("PCL") {
 }
 
 PixelClassification::~PixelClassification() {
 }
 
-Segment* PixelClassification::processSegment(ProcessorContext& context) {
+void PixelClassification::process(Context& context) {
     Segment& segment = context.getSegment("SYN_COLLOCATED");
     if (!segment.hasVariable("SYN_flags")) {
         segment.addVariableInt("SYN_flags");
     }
-    Logger::get()->progress("Starting to process segment [" + segment.toString() + "]", getModuleId(), getVersion());
-    const Grid& grid = segment.getGrid();
-    for (size_t cam = grid.getStartK(); cam <= grid.getSizeK(); cam++) {
-        for (size_t line = getMinLineNotComputed(segment, context); line <= grid.getSizeL(); line++) {
-            for (size_t col = grid.getStartM(); col <= grid.getSizeM(); col++) {
+    Logger::get()->progress("Starting to process segment [" + segment.toString() + "]", getId(), getVersion());
+    Grid& grid = segment.getGrid();
+
+    size_t startLine = getStartL(context, segment);
+    size_t endLine = getDefaultEndL(startLine, grid);
+
+    for (size_t cam = grid.getStartK(); cam < grid.getSizeK(); cam++) {
+        for (size_t line = startLine; line <= endLine; line++) {
+            for (size_t col = grid.getStartM(); col < grid.getSizeM(); col++) {
                 const size_t p = grid.getIndex(cam, line, col);
                 const int olcFlags = segment.getAccessor("F_OLC").getInt(p);
                 const int slnFlags = segment.getAccessor("F_SLN").getInt(p);
@@ -60,27 +64,5 @@ Segment* PixelClassification::processSegment(ProcessorContext& context) {
             }
         }
     }
-    // TODO - check if needed here; don't want to set this explicitly for a pixel processor
-    context.setMaxLineComputed(segment, *this, grid.getSizeL());
-
-    return &segment;
-}
-
-Variable* PixelClassification::createSYN_flagsVariable() {
-    Variable* var = new VariableImpl("SYN_flags", ncInt);
-    var->addDimension(new Dimension("N_CAM", 5)); // Number of OLCI camera modules
-    var->addDimension(new Dimension("N_LINE_OLC", 10000)); // Number of lines in OLCI camera image - TODO - replace with correct value
-    var->addDimension(new Dimension("N_DET_CAM", 760)); // Number of pixels per line in OLCI camera image - TODO - replace with correct value
-    var->addAttribute(Variable::createStringAttribute("standard_name", "surface_directional_reflectance"));
-    var->addAttribute(Variable::createStringAttribute("long_name", "Surface directional reflectance for SYN channel 1"));
-    var->addAttribute(Variable::createFloatAttribute("_FillValue", -10.000));
-    var->addAttribute(Variable::createFloatAttribute("scale_factor", 0.0001));
-    var->addAttribute(Variable::createShortAttribute("valid_min", 0));
-    var->addAttribute(Variable::createShortAttribute("valid_max", 10000));
-    var->addAttribute(Variable::createStringAttribute("ancillary_variables", "SDR_1_er"));
-    var->addAttribute(Variable::createShortAttribute("channel", 1));
-    var->addAttribute(Variable::createFloatAttribute("central_wavelength", 400));
-    var->addAttribute(Variable::createFloatAttribute("min_wavelength", 100));
-    var->addAttribute(Variable::createFloatAttribute("max_wavelength", 700));
-    return var;
+    context.setMaxLComputed(segment, *this, endLine);
 }

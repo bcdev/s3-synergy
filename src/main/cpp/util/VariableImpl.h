@@ -25,14 +25,21 @@
 
 class VariableImpl : public Variable {
 public:
-    VariableImpl(string id, NcType type);
+    VariableImpl(string ncName, string symbolicName);
     ~VariableImpl();
-    void addAttribute(Attribute<void*>* attribute);
+    void addAttribute(Attribute* attribute);
     void addDimension(Dimension* dimension);
-    string getId() const;
+
+    string getFileName() const;
+    void setFileName(const string& fileName);
+    string getNcName() const;
+    string getSymbolicName() const;
     NcType getType() const;
+    void setType(NcType type);
     vector<Dimension*> getDimensions() const;
-    vector<Attribute<void*>*> getAttributes() const;
+    vector<Attribute*> getAttributes() const;
+    Attribute& getAttribute(string& name) const;
+    string toString() const;
 };
 
 #endif	/* VARIABLEIMPL_H */

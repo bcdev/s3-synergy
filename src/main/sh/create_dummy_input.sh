@@ -1,1 +1,1 @@
-ncgen -k3 -o ../../test/resources/syn/SY_1_SYN/OLC_RADIANCE_O1.nc ../../test/resources/syn/SY_1_SYN/cdl/OLC_RADIANCE_O1.cdl
+ncgen -k3 -o /mnt/hgfs/S3L2PP/src/test/resources/syn/SY_1_SYN/OLC_RADIANCE_O1.nc /mnt/hgfs/S3L2PP/src/test/resources/syn/SY_1_SYN/cdl/OLC_RADIANCE_O1.cdl

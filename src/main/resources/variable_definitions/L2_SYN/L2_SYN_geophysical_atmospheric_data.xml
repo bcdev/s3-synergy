@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+  <variables>
+    <variable>
+      <name>sea_level_pressure</name>
+      <symbolic_name>air_pressure</symbolic_name>
+      <attributes>
+        <attribute>
+          <name>long_name</name>
+          <value>Mean sea level pressure</value>
+        </attribute>
+        <attribute>
+          <name>standard_name</name>
+          <value>air_pressure_at_sea_level</value>
+        </attribute>
+        <attribute>
+          <name>units</name>
+          <value>hPa</value>
+        </attribute>
+        <attribute>
+          <name>_FillValue</name>
+          <value>-1.0</value>
+        </attribute>
+        <attribute>
+          <name>valid_min</name>
+          <value>850.0</value>
+        </attribute>
+        <attribute>
+          <name>valid_max</name>
+          <value>1100.0</value>
+        </attribute>
+        <attribute>
+          <name>coordinates</name>
+          <value>OLC_TP_lat OLC_TP_lon</value>
+        </attribute>
+      </attributes>
+    </variable>
+    <variable>
+      <name>ozone</name>
+      <attributes>
+        <attribute>
+          <name>long_name</name>
+          <value>Total column ozone</value>
+        </attribute>
+        <attribute>
+          <name>standard_name</name>
+          <value>atmosphere_mass_content_of_ozone</value>
+        </attribute>
+        <attribute>
+          <name>units</name>
+          <value>kg m-2</value>
+        </attribute>
+        <attribute>
+          <name>_FillValue</name>
+          <value>-1.0</value>
+        </attribute>
+        <attribute>
+          <name>valid_min</name>
+          <value>0.0</value>
+        </attribute>
+        <attribute>
+          <name>valid_max</name>
+          <value>-1.0</value>
+          <!-- dummy value -->
+        </attribute>
+        <attribute>
+          <name>coordinates</name>
+          <value>OLC_TP_lat OLC_TP_lon</value>
+        </attribute>
+      </attributes>
+    </variable>
+    <variable>
+      <name>water_vapour</name>
+      <attributes>
+        <attribute>
+          <name>long_name</name>
+          <value>Total column water vapour</value>
+        </attribute>
+        <attribute>
+          <name>standard_name</name>
+          <value>atmosphere_water_vapour_content</value>
+        </attribute>
+        <attribute>
+          <name>units</name>
+          <value>g m-2</value>
+        </attribute>
+        <attribute>
+          <name>_FillValue</name>
+          <value>-1.0</value>
+        </attribute>
+        <attribute>
+          <name>valid_min</name>
+          <value>0.0</value>
+        </attribute>
+        <attribute>
+          <name>valid_max</name>
+          <value>-1.0</value>
+          <!-- dummy value -->
+        </attribute>
+        <attribute>
+          <name>coordinates</name>
+          <value>OLC_TP_lat OLC_TP_lon</value>
+        </attribute>
+      </attributes>
+    </variable>
+  </variables>
+  <global_attributes>
+    <attribute>
+      <name>dataset_name</name>
+      <value>L2_SYN_geophysical_atmospheric_data</value>
+    </attribute>
+  </global_attributes>
+</dataset>

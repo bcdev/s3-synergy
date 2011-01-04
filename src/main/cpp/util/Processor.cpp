@@ -8,45 +8,28 @@
 #include <iostream>
 #include <vector>
 
+#include "../core/Module.h"
 #include "Processor.h"
-#include "ProcessorContext.h"
 
 using std::vector;
 
-Processor::Processor() : completed(false) {
+Processor::Processor() {
 }
 
 Processor::~Processor() {
 }
 
-void Processor::addModule(Module& module) {
-    modules.push_back(&module);
-}
-
-bool Processor::isCompleted() const {
-    return completed;
-}
-
-void Processor::process(ProcessorContext& context) {
-    while (!isCompleted()) {
-        bool processingCompleted = true;
-        for (size_t i = 0; i < modules.size(); i++) {
-            Segment* target = modules[i]->processSegment(context);
-            if (target != 0 && !context.containsSegment(*target)) {
-                context.addSegment(*target);
-            }
-            // TODO - check
-            size_t maxLineComputed = 0;
-            if( context.hasMaxLineComputed(*target, *modules[i]) ) {
-                maxLineComputed = context.getMaxLineComputed(*target, *modules[i]);
-            }
-            bool maxLinesEqual = maxLineComputed == context.getMaxLine(*target);
-            processingCompleted = processingCompleted && maxLinesEqual;
-        }
-        setCompleted(processingCompleted);
+void Processor::process(Context& context) {
+    vector<Module*> modules = context.getModules();
+    for (size_t i = 0; i < modules.size(); i++) {
+        modules[i]->start(context);
     }
-}
-
-void Processor::setCompleted(bool completed) {
-    this->completed = completed;
+    while (!context.isCompleted()) {
+        for (size_t i = 0; i < modules.size(); i++) {
+            modules[i]->process(context);
+        }
+    }
+    for (size_t i = 0; i < modules.size(); i++) {
+        modules[i]->stop(context);
+    }
 }

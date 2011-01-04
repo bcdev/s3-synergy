@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+<variables>
+<!-- Global Variables Start -->
+	<variable>
+		<name>lat</name>
+		
+		
+		<attributes>
+			<attribute>
+				<name>standard_name</name>
+				
+				<value>latitude</value>
+			</attribute>
+			<attribute>
+				<name>units</name>
+				
+				<value>degrees_north</value>
+			</attribute>		
+			<attribute>
+				<name>valid_min</name>
+				
+				<value>-180.0</value>
+			</attribute>
+			<attribute>
+				<name>valid_max</name>
+				
+				<value>180.0</value>
+			</attribute>
+			<attribute>
+				<name>bounds</name>
+				
+				<value>lat_bnds</value>
+			</attribute>			
+		</attributes>
+	</variable>
+	<variable>
+		<name>lon</name>
+		
+		
+		<attributes>
+			<attribute>
+				<name>standard_name</name>
+				
+				<value>longitude</value>
+			</attribute>
+			<attribute>
+				<name>units</name>
+				
+				<value>degrees_east</value>
+			</attribute>		
+			<attribute>
+				<name>valid_min</name>
+				
+				<value>-56.0</value>
+			</attribute>
+			<attribute>
+				<name>valid_max</name>
+				
+				<value>75.0</value>
+			</attribute>
+			<attribute>
+				<name>bounds</name>
+				
+				<value>lon_bnds</value>
+			</attribute>			
+		</attributes>
+	</variable>
+	<variable>
+		<name>crs</name>
+
+		<attributes>
+			<attribute>
+				<name>grid_mapping_name</name>
+				
+				<value>latitude_longitude</value>
+			</attribute>
+			<attribute>
+				<name>longitude_of_prime_meridian</name>
+				
+				<value>0.0</value>
+			</attribute>		
+			<attribute>
+				<name>semi_major_axis</name>
+				
+				<value>6378137.0</value>
+			</attribute>
+			<attribute>
+				<name>inverse_flattening</name>
+				
+				<value>298.257223563</value>
+			</attribute>
+			<attribute>
+				<name>bounds</name>
+				
+				<value>lon_bnds</value>
+			</attribute>			
+		</attributes>
+	</variable>
+	<variable>
+		<name>lat_bnds</name>
+		
+		
+	</variable>
+	<variable>
+		<name>lon_bnds</name>
+		
+		
+	</variable>	
+	
+<!-- Global Variables End -->	
+
+	<variable>
+		<name>SM_S</name>
+		
+		
+		<attributes>
+			<attribute>
+				<name>long_name</name>
+				
+				<value>Status map</value>
+			</attribute>
+			<attribute>
+				<name>FillValue</name>
+				
+				<value>0</value>
+			</attribute>
+			<attribute>
+				<name>flag_masks</name>
+				
+				<value>3 3 3 3 4 8 16 32 64 128</value>
+			</attribute>
+			<attribute>
+				<name>flag_values</name>
+				
+				<value>0 1 2 3 4 8 16 32 64 128</value>
+			</attribute>
+			<attribute>
+				<name>flag_meaning</name>
+				
+				<value>clear shadow uncertain cloud ice_or_snow land MIR_good B3_good B2_good B0_good</value>
+			</attribute>
+			<attribute>
+				<name>grid_mapping</name>
+				
+				<value>crs</value>
+			</attribute>
+		</attributes>
+	</variable>
+</variables>
+<global_attributes>
+	<attribute>
+		<name>dataset_name</name>
+		<value>VGT_S_status_map</value>
+		
+	</attribute>	
+</global_attributes>
+</dataset>
