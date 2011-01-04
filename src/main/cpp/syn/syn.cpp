@@ -27,7 +27,7 @@ int main() {
     XPathInitializer init;
 
     // this line ensures that errors in netcdf don't cause a system exit.
-    NcError ncError = NcError(NcError::verbose_nonfatal);
+//    NcError ncError = NcError(NcError::verbose_nonfatal);
 
     // TODO - needed as argument
     string jobOrderXml = "/mnt/hgfs/S3L2PP/src/test/resources/syn/JobOrder.1.xml";

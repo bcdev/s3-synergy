@@ -8,7 +8,7 @@
 #ifndef READER_H
 #define	READER_H
 
-#include <netcdfcpp.h>
+#include <netcdf.h>
 
 #include "../core/Context.h"
 #include "../core/DefaultModule.h"
@@ -18,9 +18,9 @@ public:
     Reader();
     virtual ~Reader();
     void process(Context& context);
-    void readData(NcFile* dataFile, const size_t lines, const size_t camCount,
-            const size_t colCount, const string& symbolicName, Segment& segment,
-            Dictionary dict, size_t index);
+//    void readData(NcFile* dataFile, const size_t lines, const size_t camCount,
+//            const size_t colCount, const string& symbolicName, Segment& segment,
+//            Dictionary dict, size_t index);
 
 private:
     void modifySegmentBounds(const Context& context, Segment& segment);

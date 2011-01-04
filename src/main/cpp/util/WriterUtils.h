@@ -22,7 +22,7 @@
 #define	WRITERUTILS_H
 
 #include <map>
-#include <netcdfcpp.h>
+#include <netcdf.h>
 #include <vector>
 
 #include "Dictionary.h"
@@ -35,21 +35,21 @@ class WriterUtils {
 public:
     WriterUtils();
     virtual ~WriterUtils();
-    NcFile* getNcFile(string fileName);
-    NcVar* getNcVar(NcFile* dataFile, Variable* var, Dictionary& dict);
-
-    static const NcDim** createNcDims(NcFile* dataFile, vector<Dimension*> dims) {
-        const NcDim** ncDims = new const NcDim* [dims.size()];
-        for (size_t i = 0; i < dims.size(); i++) {
-            dataFile->add_dim(dims[i]->getName().c_str(), dims[i]->getRange());
-            ncDims[i] = dataFile->get_dim(dims[i]->getName().c_str());
-        }
-        return ncDims;
-    }
-
-private:
-    map<string, NcFile*> ncFileMap;
-    map<Variable*, NcVar*> addedVariables;
+//    NcFile* getNcFile(string fileName);
+//    NcVar* getNcVar(NcFile* dataFile, Variable* var, Dictionary& dict);
+//
+//    static const NcDim** createNcDims(NcFile* dataFile, vector<Dimension*> dims) {
+//        const NcDim** ncDims = new const NcDim* [dims.size()];
+//        for (size_t i = 0; i < dims.size(); i++) {
+//            dataFile->add_dim(dims[i]->getName().c_str(), dims[i]->getRange());
+//            ncDims[i] = dataFile->get_dim(dims[i]->getName().c_str());
+//        }
+//        return ncDims;
+//    }
+//
+//private:
+//    map<string, NcFile*> ncFileMap;
+//    map<Variable*, NcVar*> addedVariables;
 };
 
 #endif	/* WRITERUTILS_H */

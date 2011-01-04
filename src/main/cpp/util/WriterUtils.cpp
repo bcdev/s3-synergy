@@ -28,26 +28,26 @@ WriterUtils::WriterUtils() {
 WriterUtils::~WriterUtils() {
 }
 
-NcFile* WriterUtils::getNcFile(string fileName) {
-    if (ncFileMap[fileName] == 0) {
-        NcFile* dataFile = new NcFile(fileName.c_str(), NcFile::Replace, 0, 0, NcFile::Netcdf4);
-        ncFileMap[fileName] = dataFile;
-        return dataFile;
-    } else {
-        return ncFileMap[fileName];
-    }
-}
-
-NcVar* WriterUtils::getNcVar(NcFile* dataFile, Variable* var, Dictionary& dict) {
-    if (addedVariables.find(var) == addedVariables.end()) {
-        const NcDim** ncDims = createNcDims(dataFile, var->getDimensions());
-        const char* varId = dict.getNcVarName(var->getNcName()).c_str();
-        size_t dimCount = var->getDimensions().size();
-        NcType type = var->getType();
-        NcVar* ncVar = dataFile->add_var(varId, type, dimCount, ncDims);
-        addedVariables[var] = ncVar;
-        return ncVar;
-    } else {
-        return addedVariables[var];
-    }
-}
+//NcFile* WriterUtils::getNcFile(string fileName) {
+//    if (ncFileMap[fileName] == 0) {
+//        NcFile* dataFile = new NcFile(fileName.c_str(), NcFile::Replace, 0, 0, NcFile::Netcdf4);
+//        ncFileMap[fileName] = dataFile;
+//        return dataFile;
+//    } else {
+//        return ncFileMap[fileName];
+//    }
+//}
+//
+//NcVar* WriterUtils::getNcVar(NcFile* dataFile, Variable* var, Dictionary& dict) {
+//    if (addedVariables.find(var) == addedVariables.end()) {
+//        const NcDim** ncDims = createNcDims(dataFile, var->getDimensions());
+//        const char* varId = dict.getNcVarName(var->getNcName()).c_str();
+//        size_t dimCount = var->getDimensions().size();
+//        NcType type = var->getType();
+//        NcVar* ncVar = dataFile->add_var(varId, type, dimCount, ncDims);
+//        addedVariables[var] = ncVar;
+//        return ncVar;
+//    } else {
+//        return addedVariables[var];
+//    }
+//}
