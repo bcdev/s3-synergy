@@ -14,21 +14,33 @@ import java.text.MessageFormat;
  */
 public class TestDataGenerator {
 
+    private static final String NCGEN_PATH_DEFAULT = "/usr/local/bin/ncgen";
+
     public static void main(String[] args) {
         try {
-            generateOlciRadianceDatasets(args[0]);
+            generateOlciRadianceDatasets();
+            generateSlstrRadianceDatasets();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void generateOlciRadianceDatasets(String ncgen) throws Exception {
-        for (int i = 1; i <= 21; i++) {
-            final File cdlFile = new File("testdata/cdl", "OLC_RADIANCE_O" + i + ".cdl");
+    private static void generateOlciRadianceDatasets() throws Exception {
+        generateDatasets(1, 21, "OLC_RADIANCE_O");
+     }
+
+   private static void generateSlstrRadianceDatasets() throws Exception {
+       generateDatasets(1, 6, "SLST_NAD_RADIANCE_S");
+       generateDatasets(1, 6, "SLST_ALT_RADIANCE_S");
+   }
+
+    private static void generateDatasets(int first, int last, String template) throws Exception {
+        for (int i = first; i <= last; i++) {
+            final File cdlFile = new File("testdata/cdl", template + i + ".cdl");
             BufferedReader reader = null;
             BufferedWriter writer = null;
             try {
-                final InputStream is = TestDataGenerator.class.getResourceAsStream("OLC_RADIANCE_Oi.cdl");
+                final InputStream is = TestDataGenerator.class.getResourceAsStream(template + ".cdl");
                 reader = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
                 writer = new BufferedWriter(new FileWriter(cdlFile));
                 String line = reader.readLine();
@@ -55,7 +67,8 @@ public class TestDataGenerator {
                 }
             }
             final File ncFile = new File("testdata/nc", cdlFile.getName().replace(".cdl", ".nc"));
-            final String command = ncgen + " -k 3 -o " + ncFile.getPath() + " " + cdlFile.getPath();
+            final String ncgenPath = System.getProperty("ncgenPath", NCGEN_PATH_DEFAULT);
+            final String command = ncgenPath + " -k 3 -o " + ncFile.getPath() + " " + cdlFile.getPath();
             final Process process = Runtime.getRuntime().exec(command);
             if (process.waitFor() != 0) {
                 throw new Exception(
