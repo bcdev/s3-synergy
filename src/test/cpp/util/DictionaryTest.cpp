@@ -78,7 +78,7 @@ void DictionaryTest::testGetNcVarNameAndGetFileName() {
     CPPUNIT_ASSERT(varName5.compare("TOA_Radiance_Meas") == 0);
     CPPUNIT_ASSERT(varName6.compare("TOA_Radiance_Meas") == 0);
     CPPUNIT_ASSERT(varName7.compare("Geodetic_Latitude") == 0);
-//    CPPUNIT_ASSERT(varName8.compare("OLCI_time_stamps") == 0);
+    CPPUNIT_ASSERT(varName8.compare("time") == 0);
     CPPUNIT_ASSERT(varName9.compare("OLCI_QC_flags") == 0);
     CPPUNIT_ASSERT(varName10.compare("OAA") == 0);
     CPPUNIT_ASSERT(varName11.compare("sea_level_pressure") == 0);
@@ -89,10 +89,10 @@ void DictionaryTest::testGetNcVarNameAndGetFileName() {
     CPPUNIT_ASSERT(dict.getVariable(symbolicName5).getFileName().compare("SLST_NAD_RADIANCE_S5") == 0);
     CPPUNIT_ASSERT(dict.getVariable(symbolicName6).getFileName().compare("SLST_ALT_RADIANCE_S4") == 0);
     CPPUNIT_ASSERT(dict.getVariable(symbolicName7).getFileName().compare("GEOLOCATION_REF") == 0);
-//    CPPUNIT_ASSERT(dict.getVariable(symbolicName8).getFileName().compare("TIME_STAMP_OLC") == 0);
+    CPPUNIT_ASSERT(dict.getVariable(symbolicName8).getFileName().compare("L2_SYN_time_stamps") == 0);
     CPPUNIT_ASSERT(dict.getVariable(symbolicName9).getFileName().compare("PIX_ANNOT_OLC") == 0);
     CPPUNIT_ASSERT(dict.getVariable(symbolicName10).getFileName().compare("SUBS_ANNOT_GEOM_OLC") == 0);
-    CPPUNIT_ASSERT(dict.getVariable(symbolicName11).getFileName().compare("SUBS_ANNOT_METEO_OLC") == 0);
+    CPPUNIT_ASSERT(dict.getVariable(symbolicName11).getFileName().compare("L2_SYN_geophysical_atmospheric_data") == 0);
     CPPUNIT_ASSERT(dict.getVariable(symbolicName12).getFileName().compare("SUBS_ANNOT_SLST_ALT") == 0);
 }
 
@@ -121,9 +121,6 @@ void DictionaryTest::testDictionaryParsing() {
 }
 
 void DictionaryTest::testSDRVariable(Variable& var) {
-    testStandardDims(var);
-    CPPUNIT_ASSERT(ncShort == var.getType());
-
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.0001 == boost::lexical_cast<double>(var.getAttribute(attributeName).getValue()));
 
@@ -135,9 +132,6 @@ void DictionaryTest::testSDRVariable(Variable& var) {
 }
 
 void DictionaryTest::testT550Variable(Variable& var) {
-    testStandardDims(var);
-    CPPUNIT_ASSERT(ncShort == var.getType());
-
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.0001 == boost::lexical_cast<double>(var.getAttribute(attributeName).getValue()));
 
@@ -149,9 +143,6 @@ void DictionaryTest::testT550Variable(Variable& var) {
 }
 
 void DictionaryTest::testA550Variable(Variable& var) {
-    testStandardDims(var);
-    CPPUNIT_ASSERT(ncShort == var.getType());
-
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.015 == boost::lexical_cast<double>(var.getAttribute(attributeName).getValue()));
 
@@ -160,9 +151,6 @@ void DictionaryTest::testA550Variable(Variable& var) {
 }
 
 void DictionaryTest::testAMINVariable(Variable& var) {
-    testStandardDims(var);
-    CPPUNIT_ASSERT(ncShort == var.getType());
-
     string attributeName = "_FillValue";
     CPPUNIT_ASSERT(0 == boost::lexical_cast<short>(var.getAttribute(attributeName).getValue()));
 
@@ -171,9 +159,6 @@ void DictionaryTest::testAMINVariable(Variable& var) {
 }
 
 void DictionaryTest::testSLN_flagsVariable(Variable& var) {
-    testStandardDims(var);
-    CPPUNIT_ASSERT(ncShort == var.getType());
-
     string attributeName = "_FillValue";
     CPPUNIT_ASSERT(0 == boost::lexical_cast<short>(var.getAttribute(attributeName).getValue()));
 
@@ -182,9 +167,6 @@ void DictionaryTest::testSLN_flagsVariable(Variable& var) {
 }
 
 void DictionaryTest::testLatitudeVariable(Variable& var) {
-    testStandardDims(var);
-    CPPUNIT_ASSERT(ncInt == var.getType());
-
     string attributeName = "units";
     CPPUNIT_ASSERT("degrees_north" == var.getAttribute(attributeName).getValue());
 
@@ -196,8 +178,6 @@ void DictionaryTest::testLatitudeVariable(Variable& var) {
 }
 
 void DictionaryTest::testTimeVariable(Variable& var) {
-    CPPUNIT_ASSERT(ncDouble == var.getType());
-
     string attributeName = "units";
     CPPUNIT_ASSERT("microseconds since 2000-1-1 0:0:0" == var.getAttribute(attributeName).getValue());
 
@@ -206,11 +186,6 @@ void DictionaryTest::testTimeVariable(Variable& var) {
 }
 
 void DictionaryTest::testSLN_VAAVariable(Variable& var) {
-    string expectedDim = "N_SLN_TP";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[0]->getName()) == 0);
-
-    CPPUNIT_ASSERT(ncFloat == var.getType());
-
     string attributeName = "units";
     CPPUNIT_ASSERT("degrees" == var.getAttribute(attributeName).getValue());
 
@@ -219,11 +194,6 @@ void DictionaryTest::testSLN_VAAVariable(Variable& var) {
 }
 
 void DictionaryTest::testAir_pressureVariable(Variable& var) {
-    string expectedDim = "N_OLC_TP";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[0]->getName()) == 0);
-
-    CPPUNIT_ASSERT(ncFloat == var.getType());
-
     string attributeName = "units";
     CPPUNIT_ASSERT("hPa" == var.getAttribute(attributeName).getValue());
 
@@ -234,25 +204,7 @@ void DictionaryTest::testAir_pressureVariable(Variable& var) {
     CPPUNIT_ASSERT(expected.compare(dict.getNcFileName(var.getNcName())) == 0);
 }
 
-void DictionaryTest::testStandardDims(Variable& var) {
-    string expected = "N_CAM";
-    CPPUNIT_ASSERT(expected.compare(var.getDimensions()[0]->getName()) == 0);
-    expected = "N_LINE_OLC";
-    CPPUNIT_ASSERT(expected.compare(var.getDimensions()[1]->getName()) == 0);
-    expected = "N_DET_CAM";
-    CPPUNIT_ASSERT(expected.compare(var.getDimensions()[2]->getName()) == 0);
-
-    CPPUNIT_ASSERT(5 == boost::lexical_cast<int>(var.getDimensions()[0]->getRange()));
-    CPPUNIT_ASSERT(60000 == boost::lexical_cast<int>(var.getDimensions()[1]->getRange()));
-    CPPUNIT_ASSERT(740 == boost::lexical_cast<int>(var.getDimensions()[2]->getRange()));
-}
-
 void DictionaryTest::testLatVariable(Variable& var) {
-    string expectedDim = "lat";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[0]->getName()) == 0);
-
-    CPPUNIT_ASSERT(ncDouble == var.getType());
-
     string attributeName = "units";
     CPPUNIT_ASSERT("degrees_north" == var.getAttribute(attributeName).getValue());
 
@@ -261,15 +213,6 @@ void DictionaryTest::testLatVariable(Variable& var) {
 }
 
 void DictionaryTest::testB0_PVariable(Variable& var) {
-    CPPUNIT_ASSERT(var.getDimensions().size() == 2);
-
-    string expectedDim = "lat";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[0]->getName()) == 0);
-    expectedDim = "lon";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[1]->getName()) == 0);
-
-    CPPUNIT_ASSERT(ncShort == var.getType());
-
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.001 == boost::lexical_cast<double>(var.getAttribute(attributeName).getValue()));
 
@@ -281,15 +224,6 @@ void DictionaryTest::testB0_PVariable(Variable& var) {
 }
 
 void DictionaryTest::testB0_SVariable(Variable& var) {
-    CPPUNIT_ASSERT(var.getDimensions().size() == 2);
-
-    string expectedDim = "lat";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[0]->getName()) == 0);
-    expectedDim = "lon";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[1]->getName()) == 0);
-
-    CPPUNIT_ASSERT(ncShort == var.getType());
-
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.001f == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
 
@@ -301,15 +235,6 @@ void DictionaryTest::testB0_SVariable(Variable& var) {
 }
 
 void DictionaryTest::testMIR_PVariable(Variable& var) {
-    CPPUNIT_ASSERT(var.getDimensions().size() == 2);
-
-    string expectedDim = "lat";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[0]->getName()) == 0);
-    expectedDim = "lon";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[1]->getName()) == 0);
-
-    CPPUNIT_ASSERT(ncShort == var.getType());
-
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.001f == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
 
@@ -321,15 +246,6 @@ void DictionaryTest::testMIR_PVariable(Variable& var) {
 }
 
 void DictionaryTest::testMIR_SVariable(Variable& var) {
-    CPPUNIT_ASSERT(var.getDimensions().size() == 2);
-
-    string expectedDim = "lat";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[0]->getName()) == 0);
-    expectedDim = "lon";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[1]->getName()) == 0);
-
-    CPPUNIT_ASSERT(ncShort == var.getType());
-
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.001f == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
 
@@ -341,15 +257,6 @@ void DictionaryTest::testMIR_SVariable(Variable& var) {
 }
 
 void DictionaryTest::testSAA_PVariable(Variable& var) {
-    CPPUNIT_ASSERT(var.getDimensions().size() == 2);
-
-    string expectedDim = "lat";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[0]->getName()) == 0);
-    expectedDim = "lon";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[1]->getName()) == 0);
-
-    CPPUNIT_ASSERT(ncByte == var.getType());
-
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(1.5 == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
 
@@ -361,15 +268,6 @@ void DictionaryTest::testSAA_PVariable(Variable& var) {
 }
 
 void DictionaryTest::testSAA_SVariable(Variable& var) {
-    CPPUNIT_ASSERT(var.getDimensions().size() == 2);
-
-    string expectedDim = "lat";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[0]->getName()) == 0);
-    expectedDim = "lon";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[1]->getName()) == 0);
-
-    CPPUNIT_ASSERT(ncByte == var.getType());
-
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(1.5 == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
 
@@ -381,15 +279,6 @@ void DictionaryTest::testSAA_SVariable(Variable& var) {
 }
 
 void DictionaryTest::testAGVariable(Variable& var) {
-    CPPUNIT_ASSERT(var.getDimensions().size() == 2);
-
-    string expectedDim = "lat";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[0]->getName()) == 0);
-    expectedDim = "lon";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[1]->getName()) == 0);
-
-    CPPUNIT_ASSERT(ncByte == var.getType());
-
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.004 == boost::lexical_cast<double>(var.getAttribute(attributeName).getValue()));
 
@@ -401,15 +290,6 @@ void DictionaryTest::testAGVariable(Variable& var) {
 }
 
 void DictionaryTest::testOGVariable(Variable& var) {
-    CPPUNIT_ASSERT(var.getDimensions().size() == 2);
-
-    string expectedDim = "lat";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[0]->getName()) == 0);
-    expectedDim = "lon";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[1]->getName()) == 0);
-
-    CPPUNIT_ASSERT(ncByte == var.getType());
-
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.004 == boost::lexical_cast<double>(var.getAttribute(attributeName).getValue()));
 
@@ -424,15 +304,6 @@ void DictionaryTest::testOGVariable(Variable& var) {
 }
 
 void DictionaryTest::testWVGVariable(Variable& var) {
-    CPPUNIT_ASSERT(var.getDimensions().size() == 2);
-
-    string expectedDim = "lat";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[0]->getName()) == 0);
-    expectedDim = "lon";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[1]->getName()) == 0);
-
-    CPPUNIT_ASSERT(ncShort == var.getType());
-
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.04 == boost::lexical_cast<double>(var.getAttribute(attributeName).getValue()));
 
@@ -447,15 +318,6 @@ void DictionaryTest::testWVGVariable(Variable& var) {
 }
 
 void DictionaryTest::testNDVIVariable(Variable& var) {
-    CPPUNIT_ASSERT(var.getDimensions().size() == 2);
-
-    string expectedDim = "lat";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[0]->getName()) == 0);
-    expectedDim = "lon";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[1]->getName()) == 0);
-
-    CPPUNIT_ASSERT(ncByte == var.getType());
-
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.004 == boost::lexical_cast<double>(var.getAttribute(attributeName).getValue()));
 
@@ -470,15 +332,6 @@ void DictionaryTest::testNDVIVariable(Variable& var) {
 }
 
 void DictionaryTest::testTGVariable(Variable& var) {
-    CPPUNIT_ASSERT(var.getDimensions().size() == 2);
-
-    string expectedDim = "lat";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[0]->getName()) == 0);
-    expectedDim = "lon";
-    CPPUNIT_ASSERT(expectedDim.compare(var.getDimensions()[1]->getName()) == 0);
-
-    CPPUNIT_ASSERT(ncShort == var.getType());
-
     string attributeName = "standard_name";
     CPPUNIT_ASSERT("time" == var.getAttribute(attributeName).getValue());
 

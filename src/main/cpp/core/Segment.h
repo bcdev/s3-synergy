@@ -31,7 +31,7 @@ using std::logic_error;
 using std::string;
 
 /**
- * A container for variables, which exhibit the same {@link Grid}.
+ * A container for variables, which exhibit the same Grid.
  */
 class Segment {
 public:
@@ -43,61 +43,61 @@ public:
     };
 
     /**
-     * Adds a variable of type {@code int8_t} to the segment.
+     * Adds a variable of type int8_t to the segment.
      * @param varName The name of the variable being added.
      */
     virtual void addVariableByte(const string& varName) throw (logic_error) = 0;
 
     /**
-     * Adds a variable of type {@code uint8_t} to the segment.
+     * Adds a variable of type uint8_t to the segment.
      * @param varName The name of the variable being added.
      */
     virtual void addVariableUByte(const string& varName) throw (logic_error) = 0;
 
     /**
-     * Adds a variable of type {@code int16_t} to the segment.
+     * Adds a variable of type int16_t to the segment.
      * @param varName The name of the variable being added.
      */
     virtual void addVariableShort(const string& varName) throw (logic_error) = 0;
 
     /**
-     * Adds a variable of type {@code uint16_t} to the segment.
+     * Adds a variable of type uint16_t to the segment.
      * @param varName The name of the variable being added.
      */
     virtual void addVariableUShort(const string& varName) throw (logic_error) = 0;
 
     /**
-     * Adds a variable of type {@code int32_t} to the segment.
+     * Adds a variable of type int32_t to the segment.
      * @param varName The name of the variable being added.
      */
     virtual void addVariableInt(const string& varName) throw (logic_error) = 0;
 
     /**
-     * Adds a variable of type {@code uint32_t} to the segment.
+     * Adds a variable of type uint32_t to the segment.
      * @param varName The name of the variable being added.
      */
     virtual void addVariableUInt(const string& varName) throw (logic_error) = 0;
 
     /**
-     * Adds a variable of type {@code int64_t} to the segment.
+     * Adds a variable of type int64_t to the segment.
      * @param varName The name of the variable being added.
      */
     virtual void addVariableLong(const string& varName) throw (logic_error) = 0;
 
     /**
-     * Adds a variable of type {@code uint64_t} to the segment.
+     * Adds a variable of type uint64_t to the segment.
      * @param varName The name of the variable being added.
      */
     virtual void addVariableULong(const string& varName) throw (logic_error) = 0;
 
     /**
-     * Adds a variable of type {@code float} to the segment.
+     * Adds a variable of type float to the segment.
      * @param varName The name of the variable being added.
      */
     virtual void addVariableFloat(const string& varName) throw (logic_error) = 0;
 
     /**
-     * Adds a variable of type {@code double} to the segment.
+     * Adds a variable of type double to the segment.
      * @param varName The name of the variable being added.
      */
     virtual void addVariableDouble(const string& varName) throw (logic_error) = 0;
@@ -106,8 +106,8 @@ public:
      * Tests whether a variable of interest has been added to the the segment
      * or not.
      * @param varName The name of the variable of interest.
-     * @return {@code true} if the variable has been added to the segment,
-     *         {@code false} otherwise.
+     * @return true if the variable has been added to the segment,
+     *         false otherwise.
      */
     virtual bool hasVariable(const string&) const = 0;
 
@@ -145,8 +145,8 @@ public:
     /**
      * Equal to operator.
      * @param that A segment.
-     * @return {@code true} if {@code this} and {@code that} segment are the
-     *         same, {@code false} otherwise.
+     * @return true if this and that segment are the
+     *         same, false otherwise.
      */
     virtual bool operator==(const Segment& that) const {
         return this == &that;

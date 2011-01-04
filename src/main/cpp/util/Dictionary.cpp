@@ -108,36 +108,14 @@ void Dictionary::parseVariablesFile(string& variableDefPath, string& file) {
         if( symbolicName.empty() ) {
             symbolicName = variableName;
         }
-        query = "/dataset/variables/variable[name=\"" + variableName + "\"]/type";
-        NcType type = mapToNcType(xmlParser.evaluateToString(path, query));
-        Variable* var = new VariableImpl(variableName, symbolicName, type);
+        Variable* var = new VariableImpl(variableName, symbolicName);
         var->setFileName(xmlParser.evaluateToString(path, "/dataset/global_attributes/attribute[name=\"dataset_name\"]/value"));
-        vector<Dimension*> dimensions = parseDimensions(path, variableName);
-        for (size_t j = 0; j < dimensions.size(); j++) {
-            var->addDimension(dimensions[j]);
-        }
         vector<Attribute*> attributes = parseAttributes(path, variableName);
         for (size_t k = 0; k < attributes.size(); k++) {
             var->addAttribute(attributes[k]);
         }
         variables.push_back(var);
     }
-}
-
-vector<Dimension*> Dictionary::parseDimensions(string& file, string& variableName) {
-    string query = "/dataset/variables/variable[name=\"" + variableName + "\"]/dimensions/dimension/name/child::text()";
-    const vector<string> dimensionNames = xmlParser.evaluateToStringList(file, query);
-    vector<Dimension*> dimensions;
-    for (size_t i = 0; i < dimensionNames.size(); i++) {
-        query = "/dataset/variables/variable[name=\"" + variableName + "\"]/dimensions/dimension[name=\"" + dimensionNames[i] + "\"]/range";
-        string result = xmlParser.evaluateToString(file, query);
-        if (result.empty()) {
-            throw std::runtime_error("Dimension " + dimensionNames[i] + " of Variable " + variableName + " has no range.");
-        }
-        size_t range = boost::lexical_cast<int>(result);
-        dimensions.push_back(new Dimension(dimensionNames[i], range));
-    }
-    return dimensions;
 }
 
 vector<Attribute*> Dictionary::parseAttributes(string& file, string& variableName) {

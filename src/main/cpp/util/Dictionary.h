@@ -36,7 +36,7 @@ using std::vector;
  * and read.
  *
  * @param configFile The file comprising the path to the output variable
- * definitions
+ * definitions.
  */
 class Dictionary {
 public:
@@ -82,12 +82,10 @@ public:
      */
     const string getNcFileName(const string& ncName) const;
 
-protected:
-    string filePath;
 private:
+    string filePath;
     vector<string> getFiles(string& directory);
     void parseVariablesFile(string& variableDefPath, string& file);
-    vector<Dimension*> parseDimensions(string& file, string& variableName);
     vector<Attribute*> parseAttributes(string& file, string& variableName);
     NcType mapToNcType(const string& type);
 

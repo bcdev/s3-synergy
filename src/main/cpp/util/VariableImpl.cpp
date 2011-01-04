@@ -24,7 +24,7 @@
 
 #include "VariableImpl.h"
 
-VariableImpl::VariableImpl(string ncName, string symbolicName, NcType type) : Variable(ncName, symbolicName, type) {}
+VariableImpl::VariableImpl(string ncName, string symbolicName) : Variable(ncName, symbolicName) {}
 
 VariableImpl::~VariableImpl() {
     for( size_t i = 0; i < attributes.size(); i++ ) {
@@ -43,7 +43,7 @@ void VariableImpl::addDimension(Dimension* dimension) {
     dims.push_back(dimension);
 }
 
-void VariableImpl::setFileName(string fileName) {
+void VariableImpl::setFileName(const string& fileName) {
     this->fileName = fileName;
 }
 
@@ -61,6 +61,10 @@ string VariableImpl::getSymbolicName() const {
 
 NcType VariableImpl::getType() const {
     return type;
+}
+
+void VariableImpl::setType(NcType type) {
+    this->type = type;
 }
 
 vector<Dimension*> VariableImpl::getDimensions() const {

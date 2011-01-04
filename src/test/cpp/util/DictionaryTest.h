@@ -64,7 +64,6 @@ private:
     void testWVGVariable(Variable& var);
     void testNDVIVariable(Variable& var);
     void testTGVariable(Variable& var);
-    void testStandardDims(Variable& var);
     Dictionary dict;
 
 };
