@@ -24,7 +24,7 @@ variables:
 
 // global attributes:
 		:Conventions = "CF-1.4" ;
-		:title = "SYN L1c test data" ;
+		:title = "SYN L1c dummy test data" ;
 		:institution = "Brockmann Consult GmbH" ;
 		:source = "Sentinel-3 SYN" ;
 		:history = "" ;
