@@ -49,10 +49,10 @@ public:
     void parse();
 
     /**
-     * Returns the subset of variables, which are to be written.
-     * @return
+     * Returns all variables.
+     * @return All variables.
      */
-    set<Variable*> getVariables() const;
+    vector<Variable*> getVariables() const;
 
     /**
      * Returns a variable for a given symbolic name. To be used by modules in
@@ -63,29 +63,21 @@ public:
     Variable& getVariable(const string& symbolicName);
 
     /**
-     * Returns a variable for a given netCDF-name. To be used by the reader in
-     * order to fill the variable with attributes, dimensions, type and symbolic
-     * name.
-     * @param ncVarName The netCDF-name of the variable to return.
-     * @return The variable with the given netCDF-name.
-     */
-//    Variable& getVariableForNcVarName(const string& ncVarName);
-
-    /**
      * Returns the name of the given variable as it appears in the source
-     * netcdf-file given by fileName. To be used by the reader in order to read
-     * data from the variable from a file and to store the data in structures
-     * addressed by the (unique) symbolic name.
+     * netcdf-file. To be used by the reader in order to read data from the
+     * variable from a file and to store the data in structures addressed by
+     * the (unique) symbolic name.
      * @param symbolicName The symbolic name to get the netcdf-name for.
-     * @param fileName The name of the netcdf-file comprising the variable.
      * @return The netcdf-name.
      */
-    string getNcVarName(const string& symbolicName, const string& fileName);
+    string getNcVarName(const string& symbolicName);
 
     /**
-     * Returns the name of the netCDF-file for a given variable name.
-     * To be used by the writer.
-     * @param ncName The (netcdf-) variable name to get the name of the netCDF-file for.
+     * Returns the name of the netCDF-file for a given (output) variable name.
+     * Important note: this method is only to be used for output variables,
+     * since the input variable file names are ambiguous!
+     * @param ncName The output (netcdf-) variable name to get the name of the
+     * netCDF-file for.
      * @return The netCDF-filename.
      */
     const string getNcFileName(const string& ncName) const;
@@ -101,7 +93,7 @@ private:
 
     XmlParser xmlParser;
     string configFile;
-    set<Variable*> variables;
+    vector<Variable*> variables;
 };
 
 #endif	/* DICTIONARY_H */

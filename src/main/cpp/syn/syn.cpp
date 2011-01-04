@@ -5,13 +5,11 @@
 #include "../util/Dictionary.h"
 #include "../util/JobOrderParser.h"
 #include "../util/Logger.h"
- #include "../util/PixelClassification.h"
+#include "../util/PixelClassification.h"
 #include "../util/Processor.h"
-// #include "../util/ProcessorContext.h"
 #include "../util/Reader.h"
 #include "../util/StringUtils.h"
- #include "../util/SynL2Writer.h"
-// #include "../util/TestModule.h"
+#include "../util/SynL2Writer.h"
 #include "../util/WriterUtils.h"
 
 #include <iostream>
@@ -46,8 +44,8 @@ int main() {
     logger->setOutLogLevel(jobOrder.getConfig().getStandardLogLevel());
     logger->setErrLogLevel(jobOrder.getConfig().getErrorLogLevel());
     logger->info("Main process started.", "Main");
-//    jobOrder.log();
-//    logIOParameters(jobOrder, logger);
+    //    jobOrder.log();
+    //    logIOParameters(jobOrder, logger);
 
     // TODO - get config file correct for current processor, not simply the first
     Dictionary dictionary(jobOrder.getConfig().getConfigFileNames()[0]);
@@ -68,10 +66,11 @@ int main() {
     context.setJobOrder(&jobOrder);
     context.addModule(reader);
     context.addModule(pixelClassification);
-    context.addModule(writer);
+    //    context.addModule(writer);
     Dictionary* dict = new Dictionary(jobOrder.getConfig().getConfigFileNames()[0]);
     dict->parse();
     context.setDictionary(dict);
+
     processor.process(context);
 
     logger->info(createProcessingTimeMessage(start), "Main");
@@ -80,7 +79,7 @@ int main() {
     return 0;
 }
 
-void logIOParameters( JobOrder& jobOrder, Logger* logger ) {
+void logIOParameters(JobOrder& jobOrder, Logger* logger) {
     vector<ProcessorConfiguration*> processorList = jobOrder.getProcessorList();
     for (size_t h = 0; h < processorList.size(); h++) {
         vector<Input*> inputList = processorList[h]->getInputList();

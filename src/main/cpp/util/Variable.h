@@ -71,7 +71,7 @@ private:
 class Variable {
 public:
 
-    Variable(string ncName, NcType type) : ncName(ncName), type(type) {
+    Variable(string ncName, string symbolicName, NcType type) : ncName(ncName), symbolicName(symbolicName), type(type) {
     };
 
     virtual ~Variable() {
@@ -82,7 +82,18 @@ public:
 
     virtual void setFileName(string fileName) = 0;
     virtual string getFileName() const = 0;
+    /**
+     * Returns the name of the variable, by which it is addressed within its
+     * netCDF-file.
+     * @return the netCDF-name of the variable.
+     */
     virtual string getNcName() const = 0;
+    /**
+     * Returns the name of the variable, by which it is addressed within the
+     * SYN processing chain.
+     * @return the symbolic name of the variable.
+     */
+    virtual string getSymbolicName() const = 0;
     virtual NcType getType() const = 0;
     virtual vector<Dimension*> getDimensions() const = 0;
     virtual vector<Attribute*> getAttributes() const = 0;
@@ -93,7 +104,15 @@ public:
 protected:
     vector<Attribute*> attributes;
     vector<Dimension*> dims;
+    /**
+     * The name of the variable, by which it is addressed within its netCDF-file.
+     */
     string ncName;
+    /**
+     * The name of the variable, by which it is addressed within the SYN
+     * processing chain.
+     */
+    string symbolicName;
     string fileName;
     NcType type;
 };

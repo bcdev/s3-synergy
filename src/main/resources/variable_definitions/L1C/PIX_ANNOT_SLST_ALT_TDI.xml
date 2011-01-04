@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+  <variables>
+    <variable>
+      <name>SLST_CW_flags</name>
+      <symbolic_name>SLO_confidence</symbolic_name>
+    </variable>
+  </variables>
+  <global_attributes>
+    <attribute>
+      <name>dataset_name</name>
+      <value>PIX_ANNOT_SLST_ALT_TDI</value>
+    </attribute>
+  </global_attributes>
+</dataset>

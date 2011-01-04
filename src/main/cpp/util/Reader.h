@@ -18,13 +18,14 @@ public:
     Reader();
     virtual ~Reader();
     void process(Context& context);
-    void start(Context& context);
-    void readData(NcFile* dataFile, size_t lines, size_t camCount, size_t colCount, string varName, short* data);
+    void readData(NcFile* dataFile, const size_t lines, const size_t camCount,
+            const size_t colCount, const string& symbolicName, Segment& segment,
+            Dictionary dict, size_t index);
 
 private:
+    void modifySegmentBounds(const Context& context, Segment& segment);
+    void addVariableToSegment(const string variable, Segment& segment, Dictionary dict);
     const size_t stepSize;
-    static const string OLC_TOA_RADIANCE_MEAS_1;
-    vector<string> variablesToRead;
 };
 
 #endif	/* READER_H */

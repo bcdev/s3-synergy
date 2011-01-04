@@ -42,8 +42,8 @@ void SynL2Writer::process(Context& context) {
     size_t valueCount = grid.getSizeK() * lines * grid.getSizeM();
     int* values = new int[valueCount];
 
-    vector<string>::iterator iter = variablesToWrite.begin();
-    for (; iter != variablesToWrite.end(); iter++) {
+    vector<string>::iterator iter;
+    for (iter = variablesToWrite.begin(); iter != variablesToWrite.end(); iter++) {
         Variable& variable = context.getDictionary()->getVariable(*iter);
 
         string ncName = variable.getNcName();
@@ -78,8 +78,8 @@ void SynL2Writer::process(Context& context) {
 }
 
 void SynL2Writer::start(Context& context) {
-    // add all variables to be written to set
-//    variablesToWrite.push_back(OLC_TOA_RADIANCE_MEAS_1);
+    // add all variables to be written
+    variablesToWrite.push_back(OLC_TOA_RADIANCE_MEAS_1);
     variablesToWrite.push_back("SYN_flags");
 }
 void SynL2Writer::setWriterUtils(WriterUtils writerUtils) {

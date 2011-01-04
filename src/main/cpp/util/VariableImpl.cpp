@@ -24,9 +24,16 @@
 
 #include "VariableImpl.h"
 
-VariableImpl::VariableImpl(string ncName, NcType type) : Variable(ncName, type) {}
+VariableImpl::VariableImpl(string ncName, string symbolicName, NcType type) : Variable(ncName, symbolicName, type) {}
 
-VariableImpl::~VariableImpl() {}
+VariableImpl::~VariableImpl() {
+    for( size_t i = 0; i < attributes.size(); i++ ) {
+        delete attributes[i];
+    }
+    for( size_t j = 0; j < dims.size(); j++ ) {
+        delete dims[j];
+    }
+}
 
 void VariableImpl::addAttribute(Attribute* attribute) {
     attributes.push_back(attribute);
@@ -46,6 +53,10 @@ string VariableImpl::getFileName() const {
 
 string VariableImpl::getNcName() const {
     return ncName;
+}
+
+string VariableImpl::getSymbolicName() const {
+    return symbolicName;
 }
 
 NcType VariableImpl::getType() const {
@@ -72,6 +83,7 @@ Attribute& VariableImpl::getAttribute(string& name) const {
 string VariableImpl::toString() const {
     std::ostringstream oss;
     oss << "VariableImpl " << "[";
+    oss << "symbolicName = " << symbolicName << ", ";
     oss << "ncName = " << ncName << ", ";
     oss << "type = " << getType() << ", ";
     oss << "fileName = " << getFileName() << ", ";

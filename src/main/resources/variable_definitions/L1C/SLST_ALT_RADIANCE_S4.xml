@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+  <variables>
+    <variable>
+      <name>TOA_Radiance_Meas</name>
+      <symbolic_name>L_28</symbolic_name>
+    </variable>
+    <variable>
+      <name>exception</name>
+      <symbolic_name>SLO_exception_4</symbolic_name>
+    </variable>
+  </variables>
+  <global_attributes>
+    <attribute>
+      <name>dataset_name</name>
+      <value>SLST_ALT_RADIANCE_S4</value>
+    </attribute>
+  </global_attributes>
+</dataset>
+

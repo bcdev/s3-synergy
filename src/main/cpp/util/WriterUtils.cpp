@@ -41,7 +41,7 @@ NcFile* WriterUtils::getNcFile(string fileName) {
 NcVar* WriterUtils::getNcVar(NcFile* dataFile, Variable* var, Dictionary& dict) {
     if (addedVariables.find(var) == addedVariables.end()) {
         const NcDim** ncDims = createNcDims(dataFile, var->getDimensions());
-        const char* varId = dict.getNcVarName(var->getNcName(), var->getFileName()).c_str();
+        const char* varId = dict.getNcVarName(var->getNcName()).c_str();
         size_t dimCount = var->getDimensions().size();
         NcType type = var->getType();
         NcVar* ncVar = dataFile->add_var(varId, type, dimCount, ncDims);

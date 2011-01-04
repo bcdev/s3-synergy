@@ -29,7 +29,7 @@
 class DictionaryTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(DictionaryTest);
     CPPUNIT_TEST(testDictionaryParsing);
-    CPPUNIT_TEST(testGetNcVarName);
+    CPPUNIT_TEST(testGetNcVarNameAndGetFileName);
     CPPUNIT_TEST_SUITE_END();
     
 public:
@@ -42,7 +42,7 @@ public:
 private:
 
     void testDictionaryParsing();
-    void testGetNcVarName();
+    void testGetNcVarNameAndGetFileName();
     void testSDRVariable(Variable& var);
     void testT550Variable(Variable& var);
     void testA550Variable(Variable& var);

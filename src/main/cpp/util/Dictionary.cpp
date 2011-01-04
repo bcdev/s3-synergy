@@ -32,62 +32,55 @@ using boost::filesystem::directory_iterator;
 using boost::filesystem::path;
 
 Dictionary::Dictionary(string config) : configFile(config) {
+//    parse();
 }
 
 Dictionary::~Dictionary() {
+    for( size_t i = 0; i < variables.size(); i++ ) {
+        delete variables[i];
+    }
 }
 
 void Dictionary::parse() {
     string variableDefPath = xmlParser.evaluateToString(configFile, "/Config/Variable_Definition_Files_Path");
+    string L1CPath = variableDefPath + "/L1C";
+    string L2SynPath = variableDefPath + "/L2_SYN";
 
-    vector<string> childFolders = getFiles(variableDefPath);
-    for (size_t i = 0; i < childFolders.size(); i++) {
-        parseVariablesFile(variableDefPath, childFolders[i]);
+    vector<string> L1CFiles = getFiles(L1CPath);
+    for (size_t i = 0; i < L1CFiles.size(); i++) {
+        parseVariablesFile(L1CPath, L1CFiles[i]);
+    }
+    vector<string> L2SynFiles = getFiles(L2SynPath);
+    for (size_t i = 0; i < L2SynFiles.size(); i++) {
+        parseVariablesFile(L2SynPath, L2SynFiles[i]);
     }
 
 }
 
-set<Variable*> Dictionary::getVariables() const {
+vector<Variable*> Dictionary::getVariables() const {
     return variables;
 }
 
 Variable& Dictionary::getVariable(const string& symbolicName) {
-    set<Variable*>::iterator iter;
-    for (iter = variables.begin(); iter != variables.end(); iter++) {
-        if ((*iter)->getNcName().compare(symbolicName) == 0) {
-            return **iter;
+    for (size_t i = 0; i < variables.size(); i++) {
+        if (variables[i]->getSymbolicName().compare(symbolicName) == 0) {
+            return *(variables[i]);
         }
     }
-    throw std::invalid_argument("No variable with id " + symbolicName + ".");
+    throw std::invalid_argument("No variable with symbolic name " + symbolicName + ".");
 }
 
 const string Dictionary::getNcFileName(const string& ncName) const {
-    set<Variable*>::iterator iter;
-    for (iter = variables.begin(); iter != variables.end(); iter++) {
-        if ((*iter)->getNcName().compare(ncName) == 0) {
-            return (*iter)->getFileName();
+    for (size_t i = 0; i < variables.size(); i++) {
+        if (variables[i]->getNcName().compare(ncName) == 0) {
+            return variables[i]->getFileName();
         }
     }
     throw std::invalid_argument("No filename for variable " + ncName + ".");
 }
 
-string Dictionary::getNcVarName(const string& symbolicName, const string& fileName) {
-    string fileNameMod = fileName;
-    if (boost::ends_with(fileName, ".nc")) {
-        fileNameMod = fileName.substr(0, fileName.find_last_of(".nc") - 2);
-    }
-    fileNameMod = fileNameMod.substr( fileNameMod.find_last_of('/') + 1, fileNameMod.size() );
-    set<Variable*>::iterator iter;
-    for (iter = variables.begin(); iter != variables.end(); iter++) {
-        if ((*iter)->getNcName().compare(symbolicName) == 0) {
-            string result = symbolicName;
-            if (boost::starts_with(result, fileNameMod)) {
-                result = result.replace(0, fileNameMod.size() + 1, "");
-            }
-            return result;
-        }
-    }
-    throw std::invalid_argument("No netcdf-name for variable " + symbolicName + " and file " + fileName + " found.");
+string Dictionary::getNcVarName(const string& symbolicName) {
+    return getVariable(symbolicName).getNcName();
 }
 
 vector<string> Dictionary::getFiles(string& directory) {
@@ -110,9 +103,14 @@ void Dictionary::parseVariablesFile(string& variableDefPath, string& file) {
 
     for (size_t i = 0; i < variableNames.size(); i++) {
         string variableName = variableNames[i];
-        string query = "/dataset/variables/variable[name=\"" + variableName + "\"]/type";
+        string query = "/dataset/variables/variable[name=\"" + variableName + "\"]/symbolic_name";
+        string symbolicName = xmlParser.evaluateToString(path, query);
+        if( symbolicName.empty() ) {
+            symbolicName = variableName;
+        }
+        query = "/dataset/variables/variable[name=\"" + variableName + "\"]/type";
         NcType type = mapToNcType(xmlParser.evaluateToString(path, query));
-        Variable* var = new VariableImpl(variableName, type);
+        Variable* var = new VariableImpl(variableName, symbolicName, type);
         var->setFileName(xmlParser.evaluateToString(path, "/dataset/global_attributes/attribute[name=\"dataset_name\"]/value"));
         vector<Dimension*> dimensions = parseDimensions(path, variableName);
         for (size_t j = 0; j < dimensions.size(); j++) {
@@ -122,7 +120,7 @@ void Dictionary::parseVariablesFile(string& variableDefPath, string& file) {
         for (size_t k = 0; k < attributes.size(); k++) {
             var->addAttribute(attributes[k]);
         }
-        variables.insert(var);
+        variables.push_back(var);
     }
 }
 
@@ -163,14 +161,14 @@ NcType Dictionary::mapToNcType(const string& type) {
 
     if (type.compare("sc") == 0) {
         return ncByte; // signed char (8-bit signed)
-    } else if (type.compare("ss") == 0 || type.compare("uc") == 0) {
+    } else if (type.compare("ss") == 0 || type.compare("uc") == 0 || type.compare("us") == 0) {
         return ncShort; // 16-bit signed
-    } else if (type.compare("us") == 0 || type.compare("sl") == 0) {
+    } else if (type.compare("sl") == 0) {
         return ncInt; // 32-bit signed
     } else if (type.compare("fl") == 0) {
-        return ncFloat;
+        return ncFloat; // 32-bit floating point
     } else if (type.compare("db") == 0 || type.compare("sll") == 0 || type.compare("ul") == 0) {
-        return ncDouble;
+        return ncDouble; // 64-bit floating point
     }
 
     // fallback
