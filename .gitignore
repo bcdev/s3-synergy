@@ -1,8 +1,11 @@
+.idea/
+*.iml
 CMakeFiles/
 cmake_install.cmake
 Makefile
 auxdata/
 target/
+testdata/
 Makefile-S3L2PP.mk
 nbproject/
 .dep.inc
