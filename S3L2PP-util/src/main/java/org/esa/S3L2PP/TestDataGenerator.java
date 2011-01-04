@@ -18,25 +18,25 @@ public class TestDataGenerator {
 
     public static void main(String[] args) {
         try {
-            generateOlciRadianceDatasets();
-            generateSlstrRadianceDatasets();
+            generateDummyOlciRadianceDatasets();
+            generateDummySlstrRadianceDatasets();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void generateOlciRadianceDatasets() throws Exception {
-        generateDatasets(1, 21, "OLC_RADIANCE_O");
+    private static void generateDummyOlciRadianceDatasets() throws Exception {
+        generateDatasets(1, 21, "OLC_RADIANCE_O", "testdata/cdl/dummy", "testdata/nc/dummy");
      }
 
-   private static void generateSlstrRadianceDatasets() throws Exception {
-       generateDatasets(1, 6, "SLST_NAD_RADIANCE_S");
-       generateDatasets(1, 6, "SLST_ALT_RADIANCE_S");
+   private static void generateDummySlstrRadianceDatasets() throws Exception {
+       generateDatasets(1, 6, "SLST_NAD_RADIANCE_S", "testdata/cdl/dummy", "testdata/nc/dummy");
+       generateDatasets(1, 6, "SLST_ALT_RADIANCE_S", "testdata/cdl/dummy", "testdata/nc/dummy");
    }
 
-    private static void generateDatasets(int first, int last, String template) throws Exception {
+    private static void generateDatasets(int first, int last, String template, String cdlPath, String ncPath) throws Exception {
         for (int i = first; i <= last; i++) {
-            final File cdlFile = new File("testdata/cdl", template + i + ".cdl");
+            final File cdlFile = new File(cdlPath, template + i + ".cdl");
             BufferedReader reader = null;
             BufferedWriter writer = null;
             try {
@@ -66,7 +66,7 @@ public class TestDataGenerator {
                     // ignore
                 }
             }
-            final File ncFile = new File("testdata/nc", cdlFile.getName().replace(".cdl", ".nc"));
+            final File ncFile = new File(ncPath, cdlFile.getName().replace(".cdl", ".nc"));
             final String ncgenPath = System.getProperty("ncgenPath", NCGEN_PATH_DEFAULT);
             final String command = ncgenPath + " -k 3 -o " + ncFile.getPath() + " " + cdlFile.getPath();
             final Process process = Runtime.getRuntime().exec(command);
