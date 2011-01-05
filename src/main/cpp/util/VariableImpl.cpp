@@ -59,11 +59,11 @@ string VariableImpl::getSymbolicName() const {
     return symbolicName;
 }
 
-NcType VariableImpl::getType() const {
+nc_type VariableImpl::getType() const {
     return type;
 }
 
-void VariableImpl::setType(NcType type) {
+void VariableImpl::setType(nc_type type) {
     this->type = type;
 }
 

@@ -124,6 +124,9 @@ Grid& SegmentImpl::getGrid() {
 }
 
 Accessor& SegmentImpl::getAccessor(const string& varName) const {
+    if( accessorMap.find(varName) == accessorMap.end() ) {
+        throw std::invalid_argument( "No accessor for variable " + varName + "." );
+    }
     return *accessorMap.at(varName);
 }
 

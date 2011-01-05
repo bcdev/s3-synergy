@@ -21,7 +21,8 @@
 #ifndef VARIABLE_H
 #define	VARIABLE_H
 
-#include <ncvalues.h>
+#include <netcdf.h>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -164,13 +165,13 @@ public:
      * Getter for the variable's type.
      * @return the variable's type.
      */
-    virtual NcType getType() const = 0;
+    virtual nc_type getType() const = 0;
 
     /**
      * Setter for the variable's type.
      * @param type The variable type to be set.
      */
-    virtual void setType(NcType type) = 0;
+    virtual void setType(nc_type type) = 0;
 
     /**
      * Getter for the variable's dimensions.
@@ -210,7 +211,7 @@ protected:
      */
     string symbolicName;
     string fileName;
-    NcType type;
+    nc_type type;
 };
 
 /**

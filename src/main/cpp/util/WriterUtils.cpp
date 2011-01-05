@@ -28,16 +28,7 @@ WriterUtils::WriterUtils() {
 WriterUtils::~WriterUtils() {
 }
 
-//NcFile* WriterUtils::getNcFile(string fileName) {
-//    if (ncFileMap[fileName] == 0) {
-//        NcFile* dataFile = new NcFile(fileName.c_str(), NcFile::Replace, 0, 0, NcFile::Netcdf4);
-//        ncFileMap[fileName] = dataFile;
-//        return dataFile;
-//    } else {
-//        return ncFileMap[fileName];
-//    }
-//}
-//
+
 //NcVar* WriterUtils::getNcVar(NcFile* dataFile, Variable* var, Dictionary& dict) {
 //    if (addedVariables.find(var) == addedVariables.end()) {
 //        const NcDim** ncDims = createNcDims(dataFile, var->getDimensions());

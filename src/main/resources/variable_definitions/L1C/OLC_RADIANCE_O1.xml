@@ -4,21 +4,16 @@
 	<variable>
 		<name>TOA_Radiance_Meas</name>
 		<symbolic_name>L_1</symbolic_name>
-		
-		
 	</variable>
 	<variable>
 		<name>error_estimates</name>
-		<symbolic_name>L_1_er</symbolic_name>		
-		
-		
+		<symbolic_name>L_1_er</symbolic_name>
 	</variable>
 </variables>
 <global_attributes>
 	<attribute>
 		<name>dataset_name</name>
 		<value>OLC_RADIANCE_O1</value>
-		
-	</attribute>	
+	</attribute>
 </global_attributes>
 </dataset>

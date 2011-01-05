@@ -82,12 +82,19 @@ public:
      */
     const string getNcFileName(const string& ncName) const;
 
+    /**
+     * Returns the name of the netCDF-file for a given symbolic variable name.
+     * @param ncName The symbolic variable name to get the name of the
+     * netCDF-file for.
+     * @return The netCDF-filename.
+     */
+    const string getNcFileNameForSymbolicName(const string& symbolicName) const;
+
 private:
     string filePath;
     vector<string> getFiles(string& directory);
     void parseVariablesFile(string& variableDefPath, string& file);
     vector<Attribute*> parseAttributes(string& file, string& variableName);
-    NcType mapToNcType(const string& type);
 
     XmlParser xmlParser;
     string configFile;

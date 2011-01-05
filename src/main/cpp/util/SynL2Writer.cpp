@@ -8,10 +8,13 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <stdexcept>
 #include <set>
+#include <netcdf.h>
 
-#include "SynL2Writer.h"
 #include "../core/Context.h"
+#include "IOUtils.h"
 #include "../util/Logger.h"
+#include "SynL2Writer.h"
+#include "JobOrder.h"
 
 using std::invalid_argument;
 
@@ -22,67 +25,79 @@ SynL2Writer::~SynL2Writer() {
 
 }
 
-const string SynL2Writer::OLC_TOA_RADIANCE_MEAS_1 = "OLC_RADIANCE_O1_TOA_Radiance_Meas"; // to be deleted
+void SynL2Writer::process(Context& context) {
+    string segmentId = "SYN_COLLOCATED";
+    Segment& segment = context.getSegment(segmentId);
 
-//void SynL2Writer::process(Context& context) {
-//    string segmentId = "SYN_COLLOCATED";
-//    Segment& segment = context.getSegment(segmentId);
-//    Logger::get()->progress("Starting to write segment [" + segment.toString() + "]", getId());
-//
-//    if (!segment.hasVariable("SYN_flags")) {
-//        segment.addVariableInt("SYN_flags");
-//    }
-//
-//    Grid& grid = segment.getGrid();
-//
-//    size_t startLine = getStartL(context, segment);
-//    size_t endLine = getDefaultEndL(startLine, grid);
-//    size_t lines = endLine - startLine + 1;
-//
-//    size_t valueCount = grid.getSizeK() * lines * grid.getSizeM();
-//    int* values = new int[valueCount];
-//
-//    vector<string>::iterator iter;
-//    for (iter = variablesToWrite.begin(); iter != variablesToWrite.end(); iter++) {
-//        Variable& variable = context.getDictionary()->getVariable(*iter);
-//
-//        string ncName = variable.getNcName();
-//        string ncFileName = context.getDictionary()->getNcFileName(ncName);
-//        ncFileName.append( ".nc" );
-//        NcFile* ncFile = writerUtils.getNcFile(ncFileName);
-//        Accessor& accessor = context.getSegment(segmentId).getAccessor(ncName);
-//        NcVar* ncVar = writerUtils.getNcVar(ncFile, &variable, *(context.getDictionary()));
-//
-//        // switch for all data types:
-//        // for each variable do:
-//        // if variable.getType == "short" do:
-//
-//        for (size_t k = grid.getStartK(); k < grid.getSizeK(); k++) {
-//            for (size_t l = startLine; l <= endLine; l++) {
-//                for (size_t m = grid.getStartM(); m < grid.getSizeM(); m++) {
-//                    size_t position = segment.getGrid().getIndex(k, l, m);
-//                    values[position] = accessor.getShort(position);
-//                }
-//            }
-//        }
-//
-//        // else if variable.getType == "float" do:
-//
-//        // ... end for.
-//
-//        ncVar->put(values, grid.getSizeK() - grid.getStartK(), lines, grid.getSizeM() - grid.getStartM());
-//        ncFile->sync();
-//    }
-//    delete[] values;
-//    context.setMaxLComputed(segment, *this, endLine);
-//}
-//
-//void SynL2Writer::start(Context& context) {
-//    // add all variables to be written
-//    variablesToWrite.push_back(OLC_TOA_RADIANCE_MEAS_1);
-//    variablesToWrite.push_back("SYN_flags");
-//}
+    Grid& grid = segment.getGrid();
 
-void SynL2Writer::setWriterUtils(WriterUtils writerUtils) {
-    this->writerUtils = writerUtils;
+    size_t startLine = getStartL(context, segment);
+    size_t endLine = getDefaultEndL(startLine, grid);
+
+    for (size_t i = 0; i < variablesToWrite.size(); i++) {
+        Variable& variable = context.getDictionary()->getVariable(variablesToWrite[i]);
+
+        string ncVariableName = variable.getNcName();
+        string symbolicName = variable.getSymbolicName();
+
+        Logger::get()->progress("Writing variable " + symbolicName + " into "
+                "segment [" + segment.toString() + "]", getId());
+
+        string fileName = context.getDictionary()->getNcFileName(ncVariableName);
+        fileName.append(".nc");
+
+        const int ncId = getNcId(fileName);
+        vector<Dimension*> varDimensions = variable.getDimensions();
+        int* dimensionIds = IOUtils::createNcDims(ncId, varDimensions);
+
+        size_t dimCount = varDimensions.size();
+
+        int varId;
+        int status = nc_inq_varid(ncId, ncVariableName.c_str(), &varId);
+        if (status != NC_NOERR) {
+            status = nc_def_var(ncId, ncVariableName.c_str(), variable.getType(), dimCount, dimensionIds, &varId);
+        }
+        if (status != NC_NOERR) {
+            throw std::runtime_error("Unable to find or create NetCDF-variable " + ncVariableName + ".");
+        }
+
+        // getting the dimension sizes
+        size_t camCount = 1;
+        size_t lineCount = 1;
+        size_t colCount = 1;
+        nc_inq_dimlen(ncId, dimensionIds[0], &camCount);
+        nc_inq_dimlen(ncId, dimensionIds[1], &lineCount);
+        nc_inq_dimlen(ncId, dimensionIds[2], &colCount);
+
+        Accessor& accessor = segment.getAccessor(symbolicName);
+        IOUtils::write(ncId, varId, variable.getType(), dimCount, camCount, lineCount, colCount, segment, startLine, endLine, accessor);
+        nc_close(ncId);
+    }
+    context.setMaxLComputed(segment, *this, endLine);
+}
+
+void SynL2Writer::start(Context& context) {
+    // add symbolic names of all variables to be written
+    variablesToWrite.push_back("L_1");
+    //    variablesToWrite.push_back("SYN_flags");
+}
+
+const int SynL2Writer::getNcId(string fileName) {
+    if (ncFiles.find(fileName) == ncFiles.end()) {
+        int ncId;
+        int status = nc_create(fileName.c_str(), NC_NETCDF4, &ncId);
+        if (status != NC_NOERR) {
+            throw std::runtime_error("Unable to create NetCDF-file " + fileName + ".");
+        }
+        ncFiles.insert(fileName);
+        return ncId;
+    } else {
+        int ncId;
+        int status = nc_open(fileName.c_str(), NC_WRITE, &ncId);
+        if (status != NC_NOERR) {
+            throw std::runtime_error("Unable to write to NetCDF-file " + fileName + ".");
+        }
+        ncFiles.insert(fileName);
+        return ncId;
+    }
 }

@@ -11,25 +11,20 @@
 #include <netcdf.h>
 
 #include "../core/DefaultModule.h"
-#include "WriterUtils.h"
 
-using std::map;
+using std::set;
 
 class SynL2Writer : public DefaultModule {
 public:
     SynL2Writer();
     ~SynL2Writer();
-//    void process(Context& context);
-//    void start(Context& context);
-    void setWriterUtils(WriterUtils writerUtils);
+    void process(Context& context);
+    void start(Context& context);
 
 private:
-//    NcFile* getNcFile(string fileName);
-//    const NcDim** createNcDims( NcFile* dataFile, vector<Dimension*> dims );
-//    NcVar* getNcVar(NcFile* dataFile, Variable* var, Dictionary& dict);
-    static const string OLC_TOA_RADIANCE_MEAS_1; // to be deleted
+    const int getNcId(string fileName);
     vector<string> variablesToWrite;
-    WriterUtils writerUtils;
+    set<string> ncFiles;
 };
 
 #endif	/* SYNL2WRITER_H */

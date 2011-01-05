@@ -27,7 +27,7 @@ int main() {
     XPathInitializer init;
 
     // this line ensures that errors in netcdf don't cause a system exit.
-//    NcError ncError = NcError(NcError::verbose_nonfatal);
+    //    NcError ncError = NcError(NcError::verbose_nonfatal);
 
     // TODO - needed as argument
     string jobOrderXml = "/mnt/hgfs/S3L2PP/src/test/resources/syn/JobOrder.1.xml";
@@ -57,16 +57,15 @@ int main() {
     PixelClassification pixelClassification;
     //TestModule test;
     SynL2Writer writer;
-    WriterUtils writerUtils;
-    writer.setWriterUtils(writerUtils);
 
     Processor processor;
 
     Context context;
     context.setJobOrder(&jobOrder);
     context.addModule(reader);
-    context.addModule(pixelClassification);
-    //    context.addModule(writer);
+    //    context.addModule(pixelClassification);
+    context.addModule(writer);
+    
     Dictionary* dict = new Dictionary(jobOrder.getConfig().getConfigFileNames()[0]);
     dict->parse();
     context.setDictionary(dict);

@@ -34,8 +34,8 @@ public:
     void setFileName(const string& fileName);
     string getNcName() const;
     string getSymbolicName() const;
-    NcType getType() const;
-    void setType(NcType type);
+    nc_type getType() const;
+    void setType(nc_type type);
     vector<Dimension*> getDimensions() const;
     vector<Attribute*> getAttributes() const;
     Attribute& getAttribute(string& name) const;

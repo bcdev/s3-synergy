@@ -79,6 +79,15 @@ const string Dictionary::getNcFileName(const string& ncName) const {
     throw std::invalid_argument("No filename for variable " + ncName + ".");
 }
 
+const string Dictionary::getNcFileNameForSymbolicName(const string& symbolicName) const {
+    for (size_t i = 0; i < variables.size(); i++) {
+        if (variables[i]->getSymbolicName().compare(symbolicName) == 0) {
+            return variables[i]->getFileName();
+        }
+    }
+    throw std::invalid_argument("No filename for variable " + symbolicName + ".");
+}
+
 string Dictionary::getNcVarName(const string& symbolicName) {
     return getVariable(symbolicName).getNcName();
 }
@@ -131,24 +140,4 @@ vector<Attribute*> Dictionary::parseAttributes(string& file, string& variableNam
         attributes.push_back(new Attribute(type, attributeName, value));
     }
     return attributes;
-}
-
-NcType Dictionary::mapToNcType(const string& type) {
-
-    // see S3-L2-SD-08-G-ARG-IODD, page 41
-
-    if (type.compare("sc") == 0) {
-        return ncByte; // signed char (8-bit signed)
-    } else if (type.compare("ss") == 0 || type.compare("uc") == 0 || type.compare("us") == 0) {
-        return ncShort; // 16-bit signed
-    } else if (type.compare("sl") == 0) {
-        return ncInt; // 32-bit signed
-    } else if (type.compare("fl") == 0) {
-        return ncFloat; // 32-bit floating point
-    } else if (type.compare("db") == 0 || type.compare("sll") == 0 || type.compare("ul") == 0) {
-        return ncDouble; // 64-bit floating point
-    }
-
-    // fallback
-    return ncDouble;
 }
