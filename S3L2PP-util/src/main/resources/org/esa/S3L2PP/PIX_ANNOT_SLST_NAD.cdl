@@ -1,0 +1,30 @@
+netcdf PIX_ANNOT_SLST_NAD_${A_OR_TDI} {
+dimensions:
+	N_SCAN_SLST_NAD_05km_L1C = 35200 ;
+	N_PIX_SLST_NAD_05km_L1C = 2200 ;
+variables:
+	short SLST_cloud_flags(N_SCAN_SLST_NAD_05km_L1C, N_PIX_SLST_NAD_05km_L1C) ;
+		SLST_cloud_flags:long_name = "" ;
+		SLST_cloud_flags:flag_masks = 1US, 2US, 4US, 8US, 16US, 32US, 64US, 128US, 256US, 512US, 1024US, 2048US, 4096US, 8192US ;
+		SLST_cloud_flags:flag_meanings = "not_specified not_specified not_specified not_specified not_specified not_specified not_specified not_specified thin_cirrus not_specified fog_low_stratus not_specified not_specified thermal_histogram" ;
+	ubyte SLST_CW_flags(N_SCAN_SLST_NAD_05km_L1C, N_PIX_SLST_NAD_05km_L1C) ;
+		SLST_CW_flags:long_name = "" ;
+		SLST_CW_flags:flag_masks = 1UB, 2UB, 4UB, 8UB, 16UB, 32UB, 64UB, 128UB ;
+		SLST_CW_flags:flag_meanings = "cosmetic duplicate day twilight sun_glint snow summary_cloud summary_pointing" ;
+	ubyte SLST_pointing_flags(N_SCAN_SLST_NAD_05km_L1C, N_PIX_SLST_NAD_05km_L1C) ;
+		SLST_pointing_flags:long_name = "" ;
+		SLST_pointing_flags:flag_masks = 1UB, 2UB, 4UB, 8UB, 16UB, 32UB, 64UB, 128UB ;
+		SLST_pointing_flags:flag_meanings = "flip_mirror_absolute_error flip_mirror_integrated_error flip_mirror_RMS_error scan_mirror_absolute_error scan_mirror_integrated_error scan_mirror_RMS_error scan_time_error Platform_Mode" ;
+
+// global attributes:
+		:Conventions = "CF-1.4" ;
+		:title = "SYN L1c dummy test data" ;
+		:institution = "Brockmann Consult GmbH" ;
+		:source = "Sentinel-3 SYN" ;
+		:history = "" ;
+		:comment = "" ;
+		:references = "S3-RS-TAF-SY-01247" ;
+		:contact = "info@brockmann-consult.de" ;
+		:netCDF_version = "netCDF-4" ;
+		:Data_set_name = "PIX_ANNOT_SLST_NAD_${A_OR_TDI}.nc" ;
+}
