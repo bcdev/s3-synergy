@@ -10,9 +10,9 @@ import java.io.InputStreamReader;
 import java.text.MessageFormat;
 
 /**
- * Test data generator.
+ * Dummy test data generator.
  */
-public class TestDataGenerator {
+public class DummyTestDataGenerator {
 
     private static final String NCGEN_PATH_DEFAULT = "/usr/local/bin/ncgen";
 
@@ -21,6 +21,7 @@ public class TestDataGenerator {
             generateDummyOlciRadianceDatasets();
             generateDummySlstrRadianceDatasets();
             generateDummyGeolocationDataset();
+            generateDummyTimeStampDataset();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -39,12 +40,16 @@ public class TestDataGenerator {
         generateDataset("GEOLOCATION_REF", "testdata/cdl/dummy", "testdata/nc/dummy");
     }
 
+    private static void generateDummyTimeStampDataset() throws Exception {
+        generateDataset("TIME_STAMP_OLC", "testdata/cdl/dummy", "testdata/nc/dummy");
+    }
+
     private static void generateDataset(String template, String cdlPath, String ncPath) throws Exception {
         final File cdlFile = new File(cdlPath, template + ".cdl");
         BufferedReader reader = null;
         BufferedWriter writer = null;
         try {
-            final InputStream is = TestDataGenerator.class.getResourceAsStream(template + ".cdl");
+            final InputStream is = DummyTestDataGenerator.class.getResourceAsStream(template + ".cdl");
             reader = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
             writer = new BufferedWriter(new FileWriter(cdlFile));
             String line = reader.readLine();
@@ -82,7 +87,7 @@ public class TestDataGenerator {
             BufferedReader reader = null;
             BufferedWriter writer = null;
             try {
-                final InputStream is = TestDataGenerator.class.getResourceAsStream(template + ".cdl");
+                final InputStream is = DummyTestDataGenerator.class.getResourceAsStream(template + ".cdl");
                 reader = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
                 writer = new BufferedWriter(new FileWriter(cdlFile));
                 String line = reader.readLine();
