@@ -18,7 +18,11 @@ variables:
 		SZA:valid_min = -180000000 ;
 		SZA:valid_max = 180000000 ;
 		SZA:coordinates = "OLC_L1b_TP_Latitude OLC_L1b_TP_Longitude" ;
-	uint SAA(N_OLC_L1B_TP) ;
+	int SAA(N_OLC_L1B_TP) ;
+		SAA:long_name = "sun_azimuth_angle_at_tie_points" ;
+		SAA:units = "microdegrees" ;
+		SAA:valid_min = -180000000 ;
+		SAA:valid_max = 180000000 ;
 		SAA:coordinates = "OLC_L1b_TP_Latitude OLC_L1b_TP_Longitude" ;
 	uint OZA(N_OLC_L1B_TP) ;
 		OZA:long_name = "observation_zenith_angle_at_tie_points" ;
@@ -26,7 +30,7 @@ variables:
 		OZA:valid_min = 0 ;
 		OZA:valid_max = 180000000 ;
 		OZA:coordinates = "OLC_L1b_TP_Latitude OLC_L1b_TP_Longitude" ;
-	uint OAA(N_OLC_L1B_TP) ;
+	int OAA(N_OLC_L1B_TP) ;
 		OAA:long_name = "observation_azimuth_angle_at_tie_points" ;
 		OAA:units = "microdegrees" ;
 		OAA:valid_min = -180000000 ;
