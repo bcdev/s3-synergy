@@ -1,4 +1,4 @@
-netcdf PIX_ANNOT_SLST_NAD_${A_OR_TDI} {
+netcdf PIX_ANNOT_SLST_NAD_${A_or_TDI} {
 dimensions:
 	N_SCAN_SLST_NAD_05km_L1C = 35200 ;
 	N_PIX_SLST_NAD_05km_L1C = 2200 ;
@@ -26,5 +26,5 @@ variables:
 		:references = "S3-RS-TAF-SY-01247" ;
 		:contact = "info@brockmann-consult.de" ;
 		:netCDF_version = "netCDF-4" ;
-		:Data_set_name = "PIX_ANNOT_SLST_NAD_${A_OR_TDI}.nc" ;
+		:Data_set_name = "PIX_ANNOT_SLST_NAD_${A_or_TDI}.nc" ;
 }

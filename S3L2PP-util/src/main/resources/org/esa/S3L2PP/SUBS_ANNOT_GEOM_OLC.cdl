@@ -1,0 +1,47 @@
+netcdf SUBS_ANNOT_GEOM_OLC {
+dimensions:
+	N_OLC_L1B_TP = 72226 ;
+variables:
+	int OLC_L1b_TP_Latitude(N_OLC_L1B_TP) ;
+		OLC_L1b_TP_Latitude:long_name = "geodetic_latitude_at_tie_points" ;
+		OLC_L1b_TP_Latitude:units = "degrees_north" ;
+		OLC_L1b_TP_Latitude:valid_min = -90000000 ;
+		OLC_L1b_TP_Latitude:valid_max = 90000000 ;
+	int OLC_L1b_TP_Longitude(N_OLC_L1B_TP) ;
+		OLC_L1b_TP_Longitude:long_name = "geodetic_longitude_at_tie_points" ;
+		OLC_L1b_TP_Longitude:units = "degrees_east" ;
+		OLC_L1b_TP_Longitude:valid_min = -180000000 ;
+		OLC_L1b_TP_Longitude:valid_max = 180000000 ;
+	uint SZA(N_OLC_L1B_TP) ;
+		SZA:long_name = "sun_azimuth_angle_at_tie_points" ;
+		SZA:units = "microdegrees" ;
+		SZA:valid_min = -180000000 ;
+		SZA:valid_max = 180000000 ;
+		SZA:coordinates = "OLC_L1b_TP_Latitude OLC_L1b_TP_Longitude" ;
+	uint SAA(N_OLC_L1B_TP) ;
+		SAA:coordinates = "OLC_L1b_TP_Latitude OLC_L1b_TP_Longitude" ;
+	uint OZA(N_OLC_L1B_TP) ;
+		OZA:long_name = "observation_zenith_angle_at_tie_points" ;
+		OZA:units = "microdegrees" ;
+		OZA:valid_min = 0 ;
+		OZA:valid_max = 180000000 ;
+		OZA:coordinates = "OLC_L1b_TP_Latitude OLC_L1b_TP_Longitude" ;
+	uint OAA(N_OLC_L1B_TP) ;
+		OAA:long_name = "observation_azimuth_angle_at_tie_points" ;
+		OAA:units = "microdegrees" ;
+		OAA:valid_min = -180000000 ;
+		OAA:valid_max = 180000000 ;
+		OAA:coordinates = "OLC_L1b_TP_Latitude OLC_L1b_TP_Longitude" ;
+
+// global attributes:
+		:Conventions = "CF-1.4" ;
+		:title = "SYN L1c dummy test data" ;
+		:institution = "Brockmann Consult GmbH" ;
+		:source = "Sentinel-3 SYN" ;
+		:history = "" ;
+		:comment = "" ;
+		:references = "S3-RS-TAF-SY-01247" ;
+		:contact = "info@brockmann-consult.de" ;
+		:netCDF_version = "netCDF-4" ;
+		:Data_set_name = "SUBS_ANNOT_GEOM_OLC.nc" ;
+}
