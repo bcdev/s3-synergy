@@ -1,0 +1,25 @@
+netcdf PIX_ANNOT_OLC {
+dimensions:
+	N_LINE_OLC = 60000 ;
+	N_DET_CAM = 740 ;
+	N_CAM = 5 ;
+variables:
+	uint OLCI_QC_flags(N_CAM, N_LINE_OLC, N_DET_CAM) ;
+		OLCI_QC_flags:long_name = "Classification_and_quality_flags" ;
+		OLCI_QC_flags:flag_masks = 2147483648U, 1073741824U, 536870912U, 268435456U, 134217728U, 33554432U, 16777216U, 8388608U, 4194304U, 2097152U, 1048576U, 524288U, 262144U, 131072U, 65536U, 32768U, 16384U, 8192U, 4096U, 2048U, 1024U, 512U, 256U, 128U, 64U, 32U, 16U, 8U, 4U, 2U, 1U ;
+		OLCI_QC_flags:flag_values = 2147483648U, 1073741824U, 536870912U, 268435456U, 134217728U, 33554432U, 16777216U, 8388608U, 4194304U, 2097152U, 1048576U, 524288U, 262144U, 131072U, 65536U, 32768U, 16384U, 8192U, 4096U, 2048U, 1024U, 512U, 256U, 128U, 64U, 32U, 16U, 8U, 4U, 2U, 1U ;
+		OLCI_QC_flags:flag_meanings = "land coastline fresh_inland_water tidal_region bright invalid cosmetic duplicated sun_glint_risk dubious saturated@Oa01 saturated@Oa02 saturated@Oa03 saturated@Oa04 saturated@Oa05 saturated@Oa06 saturated@Oa07 saturated@Oa08 saturated@Oa09 saturated@Oa10 saturated@Oa11 saturated@Oa12 saturated@Oa13 saturated@Oa14 saturated@Oa15 saturated@Oa16 saturated@Oa17 saturated@Oa18 saturated@Oa19 saturated@Oa20 saturated@Oa21" ;
+		OLCI_QC_flags:_FillValue = 67108864U ;
+
+// global attributes:
+		:Conventions = "CF-1.4" ;
+		:title = "SYN L1c dummy test data" ;
+		:institution = "Brockmann Consult GmbH" ;
+		:source = "Sentinel-3 SYN" ;
+		:history = "" ;
+		:comment = "" ;
+		:references = "S3-RS-TAF-SY-01247" ;
+		:contact = "info@brockmann-consult.de" ;
+		:netCDF_version = "netCDF-4" ;
+		:Data_set_name = "PIX_ANNOT_OLC.nc" ;
+}

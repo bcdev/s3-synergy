@@ -21,7 +21,8 @@ public class DummyTestDataGenerator {
             generateDummyOlciRadianceDatasets();
             generateDummySlstrRadianceDatasets();
             generateDummyGeolocationDataset();
-            generateDummyTimeStampDataset();
+            generateDummyOlciTimeStampDataset();
+            generateDummyOlciFlagsDataset();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -40,8 +41,12 @@ public class DummyTestDataGenerator {
         generateDataset("GEOLOCATION_REF", "testdata/cdl/dummy", "testdata/nc/dummy");
     }
 
-    private static void generateDummyTimeStampDataset() throws Exception {
+    private static void generateDummyOlciTimeStampDataset() throws Exception {
         generateDataset("TIME_STAMP_OLC", "testdata/cdl/dummy", "testdata/nc/dummy");
+    }
+
+    private static void generateDummyOlciFlagsDataset() throws Exception {
+        generateDataset("PIX_ANNOT_OLC", "testdata/cdl/dummy", "testdata/nc/dummy");
     }
 
     private static void generateDataset(String template, String cdlPath, String ncPath) throws Exception {
