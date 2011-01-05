@@ -15,6 +15,8 @@ import java.util.Properties;
  */
 public class DummyTestDataGenerator {
 
+    private static final String CDL_DIR_DEFAULT = "testdata/cdl/dummy";
+    private static final String NC_DIR_DEFAULT = "testdata/nc/dummy";
     private static final String NCGEN_PATH_DEFAULT = "/usr/local/bin/ncgen";
     private static final String NCGEN_PATH;
 
@@ -36,13 +38,13 @@ public class DummyTestDataGenerator {
     }
 
     private static void generateDummyOlciRadianceDatasets() throws Exception {
-        final Properties properties = createDefaultProperties();
+        final Properties properties = createProperties();
         properties.setProperty("TEMPLATE_NAME", "OLC_RADIANCE_O");
         generateDatasets(1, 21, properties);
     }
 
     private static void generateDummySlstrRadianceDatasets() throws Exception {
-        final Properties properties = createDefaultProperties();
+        final Properties properties = createProperties();
         properties.setProperty("TEMPLATE_NAME", "SLST_NAD_RADIANCE_S");
         generateDatasets(1, 6, properties);
 
@@ -51,25 +53,25 @@ public class DummyTestDataGenerator {
     }
 
     private static void generateDummyGeolocationDataset() throws Exception {
-        final Properties properties = createDefaultProperties();
+        final Properties properties = createProperties();
         properties.setProperty("TEMPLATE_NAME", "GEOLOCATION_REF");
         generateDataset(properties);
     }
 
     private static void generateDummyOlciTimeStampDataset() throws Exception {
-        final Properties properties = createDefaultProperties();
+        final Properties properties = createProperties();
         properties.setProperty("TEMPLATE_NAME", "TIME_STAMP_OLC");
         generateDataset(properties);
     }
 
     private static void generateDummyOlciFlagsDataset() throws Exception {
-        final Properties properties = createDefaultProperties();
+        final Properties properties = createProperties();
         properties.setProperty("TEMPLATE_NAME", "TIME_STAMP_OLC");
         generateDataset(properties);
     }
 
     private static void generateDummySlstrFlagsDatasets() throws Exception {
-        final Properties properties = createDefaultProperties();
+        final Properties properties = createProperties();
         properties.setProperty("TEMPLATE_NAME", "PIX_ANNOT_SLST_NAD");
         properties.setProperty("CDL_FILE_NAME", "${TEMPLATE_NAME}_${A_OR_TDI}");
         properties.setProperty("A_OR_TDI", "A");
@@ -86,12 +88,12 @@ public class DummyTestDataGenerator {
 
     private static void generateDataset(Properties properties) throws Exception {
         final TemplateResolver resolver = new TemplateResolver(properties);
-        final File cdlFile = new File(resolver.getProperty("CDL_DIR"),
-                                      resolver.getProperty("CDL_FILE_NAME") + ".cdl");
+        final File cdlFile = new File(resolver.resolveProperty("cdlDir"),
+                                      resolver.resolveProperty("CDL_FILE_NAME") + ".cdl");
         BufferedReader reader = null;
         BufferedWriter writer = null;
         try {
-            final String templateName = resolver.getProperty("TEMPLATE_NAME");
+            final String templateName = resolver.resolveProperty("TEMPLATE_NAME");
             final InputStream is = DummyTestDataGenerator.class.getResourceAsStream(templateName + ".cdl");
             reader = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
             writer = new BufferedWriter(new FileWriter(cdlFile));
@@ -113,7 +115,7 @@ public class DummyTestDataGenerator {
                 // ignore
             }
         }
-        final File ncFile = new File(resolver.getProperty("NC_DIR"), cdlFile.getName().replace(".cdl", ".nc"));
+        final File ncFile = new File(resolver.resolveProperty("ncDir"), cdlFile.getName().replace(".cdl", ".nc"));
         final String command = NCGEN_PATH + " -k 3 -o " + ncFile.getPath() + " " + cdlFile.getPath();
         final Process process = Runtime.getRuntime().exec(command);
         if (process.waitFor() != 0) {
@@ -126,12 +128,12 @@ public class DummyTestDataGenerator {
     private static void generateDatasets(int first, int last, Properties properties) throws Exception {
         final TemplateResolver resolver = new TemplateResolver(properties);
         for (int i = first; i <= last; i++) {
-            final File cdlFile = new File(resolver.getProperty("CDL_DIR"),
-                                          resolver.getProperty("CDL_FILE_NAME") + i + ".cdl");
+            final File cdlFile = new File(resolver.resolveProperty("cdlDir"),
+                                          resolver.resolveProperty("CDL_FILE_NAME") + i + ".cdl");
             BufferedReader reader = null;
             BufferedWriter writer = null;
             try {
-                final String templateName = resolver.getProperty("TEMPLATE_NAME");
+                final String templateName = resolver.resolveProperty("TEMPLATE_NAME");
                 final InputStream is = DummyTestDataGenerator.class.getResourceAsStream(templateName + ".cdl");
                 reader = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
                 writer = new BufferedWriter(new FileWriter(cdlFile));
@@ -159,7 +161,7 @@ public class DummyTestDataGenerator {
                     // ignore
                 }
             }
-            final File ncFile = new File(resolver.getProperty("NC_DIR"), cdlFile.getName().replace(".cdl", ".nc"));
+            final File ncFile = new File(resolver.resolveProperty("ncDir"), cdlFile.getName().replace(".cdl", ".nc"));
             final String command = NCGEN_PATH + " -k 3 -o " + ncFile.getPath() + " " + cdlFile.getPath();
             final Process process = Runtime.getRuntime().exec(command);
             if (process.waitFor() != 0) {
@@ -170,13 +172,12 @@ public class DummyTestDataGenerator {
         }
     }
 
-    private static Properties createDefaultProperties() {
+    private static Properties createProperties() {
         final Properties properties = new Properties();
+        properties.setProperty("cdlDir", System.getProperty("cdlDir", CDL_DIR_DEFAULT));
+        properties.setProperty("ncDir", System.getProperty("ncDir", NC_DIR_DEFAULT));
         properties.setProperty("CDL_FILE_NAME", "${TEMPLATE_NAME}");
-        properties.setProperty("CDL_DIR", "testdata/cdl/dummy");
-        properties.setProperty("NC_DIR", "testdata/nc/dummy");
 
         return properties;
     }
 }
-

@@ -21,7 +21,14 @@ public class TemplateResolver {
         this.pattern = Pattern.compile(regex);
     }
 
-    public String getProperty(String key) {
+    /**
+     * Resolves the property with the given key.
+     *
+     * @param key the property key.
+     *
+     * @return the resolved property value.
+     */
+    public String resolveProperty(String key) {
         return resolve(properties.getProperty(key));
     }
 
