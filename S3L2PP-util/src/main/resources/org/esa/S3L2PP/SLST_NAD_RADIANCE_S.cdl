@@ -19,14 +19,5 @@ variables:
 		exception:flag_meanings = "ISP_absent pixel_absent not_decompressed no_signal saturation invalid_radiance no_parameters unfilled_pixel" ;
 
 // global attributes:
-		:Conventions = "CF-1.4" ;
-		:title = "SYN L1c dummy test data" ;
-		:institution = "Brockmann Consult GmbH" ;
-		:source = "Sentinel-3 SYN" ;
-		:history = "" ;
-		:comment = "" ;
-		:references = "S3-RS-TAF-SY-01247" ;
-		:contact = "info@brockmann-consult.de" ;
-		:netCDF_version = "netCDF-4" ;
-		:Data_set_name = "SLST_NAD_RADIANCE_S${i}.nc" ;
+        ${Common_Global_Attributes}
 }

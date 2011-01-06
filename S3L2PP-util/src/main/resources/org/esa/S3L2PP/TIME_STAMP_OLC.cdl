@@ -11,14 +11,5 @@ variables:
 		OLCI_time_stamps:_FillValue = -1L ;
 
 // global attributes:
-		:Conventions = "CF-1.4" ;
-		:title = "SYN L1c dummy test data" ;
-		:institution = "Brockmann Consult GmbH" ;
-		:source = "Sentinel-3 SYN" ;
-		:history = "" ;
-		:comment = "" ;
-		:references = "S3-RS-TAF-SY-01247" ;
-		:contact = "info@brockmann-consult.de" ;
-		:netCDF_version = "netCDF-4" ;
-		:Data_set_name = "TIME_STAMP_OLC.nc" ;
+        ${Common_Global_Attributes}
 }

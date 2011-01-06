@@ -33,7 +33,7 @@ public class TemplateResolver {
     }
 
     /**
-     * Makes a two-pass replacement for all occurrences of <code>${property-name}</code>
+     * Makes a three-pass replacement for all occurrences of <code>${property-name}</code>
      * in a given string with the value of the corresponding property.
      *
      * @param string the string.
@@ -41,7 +41,7 @@ public class TemplateResolver {
      * @return the string with replacements made.
      */
     public final String resolve(String string) {
-        return resolve(string, 2);
+        return resolve(string, 3);
     }
 
     /**

@@ -17,14 +17,5 @@ variables:
 		SLST_pointing_flags:flag_meanings = "flip_mirror_absolute_error flip_mirror_integrated_error flip_mirror_RMS_error scan_mirror_absolute_error scan_mirror_integrated_error scan_mirror_RMS_error scan_time_error Platform_Mode" ;
 
 // global attributes:
-		:Conventions = "CF-1.4" ;
-		:title = "SYN L1c dummy test data" ;
-		:institution = "Brockmann Consult GmbH" ;
-		:source = "Sentinel-3 SYN" ;
-		:history = "" ;
-		:comment = "" ;
-		:references = "S3-RS-TAF-SY-01247" ;
-		:contact = "info@brockmann-consult.de" ;
-		:netCDF_version = "netCDF-4" ;
-		:Data_set_name = "PIX_ANNOT_SLST_ALT_${A_or_TDI}.nc" ;
+        ${Common_Global_Attributes}
 }

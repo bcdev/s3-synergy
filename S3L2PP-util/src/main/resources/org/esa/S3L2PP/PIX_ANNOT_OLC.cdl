@@ -12,14 +12,5 @@ variables:
 		OLCI_QC_flags:_FillValue = 67108864U ;
 
 // global attributes:
-		:Conventions = "CF-1.4" ;
-		:title = "SYN L1c dummy test data" ;
-		:institution = "Brockmann Consult GmbH" ;
-		:source = "Sentinel-3 SYN" ;
-		:history = "" ;
-		:comment = "" ;
-		:references = "S3-RS-TAF-SY-01247" ;
-		:contact = "info@brockmann-consult.de" ;
-		:netCDF_version = "netCDF-4" ;
-		:Data_set_name = "PIX_ANNOT_OLC.nc" ;
+        ${Common_Global_Attributes}
 }

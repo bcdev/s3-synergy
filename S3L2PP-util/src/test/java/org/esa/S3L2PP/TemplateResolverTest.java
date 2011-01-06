@@ -96,7 +96,7 @@ public class TemplateResolverTest {
 
         assertEquals("dog pig cow",
                 templateResolver.resolve("${foo} pig cow"));
-        assertEquals("cow pig ${cat} dog",
+        assertEquals("cow pig dog dog",
                 templateResolver.resolve("cow pig ${bar}"));
     }
 
@@ -109,9 +109,9 @@ public class TemplateResolverTest {
         properties.setProperty("foo", "${cat}");
         properties.setProperty("cat", "${foo}");
 
-        assertEquals("${foo} pig cow",
+        assertEquals("${cat} pig cow",
                 templateResolver.resolve("${foo} pig cow"));
-        assertEquals("${foo} pig ${cat}",
+        assertEquals("${cat} pig ${foo}",
                 templateResolver.resolve("${foo} pig ${bar}"));
     }
 
