@@ -57,6 +57,8 @@ public class TestDataGenerator {
             generateDataset("GEN_INFO_OLC");
             generateDatasets("GEN_INFO_SLST_NAD_S", 1, 6);
             generateDatasets("GEN_INFO_SLST_ALT_S", 1, 6);
+            generateDatasets("MISREGIST_OLC_Oref_O", 1, 16);
+            generateDatasets("MISREGIST_OLC_Oref_O", 18, 21);
         } catch (Exception e) {
             e.printStackTrace();
         }
