@@ -18,6 +18,8 @@
  * Created on December 20, 2010, 11:17 AM
  */
 
+#include <stdexcept>
+
 #include "SegmentImplTest.h"
 #include "../../../main/cpp/core/SegmentImpl.h"
 
@@ -70,44 +72,44 @@ void SegmentImplTest::testGetGrid() {
 }
 
 void SegmentImplTest::testGetAccessor() {
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("B"), out_of_range);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("B"), std::invalid_argument);
     segment->addVariableByte("B");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("B").getByteData());
     CPPUNIT_ASSERT(segment->getAccessor("B").getByteData().size() == 5 * 2000 * 760);
 
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("D"), out_of_range);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("D"), std::invalid_argument);
     segment->addVariableDouble("D");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("D").getDoubleData());
 
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("F"), out_of_range);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("F"), std::invalid_argument);
     segment->addVariableFloat("F");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("F").getFloatData());
 
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("I"), out_of_range);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("I"), std::invalid_argument);
     segment->addVariableInt("I");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("I").getIntData());
 
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("L"), out_of_range);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("L"), std::invalid_argument);
     segment->addVariableLong("L");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("L").getLongData());
 
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("S"), out_of_range);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("S"), std::invalid_argument);
     segment->addVariableShort("S");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("S").getShortData());
 
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("UB"), out_of_range);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("UB"), std::invalid_argument);
     segment->addVariableUByte("UB");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("UB").getUByteData());
 
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("UI"), out_of_range);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("UI"), std::invalid_argument);
     segment->addVariableUInt("UI");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("UI").getUIntData());
 
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("UL"), out_of_range);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("UL"), std::invalid_argument);
     segment->addVariableULong("UL");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("UL").getULongData());
 
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("US"), out_of_range);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("US"), std::invalid_argument);
     segment->addVariableUShort("US");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("US").getUShortData());
 }
