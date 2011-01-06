@@ -43,38 +43,26 @@ public class TestDataGenerator {
             targetDir = new File(System.getProperty("targetDir", TARGET_DIR_DEFAULT));
             ncgenPath = System.getProperty("ncgenPath", NCGEN_PATH_DEFAULT);
 
-            generateDummyOlciRadianceDatasets();
-            generateDummySlstrRadianceDatasets();
+            generateDatasets("OLC_RADIANCE_O", 1, 21);
+            generateDatasets("SLST_NAD_RADIANCE_S", 1, 6);
+            generateDatasets("SLST_ALT_RADIANCE_S", 1, 6);
             generateDataset("GEOLOCATION_REF");
             generateDataset("TIME_STAMP_OLC");
             generateDataset("PIX_ANNOT_OLC");
-            generateDummySlstrFlagsDatasets();
+            generateSlstrFlagsDatasets();
             generateDataset("SUBS_ANNOT_GEOM_OLC");
             generateDataset("SUBS_ANNOT_METEO_OLC");
             generateDataset("SUBS_ANNOT_SLST_NAD");
             generateDataset("SUBS_ANNOT_SLST_ALT");
             generateDataset("GEN_INFO_OLC");
+            generateDatasets("GEN_INFO_SLST_NAD_S", 1, 6);
+            generateDatasets("GEN_INFO_SLST_ALT_S", 1, 6);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void generateDummyOlciRadianceDatasets() throws Exception {
-        final Properties properties = createProperties();
-        properties.setProperty("Template_File_Basename", "OLC_RADIANCE_O");
-        generateDatasets(1, 21, properties);
-    }
-
-    private static void generateDummySlstrRadianceDatasets() throws Exception {
-        final Properties properties = createProperties();
-        properties.setProperty("Template_File_Basename", "SLST_NAD_RADIANCE_S");
-        generateDatasets(1, 6, properties);
-
-        properties.setProperty("Template_File_Basename", "SLST_ALT_RADIANCE_S");
-        generateDatasets(1, 6, properties);
-    }
-
-    private static void generateDummySlstrFlagsDatasets() throws Exception {
+    private static void generateSlstrFlagsDatasets() throws Exception {
         final Properties properties = createProperties();
         properties.setProperty("Template_File_Basename", "PIX_ANNOT_SLST_NAD");
         properties.setProperty("CDL_File_Basename", "${Template_File_Basename}_${A_or_TDI}");
@@ -96,7 +84,9 @@ public class TestDataGenerator {
         generateDataset(properties);
     }
 
-    private static void generateDatasets(int minChannel, int maxChannel, Properties properties) throws Exception {
+    private static void generateDatasets(String templateName, int minChannel, int maxChannel) throws Exception {
+        final Properties properties = createProperties();
+        properties.setProperty("Template_File_Basename", templateName);
         properties.setProperty("CDL_File_Basename", "${Template_File_Basename}${i}");
         for (int i = minChannel; i <= maxChannel; i++) {
             properties.setProperty("i", String.format("%d", i));
