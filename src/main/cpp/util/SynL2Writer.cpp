@@ -78,7 +78,7 @@ void SynL2Writer::process(Context& context) {
 void SynL2Writer::start(Context& context) {
     // add symbolic names of all variables to be written
     variablesToWrite.push_back("L_1");
-    variablesToWrite.push_back("L_2");
+//    variablesToWrite.push_back("L_2");
     //    variablesToWrite.push_back("SYN_flags");
 }
 

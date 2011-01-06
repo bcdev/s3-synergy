@@ -25,6 +25,7 @@
 #include <netcdf.h>
 #include <vector>
 
+#include "Variable.h"
 #include "../core/Segment.h"
 
 using std::vector;
@@ -57,6 +58,7 @@ public:
         } else if (dimCount == 1) {
             size_t* count = new size_t[1];
             count[0] = lineCount;
+            return count;
         }
         throw std::invalid_argument("Wrong number of dimensions.");
     }
