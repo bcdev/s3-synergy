@@ -15,12 +15,17 @@ import java.util.Properties;
  */
 public class DummyTestDataGenerator {
 
-    private static final String CDL_DIR_DEFAULT = "testdata/cdl/dummy";
-    private static final String NC_DIR_DEFAULT = "testdata/nc/dummy";
+    private static final String CDL_TARGET_DIR_DEFAULT = "testdata/cdl/dummy";
+    private static final String NC_TARGET_DIR_DEFAULT = "testdata/nc/dummy";
     private static final String NCGEN_PATH_DEFAULT = "/usr/local/bin/ncgen";
+
+    private static final File CDL_TARGET_DIR;
+    private static final File NC_TARGET_DIR;
     private static final String NCGEN_PATH;
 
     static {
+        CDL_TARGET_DIR = new File(System.getProperty("cdlDir", CDL_TARGET_DIR_DEFAULT));
+        NC_TARGET_DIR = new File(System.getProperty("ncDir", NC_TARGET_DIR_DEFAULT));
         NCGEN_PATH = System.getProperty("ncgenPath", NCGEN_PATH_DEFAULT);
     }
 
@@ -40,29 +45,29 @@ public class DummyTestDataGenerator {
 
     private static void generateDummyOlciRadianceDatasets() throws Exception {
         final Properties properties = createProperties();
-        properties.setProperty("Template_Name", "OLC_RADIANCE_O");
+        properties.setProperty("Template_File_Basename", "OLC_RADIANCE_O");
         generateDatasets(1, 21, properties);
     }
 
     private static void generateDummySlstrRadianceDatasets() throws Exception {
         final Properties properties = createProperties();
-        properties.setProperty("Template_Name", "SLST_NAD_RADIANCE_S");
+        properties.setProperty("Template_File_Basename", "SLST_NAD_RADIANCE_S");
         generateDatasets(1, 6, properties);
 
-        properties.setProperty("Template_Name", "SLST_ALT_RADIANCE_S");
+        properties.setProperty("Template_File_Basename", "SLST_ALT_RADIANCE_S");
         generateDatasets(1, 6, properties);
     }
 
     private static void generateDummySlstrFlagsDatasets() throws Exception {
         final Properties properties = createProperties();
-        properties.setProperty("Template_Name", "PIX_ANNOT_SLST_NAD");
-        properties.setProperty("CDL_File_Name", "${Template_Name}_${A_or_TDI}");
+        properties.setProperty("Template_File_Basename", "PIX_ANNOT_SLST_NAD");
+        properties.setProperty("CDL_File_Basename", "${Template_File_Basename}_${A_or_TDI}");
         properties.setProperty("A_or_TDI", "A");
         generateDataset(properties);
         properties.setProperty("A_or_TDI", "TDI");
         generateDataset(properties);
 
-        properties.setProperty("Template_Name", "PIX_ANNOT_SLST_ALT");
+        properties.setProperty("Template_File_Basename", "PIX_ANNOT_SLST_ALT");
         properties.setProperty("A_or_TDI", "A");
         generateDataset(properties);
         properties.setProperty("A_or_TDI", "TDI");
@@ -71,18 +76,17 @@ public class DummyTestDataGenerator {
 
     private static void generateDataset(String templateName) throws Exception {
         final Properties properties = createProperties();
-        properties.setProperty("Template_Name", templateName);
+        properties.setProperty("Template_File_Basename", templateName);
         generateDataset(properties);
     }
 
     private static void generateDataset(Properties properties) throws Exception {
         final TemplateResolver resolver = new TemplateResolver(properties);
-        final File cdlFile = new File(resolver.resolveProperty("CDL_Dir"),
-                                      resolver.resolveProperty("CDL_File_Name") + ".cdl");
+        final File cdlFile = new File(CDL_TARGET_DIR, resolver.resolveProperty("CDL_File_Basename") + ".cdl");
         BufferedReader reader = null;
         BufferedWriter writer = null;
         try {
-            final String templateName = resolver.resolveProperty("Template_Name");
+            final String templateName = resolver.resolveProperty("Template_File_Basename");
             final InputStream is = DummyTestDataGenerator.class.getResourceAsStream(templateName + ".cdl");
             reader = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
             writer = new BufferedWriter(new FileWriter(cdlFile));
@@ -104,60 +108,31 @@ public class DummyTestDataGenerator {
                 // ignore
             }
         }
-        generateNcFile(cdlFile, resolver);
+        generateNcFile(cdlFile);
     }
 
     private static void generateDatasets(int first, int last, Properties properties) throws Exception {
-        final TemplateResolver resolver = new TemplateResolver(properties);
+        properties.setProperty("CDL_File_Basename", "${Template_File_Basename}${i}");
         for (int i = first; i <= last; i++) {
-            final File cdlFile = new File(resolver.resolveProperty("CDL_Dir"),
-                                          resolver.resolveProperty("CDL_File_Name") + i + ".cdl");
-            BufferedReader reader = null;
-            BufferedWriter writer = null;
-            try {
-                final String templateName = resolver.resolveProperty("Template_Name");
-                final InputStream is = DummyTestDataGenerator.class.getResourceAsStream(templateName + ".cdl");
-                reader = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
-                writer = new BufferedWriter(new FileWriter(cdlFile));
-                String line = reader.readLine();
-                while (line != null) {
-                    properties.setProperty("i", String.valueOf(i));
-                    if (i < 10) {
-                        properties.setProperty("ii", "0${i}");
-                    } else {
-                        properties.setProperty("ii", "${i}");
-                    }
-                    line = resolver.resolve(line);
-                    writer.write(line + "\n");
-                    line = reader.readLine();
-                }
-            } finally {
-                try {
-                    if (writer != null) {
-                        writer.close();
-                    }
-                    if (reader != null) {
-                        reader.close();
-                    }
-                } catch (IOException e) {
-                    // ignore
-                }
+            properties.setProperty("i", String.valueOf(i));
+            if (i < 10) {
+                properties.setProperty("ii", "0${i}");
+            } else {
+                properties.setProperty("ii", "${i}");
             }
-            generateNcFile(cdlFile, resolver);
+            generateDataset(properties);
         }
     }
 
     private static Properties createProperties() {
         final Properties properties = new Properties();
-        properties.setProperty("CDL_Dir", System.getProperty("cdlDir", CDL_DIR_DEFAULT));
-        properties.setProperty("CDL_File_Name", "${Template_Name}");
-        properties.setProperty("NC_Dir", System.getProperty("ncDir", NC_DIR_DEFAULT));
+        properties.setProperty("CDL_File_Basename", "${Template_File_Basename}");
 
         return properties;
     }
 
-    private static void generateNcFile(File cdlFile, TemplateResolver resolver) throws Exception {
-        final File ncFile = new File(resolver.resolveProperty("NC_Dir"), cdlFile.getName().replace(".cdl", ".nc"));
+    private static void generateNcFile(File cdlFile) throws Exception {
+        final File ncFile = new File(NC_TARGET_DIR, cdlFile.getName().replace(".cdl", ".nc"));
         final String command = NCGEN_PATH + " -k 3 -o " + ncFile.getPath() + " " + cdlFile.getPath();
         final Process process = Runtime.getRuntime().exec(command);
         if (process.waitFor() != 0) {
