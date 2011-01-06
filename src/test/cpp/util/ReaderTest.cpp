@@ -20,7 +20,7 @@
 
 #include <iostream>
 
-#include "../../../main/cpp/util/Reader.h"
+#include "../../../main/cpp/util/OlciGridReader.h"
 
 #include "ReaderTest.h"
 

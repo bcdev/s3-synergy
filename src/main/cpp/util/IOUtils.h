@@ -21,6 +21,7 @@
 #ifndef IOUTILS_H
 #define	IOUTILS_H
 
+#include <iostream>
 #include <netcdf.h>
 #include <vector>
 
@@ -41,30 +42,41 @@ public:
         return ncDims;
     }
 
-    static const size_t createCountVector(size_t dimCount, size_t camCount, size_t lineCount, size_t colCount) {
+    static const size_t* createCountVector(size_t dimCount, size_t camCount, size_t lineCount, size_t colCount) {
         if (dimCount == 3) {
-            const size_t count[] = {camCount, lineCount, colCount};
-            return *count;
+            size_t* count = new size_t[3];
+            count[0] = camCount;
+            count[1] = lineCount;
+            count[2] = colCount;
+            return count;
         } else if (dimCount == 2) {
-            const size_t count[] = {lineCount, colCount};
-            return *count;
+            size_t* count = new size_t[2];
+            count[0] = lineCount;
+            count[1] = colCount;
+            return count;
         } else if (dimCount == 1) {
-            const size_t count[] = {lineCount};
-            return *count;
+            size_t* count = new size_t[1];
+            count[0] = lineCount;
         }
         throw std::invalid_argument("Wrong number of dimensions.");
     }
 
-    static const size_t createStartVector(size_t dimCount, size_t startLine) {
+    static const size_t* createStartVector(size_t dimCount, size_t startLine) {
         if (dimCount == 3) {
-            const size_t start[] = {0, startLine, 0};
-            return *start;
+            size_t* start = new size_t[dimCount];
+            start[0] = 0;
+            start[1] = startLine;
+            start[2] = 0;
+            return start;
         } else if (dimCount == 2) {
-            const size_t start[] = {startLine, 0};
-            return *start;
+            size_t* start = new size_t[dimCount];
+            start[0] = startLine;
+            start[1] = 0;
+            return start;
         } else if (dimCount == 1) {
-            const size_t start[] = {startLine};
-            return *start;
+            size_t* start = new size_t[dimCount];
+            start[0] = startLine;
+            return start;
         }
         throw std::invalid_argument("Wrong number of dimensions.");
     }
@@ -72,7 +84,7 @@ public:
     static void readData(int ncId, int varId, string& symbolicName, Segment& segment,
             const size_t dimCount, const size_t startLine, const size_t count[], const size_t index) {
 
-        const size_t startVector = createStartVector(dimCount, startLine);
+        const size_t* startVector = createStartVector(dimCount, startLine);
 
         nc_type type;
         nc_inq_vartype(ncId, varId, &type);
@@ -80,43 +92,43 @@ public:
             case NC_BYTE:
             {
                 int8_t* buffer = &segment.getAccessor(symbolicName).getByteData()[index];
-                nc_get_vara_schar(ncId, varId, &startVector, count, buffer);
+                nc_get_vara_schar(ncId, varId, startVector, count, buffer);
                 break;
             }
             case NC_UBYTE:
             {
                 uint8_t* buffer = &segment.getAccessor(symbolicName).getUByteData()[index];
-                nc_get_vara_ubyte(ncId, varId, &startVector, count, buffer);
+                nc_get_vara_ubyte(ncId, varId, startVector, count, buffer);
                 break;
             }
             case NC_SHORT:
             {
                 int16_t* buffer = &segment.getAccessor(symbolicName).getShortData()[index];
-                nc_get_vara_short(ncId, varId, &startVector, count, buffer);
+                nc_get_vara_short(ncId, varId, startVector, count, buffer);
                 break;
             }
             case NC_USHORT:
             {
                 uint16_t* buffer = &segment.getAccessor(symbolicName).getUShortData()[index];
-                nc_get_vara_ushort(ncId, varId, &startVector, count, buffer);
+                nc_get_vara_ushort(ncId, varId, startVector, count, buffer);
                 break;
             }
             case NC_INT:
             {
                 int32_t* buffer = &segment.getAccessor(symbolicName).getIntData()[index];
-                nc_get_vara_int(ncId, varId, &startVector, count, buffer);
+                nc_get_vara_int(ncId, varId, startVector, count, buffer);
                 break;
             }
             case NC_UINT:
             {
                 uint32_t* buffer = &segment.getAccessor(symbolicName).getUIntData()[index];
-                nc_get_vara_uint(ncId, varId, &startVector, count, buffer);
+                nc_get_vara_uint(ncId, varId, startVector, count, buffer);
                 break;
             }
             case NC_INT64:
             {
                 int64_t* buffer = &segment.getAccessor(symbolicName).getLongData()[index];
-                nc_get_vara_long(ncId, varId, &startVector, count, buffer);
+                nc_get_vara_long(ncId, varId, startVector, count, buffer);
                 break;
             }
             case NC_UINT64:
@@ -124,19 +136,19 @@ public:
                 // there is no function nc_get_var_ulong, so we have to read the data
                 // into a signed long buffer
                 int64_t* buffer = &segment.getAccessor(symbolicName).getLongData()[index];
-                nc_get_vara_long(ncId, varId, &startVector, count, buffer);
+                nc_get_vara_long(ncId, varId, startVector, count, buffer);
                 break;
             }
             case NC_FLOAT:
             {
                 float* buffer = &segment.getAccessor(symbolicName).getFloatData()[index];
-                nc_get_vara_float(ncId, varId, &startVector, count, buffer);
+                nc_get_vara_float(ncId, varId, startVector, count, buffer);
                 break;
             }
             case NC_DOUBLE:
             {
                 double* buffer = &segment.getAccessor(symbolicName).getDoubleData()[index];
-                nc_get_vara_double(ncId, varId, &startVector, count, buffer);
+                nc_get_vara_double(ncId, varId, startVector, count, buffer);
                 break;
             }
             default:
@@ -144,6 +156,8 @@ public:
                 throw std::invalid_argument("Variable " + symbolicName + " has invalid type.");
             }
         }
+        
+        delete[] startVector;
     }
 
     /**
@@ -290,6 +304,26 @@ public:
         }
     }
 
+    static void print(size_t camCount, Segment& segment, size_t startLine,
+            size_t endLine, Accessor& accessor) {
+
+        Grid& grid = segment.getGrid();
+        size_t lines = endLine - startLine + 1;
+        size_t valueCount = grid.getSizeK() * lines * grid.getSizeM();
+        short* valuesTemp = new short[valueCount];
+        for (size_t k = 0; k < camCount; k++) {
+            for (size_t l = startLine; l <= endLine; l++) {
+                for (size_t m = grid.getStartM(); m < grid.getSizeM(); m++) {
+                    size_t position = grid.getIndex(k, l, m);
+                    if (accessor.getUShort(position) != 0) {
+                        std::cout << accessor.getUShort(position) << "\n";
+                    }
+                }
+            }
+        }
+        delete[] valuesTemp;
+    }
+
 private:
 
     /**
@@ -313,8 +347,8 @@ private:
         Grid& grid = segment.getGrid();
         size_t lines = endLine - startLine + 1;
         size_t valueCount = grid.getSizeK() * lines * grid.getSizeM();
-        const size_t startVector = IOUtils::createStartVector(dimCount, startLine);
-        const size_t countVector = IOUtils::createCountVector(dimCount, camCount, lineCount, colCount);
+        const size_t* startVector = IOUtils::createStartVector(dimCount, startLine);
+        const size_t* countVector = IOUtils::createCountVector(dimCount, camCount, lineCount, colCount);
         int8_t* valuesTemp = new int8_t[valueCount];
         for (size_t k = 0; k < camCount; k++) {
             for (size_t l = startLine; l <= endLine; l++) {
@@ -326,7 +360,7 @@ private:
         }
         const int8_t values = *valuesTemp;
 
-        nc_put_vara_schar(ncId, varId, &startVector, &countVector, &values);
+        nc_put_vara_schar(ncId, varId, startVector, countVector, &values);
         delete[] valuesTemp;
     }
 
@@ -351,8 +385,8 @@ private:
         Grid& grid = segment.getGrid();
         size_t lines = endLine - startLine + 1;
         size_t valueCount = grid.getSizeK() * lines * grid.getSizeM();
-        const size_t startVector = IOUtils::createStartVector(dimCount, startLine);
-        const size_t countVector = IOUtils::createCountVector(dimCount, camCount, lineCount, colCount);
+        const size_t* startVector = IOUtils::createStartVector(dimCount, startLine);
+        const size_t* countVector = IOUtils::createCountVector(dimCount, camCount, lineCount, colCount);
         uint8_t* valuesTemp = new uint8_t[valueCount];
         for (size_t k = 0; k < camCount; k++) {
             for (size_t l = startLine; l <= endLine; l++) {
@@ -364,7 +398,7 @@ private:
         }
         const uint8_t values = *valuesTemp;
 
-        nc_put_vara_ubyte(ncId, varId, &startVector, &countVector, &values);
+        nc_put_vara_ubyte(ncId, varId, startVector, countVector, &values);
         delete[] valuesTemp;
     }
 
@@ -389,8 +423,8 @@ private:
         Grid& grid = segment.getGrid();
         size_t lines = endLine - startLine + 1;
         size_t valueCount = grid.getSizeK() * lines * grid.getSizeM();
-        const size_t startVector = IOUtils::createStartVector(dimCount, startLine);
-        const size_t countVector = IOUtils::createCountVector(dimCount, camCount, lineCount, colCount);
+        const size_t* startVector = IOUtils::createStartVector(dimCount, startLine);
+        const size_t* countVector = IOUtils::createCountVector(dimCount, camCount, lineCount, colCount);
         int16_t* valuesTemp = new int16_t[valueCount];
         for (size_t k = 0; k < camCount; k++) {
             for (size_t l = startLine; l <= endLine; l++) {
@@ -402,7 +436,7 @@ private:
         }
         const int16_t values = *valuesTemp;
 
-        nc_put_vara_short(ncId, varId, &startVector, &countVector, &values);
+        nc_put_vara_short(ncId, varId, startVector, countVector, &values);
         delete[] valuesTemp;
     }
 
@@ -427,8 +461,8 @@ private:
         Grid& grid = segment.getGrid();
         size_t lines = endLine - startLine + 1;
         size_t valueCount = grid.getSizeK() * lines * grid.getSizeM();
-        const size_t startVector = IOUtils::createStartVector(dimCount, startLine);
-        const size_t countVector = IOUtils::createCountVector(dimCount, camCount, lineCount, colCount);
+        const size_t* startVector = IOUtils::createStartVector(dimCount, startLine);
+        const size_t* countVector = IOUtils::createCountVector(dimCount, camCount, lineCount, colCount);
         uint16_t* valuesTemp = new uint16_t[valueCount];
         for (size_t k = 0; k < camCount; k++) {
             for (size_t l = startLine; l <= endLine; l++) {
@@ -438,9 +472,9 @@ private:
                 }
             }
         }
-        const uint16_t values = *valuesTemp;
+        const uint16_t* values = valuesTemp;
 
-        nc_put_vara_ushort(ncId, varId, &startVector, &countVector, &values);
+        nc_put_vara_ushort(ncId, varId, startVector, countVector, values);
         delete[] valuesTemp;
     }
 
@@ -465,8 +499,8 @@ private:
         Grid& grid = segment.getGrid();
         size_t lines = endLine - startLine + 1;
         size_t valueCount = grid.getSizeK() * lines * grid.getSizeM();
-        const size_t startVector = IOUtils::createStartVector(dimCount, startLine);
-        const size_t countVector = IOUtils::createCountVector(dimCount, camCount, lineCount, colCount);
+        const size_t* startVector = IOUtils::createStartVector(dimCount, startLine);
+        const size_t* countVector = IOUtils::createCountVector(dimCount, camCount, lineCount, colCount);
         int32_t* valuesTemp = new int32_t[valueCount];
         for (size_t k = 0; k < camCount; k++) {
             for (size_t l = startLine; l <= endLine; l++) {
@@ -478,7 +512,7 @@ private:
         }
         const int32_t values = *valuesTemp;
 
-        nc_put_vara_int(ncId, varId, &startVector, &countVector, &values);
+        nc_put_vara_int(ncId, varId, startVector, countVector, &values);
         delete[] valuesTemp;
     }
 
@@ -503,8 +537,8 @@ private:
         Grid& grid = segment.getGrid();
         size_t lines = endLine - startLine + 1;
         size_t valueCount = grid.getSizeK() * lines * grid.getSizeM();
-        const size_t startVector = IOUtils::createStartVector(dimCount, startLine);
-        const size_t countVector = IOUtils::createCountVector(dimCount, camCount, lineCount, colCount);
+        const size_t* startVector = IOUtils::createStartVector(dimCount, startLine);
+        const size_t* countVector = IOUtils::createCountVector(dimCount, camCount, lineCount, colCount);
         uint32_t* valuesTemp = new uint32_t[valueCount];
         for (size_t k = 0; k < camCount; k++) {
             for (size_t l = startLine; l <= endLine; l++) {
@@ -516,7 +550,7 @@ private:
         }
         const uint32_t values = *valuesTemp;
 
-        nc_put_vara_uint(ncId, varId, &startVector, &countVector, &values);
+        nc_put_vara_uint(ncId, varId, startVector, countVector, &values);
         delete[] valuesTemp;
     }
 
@@ -541,8 +575,8 @@ private:
         Grid& grid = segment.getGrid();
         size_t lines = endLine - startLine + 1;
         size_t valueCount = grid.getSizeK() * lines * grid.getSizeM();
-        const size_t startVector = IOUtils::createStartVector(dimCount, startLine);
-        const size_t countVector = IOUtils::createCountVector(dimCount, camCount, lineCount, colCount);
+        const size_t* startVector = IOUtils::createStartVector(dimCount, startLine);
+        const size_t* countVector = IOUtils::createCountVector(dimCount, camCount, lineCount, colCount);
         int64_t* valuesTemp = new int64_t[valueCount];
         for (size_t k = 0; k < camCount; k++) {
             for (size_t l = startLine; l <= endLine; l++) {
@@ -554,7 +588,7 @@ private:
         }
         const int64_t values = *valuesTemp;
 
-        nc_put_vara_long(ncId, varId, &startVector, &countVector, &values);
+        nc_put_vara_long(ncId, varId, startVector, countVector, &values);
         delete[] valuesTemp;
     }
 
@@ -580,8 +614,8 @@ private:
         Grid& grid = segment.getGrid();
         size_t lines = endLine - startLine + 1;
         size_t valueCount = grid.getSizeK() * lines * grid.getSizeM();
-        const size_t startVector = IOUtils::createStartVector(dimCount, startLine);
-        const size_t countVector = IOUtils::createCountVector(dimCount, camCount, lineCount, colCount);
+        const size_t* startVector = IOUtils::createStartVector(dimCount, startLine);
+        const size_t* countVector = IOUtils::createCountVector(dimCount, camCount, lineCount, colCount);
         int64_t* valuesTemp = new int64_t[valueCount];
         for (size_t k = 0; k < camCount; k++) {
             for (size_t l = startLine; l <= endLine; l++) {
@@ -593,7 +627,7 @@ private:
         }
         const int64_t values = *valuesTemp;
 
-        nc_put_vara_long(ncId, varId, &startVector, &countVector, &values);
+        nc_put_vara_long(ncId, varId, startVector, countVector, &values);
         delete[] valuesTemp;
     }
 
@@ -618,8 +652,8 @@ private:
         Grid& grid = segment.getGrid();
         size_t lines = endLine - startLine + 1;
         size_t valueCount = grid.getSizeK() * lines * grid.getSizeM();
-        const size_t startVector = IOUtils::createStartVector(dimCount, startLine);
-        const size_t countVector = IOUtils::createCountVector(dimCount, camCount, lineCount, colCount);
+        const size_t* startVector = IOUtils::createStartVector(dimCount, startLine);
+        const size_t* countVector = IOUtils::createCountVector(dimCount, camCount, lineCount, colCount);
         float* valuesTemp = new float[valueCount];
         for (size_t k = 0; k < camCount; k++) {
             for (size_t l = startLine; l <= endLine; l++) {
@@ -631,7 +665,7 @@ private:
         }
         const float values = *valuesTemp;
 
-        nc_put_vara_float(ncId, varId, &startVector, &countVector, &values);
+        nc_put_vara_float(ncId, varId, startVector, countVector, &values);
         delete[] valuesTemp;
     }
 
@@ -656,8 +690,8 @@ private:
         Grid& grid = segment.getGrid();
         size_t lines = endLine - startLine + 1;
         size_t valueCount = grid.getSizeK() * lines * grid.getSizeM();
-        const size_t startVector = IOUtils::createStartVector(dimCount, startLine);
-        const size_t countVector = IOUtils::createCountVector(dimCount, camCount, lineCount, colCount);
+        const size_t* startVector = IOUtils::createStartVector(dimCount, startLine);
+        const size_t* countVector = IOUtils::createCountVector(dimCount, camCount, lineCount, colCount);
         double* valuesTemp = new double[valueCount];
         for (size_t k = 0; k < camCount; k++) {
             for (size_t l = startLine; l <= endLine; l++) {
@@ -669,10 +703,10 @@ private:
         }
         const double values = *valuesTemp;
 
-        nc_put_vara_double(ncId, varId, &startVector, &countVector, &values);
+        nc_put_vara_double(ncId, varId, startVector, countVector, &values);
         delete[] valuesTemp;
     }
-};
 
+};
 #endif	/* IOUTILS_H */
 

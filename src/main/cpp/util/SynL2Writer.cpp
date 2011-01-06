@@ -14,7 +14,6 @@
 #include "IOUtils.h"
 #include "../util/Logger.h"
 #include "SynL2Writer.h"
-#include "JobOrder.h"
 
 using std::invalid_argument;
 

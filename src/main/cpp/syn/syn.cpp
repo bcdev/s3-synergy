@@ -5,9 +5,9 @@
 #include "../util/Dictionary.h"
 #include "../util/JobOrderParser.h"
 #include "../util/Logger.h"
+#include "../util/OlciGridReader.h"
 #include "../util/PixelClassification.h"
 #include "../util/Processor.h"
-#include "../util/Reader.h"
 #include "../util/StringUtils.h"
 #include "../util/SynL2Writer.h"
 #include "../util/WriterUtils.h"
@@ -53,7 +53,7 @@ int main() {
 
     // configure modules
     // TODO - use job order for configuration
-    Reader reader;
+    OlciGridReader reader;
     PixelClassification pixelClassification;
     //TestModule test;
     SynL2Writer writer;

@@ -15,26 +15,26 @@
 
 #include "JobOrder.h"
 #include "Logger.h"
-#include "Reader.h"
-#include "ReaderConstants.h"
+#include "OlciGridReader.h"
+#include "OlciGridReaderConstants.h"
 #include "IOUtils.h"
 
 using std::min;
 using std::max;
 
-Reader::Reader() : DefaultModule("READ"), stepSize(5000) {
+OlciGridReader::OlciGridReader() : DefaultModule("READ"), stepSize(5000) {
 }
 
-Reader::~Reader() {
+OlciGridReader::~OlciGridReader() {
 }
 
-void Reader::process(Context& context) {
+void OlciGridReader::process(Context& context) {
     // switch between processor configurations
 
     Dictionary& dict = *(context.getDictionary());
     string processorId = "SYL2";
     vector<string> fileNames = context.getJobOrder()->getProcessorConfiguration(processorId).getInputList()[0]->getFileNames();
-    const vector<string>& variablesToRead = ReaderConstants::getVariablesToRead();
+    const vector<string>& variablesToRead = OlciGridReaderConstants::getVariablesToRead();
 
     Segment* segment;
     size_t endLine;
@@ -71,24 +71,28 @@ void Reader::process(Context& context) {
             size_t sizeL = min(stepSize, lineCount);
             // initial reading
 
-            nc_type type = addDimsAndTypeToVariable(ncId, varId, symbolicName, dict);
+            Variable& variable = dict.getVariable(symbolicName);
+            nc_type type = addTypeToVariable(ncId, varId, variable);
+            addDimsToVariable(variable, camCount, lineCount, colCount);
 
             segment = &context.addSegment("SYN_COLLOCATED", sizeL, colCount, camCount, 0, lineCount - 1);
             Logger::get()->progress("Reading data for variable " + symbolicName + " into segment [" + segment->toString() + "]", getId());
 
             IOUtils::addVariableToSegment(symbolicName, type, *segment);
-            const size_t countVector = IOUtils::createCountVector(dimCount, camCount, sizeL - 1, colCount);
-            IOUtils::readData(ncId, varId, symbolicName, *segment, dimCount, 0, &countVector, 0);
+            const size_t* countVector = IOUtils::createCountVector(dimCount, camCount, sizeL, colCount);
+            IOUtils::readData(ncId, varId, symbolicName, *segment, dimCount, 0, countVector, 0);
 
             endLine = sizeL - 1;
         } else {
             segment = &context.getSegment("SYN_COLLOCATED");
-            if( context.hasMaxLComputed(*segment, *this) ) {
+            if (context.hasMaxLComputed(*segment, *this)) {
                 modifySegmentBounds(context, *segment);
             }
 
             if (!segment->hasVariable(symbolicName)) {
-                nc_type type = addDimsAndTypeToVariable(ncId, varId, symbolicName, dict);
+                Variable& variable = dict.getVariable(symbolicName);
+                nc_type type = addTypeToVariable(ncId, varId, variable);
+                addDimsToVariable(variable, camCount, lineCount, colCount);
                 IOUtils::addVariableToSegment(symbolicName, type, *segment);
             }
 
@@ -99,20 +103,20 @@ void Reader::process(Context& context) {
             endLine = getDefaultEndL(startLine, grid);
             size_t lines = endLine - startLine + 1;
 
-            const size_t countVector = IOUtils::createCountVector(dimCount, camCount, lines, colCount);
+            const size_t* countVector = IOUtils::createCountVector(dimCount, camCount, lines, colCount);
             IOUtils::readData(ncId, varId, symbolicName, *segment,
-                    dimCount, startLine, &countVector, grid.getIndex(0, startLine, 0));
+                    dimCount, startLine, countVector, grid.getIndex(0, startLine, 0));
         }
     }
     context.setMaxLComputed(*segment, *this, endLine);
 }
 
-void Reader::modifySegmentBounds(const Context& context, Segment& segment) {
+void OlciGridReader::modifySegmentBounds(const Context& context, Segment& segment) {
     size_t minRequiredLine = context.getMinLRequired(segment, context.getMaxLComputed(segment, *this) + 1);
     segment.setStartL(minRequiredLine);
 }
 
-const int Reader::findFile(vector<string> fileNames, string& fileName) {
+const int OlciGridReader::findFile(vector<string> fileNames, string& fileName) {
     // get Variables from every file
     for (size_t i = 0; i < fileNames.size(); i++) {
         string currentFileName = fileNames[i];
@@ -129,13 +133,15 @@ const int Reader::findFile(vector<string> fileNames, string& fileName) {
     throw std::runtime_error("No file with name " + fileName + " found.");
 }
 
-const nc_type Reader::addDimsAndTypeToVariable(int ncId, int varId, string& symbolicName, Dictionary& dict) {
-    dict.getVariable(symbolicName).addDimension(new Dimension("N_CAM", 5));
-    dict.getVariable(symbolicName).addDimension(new Dimension("N_LINE_OLC", 60000));
-    dict.getVariable(symbolicName).addDimension(new Dimension("N_DET_CAM", 740));
-
+const nc_type OlciGridReader::addTypeToVariable(int ncId, int varId, Variable& variable) {
     nc_type type;
     nc_inq_vartype(ncId, varId, &type);
-    dict.getVariable(symbolicName).setType(type);
+    variable.setType(type);
     return type;
+}
+
+void OlciGridReader::addDimsToVariable(Variable& variable, size_t camCount, size_t lineCount, size_t colCount) {
+    variable.addDimension(new Dimension("N_CAM", camCount));
+    variable.addDimension(new Dimension("N_LINE_OLC", lineCount));
+    variable.addDimension(new Dimension("N_DET_CAM", colCount));
 }
