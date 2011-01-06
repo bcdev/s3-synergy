@@ -118,7 +118,7 @@ bool Context::isCompleted() const {
     for (size_t i = 0; i < moduleList.size(); i++) {
         for (size_t j = 0; j < segmentList.size(); j++) {
             size_t maxLComputed = getMaxLComputed(*(segmentList[j]), *(moduleList[i]));
-            if (maxLComputed != segmentList[j]->getGrid().getMaxL() - 1) {
+            if (maxLComputed != segmentList[j]->getGrid().getMaxL()) {
                 return false;
             }
         }
