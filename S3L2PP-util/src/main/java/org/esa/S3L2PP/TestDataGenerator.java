@@ -3,6 +3,7 @@ package org.esa.S3L2PP;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,22 +28,21 @@ public class TestDataGenerator {
                                                     "\t\t:netCDF_version = \"netCDF-4\" ;\n" +
                                                     "\t\t:Data_set_name = \"${CDL_File_Basename}.nc\" ;";
 
-    private static final String CDL_TARGET_DIR_DEFAULT = "testdata/cdl/dummy";
-    private static final String NC_TARGET_DIR_DEFAULT = "testdata/nc/dummy";
-    private static final String NCGEN_PATH_DEFAULT = "/usr/local/bin/ncgen";
+    private static final String NCGEN_PATH_DEFAULT = "/usr/bin/ncgen";
+    private static final String TARGET_DIR_DEFAULT = "testdata/dummy";
 
-    private static final File CDL_TARGET_DIR;
-    private static final File NC_TARGET_DIR;
-    private static final String NCGEN_PATH;
-
-    static {
-        CDL_TARGET_DIR = new File(System.getProperty("cdlDir", CDL_TARGET_DIR_DEFAULT));
-        NC_TARGET_DIR = new File(System.getProperty("ncDir", NC_TARGET_DIR_DEFAULT));
-        NCGEN_PATH = System.getProperty("ncgenPath", NCGEN_PATH_DEFAULT);
-    }
+    private static File targetDir;
+    private static String ncgenPath;
 
     public static void main(String[] args) {
         try {
+            final File propertiesFile = new File("testdata.properties");
+            if (propertiesFile.exists()) {
+                System.getProperties().load(new FileReader(propertiesFile));
+            }
+            targetDir = new File(System.getProperty("targetDir", TARGET_DIR_DEFAULT));
+            ncgenPath = System.getProperty("ncgenPath", NCGEN_PATH_DEFAULT);
+
             generateDummyOlciRadianceDatasets();
             generateDummySlstrRadianceDatasets();
             generateDataset("GEOLOCATION_REF");
@@ -104,7 +104,7 @@ public class TestDataGenerator {
 
     private static void generateDataset(Properties properties) throws Exception {
         final TemplateResolver resolver = new TemplateResolver(properties);
-        final File cdlFile = new File(CDL_TARGET_DIR, resolver.resolveProperty("CDL_File_Basename") + ".cdl");
+        final File cdlFile = new File(targetDir, resolver.resolveProperty("CDL_File_Basename") + ".cdl");
         BufferedReader reader = null;
         BufferedWriter writer = null;
         try {
@@ -141,8 +141,8 @@ public class TestDataGenerator {
     }
 
     private static void generateNcFile(File cdlFile) throws Exception {
-        final File ncFile = new File(NC_TARGET_DIR, cdlFile.getName().replace(".cdl", ".nc"));
-        final String command = NCGEN_PATH + " -k 3 -o " + ncFile.getPath() + " " + cdlFile.getPath();
+        final File ncFile = new File(targetDir, cdlFile.getName().replace(".cdl", ".nc"));
+        final String command = ncgenPath + " -k 3 -o " + ncFile.getPath() + " " + cdlFile.getPath();
         final Process process = Runtime.getRuntime().exec(command);
         if (process.waitFor() != 0) {
             throw new Exception(

@@ -6,6 +6,7 @@ Makefile
 auxdata/
 target/
 testdata/
+testdata.properties
 Makefile-S3L2PP.mk
 nbproject/
 .dep.inc
