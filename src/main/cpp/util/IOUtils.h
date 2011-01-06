@@ -304,26 +304,6 @@ public:
         }
     }
 
-    static void print(size_t camCount, Segment& segment, size_t startLine,
-            size_t endLine, Accessor& accessor) {
-
-        Grid& grid = segment.getGrid();
-        size_t lines = endLine - startLine + 1;
-        size_t valueCount = grid.getSizeK() * lines * grid.getSizeM();
-        short* valuesTemp = new short[valueCount];
-        for (size_t k = 0; k < camCount; k++) {
-            for (size_t l = startLine; l <= endLine; l++) {
-                for (size_t m = grid.getStartM(); m < grid.getSizeM(); m++) {
-                    size_t position = grid.getIndex(k, l, m);
-                    if (accessor.getUShort(position) != 0) {
-                        std::cout << accessor.getUShort(position) << "\n";
-                    }
-                }
-            }
-        }
-        delete[] valuesTemp;
-    }
-
 private:
 
     /**
@@ -358,9 +338,9 @@ private:
                 }
             }
         }
-        const int8_t values = *valuesTemp;
+        const int8_t* values = valuesTemp;
 
-        nc_put_vara_schar(ncId, varId, startVector, countVector, &values);
+        nc_put_vara_schar(ncId, varId, startVector, countVector, values);
         delete[] valuesTemp;
     }
 
@@ -396,9 +376,9 @@ private:
                 }
             }
         }
-        const uint8_t values = *valuesTemp;
+        const uint8_t* values = valuesTemp;
 
-        nc_put_vara_ubyte(ncId, varId, startVector, countVector, &values);
+        nc_put_vara_ubyte(ncId, varId, startVector, countVector, values);
         delete[] valuesTemp;
     }
 
@@ -434,9 +414,9 @@ private:
                 }
             }
         }
-        const int16_t values = *valuesTemp;
+        const int16_t* values = valuesTemp;
 
-        nc_put_vara_short(ncId, varId, startVector, countVector, &values);
+        nc_put_vara_short(ncId, varId, startVector, countVector, values);
         delete[] valuesTemp;
     }
 
@@ -510,9 +490,9 @@ private:
                 }
             }
         }
-        const int32_t values = *valuesTemp;
+        const int32_t* values = valuesTemp;
 
-        nc_put_vara_int(ncId, varId, startVector, countVector, &values);
+        nc_put_vara_int(ncId, varId, startVector, countVector, values);
         delete[] valuesTemp;
     }
 
@@ -548,9 +528,9 @@ private:
                 }
             }
         }
-        const uint32_t values = *valuesTemp;
+        const uint32_t* values = valuesTemp;
 
-        nc_put_vara_uint(ncId, varId, startVector, countVector, &values);
+        nc_put_vara_uint(ncId, varId, startVector, countVector, values);
         delete[] valuesTemp;
     }
 
@@ -586,9 +566,9 @@ private:
                 }
             }
         }
-        const int64_t values = *valuesTemp;
+        const int64_t* values = valuesTemp;
 
-        nc_put_vara_long(ncId, varId, startVector, countVector, &values);
+        nc_put_vara_long(ncId, varId, startVector, countVector, values);
         delete[] valuesTemp;
     }
 
@@ -625,9 +605,9 @@ private:
                 }
             }
         }
-        const int64_t values = *valuesTemp;
+        const int64_t* values = valuesTemp;
 
-        nc_put_vara_long(ncId, varId, startVector, countVector, &values);
+        nc_put_vara_long(ncId, varId, startVector, countVector, values);
         delete[] valuesTemp;
     }
 
@@ -663,9 +643,9 @@ private:
                 }
             }
         }
-        const float values = *valuesTemp;
+        const float* values = valuesTemp;
 
-        nc_put_vara_float(ncId, varId, startVector, countVector, &values);
+        nc_put_vara_float(ncId, varId, startVector, countVector, values);
         delete[] valuesTemp;
     }
 
@@ -701,9 +681,9 @@ private:
                 }
             }
         }
-        const double values = *valuesTemp;
+        const double* values = valuesTemp;
 
-        nc_put_vara_double(ncId, varId, startVector, countVector, &values);
+        nc_put_vara_double(ncId, varId, startVector, countVector, values);
         delete[] valuesTemp;
     }
 

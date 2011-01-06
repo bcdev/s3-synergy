@@ -42,7 +42,7 @@ void SynL2Writer::process(Context& context) {
         Logger::get()->progress("Writing variable " + symbolicName + " into "
                 "segment [" + segment.toString() + "]", getId());
 
-        string fileName = context.getDictionary()->getNcFileName(ncVariableName);
+        string fileName = context.getDictionary()->getNcFileNameForSymbolicName(symbolicName);
         fileName.append(".nc");
 
         const int ncId = getNcId(fileName);
@@ -78,6 +78,7 @@ void SynL2Writer::process(Context& context) {
 void SynL2Writer::start(Context& context) {
     // add symbolic names of all variables to be written
     variablesToWrite.push_back("L_1");
+    variablesToWrite.push_back("L_2");
     //    variablesToWrite.push_back("SYN_flags");
 }
 
