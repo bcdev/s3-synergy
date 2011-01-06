@@ -1,0 +1,32 @@
+netcdf ${CDL_File_Basename} {
+dimensions:
+	N_CHANNELS = 21 ;
+	N_DET_CAM = 740 ;
+	N_CAM = 5 ;
+variables:
+	float lambda0(N_CAM, N_CHANNELS, N_DET_CAM) ;
+		lambda0:long_name = "characterized_central_wavelength" ;
+		lambda0:standard_name = "TBD" ;
+		lambda0:units = "nm" ;
+		lambda0:valid_min = 390.f ;
+		lambda0:valid_max = 1040.f ;
+		lambda0:_FillValue = -1.f ;
+		lambda0:ancillary_variables = "FWHM" ;
+	float FWHM(N_CAM, N_CHANNELS, N_DET_CAM) ;
+		FWHM:long_name = "TBD" ;
+		FWHM:standard_name = "TBD" ;
+		FWHM:units = "nm" ;
+		FWHM:valid_min = 0.f ;
+		FWHM:valid_max = 650.f ;
+		FWHM:_FillValue = -1.f ;
+		FWHM:ancillary_variables = "lambda0" ;
+	float Solar_Flux(N_CAM, N_CHANNELS, N_DET_CAM) ;
+		Solar_Flux:long_name = "in_band_solar_irradiance" ;
+		Solar_Flux:units = "mW.m-1.nm-1" ;
+		Solar_Flux:valid_min = 500.f ;
+		Solar_Flux:valid_max = 2500.f ;
+		Solar_Flux:_FillValue = -1.f ;
+		Solar_Flux:ancillary_variables = "lambda0" ;
+
+${Global_Attributes}
+}

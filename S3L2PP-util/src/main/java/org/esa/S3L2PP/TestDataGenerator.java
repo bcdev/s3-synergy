@@ -53,6 +53,7 @@ public class TestDataGenerator {
             generateDataset("SUBS_ANNOT_METEO_OLC");
             generateDataset("SUBS_ANNOT_SLST_NAD");
             generateDataset("SUBS_ANNOT_SLST_ALT");
+            generateDataset("GEN_INFO_OLC");
         } catch (Exception e) {
             e.printStackTrace();
         }
