@@ -10,6 +10,5 @@ variables:
 		OLCI_time_stamps:valid_max = 2000000000000000L ;
 		OLCI_time_stamps:_FillValue = -1L ;
 
-// global attributes:
-        ${Common_Global_Attributes}
+${Global_Attributes}
 }

@@ -16,6 +16,5 @@ variables:
 		SLST_pointing_flags:flag_masks = 1UB, 2UB, 4UB, 8UB, 16UB, 32UB, 64UB, 128UB ;
 		SLST_pointing_flags:flag_meanings = "flip_mirror_absolute_error flip_mirror_integrated_error flip_mirror_RMS_error scan_mirror_absolute_error scan_mirror_integrated_error scan_mirror_RMS_error scan_time_error Platform_Mode" ;
 
-// global attributes:
-        ${Common_Global_Attributes}
+${Global_Attributes}
 }

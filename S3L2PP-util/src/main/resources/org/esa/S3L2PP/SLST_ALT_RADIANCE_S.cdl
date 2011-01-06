@@ -18,6 +18,5 @@ variables:
 		exception:flag_masks = 1UB, 2UB, 4UB, 8UB, 16UB, 32UB, 64UB, 128UB ;
 		exception:flag_meanings = "ISP_absent pixel_absent not_decompressed no_signal saturation invalid_radiance no_parameters unfilled_pixel" ;
 
-// global attributes:
-        ${Common_Global_Attributes}
+${Global_Attributes}
 }

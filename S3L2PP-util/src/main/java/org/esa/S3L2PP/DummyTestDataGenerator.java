@@ -15,16 +15,17 @@ import java.util.Properties;
  */
 public class DummyTestDataGenerator {
 
-    private static final String COMMON_GLOBAL_ATTRIBUTES = ":Conventions = \"CF-1.4\" ;\n" +
-                                                           "\t\t:title = \"SYN L1c dummy test data\" ;\n" +
-                                                           "\t\t:institution = \"Brockmann Consult GmbH\" ;\n" +
-                                                           "\t\t:source = \"Sentinel-3 SYN\" ;\n" +
-                                                           "\t\t:history = \"\" ;\n" +
-                                                           "\t\t:comment = \"\" ;\n" +
-                                                           "\t\t:references = \"S3-RS-TAF-SY-01247\" ;\n" +
-                                                           "\t\t:contact = \"info@brockmann-consult.de\" ;\n" +
-                                                           "\t\t:netCDF_version = \"netCDF-4\" ;\n" +
-                                                           "\t\t:Data_set_name = \"${CDL_File_Basename}.nc\" ;";
+    private static final String GLOBAL_ATTRIBUTES = "// global attributes:\n" +
+                                                    "\t\t:Conventions = \"CF-1.4\" ;\n" +
+                                                    "\t\t:title = \"SYN L1c dummy test data\" ;\n" +
+                                                    "\t\t:institution = \"Brockmann Consult GmbH\" ;\n" +
+                                                    "\t\t:source = \"Sentinel-3 SYN\" ;\n" +
+                                                    "\t\t:history = \"\" ;\n" +
+                                                    "\t\t:comment = \"\" ;\n" +
+                                                    "\t\t:references = \"S3-RS-TAF-SY-01247\" ;\n" +
+                                                    "\t\t:contact = \"info@brockmann-consult.de\" ;\n" +
+                                                    "\t\t:netCDF_version = \"netCDF-4\" ;\n" +
+                                                    "\t\t:Data_set_name = \"${CDL_File_Basename}.nc\" ;";
 
     private static final String CDL_TARGET_DIR_DEFAULT = "testdata/cdl/dummy";
     private static final String NC_TARGET_DIR_DEFAULT = "testdata/nc/dummy";
@@ -137,7 +138,7 @@ public class DummyTestDataGenerator {
 
     private static Properties createProperties() {
         final Properties properties = new Properties();
-        properties.setProperty("Common_Global_Attributes", COMMON_GLOBAL_ATTRIBUTES);
+        properties.setProperty("Global_Attributes", GLOBAL_ATTRIBUTES);
         properties.setProperty("CDL_File_Basename", "${Template_File_Basename}");
         return properties;
     }

@@ -37,6 +37,5 @@ variables:
 		OAA:valid_max = 180000000 ;
 		OAA:coordinates = "OLC_L1b_TP_Latitude OLC_L1b_TP_Longitude" ;
 
-// global attributes:
-        ${Common_Global_Attributes}
+${Global_Attributes}
 }

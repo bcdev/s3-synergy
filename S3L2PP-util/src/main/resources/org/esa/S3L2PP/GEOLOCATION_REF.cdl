@@ -20,6 +20,5 @@ variables:
 		Altitude:valid_min = -1000 ;
 		Altitude:valid_max = 9000 ;
 
-// global attributes:
-        ${Common_Global_Attributes}
+${Global_Attributes}
 }

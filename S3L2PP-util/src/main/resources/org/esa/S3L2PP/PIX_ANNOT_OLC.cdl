@@ -11,6 +11,5 @@ variables:
 		OLCI_QC_flags:flag_meanings = "land coastline fresh_inland_water tidal_region bright invalid cosmetic sun_glint_risk dubious saturated@Oa01 saturated@Oa02 saturated@Oa03 saturated@Oa04 saturated@Oa05 saturated@Oa06 saturated@Oa07 saturated@Oa08 saturated@Oa09 saturated@Oa10 saturated@Oa11 saturated@Oa12 saturated@Oa13 saturated@Oa14 saturated@Oa15 saturated@Oa16 saturated@Oa17 saturated@Oa18 saturated@Oa19 saturated@Oa20 saturated@Oa21" ;
 		OLCI_QC_flags:_FillValue = 67108864U ;
 
-// global attributes:
-        ${Common_Global_Attributes}
+${Global_Attributes}
 }

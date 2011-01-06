@@ -22,6 +22,5 @@ variables:
 		error_estimates:valid_max = 65535 ;
 		error_estimates:_FillValue = 0US ;
 
-// global attributes:
-        ${Common_Global_Attributes}
+${Global_Attributes}
 }
