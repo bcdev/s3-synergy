@@ -1,4 +1,4 @@
-netcdf SUBS_ANNOT_GEOM_OLC {
+netcdf ${CDL_File_Basename} {
 dimensions:
 	N_OLC_L1B_TP = 72226 ;
 variables:

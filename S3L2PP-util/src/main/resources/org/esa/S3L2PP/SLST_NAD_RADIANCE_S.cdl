@@ -1,4 +1,4 @@
-netcdf SLST_NAD_RADIANCE_S${i} {
+netcdf ${CDL_File_Basename} {
 dimensions:
 	N_SCAN_SLST_NAD_05km_L1C = 35200 ;
 	N_PIX_SLST_NAD_05km_L1C = 2200 ;

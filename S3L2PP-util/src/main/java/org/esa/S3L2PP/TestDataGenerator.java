@@ -13,7 +13,7 @@ import java.util.Properties;
 /**
  * Dummy test data generator.
  */
-public class DummyTestDataGenerator {
+public class TestDataGenerator {
 
     private static final String GLOBAL_ATTRIBUTES = "// global attributes:\n" +
                                                     "\t\t:Conventions = \"CF-1.4\" ;\n" +
@@ -50,6 +50,7 @@ public class DummyTestDataGenerator {
             generateDataset("PIX_ANNOT_OLC");
             generateDummySlstrFlagsDatasets();
             generateDataset("SUBS_ANNOT_GEOM_OLC");
+            generateDataset("SUBS_ANNOT_METEO_OLC");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -92,6 +93,15 @@ public class DummyTestDataGenerator {
         generateDataset(properties);
     }
 
+    private static void generateDatasets(int minChannel, int maxChannel, Properties properties) throws Exception {
+        properties.setProperty("CDL_File_Basename", "${Template_File_Basename}${i}");
+        for (int i = minChannel; i <= maxChannel; i++) {
+            properties.setProperty("i", String.format("%d", i));
+            properties.setProperty("ii", String.format("%02d", i));
+            generateDataset(properties);
+        }
+    }
+
     private static void generateDataset(Properties properties) throws Exception {
         final TemplateResolver resolver = new TemplateResolver(properties);
         final File cdlFile = new File(CDL_TARGET_DIR, resolver.resolveProperty("CDL_File_Basename") + ".cdl");
@@ -99,7 +109,7 @@ public class DummyTestDataGenerator {
         BufferedWriter writer = null;
         try {
             final String templateName = resolver.resolveProperty("Template_File_Basename");
-            final InputStream is = DummyTestDataGenerator.class.getResourceAsStream(templateName + ".cdl");
+            final InputStream is = TestDataGenerator.class.getResourceAsStream(templateName + ".cdl");
             reader = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
             writer = new BufferedWriter(new FileWriter(cdlFile));
             String line = reader.readLine();
@@ -121,19 +131,6 @@ public class DummyTestDataGenerator {
             }
         }
         generateNcFile(cdlFile);
-    }
-
-    private static void generateDatasets(int first, int last, Properties properties) throws Exception {
-        properties.setProperty("CDL_File_Basename", "${Template_File_Basename}${i}");
-        for (int i = first; i <= last; i++) {
-            properties.setProperty("i", String.valueOf(i));
-            if (i < 10) {
-                properties.setProperty("ii", "0${i}");
-            } else {
-                properties.setProperty("ii", "${i}");
-            }
-            generateDataset(properties);
-        }
     }
 
     private static Properties createProperties() {

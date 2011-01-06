@@ -1,4 +1,4 @@
-netcdf TIME_STAMP_OLC {
+netcdf ${CDL_File_Basename} {
 dimensions:
 	N_LINE_OLC = 60000 ;
 variables:
