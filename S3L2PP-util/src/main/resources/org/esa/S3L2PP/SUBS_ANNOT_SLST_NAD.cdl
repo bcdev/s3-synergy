@@ -1,0 +1,24 @@
+netcdf ${CDL_File_Basename} {
+dimensions:
+	N_SLST_L1B_TP = 36000 ;
+variables:
+	double SLST_L1b_TP_Latitude(N_SLST_L1B_TP) ;
+		SLST_L1b_TP_Latitude:long_name = "geodetic_latitude_at_tie_points" ;
+		SLST_L1b_TP_Latitude:standard_name = "latitude" ;
+		SLST_L1b_TP_Latitude:units = "degrees_north" ;
+	double SLST_L1b_TP_Longitude(N_SLST_L1B_TP) ;
+		SLST_L1b_TP_Longitude:long_name = "geodetic_longitude_at_tie_points" ;
+		SLST_L1b_TP_Longitude:standard_name = "longitude" ;
+		SLST_L1b_TP_Longitude:units = "degrees_east" ;
+	float OZA(N_SLST_L1B_TP) ;
+		OZA:long_name = "observation_zenith_angle_at_tie_points" ;
+		OZA:units = "degree" ;
+	float OAA(N_SLST_L1B_TP) ;
+		OAA:long_name = "observation_azimuth_angle_at_tie_points" ;
+		OAA:units = "degree" ;
+	float sat_path(N_SLST_L1B_TP) ;
+		OAA:long_name = "" ;
+		OAA:units = "metre" ;
+
+${Global_Attributes}
+}

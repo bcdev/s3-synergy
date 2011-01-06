@@ -51,6 +51,8 @@ public class TestDataGenerator {
             generateDummySlstrFlagsDatasets();
             generateDataset("SUBS_ANNOT_GEOM_OLC");
             generateDataset("SUBS_ANNOT_METEO_OLC");
+            generateDataset("SUBS_ANNOT_SLST_NAD");
+            generateDataset("SUBS_ANNOT_SLST_ALT");
         } catch (Exception e) {
             e.printStackTrace();
         }
