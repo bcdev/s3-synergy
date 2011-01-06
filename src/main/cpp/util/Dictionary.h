@@ -92,7 +92,6 @@ public:
 
 private:
     string filePath;
-    vector<string> getFiles(string& directory);
     void parseVariablesFile(string& variableDefPath, string& file);
     vector<Attribute*> parseAttributes(string& file, string& variableName);
 

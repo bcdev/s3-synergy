@@ -21,6 +21,7 @@
 #ifndef IOUTILS_H
 #define	IOUTILS_H
 
+#include <boost/filesystem.hpp>
 #include <iostream>
 #include <netcdf.h>
 #include <vector>
@@ -28,6 +29,9 @@
 #include "Variable.h"
 #include "../core/Segment.h"
 
+using boost::filesystem::is_directory;
+using boost::filesystem::directory_iterator;
+using boost::filesystem::path;
 using std::vector;
 
 class IOUtils {
@@ -158,7 +162,7 @@ public:
                 throw std::invalid_argument("Variable " + symbolicName + " has invalid type.");
             }
         }
-        
+
         delete[] startVector;
     }
 
@@ -304,6 +308,20 @@ public:
                 throw std::invalid_argument("Variable " + symbolicName + " has invalid type.");
             }
         }
+    }
+
+    static vector<string> getFiles(string& directory) {
+        vector<string> files;
+        if (is_directory(directory)) {
+            for (directory_iterator iter(directory); iter != directory_iterator(); ++iter) {
+                path file = iter->path();
+                if (!is_directory(file)) {
+                    files.push_back(file.filename());
+                }
+            }
+        }
+
+        return files;
     }
 
 private:
@@ -691,4 +709,3 @@ private:
 
 };
 #endif	/* IOUTILS_H */
-

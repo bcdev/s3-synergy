@@ -18,18 +18,13 @@
  * Created on December 21, 2010, 1:55 PM
  */
 
-#include <iostream>
-#include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include <stdexcept>
 #include <boost/algorithm/string/predicate.hpp>
 
 #include "Dictionary.h"
 #include "VariableImpl.h"
-
-using boost::filesystem::is_directory;
-using boost::filesystem::directory_iterator;
-using boost::filesystem::path;
+#include "IOUtils.h"
 
 Dictionary::Dictionary(string config) : configFile(config) {
 //    parse();
@@ -46,11 +41,11 @@ void Dictionary::parse() {
     string L1CPath = variableDefPath + "/L1C";
     string L2SynPath = variableDefPath + "/L2_SYN";
 
-    vector<string> L1CFiles = getFiles(L1CPath);
+    vector<string> L1CFiles = IOUtils::getFiles(L1CPath);
     for (size_t i = 0; i < L1CFiles.size(); i++) {
         parseVariablesFile(L1CPath, L1CFiles[i]);
     }
-    vector<string> L2SynFiles = getFiles(L2SynPath);
+    vector<string> L2SynFiles = IOUtils::getFiles(L2SynPath);
     for (size_t i = 0; i < L2SynFiles.size(); i++) {
         parseVariablesFile(L2SynPath, L2SynFiles[i]);
     }
@@ -90,20 +85,6 @@ const string Dictionary::getNcFileNameForSymbolicName(const string& symbolicName
 
 string Dictionary::getNcVarName(const string& symbolicName) {
     return getVariable(symbolicName).getNcName();
-}
-
-vector<string> Dictionary::getFiles(string& directory) {
-    vector<string> files;
-    if (is_directory(directory)) {
-        for (directory_iterator iter(directory); iter != directory_iterator(); ++iter) {
-            path file = iter->path();
-            if (!is_directory(file)) {
-                files.push_back(file.filename());
-            }
-        }
-    }
-
-    return files;
 }
 
 void Dictionary::parseVariablesFile(string& variableDefPath, string& file) {

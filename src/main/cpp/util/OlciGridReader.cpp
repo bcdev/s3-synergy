@@ -33,7 +33,7 @@ void OlciGridReader::process(Context& context) {
 
     Dictionary& dict = *(context.getDictionary());
     string processorId = "SYL2";
-    vector<string> fileNames = context.getJobOrder()->getProcessorConfiguration(processorId).getInputList()[0]->getFileNames();
+    string sourceDir = context.getJobOrder()->getProcessorConfiguration(processorId).getInputList()[0]->getFileNames()[0];
     const vector<string>& variablesToRead = OlciGridReaderConstants::getVariablesToRead();
 
     Segment* segment;
@@ -45,7 +45,7 @@ void OlciGridReader::process(Context& context) {
         string ncVariableName = dict.getNcVarName(symbolicName);
         string fileName = dict.getNcFileNameForSymbolicName(symbolicName);
 
-        int ncId = findFile(fileNames, fileName);
+        int ncId = findFile(sourceDir, fileName);
 
         // getting the netCDF-variable-id
         int varId;
@@ -116,12 +116,14 @@ void OlciGridReader::modifySegmentBounds(const Context& context, Segment& segmen
     segment.setStartL(minRequiredLine);
 }
 
-const int OlciGridReader::findFile(vector<string> fileNames, string& fileName) {
+const int OlciGridReader::findFile(string& sourceDir, string& fileName) {
+    vector<string> fileNames = IOUtils::getFiles(sourceDir);
+
     // get Variables from every file
     for (size_t i = 0; i < fileNames.size(); i++) {
-        string currentFileName = fileNames[i];
-        if (boost::ends_with(currentFileName, fileName) ||
-                boost::ends_with(currentFileName, fileName + ".nc")) {
+        string currentFileName = sourceDir + "/" + fileNames[i];
+        if (boost::ends_with(currentFileName, fileName) + ".nc" ||
+                boost::ends_with(currentFileName, fileName)) {
             int ncId;
             if (nc_open(currentFileName.c_str(), NC_NOWRITE, &ncId) != NC_NOERR) {
                 throw std::runtime_error("Unable to open netCDF-file " + currentFileName + ".");
