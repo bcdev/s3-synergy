@@ -19,4 +19,5 @@ variables:
 		exception:flag_meanings = "ISP_absent pixel_absent not_decompressed no_signal saturation invalid_radiance no_parameters unfilled_pixel" ;
 
 ${Global_Attributes}
+        :sub_band = "${Sub_Band}" ;
 }

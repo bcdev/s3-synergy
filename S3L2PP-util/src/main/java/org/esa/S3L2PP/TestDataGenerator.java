@@ -28,6 +28,10 @@ public class TestDataGenerator {
                                                     "\t\t:netCDF_version = \"netCDF-4\" ;\n" +
                                                     "\t\t:Data_set_name = \"${CDL_File_Basename}.nc\" ;";
 
+    private static final String SUB_BAND_A = "A";
+    private static final String SUB_BAND_B = "B";
+    private static final String SUB_BAND_TDI = "A+B";
+
     private static final String NCGEN_PATH_DEFAULT = "/usr/bin/ncgen";
     private static final String TARGET_DIR_DEFAULT = "testdata/dummy";
 
@@ -60,6 +64,8 @@ public class TestDataGenerator {
             generateDatasets("MISREGIST_OLC_Oref_O", 1, 16);
             generateDatasets("MISREGIST_OLC_Oref_O", 18, 21);
             generateDatasets("MISREGIST_SLST_NAD_Oref_S", 1, 6);
+            generateDatasets("MISREGIST_SLST_NAD_Oref_S", 1, 6);
+            generateSlstrCollocationDatasets();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -68,16 +74,14 @@ public class TestDataGenerator {
     private static void generateSlstrFlagsDatasets() throws Exception {
         final Properties properties = createProperties();
         properties.setProperty("Template_File_Basename", "PIX_ANNOT_SLST_NAD");
-        properties.setProperty("CDL_File_Basename", "${Template_File_Basename}_${A_or_TDI}");
-        properties.setProperty("A_or_TDI", "A");
+        properties.setProperty("CDL_File_Basename", "${Template_File_Basename}_${Sub_Band}");
         generateDataset(properties);
-        properties.setProperty("A_or_TDI", "TDI");
-        generateDataset(properties);
+    }
 
-        properties.setProperty("Template_File_Basename", "PIX_ANNOT_SLST_ALT");
-        properties.setProperty("A_or_TDI", "A");
-        generateDataset(properties);
-        properties.setProperty("A_or_TDI", "TDI");
+    private static void generateSlstrCollocationDatasets() throws Exception {
+        final Properties properties = createProperties();
+        properties.setProperty("Template_File_Basename", "COLLOC_SLST_ALT");
+        properties.setProperty("CDL_File_Basename", "${Template_File_Basename}_${Sub_Band}");
         generateDataset(properties);
     }
 
@@ -132,6 +136,7 @@ public class TestDataGenerator {
     private static Properties createProperties() {
         final Properties properties = new Properties();
         properties.setProperty("Global_Attributes", GLOBAL_ATTRIBUTES);
+        properties.setProperty("Sub_Band", SUB_BAND_A);
         properties.setProperty("CDL_File_Basename", "${Template_File_Basename}");
         return properties;
     }

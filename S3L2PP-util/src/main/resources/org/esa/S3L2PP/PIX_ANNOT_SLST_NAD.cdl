@@ -17,4 +17,5 @@ variables:
 		SLST_pointing_flags:flag_meanings = "flip_mirror_absolute_error flip_mirror_integrated_error flip_mirror_RMS_error scan_mirror_absolute_error scan_mirror_integrated_error scan_mirror_RMS_error scan_time_error Platform_Mode" ;
 
 ${Global_Attributes}
+        :sub_band = "${Sub_Band}" ;
 }
