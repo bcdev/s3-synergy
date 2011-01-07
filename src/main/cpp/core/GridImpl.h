@@ -39,7 +39,8 @@ public:
 
     void setStartL(size_t l) {
         if (l + sizeL - 1 > maxL) {
-            l = maxL - sizeL + 1;
+            sizeL = maxL - l + 1;
+            this->strideK = sizeM * sizeL;
         }
         this->startL = l;
     }

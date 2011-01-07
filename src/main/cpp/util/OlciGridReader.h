@@ -8,10 +8,13 @@
 #ifndef READER_H
 #define	READER_H
 
+#include <map>
 #include <netcdf.h>
 
 #include "../core/Context.h"
 #include "../core/DefaultModule.h"
+
+using std::map;
 
 class OlciGridReader : public DefaultModule {
 public:
@@ -24,6 +27,7 @@ private:
     const int findFile(string& sourceDir, string& fileName);
     const nc_type addTypeToVariable(int ncId, int varId, Variable& variable);
     void addDimsToVariable(Variable& variable, size_t camCount, size_t lineCount, size_t colCount);
+    map<string, int> openedFiles;
     const size_t stepSize;
 };
 

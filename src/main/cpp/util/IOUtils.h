@@ -37,12 +37,18 @@ using std::vector;
 class IOUtils {
 public:
 
-    static int* createNcDims(int ncId, vector<Dimension*> dims) {
+    static int* getNcDims(int ncId, vector<Dimension*> dims) {
         int* ncDims = new int[dims.size()];
         for (size_t i = 0; i < dims.size(); i++) {
-            int currentDimId;
-            nc_def_dim(ncId, dims[i]->getName().c_str(), dims[i]->getRange(), &currentDimId);
-            ncDims[i] = currentDimId;
+            int dimId;
+            int status = nc_inq_dimid(ncId, dims[i]->getName().c_str(), &dimId);
+            if( status != NC_NOERR ) {
+                int currentDimId;
+                nc_def_dim(ncId, dims[i]->getName().c_str(), dims[i]->getRange(), &currentDimId);
+                ncDims[i] = currentDimId;
+            } else {
+                ncDims[i] = dimId;
+            }
         }
         return ncDims;
     }
@@ -468,10 +474,13 @@ private:
             for (size_t l = startLine; l <= endLine; l++) {
                 for (size_t m = grid.getStartM(); m < grid.getSizeM(); m++) {
                     size_t position = grid.getIndex(k, l, m);
-                    valuesTemp[position] = accessor.getUShort(position);
+                    std::cout << position << "  ";
+                    uint16_t value = accessor.getUShort(position);
+                    valuesTemp[position] = value;
                 }
             }
         }
+        std::cout << "\n";
         const uint16_t* values = valuesTemp;
 
         nc_put_vara_ushort(ncId, varId, startVector, countVector, values);

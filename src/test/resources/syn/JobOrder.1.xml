@@ -51,7 +51,7 @@
 					<File_Type>S3L1C</File_Type>
 					<File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
 					<List_of_File_Names count="18">
-						<File_Name>/mnt/hgfs/S3L2PP/testdata/nc</File_Name>
+						<File_Name>/mnt/hgfs/S3L2PP/testdata/dummy</File_Name>
 <!--						<File_Name>Input_1.safe</File_Name> -->
 					</List_of_File_Names>
 				</Input>

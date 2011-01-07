@@ -58,9 +58,13 @@ const string OlciGridReaderConstants::L_29 = "L_29";
 const string OlciGridReaderConstants::L_30 = "L_30";
 
 const vector<string> OlciGridReaderConstants::getVariablesToRead() {
+    /*
+        Important note:
+            The first variable to be added here defines the OLCI-grid!
+     */
     vector<string> varsToRead;
     varsToRead.push_back(L_1);
-    varsToRead.push_back(L_2);
+//    varsToRead.push_back(L_2);
 //    varsToRead.push_back(L_3);
 //    varsToRead.push_back(L_4);
 //    varsToRead.push_back(L_5);

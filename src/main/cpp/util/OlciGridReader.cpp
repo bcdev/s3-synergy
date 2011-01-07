@@ -8,10 +8,10 @@
 #include <algorithm>
 #include <boost/algorithm/string/predicate.hpp>
 #include <iostream>
-#include <valarray>
-#include <stdexcept>
 #include <netcdf.h>
 #include <stddef.h>
+#include <stdexcept>
+#include <valarray>
 
 #include "JobOrder.h"
 #include "Logger.h"
@@ -22,7 +22,7 @@
 using std::min;
 using std::max;
 
-OlciGridReader::OlciGridReader() : DefaultModule("READ"), stepSize(5000) {
+OlciGridReader::OlciGridReader() : DefaultModule("READ"), stepSize(2000) {
 }
 
 OlciGridReader::~OlciGridReader() {
@@ -63,13 +63,21 @@ void OlciGridReader::process(Context& context) {
         size_t camCount = 1;
         size_t lineCount = 1;
         size_t colCount = 1;
-        nc_inq_dimlen(ncId, dimensionIds[0], &camCount);
-        nc_inq_dimlen(ncId, dimensionIds[1], &lineCount);
-        nc_inq_dimlen(ncId, dimensionIds[2], &colCount);
+
+        if (dimCount == 3) {
+            nc_inq_dimlen(ncId, dimensionIds[0], &camCount);
+            nc_inq_dimlen(ncId, dimensionIds[1], &lineCount);
+            nc_inq_dimlen(ncId, dimensionIds[2], &colCount);
+        } else if (dimCount == 2) {
+            nc_inq_dimlen(ncId, dimensionIds[0], &lineCount);
+            nc_inq_dimlen(ncId, dimensionIds[1], &colCount);
+        } else if (dimCount == 1) {
+            nc_inq_dimlen(ncId, dimensionIds[0], &lineCount);
+        }
 
         if (!context.hasSegment("SYN_COLLOCATED")) {
-            size_t sizeL = min(stepSize, lineCount);
             // initial reading
+            size_t sizeL = min(stepSize, lineCount);
 
             Variable& variable = dict.getVariable(symbolicName);
             nc_type type = addTypeToVariable(ncId, varId, variable);
@@ -98,14 +106,16 @@ void OlciGridReader::process(Context& context) {
 
             // modifying segment values
             Grid& grid = segment->getGrid();
-            Logger::get()->progress("Reading data for variable " + symbolicName + " into segment [" + segment->toString() + "]", getId());
             size_t startLine = getStartL(context, *segment);
             endLine = getDefaultEndL(startLine, grid);
             size_t lines = endLine - startLine + 1;
 
             const size_t* countVector = IOUtils::createCountVector(dimCount, camCount, lines, colCount);
+            size_t index = grid.getIndex(0, startLine, 0);
+
+            Logger::get()->progress("Reading data for variable " + symbolicName + " into segment [" + segment->toString() + "]", getId());
             IOUtils::readData(ncId, varId, symbolicName, *segment,
-                    dimCount, startLine, countVector, grid.getIndex(0, startLine, 0));
+                    dimCount, startLine, countVector, 0);
         }
     }
     context.setMaxLComputed(*segment, *this, endLine);
@@ -119,16 +129,22 @@ void OlciGridReader::modifySegmentBounds(const Context& context, Segment& segmen
 const int OlciGridReader::findFile(string& sourceDir, string& fileName) {
     vector<string> fileNames = IOUtils::getFiles(sourceDir);
 
-    // get Variables from every file
+    if( openedFiles.find(fileName) != openedFiles.end() ) {
+        return openedFiles[fileName];
+    }
+
     for (size_t i = 0; i < fileNames.size(); i++) {
         string currentFileName = sourceDir + "/" + fileNames[i];
-        if (boost::ends_with(currentFileName, fileName) + ".nc" ||
-                boost::ends_with(currentFileName, fileName)) {
-            int ncId;
-            if (nc_open(currentFileName.c_str(), NC_NOWRITE, &ncId) != NC_NOERR) {
-                throw std::runtime_error("Unable to open netCDF-file " + currentFileName + ".");
-            } else {
-                return ncId;
+        if (boost::ends_with(currentFileName, ".nc")) {
+            if (boost::ends_with(currentFileName, fileName + ".nc") ||
+                    boost::ends_with(currentFileName, fileName)) {
+                int ncId;
+                if (nc_open(currentFileName.c_str(), NC_NOWRITE, &ncId) != NC_NOERR) {
+                    throw std::runtime_error("Unable to open netCDF-file " + currentFileName + ".");
+                } else {
+                    openedFiles[fileName] = ncId;
+                    return ncId;
+                }
             }
         }
     }

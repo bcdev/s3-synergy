@@ -5,10 +5,11 @@
  * Created on November 17, 2010, 3:40 PM
  */
 
+#include <algorithm>
 #include <boost/algorithm/string/predicate.hpp>
+#include <netcdf.h>
 #include <stdexcept>
 #include <set>
-#include <netcdf.h>
 
 #include "../core/Context.h"
 #include "IOUtils.h"
@@ -16,6 +17,7 @@
 #include "SynL2Writer.h"
 
 using std::invalid_argument;
+using std::min;
 
 SynL2Writer::SynL2Writer() : DefaultModule("SYN_L2_WRITER") {
 }
@@ -46,10 +48,10 @@ void SynL2Writer::process(Context& context) {
         fileName.append(".nc");
 
         const int ncId = getNcId(fileName);
-        vector<Dimension*> varDimensions = variable.getDimensions();
-        int* dimensionIds = IOUtils::createNcDims(ncId, varDimensions);
 
+        vector<Dimension*> varDimensions = variable.getDimensions();
         size_t dimCount = varDimensions.size();
+        int* dimensionIds = IOUtils::getNcDims(ncId, varDimensions);
 
         int varId;
         int status = nc_inq_varid(ncId, ncVariableName.c_str(), &varId);
@@ -62,12 +64,11 @@ void SynL2Writer::process(Context& context) {
 
         // getting the dimension sizes
         size_t camCount = 1;
-        size_t lineCount = 1;
         size_t colCount = 1;
         nc_inq_dimlen(ncId, dimensionIds[0], &camCount);
-        nc_inq_dimlen(ncId, dimensionIds[1], &lineCount);
         nc_inq_dimlen(ncId, dimensionIds[2], &colCount);
 
+        size_t lineCount = min(grid.getMaxL() - grid.getStartL() + 1, grid.getSizeL());
         Accessor& accessor = segment.getAccessor(symbolicName);
         IOUtils::write(ncId, varId, variable.getType(), dimCount, camCount, lineCount, colCount, segment, startLine, endLine, accessor);
         nc_close(ncId);
@@ -76,9 +77,8 @@ void SynL2Writer::process(Context& context) {
 }
 
 void SynL2Writer::start(Context& context) {
-    // add symbolic names of all variables to be written
+    // add symbolic names of all variables to be written, e.g. do:
     variablesToWrite.push_back("L_1");
-//    variablesToWrite.push_back("L_2");
     //    variablesToWrite.push_back("SYN_flags");
 }
 
