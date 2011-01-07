@@ -11,5 +11,4 @@ Makefile-S3L2PP.mk
 nbproject/
 .dep.inc
 LOG.*
-src/test/resources/syn/SY_1_SYN/*.nc
 doc/html/

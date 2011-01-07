@@ -18,6 +18,9 @@
  * Created on January 6, 2011, 12:14 PM
  */
 
+#include <netcdf.h>
+#include <string>
+
 #include "../../../main/cpp/util/IOUtils.h"
 #include "../../../main/cpp/core/SegmentImpl.h"
 #include "IOUtilsTest.h"
@@ -35,6 +38,47 @@ void IOUtilsTest::setUp() {
 }
 
 void IOUtilsTest::tearDown() {
+
+}
+
+void IOUtilsTest::testReadData() {
+
+    string fileName = "/mnt/hgfs/S3L2PP/src/test/resources/syn/SY_1_SYN/OLC_RADIANCE_O1.nc";
+    int ncId;
+    nc_open(fileName.c_str(), NC_NOWRITE, &ncId);
+
+    string varName = "TOA_Radiance_Meas";
+    int varId;
+    nc_inq_varid(ncId, varName.c_str(), &varId);
+
+    Segment* segment = new SegmentImpl("SiggiSegment", 2, 2, 4, 0, 4);
+
+    string symbolicName = "SymbolicVarName";
+    size_t dimCount = 3;
+    size_t startLine = 0;
+    const size_t* count = IOUtils::createCountVector(dimCount, 4, 2, 2);
+    CPPUNIT_ASSERT_THROW(IOUtils::readData(ncId, varId, symbolicName, *segment, dimCount, startLine, count), std::invalid_argument);
+
+    segment->addVariableUShort(symbolicName);
+    CPPUNIT_ASSERT_NO_THROW(IOUtils::readData(ncId, varId, symbolicName, *segment, dimCount, startLine, count));
+
+    valarray<uint16_t>& readData = segment->getAccessor(symbolicName).getUShortData();
+    
+    Grid& grid = segment->getGrid();
+    int index = grid.getIndex(0, 0, 0);
+    CPPUNIT_ASSERT(readData[index] == 1);
+
+    index = grid.getIndex(1, 0, 0);
+    CPPUNIT_ASSERT(readData[index] == 11);
+
+    index = grid.getIndex(0, 1, 1);
+    CPPUNIT_ASSERT(readData[index] == 4);
+
+    index = grid.getIndex(1, 1, 0);
+    CPPUNIT_ASSERT(readData[index] == 13);
+
+    index = grid.getIndex(3, 1, 1);
+    CPPUNIT_ASSERT(readData[index] == 34);
 
 }
 
