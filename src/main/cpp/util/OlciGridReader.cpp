@@ -88,7 +88,7 @@ void OlciGridReader::process(Context& context) {
 
             IOUtils::addVariableToSegment(symbolicName, type, *segment);
             const size_t* countVector = IOUtils::createCountVector(dimCount, camCount, sizeL, colCount);
-            IOUtils::readData(ncId, varId, symbolicName, *segment, dimCount, 0, countVector, 0);
+            IOUtils::readData(ncId, varId, symbolicName, *segment, dimCount, 0, countVector);
 
             endLine = sizeL - 1;
         } else {
@@ -111,11 +111,10 @@ void OlciGridReader::process(Context& context) {
             size_t lines = endLine - startLine + 1;
 
             const size_t* countVector = IOUtils::createCountVector(dimCount, camCount, lines, colCount);
-            size_t index = grid.getIndex(0, startLine, 0);
 
             Logger::get()->progress("Reading data for variable " + symbolicName + " into segment [" + segment->toString() + "]", getId());
-            IOUtils::readData(ncId, varId, symbolicName, *segment,
-                    dimCount, startLine, countVector, 0);
+            IOUtils::readData(ncId, varId, symbolicName, *segment, dimCount,
+                    startLine, countVector);
         }
     }
     context.setMaxLComputed(*segment, *this, endLine);
