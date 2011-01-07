@@ -474,13 +474,10 @@ private:
             for (size_t l = startLine; l <= endLine; l++) {
                 for (size_t m = grid.getStartM(); m < grid.getSizeM(); m++) {
                     size_t position = grid.getIndex(k, l, m);
-                    std::cout << position << "  ";
-                    uint16_t value = accessor.getUShort(position);
-                    valuesTemp[position] = value;
+                    valuesTemp[position] = accessor.getUShort(position);
                 }
             }
         }
-        std::cout << "\n";
         const uint16_t* values = valuesTemp;
 
         nc_put_vara_ushort(ncId, varId, startVector, countVector, values);
