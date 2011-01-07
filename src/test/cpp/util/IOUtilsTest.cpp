@@ -41,17 +41,17 @@ void IOUtilsTest::tearDown() {
 
 }
 
-void IOUtilsTest::testReadData() {
+void IOUtilsTest::testReadOlciDataPart() {
 
     string fileName = "/mnt/hgfs/S3L2PP/src/test/resources/syn/SY_1_SYN/OLC_RADIANCE_O1.nc";
     int ncId;
-    nc_open(fileName.c_str(), NC_NOWRITE, &ncId);
+    CPPUNIT_ASSERT(nc_open(fileName.c_str(), NC_NOWRITE, &ncId) == NC_NOERR);
 
     string varName = "TOA_Radiance_Meas";
     int varId;
-    nc_inq_varid(ncId, varName.c_str(), &varId);
+    CPPUNIT_ASSERT(nc_inq_varid(ncId, varName.c_str(), &varId) == NC_NOERR);
 
-    Segment* segment = new SegmentImpl("SiggiSegment", 2, 2, 4, 0, 4);
+    Segment* segment = new SegmentImpl("SiggiDasSegment", 2, 2, 4, 0, 4);
 
     string symbolicName = "SymbolicVarName";
     size_t dimCount = 3;
@@ -63,7 +63,7 @@ void IOUtilsTest::testReadData() {
     CPPUNIT_ASSERT_NO_THROW(IOUtils::readData(ncId, varId, symbolicName, *segment, dimCount, startLine, count));
 
     valarray<uint16_t>& readData = segment->getAccessor(symbolicName).getUShortData();
-    
+
     Grid& grid = segment->getGrid();
     int index = grid.getIndex(0, 0, 0);
     CPPUNIT_ASSERT(readData[index] == 1);
@@ -80,6 +80,148 @@ void IOUtilsTest::testReadData() {
     index = grid.getIndex(3, 1, 1);
     CPPUNIT_ASSERT(readData[index] == 34);
 
+    CPPUNIT_ASSERT_THROW(index = grid.getIndex(0, 4, 0), std::out_of_range);
+
+    CPPUNIT_ASSERT_THROW(index = grid.getIndex(3, 4, 1), std::out_of_range);
+}
+
+void IOUtilsTest::testReadSlstrDataPart() {
+
+    string fileName = "/mnt/hgfs/S3L2PP/src/test/resources/syn/SY_1_SYN/SLST_ALT_RADIANCE_S1.nc";
+    int ncId;
+    CPPUNIT_ASSERT(nc_open(fileName.c_str(), NC_NOWRITE, &ncId) == NC_NOERR);
+
+    string varName = "TOA_Radiance_Meas";
+    int varId;
+    CPPUNIT_ASSERT(nc_inq_varid(ncId, varName.c_str(), &varId) == NC_NOERR);
+
+    Segment* segment = new SegmentImpl("SiggiDasSegment", 4, 4, 1, 0, 9);
+
+    string symbolicName = "SymbolicVarName";
+    size_t dimCount = 2;
+    size_t startLine = 0;
+    const size_t* count = IOUtils::createCountVector(dimCount, 1, 4, 4);
+    CPPUNIT_ASSERT_THROW(IOUtils::readData(ncId, varId, symbolicName, *segment, dimCount, startLine, count), std::invalid_argument);
+
+    segment->addVariableShort(symbolicName);
+    CPPUNIT_ASSERT_NO_THROW(IOUtils::readData(ncId, varId, symbolicName, *segment, dimCount, startLine, count));
+
+    valarray<int16_t>& readData = segment->getAccessor(symbolicName).getShortData();
+
+    Grid& grid = segment->getGrid();
+    int index = grid.getIndex(0, 0, 0);
+    CPPUNIT_ASSERT(readData[index] == 1);
+
+    index = grid.getIndex(0, 1, 0);
+    CPPUNIT_ASSERT(readData[index] == 5);
+
+    index = grid.getIndex(0, 0, 3);
+    CPPUNIT_ASSERT(readData[index] == 4);
+
+    index = grid.getIndex(0, 2, 2);
+    CPPUNIT_ASSERT(readData[index] == 11);
+
+    index = grid.getIndex(0, 3, 3);
+    CPPUNIT_ASSERT(readData[index] == 16);
+
+    CPPUNIT_ASSERT_THROW(index = grid.getIndex(0, 4, 0), std::out_of_range);
+
+    CPPUNIT_ASSERT_THROW(index = grid.getIndex(0, 4, 1), std::out_of_range);
+}
+
+void IOUtilsTest::testReadOlciDataFull() {
+
+    string fileName = "/mnt/hgfs/S3L2PP/src/test/resources/syn/SY_1_SYN/OLC_RADIANCE_O1.nc";
+    int ncId;
+    CPPUNIT_ASSERT(nc_open(fileName.c_str(), NC_NOWRITE, &ncId) == NC_NOERR);
+
+    string varName = "TOA_Radiance_Meas";
+    int varId;
+    CPPUNIT_ASSERT(nc_inq_varid(ncId, varName.c_str(), &varId) == NC_NOERR);
+
+    Segment* segment = new SegmentImpl("SiggiDasSegment", 5, 2, 4, 0, 4);
+
+    string symbolicName = "SymbolicVarName";
+    size_t dimCount = 3;
+    size_t startLine = 0;
+    const size_t* count = IOUtils::createCountVector(dimCount, 4, 5, 2);
+    CPPUNIT_ASSERT_THROW(IOUtils::readData(ncId, varId, symbolicName, *segment, dimCount, startLine, count), std::invalid_argument);
+
+    segment->addVariableUShort(symbolicName);
+    CPPUNIT_ASSERT_NO_THROW(IOUtils::readData(ncId, varId, symbolicName, *segment, dimCount, startLine, count));
+
+    valarray<uint16_t>& readData = segment->getAccessor(symbolicName).getUShortData();
+
+    Grid& grid = segment->getGrid();
+    int index = grid.getIndex(0, 0, 0);
+    CPPUNIT_ASSERT(readData[index] == 1);
+
+    index = grid.getIndex(1, 0, 0);
+    CPPUNIT_ASSERT(readData[index] == 11);
+
+    index = grid.getIndex(0, 1, 1);
+    CPPUNIT_ASSERT(readData[index] == 4);
+
+    index = grid.getIndex(1, 1, 0);
+    CPPUNIT_ASSERT(readData[index] == 13);
+
+    index = grid.getIndex(3, 1, 1);
+    CPPUNIT_ASSERT(readData[index] == 34);
+
+    CPPUNIT_ASSERT_NO_THROW(index = grid.getIndex(0, 4, 0));
+    CPPUNIT_ASSERT(readData[index] == 9);
+
+    CPPUNIT_ASSERT_NO_THROW(index = grid.getIndex(3, 4, 1));
+    CPPUNIT_ASSERT(readData[index] == 40);
+}
+
+void IOUtilsTest::testReadSlstrDataFull() {
+
+    string fileName = "/mnt/hgfs/S3L2PP/src/test/resources/syn/SY_1_SYN/SLST_ALT_RADIANCE_S1.nc";
+    int ncId;
+    CPPUNIT_ASSERT(nc_open(fileName.c_str(), NC_NOWRITE, &ncId) == NC_NOERR);
+
+    string varName = "TOA_Radiance_Meas";
+    int varId;
+    CPPUNIT_ASSERT(nc_inq_varid(ncId, varName.c_str(), &varId) == NC_NOERR);
+
+    Segment* segment = new SegmentImpl("SiggiDasSegment", 10, 4, 1, 0, 9);
+
+    string symbolicName = "SymbolicVarName";
+    size_t dimCount = 2;
+    size_t startLine = 0;
+    const size_t* count = IOUtils::createCountVector(dimCount, 1, 10, 4);
+    CPPUNIT_ASSERT_THROW(IOUtils::readData(ncId, varId, symbolicName, *segment, dimCount, startLine, count), std::invalid_argument);
+
+    segment->addVariableShort(symbolicName);
+    CPPUNIT_ASSERT_NO_THROW(IOUtils::readData(ncId, varId, symbolicName, *segment, dimCount, startLine, count));
+
+    valarray<int16_t>& readData = segment->getAccessor(symbolicName).getShortData();
+
+    Grid& grid = segment->getGrid();
+    int index = grid.getIndex(0, 0, 0);
+    CPPUNIT_ASSERT(readData[index] == 1);
+
+    index = grid.getIndex(0, 1, 0);
+    CPPUNIT_ASSERT(readData[index] == 5);
+
+    index = grid.getIndex(0, 0, 3);
+    CPPUNIT_ASSERT(readData[index] == 4);
+
+    index = grid.getIndex(0, 2, 2);
+    CPPUNIT_ASSERT(readData[index] == 11);
+
+    index = grid.getIndex(0, 3, 3);
+    CPPUNIT_ASSERT(readData[index] == 16);
+
+    CPPUNIT_ASSERT_NO_THROW(index = grid.getIndex(0, 2, 3));
+    CPPUNIT_ASSERT(readData[index] == 12);
+
+    CPPUNIT_ASSERT_NO_THROW(index = grid.getIndex(0, 4, 0));
+    CPPUNIT_ASSERT(readData[index] == 17);
+
+    CPPUNIT_ASSERT_NO_THROW(index = grid.getIndex(0, 9, 3));
+    CPPUNIT_ASSERT(readData[index] == 40);
 }
 
 void IOUtilsTest::testCreateCountVector() {

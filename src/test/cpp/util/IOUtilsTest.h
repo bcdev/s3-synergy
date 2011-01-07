@@ -25,7 +25,10 @@
 
 class IOUtilsTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(IOUtilsTest);
-    CPPUNIT_TEST(testReadData);
+    CPPUNIT_TEST(testReadOlciDataPart);
+    CPPUNIT_TEST(testReadSlstrDataPart);
+    CPPUNIT_TEST(testReadOlciDataFull);
+    CPPUNIT_TEST(testReadSlstrDataFull);
     CPPUNIT_TEST(testCreateCountVector);
     CPPUNIT_TEST(testCreateStartVector);
     CPPUNIT_TEST(testAddVariableToSegment);
@@ -37,7 +40,10 @@ public:
     void setUp();
     void tearDown();
 private:
-    void testReadData();
+    void testReadOlciDataPart();
+    void testReadSlstrDataPart();
+    void testReadOlciDataFull();
+    void testReadSlstrDataFull();
     void testCreateCountVector();
     void testCreateStartVector();
     void testAddVariableToSegment();
