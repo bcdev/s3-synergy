@@ -91,7 +91,7 @@ protected:
      * @return The index of the row were this module shall stop the processing
      *         of segment data.
      */
-    size_t getDefaultEndL(size_t startLine, Grid& grid) const {
+    size_t getDefaultEndL(const size_t startLine, const Grid& grid) const {
         if (startLine + grid.getSizeL() - 1 > grid.getMaxL() - 1) {
             return grid.getMaxL();
         } else {

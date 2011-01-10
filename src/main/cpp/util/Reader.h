@@ -10,11 +10,13 @@
 
 #include <map>
 #include <netcdf.h>
+#include <set>
 
 #include "../core/Context.h"
 #include "../core/DefaultModule.h"
 
 using std::map;
+using std::set;
 
 class Reader : public DefaultModule {
 public:
@@ -23,12 +25,14 @@ public:
     void process(Context& context);
 
 private:
-    void modifySegmentBounds(const Context& context, Segment& segment);
+    void modifyBoundsOfSegments(const Context& context);
     const int findFile(string& sourceDir, string& fileName);
-    const nc_type addTypeToVariable(int ncId, int varId, Variable& variable);
+    const void setVariableType(int ncId, int varId, Variable& variable);
+    const nc_type getVariableType(int ncId, int varId, Variable& variable);
     void addDimsToVariable(Variable& variable, size_t camCount, size_t lineCount, size_t colCount);
-    const bool areGridsEqual(const Grid& a, const Grid& b) const;
+    const bool segmentIsCompletelyComputed(const string& segmentName) const;
     map<string, int> openedFiles;
+    set<string> completedSegments;
     const size_t stepSize;
     const Grid* olciGrid;
 };

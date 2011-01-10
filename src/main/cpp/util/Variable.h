@@ -162,6 +162,20 @@ public:
     virtual string getSymbolicName() const = 0;
 
     /**
+     * Returns the name of the segment this variable is associated with during
+     * the processing.
+     * @return The segment's name.
+     */
+    virtual const string getSegmentName() const = 0;
+
+    /**
+     * Sets the name of the segment this variable is associated with during
+     * the processing.
+     * @param segmentName The segment's name.
+     */
+    virtual void setSegmentName(const string& segmentName) = 0;
+
+    /**
      * Getter for the variable's type.
      * @return the variable's type.
      */
@@ -201,15 +215,18 @@ public:
 protected:
     vector<Attribute*> attributes;
     vector<Dimension*> dims;
+
     /**
      * The name of the variable, by which it is addressed within its netCDF-file.
      */
     string ncName;
+
     /**
      * The name of the variable, by which it is addressed within the processing
      * chain.
      */
     string symbolicName;
+    string segmentName;
     string fileName;
     nc_type type;
 };

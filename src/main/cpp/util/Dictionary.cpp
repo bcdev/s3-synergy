@@ -27,11 +27,11 @@
 #include "IOUtils.h"
 
 Dictionary::Dictionary(string config) : configFile(config) {
-//    parse();
+    //    parse();
 }
 
 Dictionary::~Dictionary() {
-    for( size_t i = 0; i < variables.size(); i++ ) {
+    for (size_t i = 0; i < variables.size(); i++) {
         delete variables[i];
     }
 }
@@ -87,6 +87,10 @@ string Dictionary::getNcVarName(const string& symbolicName) {
     return getVariable(symbolicName).getNcName();
 }
 
+const string Dictionary::getSegmentName(const string& symbolicName) {
+    return getVariable(symbolicName).getSegmentName();
+};
+
 void Dictionary::parseVariablesFile(string& variableDefPath, string& file) {
     string path = variableDefPath + "/" + file;
     const vector<string> variableNames = xmlParser.evaluateToStringList(path, "/dataset/variables/variable/name/child::text()");
@@ -95,11 +99,13 @@ void Dictionary::parseVariablesFile(string& variableDefPath, string& file) {
         string variableName = variableNames[i];
         string query = "/dataset/variables/variable[name=\"" + variableName + "\"]/symbolic_name";
         string symbolicName = xmlParser.evaluateToString(path, query);
-        if( symbolicName.empty() ) {
+        if (symbolicName.empty()) {
             symbolicName = variableName;
         }
         Variable* var = new VariableImpl(variableName, symbolicName);
         var->setFileName(xmlParser.evaluateToString(path, "/dataset/global_attributes/attribute[name=\"dataset_name\"]/value"));
+        query = "/dataset/variables/variable[name=\"" + variableName + "\"]/segment_name";
+        var->setSegmentName(xmlParser.evaluateToString(path, query));
         vector<Attribute*> attributes = parseAttributes(path, variableName);
         for (size_t k = 0; k < attributes.size(); k++) {
             var->addAttribute(attributes[k]);

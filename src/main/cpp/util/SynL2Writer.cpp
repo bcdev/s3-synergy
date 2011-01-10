@@ -27,22 +27,25 @@ SynL2Writer::~SynL2Writer() {
 }
 
 void SynL2Writer::process(Context& context) {
-    string segmentId = "SYN_COLLOCATED";
-    Segment& segment = context.getSegment(segmentId);
 
-    Grid& grid = segment.getGrid();
-
-    size_t startLine = getStartL(context, segment);
-    size_t endLine = getDefaultEndL(startLine, grid);
+    Segment* segment;
+    size_t endLine;
 
     for (size_t i = 0; i < variablesToWrite.size(); i++) {
+        string segmentName = context.getDictionary()->getSegmentName(variablesToWrite[i]);
+        segment = &context.getSegment(segmentName);
+        Grid& grid = segment->getGrid();
+
+        size_t startLine = getStartL(context, *segment);
+        endLine = getDefaultEndL(startLine, grid);
+
         Variable& variable = context.getDictionary()->getVariable(variablesToWrite[i]);
 
         string ncVariableName = variable.getNcName();
         string symbolicName = variable.getSymbolicName();
 
         Logger::get()->progress("Writing variable " + symbolicName + " into "
-                "segment [" + segment.toString() + "]", getId());
+                "segment [" + segment->toString() + "]", getId());
 
         string fileName = context.getDictionary()->getNcFileNameForSymbolicName(symbolicName);
         fileName.append(".nc");
@@ -69,16 +72,19 @@ void SynL2Writer::process(Context& context) {
         nc_inq_dimlen(ncId, dimensionIds[2], &colCount);
 
         size_t lineCount = min(grid.getMaxL() - grid.getStartL() + 1, grid.getSizeL());
-        Accessor& accessor = segment.getAccessor(symbolicName);
-        IOUtils::write(ncId, varId, variable.getType(), dimCount, camCount, lineCount, colCount, segment, startLine, endLine, accessor);
+        Accessor& accessor = segment->getAccessor(symbolicName);
+        IOUtils::write(ncId, varId, variable.getType(), dimCount, camCount, lineCount, colCount, *segment, startLine, endLine, accessor);
         nc_close(ncId);
     }
-    context.setMaxLComputed(segment, *this, endLine);
+    context.setMaxLComputed(*segment, *this, endLine);
 }
 
 void SynL2Writer::start(Context& context) {
     // add symbolic names of all variables to be written, e.g. do:
     //    variablesToWrite.push_back("SYN_flags");
+
+    // this line only for debug reasons
+    variablesToWrite.push_back("L_1");
 }
 
 const int SynL2Writer::getNcId(string fileName) {

@@ -90,6 +90,12 @@ public:
      */
     const string getNcFileNameForSymbolicName(const string& symbolicName) const;
 
+    /**
+     * Returns the name of the segment the variable uses during the processing.
+     * @return The segment's name.
+     */
+    const string getSegmentName(const string& symbolicName);
+
 private:
     string filePath;
     void parseVariablesFile(string& variableDefPath, string& file);

@@ -59,6 +59,15 @@ string VariableImpl::getSymbolicName() const {
     return symbolicName;
 }
 
+const string VariableImpl::getSegmentName() const {
+    return segmentName;
+}
+
+void VariableImpl::setSegmentName(const string& segmentName) {
+    this->segmentName = segmentName;
+}
+
+
 nc_type VariableImpl::getType() const {
     return type;
 }

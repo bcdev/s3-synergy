@@ -103,6 +103,10 @@ Segment& Context::getSegment(const string& id) const {
     return *segmentMap.at(id);
 }
 
+const vector<Segment*> Context::getSegments() const {
+    return segmentList;
+}
+
 bool Context::hasObject(const string& id) const {
     return objectMap.find(id) != objectMap.end();
 }
@@ -127,7 +131,10 @@ bool Context::isCompleted() const {
 }
 
 size_t Context::getMaxLComputed(const Segment& segment, const Module& module) const {
-    return maxLineComputedMap.at(&segment).at(&module);
+    if (hasMaxLComputed(segment, module)) {
+        return maxLineComputedMap.at(&segment).at(&module);
+    }
+    return 0;
 }
 
 bool Context::hasMaxLComputed(const Segment& segment, const Module& module) const {

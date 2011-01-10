@@ -34,17 +34,26 @@ void Reader::process(Context& context) {
     Dictionary& dict = *(context.getDictionary());
     string processorId = "SYL2";
     string sourceDir = context.getJobOrder()->getProcessorConfiguration(processorId).getInputList()[0]->getFileNames()[0];
+
     // TODO - replace by dictionary
     const vector<string>& variablesToRead = ReaderConstants::getVariablesToRead();
 
     Segment* segment;
     size_t endLine;
+
+    // Modify each segment's bounds, if necessary
+    modifyBoundsOfSegments(context);
+
     // read from each variable
     for (size_t varIndex = 0; varIndex < variablesToRead.size(); varIndex++) {
-
         string symbolicName = variablesToRead[varIndex];
         string ncVariableName = dict.getNcVarName(symbolicName);
         string fileName = dict.getNcFileNameForSymbolicName(symbolicName);
+        const string& segmentName = dict.getSegmentName(symbolicName);
+
+        if (segmentIsCompletelyComputed(segmentName)) {
+            continue;
+        }
 
         int ncId = findFile(sourceDir, fileName);
 
@@ -57,9 +66,8 @@ void Reader::process(Context& context) {
         nc_inq_varndims(ncId, varId, &dimCount);
 
         // getting the dimension-ids
-        // TODO - replace by valarray or vector
-        int* dimensionIds = new int[dimCount];
-        nc_inq_vardimid(ncId, varId, dimensionIds);
+        valarray<int> dimensionIds(dimCount);
+        nc_inq_vardimid(ncId, varId, &dimensionIds[0]);
 
         // getting the dimension sizes
         size_t camCount = 1;
@@ -77,70 +85,50 @@ void Reader::process(Context& context) {
             nc_inq_dimlen(ncId, dimensionIds[0], &lineCount);
         }
 
-        if (!context.hasSegment("SYN_COLLOCATED")) {
-            // initial reading
-            size_t sizeL = min(stepSize, lineCount);
-
-            Variable& variable = dict.getVariable(symbolicName);
-            nc_type type = addTypeToVariable(ncId, varId, variable);
-            // this line only for debbuging reasons
-            addDimsToVariable(variable, camCount, lineCount, colCount);
-
-            segment = &context.addSegment("SYN_COLLOCATED", sizeL, colCount, camCount, 0, lineCount - 1);
-            olciGrid = &segment->getGrid();
-            Logger::get()->progress("Reading data for variable " + symbolicName + " into segment [" + segment->toString() + "]", getId());
-
-            IOUtils::addVariableToSegment(symbolicName, type, *segment);
-            const size_t* countVector = IOUtils::createCountVector(dimCount, camCount, sizeL, colCount);
-            IOUtils::readData(ncId, varId, symbolicName, *segment, dimCount, 0, countVector);
-
-            endLine = sizeL - 1;
+        size_t sizeL = min(stepSize, lineCount);
+        if (!context.hasSegment(segmentName)) {
+            segment = &context.addSegment(segmentName, sizeL, colCount, camCount, 0, lineCount - 1);
         } else {
-            segment = &context.getSegment("SYN_COLLOCATED");
-            if (context.hasMaxLComputed(*segment, *this)) {
-                modifySegmentBounds(context, *segment);
-            }
+            segment = &context.getSegment(segmentName);
+        }
 
-            if (!segment->hasVariable(symbolicName)) {
-                Variable& variable = dict.getVariable(symbolicName);
-                nc_type type = addTypeToVariable(ncId, varId, variable);
-                // this line only for debbuging reasons
-                addDimsToVariable(variable, camCount, lineCount, colCount);
+        if (!segment->hasVariable(symbolicName)) {
+            Variable& variable = dict.getVariable(symbolicName);
+            setVariableType(ncId, varId, variable);
+            nc_type type = getVariableType(ncId, varId, variable);
+            IOUtils::addVariableToSegment(symbolicName, type, *segment);
+            addDimsToVariable(variable, camCount, sizeL, colCount);
+        }
 
-                IOUtils::addVariableToSegment(symbolicName, type, *segment);
-            }
+        Logger::get()->progress("Reading data for variable " + symbolicName + " into segment [" + segment->toString() + "]", getId());
+        IOUtils::readData(ncId, varId, segment->getAccessor(symbolicName), segment->getGrid(), dimCount, context.getMaxLComputed(*segment, *this) + 1);
 
-            // set up own grid for each variable, test if it is equal to OLCI-grid
-            // then use OLCI or own
-
-            // modifying segment values
-            const Grid& grid = segment->getGrid();
-            const size_t startLine = getStartL(context, *segment);
-            endLine = getDefaultEndL(startLine, grid);
-            size_t lines = endLine - startLine + 1;
-
-            const size_t* countVector = IOUtils::createCountVector(dimCount, camCount, lines, colCount);
-
-            Logger::get()->progress("Reading data for variable " + symbolicName + " into segment [" + segment->toString() + "]", getId());
-            IOUtils::readData(ncId, varId, symbolicName, *segment, dimCount,
-                    startLine, countVector);
-            if( !areGridsEqual(grid, *olciGrid) ) {
-//                collocate
-            }
+        endLine = segment->getGrid().getStartL() + segment->getGrid().getSizeL() - 1;
+        context.setMaxLComputed(*segment, *this, endLine);
+        if (segment->getGrid().getMaxL() == endLine) {
+            completedSegments.insert(segment->getId());
         }
     }
-    context.setMaxLComputed(*segment, *this, endLine);
+
 }
 
-void Reader::modifySegmentBounds(const Context& context, Segment& segment) {
-    size_t minRequiredLine = context.getMinLRequired(segment, context.getMaxLComputed(segment, *this) + 1);
-    segment.setStartL(minRequiredLine);
+void Reader::modifyBoundsOfSegments(const Context& context) {
+    const vector<Segment*> segments = context.getSegments();
+    for (size_t i = 0; i < segments.size(); i++) {
+        Segment* segment = segments[i];
+        size_t maxL = segment->getGrid().getStartL() + segment->getGrid().getSizeL() - 1;
+        if (context.getMaxLComputed(*segment, *this) == maxL &&
+                completedSegments.find(segment->getId()) == completedSegments.end()) {
+            size_t minRequiredLine = context.getMinLRequired(*segment, context.getMaxLComputed(*segment, *this) + 1);
+            segment->setStartL(minRequiredLine);
+        }
+    }
 }
 
 const int Reader::findFile(string& sourceDir, string& fileName) {
     vector<string> fileNames = IOUtils::getFiles(sourceDir);
 
-    if( openedFiles.find(fileName) != openedFiles.end() ) {
+    if (openedFiles.find(fileName) != openedFiles.end()) {
         return openedFiles[fileName];
     }
 
@@ -162,24 +150,24 @@ const int Reader::findFile(string& sourceDir, string& fileName) {
     throw std::runtime_error("No file with name " + fileName + " found.");
 }
 
-const nc_type Reader::addTypeToVariable(int ncId, int varId, Variable& variable) {
+const void Reader::setVariableType(int ncId, int varId, Variable& variable) {
     nc_type type;
     nc_inq_vartype(ncId, varId, &type);
     variable.setType(type);
+}
+
+const nc_type Reader::getVariableType(int ncId, int varId, Variable& variable) {
+    nc_type type;
+    nc_inq_vartype(ncId, varId, &type);
     return type;
 }
 
-const bool Reader::areGridsEqual(const Grid& a, const Grid& b) const {
-    return a.getSize() == b.getSize() &&
-            a.getSizeK() == b.getSizeK() &&
-            a.getSizeL() == b.getSizeL() &&
-            a.getSizeM() == b.getSizeM() &&
-            a.getStartK() == b.getStartK() &&
-            a.getStartL() == b.getStartL() &&
-            a.getStartM() == b.getStartM();
+const bool Reader::segmentIsCompletelyComputed(const string& segmentName) const {
+    return completedSegments.find(segmentName) != completedSegments.end();
 }
 
 // needed only for debugging purposes
+
 void Reader::addDimsToVariable(Variable& variable, size_t camCount, size_t lineCount, size_t colCount) {
     variable.addDimension(new Dimension("N_CAM", camCount));
     variable.addDimension(new Dimension("N_LINE_OLC", lineCount));

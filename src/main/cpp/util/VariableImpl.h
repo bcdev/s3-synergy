@@ -34,6 +34,8 @@ public:
     void setFileName(const string& fileName);
     string getNcName() const;
     string getSymbolicName() const;
+    const string getSegmentName() const;
+    void setSegmentName(const string& segmentName);
     nc_type getType() const;
     void setType(nc_type type);
     vector<Dimension*> getDimensions() const;

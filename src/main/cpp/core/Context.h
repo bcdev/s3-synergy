@@ -132,6 +132,12 @@ public:
     Segment& getSegment(const string& id) const;
 
     /**
+     * Returns a vector containing pointers to all segments.
+     * @return A vector containing pointers to all segments.
+     */
+    const vector<Segment*> getSegments() const;
+
+    /**
      * Returns the index of the maximum row in a segment, which has been
      * computed by a certain module.
      * @param segment The segment.
