@@ -79,8 +79,8 @@ public:
     virtual void process(Context& context) = 0;
 
     /**
-     * Returns the index of the minimum row in a given segment, which is
-     * required for processing a certain block of rows in the segment.
+     * Returns the index of the minimum row in a segment, which is required for
+     * processing a certain block of rows in the segment.
      * @param segment The segment.
      * @param l The row index of the first row in the block of rows to be
      *          processed.
