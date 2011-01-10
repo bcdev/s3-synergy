@@ -79,14 +79,15 @@ public:
     virtual void process(Context& context) = 0;
 
     /**
-     * Returns the index of the minimum row, which is required for processing
-     * a certain block of rows.
+     * Returns the index of the minimum row in a given segment, which is
+     * required for processing a certain block of rows in the segment.
+     * @param segment The segment.
      * @param l The row index of the first row in the block of rows to be
      *          processed.
      * @return the index of the minimum row required for processing a block
      *         of rows the first row of which has the row index {@code l}.
      */
-    virtual size_t getMinLRequired(size_t l) const = 0;
+    virtual size_t getMinLRequired(const Segment& segment, size_t l) const = 0;
 };
 
 #endif	/* MODULE_H */

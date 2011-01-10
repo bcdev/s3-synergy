@@ -60,7 +60,7 @@ public:
     virtual void process(Context& context) {
     };
 
-    virtual size_t getMinLRequired(size_t line) const {
+    virtual size_t getMinLRequired(const Segment& segment, size_t line) const {
         return line;
     }
 

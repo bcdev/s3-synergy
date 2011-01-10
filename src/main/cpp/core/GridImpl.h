@@ -38,14 +38,14 @@ public:
     }
 
     void setStartL(size_t l) {
-        if( l > maxL ) {
+        if (l > maxL) {
             throw std::out_of_range("L is bigger than the maximum line.");
         }
         if (l + sizeL - 1 > maxL) {
-            sizeL = maxL - l + 1;
-            this->strideK = sizeM * sizeL;
+            startL = maxL - sizeL + 1;
+        } else {
+            this->startL = l;
         }
-        this->startL = l;
     }
 
     size_t getStartM() const {

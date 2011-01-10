@@ -127,10 +127,7 @@ bool Context::isCompleted() const {
 }
 
 size_t Context::getMaxLComputed(const Segment& segment, const Module& module) const {
-    if (hasMaxLComputed(segment, module)) {
-        return maxLineComputedMap.at(&segment).at(&module);
-    }
-    return 0;
+    return maxLineComputedMap.at(&segment).at(&module);
 }
 
 bool Context::hasMaxLComputed(const Segment& segment, const Module& module) const {
@@ -144,8 +141,8 @@ void Context::setMaxLComputed(const Segment& segment, const Module& module, size
 
 size_t Context::getMinLRequired(const Segment& segment, size_t l) const {
     size_t minLineRequired = numeric_limits<size_t>::max();
-    for(size_t i = 0; i < moduleList.size(); i++) {
-        minLineRequired = min(minLineRequired, moduleList[i]->getMinLRequired(l));
+    for (size_t i = 0; i < moduleList.size(); i++) {
+        minLineRequired = min(minLineRequired, moduleList[i]->getMinLRequired(segment, l));
     }
 
     return minLineRequired;

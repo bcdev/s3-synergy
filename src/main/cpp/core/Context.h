@@ -191,6 +191,10 @@ public:
     bool isCompleted() const;
 
 private:
+    template <class K, class V>
+    bool exists(const map<K, V>& map, const K& key) const {
+        return map.find(key) != map.end();
+    }
     void removeObject(Object& object);
     void removeSegment(Segment& segment);
 
@@ -205,11 +209,6 @@ private:
 
     typedef map<const Module*, size_t> ModuleLineMap;
     map<const Segment*, ModuleLineMap> maxLineComputedMap;
-
-    template <class K, class V>
-    bool exists(const map<K, V>& map, const K& key) const {
-        return map.find(key) != map.end();
-    }
 };
 
 #endif	/* CONTEXT_H */
