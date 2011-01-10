@@ -129,7 +129,7 @@ void SegmentImplTest::testShift() {
     }
 
     segment->setStartL(200);
-    CPPUNIT_ASSERT(segment->getGrid().getStartL() == 200);
+    CPPUNIT_ASSERT(grid.getStartL() == 200);
 
     for (size_t k = 0; k < grid.getSizeK(); k++) {
         for (size_t l = grid.getStartL(); l < grid.getStartL() + grid.getSizeL(); l++) {
