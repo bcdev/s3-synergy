@@ -62,27 +62,64 @@ void IOUtilsTest::testReadOlciDataPart() {
     segment->addVariableUShort(symbolicName);
     CPPUNIT_ASSERT_NO_THROW(IOUtils::readData(ncId, varId, symbolicName, *segment, dimCount, startLine, count));
 
-    valarray<uint16_t>& readData = segment->getAccessor(symbolicName).getUShortData();
+    valarray<uint16_t>& data = segment->getAccessor(symbolicName).getUShortData();
 
     Grid& grid = segment->getGrid();
     int index = grid.getIndex(0, 0, 0);
-    CPPUNIT_ASSERT(readData[index] == 1);
+    CPPUNIT_ASSERT(data[index] == 1);
 
     index = grid.getIndex(1, 0, 0);
-    CPPUNIT_ASSERT(readData[index] == 11);
+    CPPUNIT_ASSERT(data[index] == 11);
 
     index = grid.getIndex(0, 1, 1);
-    CPPUNIT_ASSERT(readData[index] == 4);
+    CPPUNIT_ASSERT(data[index] == 4);
 
     index = grid.getIndex(1, 1, 0);
-    CPPUNIT_ASSERT(readData[index] == 13);
+    CPPUNIT_ASSERT(data[index] == 13);
 
     index = grid.getIndex(3, 1, 1);
-    CPPUNIT_ASSERT(readData[index] == 34);
+    CPPUNIT_ASSERT(data[index] == 34);
 
     CPPUNIT_ASSERT_THROW(index = grid.getIndex(0, 4, 0), std::out_of_range);
 
     CPPUNIT_ASSERT_THROW(index = grid.getIndex(3, 4, 1), std::out_of_range);
+
+    startLine = 1;
+    segment->setStartL(startLine);
+    CPPUNIT_ASSERT(data[grid.getIndex(0, 1, 0)] == 3);
+    CPPUNIT_ASSERT(data[grid.getIndex(0, 1, 1)] == 4);
+    CPPUNIT_ASSERT(data[grid.getIndex(1, 1, 0)] == 13);
+    CPPUNIT_ASSERT(data[grid.getIndex(1, 1, 1)] == 14);
+    CPPUNIT_ASSERT(data[grid.getIndex(2, 1, 0)] == 23);
+    CPPUNIT_ASSERT(data[grid.getIndex(2, 1, 1)] == 24);
+    CPPUNIT_ASSERT(data[grid.getIndex(3, 1, 0)] == 33);
+    CPPUNIT_ASSERT(data[grid.getIndex(3, 1, 1)] == 34);
+
+    const size_t* count2 = IOUtils::createCountVector(dimCount, 4, 1, 2);
+    index = grid.getIndex(0, 2, 0);
+
+    IOUtils::readData(ncId, varId, symbolicName, *segment, dimCount, 2, count2, index);
+    data = segment->getAccessor(symbolicName).getUShortData();
+
+    index = grid.getIndex(0, 1, 0);
+    CPPUNIT_ASSERT(data[grid.getIndex(0, 1, 0)] == 3);
+    CPPUNIT_ASSERT(data[grid.getIndex(0, 1, 1)] == 4);
+    CPPUNIT_ASSERT(data[grid.getIndex(1, 1, 0)] == 13);
+    CPPUNIT_ASSERT(data[grid.getIndex(1, 1, 1)] == 14);
+    CPPUNIT_ASSERT(data[grid.getIndex(2, 1, 0)] == 23);
+    CPPUNIT_ASSERT(data[grid.getIndex(2, 1, 1)] == 24);
+    CPPUNIT_ASSERT(data[grid.getIndex(3, 1, 0)] == 33);
+    CPPUNIT_ASSERT(data[grid.getIndex(3, 1, 1)] == 34);
+
+    CPPUNIT_ASSERT(data[grid.getIndex(0, 2, 0)] == 5);
+    CPPUNIT_ASSERT(data[grid.getIndex(0, 2, 1)] == 6);
+    CPPUNIT_ASSERT(data[grid.getIndex(1, 2, 0)] == 15);
+    CPPUNIT_ASSERT(data[grid.getIndex(1, 2, 1)] == 16);
+    CPPUNIT_ASSERT(data[grid.getIndex(2, 2, 0)] == 25);
+    CPPUNIT_ASSERT(data[grid.getIndex(2, 2, 1)] == 26);
+    CPPUNIT_ASSERT(data[grid.getIndex(3, 2, 0)] == 35);
+    CPPUNIT_ASSERT(data[grid.getIndex(3, 2, 1)] == 36);
+
 }
 
 void IOUtilsTest::testReadSlstrDataPart() {

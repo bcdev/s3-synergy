@@ -18,8 +18,8 @@
  * Created on January 3, 2011, 1:57 PM
  */
 
-#ifndef OLCIGRIDREADERCONSTANTS_H
-#define	OLCIGRIDREADERCONSTANTS_H
+#ifndef READERCONSTANTS_H
+#define	READERCONSTANTS_H
 
 #include <string>
 #include <vector>
@@ -30,10 +30,10 @@ using std::vector;
 /**
  * This class merely contains constants used for reading input data.
  */
-class OlciGridReaderConstants {
+class ReaderConstants {
 public:
-    OlciGridReaderConstants();
-    virtual ~OlciGridReaderConstants();
+    ReaderConstants();
+    virtual ~ReaderConstants();
 
     static const string L_1;
     static const string L_2;
@@ -71,5 +71,5 @@ private:
 
 };
 
-#endif	/* OLCIGRIDREADERCONSTANTS_H */
+#endif	/* READERCONSTANTS_H */
 

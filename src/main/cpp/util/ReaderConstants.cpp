@@ -18,46 +18,46 @@
  * Created on January 3, 2011, 1:57 PM
  */
 
-#include "OlciGridReaderConstants.h"
+#include "ReaderConstants.h"
 
-OlciGridReaderConstants::OlciGridReaderConstants() {
+ReaderConstants::ReaderConstants() {
 }
 
-OlciGridReaderConstants::~OlciGridReaderConstants() {
+ReaderConstants::~ReaderConstants() {
 }
 
-const string OlciGridReaderConstants::L_1 = "L_1";
-const string OlciGridReaderConstants::L_2 = "L_2";
-const string OlciGridReaderConstants::L_3 = "L_3";
-const string OlciGridReaderConstants::L_4 = "L_4";
-const string OlciGridReaderConstants::L_5 = "L_5";
-const string OlciGridReaderConstants::L_6 = "L_6";
-const string OlciGridReaderConstants::L_7 = "L_7";
-const string OlciGridReaderConstants::L_8 = "L_8";
-const string OlciGridReaderConstants::L_9 = "L_9";
-const string OlciGridReaderConstants::L_10= "L_10";
-const string OlciGridReaderConstants::L_11 = "L_11";
-const string OlciGridReaderConstants::L_12 = "L_12";
-const string OlciGridReaderConstants::L_13 = "L_13";
-const string OlciGridReaderConstants::L_14 = "L_14";
-const string OlciGridReaderConstants::L_15 = "L_15";
-const string OlciGridReaderConstants::L_16 = "L_16";
-const string OlciGridReaderConstants::L_17 = "L_17";
-const string OlciGridReaderConstants::L_18 = "L_18";
-const string OlciGridReaderConstants::L_19 = "L_19";
-const string OlciGridReaderConstants::L_20 = "L_20";
-const string OlciGridReaderConstants::L_21 = "L_21";
-const string OlciGridReaderConstants::L_22 = "L_22";
-const string OlciGridReaderConstants::L_23 = "L_23";
-const string OlciGridReaderConstants::L_24 = "L_24";
-const string OlciGridReaderConstants::L_25 = "L_25";
-const string OlciGridReaderConstants::L_26 = "L_26";
-const string OlciGridReaderConstants::L_27 = "L_27";
-const string OlciGridReaderConstants::L_28 = "L_28";
-const string OlciGridReaderConstants::L_29 = "L_29";
-const string OlciGridReaderConstants::L_30 = "L_30";
+const string ReaderConstants::L_1 = "L_1";
+const string ReaderConstants::L_2 = "L_2";
+const string ReaderConstants::L_3 = "L_3";
+const string ReaderConstants::L_4 = "L_4";
+const string ReaderConstants::L_5 = "L_5";
+const string ReaderConstants::L_6 = "L_6";
+const string ReaderConstants::L_7 = "L_7";
+const string ReaderConstants::L_8 = "L_8";
+const string ReaderConstants::L_9 = "L_9";
+const string ReaderConstants::L_10= "L_10";
+const string ReaderConstants::L_11 = "L_11";
+const string ReaderConstants::L_12 = "L_12";
+const string ReaderConstants::L_13 = "L_13";
+const string ReaderConstants::L_14 = "L_14";
+const string ReaderConstants::L_15 = "L_15";
+const string ReaderConstants::L_16 = "L_16";
+const string ReaderConstants::L_17 = "L_17";
+const string ReaderConstants::L_18 = "L_18";
+const string ReaderConstants::L_19 = "L_19";
+const string ReaderConstants::L_20 = "L_20";
+const string ReaderConstants::L_21 = "L_21";
+const string ReaderConstants::L_22 = "L_22";
+const string ReaderConstants::L_23 = "L_23";
+const string ReaderConstants::L_24 = "L_24";
+const string ReaderConstants::L_25 = "L_25";
+const string ReaderConstants::L_26 = "L_26";
+const string ReaderConstants::L_27 = "L_27";
+const string ReaderConstants::L_28 = "L_28";
+const string ReaderConstants::L_29 = "L_29";
+const string ReaderConstants::L_30 = "L_30";
 
-const vector<string> OlciGridReaderConstants::getVariablesToRead() {
+const vector<string> ReaderConstants::getVariablesToRead() {
     /*
         Important note:
             The first variable to be added here defines the OLCI-grid!
@@ -81,7 +81,7 @@ const vector<string> OlciGridReaderConstants::getVariablesToRead() {
 //    varsToRead.push_back(L_16);
 //    varsToRead.push_back(L_17);
 //    varsToRead.push_back(L_18);
-//    varsToRead.push_back(L_19);
+    varsToRead.push_back(L_19);
 //    varsToRead.push_back(L_20);
 //    varsToRead.push_back(L_21);
 //    varsToRead.push_back(L_22);

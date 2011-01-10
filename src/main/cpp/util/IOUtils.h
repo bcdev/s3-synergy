@@ -42,7 +42,7 @@ public:
         for (size_t i = 0; i < dims.size(); i++) {
             int dimId;
             int status = nc_inq_dimid(ncId, dims[i]->getName().c_str(), &dimId);
-            if( status != NC_NOERR ) {
+            if (status != NC_NOERR) {
                 int currentDimId;
                 nc_def_dim(ncId, dims[i]->getName().c_str(), dims[i]->getRange(), &currentDimId);
                 ncDims[i] = currentDimId;
@@ -54,6 +54,7 @@ public:
     }
 
     static const size_t* createCountVector(size_t dimCount, size_t camCount, size_t lineCount, size_t colCount) {
+        // TODO - replace by vector
         if (dimCount == 3) {
             size_t* count = new size_t[3];
             count[0] = camCount;
@@ -94,7 +95,7 @@ public:
     }
 
     static void readData(int ncId, int varId, string& symbolicName, Segment& segment,
-            const size_t dimCount, const size_t startLine, const size_t count[]) {
+            const size_t dimCount, const size_t startLine, const size_t count[], const size_t index = 0) {
 
         const size_t* startVector = createStartVector(dimCount, startLine);
 
@@ -103,43 +104,51 @@ public:
         switch (type) {
             case NC_BYTE:
             {
-                int8_t* buffer = &segment.getAccessor(symbolicName).getByteData()[0];
+                int8_t* buffer = &segment.getAccessor(symbolicName).getByteData()[index];
                 nc_get_vara_schar(ncId, varId, startVector, count, buffer);
                 break;
             }
             case NC_UBYTE:
             {
-                uint8_t* buffer = &segment.getAccessor(symbolicName).getUByteData()[0];
+                uint8_t* buffer = &segment.getAccessor(symbolicName).getUByteData()[index];
                 nc_get_vara_ubyte(ncId, varId, startVector, count, buffer);
                 break;
             }
             case NC_SHORT:
             {
-                int16_t* buffer = &segment.getAccessor(symbolicName).getShortData()[0];
+
+                int16_t* buffer = &segment.getAccessor(symbolicName).getShortData()[index];
                 nc_get_vara_short(ncId, varId, startVector, count, buffer);
                 break;
             }
             case NC_USHORT:
             {
-                uint16_t* buffer = &segment.getAccessor(symbolicName).getUShortData()[0];
-                nc_get_vara_ushort(ncId, varId, startVector, count, buffer);
+                uint16_t* buffer = &segment.getAccessor(symbolicName).getUShortData()[index];
+                valarray<size_t> myCount(count, 3);
+                valarray<size_t> myStartVector(startVector, 3);
+                myCount[0] = 1;
+                for (size_t k = segment.getGrid().getStartK(); k < segment.getGrid().getStartK() + segment.getGrid().getSizeK(); k++) {
+                    myStartVector[0] = k;
+                    nc_get_vara_ushort(ncId, varId, &myStartVector[0], &myCount[0], buffer);
+                    buffer += segment.getGrid().getStrideK();
+                }
                 break;
             }
             case NC_INT:
             {
-                int32_t* buffer = &segment.getAccessor(symbolicName).getIntData()[0];
+                int32_t* buffer = &segment.getAccessor(symbolicName).getIntData()[index];
                 nc_get_vara_int(ncId, varId, startVector, count, buffer);
                 break;
             }
             case NC_UINT:
             {
-                uint32_t* buffer = &segment.getAccessor(symbolicName).getUIntData()[0];
+                uint32_t* buffer = &segment.getAccessor(symbolicName).getUIntData()[index];
                 nc_get_vara_uint(ncId, varId, startVector, count, buffer);
                 break;
             }
             case NC_INT64:
             {
-                int64_t* buffer = &segment.getAccessor(symbolicName).getLongData()[0];
+                int64_t* buffer = &segment.getAccessor(symbolicName).getLongData()[index];
                 nc_get_vara_long(ncId, varId, startVector, count, buffer);
                 break;
             }
@@ -147,19 +156,19 @@ public:
             {
                 // there is no function nc_get_var_ulong, so we have to read the data
                 // into a signed long buffer
-                int64_t* buffer = &segment.getAccessor(symbolicName).getLongData()[0];
+                int64_t* buffer = &segment.getAccessor(symbolicName).getLongData()[index];
                 nc_get_vara_long(ncId, varId, startVector, count, buffer);
                 break;
             }
             case NC_FLOAT:
             {
-                float* buffer = &segment.getAccessor(symbolicName).getFloatData()[0];
+                float* buffer = &segment.getAccessor(symbolicName).getFloatData()[index];
                 nc_get_vara_float(ncId, varId, startVector, count, buffer);
                 break;
             }
             case NC_DOUBLE:
             {
-                double* buffer = &segment.getAccessor(symbolicName).getDoubleData()[0];
+                double* buffer = &segment.getAccessor(symbolicName).getDoubleData()[index];
                 nc_get_vara_double(ncId, varId, startVector, count, buffer);
                 break;
             }

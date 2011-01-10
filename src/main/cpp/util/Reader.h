@@ -16,10 +16,10 @@
 
 using std::map;
 
-class OlciGridReader : public DefaultModule {
+class Reader : public DefaultModule {
 public:
-    OlciGridReader();
-    virtual ~OlciGridReader();
+    Reader();
+    virtual ~Reader();
     void process(Context& context);
 
 private:
@@ -27,8 +27,10 @@ private:
     const int findFile(string& sourceDir, string& fileName);
     const nc_type addTypeToVariable(int ncId, int varId, Variable& variable);
     void addDimsToVariable(Variable& variable, size_t camCount, size_t lineCount, size_t colCount);
+    const bool areGridsEqual(const Grid& a, const Grid& b) const;
     map<string, int> openedFiles;
     const size_t stepSize;
+    const Grid* olciGrid;
 };
 
 #endif	/* READER_H */
