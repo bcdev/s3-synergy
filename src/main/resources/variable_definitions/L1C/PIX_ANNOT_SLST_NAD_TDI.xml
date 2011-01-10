@@ -4,6 +4,7 @@
     <variable>
       <name>SLST_CW_flags</name>
       <symbolic_name>SLN_confidence</symbolic_name>
+      <segment_name>SLST_NAD_05km</segment_name>
     </variable>
   </variables>
   <global_attributes>

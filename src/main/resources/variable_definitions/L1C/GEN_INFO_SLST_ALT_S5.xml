@@ -4,14 +4,17 @@
     <variable>
       <name>band_centre</name>
       <symbolic_name>wavelength_29</symbolic_name>
+      <segment_name>N_DET_SLST_05km</segment_name>
     </variable>
     <variable>
       <name>bandwidth</name>
       <symbolic_name>bandwidth_29</symbolic_name>
+      <segment_name>N_DET_SLST_05km</segment_name>
     </variable>
     <variable>
       <name>solar_irradiance</name>
       <symbolic_name>solar_irradiance_29</symbolic_name>
+      <segment_name>N_DET_SLST_05km</segment_name>
     </variable>
   </variables>
   <global_attributes>

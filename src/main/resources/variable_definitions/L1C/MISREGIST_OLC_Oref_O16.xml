@@ -4,21 +4,18 @@
     <variable>
       <name>delta_col</name>
       <symbolic_name>delta_x_16</symbolic_name>
-      
-      
+      <segment_name>SYN_COLLOCATION</segment_name>
     </variable>
     <variable>
       <name>delta_row</name>
       <symbolic_name>delta_y_16</symbolic_name>
-      
-      
+      <segment_name>SYN_COLLOCATION</segment_name>
     </variable>
   </variables>
   <global_attributes>
     <attribute>
       <name>dataset_name</name>
       <value>MISREGIST_OLC_Oref_O16</value>
-      
     </attribute>
   </global_attributes>
 </dataset>

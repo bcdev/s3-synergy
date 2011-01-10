@@ -4,21 +4,18 @@
     <variable>
       <name>TOA_Radiance_Meas</name>
       <symbolic_name>L_11</symbolic_name>
-      
-      
+      <segment_name>SYN_COLLOCATION</segment_name>
     </variable>
     <variable>
       <name>error_estimates</name>
       <symbolic_name>L_11_er</symbolic_name>
-      
-      
+      <segment_name>SYN_COLLOCATION</segment_name>
     </variable>
   </variables>
   <global_attributes>
     <attribute>
       <name>dataset_name</name>
       <value>OLC_RADIANCE_O11</value>
-      
     </attribute>
   </global_attributes>
 </dataset>
