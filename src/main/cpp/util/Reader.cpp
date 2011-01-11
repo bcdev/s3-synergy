@@ -35,9 +35,6 @@ void Reader::process(Context& context) {
     string processorId = "SYL2";
     string sourceDir = context.getJobOrder()->getProcessorConfiguration(processorId).getInputList()[0]->getFileNames()[0];
 
-    // TODO - replace by dictionary
-    const vector<string>& variablesToRead = ReaderConstants::getVariablesToRead();
-
     Segment* segment;
     size_t endLine;
 
@@ -45,8 +42,9 @@ void Reader::process(Context& context) {
     modifyBoundsOfSegments(context);
 
     // read from each variable
-    for (size_t varIndex = 0; varIndex < variablesToRead.size(); varIndex++) {
-        string symbolicName = variablesToRead[varIndex];
+    const vector<string> variablesToBeRead = dict.getVariablesToBeRead();
+    for (size_t varIndex = 0; varIndex < variablesToBeRead.size(); varIndex++) {
+        string symbolicName = variablesToBeRead[varIndex];
         string ncVariableName = dict.getNcVarName(symbolicName);
         string fileName = dict.getNcFileNameForSymbolicName(symbolicName);
         const string& segmentName = dict.getSegmentName(symbolicName);
