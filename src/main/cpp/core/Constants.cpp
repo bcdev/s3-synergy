@@ -20,4 +20,9 @@
 
 #include "Constants.h"
 
-const string Constants::PROCESSOR_VERSION = "1.0-SNAPSHOT";
+const char Constants::PROCESSOR_VERSION[] = "1.0-SNAPSHOT";
+
+const char Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED[] = "SYN_COLLOCATED";
+const char Constants::SYMBOLIC_NAME_DIMENSION_N_CAM[] = "N_CAM";
+const char Constants::SYMBOLIC_NAME_DIMENSION_N_DET_CAM[] = "N_DET_CAM";
+const char Constants::SYMBOLIC_NAME_DIMENSION_N_LINE_OLC[] = "N_LINE_OLC";

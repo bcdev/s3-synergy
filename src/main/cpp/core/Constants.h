@@ -31,7 +31,12 @@ public:
     static const size_t N_CAM = 5;
     static const size_t N_DET_CAM = 760;
     static const size_t N_LINE_OLC = 60000;
-    static const string PROCESSOR_VERSION;
+    static const char PROCESSOR_VERSION[];
+
+    static const char SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED[];
+    static const char SYMBOLIC_NAME_DIMENSION_N_CAM[];
+    static const char SYMBOLIC_NAME_DIMENSION_N_DET_CAM[];
+    static const char SYMBOLIC_NAME_DIMENSION_N_LINE_OLC[];
 
 private:
     Constants() {
