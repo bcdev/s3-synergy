@@ -120,19 +120,19 @@ Grid& SegmentImpl::getGrid() {
     return grid;
 }
 
-Accessor& SegmentImpl::getAccessor(const string& varName) const {
+Accessor& SegmentImpl::getAccessor(const string& varName) const throw (logic_error) {
     if (!hasVariable(varName)) {
         throw logic_error("No accessor for variable " + varName + ".");
     }
     return *accessorMap.at(varName);
 }
 
-void SegmentImpl::setStartL(size_t l) {
+void SegmentImpl::setStartL(size_t l) throw (logic_error) {
     if (l < grid.getStartL()) {
-        throw logic_error(className + ": l < grid.getStartL().");
+        throw logic_error("Class: " + className + ": l < grid.getStartL().");
     }
     if (l > grid.getStartL() + grid.getSizeL()) {
-        throw logic_error(className + ": l > grid.getStartL() + grid.getSizeL().");
+        throw logic_error("Class: " + className + ": l > grid.getStartL() + grid.getSizeL().");
     }
     if (l + grid.getSizeL() - 1 > grid.getMaxL()) {
         l = grid.getMaxL() - grid.getSizeL() + 1;
@@ -155,7 +155,7 @@ string const SegmentImpl::toString() {
 
 void SegmentImpl::unique(const string& varName) const throw (logic_error) {
     if (hasVariable(varName)) {
-        throw logic_error("variable '" + varName + "' has already been added to segment '" + id + "'.");
+        throw logic_error("Variable '" + varName + "' has already been added to segment '" + id + "'.");
     }
 }
 

@@ -28,7 +28,6 @@
 
 using std::copy;
 using std::fill;
-using std::bad_cast;
 using std::invalid_argument;
 
 template<class T>

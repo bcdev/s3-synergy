@@ -124,8 +124,8 @@ public:
     virtual size_t getMinL() const = 0;
 
     /**
-     * Returns the maxiimum valid value of the row index dimension.
-     * @return the maxiimum valid value of the row index dimension.
+     * Returns the maximum valid value of the row index dimension.
+     * @return the maximum valid value of the row index dimension.
      */
     virtual size_t getMaxL() const = 0;
 };
