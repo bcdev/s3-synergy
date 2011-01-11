@@ -131,16 +131,27 @@ public:
     virtual Accessor& getAccessor(const string& varName) const = 0;
 
     /**
+     * Moves the start of the segment to the row with the given index. The
+     * segment must not be moved backward and must not be moved beyond the
+     * the row succeeding the last row in the current segment grid.
+     * 
+     * The segment cannot be moved to a row, which results in an extent
+     * beyond the maximum valid row in the segment grid. The extent of the
+     * segment is constrained to the region defined by the the minimum and
+     * maximum valid rows in the segment grid.
+     *
+     * On return the segment is moved to the maximum row, which is consistent
+     * with the given target row and the extent constraints.
+     * 
+     * @param l The index of the row the segment shall be moved to.
+     */
+    virtual void setStartL(size_t l) = 0;
+
+    /**
      * Returns a string representation of the segment.
      * @return a string representation of the segment.
      */
     virtual const string toString() = 0;
-
-    /**
-     * Shifts the segment's grid and its accessor(s) to the given line.
-     * @param l The line to shift the segment to.
-     */
-    virtual void setStartL(size_t l) = 0;
 
     /**
      * Equal to operator.
@@ -151,7 +162,6 @@ public:
     virtual bool operator==(const Segment& that) const {
         return this == &that;
     }
-
 };
 
 #endif	/* SEGMENT_H */
