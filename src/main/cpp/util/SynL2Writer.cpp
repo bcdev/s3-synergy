@@ -27,25 +27,21 @@ SynL2Writer::~SynL2Writer() {
 }
 
 void SynL2Writer::process(Context& context) {
-
-    Segment* segment;
-    size_t endLine;
-
     for (size_t i = 0; i < variablesToWrite.size(); i++) {
-        string segmentName = context.getDictionary()->getSegmentNameForL1c(variablesToWrite[i]);
-        segment = &context.getSegment(segmentName);
-        Grid& grid = segment->getGrid();
+        const string segmentName = context.getDictionary()->getSegmentNameForL2(variablesToWrite[i]);
+        const Segment& segment = context.getSegment(segmentName);
+        const Grid& grid = segment.getGrid();
 
-        size_t startLine = getStartL(context, *segment);
-        endLine = getDefaultEndL(startLine, grid);
+        const size_t startL = getStartL(context, segment);
+        const size_t endLine = getDefaultEndL(startL, grid);
 
         Variable& variable = context.getDictionary()->getL2Variable(variablesToWrite[i]);
 
         string ncVariableName = variable.getNcName();
         string symbolicName = variable.getSymbolicName();
 
-        Logger::get()->progress("Writing variable " + symbolicName + " into "
-                "segment [" + segment->toString() + "]", getId());
+        Logger::get()->progress("Writing variable " + symbolicName + " of "
+                "segment [" + segment.toString() + "]", getId());
 
         string fileName = context.getDictionary()->getL1cNcFileNameForSymbolicName(symbolicName);
         fileName.append(".nc");
@@ -72,11 +68,12 @@ void SynL2Writer::process(Context& context) {
         nc_inq_dimlen(ncId, dimensionIds[2], &colCount);
 
         size_t lineCount = min(grid.getMaxL() - grid.getStartL() + 1, grid.getSizeL());
-        Accessor& accessor = segment->getAccessor(symbolicName);
-        IOUtils::write(ncId, varId, variable.getType(), dimCount, camCount, lineCount, colCount, *segment, startLine, endLine, accessor);
+        Accessor& accessor = segment.getAccessor(symbolicName);
+        IOUtils::write(ncId, varId, variable.getType(), dimCount, camCount, lineCount, colCount, segment, startL, endLine, accessor);
         nc_close(ncId);
     }
-    context.setMaxLComputed(*segment, *this, endLine);
+    // TODO ...
+    // context.setMaxLComputed(*segment, *this, endLine);
 }
 
 void SynL2Writer::start(Context& context) {

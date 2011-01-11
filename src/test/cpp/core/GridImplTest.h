@@ -23,7 +23,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../main/cpp/core/Grid.h"
+#include "../../../main/cpp/core/GridImpl.h"
 
 class GridImplTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(GridImplTest);
@@ -41,7 +41,7 @@ public:
     void tearDown();
 
 private:
-    Grid* grid;
+    GridImpl* grid;
     void testStarts();
     void testSizes();
     void testStrides();

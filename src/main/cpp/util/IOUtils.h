@@ -230,7 +230,7 @@ public:
      * @param accessor The segment's accessor to the data.
      */
     static void write(int ncId, int varId, nc_type type, size_t dimCount, size_t camCount,
-            size_t lineCount, size_t colCount, Segment& segment, size_t startLine,
+            size_t lineCount, size_t colCount, const Segment& segment, size_t startLine,
             size_t endLine, Accessor& accessor) {
         switch (type) {
             case(NC_BYTE):
@@ -390,7 +390,7 @@ private:
      * @param accessor The segment's accessor to the data.
      */
     static void writeByte(int ncId, int varId, size_t dimCount, size_t camCount,
-            size_t lineCount, size_t colCount, Segment& segment, size_t startLine,
+            size_t lineCount, size_t colCount, const Segment& segment, size_t startLine,
             size_t endLine, Accessor& accessor) {
 
         Grid& grid = segment.getGrid();
@@ -428,7 +428,7 @@ private:
      * @param accessor The segment's accessor to the data.
      */
     static void writeUByte(int ncId, int varId, size_t dimCount, size_t camCount,
-            size_t lineCount, size_t colCount, Segment& segment, size_t startLine,
+            size_t lineCount, size_t colCount, const Segment& segment, size_t startLine,
             size_t endLine, Accessor& accessor) {
 
         Grid& grid = segment.getGrid();
@@ -466,7 +466,7 @@ private:
      * @param accessor The segment's accessor to the data.
      */
     static void writeShort(int ncId, int varId, size_t dimCount, size_t camCount,
-            size_t lineCount, size_t colCount, Segment& segment, size_t startLine,
+            size_t lineCount, size_t colCount, const Segment& segment, size_t startLine,
             size_t endLine, Accessor& accessor) {
 
         Grid& grid = segment.getGrid();
@@ -504,7 +504,7 @@ private:
      * @param accessor The segment's accessor to the data.
      */
     static void writeUShort(int ncId, int varId, size_t dimCount, size_t camCount,
-            size_t lineCount, size_t colCount, Segment& segment, size_t startLine,
+            size_t lineCount, size_t colCount, const Segment& segment, size_t startLine,
             size_t endLine, Accessor& accessor) {
 
         Grid& grid = segment.getGrid();
@@ -542,7 +542,7 @@ private:
      * @param accessor The segment's accessor to the data.
      */
     static void writeInt(int ncId, int varId, size_t dimCount, size_t camCount,
-            size_t lineCount, size_t colCount, Segment& segment, size_t startLine,
+            size_t lineCount, size_t colCount, const Segment& segment, size_t startLine,
             size_t endLine, Accessor& accessor) {
 
         Grid& grid = segment.getGrid();
@@ -580,7 +580,7 @@ private:
      * @param accessor The segment's accessor to the data.
      */
     static void writeUInt(int ncId, int varId, size_t dimCount, size_t camCount,
-            size_t lineCount, size_t colCount, Segment& segment, size_t startLine,
+            size_t lineCount, size_t colCount, const Segment& segment, size_t startLine,
             size_t endLine, Accessor& accessor) {
 
         Grid& grid = segment.getGrid();
@@ -618,7 +618,7 @@ private:
      * @param accessor The segment's accessor to the data.
      */
     static void writeLong(int ncId, int varId, size_t dimCount, size_t camCount,
-            size_t lineCount, size_t colCount, Segment& segment, size_t startLine,
+            size_t lineCount, size_t colCount, const Segment& segment, size_t startLine,
             size_t endLine, Accessor& accessor) {
 
         Grid& grid = segment.getGrid();
@@ -657,7 +657,7 @@ private:
      * @param accessor The segment's accessor to the data.
      */
     static void writeULong(int ncId, int varId, size_t dimCount, size_t camCount,
-            size_t lineCount, size_t colCount, Segment& segment, size_t startLine,
+            size_t lineCount, size_t colCount, const Segment& segment, size_t startLine,
             size_t endLine, Accessor& accessor) {
 
         Grid& grid = segment.getGrid();
@@ -695,7 +695,7 @@ private:
      * @param accessor The segment's accessor to the data.
      */
     static void writeFloat(int ncId, int varId, size_t dimCount, size_t camCount,
-            size_t lineCount, size_t colCount, Segment& segment, size_t startLine,
+            size_t lineCount, size_t colCount, const Segment& segment, size_t startLine,
             size_t endLine, Accessor& accessor) {
 
         Grid& grid = segment.getGrid();
@@ -733,7 +733,7 @@ private:
      * @param accessor The segment's accessor to the data.
      */
     static void writeDouble(int ncId, int varId, size_t dimCount, size_t camCount,
-            size_t lineCount, size_t colCount, Segment& segment, size_t startLine,
+            size_t lineCount, size_t colCount, const Segment& segment, size_t startLine,
             size_t endLine, Accessor& accessor) {
 
         Grid& grid = segment.getGrid();

@@ -50,11 +50,11 @@ public:
     bool hasVariable(const string& varName) const;
 
     const string& getId() const;
-    Grid& getGrid();
+    Grid& getGrid() const;
     Accessor& getAccessor(const string& varName) const throw (logic_error);
     void setStartL(size_t l) throw (logic_error);
     
-    const string toString();
+    string toString() const;
 
 private:
     void unique(const string& varName) const throw (logic_error);
@@ -62,7 +62,7 @@ private:
     static const string className;
 
     const string id;
-    GridImpl grid;
+    mutable GridImpl grid;
     map<string, Accessor*> accessorMap;
     vector<Accessor*> accessorList;
 };

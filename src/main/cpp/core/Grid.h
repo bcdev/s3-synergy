@@ -53,12 +53,6 @@ public:
     virtual size_t getStartL() const = 0;
 
     /**
-     * Sets the start value of the row index dimension to a new value.
-     * @param l The new start value of the row index dimension.
-     */
-    virtual void setStartL(size_t l) = 0;
-
-    /**
      * Returns the start value of the column index dimension.
      * @return the start value of the column index dimension.
      */
