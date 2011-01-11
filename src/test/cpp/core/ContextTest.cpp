@@ -79,60 +79,29 @@ void ContextTest::testAddSegment() {
 
 void ContextTest::testSetGetDictionary() {
     CPPUNIT_ASSERT(context->getDictionary() == 0);
-    context->setDictionary(new Dictionary(""));
-    CPPUNIT_ASSERT(context->getDictionary() != 0);
+    Dictionary* dictionary = (Dictionary*) 1;
+    context->setDictionary(dictionary);
+    CPPUNIT_ASSERT(context->getDictionary() == dictionary);
 }
 
 void ContextTest::testSetGetJobOrder() {
     CPPUNIT_ASSERT(context->getJobOrder() == 0);
-    // TODO: use pointer to job order instance
-    context->setJobOrder(0);
-//    CPPUNIT_ASSERT(context->getJobOrder() != 0);
+    JobOrder* jobOrder = (JobOrder*) 1;
+    context->setJobOrder(jobOrder);
+    CPPUNIT_ASSERT(context->getJobOrder() == jobOrder);
 }
 
 void ContextTest::testSetGetLogging() {
-
-    class Logger : public virtual Logging {
-    public:
-
-        Logger() {
-        }
-
-        ~Logger() {
-        }
-
-        void debug(const string& message, const string& moduleName,
-                const string& processorVersion = Constants::PROCESSOR_VERSION) {
-        }
-
-        void info(const string& message, const string& moduleName,
-                const string& processorVersion = Constants::PROCESSOR_VERSION) {
-        }
-
-        void progress(const string& message, const string& moduleName,
-                const string& processorVersion = Constants::PROCESSOR_VERSION) {
-        }
-
-        void warning(const string& message, const string& moduleName,
-                const string& processorVersion = Constants::PROCESSOR_VERSION) {
-        }
-
-        void error(const string& message, const string& moduleName,
-                const string& processorVersion = Constants::PROCESSOR_VERSION) {
-        }
-
-    };
     CPPUNIT_ASSERT(context->getLogging() == 0);
-    const auto_ptr<Logging> l(new Logger());
-    context->setLogging(l.get());
-    CPPUNIT_ASSERT(context->getLogging() != 0);
-    CPPUNIT_ASSERT(context->getLogging() == l.get());
+    Logging* logging = (Logging*) 1;
+    context->setLogging(logging);
+    CPPUNIT_ASSERT(context->getLogging() == logging);
 }
 
 void ContextTest::testGetUnknownObject() {
-    CPPUNIT_ASSERT_THROW(context->getObject("O"), out_of_range);
+    CPPUNIT_ASSERT_THROW(context->getObject("O"), logic_error);
 }
 
 void ContextTest::testGetUnknownSegment() {
-    CPPUNIT_ASSERT_THROW(context->getSegment("S"), out_of_range);
+    CPPUNIT_ASSERT_THROW(context->getSegment("S"), logic_error);
 }
