@@ -18,7 +18,6 @@
  * Created on December 15, 2010, 5:28 PM
  */
 
-#include <algorithm>
 #include <limits>
 #include <sstream>
 #include <stdexcept>
@@ -28,8 +27,6 @@
 
 using std::invalid_argument;
 using std::logic_error;
-using std::min;
-using std::numeric_limits;
 using std::ostringstream;
 
 SegmentImpl::SegmentImpl(const string& s, size_t l, size_t m, size_t k, size_t minL, size_t maxL) : id(s), grid(k, l, m, minL, maxL), accessorMap() {
@@ -124,32 +121,36 @@ Grid& SegmentImpl::getGrid() {
 }
 
 Accessor& SegmentImpl::getAccessor(const string& varName) const {
-    if( accessorMap.find(varName) == accessorMap.end() ) {
-        throw std::invalid_argument( "No accessor for variable " + varName + "." );
+    if (!hasVariable(varName)) {
+        throw logic_error("No accessor for variable " + varName + ".");
     }
     return *accessorMap.at(varName);
 }
 
+void SegmentImpl::setStartL(size_t l) {
+    if (l < grid.getStartL()) {
+        throw logic_error(className + ": l < grid.getStartL().");
+    }
+    if (l > grid.getStartL() + grid.getSizeL()) {
+        throw logic_error(className + ": l > grid.getStartL() + grid.getSizeL().");
+    }
+    if (l + grid.getSizeL() - 1 > grid.getMaxL()) {
+        l = grid.getMaxL() - grid.getSizeL() + 1;
+    }
+    for (size_t i = 0; i < accessorList.size(); i++) {
+        accessorList[i]->shift(l - grid.getStartL(), grid.getStrideK(), grid.getStrideL());
+    }
+    grid.setStartL(l);
+}
+
 string const SegmentImpl::toString() {
-    std::ostringstream oss;
+    ostringstream oss;
     oss << className << "[";
     oss << "id = " << getId() << ", ";
     oss << "startL = " << getGrid().getStartL() << ", ";
     oss << "sizeL = " << getGrid().getSizeL() << "]";
 
     return oss.str();
-}
-
-void SegmentImpl::setStartL(size_t l) {
-    if (l < grid.getStartL()) {
-        throw invalid_argument(className + ": l < grid.getStartL().");
-    }
-    const size_t oldStartL = grid.getStartL();
-    grid.setStartL(l);
-    const size_t newStartL = grid.getStartL();
-    for (size_t i = 0; i < accessorList.size(); i++) {
-        accessorList[i]->shift(min(newStartL - oldStartL, l - oldStartL), grid.getStrideK(), grid.getStrideL());
-    }
 }
 
 void SegmentImpl::unique(const string& varName) const throw (logic_error) {

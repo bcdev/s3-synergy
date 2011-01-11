@@ -70,9 +70,8 @@ void GridImplTest::testSetGetStartL() {
     CPPUNIT_ASSERT(grid->getStartL() == 0);
     grid->setStartL(1000);
     CPPUNIT_ASSERT(grid->getStartL() == 1000);
-    CPPUNIT_ASSERT_THROW(grid->setStartL(60000), out_of_range);
-    grid->setStartL(0);
-    CPPUNIT_ASSERT(grid->getStartL() == 0);
-    grid->setStartL(59000);
+    grid->setStartL(58000);
+    CPPUNIT_ASSERT(grid->getStartL() == 58000);
+    CPPUNIT_ASSERT_THROW(grid->setStartL(58001), out_of_range);
     CPPUNIT_ASSERT(grid->getStartL() == 58000);
 }

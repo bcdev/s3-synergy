@@ -37,16 +37,7 @@ public:
         return startL;
     }
 
-    void setStartL(size_t l) {
-        if (l > maxL) {
-            throw std::out_of_range("L is bigger than the maximum line.");
-        }
-        if (l + sizeL - 1 > maxL) {
-            startL = maxL - sizeL + 1;
-        } else {
-            this->startL = l;
-        }
-    }
+    void setStartL(size_t l);
 
     size_t getStartM() const {
         return startM;

@@ -26,7 +26,10 @@
 
 #include "Accessor.h"
 
+using std::copy;
+using std::fill;
 using std::bad_cast;
+using std::invalid_argument;
 
 template<class T>
 class AbstractAccessor : public virtual Accessor {
@@ -157,9 +160,18 @@ public:
     }
 
     void shift(size_t n, size_t strideK, size_t strideL) {
-        for (size_t i = 0; i < data.size(); i += strideK) {
-            std::copy(&data[i + n * strideL], &data[i + strideK], &data[i]);
-            std::fill(&data[i + strideK - n * strideL], &data[i + strideK], T(0));
+        if (n * strideL > strideK) {
+            throw invalid_argument("n * strideL > strideK");
+        }
+        if (strideK % strideL != 0) {
+            throw invalid_argument("strideK % strideL != 0");
+        }
+        if (data.size() % strideK != 0) {
+            throw invalid_argument("data.size() % strideK != 0");
+        }
+        for (size_t k = 0; k < data.size(); k += strideK) {
+            copy(&data[k + n * strideL], &data[k + strideK], &data[k]);
+            fill(&data[k + strideK - n * strideL], &data[k + strideK], T(0));
         }
     }
 

@@ -23,6 +23,9 @@
 #include "SegmentImplTest.h"
 #include "../../../main/cpp/core/SegmentImpl.h"
 
+using std::invalid_argument;
+using std::logic_error;
+
 CPPUNIT_TEST_SUITE_REGISTRATION(SegmentImplTest);
 
 SegmentImplTest::SegmentImplTest() {
@@ -72,51 +75,51 @@ void SegmentImplTest::testGetGrid() {
 }
 
 void SegmentImplTest::testGetAccessor() {
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("B"), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("B"), logic_error);
     segment->addVariableByte("B");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("B").getByteData());
     CPPUNIT_ASSERT(segment->getAccessor("B").getByteData().size() == 5 * 2000 * 760);
 
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("D"), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("D"), logic_error);
     segment->addVariableDouble("D");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("D").getDoubleData());
 
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("F"), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("F"), logic_error);
     segment->addVariableFloat("F");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("F").getFloatData());
 
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("I"), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("I"), logic_error);
     segment->addVariableInt("I");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("I").getIntData());
 
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("L"), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("L"), logic_error);
     segment->addVariableLong("L");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("L").getLongData());
 
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("S"), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("S"), logic_error);
     segment->addVariableShort("S");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("S").getShortData());
 
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("UB"), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("UB"), logic_error);
     segment->addVariableUByte("UB");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("UB").getUByteData());
 
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("UI"), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("UI"), logic_error);
     segment->addVariableUInt("UI");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("UI").getUIntData());
 
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("UL"), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("UL"), logic_error);
     segment->addVariableULong("UL");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("UL").getULongData());
 
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("US"), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("US"), logic_error);
     segment->addVariableUShort("US");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("US").getUShortData());
 }
 
 void SegmentImplTest::testShift() {
-    segment->addVariableInt("I");
-    valarray<int>& data = segment->getAccessor("I").getIntData();
+    segment->addVariableUInt("U");
+    valarray<uint32_t>& data = segment->getAccessor("U").getUIntData();
 
     const Grid& grid = segment->getGrid();
     for (size_t k = 0; k < grid.getSizeK(); k++) {
@@ -140,6 +143,24 @@ void SegmentImplTest::testShift() {
                 } else {
                     CPPUNIT_ASSERT(data[i] == 0);
                 }
+            }
+        }
+    }
+
+    CPPUNIT_ASSERT_THROW(segment->setStartL(100), logic_error);
+    CPPUNIT_ASSERT(grid.getStartL() == 200);
+
+    CPPUNIT_ASSERT_THROW(segment->setStartL(2201), logic_error);
+    CPPUNIT_ASSERT(grid.getStartL() == 200);
+
+    segment->setStartL(2200);
+    CPPUNIT_ASSERT(grid.getStartL() == 2200);
+
+    for (size_t k = 0; k < grid.getSizeK(); k++) {
+        for (size_t l = grid.getStartL(); l < grid.getStartL() + grid.getSizeL(); l++) {
+            for (size_t m = 0; m < grid.getSizeM(); m++) {
+                const size_t i = grid.getIndex(k, l, m);
+                CPPUNIT_ASSERT(data[i] == 0);
             }
         }
     }
