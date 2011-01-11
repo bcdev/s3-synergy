@@ -37,8 +37,6 @@ public:
         return startL;
     }
 
-    void setStartL(size_t l);
-
     size_t getStartM() const {
         return startM;
     }
@@ -80,6 +78,8 @@ public:
     size_t getMaxL() const {
         return maxL;
     }
+
+    void setStartL(size_t l);
 
 private:
     size_t startK;

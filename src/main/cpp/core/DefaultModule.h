@@ -74,7 +74,7 @@ protected:
      * @return The index of the row where this module shall start the processing
      *         of the {@code segment}.
      */
-    size_t getStartL(Context& context, Segment& segment) const {
+    size_t getStartL(const Context& context, const Segment& segment) const {
         if (context.hasMaxLComputed(segment, *this)) {
             return max(segment.getGrid().getStartL(),
                     context.getMaxLComputed(segment, *this) + 1);

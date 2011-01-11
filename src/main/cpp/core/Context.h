@@ -79,7 +79,7 @@ public:
      * Returns a list of modules, which have been added to the context.
      * @return a list of modules, which have been added to the context.
      */
-    vector<Module*> getModules() const;
+    const vector<Module*> getModules() const;
 
     /**
      * Returns the dictionary.

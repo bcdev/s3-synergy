@@ -91,7 +91,7 @@ void Context::setLogging(Logging* logging) {
     this->logging = logging;
 }
 
-vector<Module*> Context::getModules() const {
+const vector<Module*> Context::getModules() const {
     return moduleList;
 }
 

@@ -116,7 +116,7 @@ const string& SegmentImpl::getId() const {
     return id;
 }
 
-Grid& SegmentImpl::getGrid() {
+Grid& SegmentImpl::getGrid() const {
     return grid;
 }
 
@@ -143,7 +143,7 @@ void SegmentImpl::setStartL(size_t l) throw (logic_error) {
     grid.setStartL(l);
 }
 
-string const SegmentImpl::toString() {
+string SegmentImpl::toString() const {
     ostringstream oss;
     oss << className << "[";
     oss << "id = " << getId() << ", ";

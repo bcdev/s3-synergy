@@ -121,7 +121,7 @@ public:
      * Returns the segment grid.
      * @return the segment grid.
      */
-    virtual Grid& getGrid() = 0;
+    virtual Grid& getGrid() const = 0;
 
     /**
      * Returns an accessor to a variable's samples.
@@ -151,7 +151,7 @@ public:
      * Returns a string representation of the segment.
      * @return a string representation of the segment.
      */
-    virtual const string toString() = 0;
+    virtual string toString() const = 0;
 
     /**
      * Equal to operator.
