@@ -38,7 +38,7 @@ class IOUtils {
 public:
 
     static int* getNcDims(int ncId, vector<Dimension*> dims) {
-        int* ncDims = new int[dims.size()];
+        valarray<int> ncDims(dims.size());
         for (size_t i = 0; i < dims.size(); i++) {
             int dimId;
             int status = nc_inq_dimid(ncId, dims[i]->getName().c_str(), &dimId);
@@ -50,7 +50,7 @@ public:
                 ncDims[i] = dimId;
             }
         }
-        return ncDims;
+        return &ncDims[0];
     }
 
     static const valarray<size_t> createCountVector(size_t dimCount, size_t camCount, size_t lineCount, size_t colCount) {

@@ -42,9 +42,13 @@ const string XmlParser::evaluateToString(string& path, const char* expression) {
 
     // cleaning up
     XMLString::release(&expr);
+    delete parser;
 
     const xalanc::XalanDOMString& resultString = result->str();
-    return XMLString::transcode(resultString.data());
+    char* resultChars = XMLString::transcode(resultString.data());
+    string resultStr(resultChars);
+    XMLString::release(&resultChars);
+    return resultStr;
 }
 
 const vector<string> XmlParser::evaluateToStringList(string& path, string& expression) {
@@ -75,6 +79,7 @@ const vector<string> XmlParser::evaluateToStringList(string& path, const char* e
         char* value = XMLString::transcode(name);
         output.push_back(value);
     }
+    delete parser;
     return output;
 }
 
