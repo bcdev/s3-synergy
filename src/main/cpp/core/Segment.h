@@ -128,7 +128,7 @@ public:
      * @param varName The name of the variable to be accessed.
      * @return the accessor.
      */
-    virtual Accessor& getAccessor(const string& varName) const = 0;
+    virtual Accessor& getAccessor(const string& varName) const throw (logic_error) = 0;
 
     /**
      * Moves the start of the segment to the row with the given index. The
@@ -145,7 +145,7 @@ public:
      * 
      * @param l The index of the row the segment shall be moved to.
      */
-    virtual void setStartL(size_t l) = 0;
+    virtual void setStartL(size_t l) throw (logic_error) = 0;
 
     /**
      * Returns a string representation of the segment.

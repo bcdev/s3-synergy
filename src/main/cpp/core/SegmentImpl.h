@@ -51,8 +51,8 @@ public:
 
     const string& getId() const;
     Grid& getGrid();
-    Accessor& getAccessor(const string& varName) const;
-    void setStartL(size_t l);
+    Accessor& getAccessor(const string& varName) const throw (logic_error);
+    void setStartL(size_t l) throw (logic_error);
     
     const string toString();
 

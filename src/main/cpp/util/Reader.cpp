@@ -16,7 +16,6 @@
 #include "JobOrder.h"
 #include "Logger.h"
 #include "Reader.h"
-#include "ReaderConstants.h"
 #include "IOUtils.h"
 
 using std::min;
