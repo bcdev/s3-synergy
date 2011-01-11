@@ -106,24 +106,24 @@ string Logger::createMessageHeader(const string& moduleName, const string& modul
 }
 
 void Logger::logToError(const string& message, const string& moduleName, const string& moduleVersion) {
-    string* logMessage = new string();
-    logMessage->append(createMessageHeader(moduleName, moduleVersion));
-    logMessage->append("[E] ");
-    logMessage->append(message);
+    string logMessage;
+    logMessage.append(createMessageHeader(moduleName, moduleVersion));
+    logMessage.append("[E] ");
+    logMessage.append(message);
 
-    logFile << *logMessage << "\n";
-    cerr << *logMessage << "\n";
+    logFile << logMessage << "\n";
+    cerr << logMessage << "\n";
 }
 
 void Logger::logToStdout(const string& message, const string& moduleName, const string& moduleVersion, const string& logType) {
-    string* logMessage = new string();
-    logMessage->append(createMessageHeader(moduleName, moduleVersion));
-    logMessage->append(logType);
-    logMessage->append(" ");
-    logMessage->append(message);
+    string logMessage;
+    logMessage.append(createMessageHeader(moduleName, moduleVersion));
+    logMessage.append(logType);
+    logMessage.append(" ");
+    logMessage.append(message);
 
-    logFile << *logMessage << "\n";
-    cout << *logMessage << "\n";
+    logFile << logMessage << "\n";
+    cout << logMessage << "\n";
 }
 
 string Logger::getTimeString() {

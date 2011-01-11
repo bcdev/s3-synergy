@@ -42,14 +42,13 @@ void Reader::process(Context& context) {
 
     // read from each variable
     const vector<string> variablesToBeRead = dict.getVariables(true);
-//    for (size_t varIndex = 0; varIndex < variablesToBeRead.size(); varIndex++) {
-    for (size_t varIndex = 0; varIndex < 100; varIndex++) {
+    for (size_t varIndex = 0; varIndex < variablesToBeRead.size(); varIndex++) {
         string symbolicName = variablesToBeRead[varIndex];
         string ncVariableName = dict.getL1cNcVarName(symbolicName);
         string fileName = dict.getL1cNcFileNameForSymbolicName(symbolicName);
         const string& segmentName = dict.getSegmentNameForL1c(symbolicName);
 
-        if (segmentIsCompletelyComputed(segmentName, symbolicName)) {
+        if (hasSegmentComplete(symbolicName)) {
             continue;
         }
 
@@ -84,10 +83,10 @@ void Reader::process(Context& context) {
         }
 
         size_t sizeL = min(stepSize, lineCount);
-        if (!context.hasSegment(segmentName)) {
-            segment = &context.addSegment(segmentName, sizeL, colCount, camCount, 0, lineCount - 1);
-        } else {
+        if (context.hasSegment(segmentName)) {
             segment = &context.getSegment(segmentName);
+        } else {
+            segment = &context.addSegment(segmentName, sizeL, colCount, camCount, 0, lineCount - 1);
         }
 
         if (!segment->hasVariable(symbolicName)) {
@@ -95,18 +94,51 @@ void Reader::process(Context& context) {
             setVariableType(ncId, varId, variable);
             nc_type type = getVariableType(ncId, varId, variable);
             IOUtils::addVariableToSegment(symbolicName, type, *segment);
-            addDimsToVariable(variable, camCount, sizeL, colCount);
+//            addDimsToVariable(variable, camCount, sizeL, colCount);
         }
 
         Logger::get()->progress("Reading data for variable " + symbolicName + " into segment [" + segment->toString() + "]", getId());
         IOUtils::readData(ncId, varId, segment->getAccessor(symbolicName), segment->getGrid(), dimCount, context.getMaxLComputed(*segment, *this) + 1);
 
         endLine = segment->getGrid().getStartL() + segment->getGrid().getSizeL() - 1;
+        setMaxLineComputed(context, segment, symbolicName, dict, endLine);
+    }
+}
+
+void Reader::setMaxLineComputed(Context& context, Segment* segment, string& symbolicName, Dictionary& dict, size_t endLine) {
+    string segmentName = segment->getId();
+    if (segment->getGrid().getMaxL() == endLine) {
+        completedSegments[symbolicName] = segmentName;
+    }
+    if( segmentVariableMap.find(segmentName) == segmentVariableMap.end() ) {
+        set<string> variables;
+        segmentVariableMap[segmentName] = &variables;
+//        segmentVariableMap[segmentName] = new set<string>();
+    }
+    segmentVariableMap[segmentName]->insert(symbolicName);
+    if (isSegmentComputedByAllVariables(*segment, dict)) {
+        segmentVariableMap.clear();
         context.setMaxLComputed(*segment, *this, endLine);
-        if (segment->getGrid().getMaxL() == endLine) {
-            completedSegments[symbolicName] = segment->getId();
+    }
+}
+
+const bool Reader::isSegmentComputedByAllVariables(Segment& segment, Dictionary& dict) {
+    vector<string> variables = dict.getVariables(true);
+    vector<string> varsForSegment;
+    for (size_t i = 0; i < variables.size(); i++) {
+        string varName = variables[i];
+        string segmentName = dict.getSegmentNameForL1c(varName);
+        if (segment.getId().compare(segmentName) == 0) {
+            varsForSegment.push_back(varName);
         }
     }
+    set<string>* varsInSegment = segmentVariableMap[segment.getId()];
+    for (size_t j = 0; j < varsForSegment.size(); j++) {
+        if (varsInSegment->find(varsForSegment[j]) == varsInSegment->end()) {
+            return false;
+        }
+    }
+    return true;
 }
 
 void Reader::modifyBoundsOfSegments(const Context& context) {
@@ -114,27 +146,16 @@ void Reader::modifyBoundsOfSegments(const Context& context) {
     for (size_t i = 0; i < segments.size(); i++) {
         Segment* segment = segments[i];
         size_t maxL = segment->getGrid().getStartL() + segment->getGrid().getSizeL() - 1;
-
         if (context.getMaxLComputed(*segment, *this) == maxL &&
-                !segmentIsCompletelyComputed(segment->getId(), *context.getDictionary())) {
-                size_t minRequiredLine = context.getMinLRequired(*segment, context.getMaxLComputed(*segment, *this) + 1);
-                segment->setStartL(minRequiredLine);
-            }
+                !isSegmentComputedByAllVariables(*segment, *context.getDictionary())) {
+            size_t minRequiredLine = context.getMinLRequired(*segment, context.getMaxLComputed(*segment, *this) + 1);
+            segment->setStartL(minRequiredLine);
+        }
     }
 }
 
-const bool Reader::segmentIsCompletelyComputed(const string& segmentName, const string& symbolicName) const {
+const bool Reader::hasSegmentComplete(const string& symbolicName) const {
     return completedSegments.find(symbolicName) != completedSegments.end();
-}
-
-const bool Reader::segmentIsCompletelyComputed(const string& segmentName, const Dictionary& dict) const {
-    const vector<string> variablesToBeRead = dict.getVariables(true);
-    for( size_t i = 0; i < variablesToBeRead.size(); i++ ) {
-        if(completedSegments.find(variablesToBeRead[i]) == completedSegments.end() ) {
-            return false;
-        };
-    }
-    return true;
 }
 
 const int Reader::findFile(string& sourceDir, string& fileName) {
@@ -165,13 +186,13 @@ const int Reader::findFile(string& sourceDir, string& fileName) {
 const void Reader::setVariableType(int ncId, int varId, Variable& variable) {
 
     nc_type type;
-            nc_inq_vartype(ncId, varId, &type);
-            variable.setType(type);
+    nc_inq_vartype(ncId, varId, &type);
+    variable.setType(type);
 }
 
 const nc_type Reader::getVariableType(int ncId, int varId, Variable& variable) {
     nc_type type;
-            nc_inq_vartype(ncId, varId, &type);
+    nc_inq_vartype(ncId, varId, &type);
 
     return type;
 }
@@ -180,6 +201,6 @@ const nc_type Reader::getVariableType(int ncId, int varId, Variable& variable) {
 
 void Reader::addDimsToVariable(Variable& variable, size_t camCount, size_t lineCount, size_t colCount) {
     variable.addDimension(new Dimension("N_CAM", camCount));
-            variable.addDimension(new Dimension("N_LINE_OLC", lineCount));
-            variable.addDimension(new Dimension("N_DET_CAM", colCount));
+    variable.addDimension(new Dimension("N_LINE_OLC", lineCount));
+    variable.addDimension(new Dimension("N_DET_CAM", colCount));
 }
