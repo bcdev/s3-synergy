@@ -33,9 +33,7 @@ class DictionaryTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE_END();
     
 public:
-    DictionaryTest() : dict("/mnt/hgfs/S3L2PP/src/test/resources/syn/config/config.xml") {
-        
-    }
+    DictionaryTest();
     virtual ~DictionaryTest();
     void setUp();
     void tearDown();
@@ -64,7 +62,7 @@ private:
     void testWVGVariable(Variable& var);
     void testNDVIVariable(Variable& var);
     void testTGVariable(Variable& var);
-    Dictionary dict;
+    Dictionary* dict;
 
 };
 

@@ -41,14 +41,15 @@ void Reader::process(Context& context) {
     modifyBoundsOfSegments(context);
 
     // read from each variable
-    const vector<string> variablesToBeRead = dict.getVariablesToBeRead();
-    for (size_t varIndex = 0; varIndex < variablesToBeRead.size(); varIndex++) {
+    const vector<string> variablesToBeRead = dict.getVariables(true);
+//    for (size_t varIndex = 0; varIndex < variablesToBeRead.size(); varIndex++) {
+    for (size_t varIndex = 0; varIndex < 100; varIndex++) {
         string symbolicName = variablesToBeRead[varIndex];
-        string ncVariableName = dict.getNcVarName(symbolicName);
-        string fileName = dict.getNcFileNameForSymbolicName(symbolicName);
-        const string& segmentName = dict.getSegmentName(symbolicName);
+        string ncVariableName = dict.getL1cNcVarName(symbolicName);
+        string fileName = dict.getL1cNcFileNameForSymbolicName(symbolicName);
+        const string& segmentName = dict.getSegmentNameForL1c(symbolicName);
 
-        if (segmentIsCompletelyComputed(segmentName)) {
+        if (segmentIsCompletelyComputed(segmentName, symbolicName)) {
             continue;
         }
 
@@ -90,7 +91,7 @@ void Reader::process(Context& context) {
         }
 
         if (!segment->hasVariable(symbolicName)) {
-            Variable& variable = dict.getVariable(symbolicName);
+            Variable& variable = dict.getL1cVariable(symbolicName);
             setVariableType(ncId, varId, variable);
             nc_type type = getVariableType(ncId, varId, variable);
             IOUtils::addVariableToSegment(symbolicName, type, *segment);
@@ -103,10 +104,9 @@ void Reader::process(Context& context) {
         endLine = segment->getGrid().getStartL() + segment->getGrid().getSizeL() - 1;
         context.setMaxLComputed(*segment, *this, endLine);
         if (segment->getGrid().getMaxL() == endLine) {
-            completedSegments.insert(segment->getId());
+            completedSegments[symbolicName] = segment->getId();
         }
     }
-
 }
 
 void Reader::modifyBoundsOfSegments(const Context& context) {
@@ -114,17 +114,31 @@ void Reader::modifyBoundsOfSegments(const Context& context) {
     for (size_t i = 0; i < segments.size(); i++) {
         Segment* segment = segments[i];
         size_t maxL = segment->getGrid().getStartL() + segment->getGrid().getSizeL() - 1;
+
         if (context.getMaxLComputed(*segment, *this) == maxL &&
-                completedSegments.find(segment->getId()) == completedSegments.end()) {
-            size_t minRequiredLine = context.getMinLRequired(*segment, context.getMaxLComputed(*segment, *this) + 1);
-            segment->setStartL(minRequiredLine);
-        }
+                !segmentIsCompletelyComputed(segment->getId(), *context.getDictionary())) {
+                size_t minRequiredLine = context.getMinLRequired(*segment, context.getMaxLComputed(*segment, *this) + 1);
+                segment->setStartL(minRequiredLine);
+            }
     }
+}
+
+const bool Reader::segmentIsCompletelyComputed(const string& segmentName, const string& symbolicName) const {
+    return completedSegments.find(symbolicName) != completedSegments.end();
+}
+
+const bool Reader::segmentIsCompletelyComputed(const string& segmentName, const Dictionary& dict) const {
+    const vector<string> variablesToBeRead = dict.getVariables(true);
+    for( size_t i = 0; i < variablesToBeRead.size(); i++ ) {
+        if(completedSegments.find(variablesToBeRead[i]) == completedSegments.end() ) {
+            return false;
+        };
+    }
+    return true;
 }
 
 const int Reader::findFile(string& sourceDir, string& fileName) {
     vector<string> fileNames = IOUtils::getFiles(sourceDir);
-
     if (openedFiles.find(fileName) != openedFiles.end()) {
         return openedFiles[fileName];
     }
@@ -139,6 +153,7 @@ const int Reader::findFile(string& sourceDir, string& fileName) {
                     throw std::runtime_error("Unable to open netCDF-file " + currentFileName + ".");
                 } else {
                     openedFiles[fileName] = ncId;
+
                     return ncId;
                 }
             }
@@ -148,25 +163,23 @@ const int Reader::findFile(string& sourceDir, string& fileName) {
 }
 
 const void Reader::setVariableType(int ncId, int varId, Variable& variable) {
+
     nc_type type;
-    nc_inq_vartype(ncId, varId, &type);
-    variable.setType(type);
+            nc_inq_vartype(ncId, varId, &type);
+            variable.setType(type);
 }
 
 const nc_type Reader::getVariableType(int ncId, int varId, Variable& variable) {
     nc_type type;
-    nc_inq_vartype(ncId, varId, &type);
-    return type;
-}
+            nc_inq_vartype(ncId, varId, &type);
 
-const bool Reader::segmentIsCompletelyComputed(const string& segmentName) const {
-    return completedSegments.find(segmentName) != completedSegments.end();
+    return type;
 }
 
 // needed only for debugging purposes
 
 void Reader::addDimsToVariable(Variable& variable, size_t camCount, size_t lineCount, size_t colCount) {
     variable.addDimension(new Dimension("N_CAM", camCount));
-    variable.addDimension(new Dimension("N_LINE_OLC", lineCount));
-    variable.addDimension(new Dimension("N_DET_CAM", colCount));
+            variable.addDimension(new Dimension("N_LINE_OLC", lineCount));
+            variable.addDimension(new Dimension("N_DET_CAM", colCount));
 }

@@ -28,14 +28,14 @@ SynL2Writer::~SynL2Writer() {
 
 void SynL2Writer::process(Context& context) {
     for (size_t i = 0; i < variablesToWrite.size(); i++) {
-        const string segmentName = context.getDictionary()->getSegmentName(variablesToWrite[i]);
+        const string segmentName = context.getDictionary()->getSegmentNameForL2(variablesToWrite[i]);
         const Segment& segment = context.getSegment(segmentName);
         const Grid& grid = segment.getGrid();
 
         const size_t startL = getStartL(context, segment);
         const size_t endLine = getDefaultEndL(startL, grid);
 
-        Variable& variable = context.getDictionary()->getVariable(variablesToWrite[i]);
+        Variable& variable = context.getDictionary()->getL2Variable(variablesToWrite[i]);
 
         string ncVariableName = variable.getNcName();
         string symbolicName = variable.getSymbolicName();
@@ -43,7 +43,7 @@ void SynL2Writer::process(Context& context) {
         Logger::get()->progress("Writing variable " + symbolicName + " of "
                 "segment [" + segment.toString() + "]", getId());
 
-        string fileName = context.getDictionary()->getNcFileNameForSymbolicName(symbolicName);
+        string fileName = context.getDictionary()->getL1cNcFileNameForSymbolicName(symbolicName);
         fileName.append(".nc");
 
         const int ncId = getNcId(fileName);

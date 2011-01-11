@@ -20,14 +20,8 @@ void logIOParameters(JobOrder& jobOrder, Logger* logger);
 int main() {
 
 
-    // take the current time;
     clock_t start = clock();
-
-    // Initialize Xerces and XPath
     XPathInitializer init;
-
-    // this line ensures that errors in netcdf don't cause a system exit.
-    //    NcError ncError = NcError(NcError::verbose_nonfatal);
 
     // TODO - needed as argument
     string jobOrderXml = "/mnt/hgfs/S3L2PP/src/test/resources/syn/JobOrder.1.xml";
@@ -48,8 +42,7 @@ int main() {
     //    logIOParameters(jobOrder, logger);
 
     // TODO - get config file correct for current processor, not simply the first
-    Dictionary dictionary(jobOrder.getConfig().getConfigFileNames()[0]);
-    dictionary.parse();
+    Dictionary dict(jobOrder.getConfig().getConfigFileNames()[0]);
 
     // configure modules
     // TODO - use job order for configuration
@@ -64,11 +57,8 @@ int main() {
     context.setJobOrder(&jobOrder);
     context.addModule(reader);
     //    context.addModule(pixelClassification);
-//    context.addModule(writer);
-    
-    Dictionary* dict = new Dictionary(jobOrder.getConfig().getConfigFileNames()[0]);
-    dict->parse();
-    context.setDictionary(dict);
+    //    context.addModule(writer);
+    context.setDictionary(&dict);
 
     processor.process(context);
 
