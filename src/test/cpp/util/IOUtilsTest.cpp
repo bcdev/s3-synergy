@@ -56,7 +56,7 @@ void IOUtilsTest::testReadOlciDataPart() {
     string symbolicName = "SymbolicVarName";
     size_t dimCount = 3;
     size_t startLine = 0;
-    CPPUNIT_ASSERT_THROW(IOUtils::readData(ncId, varId, segment->getAccessor(symbolicName), segment->getGrid(), dimCount, startLine), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(IOUtils::readData(ncId, varId, segment->getAccessor(symbolicName), segment->getGrid(), dimCount, startLine), std::logic_error);
 
     segment->addVariableUShort(symbolicName);
     CPPUNIT_ASSERT_NO_THROW(IOUtils::readData(ncId, varId, segment->getAccessor(symbolicName), segment->getGrid(), dimCount, startLine));
@@ -155,7 +155,7 @@ void IOUtilsTest::testCreateStartVector() {
 void IOUtilsTest::testAddVariableToSegment() {
     Segment* segment = new SegmentImpl("Asterix", 10, 10, 5, 0, 9);
     CPPUNIT_ASSERT(segment->hasVariable("Obelix") == false);
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("Obelix"), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(segment->getAccessor("Obelix"), std::logic_error);
     IOUtils::addVariableToSegment("Obelix", NC_SHORT, *segment);
     CPPUNIT_ASSERT(segment->hasVariable("Obelix") == true);
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("Obelix"));

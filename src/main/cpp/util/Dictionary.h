@@ -44,73 +44,88 @@ public:
     virtual ~Dictionary();
 
     /**
-     * Parses the input files and thus initialises the dictionary.
-     */
-    void parse();
-
-    /**
-     * Returns all variables.
-     * @return All variables.
-     */
-    vector<Variable*> getVariables() const;
-
-    /**
-     * Returns the list of variables, which are to be read. To be used by the
-     * reader.
+     * Returns the list of symbolic names of the variables, which are to be read
+     * from the input L1C-product. To be used by the reader.
      * @return The list of variables to be read.
      */
-    const vector<string> getVariablesToBeRead() const;
+    const vector<string> getVariables(bool l1c) const;
 
     /**
-     * Returns a variable for a given symbolic name. To be used by modules in
+     * Returns a L1C-variable for a given symbolic name.
+     * @param varId The symbolic name of the variable to return.
+     * @return The variable with the given symbolic name.
+     */
+    Variable& getL1cVariable(const string& symbolicName);
+
+    /**
+     * Returns a L2-variable for a given symbolic name. To be used by modules in
      * order to get needed attributes for the variable.
      * @param varId The symbolic name of the variable to return.
      * @return The variable with the given symbolic name.
      */
-    Variable& getVariable(const string& symbolicName);
+    Variable& getL2Variable(const string& symbolicName);
 
     /**
-     * Returns the name of the given variable as it appears in the source
+     * Returns the name of the given L1C-variable as it appears in the source
      * netcdf-file. To be used by the reader in order to read data from the
      * variable from a file and to store the data in structures addressed by
      * the (unique) symbolic name.
      * @param symbolicName The symbolic name to get the netcdf-name for.
      * @return The netcdf-name.
      */
-    string getNcVarName(const string& symbolicName);
+    string getL1cNcVarName(const string& symbolicName);
 
     /**
-     * Returns the name of the netCDF-file for a given (output) variable name.
+     * Returns the name of the netCDF-file for a given L2 variable name.
      * Important note: this method is only to be used for output variables,
-     * since the input variable file names are ambiguous!
-     * @param ncName The output (netcdf-) variable name to get the name of the
+     * since the input variable file names are ambiguous! In search for the
+     * file name of an input variable, use getL1CNcFileNameForSymbolicName().
+     * @param ncName The output L2-variable name to get the name of the
      * netCDF-file for.
      * @return The netCDF-filename.
      */
-    const string getNcFileName(const string& ncName) const;
+    const string getL2NcFileName(const string& ncName) const;
 
     /**
-     * Returns the name of the netCDF-file for a given symbolic variable name.
+     * Returns the name of the netCDF-file for a given symbolic L1C-variable name.
      * @param ncName The symbolic variable name to get the name of the
      * netCDF-file for.
      * @return The netCDF-filename.
      */
-    const string getNcFileNameForSymbolicName(const string& symbolicName) const;
+    const string getL1cNcFileNameForSymbolicName(const string& symbolicName) const;
 
     /**
-     * Returns the name of the segment the variable uses during the processing.
+     * Returns the name of the netCDF-file for a given symbolic L2-variable name.
+     * @param ncName The symbolic variable name to get the name of the
+     * netCDF-file for.
+     * @return The netCDF-filename.
+     */
+    const string getL2NcFileNameForSymbolicName(const string& symbolicName) const;
+
+    /**
+     * Returns the name of the segment the (L1c-)variable uses during the
+     * processing.
      * @return The segment's name.
      */
-    const string getSegmentName(const string& symbolicName);
+    const string getSegmentNameForL1c(const string& symbolicName);
+
+    /**
+     * Returns the name of the segment the (L2-)variable uses during the
+     * processing.
+     * @return The segment's name.
+     */
+    const string getSegmentNameForL2(const string& symbolicName);
 
 private:
+    void init();
     string filePath;
-    void parseVariablesFile(string& variableDefPath, string& file);
+    void parseVariablesFile(string& variableDefPath, string& file, bool l1c);
     vector<Attribute*> parseAttributes(string& file, string& variableName);
 
     XmlParser xmlParser;
     string configFile;
-    vector<Variable*> variables;
+    vector<Variable*> l1cVariables;
+    vector<Variable*> l2Variables;
     vector<string> variablesToBeRead;
 };
 

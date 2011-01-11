@@ -14,17 +14,14 @@
 			</attribute>
 			<attribute>
 				<name>_FillValue</name>
-
 				<value>-1</value>
 			</attribute>
 			<attribute>
 				<name>valid_min</name>
-
 				<value>0.0</value>
 			</attribute>
 			<attribute>
 				<name>valid_max</name>
-
 				<value>4294967295.0</value>
 			</attribute>
 		</attributes>

@@ -29,85 +29,108 @@
 
 using std::ifstream;
 using boost::algorithm::trim_copy;
+using boost::starts_with;
 
 Dictionary::Dictionary(string config) : configFile(config) {
-    parse();
+    init();
 }
 
 Dictionary::~Dictionary() {
-    for (size_t i = 0; i < variables.size(); i++) {
-        delete variables[i];
+    for (size_t i = 0; i < l1cVariables.size(); i++) {
+        delete l1cVariables[i];
+    }
+    for (size_t i = 0; i < l2Variables.size(); i++) {
+        delete l2Variables[i];
     }
 }
 
-void Dictionary::parse() {
+void Dictionary::init() {
     string variableDefPath = xmlParser.evaluateToString(configFile, "/Config/Variable_Definition_Files_Path");
     string L1CPath = variableDefPath + "/L1C";
     string L2SynPath = variableDefPath + "/L2_SYN";
 
     vector<string> L1CFiles = IOUtils::getFiles(L1CPath);
     for (size_t i = 0; i < L1CFiles.size(); i++) {
-        parseVariablesFile(L1CPath, L1CFiles[i]);
+        parseVariablesFile(L1CPath, L1CFiles[i], true);
     }
     vector<string> L2SynFiles = IOUtils::getFiles(L2SynPath);
     for (size_t i = 0; i < L2SynFiles.size(); i++) {
-        parseVariablesFile(L2SynPath, L2SynFiles[i]);
+        parseVariablesFile(L2SynPath, L2SynFiles[i], false);
     }
-
-    string variablesToBeReadFile = xmlParser.evaluateToString(configFile, "/Config/Variables_To_Be_Read_File");
-    ifstream stream(variablesToBeReadFile);
-    string temp;
-    while (getline(stream, temp)) {
-        temp = trim_copy(temp);
-        variablesToBeRead.push_back(temp);
-    }
-
 }
 
-const vector<string> Dictionary::getVariablesToBeRead() const {
-    return variablesToBeRead;
-}
-
-vector<Variable*> Dictionary::getVariables() const {
-    return variables;
-}
-
-Variable& Dictionary::getVariable(const string& symbolicName) {
-    for (size_t i = 0; i < variables.size(); i++) {
-        if (variables[i]->getSymbolicName().compare(symbolicName) == 0) {
-            return *(variables[i]);
+const vector<string> Dictionary::getVariables(bool l1c) const {
+    vector<string> result;
+    if (l1c) {
+        for (size_t i = 0; i < l1cVariables.size(); i++) {
+            result.push_back(l1cVariables[i]->getSymbolicName());
+        }
+    } else {
+        for (size_t i = 0; i < l2Variables.size(); i++) {
+            result.push_back(l2Variables[i]->getSymbolicName());
         }
     }
-    throw std::invalid_argument("No variable with symbolic name " + symbolicName + ".");
+    return result;
 }
 
-const string Dictionary::getNcFileName(const string& ncName) const {
-    for (size_t i = 0; i < variables.size(); i++) {
-        if (variables[i]->getNcName().compare(ncName) == 0) {
-            return variables[i]->getFileName();
+Variable& Dictionary::getL1cVariable(const string& symbolicName) {
+    for (size_t i = 0; i < l1cVariables.size(); i++) {
+        if (l1cVariables[i]->getSymbolicName().compare(symbolicName) == 0) {
+            return *(l1cVariables[i]);
+        }
+    }
+    throw std::invalid_argument("No L1C-variable with symbolic name " + symbolicName + ".");
+}
+
+Variable& Dictionary::getL2Variable(const string& symbolicName) {
+    for (size_t i = 0; i < l2Variables.size(); i++) {
+        if (l2Variables[i]->getSymbolicName().compare(symbolicName) == 0) {
+            return *(l2Variables[i]);
+        }
+    }
+    throw std::invalid_argument("No L2-variable with symbolic name " + symbolicName + ".");
+}
+
+const string Dictionary::getL2NcFileName(const string& ncName) const {
+    for (size_t i = 0; i < l2Variables.size(); i++) {
+        if (l2Variables[i]->getNcName().compare(ncName) == 0) {
+            return l2Variables[i]->getFileName();
         }
     }
     throw std::invalid_argument("No filename for variable " + ncName + ".");
 }
 
-const string Dictionary::getNcFileNameForSymbolicName(const string& symbolicName) const {
-    for (size_t i = 0; i < variables.size(); i++) {
-        if (variables[i]->getSymbolicName().compare(symbolicName) == 0) {
-            return variables[i]->getFileName();
+const string Dictionary::getL1cNcFileNameForSymbolicName(const string& symbolicName) const {
+    for (size_t i = 0; i < l1cVariables.size(); i++) {
+        if (l1cVariables[i]->getSymbolicName().compare(symbolicName) == 0) {
+            return l1cVariables[i]->getFileName();
         }
     }
     throw std::invalid_argument("No filename for variable " + symbolicName + ".");
 }
 
-string Dictionary::getNcVarName(const string& symbolicName) {
-    return getVariable(symbolicName).getNcName();
+const string Dictionary::getL2NcFileNameForSymbolicName(const string& symbolicName) const {
+    for (size_t i = 0; i < l2Variables.size(); i++) {
+        if (l2Variables[i]->getSymbolicName().compare(symbolicName) == 0) {
+            return l2Variables[i]->getFileName();
+        }
+    }
+    throw std::invalid_argument("No filename for variable " + symbolicName + ".");
 }
 
-const string Dictionary::getSegmentName(const string& symbolicName) {
-    return getVariable(symbolicName).getSegmentName();
-};
+string Dictionary::getL1cNcVarName(const string& symbolicName) {
+    return getL1cVariable(symbolicName).getNcName();
+}
 
-void Dictionary::parseVariablesFile(string& variableDefPath, string& file) {
+const string Dictionary::getSegmentNameForL1c(const string& symbolicName) {
+    return getL1cVariable(symbolicName).getSegmentName();
+}
+
+const string Dictionary::getSegmentNameForL2(const string& symbolicName) {
+    return getL2Variable(symbolicName).getSegmentName();
+}
+
+void Dictionary::parseVariablesFile(string& variableDefPath, string& file, bool l1c) {
     string path = variableDefPath + "/" + file;
     const vector<string> variableNames = xmlParser.evaluateToStringList(path, "/dataset/variables/variable/name/child::text()");
 
@@ -126,7 +149,11 @@ void Dictionary::parseVariablesFile(string& variableDefPath, string& file) {
         for (size_t k = 0; k < attributes.size(); k++) {
             var->addAttribute(attributes[k]);
         }
-        variables.push_back(var);
+        if (l1c) {
+            l1cVariables.push_back(var);
+        } else {
+            l2Variables.push_back(var);
+        }
     }
 }
 

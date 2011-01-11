@@ -27,25 +27,24 @@ using std::vector;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(DictionaryTest);
 
+DictionaryTest::DictionaryTest() {
+
+}
+
 DictionaryTest::~DictionaryTest() {
 }
 
 void DictionaryTest::setUp() {
     // Initialize Xerces and XPath
     XPathInitializer init;
-    dict.parse();
-    //    vector<Variable*> vars = dict.getVariables();
-    //    for (size_t i = 0; i < vars.size(); i++) {
-    //        std::cout << "\n" << vars[i]->toString() << "\n";
-    //    }
+    dict = new Dictionary("/mnt/hgfs/S3L2PP/src/test/resources/syn/config/config.xml");
 }
 
 void DictionaryTest::tearDown() {
-
+    delete dict;
 }
 
 void DictionaryTest::testGetNcVarNameAndGetFileName() {
-    string symbolicName = "SDR_1";
     string symbolicName2 = "L_1";
     string symbolicName3 = "L_14";
     string symbolicName4 = "L_18";
@@ -57,67 +56,64 @@ void DictionaryTest::testGetNcVarNameAndGetFileName() {
     string symbolicName10 = "OLC_VAA";
     string symbolicName11 = "air_pressure";
     string symbolicName12 = "SLO_TP_lon";
+//    string symbolicName12 = "water_vapour";
 
-    string varName1 = dict.getNcVarName(symbolicName);
-    string varName2 = dict.getNcVarName(symbolicName2);
-    string varName3 = dict.getNcVarName(symbolicName3);
-    string varName4 = dict.getNcVarName(symbolicName4);
-    string varName5 = dict.getNcVarName(symbolicName5);
-    string varName6 = dict.getNcVarName(symbolicName6);
-    string varName7 = dict.getNcVarName(symbolicName7);
-    string varName8 = dict.getNcVarName(symbolicName8);
-    string varName9 = dict.getNcVarName(symbolicName9);
-    string varName10 = dict.getNcVarName(symbolicName10);
-    string varName11 = dict.getNcVarName(symbolicName11);
-    string varName12 = dict.getNcVarName(symbolicName12);
+    string varName2 = dict->getL1cNcVarName(symbolicName2);
+    string varName3 = dict->getL1cNcVarName(symbolicName3);
+    string varName4 = dict->getL1cNcVarName(symbolicName4);
+    string varName5 = dict->getL1cNcVarName(symbolicName5);
+    string varName6 = dict->getL1cNcVarName(symbolicName6);
+    string varName7 = dict->getL1cNcVarName(symbolicName7);
+    string varName8 = dict->getL1cNcVarName(symbolicName8);
+    string varName9 = dict->getL1cNcVarName(symbolicName9);
+    string varName10 = dict->getL1cNcVarName(symbolicName10);
+    string varName11 = dict->getL1cNcVarName(symbolicName11);
+    string varName12 = dict->getL1cNcVarName(symbolicName12);
 
-    CPPUNIT_ASSERT(varName1.compare("SDR_1") == 0);
     CPPUNIT_ASSERT(varName2.compare("TOA_Radiance_Meas") == 0);
     CPPUNIT_ASSERT(varName3.compare("TOA_Radiance_Meas") == 0);
     CPPUNIT_ASSERT(varName4.compare("TOA_Radiance_Meas") == 0);
     CPPUNIT_ASSERT(varName5.compare("TOA_Radiance_Meas") == 0);
     CPPUNIT_ASSERT(varName6.compare("TOA_Radiance_Meas") == 0);
     CPPUNIT_ASSERT(varName7.compare("Geodetic_Latitude") == 0);
-    CPPUNIT_ASSERT(varName8.compare("time") == 0);
+    CPPUNIT_ASSERT(varName8.compare("OLCI_time_stamps") == 0);
     CPPUNIT_ASSERT(varName9.compare("OLCI_QC_flags") == 0);
     CPPUNIT_ASSERT(varName10.compare("OAA") == 0);
     CPPUNIT_ASSERT(varName11.compare("sea_level_pressure") == 0);
     CPPUNIT_ASSERT(varName12.compare("SLST_L1b_TP_Longitude") == 0);
 
-    CPPUNIT_ASSERT(dict.getVariable(symbolicName3).getFileName().compare("OLC_RADIANCE_O16") == 0);
-    CPPUNIT_ASSERT(dict.getVariable(symbolicName4).getFileName().compare("OLC_RADIANCE_O21") == 0);
-    CPPUNIT_ASSERT(dict.getVariable(symbolicName5).getFileName().compare("SLST_NAD_RADIANCE_S5") == 0);
-    CPPUNIT_ASSERT(dict.getVariable(symbolicName6).getFileName().compare("SLST_ALT_RADIANCE_S4") == 0);
-    CPPUNIT_ASSERT(dict.getVariable(symbolicName7).getFileName().compare("GEOLOCATION_REF") == 0);
-    CPPUNIT_ASSERT(dict.getVariable(symbolicName8).getFileName().compare("L2_SYN_time_stamps") == 0);
-    CPPUNIT_ASSERT(dict.getVariable(symbolicName9).getFileName().compare("PIX_ANNOT_OLC") == 0);
-    CPPUNIT_ASSERT(dict.getVariable(symbolicName10).getFileName().compare("SUBS_ANNOT_GEOM_OLC") == 0);
-    CPPUNIT_ASSERT(dict.getVariable(symbolicName11).getFileName().compare("L2_SYN_geophysical_atmospheric_data") == 0);
-    CPPUNIT_ASSERT(dict.getVariable(symbolicName12).getFileName().compare("SUBS_ANNOT_SLST_ALT") == 0);
+    CPPUNIT_ASSERT(dict->getL1cVariable(symbolicName3).getFileName().compare("OLC_RADIANCE_O16") == 0);
+    CPPUNIT_ASSERT(dict->getL1cVariable(symbolicName4).getFileName().compare("OLC_RADIANCE_O21") == 0);
+    CPPUNIT_ASSERT(dict->getL1cVariable(symbolicName5).getFileName().compare("SLST_NAD_RADIANCE_S5") == 0);
+    CPPUNIT_ASSERT(dict->getL1cVariable(symbolicName6).getFileName().compare("SLST_ALT_RADIANCE_S4") == 0);
+    CPPUNIT_ASSERT(dict->getL1cVariable(symbolicName7).getFileName().compare("GEOLOCATION_REF") == 0);
+    CPPUNIT_ASSERT(dict->getL2Variable(symbolicName8).getFileName().compare("L2_SYN_time_stamps") == 0);
+    CPPUNIT_ASSERT(dict->getL1cVariable(symbolicName9).getFileName().compare("PIX_ANNOT_OLC") == 0);
+    CPPUNIT_ASSERT(dict->getL1cVariable(symbolicName10).getFileName().compare("SUBS_ANNOT_GEOM_OLC") == 0);
+    CPPUNIT_ASSERT(dict->getL2Variable(symbolicName11).getFileName().compare("L2_SYN_geophysical_atmospheric_data") == 0);
+    CPPUNIT_ASSERT(dict->getL1cVariable(symbolicName12).getFileName().compare("SUBS_ANNOT_SLST_ALT") == 0);
 }
 
 void DictionaryTest::testDictionaryParsing() {
-    testSDRVariable(dict.getVariable("SDR_1"));
-    testA550Variable(dict.getVariable("A550"));
-    testT550Variable(dict.getVariable("T550"));
-    testAMINVariable(dict.getVariable("AMIN"));
-//    testAir_pressureVariable(dict.getVariable("air_pressure"));
-    testLatitudeVariable(dict.getVariable("latitude"));
-    testSLN_flagsVariable(dict.getVariable("SLN_flags"));
-//    testTimeVariable(dict.getVariable("time"));
-
-//    testAGVariable(dict.getVariable("AG"));
-//    testB0_PVariable(dict.getVariable("B0_P"));
-//    testB0_SVariable(dict.getVariable("B0_S"));
-//    testLatVariable(dict.getVariable("lat"));
-//    testMIR_PVariable(dict.getVariable("MIR_P"));
-//    testMIR_SVariable(dict.getVariable("MIR_S"));
-//    testNDVIVariable(dict.getVariable("NDVI"));
-//    testOGVariable(dict.getVariable("OG"));
-//    testSAA_PVariable(dict.getVariable("SAA_P"));
-//    testSAA_SVariable(dict.getVariable("SAA_S"));
-//    testTGVariable(dict.getVariable("TG"));
-//    testWVGVariable(dict.getVariable("WVG"));
+    testSDRVariable(dict->getL2Variable("SDR_1"));
+    testA550Variable(dict->getL2Variable("A550"));
+    testT550Variable(dict->getL2Variable("T550"));
+    testAMINVariable(dict->getL2Variable("AMIN"));
+    //    testAir_pressureVariable(dict->getVariable("air_pressure"));
+    testLatitudeVariable(dict->getL2Variable("latitude"));
+    testSLN_flagsVariable(dict->getL2Variable("SLN_flags"));
+    //    testAGVariable(dict->getVariable("AG"));
+    //    testB0_PVariable(dict->getVariable("B0_P"));
+    //    testB0_SVariable(dict->getVariable("B0_S"));
+    //    testLatVariable(dict->getVariable("lat"));
+    //    testMIR_PVariable(dict->getVariable("MIR_P"));
+    //    testMIR_SVariable(dict->getVariable("MIR_S"));
+    //    testNDVIVariable(dict->getVariable("NDVI"));
+    //    testOGVariable(dict->getVariable("OG"));
+    //    testSAA_PVariable(dict->getVariable("SAA_P"));
+    //    testSAA_SVariable(dict->getVariable("SAA_S"));
+    //    testTGVariable(dict->getVariable("TG"));
+    //    testWVGVariable(dict->getVariable("WVG"));
 }
 
 void DictionaryTest::testSDRVariable(Variable& var) {
@@ -128,7 +124,7 @@ void DictionaryTest::testSDRVariable(Variable& var) {
     CPPUNIT_ASSERT(1 == boost::lexical_cast<int>(var.getAttribute(attributeName).getValue()));
 
     string expected = "L2_SYN_surface_directional_reflectance_1";
-    CPPUNIT_ASSERT(expected.compare(dict.getNcFileName(var.getNcName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
 void DictionaryTest::testT550Variable(Variable& var) {
@@ -139,7 +135,7 @@ void DictionaryTest::testT550Variable(Variable& var) {
     CPPUNIT_ASSERT(32767 == boost::lexical_cast<int>(var.getAttribute(attributeName).getValue()));
 
     string expected = "L2_SYN_aerosol_optical_thickness";
-    CPPUNIT_ASSERT(expected.compare(dict.getNcFileName(var.getNcName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
 void DictionaryTest::testA550Variable(Variable& var) {
@@ -163,7 +159,7 @@ void DictionaryTest::testSLN_flagsVariable(Variable& var) {
     CPPUNIT_ASSERT(0 == boost::lexical_cast<short>(var.getAttribute(attributeName).getValue()));
 
     string expected = "L2_SYN_status_flags";
-    CPPUNIT_ASSERT(expected.compare(dict.getNcFileName(var.getNcName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
 void DictionaryTest::testLatitudeVariable(Variable& var) {
@@ -201,7 +197,7 @@ void DictionaryTest::testAir_pressureVariable(Variable& var) {
     CPPUNIT_ASSERT(1100.0 == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
 
     string expected = "L2_SYN_geophysical_atmospheric_data";
-    CPPUNIT_ASSERT(expected.compare(dict.getNcFileName(var.getNcName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
 void DictionaryTest::testLatVariable(Variable& var) {
@@ -220,7 +216,7 @@ void DictionaryTest::testB0_PVariable(Variable& var) {
     CPPUNIT_ASSERT(10000.0 == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
 
     string expected = "VGT_P_B0_TOA_reflectance";
-    CPPUNIT_ASSERT(expected.compare(dict.getNcFileName(var.getNcName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
 void DictionaryTest::testB0_SVariable(Variable& var) {
@@ -231,7 +227,7 @@ void DictionaryTest::testB0_SVariable(Variable& var) {
     CPPUNIT_ASSERT(10000.0 == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
 
     string expected = "VGT_S_B0_surface_reflectance";
-    CPPUNIT_ASSERT(expected.compare(dict.getNcFileName(var.getNcName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
 void DictionaryTest::testMIR_PVariable(Variable& var) {
@@ -242,7 +238,7 @@ void DictionaryTest::testMIR_PVariable(Variable& var) {
     CPPUNIT_ASSERT(10000.0 == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
 
     string expected = "VGT_P_MIR_TOA_reflectance";
-    CPPUNIT_ASSERT(expected.compare(dict.getNcFileName(var.getNcName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
 void DictionaryTest::testMIR_SVariable(Variable& var) {
@@ -253,7 +249,7 @@ void DictionaryTest::testMIR_SVariable(Variable& var) {
     CPPUNIT_ASSERT(10000.0 == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
 
     string expected = "VGT_S_MIR_surface_reflectance";
-    CPPUNIT_ASSERT(expected.compare(dict.getNcFileName(var.getNcName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
 void DictionaryTest::testSAA_PVariable(Variable& var) {
@@ -264,7 +260,7 @@ void DictionaryTest::testSAA_PVariable(Variable& var) {
     CPPUNIT_ASSERT(120 == boost::lexical_cast<short>(var.getAttribute(attributeName).getValue()));
 
     string expected = "VGT_P_solar_azimuth_angle";
-    CPPUNIT_ASSERT(expected.compare(dict.getNcFileName(var.getNcName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
 void DictionaryTest::testSAA_SVariable(Variable& var) {
@@ -275,7 +271,7 @@ void DictionaryTest::testSAA_SVariable(Variable& var) {
     CPPUNIT_ASSERT(120 == boost::lexical_cast<short>(var.getAttribute(attributeName).getValue()));
 
     string expected = "VGT_S_solar_azimuth_angle";
-    CPPUNIT_ASSERT(expected.compare(dict.getNcFileName(var.getNcName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
 void DictionaryTest::testAGVariable(Variable& var) {
@@ -286,7 +282,7 @@ void DictionaryTest::testAGVariable(Variable& var) {
     CPPUNIT_ASSERT(127 == boost::lexical_cast<short>(var.getAttribute(attributeName).getValue()));
 
     string expected = "VGT_P_aerosol";
-    CPPUNIT_ASSERT(expected.compare(dict.getNcFileName(var.getNcName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
 void DictionaryTest::testOGVariable(Variable& var) {
@@ -300,7 +296,7 @@ void DictionaryTest::testOGVariable(Variable& var) {
     CPPUNIT_ASSERT(-1 == boost::lexical_cast<short>(var.getAttribute(attributeName).getValue()));
 
     string expected = "VGT_P_ozone";
-    CPPUNIT_ASSERT(expected.compare(dict.getNcFileName(var.getNcName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
 void DictionaryTest::testWVGVariable(Variable& var) {
@@ -314,7 +310,7 @@ void DictionaryTest::testWVGVariable(Variable& var) {
     CPPUNIT_ASSERT(-1 == boost::lexical_cast<short>(var.getAttribute(attributeName).getValue()));
 
     string expected = "VGT_P_water_vapour";
-    CPPUNIT_ASSERT(expected.compare(dict.getNcFileName(var.getNcName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
 void DictionaryTest::testNDVIVariable(Variable& var) {
@@ -328,7 +324,7 @@ void DictionaryTest::testNDVIVariable(Variable& var) {
     CPPUNIT_ASSERT(-0.1 == boost::lexical_cast<double>(var.getAttribute(attributeName).getValue()));
 
     string expected = "VGT_S_NDVI";
-    CPPUNIT_ASSERT(expected.compare(dict.getNcFileName(var.getNcName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
 void DictionaryTest::testTGVariable(Variable& var) {
@@ -339,5 +335,5 @@ void DictionaryTest::testTGVariable(Variable& var) {
     CPPUNIT_ASSERT(-1 == boost::lexical_cast<short>(var.getAttribute(attributeName).getValue()));
 
     string expected = "VGT_S_synthesis_time";
-    CPPUNIT_ASSERT(expected.compare(dict.getNcFileName(var.getNcName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }

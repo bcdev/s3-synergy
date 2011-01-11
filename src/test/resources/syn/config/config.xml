@@ -8,5 +8,4 @@
 	    <Aux_File_Name id="VSRT">auxdata/S3__SY_2_VSRTAX_20101201T000000_20110301T000000_20101207T120000__BC__D_NT_AUX_01.nc</Aux_File_Name>
     </Aux_Files>
     <Variable_Definition_Files_Path>/mnt/hgfs/S3L2PP/src/main/resources/variable_definitions</Variable_Definition_Files_Path>
-    <Variables_To_Be_Read_File>/mnt/hgfs/S3L2PP/src/main/resources/variable_definitions/variables_to_be_read</Variables_To_Be_Read_File>
 </Config>
