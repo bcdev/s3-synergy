@@ -18,16 +18,20 @@
  * Created on December 21, 2010, 1:55 PM
  */
 
+#include <fstream>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
 #include <stdexcept>
-#include <boost/algorithm/string/predicate.hpp>
 
 #include "Dictionary.h"
 #include "VariableImpl.h"
 #include "IOUtils.h"
 
+using std::ifstream;
+using boost::algorithm::trim_copy;
+
 Dictionary::Dictionary(string config) : configFile(config) {
-    //    parse();
+    parse();
 }
 
 Dictionary::~Dictionary() {
@@ -50,6 +54,18 @@ void Dictionary::parse() {
         parseVariablesFile(L2SynPath, L2SynFiles[i]);
     }
 
+    string variablesToBeReadFile = xmlParser.evaluateToString(configFile, "/Config/Variables_To_Be_Read_File");
+    ifstream stream(variablesToBeReadFile);
+    string temp;
+    while (getline(stream, temp)) {
+        temp = trim_copy(temp);
+        variablesToBeRead.push_back(temp);
+    }
+
+}
+
+const vector<string> Dictionary::getVariablesToBeRead() const {
+    return variablesToBeRead;
 }
 
 vector<Variable*> Dictionary::getVariables() const {

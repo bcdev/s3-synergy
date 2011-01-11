@@ -55,6 +55,13 @@ public:
     vector<Variable*> getVariables() const;
 
     /**
+     * Returns the list of variables, which are to be read. To be used by the
+     * reader.
+     * @return The list of variables to be read.
+     */
+    const vector<string> getVariablesToBeRead() const;
+
+    /**
      * Returns a variable for a given symbolic name. To be used by modules in
      * order to get needed attributes for the variable.
      * @param varId The symbolic name of the variable to return.
@@ -104,6 +111,7 @@ private:
     XmlParser xmlParser;
     string configFile;
     vector<Variable*> variables;
+    vector<string> variablesToBeRead;
 };
 
 #endif	/* DICTIONARY_H */
