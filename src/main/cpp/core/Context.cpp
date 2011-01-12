@@ -137,8 +137,15 @@ size_t Context::getMaxLComputed(const Segment& segment, const Module& module) co
     return 0;
 }
 
-size_t Context::getMaxLWritable(const Segment& segment, const Writer& writer) const {
-    return 0;
+size_t Context::getMaxLWritable(const Segment& segment, const Writer& writer) {
+    size_t maxLWritable = segment.getGrid().getStartL() + segment.getGrid().getSizeL() - 1;
+    ModuleLineMap map = maxLineComputedMap[&segment];
+    for (ModuleLineMap::iterator iter = map.begin(); iter != map.end(); iter++) {
+        if (&iter->first != (const Module* const*)&writer) {
+            maxLWritable = min(maxLWritable, iter->second);
+        }
+    }
+    return maxLWritable;
 }
 
 bool Context::hasMaxLComputed(const Segment& segment, const Module& module) const {

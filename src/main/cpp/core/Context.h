@@ -166,7 +166,7 @@ public:
      * @return The index of the maximum row in a segment, which has been
      * computed by all modules except the provided writer.
      */
-    size_t getMaxLWritable(const Segment& segment, const Writer& writer) const;
+    size_t getMaxLWritable(const Segment& segment, const Writer& writer);
 
     /**
      * Returns the index of the minimum row in a segment, which is required for

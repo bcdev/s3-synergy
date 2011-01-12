@@ -36,6 +36,7 @@ class ContextTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(testSetGetLogging);
     CPPUNIT_TEST(testGetUnknownObject);
     CPPUNIT_TEST(testGetUnknownSegment);
+    CPPUNIT_TEST(testGetMaxLWritable);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -55,6 +56,7 @@ private:
     void testSetGetLogging();
     void testGetUnknownObject();
     void testGetUnknownSegment();
+    void testGetMaxLWritable();
 };
 
 #endif	/* CONTEXTTEST_H */

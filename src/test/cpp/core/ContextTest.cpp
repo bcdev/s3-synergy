@@ -22,6 +22,8 @@
 
 #include "ContextTest.h"
 #include "../../../main/cpp/core/DefaultModule.h"
+#include "../../../main/cpp/util/Reader.h"
+#include "../../../main/cpp/util/SynL2Writer.h"
 #include "TestObject.h"
 
 using std::auto_ptr;
@@ -104,4 +106,31 @@ void ContextTest::testGetUnknownObject() {
 
 void ContextTest::testGetUnknownSegment() {
     CPPUNIT_ASSERT_THROW(context->getSegment("S"), logic_error);
+}
+
+void ContextTest::testGetMaxLWritable() {
+    Segment& segment = context->addSegment("A", 10, 10, 3, 0, 200);
+    const Writer* writer = new SynL2Writer();
+    size_t maxLWritable = context->getMaxLWritable(segment, *writer);
+    CPPUNIT_ASSERT(maxLWritable == 9);
+
+    Module* module1 = new Reader();
+    context->addModule(*module1);
+    segment.setStartL(10);
+    context->setMaxLComputed(segment, *module1, 13);
+
+    maxLWritable = context->getMaxLWritable(segment, *writer);
+    CPPUNIT_ASSERT(maxLWritable == 13);
+
+    Module* module2 = new Reader();
+    context->addModule(*module2);
+    segment.setStartL(20);
+    context->setMaxLComputed(segment, *module2, 22);
+
+    maxLWritable = context->getMaxLWritable(segment, *writer);
+    CPPUNIT_ASSERT(maxLWritable == 13);
+
+    context->setMaxLComputed(segment, *module1, 23);
+    maxLWritable = context->getMaxLWritable(segment, *writer);
+    CPPUNIT_ASSERT(maxLWritable == 22);
 }
