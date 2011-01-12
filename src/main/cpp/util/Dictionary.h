@@ -40,6 +40,7 @@ using std::vector;
  */
 class Dictionary {
 public:
+    Dictionary();
     Dictionary(string configFile);
     virtual ~Dictionary();
 
@@ -48,7 +49,7 @@ public:
      * from the input L1C-product. To be used by the reader.
      * @return The list of variables to be read.
      */
-    const vector<string> getVariables(bool l1c) const;
+    vector<string> getVariables(bool l1c) const;
 
     /**
      * Returns a L1C-variable for a given symbolic name.
@@ -116,6 +117,10 @@ public:
      */
     const string getSegmentNameForL2(const string& symbolicName);
 
+    Variable& addVariable(const string& sectionId, const string& symbolicVarName, const string& ncVarName);
+
+    bool hasVariable(const string& sectionId, const string& symbolicVarName);
+
 private:
     void init();
     string filePath;
@@ -123,10 +128,9 @@ private:
     vector<Attribute*> parseAttributes(string& file, string& variableName);
 
     XmlParser xmlParser;
-    string configFile;
+    const string configFile;
     vector<Variable*> l1cVariables;
     vector<Variable*> l2Variables;
-    vector<string> variablesToBeRead;
 };
 
 #endif	/* DICTIONARY_H */

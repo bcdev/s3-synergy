@@ -31,7 +31,7 @@ public:
     }
 
     valarray<int32_t>& getIntData() const throw (bad_cast) {
-        return getData();
+        return getTypedData();
     }
 };
 

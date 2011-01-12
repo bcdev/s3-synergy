@@ -33,7 +33,7 @@ public:
     }
 
     valarray<float>& getFloatData() const throw (bad_cast) {
-        return getData();
+        return getTypedData();
     }
 };
 

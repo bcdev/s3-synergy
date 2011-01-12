@@ -12,30 +12,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
- * File:   UByteAccessor.h
+ * File:   SynL2WriterTest.h
  * Author: ralf
  *
- * Created on December 18, 2010, 5:22 PM
+ * Created on January 12, 2011, 11:48 AM
  */
 
-#ifndef UBYTEACCESSOR_H
-#define	UBYTEACCESSOR_H
+#ifndef SYNL2WRITERTEST_H
+#define	SYNL2WRITERTEST_H
 
-#include "AbstractAccessor.h"
+#include <cppunit/extensions/HelperMacros.h>
 
-class UByteAccessor : public virtual AbstractAccessor<uint8_t> {
+#include "../../../main/cpp/util/SynL2Writer.h"
+
+class SynL2WriterTest : public CPPUNIT_NS::TestFixture {
+    CPPUNIT_TEST_SUITE(SynL2WriterTest);
+    CPPUNIT_TEST(testWriter);
+    CPPUNIT_TEST_SUITE_END();
+
 public:
+    SynL2WriterTest();
+    virtual ~SynL2WriterTest();
+    void setUp();
+    void tearDown();
 
-    UByteAccessor(size_t n) : AbstractAccessor<uint8_t>(n) {
-    }
-
-    virtual ~UByteAccessor() {
-    }
-
-    valarray<uint8_t>& getUByteData() const throw (bad_cast) {
-        return getTypedData();
-    }
+private:
+    Module* writer;
+    void testWriter();
 };
 
-#endif	/* UBYTEACCESSOR_H */
+#endif	/* SYNL2WRITERTEST_H */
 

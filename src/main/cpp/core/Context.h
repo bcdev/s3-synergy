@@ -37,6 +37,7 @@ using std::vector;
 
 class JobOrder;
 class Module;
+class Writer;
 
 /**
  * Represents the context of a processing.
@@ -158,6 +159,16 @@ public:
     void setMaxLComputed(const Segment& segment, const Module& module, size_t l);
 
     /**
+     * Returns the index of the maximum row in a segment, which has been
+     * computed by all modules except the provided writer.
+     * @param segment The segment.
+     * @param writer The writer to exclude.
+     * @return The index of the maximum row in a segment, which has been
+     * computed by all modules except the provided writer.
+     */
+    size_t getMaxLWritable(const Segment& segment, const Writer& writer) const;
+
+    /**
      * Returns the index of the minimum row in a segment, which is required for
      * processing any block of rows starting with a certain row index.
      * @param segment The segment.
@@ -197,6 +208,7 @@ public:
     bool isCompleted() const;
 
 private:
+
     template <class K, class V>
     bool exists(const map<K, V>& map, const K& key) const {
         return map.find(key) != map.end();

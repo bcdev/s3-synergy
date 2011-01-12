@@ -137,6 +137,10 @@ size_t Context::getMaxLComputed(const Segment& segment, const Module& module) co
     return 0;
 }
 
+size_t Context::getMaxLWritable(const Segment& segment, const Writer& writer) const {
+    return 0;
+}
+
 bool Context::hasMaxLComputed(const Segment& segment, const Module& module) const {
     return exists(maxLineComputedMap, &segment)
             && exists(maxLineComputedMap.at(&segment), &module);

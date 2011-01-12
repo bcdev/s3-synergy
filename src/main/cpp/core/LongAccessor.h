@@ -31,7 +31,7 @@ public:
     }
 
     valarray<int64_t>& getLongData() const throw (bad_cast) {
-        return getData();
+        return getTypedData();
     }
 };
 

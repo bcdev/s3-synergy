@@ -23,11 +23,11 @@ XmlParser::XmlParser() {
 XmlParser::~XmlParser() {
 }
 
-const string XmlParser::evaluateToString(string& path, string& expression) {
+const string XmlParser::evaluateToString(const string& path, const string& expression) {
     return evaluateToString(path, expression.c_str());
 }
 
-const string XmlParser::evaluateToString(string& path, const char* expression) {
+const string XmlParser::evaluateToString(const string& path, const char* expression) {
     parse(path);
     // Create a XalanDocument based on doc.
     XercesDOMSupport support;
@@ -83,7 +83,7 @@ const vector<string> XmlParser::evaluateToStringList(string& path, const char* e
     return output;
 }
 
-void XmlParser::parse(string& path) {
+void XmlParser::parse(const string& path) {
     try {
         // construct a DOM parser
         parser = new XercesDOMParser();

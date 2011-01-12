@@ -194,7 +194,7 @@ public:
      * of type {@code int8_t} a {@code bad_cast} exception is thrown.
      * @return the container of sample values.
      */
-    virtual valarray<int8_t>& getByteData() const throw(bad_cast) = 0;
+    virtual valarray<int8_t>& getByteData() const throw (bad_cast) = 0;
 
     /**
      * Returns the container of samples values. If the samples are not
@@ -258,6 +258,12 @@ public:
      * @return the container of sample values.
      */
     virtual valarray<double>& getDoubleData() const throw (bad_cast) = 0;
+
+    /**
+     * Returns an untyped pointer to the container of sample values.
+     * @return an untyped pointer to the container of sample values.
+     */
+    virtual void* getUntypedData() const = 0;
 
     virtual void shift(size_t n, size_t strideK, size_t strideL) = 0;
 };

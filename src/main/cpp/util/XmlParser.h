@@ -26,8 +26,8 @@ public:
     string getTextContent(DOMNode* node);
     string getNodeName(DOMElement* node);
     string getNodeAttribute(DOMElement* node, string attributeName);
-    const string evaluateToString(string& path, const char* expression);
-    const string evaluateToString(string& path, string& expression);
+    const string evaluateToString(const string& path, const char* expression);
+    const string evaluateToString(const string& path, const string& expression);
     const vector<string> evaluateToStringList(string& path, string& expression);
     const vector<string> evaluateToStringList(string& path, const char* expression);
     
@@ -38,7 +38,7 @@ protected:
 
 private:
     list<string> getNodeNames(DOMElement * root);
-    void parse(string& path);
+    void parse(const string& path);
 
 };
 

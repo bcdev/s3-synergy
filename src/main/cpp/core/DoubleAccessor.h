@@ -33,7 +33,7 @@ public:
     }
 
     valarray<double>& getDoubleData() const throw (bad_cast) {
-        return getData();
+        return getTypedData();
     }
 };
 

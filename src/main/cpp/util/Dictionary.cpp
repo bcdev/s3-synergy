@@ -31,6 +31,9 @@ using std::ifstream;
 using boost::algorithm::trim_copy;
 using boost::starts_with;
 
+Dictionary::Dictionary() {
+}
+
 Dictionary::Dictionary(string config) : configFile(config) {
     init();
 }
@@ -59,7 +62,27 @@ void Dictionary::init() {
     }
 }
 
-const vector<string> Dictionary::getVariables(bool l1c) const {
+bool Dictionary::hasVariable(const string& sectionId, const string& symbolicVarName) {
+    if (sectionId.compare("SYL2") == 0) {
+        for (size_t i = 0; i < l2Variables.size(); i++) {
+            if (l2Variables[i]->getSymbolicName().compare(symbolicVarName) == 0) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+Variable& Dictionary::addVariable(const string& sectionId, const string& symbolicVarName, const string& ncVarName) {
+    if (sectionId.compare("SYL2") == 0 && !hasVariable(sectionId, symbolicVarName)) {
+        Variable* variable = new VariableImpl(ncVarName, symbolicVarName);
+        l2Variables.push_back(variable);
+        return *variable;
+    }
+    throw std::invalid_argument("Invalid section ID: " + sectionId);
+}
+
+vector<string> Dictionary::getVariables(bool l1c) const {
     vector<string> result;
     if (l1c) {
         for (size_t i = 0; i < l1cVariables.size(); i++) {

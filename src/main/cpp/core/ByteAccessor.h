@@ -33,7 +33,7 @@ public:
     }
 
     valarray<int8_t>& getByteData() const throw (bad_cast) {
-        return getData();
+        return getTypedData();
     }
 };
 

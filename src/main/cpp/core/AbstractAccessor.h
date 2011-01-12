@@ -158,6 +158,10 @@ public:
         throw bad_cast();
     }
 
+    void* getUntypedData() const {
+        return (void*) &data[0];
+    }
+
     void shift(size_t n, size_t strideK, size_t strideL) {
         if (n * strideL > strideK) {
             throw invalid_argument("n * strideL > strideK");
@@ -182,7 +186,7 @@ protected:
     virtual ~AbstractAccessor() {
     }
 
-    valarray<T>& getData() const {
+    valarray<T>& getTypedData() const {
         return const_cast<valarray<T>&> (data);
     }
 

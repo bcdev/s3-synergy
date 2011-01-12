@@ -12,3 +12,4 @@ nbproject/
 .dep.inc
 LOG.*
 doc/html/
+/*.nc

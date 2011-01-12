@@ -23,6 +23,7 @@
 
 #include <cstddef>
 #include <stdexcept>
+#include <valarray>
 
 using std::out_of_range;
 

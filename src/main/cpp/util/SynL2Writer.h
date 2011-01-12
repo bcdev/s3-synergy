@@ -8,14 +8,15 @@
 #ifndef SYNL2WRITER_H
 #define	SYNL2WRITER_H
 
-#include <map>
+#include <vector>
 
 #include "../core/DefaultModule.h"
+#include "../core/Writer.h"
 
 using std::map;
 using std::set;
 
-class SynL2Writer : virtual public DefaultModule {
+class SynL2Writer : virtual public DefaultModule, virtual public Writer {
 public:
     SynL2Writer();
     ~SynL2Writer();
@@ -33,7 +34,8 @@ private:
     vector<string> variablesToWrite;
 
     map<string, int> ncIdMap;
-    map<string, vector<int> > ncIdsMap;
+    map<string, valarray<int> > dimIdMap;
+    map<string, int> varIdMap;
 };
 
 #endif	/* SYNL2WRITER_H */

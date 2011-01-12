@@ -12,30 +12,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
- * File:   UByteAccessor.h
+ * File:   Writer.h
  * Author: ralf
  *
- * Created on December 18, 2010, 5:22 PM
+ * Created on January 12, 2011, 4:52 PM
  */
 
-#ifndef UBYTEACCESSOR_H
-#define	UBYTEACCESSOR_H
+#ifndef WRITER_H
+#define	WRITER_H
 
-#include "AbstractAccessor.h"
+#include "Module.h"
 
-class UByteAccessor : public virtual AbstractAccessor<uint8_t> {
+class Writer : public virtual Module {
 public:
 
-    UByteAccessor(size_t n) : AbstractAccessor<uint8_t>(n) {
-    }
-
-    virtual ~UByteAccessor() {
-    }
-
-    valarray<uint8_t>& getUByteData() const throw (bad_cast) {
-        return getTypedData();
+    virtual ~Writer() {
     }
 };
 
-#endif	/* UBYTEACCESSOR_H */
+#endif	/* WRITER_H */
 
