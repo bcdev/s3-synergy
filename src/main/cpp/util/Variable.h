@@ -21,10 +21,12 @@
 #ifndef VARIABLE_H
 #define	VARIABLE_H
 
-#include <netcdf.h>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <boost/lexical_cast.hpp>
+#include <boost/numeric/conversion/cast.hpp>
+#include <netcdf.h>
 
 using std::string;
 using std::vector;
@@ -64,6 +66,46 @@ public:
         return value;
     }
 
+    int8_t getByte() const {
+        return boost::numeric_cast<int8_t > (boost::lexical_cast<int16_t > (value));
+    }
+
+    int8_t getUByte() const {
+        return boost::numeric_cast<uint8_t > (boost::lexical_cast<uint16_t > (value));
+    }
+
+    int32_t getShort() const {
+        return boost::lexical_cast<int32_t > (value);
+    }
+
+    uint32_t getUShort() const {
+        return boost::lexical_cast<uint32_t > (value);
+    }
+
+    int32_t getInt() const {
+        return boost::lexical_cast<int32_t > (value);
+    }
+
+    uint32_t getUInt() const {
+        return boost::lexical_cast<uint32_t > (value);
+    }
+
+    int64_t getLong() const {
+        return boost::lexical_cast<int64_t > (value);
+    }
+
+    uint64_t getULong() const {
+        return boost::lexical_cast<uint64_t > (value);
+    }
+
+    float getFloat() const {
+        return boost::lexical_cast<float> (value);
+    }
+
+    double getDouble() const {
+        return boost::lexical_cast<double> (value);
+    }
+
     /**
      * Getter for the attribute's type.
      * @return The attribute's type.
@@ -84,7 +126,7 @@ public:
      * Returns a string representation of the attribute.
      * @return A string representation of the attribute.
      */
-    string toString() {
+    string toString() const {
         std::ostringstream oss;
         oss << "Attribute: " << "[";
         oss << "key = " << key << ", ";

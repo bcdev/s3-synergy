@@ -112,6 +112,8 @@ void SynL2Writer::createNcVar(const Variable& variable, const Grid& grid) {
     int varId;
     nc_def_var(ncId, variable.getNcName().c_str(), variable.getType(), 3, &dimIds[0], &varId);
     varIdMap[varName] = varId;
-
-    // todo: attributes ...
+    
+    const vector<Attribute*> attributes = variable.getAttributes();
+    for (vector<Attribute*>::const_iterator iter = attributes.begin(); iter != attributes.end(); iter++) {
+    }
 }

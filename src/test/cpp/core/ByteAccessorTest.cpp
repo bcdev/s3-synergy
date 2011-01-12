@@ -23,8 +23,6 @@
 #include "ByteAccessorTest.h"
 #include "../../../main/cpp/core/ByteAccessor.h"
 
-using std::bad_cast;
-
 CPPUNIT_TEST_SUITE_REGISTRATION(ByteAccessorTest);
 
 ByteAccessorTest::ByteAccessorTest() {
@@ -96,8 +94,8 @@ void ByteAccessorTest::testSetUByteGetByte() {
     accessor->setUByte(0, 127);
     CPPUNIT_ASSERT(accessor->getByte(0) == 127);
 
-    accessor->setUByte(0, 255);
-    CPPUNIT_ASSERT(accessor->getByte(0) == -1);
+    CPPUNIT_ASSERT_THROW(accessor->setUByte(0, 255), bad_cast);
+    CPPUNIT_ASSERT(accessor->getByte(0) == 127);
 }
 
 void ByteAccessorTest::testGetByteData() {

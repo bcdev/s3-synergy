@@ -48,140 +48,140 @@ public:
      * @param i The index.
      * @return the value of the sample at {@code i}.
      */
-    virtual int8_t getByte(size_t i) const throw (out_of_range) = 0;
+    virtual int8_t getByte(size_t i) const throw (bad_cast, out_of_range) = 0;
 
     /**
      * Returns the value of the sample at a given index {@code i}.
      * @param i The index.
      * @return the value of the sample at {@code i}.
      */
-    virtual uint8_t getUByte(size_t i) const throw (out_of_range) = 0;
+    virtual uint8_t getUByte(size_t i) const throw (bad_cast, out_of_range) = 0;
 
     /**
      * Returns the value of the sample at a given index {@code i}.
      * @param i The index.
      * @return the value of the sample at {@code i}.
      */
-    virtual int16_t getShort(size_t i) const throw (out_of_range) = 0;
+    virtual int16_t getShort(size_t i) const throw (bad_cast, out_of_range) = 0;
 
     /**
      * Returns the value of the sample at a given index {@code i}.
      * @param i The index.
      * @return the value of the sample at {@code i}.
      */
-    virtual uint16_t getUShort(size_t i) const throw (out_of_range) = 0;
+    virtual uint16_t getUShort(size_t i) const throw (bad_cast, out_of_range) = 0;
 
     /**
      * Returns the value of the sample at a given index {@code i}.
      * @param i The index.
      * @return the value of the sample at {@code i}.
      */
-    virtual int32_t getInt(size_t i) const throw (out_of_range) = 0;
+    virtual int32_t getInt(size_t i) const throw (bad_cast, out_of_range) = 0;
 
     /**
      * Returns the value of the sample at a given index {@code i}.
      * @param i The index.
      * @return the value of the sample at {@code i}.
      */
-    virtual uint32_t getUInt(size_t i) const throw (out_of_range) = 0;
+    virtual uint32_t getUInt(size_t i) const throw (bad_cast, out_of_range) = 0;
 
     /**
      * Returns the value of the sample at a given index {@code i}.
      * @param i The index.
      * @return the value of the sample at {@code i}.
      */
-    virtual int64_t getLong(size_t i) const throw (out_of_range) = 0;
+    virtual int64_t getLong(size_t i) const throw (bad_cast, out_of_range) = 0;
 
     /**
      * Returns the value of the sample at a given index {@code i}.
      * @param i The index.
      * @return the value of the sample at {@code i}.
      */
-    virtual uint64_t getULong(size_t i) const throw (out_of_range) = 0;
+    virtual uint64_t getULong(size_t i) const throw (bad_cast, bad_cast, out_of_range) = 0;
 
     /**
      * Returns the value of the sample at a given index {@code i}.
      * @param i The index.
      * @return the value of the sample at {@code i}.
      */
-    virtual float getFloat(size_t i) const throw (out_of_range) = 0;
+    virtual float getFloat(size_t i) const throw (bad_cast, out_of_range) = 0;
 
     /**
      * Returns the value of the sample at a given index {@code i}.
      * @param i The index.
      * @return the value of the sample at {@code i}.
      */
-    virtual double getDouble(size_t i) const throw (out_of_range) = 0;
+    virtual double getDouble(size_t i) const throw (bad_cast, out_of_range) = 0;
 
     /**
      * Sets the value of the sample at index {@code i} to a given value.
      * @param i The index.
      * @param value The value.
      */
-    virtual void setByte(size_t i, int8_t value) throw (out_of_range) = 0;
+    virtual void setByte(size_t i, int8_t value) throw (bad_cast, out_of_range) = 0;
 
     /**
      * Sets the value of the sample at index {@code i} to a given value.
      * @param i The index.
      * @param value The value.
      */
-    virtual void setUByte(size_t i, uint8_t value) throw (out_of_range) = 0;
+    virtual void setUByte(size_t i, uint8_t value) throw (bad_cast, out_of_range) = 0;
 
     /**
      * Sets the value of the sample at index {@code i} to a given value.
      * @param i The index.
      * @param value The value.
      */
-    virtual void setShort(size_t i, int16_t value) throw (out_of_range) = 0;
+    virtual void setShort(size_t i, int16_t value) throw (bad_cast, out_of_range) = 0;
 
     /**
      * Sets the value of the sample at index {@code i} to a given value.
      * @param i The index.
      * @param value The value.
      */
-    virtual void setUShort(size_t i, uint16_t value) throw (out_of_range) = 0;
+    virtual void setUShort(size_t i, uint16_t value) throw (bad_cast, out_of_range) = 0;
 
     /**
      * Sets the value of the sample at index {@code i} to a given value.
      * @param i The index.
      * @param value The value.
      */
-    virtual void setInt(size_t i, int32_t value) throw (out_of_range) = 0;
+    virtual void setInt(size_t i, int32_t value) throw (bad_cast, out_of_range) = 0;
 
     /**
      * Sets the value of the sample at index {@code i} to a given value.
      * @param i The index.
      * @param value The value.
      */
-    virtual void setUInt(size_t i, uint32_t value) throw (out_of_range) = 0;
+    virtual void setUInt(size_t i, uint32_t value) throw (bad_cast, out_of_range) = 0;
 
     /**
      * Sets the value of the sample at index {@code i} to a given value.
      * @param i The index.
      * @param value The value.
      */
-    virtual void setLong(size_t i, int64_t value) throw (out_of_range) = 0;
+    virtual void setLong(size_t i, int64_t value) throw (bad_cast, out_of_range) = 0;
 
     /**
      * Sets the value of the sample at index {@code i} to a given value.
      * @param i The index.
      * @param value The value.
      */
-    virtual void setULong(size_t i, uint64_t value) throw (out_of_range) = 0;
+    virtual void setULong(size_t i, uint64_t value) throw (bad_cast, out_of_range) = 0;
 
     /**
      * Sets the value of the sample at index {@code i} to a given value.
      * @param i The index.
      * @param value The value.
      */
-    virtual void setFloat(size_t i, float value) throw (out_of_range) = 0;
+    virtual void setFloat(size_t i, float value) throw (bad_cast, out_of_range) = 0;
 
     /**
      * Sets the value of the sample at index {@code i} to a given value.
      * @param i The index.
      * @param value The value.
      */
-    virtual void setDouble(size_t i, double value) throw (out_of_range) = 0;
+    virtual void setDouble(size_t i, double value) throw (bad_cast, out_of_range) = 0;
 
     /**
      * Returns the number of sample values.

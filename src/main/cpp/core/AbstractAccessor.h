@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2010 by Brockmann Consult (info@brockmann-consult.de)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -24,6 +24,8 @@
 #include <algorithm>
 #include <typeinfo>
 
+#include <boost/numeric/conversion/cast.hpp>
+
 #include "Accessor.h"
 
 using std::copy;
@@ -34,84 +36,84 @@ template<class T>
 class AbstractAccessor : public virtual Accessor {
 public:
 
-    int8_t getByte(size_t i) const throw (out_of_range) {
-        return data[at(i)];
+    int8_t getByte(size_t i) const throw (bad_cast, out_of_range) {
+        return boost::numeric_cast<int8_t > (data[at(i)]);
     }
 
-    void setByte(size_t i, int8_t value) throw (out_of_range) {
-        data[at(i)] = value;
+    void setByte(size_t i, int8_t value) throw (bad_cast, out_of_range) {
+        data[at(i)] = boost::numeric_cast<T > (value);
     }
 
-    double getDouble(size_t i) const throw (out_of_range) {
-        return data[at(i)];
+    double getDouble(size_t i) const throw (bad_cast, out_of_range) {
+        return boost::numeric_cast<double > (data[at(i)]);
     }
 
-    void setDouble(size_t i, double value) throw (out_of_range) {
-        data[at(i)] = value;
+    void setDouble(size_t i, double value) throw (bad_cast, out_of_range) {
+        data[at(i)] = boost::numeric_cast<T > (value);
     }
 
-    float getFloat(size_t i) const throw (out_of_range) {
-        return data[at(i)];
+    float getFloat(size_t i) const throw (bad_cast, out_of_range) {
+        return boost::numeric_cast<float > (data[at(i)]);
     }
 
-    void setFloat(size_t i, float value) throw (out_of_range) {
-        data[at(i)] = value;
+    void setFloat(size_t i, float value) throw (bad_cast, out_of_range) {
+        data[at(i)] = boost::numeric_cast<T > (value);
     }
 
-    int32_t getInt(size_t i) const throw (out_of_range) {
-        return data[at(i)];
+    int32_t getInt(size_t i) const throw (bad_cast, out_of_range) {
+        return boost::numeric_cast<int32_t > (data[at(i)]);
     }
 
-    void setInt(size_t i, int32_t value) throw (out_of_range) {
-        data[at(i)] = value;
+    void setInt(size_t i, int32_t value) throw (bad_cast, out_of_range) {
+        data[at(i)] = boost::numeric_cast<T > (value);
     }
 
-    int64_t getLong(size_t i) const throw (out_of_range) {
-        return data[at(i)];
+    int64_t getLong(size_t i) const throw (bad_cast, out_of_range) {
+        return boost::numeric_cast<int64_t > (data[at(i)]);
     }
 
-    void setLong(size_t i, int64_t value) throw (out_of_range) {
-        data[at(i)] = value;
+    void setLong(size_t i, int64_t value) throw (bad_cast, out_of_range) {
+        data[at(i)] = boost::numeric_cast<T > (value);
     }
 
-    int16_t getShort(size_t i) const throw (out_of_range) {
-        return data[at(i)];
+    int16_t getShort(size_t i) const throw (bad_cast, out_of_range) {
+        return boost::numeric_cast<int16_t > (data[at(i)]);
     }
 
-    void setShort(size_t i, int16_t value) throw (out_of_range) {
-        data[at(i)] = value;
+    void setShort(size_t i, int16_t value) throw (bad_cast, out_of_range) {
+        data[at(i)] = boost::numeric_cast<int16_t > (value);
     }
 
-    uint8_t getUByte(size_t i) const throw (out_of_range) {
-        return data[at(i)];
+    uint8_t getUByte(size_t i) const throw (bad_cast, out_of_range) {
+        return boost::numeric_cast<uint8_t > (data[at(i)]);
     }
 
-    void setUByte(size_t i, uint8_t value) throw (out_of_range) {
-        data[at(i)] = value;
+    void setUByte(size_t i, uint8_t value) throw (bad_cast, out_of_range) {
+        data[at(i)] = boost::numeric_cast<T > (value);
     }
 
-    uint32_t getUInt(size_t i) const throw (out_of_range) {
-        return data[at(i)];
+    uint32_t getUInt(size_t i) const throw (bad_cast, out_of_range) {
+        return boost::numeric_cast<uint32_t > (data[at(i)]);
     }
 
-    void setUInt(size_t i, uint32_t value) throw (out_of_range) {
-        data[at(i)] = value;
+    void setUInt(size_t i, uint32_t value) throw (bad_cast, out_of_range) {
+        data[at(i)] = boost::numeric_cast<T > (value);
     }
 
-    uint64_t getULong(size_t i) const throw (out_of_range) {
-        return data[at(i)];
+    uint64_t getULong(size_t i) const throw (bad_cast, out_of_range) {
+        return boost::numeric_cast<uint64_t > (data[at(i)]);
     }
 
-    void setULong(size_t i, uint64_t value) throw (out_of_range) {
-        data[at(i)] = value;
+    void setULong(size_t i, uint64_t value) throw (bad_cast, out_of_range) {
+        data[at(i)] = boost::numeric_cast<T > (value);
     }
 
-    uint16_t getUShort(size_t i) const throw (out_of_range) {
-        return data[at(i)];
+    uint16_t getUShort(size_t i) const throw (bad_cast, out_of_range) {
+        return boost::numeric_cast<uint16_t > (data[at(i)]);
     }
 
-    void setUShort(size_t i, uint16_t value) throw (out_of_range) {
-        data[at(i)] = value;
+    void setUShort(size_t i, uint16_t value) throw (bad_cast, out_of_range) {
+        data[at(i)] = boost::numeric_cast<T > (value);
     }
 
     const size_t getSampleCount() const {
