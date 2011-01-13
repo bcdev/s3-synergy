@@ -126,6 +126,7 @@ private:
     string filePath;
     void parseVariablesFile(string& variableDefPath, string& file, bool l1c);
     vector<Attribute*> parseAttributes(string& file, string& variableName);
+    int mapToNcType(const string& typeString);
 
     XmlParser xmlParser;
     const string configFile;

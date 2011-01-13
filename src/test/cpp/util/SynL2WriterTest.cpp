@@ -43,9 +43,11 @@ void SynL2WriterTest::testWriter() {
     Variable& a = dictionary.addVariable("SYL2", "SDR_1", "SDR_1");
     a.setFileName("test");
     a.setType(NC_BYTE);
+    a.setSegmentName(Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED);
     Variable& b = dictionary.addVariable("SYL2", "SDR_1_er", "SDR_1_er");
     b.setFileName("test");
     b.setType(NC_FLOAT);
+    b.setSegmentName(Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED);
 
     Context context;
     context.setDictionary(&dictionary);
