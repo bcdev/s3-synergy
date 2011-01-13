@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+  <variables>
+    <variable>
+      <name>lambda0</name>
+      <symbolic_name>wavelength_3</symbolic_name>
+      <segment_name>N_CAM,N_CHANNELS,N_DET_CAM</segment_name>
+    </variable>
+    <variable>
+      <name>FWHM</name>
+      <symbolic_name>bandwidth_3</symbolic_name>
+      <segment_name>N_CAM,N_CHANNELS,N_DET_CAM</segment_name>
+    </variable>
+    <variable>
+      <name>Solar_Flux</name>
+      <symbolic_name>solar_irradiance_3</symbolic_name>
+      <segment_name>N_CAM,N_CHANNELS,N_DET_CAM</segment_name>
+    </variable>
+  </variables>
+  <global_attributes>
+    <attribute>
+      <name>dataset_name</name>
+      <value>GEN_INFO_OLC</value>
+    </attribute>
+  </global_attributes>
+</dataset>
+

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+<variables>
+	<variable>
+		<name>OLC_TP_LAT</name>
+		
+		
+		<attributes>
+			<attribute>
+				<name>standard_name</name>
+				
+				<value>latitude</value>
+			</attribute>
+			<attribute>
+				<name>units</name>
+				
+				<value>degrees_north</value>
+			</attribute>
+			<attribute>
+				<name>scale_factor</name>
+				
+				<value>0.000001</value>
+			</attribute>
+			<attribute>
+				<name>valid_min</name>
+				
+				<value>-90000000</value>
+			</attribute>
+			<attribute>
+				<name>valid_max</name>
+				
+				<value>90000000</value>
+			</attribute>
+		</attributes>
+	</variable>
+	<variable>
+		<name>longitude</name>
+		
+		
+		<attributes>
+			<attribute>
+				<name>standard_name</name>
+				
+				<value>longitude</value>
+			</attribute>
+			<attribute>
+				<name>units</name>
+				
+				<value>degrees_east</value>
+			</attribute>
+			<attribute>
+				<name>scale_factor</name>
+				
+				<value>0.000001</value>
+			</attribute>
+			<attribute>
+				<name>valid_min</name>
+				
+				<value>-180000000</value>
+			</attribute>
+			<attribute>
+				<name>valid_max</name>
+				
+				<value>180000000</value>
+			</attribute>
+		</attributes>
+	</variable>
+	<variable>
+		<name>SAA</name>
+		
+		
+		<attributes>
+			<attribute>
+				<name>long_name</name>
+				
+				<value>Solar azimuth angle</value>
+			</attribute>
+			<attribute>
+				<name>standard_name</name>
+				
+				<value>solar_azimuth_angle</value>
+			</attribute>
+			<attribute>
+				<name>units</name>
+				
+				<value>degrees</value>
+			</attribute>
+			<attribute>
+				<name>scale_factor</name>
+				
+				<value>0.000001</value>
+			</attribute>
+			<attribute>
+				<name>valid_min</name>
+				
+				<value>-180000000</value>
+			</attribute>
+			<attribute>
+				<name>valid_max</name>
+				
+				<value>180000000</value>
+			</attribute>
+			<attribute>
+				<name>coordinates</name>
+				
+				<value>OLC_TP_lat OLC_TP_lon</value>
+			</attribute>			
+		</attributes>
+	</variable>
+	<variable>
+		<name>SZA</name>
+		
+		
+		<attributes>
+			<attribute>
+				<name>long_name</name>
+				
+				<value>Solar zenith angle</value>
+			</attribute>
+			<attribute>
+				<name>standard_name</name>
+				
+				<value>solar_zenith_angle</value>
+			</attribute>
+			<attribute>
+				<name>units</name>
+				
+				<value>degrees</value>
+			</attribute>
+			<attribute>
+				<name>scale_factor</name>
+				
+				<value>0.000001</value>
+			</attribute>
+			<attribute>
+				<name>valid_min</name>
+				
+				<value>0</value>
+			</attribute>
+			<attribute>
+				<name>valid_max</name>
+				
+				<value>90000000</value>
+			</attribute>
+			<attribute>
+				<name>coordinates</name>
+				
+				<value>OLC_TP_lat OLC_TP_lon</value>
+			</attribute>			
+		</attributes>
+	</variable>
+	<variable>
+		<name>OLC_VAA</name>
+		
+		
+		<attributes>
+			<attribute>
+				<name>long_name</name>
+				
+				<value>OLCI view azimuth angle</value>
+			</attribute>
+			<attribute>
+				<name>units</name>
+				
+				<value>degrees</value>
+			</attribute>
+			<attribute>
+				<name>scale_factor</name>
+				
+				<value>0.000001</value>
+			</attribute>
+			<attribute>
+				<name>valid_min</name>
+				
+				<value>-180000000</value>
+			</attribute>
+			<attribute>
+				<name>valid_max</name>
+				
+				<value>180000000</value>
+			</attribute>
+			<attribute>
+				<name>coordinates</name>
+				
+				<value>OLC_TP_lat OLC_TP_lon</value>
+			</attribute>			
+		</attributes>
+	</variable>
+	<variable>
+		<name>OLC_VZA</name>
+		
+		
+		<attributes>
+			<attribute>
+				<name>long_name</name>
+				
+				<value>OLCI view zenith angle</value>
+			</attribute>
+			<attribute>
+				<name>units</name>
+				
+				<value>degrees</value>
+			</attribute>
+			<attribute>
+				<name>scale_factor</name>
+				
+				<value>0.000001</value>
+			</attribute>
+			<attribute>
+				<name>valid_min</name>
+				
+				<value>0</value>
+			</attribute>
+			<attribute>
+				<name>valid_max</name>
+				
+				<value>90000000</value>
+			</attribute>
+			<attribute>
+				<name>coordinates</name>
+				
+				<value>OLC_TP_lat OLC_TP_lon</value>
+			</attribute>			
+		</attributes>
+	</variable>		
+</variables>
+<global_attributes>
+	<attribute>
+		<name>dataset_name</name>
+		<value>L2_SYN_OLCI_sub-sampled_annotations</value>
+		
+	</attribute>	
+</global_attributes>
+</dataset>
