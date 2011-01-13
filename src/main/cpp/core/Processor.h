@@ -8,7 +8,8 @@
 #ifndef PROCESSOR_H
 #define	PROCESSOR_H
 
-#include "../core/Context.h"
+#include "Context.h"
+#include "Module.h"
 
 using std::vector;
 

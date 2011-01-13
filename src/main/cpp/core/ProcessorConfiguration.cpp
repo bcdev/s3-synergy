@@ -19,10 +19,10 @@
  */
 
 #include <iostream>
+#include <boost/lexical_cast.hpp>
 
 #include "ProcessorConfiguration.h"
-#include "Logger.h"
-#include "StringUtils.h"
+#include "../util/Logger.h"
 
 using std::cout;
 
@@ -63,20 +63,22 @@ string ProcessorConfiguration::getTaskName() const {
     return taskName;
 }
 
+// TODO - replace by toString()
+
 void ProcessorConfiguration::log() {
     Logger* logger = Logger::get();
-    logger->debug("taskName = " + taskName, "JobOrder" );
+    logger->debug("taskName = " + taskName, "JobOrder");
     logger->debug("taskVersion = " + taskVersion, "JobOrder");
     for (size_t i = 0; i < breakpointFiles.size(); i++) {
-        logger->debug("parsing breakpointFile " + StringUtils::intToString(i + 1) + ": ", "JobOrder");
+        logger->debug("parsing breakpointFile " + boost::lexical_cast<string > (i + 1) + ": ", "JobOrder");
         breakpointFiles.at(i)->log();
     }
     for (size_t i = 0; i < inputList.size(); i++) {
-        logger->debug("parsing input " + StringUtils::intToString(i + 1) + ": ", "JobOrder");
+        logger->debug("parsing input " + boost::lexical_cast<string > (i + 1) + ": ", "JobOrder");
         inputList.at(i)->log();
     }
     for (size_t i = 0; i < outputList.size(); i++) {
-        logger->debug("parsing output " + StringUtils::intToString(i + 1) + ": ", "JobOrder");
+        logger->debug("parsing output " + boost::lexical_cast<string>(i + 1) + ": ", "JobOrder");
         outputList.at(i)->log();
     }
 }
@@ -135,7 +137,7 @@ void Input::log() const {
     logger->debug("fileType = " + fileType, "JobOrder");
     logger->debug("fileNameType = " + fileNameType, "JobOrder");
     for (size_t i = 0; i < fileNames.size(); i++) {
-        logger->debug("fileName " + StringUtils::intToString(i + 1) + ": " + fileNames.at(i), "JobOrder");
+        logger->debug("fileName " + boost::lexical_cast<string>(i + 1) + ": " + fileNames.at(i), "JobOrder");
     }
     for (size_t i = 0; i < timeIntervals.size(); i++) {
         timeIntervals.at(i)->log();
@@ -167,21 +169,24 @@ Output::Output(string fileType, string fileNameType, string fileName) {
     this->fileNameType = fileNameType;
     this->fileName = fileName;
 }
+
 string Output::getFileName() const {
     return fileName;
 }
+
 string Output::getFileNameType() const {
     return fileNameType;
 }
+
 string Output::getFileType() const {
     return fileType;
 }
 
 void Output::log() const {
     Logger* logger = Logger::get();
-    logger->debug( "fileType = " + fileType, "JobOrder");
-    logger->debug( "fileNameType = " + fileNameType, "JobOrder");
-    logger->debug( "fileName = " + fileName, "JobOrder");
+    logger->debug("fileType = " + fileType, "JobOrder");
+    logger->debug("fileNameType = " + fileNameType, "JobOrder");
+    logger->debug("fileName = " + fileName, "JobOrder");
 }
 
 /*

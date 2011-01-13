@@ -20,10 +20,10 @@
 
 #include <stdexcept>
 #include <iostream>
+#include <boost/lexical_cast.hpp>
 
 #include "JobOrder.h"
-#include "Logger.h"
-#include "StringUtils.h"
+#include "../util/Logger.h"
 
 using std::cout;
 using std::invalid_argument;
@@ -36,10 +36,11 @@ JobOrder::JobOrder(Configuration config, vector<ProcessorConfiguration*> process
 JobOrder::~JobOrder() {
 }
 
+// TODO - replace by toString() and get rid of logger dependency
 void JobOrder::log() {
     config.log();
     for (size_t i = 0; i < processorConfigs.size(); i++) {
-        Logger::get()->debug("parsing processor config " + StringUtils::intToString(i + 1) + ":", "JobOrder");
+        Logger::get()->debug("parsing processor config " + boost::lexical_cast<string>(i + 1) + ":", "JobOrder");
         processorConfigs.at(i)->log();
     }
 }

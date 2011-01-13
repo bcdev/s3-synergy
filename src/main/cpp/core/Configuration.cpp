@@ -6,10 +6,10 @@
  */
 
 #include <iostream>
+#include <boost/lexical_cast.hpp>
 
 #include "Configuration.h"
-#include "Logger.h"
-#include "StringUtils.h"
+#include "../util/Logger.h"
 
 using std::cout;
 using std::endl;
@@ -34,6 +34,8 @@ void Configuration::setProcessorName(string processorName) {
     this->processorName = processorName;
 }
 
+// TODO - replace by toString() and remove Logger dependency
+
 void Configuration::log() {
     Logger* logger = Logger::get();
     logger->debug("order_id = " + getOrderId(), "JobOrder");
@@ -48,7 +50,7 @@ void Configuration::log() {
     logger->debug("start time = " + getSensingTimeStart(), "JobOrder");
     logger->debug("stop time = " + getSensingTimeStop(), "JobOrder");
     for (size_t i = 0; i < getConfigFileNames().size(); i++) {
-        logger->debug("config file " + StringUtils::intToString(i + 1) + ": " + getConfigFileNames().at(i), "JobOrder");
+        logger->debug("config file " + boost::lexical_cast<string>(i + 1) + ": " + getConfigFileNames().at(i), "JobOrder");
     }
     for (size_t i = 0; i < getProcessingParameters().size(); i++) {
         getProcessingParameters().at(i)->log();
@@ -142,9 +144,11 @@ void Configuration::setProcessingParameters(vector<ProcessingParameter*> process
 vector<ProcessingParameter*> Configuration::getProcessingParameters() const {
     return processingParameters;
 }
+
 void Configuration::setOrderId(string orderId) {
     this->orderId = orderId;
 }
+
 string Configuration::getOrderId() const {
     return orderId;
 }

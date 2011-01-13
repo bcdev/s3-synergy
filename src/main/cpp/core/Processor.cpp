@@ -8,7 +8,6 @@
 #include <iostream>
 #include <vector>
 
-#include "../core/Module.h"
 #include "Processor.h"
 
 using std::vector;
