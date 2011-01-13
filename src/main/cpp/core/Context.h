@@ -26,7 +26,7 @@
 #include <vector>
 
 #include "Constants.h"
-#include "../util/Dictionary.h"
+#include "Dictionary.h"
 #include "Logging.h"
 #include "Segment.h"
 #include "Object.h"

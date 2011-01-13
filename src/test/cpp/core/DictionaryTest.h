@@ -23,8 +23,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../main/cpp/util/Dictionary.h"
-#include "../../../main/cpp/util/StringUtils.h"
+#include "../../../main/cpp/core/Dictionary.h"
 
 class DictionaryTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(DictionaryTest);
@@ -63,7 +62,6 @@ private:
     void testNDVIVariable(Variable& var);
     void testTGVariable(Variable& var);
     Dictionary* dict;
-
 };
 
 #endif	/* DICTIONARYTEST_H */

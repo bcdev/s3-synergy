@@ -25,7 +25,7 @@
 #include <vector>
 
 #include "Variable.h"
-#include "XmlParser.h"
+#include "../util/XmlParser.h"
 
 using std::set;
 using std::vector;
