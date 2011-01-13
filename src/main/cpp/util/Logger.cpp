@@ -21,9 +21,9 @@
 #include <iostream>
 #include <time.h>
 #include <unistd.h>
+#include <boost/lexical_cast.hpp>
 
 #include "Logger.h"
-#include "StringUtils.h"
 
 using std::cout;
 using std::cerr;
@@ -100,7 +100,7 @@ string Logger::createMessageHeader(const string& moduleName, const string& modul
     header.append(" ");
     header.append(moduleVersion);
     header.append(" [");
-    header.append(StringUtils::intToString((int) getpid()));
+    header.append(boost::lexical_cast<string>((int) getpid()));
     header.append("]: ");
     return header;
 }

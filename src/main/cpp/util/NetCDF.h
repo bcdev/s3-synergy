@@ -107,11 +107,62 @@ public:
     }
 
     static void addAttribute(int fileId, int varId, Attribute attribute) {
-        size_t count = 1;
-        if (attribute.getType() == NC_STRING) {
-            count = attribute.getStrings().size();
+        switch (attribute.getType()) {
+            case NC_BYTE:
+            {
+                putAttribute(fileId, varId, attribute, attribute.getByte());
+                break;
+            }
+            case NC_UBYTE:
+            {
+                putAttribute(fileId, varId, attribute, attribute.getUByte());
+                break;
+            }
+            case NC_SHORT:
+            {
+                putAttribute(fileId, varId, attribute, attribute.getShort());
+                break;
+            }
+            case NC_USHORT:
+            {
+                putAttribute(fileId, varId, attribute, attribute.getUShort());
+                break;
+            }
+            case NC_INT:
+            {
+                putAttribute(fileId, varId, attribute, attribute.getInt());
+                break;
+            }
+            case NC_UINT:
+            {
+                putAttribute(fileId, varId, attribute, attribute.getUInt());
+                break;
+            }
+            case NC_INT64:
+            {
+                putAttribute(fileId, varId, attribute, attribute.getLong());
+                break;
+            }
+            case NC_UINT64:
+            {
+                putAttribute(fileId, varId, attribute, attribute.getULong());
+                break;
+            }
+            case NC_FLOAT:
+            {
+                putAttribute(fileId, varId, attribute, attribute.getFloat());
+                break;
+            }
+            case NC_DOUBLE:
+            {
+                putAttribute(fileId, varId, attribute, attribute.getDouble());
+                break;
+            }
+            default:
+            {
+                putAttributeString(fileId, varId, attribute);
+            }
         }
-//        nc_put_att(fileId, varId, attribute.getKey(), attribute.getType(), count, attribute.getValue());
     }
 
     static void setDefinitionPhaseFinished(int ncId) {
@@ -125,6 +176,19 @@ public:
     }
 
 private:
+
+    template<class T>
+    static void putAttribute(int fileId, int varId, Attribute attribute, T t) {
+        T v = t;
+        int status = nc_put_att(fileId, varId, attribute.getKey().c_str(), attribute.getType(), 1, &v);
+        checkStatus(status, "putting attribute");
+    }
+
+    static void putAttributeString(int fileId, int varId, Attribute attribute) {
+        const string& value = attribute.getString();
+        int status = nc_put_att(fileId, varId, attribute.getKey().c_str(), NC_CHAR, value.size(), value.c_str());
+        checkStatus(status, "putting attribute");
+    }
 
     static void checkStatus(int status, const char* action) {
         if (status != NC_NOERR) {

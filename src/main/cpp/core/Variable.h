@@ -60,14 +60,8 @@ public:
     ~Attribute() {
     }
 
-    /**
-     * Getter for the attribute's value.
-     * @return The attribute's value.
-     */
-    vector<string> getStrings() const {
-        vector<string> result;
-        boost::algorithm::split(result, value, boost::is_any_of(" "));
-        return result;
+    const string& getString() const {
+        return value;
     }
 
     int8_t getByte() const {

@@ -22,8 +22,8 @@
 
 #include "ContextTest.h"
 #include "../../../main/cpp/core/DefaultModule.h"
-#include "../../../main/cpp/util/Reader.h"
-#include "../../../main/cpp/util/SynL2Writer.h"
+#include "../../../main/cpp/modules/Reader.h"
+#include "../../../main/cpp/modules/SynL2Writer.h"
 #include "TestObject.h"
 
 using std::auto_ptr;

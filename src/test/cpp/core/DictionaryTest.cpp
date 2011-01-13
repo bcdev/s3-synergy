@@ -152,7 +152,7 @@ void DictionaryTest::testSLN_flagsVariable(Variable& var) {
 
 void DictionaryTest::testLatitudeVariable(Variable& var) {
     string attributeName = "units";
-    CPPUNIT_ASSERT("degrees_north" == var.getAttribute(attributeName).getStrings()[0]);
+    CPPUNIT_ASSERT("degrees_north" == var.getAttribute(attributeName).getString());
 
     attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.000001 == var.getAttribute(attributeName).getDouble());
@@ -163,7 +163,7 @@ void DictionaryTest::testLatitudeVariable(Variable& var) {
 
 void DictionaryTest::testTimeVariable(Variable& var) {
     string attributeName = "units";
-    CPPUNIT_ASSERT("microseconds since 2000-1-1 0:0:0" == var.getAttribute(attributeName).getStrings()[0]);
+    CPPUNIT_ASSERT("microseconds since 2000-1-1 0:0:0" == var.getAttribute(attributeName).getString());
 
     attributeName = "valid_max";
     CPPUNIT_ASSERT(4294967295.0 == var.getAttribute(attributeName).getDouble());
@@ -171,7 +171,7 @@ void DictionaryTest::testTimeVariable(Variable& var) {
 
 void DictionaryTest::testSLN_VAAVariable(Variable& var) {
     string attributeName = "units";
-    CPPUNIT_ASSERT("degrees" == var.getAttribute(attributeName).getStrings()[0]);
+    CPPUNIT_ASSERT("degrees" == var.getAttribute(attributeName).getString());
 
     attributeName = "valid_min";
     CPPUNIT_ASSERT(-180.0 == var.getAttribute(attributeName).getFloat());
@@ -179,7 +179,7 @@ void DictionaryTest::testSLN_VAAVariable(Variable& var) {
 
 void DictionaryTest::testAir_pressureVariable(Variable& var) {
     string attributeName = "units";
-    CPPUNIT_ASSERT("hPa" == var.getAttribute(attributeName).getStrings()[0]);
+    CPPUNIT_ASSERT("hPa" == var.getAttribute(attributeName).getString());
 
     attributeName = "valid_max";
     CPPUNIT_ASSERT(1100.0 == var.getAttribute(attributeName).getFloat());
@@ -190,7 +190,7 @@ void DictionaryTest::testAir_pressureVariable(Variable& var) {
 
 void DictionaryTest::testLatVariable(Variable& var) {
     string attributeName = "units";
-    CPPUNIT_ASSERT("degrees_north" == var.getAttribute(attributeName).getStrings()[0]);
+    CPPUNIT_ASSERT("degrees_north" == var.getAttribute(attributeName).getString());
 
     attributeName = "valid_max";
     CPPUNIT_ASSERT(180.0 == var.getAttribute(attributeName).getFloat());
@@ -278,7 +278,7 @@ void DictionaryTest::testOGVariable(Variable& var) {
     CPPUNIT_ASSERT(0.004 == var.getAttribute(attributeName).getDouble());
 
     attributeName = "units";
-    CPPUNIT_ASSERT("atm cm" == var.getAttribute(attributeName).getStrings()[0]);
+    CPPUNIT_ASSERT("atm cm" == var.getAttribute(attributeName).getString());
 
     attributeName = "_FillValue";
     CPPUNIT_ASSERT(-1 == var.getAttribute(attributeName).getShort());
@@ -292,7 +292,7 @@ void DictionaryTest::testWVGVariable(Variable& var) {
     CPPUNIT_ASSERT(0.04 == var.getAttribute(attributeName).getDouble());
 
     attributeName = "units";
-    CPPUNIT_ASSERT("g cm-2" == var.getAttribute(attributeName).getStrings()[0]);
+    CPPUNIT_ASSERT("g cm-2" == var.getAttribute(attributeName).getString());
 
     attributeName = "_FillValue";
     CPPUNIT_ASSERT(-1 == var.getAttribute(attributeName).getShort());
@@ -306,7 +306,7 @@ void DictionaryTest::testNDVIVariable(Variable& var) {
     CPPUNIT_ASSERT(0.004 == var.getAttribute(attributeName).getDouble());
 
     attributeName = "standard_name";
-    CPPUNIT_ASSERT("normalized_difference_vegetation_index" == var.getAttribute(attributeName).getStrings()[0]);
+    CPPUNIT_ASSERT("normalized_difference_vegetation_index" == var.getAttribute(attributeName).getString());
 
     attributeName = "add_offset";
     CPPUNIT_ASSERT(-0.1 == var.getAttribute(attributeName).getDouble());
@@ -317,7 +317,7 @@ void DictionaryTest::testNDVIVariable(Variable& var) {
 
 void DictionaryTest::testTGVariable(Variable& var) {
     string attributeName = "standard_name";
-    CPPUNIT_ASSERT("time" == var.getAttribute(attributeName).getStrings()[0]);
+    CPPUNIT_ASSERT("time" == var.getAttribute(attributeName).getString());
 
     attributeName = "_FillValue";
     CPPUNIT_ASSERT(-1 == var.getAttribute(attributeName).getShort());

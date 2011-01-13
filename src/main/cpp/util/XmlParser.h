@@ -9,12 +9,13 @@
 #define XMLPARSER_H_
 
 #include <list>
+#include <vector>
 
-#include "Configuration.h"
 #include "XPathInitializer.h"
 
-using std::string;
 using std::list;
+using std::string;
+using std::vector;
 
 class XmlParser {
 public:

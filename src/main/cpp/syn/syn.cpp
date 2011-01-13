@@ -5,11 +5,9 @@
 #include "../core/Dictionary.h"
 #include "../util/JobOrderParser.h"
 #include "../util/Logger.h"
-#include "../util/Processor.h"
-#include "../util/Reader.h"
-#include "../util/StringUtils.h"
-#include "../util/SynL2Writer.h"
-#include "../util/WriterUtils.h"
+#include "../core/Processor.h"
+#include "../modules/Reader.h"
+#include "../modules/SynL2Writer.h"
 
 #include <iostream>
 

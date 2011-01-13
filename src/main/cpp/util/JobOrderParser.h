@@ -21,9 +21,9 @@
 #ifndef JOBORDERPARSER_H
 #define	JOBORDERPARSER_H
 
-#include "Configuration.h"
-#include "JobOrder.h"
-#include "ProcessorConfiguration.h"
+#include "../core/Configuration.h"
+#include "../core/JobOrder.h"
+#include "../core/ProcessorConfiguration.h"
 #include "XmlParser.h"
 
 using std::string;
