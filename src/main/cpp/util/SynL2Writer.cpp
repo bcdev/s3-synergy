@@ -60,16 +60,17 @@ void SynL2Writer::process(Context& context) {
 
 void SynL2Writer::start(Context& context) {
     // todo: extract directory path from job order ...
+    Dictionary& dict = &context.getDictionary();
 
-    variablesToWrite = context.getDictionary()->getVariables(false);
+    variablesToWrite = dict.getVariables(false);
     const Segment& segment = context.getSegment(Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED);
 
     for (size_t i = 0; i < variablesToWrite.size(); i++) {
-        const Variable& variable = context.getDictionary()->getL2Variable(variablesToWrite[i]);
+        const Variable& variable = dict.getL2Variable(variablesToWrite[i]);
         createNcVar(variable, segment.getGrid());
     }
     for (map<string, int>::iterator i = fileIdMap.begin(); i != fileIdMap.end(); i++) {
-        nc_enddef(i->second);
+        NetCDF::setDefinitionPhaseFinished(i->second);
     }
 
     // todo: other segments ...
@@ -77,7 +78,7 @@ void SynL2Writer::start(Context& context) {
 
 void SynL2Writer::stop(Context& context) {
     for (map<string, int>::iterator i = fileIdMap.begin(); i != fileIdMap.end(); i++) {
-        nc_close(i->second);
+        NetCDF::closeFile(i->second);
     }
     fileIdMap.clear();
     dimIdMap.clear();

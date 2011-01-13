@@ -103,6 +103,16 @@ public:
         return varId;
     }
 
+    static void setDefinitionPhaseFinished(int ncId) {
+        int status = nc_enddef(ncId);
+        checkStatus(status, "setting definition phase to finished");
+    }
+
+    static void closeFile(int ncId) {
+        int status = nc_close(ncId);
+        checkStatus(status, "closing netCDF-file");
+    }
+
 private:
 
     static void checkStatus(int status, const char* action) {
