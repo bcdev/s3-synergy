@@ -31,7 +31,6 @@ JobOrderParser::JobOrderParser(string path) {
 }
 
 JobOrderParser::~JobOrderParser() {
-    delete this->parser;
 }
 
 JobOrder JobOrderParser::parseJobOrder() {
