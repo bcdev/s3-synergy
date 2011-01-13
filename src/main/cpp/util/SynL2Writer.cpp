@@ -5,9 +5,9 @@
  * Created on November 17, 2010, 3:40 PM
  */
 
-#include <netcdf.h>
 #include <iostream>
 
+#include "NetCDF.h"
 #include "SynL2Writer.h"
 
 using std::make_pair;
@@ -32,11 +32,11 @@ void SynL2Writer::process(Context& context) {
         if (!exists(varIdMap, varName)) {
             throw logic_error("Unknown variable '" + varName + "'.");
         }
-        if (!exists(ncIdMap, ncFileName)) {
+        if (!exists(fileIdMap, ncFileName)) {
             throw logic_error("Unknown netCDF file '" + ncFileName + "'.");
         }
         const int varId = varIdMap[varName];
-        const int ncId = ncIdMap[ncFileName];
+        const int ncId = fileIdMap[ncFileName];
 
         valarray<size_t> starts(3);
         valarray<size_t> sizes(3);
@@ -51,7 +51,7 @@ void SynL2Writer::process(Context& context) {
             context.getLogging()->progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
         }
         const Accessor& accessor = segment.getAccessor(varName);
-        nc_put_vars(ncId, varId, &starts[0], &sizes[0], 0, accessor.getUntypedData());
+        NetCDF::putData(ncId, varId, &starts[0], &sizes[0], accessor.getUntypedData());
     }
     context.setMaxLComputed(segment, *this, endL);
 
@@ -68,7 +68,7 @@ void SynL2Writer::start(Context& context) {
         const Variable& variable = context.getDictionary()->getL2Variable(variablesToWrite[i]);
         createNcVar(variable, segment.getGrid());
     }
-    for (map<string, int>::iterator i = ncIdMap.begin(); i != ncIdMap.end(); i++) {
+    for (map<string, int>::iterator i = fileIdMap.begin(); i != fileIdMap.end(); i++) {
         nc_enddef(i->second);
     }
 
@@ -76,10 +76,10 @@ void SynL2Writer::start(Context& context) {
 }
 
 void SynL2Writer::stop(Context& context) {
-    for (map<string, int>::iterator i = ncIdMap.begin(); i != ncIdMap.end(); i++) {
+    for (map<string, int>::iterator i = fileIdMap.begin(); i != fileIdMap.end(); i++) {
         nc_close(i->second);
     }
-    ncIdMap.clear();
+    fileIdMap.clear();
     dimIdMap.clear();
     varIdMap.clear();
 }
@@ -91,26 +91,24 @@ void SynL2Writer::createNcVar(const Variable& variable, const Grid& grid) {
     if (exists(varIdMap, varName)) {
         throw logic_error("Variable '" + varName + "' already exists.");
     }
-    if (!exists(ncIdMap, ncFileName)) {
-        int ncId;
-        nc_create(variable.getFileName().append(".nc").c_str(), NC_NETCDF4, &ncId);
+    if (!exists(fileIdMap, ncFileName)) {
+        int fileId = NetCDF::createFile(variable.getFileName().append(".nc").c_str());
 
         const size_t sizeK = grid.getSizeK();
         const size_t sizeL = grid.getMaxL() - grid.getMinL() + 1;
         const size_t sizeM = grid.getSizeM();
 
         valarray<int> dimIds(3);
-        nc_def_dim(ncId, Constants::SYMBOLIC_NAME_DIMENSION_N_CAM, sizeK, &dimIds[0]);
-        nc_def_dim(ncId, Constants::SYMBOLIC_NAME_DIMENSION_N_LINE_OLC, sizeL, &dimIds[1]);
-        nc_def_dim(ncId, Constants::SYMBOLIC_NAME_DIMENSION_N_DET_CAM, sizeM, &dimIds[2]);
+        dimIds[0] = NetCDF::defineDimension(fileId, Constants::SYMBOLIC_NAME_DIMENSION_N_CAM, sizeK);
+        dimIds[1] = NetCDF::defineDimension(fileId, Constants::SYMBOLIC_NAME_DIMENSION_N_LINE_OLC, sizeL);
+        dimIds[2] = NetCDF::defineDimension(fileId, Constants::SYMBOLIC_NAME_DIMENSION_N_DET_CAM, sizeM);
 
-        ncIdMap[ncFileName] = ncId;
+        fileIdMap[ncFileName] = fileId;
         dimIdMap.insert(make_pair(ncFileName, dimIds));
     }
-    const int ncId = ncIdMap[ncFileName];
+    const int ncId = fileIdMap[ncFileName];
     const valarray<int>& dimIds = dimIdMap[ncFileName];
-    int varId;
-    nc_def_var(ncId, variable.getNcName().c_str(), variable.getType(), 3, &dimIds[0], &varId);
+    int varId = NetCDF::defineVariable(ncId, variable.getNcName().c_str(), variable.getType(), 3, &dimIds[0]);
     varIdMap[varName] = varId;
     
     const vector<Attribute*> attributes = variable.getAttributes();

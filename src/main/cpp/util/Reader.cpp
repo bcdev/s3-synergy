@@ -8,15 +8,15 @@
 #include <algorithm>
 #include <boost/algorithm/string/predicate.hpp>
 #include <iostream>
-#include <netcdf.h>
 #include <stddef.h>
 #include <stdexcept>
 #include <valarray>
 
+#include "IOUtils.h"
 #include "JobOrder.h"
 #include "Logger.h"
+#include "NetCDF.h"
 #include "Reader.h"
-#include "IOUtils.h"
 
 using std::min;
 using std::max;
@@ -52,19 +52,10 @@ void Reader::process(Context& context) {
             continue;
         }
 
-        int ncId = findFile(sourceDir, fileName);
-
-        // getting the netCDF-variable-id
-        int varId;
-        nc_inq_varid(ncId, ncVariableName.c_str(), &varId);
-
-        // getting the number of dimensions of the variable
-        int dimCount;
-        nc_inq_varndims(ncId, varId, &dimCount);
-
-        // getting the dimension-ids
-        valarray<int> dimensionIds(dimCount);
-        nc_inq_vardimid(ncId, varId, &dimensionIds[0]);
+        int fileId = findFile(sourceDir, fileName);
+        int varId = NetCDF::getVariableId(fileId, ncVariableName.c_str());
+        int dimCount = NetCDF::getDimCountForVariable(fileId, varId);
+        valarray<int> dimensionIds = NetCDF::getDimIdsForVariable(fileId, varId);
 
         // getting the dimension sizes
         size_t camCount = 1;
@@ -72,14 +63,14 @@ void Reader::process(Context& context) {
         size_t colCount = 1;
 
         if (dimCount == 3) {
-            nc_inq_dimlen(ncId, dimensionIds[0], &camCount);
-            nc_inq_dimlen(ncId, dimensionIds[1], &lineCount);
-            nc_inq_dimlen(ncId, dimensionIds[2], &colCount);
+            camCount = NetCDF::getDimLength(fileId, dimensionIds[0]);
+            lineCount = NetCDF::getDimLength(fileId, dimensionIds[1]);
+            colCount = NetCDF::getDimLength(fileId, dimensionIds[2]);
         } else if (dimCount == 2) {
-            nc_inq_dimlen(ncId, dimensionIds[0], &lineCount);
-            nc_inq_dimlen(ncId, dimensionIds[1], &colCount);
+            lineCount = NetCDF::getDimLength(fileId, dimensionIds[0]);
+            colCount = NetCDF::getDimLength(fileId, dimensionIds[1]);
         } else if (dimCount == 1) {
-            nc_inq_dimlen(ncId, dimensionIds[0], &lineCount);
+            lineCount = NetCDF::getDimLength(fileId, dimensionIds[0]);
         }
 
         size_t sizeL = min(stepSize, lineCount);
@@ -91,14 +82,14 @@ void Reader::process(Context& context) {
 
         if (!segment->hasVariable(symbolicName)) {
             Variable& variable = dict.getL1cVariable(symbolicName);
-            setVariableType(ncId, varId, variable);
-            nc_type type = getVariableType(ncId, varId, variable);
+            int type = NetCDF::getVariableType(fileId, varId);
+            variable.setType(type);
             IOUtils::addVariableToSegment(symbolicName, type, *segment);
-//            addDimsToVariable(variable, camCount, sizeL, colCount);
+            //            addDimsToVariable(variable, camCount, sizeL, colCount);
         }
 
         Logger::get()->progress("Reading data for variable " + symbolicName + " into segment [" + segment->toString() + "]", getId());
-        IOUtils::readData(ncId, varId, segment->getAccessor(symbolicName), segment->getGrid(), dimCount, context.getMaxLComputed(*segment, *this) + 1);
+        IOUtils::readData(fileId, varId, segment->getAccessor(symbolicName), segment->getGrid(), dimCount, context.getMaxLComputed(*segment, *this) + 1);
 
         endLine = segment->getGrid().getStartL() + segment->getGrid().getSizeL() - 1;
         setMaxLineComputed(context, segment, symbolicName, dict, endLine);
@@ -110,12 +101,11 @@ void Reader::setMaxLineComputed(Context& context, Segment* segment, string& symb
     if (segment->getGrid().getMaxL() == endLine) {
         completedSegments[symbolicName] = segmentName;
     }
-    if( segmentVariableMap.find(segmentName) == segmentVariableMap.end() ) {
+    if (segmentVariableMap.find(segmentName) == segmentVariableMap.end()) {
         set<string> variables;
-        segmentVariableMap[segmentName] = &variables;
-//        segmentVariableMap[segmentName] = new set<string>();
+        segmentVariableMap[segmentName] = variables;
     }
-    segmentVariableMap[segmentName]->insert(symbolicName);
+    segmentVariableMap[segmentName].insert(symbolicName);
     if (isSegmentComputedByAllVariables(*segment, dict)) {
         segmentVariableMap.clear();
         context.setMaxLComputed(*segment, *this, endLine);
@@ -132,9 +122,9 @@ const bool Reader::isSegmentComputedByAllVariables(Segment& segment, Dictionary&
             varsForSegment.push_back(varName);
         }
     }
-    set<string>* varsInSegment = segmentVariableMap[segment.getId()];
+    set<string> varsInSegment = segmentVariableMap[segment.getId()];
     for (size_t j = 0; j < varsForSegment.size(); j++) {
-        if (varsInSegment->find(varsForSegment[j]) == varsInSegment->end()) {
+        if (varsInSegment.find(varsForSegment[j]) == varsInSegment.end()) {
             return false;
         }
     }
@@ -169,32 +159,14 @@ const int Reader::findFile(string& sourceDir, string& fileName) {
         if (boost::ends_with(currentFileName, ".nc")) {
             if (boost::ends_with(currentFileName, fileName + ".nc") ||
                     boost::ends_with(currentFileName, fileName)) {
-                int ncId;
-                if (nc_open(currentFileName.c_str(), NC_NOWRITE, &ncId) != NC_NOERR) {
-                    throw std::runtime_error("Unable to open netCDF-file " + currentFileName + ".");
-                } else {
-                    openedFiles[fileName] = ncId;
 
-                    return ncId;
-                }
+                int fileId = NetCDF::openFile(currentFileName.c_str());
+                openedFiles[fileName] = fileId;
+                return fileId;
             }
         }
     }
     throw std::runtime_error("No file with name " + fileName + " found.");
-}
-
-const void Reader::setVariableType(int ncId, int varId, Variable& variable) {
-
-    nc_type type;
-    nc_inq_vartype(ncId, varId, &type);
-    variable.setType(type);
-}
-
-const nc_type Reader::getVariableType(int ncId, int varId, Variable& variable) {
-    nc_type type;
-    nc_inq_vartype(ncId, varId, &type);
-
-    return type;
 }
 
 // needed only for debugging purposes

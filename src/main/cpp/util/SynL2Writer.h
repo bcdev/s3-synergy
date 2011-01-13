@@ -33,7 +33,7 @@ private:
     void createNcVar(const Variable& variable, const Grid& grid);
     vector<string> variablesToWrite;
 
-    map<string, int> ncIdMap;
+    map<string, int> fileIdMap;
     map<string, valarray<int> > dimIdMap;
     map<string, int> varIdMap;
 };
