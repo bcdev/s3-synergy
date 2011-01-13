@@ -23,7 +23,7 @@
 
 #include "DefaultModule.h"
 
-class Writer : public virtual DefaultModule {
+class Writer : public DefaultModule {
 public:
 
     Writer(const string& moduleId, const string& moduleVersion = "") : DefaultModule(moduleId, moduleVersion) {

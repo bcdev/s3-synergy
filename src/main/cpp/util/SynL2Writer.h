@@ -15,7 +15,7 @@
 using std::map;
 using std::set;
 
-class SynL2Writer : virtual public Writer {
+class SynL2Writer : public Writer {
 public:
     SynL2Writer();
     ~SynL2Writer();

@@ -2,10 +2,9 @@
 #include <unistd.h>
 #include <vector>
 
-#include "../util/Dictionary.h"
+#include "../core/Dictionary.h"
 #include "../util/JobOrderParser.h"
 #include "../util/Logger.h"
-#include "../util/PixelClassification.h"
 #include "../util/Processor.h"
 #include "../util/Reader.h"
 #include "../util/StringUtils.h"
@@ -47,7 +46,6 @@ int main() {
     // configure modules
     // TODO - use job order for configuration
     Reader reader;
-    PixelClassification pixelClassification;
     //TestModule test;
     SynL2Writer writer;
 
@@ -56,7 +54,6 @@ int main() {
     Context context;
     context.setJobOrder(&jobOrder);
     context.addModule(reader);
-    //    context.addModule(pixelClassification);
     //    context.addModule(writer);
     context.setDictionary(&dict);
 

@@ -28,7 +28,7 @@
 #include <string>
 #include <valarray>
 
-#include "Variable.h"
+#include "../core/Variable.h"
 
 using std::runtime_error;
 using std::valarray;

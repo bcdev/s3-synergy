@@ -29,7 +29,7 @@ using std::max;
 /**
  * A default module, doing nothing.
  */
-class DefaultModule : public virtual Module {
+class DefaultModule : public Module {
 public:
 
     /**
