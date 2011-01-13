@@ -21,11 +21,14 @@
 #ifndef NETCDF_H
 #define	NETCDF_H
 
+#include <netcdf.h>
+#include <boost/algorithm/string/split.hpp>
 #include <sstream>
 #include <stdexcept>
 #include <string>
-#include <netcdf.h>
 #include <valarray>
+
+#include "Variable.h"
 
 using std::runtime_error;
 using std::valarray;
@@ -101,6 +104,14 @@ public:
         int status = nc_def_var(fileId, name, type, dimCount, &dimIds[0], &varId);
         checkStatus(status, "defining variable");
         return varId;
+    }
+
+    static void addAttribute(int fileId, int varId, Attribute attribute) {
+        size_t count = 1;
+        if (attribute.getType() == NC_STRING) {
+            count = attribute.getStrings().size();
+        }
+//        nc_put_att(fileId, varId, attribute.getKey(), attribute.getType(), count, attribute.getValue());
     }
 
     static void setDefinitionPhaseFinished(int ncId) {

@@ -56,7 +56,7 @@ void DictionaryTest::testGetNcVarNameAndGetFileName() {
     string symbolicName10 = "OLC_VAA";
     string symbolicName11 = "air_pressure";
     string symbolicName12 = "SLO_TP_lon";
-//    string symbolicName12 = "water_vapour";
+    //    string symbolicName12 = "water_vapour";
 
     string varName2 = dict->getL1cNcVarName(symbolicName2);
     string varName3 = dict->getL1cNcVarName(symbolicName3);
@@ -99,29 +99,17 @@ void DictionaryTest::testDictionaryParsing() {
     testA550Variable(dict->getL2Variable("A550"));
     testT550Variable(dict->getL2Variable("T550"));
     testAMINVariable(dict->getL2Variable("AMIN"));
-    //    testAir_pressureVariable(dict->getVariable("air_pressure"));
+    testAir_pressureVariable(dict->getL2Variable("air_pressure"));
     testLatitudeVariable(dict->getL2Variable("latitude"));
     testSLN_flagsVariable(dict->getL2Variable("SLN_flags"));
-    //    testAGVariable(dict->getVariable("AG"));
-    //    testB0_PVariable(dict->getVariable("B0_P"));
-    //    testB0_SVariable(dict->getVariable("B0_S"));
-    //    testLatVariable(dict->getVariable("lat"));
-    //    testMIR_PVariable(dict->getVariable("MIR_P"));
-    //    testMIR_SVariable(dict->getVariable("MIR_S"));
-    //    testNDVIVariable(dict->getVariable("NDVI"));
-    //    testOGVariable(dict->getVariable("OG"));
-    //    testSAA_PVariable(dict->getVariable("SAA_P"));
-    //    testSAA_SVariable(dict->getVariable("SAA_S"));
-    //    testTGVariable(dict->getVariable("TG"));
-    //    testWVGVariable(dict->getVariable("WVG"));
 }
 
 void DictionaryTest::testSDRVariable(Variable& var) {
     string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.0001 == boost::lexical_cast<double>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(0.0001 == var.getAttribute(attributeName).getDouble());
 
     attributeName = "channel";
-    CPPUNIT_ASSERT(1 == boost::lexical_cast<int>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(1 == var.getAttribute(attributeName).getInt());
 
     string expected = "L2_SYN_surface_directional_reflectance_1";
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
@@ -129,10 +117,10 @@ void DictionaryTest::testSDRVariable(Variable& var) {
 
 void DictionaryTest::testT550Variable(Variable& var) {
     string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.0001 == boost::lexical_cast<double>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(0.0001 == var.getAttribute(attributeName).getDouble());
 
     attributeName = "valid_max";
-    CPPUNIT_ASSERT(32767 == boost::lexical_cast<int>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(32767 == var.getAttribute(attributeName).getInt());
 
     string expected = "L2_SYN_aerosol_optical_thickness";
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
@@ -140,23 +128,23 @@ void DictionaryTest::testT550Variable(Variable& var) {
 
 void DictionaryTest::testA550Variable(Variable& var) {
     string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.015 == boost::lexical_cast<double>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(0.015 == var.getAttribute(attributeName).getDouble());
 
     attributeName = "valid_max";
-    CPPUNIT_ASSERT(255 == boost::lexical_cast<short>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(255 == var.getAttribute(attributeName).getShort());
 }
 
 void DictionaryTest::testAMINVariable(Variable& var) {
     string attributeName = "_FillValue";
-    CPPUNIT_ASSERT(0 == boost::lexical_cast<short>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(0 == var.getAttribute(attributeName).getShort());
 
     attributeName = "valid_max";
-    CPPUNIT_ASSERT(40 == boost::lexical_cast<short>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(40 == var.getAttribute(attributeName).getShort());
 }
 
 void DictionaryTest::testSLN_flagsVariable(Variable& var) {
     string attributeName = "_FillValue";
-    CPPUNIT_ASSERT(0 == boost::lexical_cast<short>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(0 == var.getAttribute(attributeName).getShort());
 
     string expected = "L2_SYN_status_flags";
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
@@ -164,37 +152,37 @@ void DictionaryTest::testSLN_flagsVariable(Variable& var) {
 
 void DictionaryTest::testLatitudeVariable(Variable& var) {
     string attributeName = "units";
-    CPPUNIT_ASSERT("degrees_north" == var.getAttribute(attributeName).getValue());
+    CPPUNIT_ASSERT("degrees_north" == var.getAttribute(attributeName).getStrings()[0]);
 
     attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.000001 == boost::lexical_cast<double>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(0.000001 == var.getAttribute(attributeName).getDouble());
 
     attributeName = "valid_min";
-    CPPUNIT_ASSERT(-90000000 == boost::lexical_cast<int>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(-90000000 == var.getAttribute(attributeName).getInt());
 }
 
 void DictionaryTest::testTimeVariable(Variable& var) {
     string attributeName = "units";
-    CPPUNIT_ASSERT("microseconds since 2000-1-1 0:0:0" == var.getAttribute(attributeName).getValue());
+    CPPUNIT_ASSERT("microseconds since 2000-1-1 0:0:0" == var.getAttribute(attributeName).getStrings()[0]);
 
     attributeName = "valid_max";
-    CPPUNIT_ASSERT(4294967295.0 == boost::lexical_cast<double>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(4294967295.0 == var.getAttribute(attributeName).getDouble());
 }
 
 void DictionaryTest::testSLN_VAAVariable(Variable& var) {
     string attributeName = "units";
-    CPPUNIT_ASSERT("degrees" == var.getAttribute(attributeName).getValue());
+    CPPUNIT_ASSERT("degrees" == var.getAttribute(attributeName).getStrings()[0]);
 
     attributeName = "valid_min";
-    CPPUNIT_ASSERT(-180.0 == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(-180.0 == var.getAttribute(attributeName).getFloat());
 }
 
 void DictionaryTest::testAir_pressureVariable(Variable& var) {
     string attributeName = "units";
-    CPPUNIT_ASSERT("hPa" == var.getAttribute(attributeName).getValue());
+    CPPUNIT_ASSERT("hPa" == var.getAttribute(attributeName).getStrings()[0]);
 
     attributeName = "valid_max";
-    CPPUNIT_ASSERT(1100.0 == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(1100.0 == var.getAttribute(attributeName).getFloat());
 
     string expected = "L2_SYN_geophysical_atmospheric_data";
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
@@ -202,18 +190,18 @@ void DictionaryTest::testAir_pressureVariable(Variable& var) {
 
 void DictionaryTest::testLatVariable(Variable& var) {
     string attributeName = "units";
-    CPPUNIT_ASSERT("degrees_north" == var.getAttribute(attributeName).getValue());
+    CPPUNIT_ASSERT("degrees_north" == var.getAttribute(attributeName).getStrings()[0]);
 
     attributeName = "valid_max";
-    CPPUNIT_ASSERT(180.0 == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(180.0 == var.getAttribute(attributeName).getFloat());
 }
 
 void DictionaryTest::testB0_PVariable(Variable& var) {
     string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.001 == boost::lexical_cast<double>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(0.001 == var.getAttribute(attributeName).getDouble());
 
     attributeName = "valid_max";
-    CPPUNIT_ASSERT(10000.0 == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(10000.0 == var.getAttribute(attributeName).getFloat());
 
     string expected = "VGT_P_B0_TOA_reflectance";
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
@@ -221,10 +209,10 @@ void DictionaryTest::testB0_PVariable(Variable& var) {
 
 void DictionaryTest::testB0_SVariable(Variable& var) {
     string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.001f == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(0.001f == var.getAttribute(attributeName).getFloat());
 
     attributeName = "valid_max";
-    CPPUNIT_ASSERT(10000.0 == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(10000.0 == var.getAttribute(attributeName).getFloat());
 
     string expected = "VGT_S_B0_surface_reflectance";
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
@@ -232,10 +220,10 @@ void DictionaryTest::testB0_SVariable(Variable& var) {
 
 void DictionaryTest::testMIR_PVariable(Variable& var) {
     string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.001f == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(0.001f == var.getAttribute(attributeName).getFloat());
 
     attributeName = "valid_max";
-    CPPUNIT_ASSERT(10000.0 == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(10000.0 == var.getAttribute(attributeName).getFloat());
 
     string expected = "VGT_P_MIR_TOA_reflectance";
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
@@ -243,10 +231,10 @@ void DictionaryTest::testMIR_PVariable(Variable& var) {
 
 void DictionaryTest::testMIR_SVariable(Variable& var) {
     string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.001f == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(0.001f == var.getAttribute(attributeName).getFloat());
 
     attributeName = "valid_max";
-    CPPUNIT_ASSERT(10000.0 == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(10000.0 == var.getAttribute(attributeName).getFloat());
 
     string expected = "VGT_S_MIR_surface_reflectance";
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
@@ -254,10 +242,10 @@ void DictionaryTest::testMIR_SVariable(Variable& var) {
 
 void DictionaryTest::testSAA_PVariable(Variable& var) {
     string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(1.5 == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(1.5 == var.getAttribute(attributeName).getFloat());
 
     attributeName = "valid_max";
-    CPPUNIT_ASSERT(120 == boost::lexical_cast<short>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(120 == var.getAttribute(attributeName).getShort());
 
     string expected = "VGT_P_solar_azimuth_angle";
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
@@ -265,10 +253,10 @@ void DictionaryTest::testSAA_PVariable(Variable& var) {
 
 void DictionaryTest::testSAA_SVariable(Variable& var) {
     string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(1.5 == boost::lexical_cast<float>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(1.5 == var.getAttribute(attributeName).getFloat());
 
     attributeName = "valid_max";
-    CPPUNIT_ASSERT(120 == boost::lexical_cast<short>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(120 == var.getAttribute(attributeName).getShort());
 
     string expected = "VGT_S_solar_azimuth_angle";
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
@@ -276,10 +264,10 @@ void DictionaryTest::testSAA_SVariable(Variable& var) {
 
 void DictionaryTest::testAGVariable(Variable& var) {
     string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.004 == boost::lexical_cast<double>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(0.004 == var.getAttribute(attributeName).getDouble());
 
     attributeName = "valid_max";
-    CPPUNIT_ASSERT(127 == boost::lexical_cast<short>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(127 == var.getAttribute(attributeName).getShort());
 
     string expected = "VGT_P_aerosol";
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
@@ -287,13 +275,13 @@ void DictionaryTest::testAGVariable(Variable& var) {
 
 void DictionaryTest::testOGVariable(Variable& var) {
     string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.004 == boost::lexical_cast<double>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(0.004 == var.getAttribute(attributeName).getDouble());
 
     attributeName = "units";
-    CPPUNIT_ASSERT("atm cm" == var.getAttribute(attributeName).getValue());
+    CPPUNIT_ASSERT("atm cm" == var.getAttribute(attributeName).getStrings()[0]);
 
     attributeName = "_FillValue";
-    CPPUNIT_ASSERT(-1 == boost::lexical_cast<short>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(-1 == var.getAttribute(attributeName).getShort());
 
     string expected = "VGT_P_ozone";
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
@@ -301,13 +289,13 @@ void DictionaryTest::testOGVariable(Variable& var) {
 
 void DictionaryTest::testWVGVariable(Variable& var) {
     string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.04 == boost::lexical_cast<double>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(0.04 == var.getAttribute(attributeName).getDouble());
 
     attributeName = "units";
-    CPPUNIT_ASSERT("g cm-2" == var.getAttribute(attributeName).getValue());
+    CPPUNIT_ASSERT("g cm-2" == var.getAttribute(attributeName).getStrings()[0]);
 
     attributeName = "_FillValue";
-    CPPUNIT_ASSERT(-1 == boost::lexical_cast<short>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(-1 == var.getAttribute(attributeName).getShort());
 
     string expected = "VGT_P_water_vapour";
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
@@ -315,13 +303,13 @@ void DictionaryTest::testWVGVariable(Variable& var) {
 
 void DictionaryTest::testNDVIVariable(Variable& var) {
     string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.004 == boost::lexical_cast<double>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(0.004 == var.getAttribute(attributeName).getDouble());
 
     attributeName = "standard_name";
-    CPPUNIT_ASSERT("normalized_difference_vegetation_index" == var.getAttribute(attributeName).getValue());
+    CPPUNIT_ASSERT("normalized_difference_vegetation_index" == var.getAttribute(attributeName).getStrings()[0]);
 
     attributeName = "add_offset";
-    CPPUNIT_ASSERT(-0.1 == boost::lexical_cast<double>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(-0.1 == var.getAttribute(attributeName).getDouble());
 
     string expected = "VGT_S_NDVI";
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
@@ -329,10 +317,10 @@ void DictionaryTest::testNDVIVariable(Variable& var) {
 
 void DictionaryTest::testTGVariable(Variable& var) {
     string attributeName = "standard_name";
-    CPPUNIT_ASSERT("time" == var.getAttribute(attributeName).getValue());
+    CPPUNIT_ASSERT("time" == var.getAttribute(attributeName).getStrings()[0]);
 
     attributeName = "_FillValue";
-    CPPUNIT_ASSERT(-1 == boost::lexical_cast<short>(var.getAttribute(attributeName).getValue()));
+    CPPUNIT_ASSERT(-1 == var.getAttribute(attributeName).getShort());
 
     string expected = "VGT_S_synthesis_time";
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);

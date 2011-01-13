@@ -24,7 +24,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
-
+#include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 
@@ -51,7 +51,7 @@ public:
      * @param key The attribute's name.
      * @param value The attribute's value.
      */
-    Attribute(string type, string key, string value) : type(type), key(key), value(value) {
+    Attribute(int type, string key, string value) : type(type), key(key), value(value) {
     }
 
     /**
@@ -64,8 +64,10 @@ public:
      * Getter for the attribute's value.
      * @return The attribute's value.
      */
-    string getValue() const {
-        return value;
+    vector<string> getStrings() const {
+        vector<string> result;
+        boost::algorithm::split(result, value, boost::is_any_of(" "));
+        return result;
     }
 
     int8_t getByte() const {
@@ -112,7 +114,7 @@ public:
      * Getter for the attribute's type.
      * @return The attribute's type.
      */
-    string getType() const {
+    int getType() const {
         return type;
     }
 
@@ -138,7 +140,7 @@ public:
     }
 
 private:
-    string type;
+    int type;
     string key;
     string value;
 };

@@ -60,20 +60,18 @@ void SynL2Writer::process(Context& context) {
 
 void SynL2Writer::start(Context& context) {
     // todo: extract directory path from job order ...
-    Dictionary& dict = &context.getDictionary();
+    Dictionary& dict = *context.getDictionary();
 
     variablesToWrite = dict.getVariables(false);
-    const Segment& segment = context.getSegment(Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED);
-
     for (size_t i = 0; i < variablesToWrite.size(); i++) {
         const Variable& variable = dict.getL2Variable(variablesToWrite[i]);
+        const string segmentName = variable.getSegmentName();
+        const Segment& segment = context.getSegment(segmentName);
         createNcVar(variable, segment.getGrid());
     }
     for (map<string, int>::iterator i = fileIdMap.begin(); i != fileIdMap.end(); i++) {
         NetCDF::setDefinitionPhaseFinished(i->second);
     }
-
-    // todo: other segments ...
 }
 
 void SynL2Writer::stop(Context& context) {
@@ -107,12 +105,13 @@ void SynL2Writer::createNcVar(const Variable& variable, const Grid& grid) {
         fileIdMap[ncFileName] = fileId;
         dimIdMap.insert(make_pair(ncFileName, dimIds));
     }
-    const int ncId = fileIdMap[ncFileName];
+    const int fileId = fileIdMap[ncFileName];
     const valarray<int>& dimIds = dimIdMap[ncFileName];
-    int varId = NetCDF::defineVariable(ncId, variable.getNcName().c_str(), variable.getType(), 3, &dimIds[0]);
+    int varId = NetCDF::defineVariable(fileId, variable.getNcName().c_str(), variable.getType(), 3, &dimIds[0]);
     varIdMap[varName] = varId;
     
     const vector<Attribute*> attributes = variable.getAttributes();
     for (vector<Attribute*>::const_iterator iter = attributes.begin(); iter != attributes.end(); iter++) {
+        NetCDF::addAttribute(fileId, varId, **iter);
     }
 }
