@@ -187,10 +187,16 @@ vector<Attribute*> Dictionary::parseAttributes(string& file, string& variableNam
     for (size_t i = 0; i < attributeNames.size(); i++) {
         string attributeName = attributeNames[i];
         query = "/dataset/variables/variable[name=\"" + variableName + "\"]/attributes/attribute[name=\"" + attributeName + "\"]/type";
-        string type = xmlParser.evaluateToString(file, query);
+        int type = mapToNcType(xmlParser.evaluateToString(file, query));
         query = "/dataset/variables/variable[name=\"" + variableName + "\"]/attributes/attribute[name=\"" + attributeName + "\"]/value";
         string value = xmlParser.evaluateToString(file, query);
+
         attributes.push_back(new Attribute(type, attributeName, value));
     }
     return attributes;
+}
+
+int Dictionary::mapToNcType(const string& typeString) {
+    // TODO - implement
+    return 0;
 }
