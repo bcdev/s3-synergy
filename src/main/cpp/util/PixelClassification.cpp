@@ -19,7 +19,7 @@
  */
 
 #include "PixelClassification.h"
-#include "ProcessorContext.h"
+#include "../core/Context.h"
 
 PixelClassification::PixelClassification() : DefaultModule("PCL") {
 }
@@ -32,7 +32,7 @@ void PixelClassification::process(Context& context) {
     if (!segment.hasVariable("SYN_flags")) {
         segment.addVariableInt("SYN_flags");
     }
-    Logger::get()->progress("Starting to process segment [" + segment.toString() + "]", getId(), getVersion());
+    context.getLogging()->progress("Starting to process segment [" + segment.toString() + "]", getId(), getVersion());
     Grid& grid = segment.getGrid();
 
     size_t startLine = getStartL(context, segment);

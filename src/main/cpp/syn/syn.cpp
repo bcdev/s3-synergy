@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <vector>
 
-#include "../util/Dictionary.h"
+#include "../core/Dictionary.h"
 #include "../util/JobOrderParser.h"
 #include "../util/Logger.h"
 #include "../util/PixelClassification.h"

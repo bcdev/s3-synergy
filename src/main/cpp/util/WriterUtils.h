@@ -25,8 +25,8 @@
 #include <netcdf.h>
 #include <vector>
 
-#include "Dictionary.h"
-#include "Variable.h"
+#include "../core/Dictionary.h"
+#include "../core/Variable.h"
 
 using std::map;
 using std::vector;
