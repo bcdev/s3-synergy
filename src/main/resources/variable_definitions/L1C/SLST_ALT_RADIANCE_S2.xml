@@ -8,7 +8,7 @@
     </variable>
     <variable>
       <name>exception</name>
-      <symbolic_name>SLO_26_exception</symbolic_name>
+      <symbolic_name>SLO_exception_2</symbolic_name>
       <segment_name>SLST_ALT_05km</segment_name>
     </variable>
   </variables>
