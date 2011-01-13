@@ -19,14 +19,18 @@ SynL2Writer::~SynL2Writer() {
 }
 
 void SynL2Writer::process(Context& context) {
-    const Segment& segment = context.getSegment(Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED);
-    const Grid& grid = segment.getGrid();
-    const size_t startL = getStartL(context, segment);
-    const size_t endL = context.getMaxLWritable(segment, *this);
 
     for (size_t i = 0; i < variablesToWrite.size(); i++) {
-        const Variable& variable = context.getDictionary()->getL2Variable(variablesToWrite[i]);
+        Dictionary& dict = *context.getDictionary();
+        const Variable& variable = dict.getL2Variable(variablesToWrite[i]);
         const string varName = variable.getSymbolicName();
+
+        string segmentName = dict.getSegmentNameForL2(varName);
+        const Segment& segment = context.getSegment(segmentName);
+        const Grid& grid = segment.getGrid();
+        const size_t startL = getStartL(context, segment);
+        size_t endL = context.getMaxLWritable(segment, *this);
+
         const string ncFileName = variable.getFileName();
 
         if (!exists(varIdMap, varName)) {
@@ -52,10 +56,9 @@ void SynL2Writer::process(Context& context) {
         }
         const Accessor& accessor = segment.getAccessor(varName);
         NetCDF::putData(ncId, varId, &starts[0], &sizes[0], accessor.getUntypedData());
-    }
-    context.setMaxLComputed(segment, *this, endL);
 
-    // todo: other segments ...
+        setMaxLComputed(context, varName, dict, endL);
+    }
 }
 
 void SynL2Writer::start(Context& context) {
@@ -109,9 +112,42 @@ void SynL2Writer::createNcVar(const Variable& variable, const Grid& grid) {
     const valarray<int>& dimIds = dimIdMap[ncFileName];
     int varId = NetCDF::defineVariable(fileId, variable.getNcName().c_str(), variable.getType(), 3, &dimIds[0]);
     varIdMap[varName] = varId;
-    
+
     const vector<Attribute*> attributes = variable.getAttributes();
     for (vector<Attribute*>::const_iterator iter = attributes.begin(); iter != attributes.end(); iter++) {
         NetCDF::addAttribute(fileId, varId, **iter);
     }
+}
+
+void SynL2Writer::setMaxLComputed(Context& context, string symbolicName, Dictionary& dict, size_t endLine ) {
+    string segmentName = dict.getSegmentNameForL2(symbolicName);
+    Segment* segment = &context.getSegment(segmentName);
+    if (segmentVariableMap.find(segmentName) == segmentVariableMap.end()) {
+        set<string> variables;
+        segmentVariableMap[segmentName] = variables;
+    }
+    segmentVariableMap[segmentName].insert(symbolicName);
+    if (isSegmentComputedByAllVariables(*segment, dict)) {
+        segmentVariableMap.clear();
+        context.setMaxLComputed(*segment, *this, endLine);
+    }
+}
+
+const bool SynL2Writer::isSegmentComputedByAllVariables(Segment& segment, Dictionary& dict) {
+    vector<string> variables = dict.getVariables(true);
+    vector<string> varsForSegment;
+    for (size_t i = 0; i < variables.size(); i++) {
+        string varName = variables[i];
+        string segmentName = dict.getSegmentNameForL2(varName);
+        if (segment.getId().compare(segmentName) == 0) {
+            varsForSegment.push_back(varName);
+        }
+    }
+    set<string> varsInSegment = segmentVariableMap[segment.getId()];
+    for (size_t j = 0; j < varsForSegment.size(); j++) {
+        if (varsInSegment.find(varsForSegment[j]) == varsInSegment.end()) {
+            return false;
+        }
+    }
+    return true;
 }

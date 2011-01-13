@@ -16,6 +16,7 @@ using std::map;
 using std::set;
 
 class SynL2Writer : public Writer {
+
 public:
     SynL2Writer();
     ~SynL2Writer();
@@ -31,10 +32,13 @@ private:
     }
     void createNcVar(const Variable& variable, const Grid& grid);
     vector<string> variablesToWrite;
+    void setMaxLComputed(Context& context, string symbolicName, Dictionary& dict, size_t endLine);
+    const bool isSegmentComputedByAllVariables(Segment& segment, Dictionary& dict);
 
     map<string, int> fileIdMap;
     map<string, valarray<int> > dimIdMap;
     map<string, int> varIdMap;
+    map<string, set<string> > segmentVariableMap;
 };
 
 #endif	/* SYNL2WRITER_H */
