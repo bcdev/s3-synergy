@@ -120,7 +120,7 @@ void SynL2Writer::createNcVar(const Variable& variable, const Grid& grid) {
 }
 
 void SynL2Writer::setMaxLComputed(Context& context, string symbolicName, Dictionary& dict, size_t endLine ) {
-    string segmentName = dict.getSegmentNameForL1c(symbolicName);
+    string segmentName = dict.getSegmentNameForL2(symbolicName);
     Segment* segment = &context.getSegment(segmentName);
     if (segmentVariableMap.find(segmentName) == segmentVariableMap.end()) {
         set<string> variables;
@@ -138,7 +138,7 @@ const bool SynL2Writer::isSegmentComputedByAllVariables(Segment& segment, Dictio
     vector<string> varsForSegment;
     for (size_t i = 0; i < variables.size(); i++) {
         string varName = variables[i];
-        string segmentName = dict.getSegmentNameForL1c(varName);
+        string segmentName = dict.getSegmentNameForL2(varName);
         if (segment.getId().compare(segmentName) == 0) {
             varsForSegment.push_back(varName);
         }
