@@ -37,7 +37,7 @@ public:
      * @param moduleId The module ID.
      * @param moduleVersion The module version.
      */
-    DefaultModule(const string& moduleId, string moduleVersion = "") : id(moduleId), version(moduleVersion) {
+    DefaultModule(const string& moduleId, const string& moduleVersion = "") : id(moduleId), version(moduleVersion) {
     };
 
     virtual ~DefaultModule() {
