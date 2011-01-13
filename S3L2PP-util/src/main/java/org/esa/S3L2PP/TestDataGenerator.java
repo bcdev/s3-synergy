@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2011 by Brockmann Consult (info@brockmann-consult.de)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation. This program is distributed in the hope it will
+ * be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
+ */
+
 package org.esa.S3L2PP;
 
 import java.io.BufferedReader;
@@ -18,9 +33,9 @@ public class TestDataGenerator {
 
     private static final String GLOBAL_ATTRIBUTES = "// global attributes:\n" +
                                                     "\t\t:Conventions = \"CF-1.4\" ;\n" +
-                                                    "\t\t:title = \"SYN L1c dummy test data\" ;\n" +
+                                                    "\t\t:title = \"S3 L1c dummy test data\" ;\n" +
                                                     "\t\t:institution = \"Brockmann Consult GmbH\" ;\n" +
-                                                    "\t\t:source = \"Sentinel-3 SYN\" ;\n" +
+                                                    "\t\t:source = \"Sentinel-3 S3L2PP\" ;\n" +
                                                     "\t\t:history = \"\" ;\n" +
                                                     "\t\t:comment = \"\" ;\n" +
                                                     "\t\t:references = \"S3-RS-TAF-SY-01247\" ;\n" +
