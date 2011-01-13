@@ -10,13 +10,12 @@
 
 #include <vector>
 
-#include "../core/DefaultModule.h"
 #include "../core/Writer.h"
 
 using std::map;
 using std::set;
 
-class SynL2Writer : virtual public DefaultModule, virtual public Writer {
+class SynL2Writer : virtual public Writer {
 public:
     SynL2Writer();
     ~SynL2Writer();

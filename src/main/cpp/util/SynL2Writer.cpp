@@ -12,7 +12,7 @@
 
 using std::make_pair;
 
-SynL2Writer::SynL2Writer() : DefaultModule("SYN_L2_WRITER"), Writer() {
+SynL2Writer::SynL2Writer() : Writer("SYN_L2_WRITER") {
 }
 
 SynL2Writer::~SynL2Writer() {
