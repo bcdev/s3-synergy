@@ -26,7 +26,7 @@
 #include <netcdf.h>
 #include <vector>
 
-#include "Variable.h"
+#include "../core/Variable.h"
 #include "../core/Segment.h"
 
 using boost::filesystem::is_directory;

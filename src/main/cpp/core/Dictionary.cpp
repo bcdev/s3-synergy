@@ -25,7 +25,7 @@
 
 #include "Dictionary.h"
 #include "VariableImpl.h"
-#include "IOUtils.h"
+#include "../util/IOUtils.h"
 
 using std::ifstream;
 using boost::algorithm::trim_copy;
