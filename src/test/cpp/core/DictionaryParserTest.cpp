@@ -12,7 +12,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
- * File:   DictionaryTest.cpp
+ * File:   DictionaryParserTest.cpp
  * Author: thomass
  * 
  * Created on December 23, 2010, 11:11 AM
@@ -21,30 +21,30 @@
 #include <boost/lexical_cast.hpp>
 #include <vector>
 
-#include "DictionaryTest.h"
+#include "DictionaryParserTest.h"
 
 using std::vector;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(DictionaryTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(DictionaryParserTest);
 
-DictionaryTest::DictionaryTest() {
+DictionaryParserTest::DictionaryParserTest() {
 
 }
 
-DictionaryTest::~DictionaryTest() {
+DictionaryParserTest::~DictionaryParserTest() {
 }
 
-void DictionaryTest::setUp() {
+void DictionaryParserTest::setUp() {
     // Initialize Xerces and XPath
     XPathInitializer init;
     dict = new Dictionary("/mnt/hgfs/S3L2PP/src/test/resources/syn/config/config.xml");
 }
 
-void DictionaryTest::tearDown() {
+void DictionaryParserTest::tearDown() {
     delete dict;
 }
 
-void DictionaryTest::testGetNcVarNameAndGetFileName() {
+void DictionaryParserTest::testGetNcVarNameAndGetFileName() {
     string symbolicName2 = "L_1";
     string symbolicName3 = "L_14";
     string symbolicName4 = "L_18";
@@ -94,7 +94,7 @@ void DictionaryTest::testGetNcVarNameAndGetFileName() {
     CPPUNIT_ASSERT(dict->getL1cVariable(symbolicName12).getFileName().compare("SUBS_ANNOT_SLST_ALT") == 0);
 }
 
-void DictionaryTest::testDictionaryParsing() {
+void DictionaryParserTest::testDictionaryParsing() {
     testSDRVariable(dict->getL2Variable("SDR_1"));
     testA550Variable(dict->getL2Variable("A550"));
     testT550Variable(dict->getL2Variable("T550"));
@@ -104,7 +104,7 @@ void DictionaryTest::testDictionaryParsing() {
     testSLN_flagsVariable(dict->getL2Variable("SLN_flags"));
 }
 
-void DictionaryTest::testSDRVariable(Variable& var) {
+void DictionaryParserTest::testSDRVariable(Variable& var) {
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.0001 == var.getAttribute(attributeName).getDouble());
 
@@ -115,7 +115,7 @@ void DictionaryTest::testSDRVariable(Variable& var) {
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
-void DictionaryTest::testT550Variable(Variable& var) {
+void DictionaryParserTest::testT550Variable(Variable& var) {
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.0001 == var.getAttribute(attributeName).getDouble());
 
@@ -126,7 +126,7 @@ void DictionaryTest::testT550Variable(Variable& var) {
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
-void DictionaryTest::testA550Variable(Variable& var) {
+void DictionaryParserTest::testA550Variable(Variable& var) {
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.015 == var.getAttribute(attributeName).getDouble());
 
@@ -134,7 +134,7 @@ void DictionaryTest::testA550Variable(Variable& var) {
     CPPUNIT_ASSERT(255 == var.getAttribute(attributeName).getShort());
 }
 
-void DictionaryTest::testAMINVariable(Variable& var) {
+void DictionaryParserTest::testAMINVariable(Variable& var) {
     string attributeName = "_FillValue";
     CPPUNIT_ASSERT(0 == var.getAttribute(attributeName).getShort());
 
@@ -142,7 +142,7 @@ void DictionaryTest::testAMINVariable(Variable& var) {
     CPPUNIT_ASSERT(40 == var.getAttribute(attributeName).getShort());
 }
 
-void DictionaryTest::testSLN_flagsVariable(Variable& var) {
+void DictionaryParserTest::testSLN_flagsVariable(Variable& var) {
     string attributeName = "_FillValue";
     CPPUNIT_ASSERT(0 == var.getAttribute(attributeName).getShort());
 
@@ -150,7 +150,7 @@ void DictionaryTest::testSLN_flagsVariable(Variable& var) {
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
-void DictionaryTest::testLatitudeVariable(Variable& var) {
+void DictionaryParserTest::testLatitudeVariable(Variable& var) {
     string attributeName = "units";
     CPPUNIT_ASSERT("degrees_north" == var.getAttribute(attributeName).getString());
 
@@ -161,7 +161,7 @@ void DictionaryTest::testLatitudeVariable(Variable& var) {
     CPPUNIT_ASSERT(-90000000 == var.getAttribute(attributeName).getInt());
 }
 
-void DictionaryTest::testTimeVariable(Variable& var) {
+void DictionaryParserTest::testTimeVariable(Variable& var) {
     string attributeName = "units";
     CPPUNIT_ASSERT("microseconds since 2000-1-1 0:0:0" == var.getAttribute(attributeName).getString());
 
@@ -169,7 +169,7 @@ void DictionaryTest::testTimeVariable(Variable& var) {
     CPPUNIT_ASSERT(4294967295.0 == var.getAttribute(attributeName).getDouble());
 }
 
-void DictionaryTest::testSLN_VAAVariable(Variable& var) {
+void DictionaryParserTest::testSLN_VAAVariable(Variable& var) {
     string attributeName = "units";
     CPPUNIT_ASSERT("degrees" == var.getAttribute(attributeName).getString());
 
@@ -177,7 +177,7 @@ void DictionaryTest::testSLN_VAAVariable(Variable& var) {
     CPPUNIT_ASSERT(-180.0 == var.getAttribute(attributeName).getFloat());
 }
 
-void DictionaryTest::testAir_pressureVariable(Variable& var) {
+void DictionaryParserTest::testAir_pressureVariable(Variable& var) {
     string attributeName = "units";
     CPPUNIT_ASSERT("hPa" == var.getAttribute(attributeName).getString());
 
@@ -188,7 +188,7 @@ void DictionaryTest::testAir_pressureVariable(Variable& var) {
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
-void DictionaryTest::testLatVariable(Variable& var) {
+void DictionaryParserTest::testLatVariable(Variable& var) {
     string attributeName = "units";
     CPPUNIT_ASSERT("degrees_north" == var.getAttribute(attributeName).getString());
 
@@ -196,7 +196,7 @@ void DictionaryTest::testLatVariable(Variable& var) {
     CPPUNIT_ASSERT(180.0 == var.getAttribute(attributeName).getFloat());
 }
 
-void DictionaryTest::testB0_PVariable(Variable& var) {
+void DictionaryParserTest::testB0_PVariable(Variable& var) {
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.001 == var.getAttribute(attributeName).getDouble());
 
@@ -207,7 +207,7 @@ void DictionaryTest::testB0_PVariable(Variable& var) {
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
-void DictionaryTest::testB0_SVariable(Variable& var) {
+void DictionaryParserTest::testB0_SVariable(Variable& var) {
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.001f == var.getAttribute(attributeName).getFloat());
 
@@ -218,7 +218,7 @@ void DictionaryTest::testB0_SVariable(Variable& var) {
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
-void DictionaryTest::testMIR_PVariable(Variable& var) {
+void DictionaryParserTest::testMIR_PVariable(Variable& var) {
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.001f == var.getAttribute(attributeName).getFloat());
 
@@ -229,7 +229,7 @@ void DictionaryTest::testMIR_PVariable(Variable& var) {
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
-void DictionaryTest::testMIR_SVariable(Variable& var) {
+void DictionaryParserTest::testMIR_SVariable(Variable& var) {
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.001f == var.getAttribute(attributeName).getFloat());
 
@@ -240,7 +240,7 @@ void DictionaryTest::testMIR_SVariable(Variable& var) {
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
-void DictionaryTest::testSAA_PVariable(Variable& var) {
+void DictionaryParserTest::testSAA_PVariable(Variable& var) {
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(1.5 == var.getAttribute(attributeName).getFloat());
 
@@ -251,7 +251,7 @@ void DictionaryTest::testSAA_PVariable(Variable& var) {
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
-void DictionaryTest::testSAA_SVariable(Variable& var) {
+void DictionaryParserTest::testSAA_SVariable(Variable& var) {
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(1.5 == var.getAttribute(attributeName).getFloat());
 
@@ -262,7 +262,7 @@ void DictionaryTest::testSAA_SVariable(Variable& var) {
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
-void DictionaryTest::testAGVariable(Variable& var) {
+void DictionaryParserTest::testAGVariable(Variable& var) {
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.004 == var.getAttribute(attributeName).getDouble());
 
@@ -273,7 +273,7 @@ void DictionaryTest::testAGVariable(Variable& var) {
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
-void DictionaryTest::testOGVariable(Variable& var) {
+void DictionaryParserTest::testOGVariable(Variable& var) {
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.004 == var.getAttribute(attributeName).getDouble());
 
@@ -287,7 +287,7 @@ void DictionaryTest::testOGVariable(Variable& var) {
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
-void DictionaryTest::testWVGVariable(Variable& var) {
+void DictionaryParserTest::testWVGVariable(Variable& var) {
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.04 == var.getAttribute(attributeName).getDouble());
 
@@ -301,7 +301,7 @@ void DictionaryTest::testWVGVariable(Variable& var) {
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
-void DictionaryTest::testNDVIVariable(Variable& var) {
+void DictionaryParserTest::testNDVIVariable(Variable& var) {
     string attributeName = "scale_factor";
     CPPUNIT_ASSERT(0.004 == var.getAttribute(attributeName).getDouble());
 
@@ -315,7 +315,7 @@ void DictionaryTest::testNDVIVariable(Variable& var) {
     CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcName())) == 0);
 }
 
-void DictionaryTest::testTGVariable(Variable& var) {
+void DictionaryParserTest::testTGVariable(Variable& var) {
     string attributeName = "standard_name";
     CPPUNIT_ASSERT("time" == var.getAttribute(attributeName).getString());
 

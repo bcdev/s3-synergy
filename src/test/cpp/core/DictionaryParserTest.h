@@ -12,28 +12,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
- * File:   DictionaryTest.h
+ * File:   DictionaryParserTest.h
  * Author: thomass
  *
  * Created on December 23, 2010, 11:11 AM
  */
 
-#ifndef DICTIONARYTEST_H
-#define	DICTIONARYTEST_H
+#ifndef DICTIONARYPARSERTEST_H
+#define	DICTIONARYPARSERTEST_H
 
 #include <cppunit/extensions/HelperMacros.h>
 
 #include "../../../main/cpp/core/Dictionary.h"
 
-class DictionaryTest : public CPPUNIT_NS::TestFixture {
-    CPPUNIT_TEST_SUITE(DictionaryTest);
+class DictionaryParserTest : public CPPUNIT_NS::TestFixture {
+    CPPUNIT_TEST_SUITE(DictionaryParserTest);
     CPPUNIT_TEST(testDictionaryParsing);
     CPPUNIT_TEST(testGetNcVarNameAndGetFileName);
     CPPUNIT_TEST_SUITE_END();
     
 public:
-    DictionaryTest();
-    virtual ~DictionaryTest();
+    DictionaryParserTest();
+    virtual ~DictionaryParserTest();
     void setUp();
     void tearDown();
 private:
@@ -64,4 +64,4 @@ private:
     Dictionary* dict;
 };
 
-#endif	/* DICTIONARYTEST_H */
+#endif	/* DICTIONARYPARSERTEST_H */
