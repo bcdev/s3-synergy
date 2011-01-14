@@ -18,6 +18,8 @@
  * Created on January 12, 2011, 11:48 AM
  */
 
+#include <netcdf.h>
+
 #include "SynL2WriterTest.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(SynL2WriterTest);
@@ -40,33 +42,35 @@ void SynL2WriterTest::testWriter() {
     CPPUNIT_ASSERT(writer != 0);
 
     Dictionary dictionary;
-    Variable& a = dictionary.addVariable("SYL2", "SDR_1", "SDR_1");
-    a.setFileName("test");
+    Variable& a = dictionary.addVolume("SYL2").addSection(Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED).addVariable("SDR_1");
+    a.setNcVarName("SDR_1");
+    a.setNcFileName("test");
     a.setType(NC_BYTE);
     a.setSegmentName(Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED);
-    a.addAttribute(new Attribute(NC_BYTE, "B", "1"));
-    a.addAttribute(new Attribute(NC_UBYTE, "UB", "2"));
-    a.addAttribute(new Attribute(NC_SHORT, "S", "3"));
-    a.addAttribute(new Attribute(NC_USHORT, "US", "4"));
-    a.addAttribute(new Attribute(NC_INT, "I", "5"));
-    a.addAttribute(new Attribute(NC_UINT, "UI", "6"));
-    a.addAttribute(new Attribute(NC_INT64, "L", "7"));
-    a.addAttribute(new Attribute(NC_UINT64, "UL", "8"));
-    a.addAttribute(new Attribute(NC_FLOAT, "F", "9.1"));
-    a.addAttribute(new Attribute(NC_DOUBLE, "D", "9.2"));
-    a.addAttribute(new Attribute(NC_STRING, "Str", "Zehn"));
-    Variable& b = dictionary.addVariable("SYL2", "SDR_1_er", "SDR_1_er");
-    b.setFileName("test");
+    a.addAttribute(NC_BYTE, "B", "1");
+    a.addAttribute(NC_UBYTE, "UB", "2");
+    a.addAttribute(NC_SHORT, "S", "3");
+    a.addAttribute(NC_USHORT, "US", "4");
+    a.addAttribute(NC_INT, "I", "5");
+    a.addAttribute(NC_UINT, "UI", "6");
+    a.addAttribute(NC_INT64, "L", "7");
+    a.addAttribute(NC_UINT64, "UL", "8");
+    a.addAttribute(NC_FLOAT, "F", "9.1");
+    a.addAttribute(NC_DOUBLE, "D", "9.2");
+    a.addAttribute(NC_STRING, "Str", "Zehn");
+    Variable& b = dictionary.getVolume("SYL2").getSection(Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED).addVariable("SDR_1_er");
+    b.setNcVarName("SDR_1_er");
+    b.setNcFileName("test");
     b.setType(NC_FLOAT);
     b.setSegmentName(Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED);
 
     Context context;
     context.setDictionary(&dictionary);
     Segment& segment = context.addSegment(Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED, 1, 2, 3, 0, 4);
-    segment.addVariableByte(a.getSymbolicName());
-    segment.addVariableFloat(b.getSymbolicName());
-    Accessor& accessorA = segment.getAccessor(a.getSymbolicName());
-    Accessor& accessorB = segment.getAccessor(b.getSymbolicName());
+    segment.addVariableByte(a.getName());
+    segment.addVariableFloat(b.getName());
+    Accessor& accessorA = segment.getAccessor(a.getName());
+    Accessor& accessorB = segment.getAccessor(b.getName());
     valarray<int8_t>& bufferA = accessorA.getByteData();
     valarray<float>& bufferB = accessorB.getFloatData();
 

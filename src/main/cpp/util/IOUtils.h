@@ -21,17 +21,14 @@
 #ifndef IOUTILS_H
 #define	IOUTILS_H
 
-#include <boost/filesystem.hpp>
 #include <iostream>
 #include <netcdf.h>
 #include <vector>
 
-#include "../core/Variable.h"
+#include "../core/Boost.h"
+#include "../core/Dictionary.h"
 #include "../core/Segment.h"
 
-using boost::filesystem::is_directory;
-using boost::filesystem::directory_iterator;
-using boost::filesystem::path;
 using std::vector;
 
 class IOUtils {
@@ -44,7 +41,7 @@ public:
             int status = nc_inq_dimid(ncId, dims[i]->getName().c_str(), &dimId);
             if (status != NC_NOERR) {
                 int currentDimId;
-                nc_def_dim(ncId, dims[i]->getName().c_str(), dims[i]->getRange(), &currentDimId);
+                nc_def_dim(ncId, dims[i]->getName().c_str(), dims[i]->getSize(), &currentDimId);
                 ncDims[i] = currentDimId;
             } else {
                 ncDims[i] = dimId;

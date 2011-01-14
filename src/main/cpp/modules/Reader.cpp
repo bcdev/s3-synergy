@@ -172,7 +172,7 @@ const int Reader::findFile(string& sourceDir, string& fileName) {
 // needed only for debugging purposes
 
 void Reader::addDimsToVariable(Variable& variable, size_t camCount, size_t lineCount, size_t colCount) {
-    variable.addDimension(new Dimension("N_CAM", camCount));
-    variable.addDimension(new Dimension("N_LINE_OLC", lineCount));
-    variable.addDimension(new Dimension("N_DET_CAM", colCount));
+    variable.addDimension("N_CAM").setSize(camCount);
+    variable.addDimension("N_LINE_OLC").setSize(lineCount);
+    variable.addDimension("N_DET_CAM").setSize(colCount);
 }

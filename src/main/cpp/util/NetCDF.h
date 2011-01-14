@@ -28,7 +28,7 @@
 #include <string>
 #include <valarray>
 
-#include "../core/Variable.h"
+#include "../core/Dictionary.h"
 
 using std::runtime_error;
 using std::valarray;
@@ -180,13 +180,13 @@ private:
     template<class T>
     static void putAttribute(int fileId, int varId, Attribute attribute, T t) {
         T v = t;
-        int status = nc_put_att(fileId, varId, attribute.getKey().c_str(), attribute.getType(), 1, &v);
+        int status = nc_put_att(fileId, varId, attribute.getName().c_str(), attribute.getType(), 1, &v);
         checkStatus(status, "putting attribute");
     }
 
     static void putAttributeString(int fileId, int varId, Attribute attribute) {
-        const string& value = attribute.getString();
-        int status = nc_put_att(fileId, varId, attribute.getKey().c_str(), NC_CHAR, value.size(), value.c_str());
+        const string& value = attribute.getValue();
+        int status = nc_put_att(fileId, varId, attribute.getName().c_str(), NC_CHAR, value.size(), value.c_str());
         checkStatus(status, "putting attribute");
     }
 

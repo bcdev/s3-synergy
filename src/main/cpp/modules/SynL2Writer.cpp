@@ -24,7 +24,7 @@ void SynL2Writer::process(Context& context) {
     for (size_t i = 0; i < variablesToWrite.size(); i++) {
         Dictionary& dict = *context.getDictionary();
         const Variable& variable = dict.getL2Variable(variablesToWrite[i]);
-        const string varName = variable.getSymbolicName();
+        const string varName = variable.getName();
 
         string segmentName = dict.getSegmentNameForL2(varName);
         const Segment& segment = context.getSegment(segmentName);
@@ -32,7 +32,7 @@ void SynL2Writer::process(Context& context) {
         const size_t startL = getStartL(context, segment);
         size_t endL = context.getMaxLWritable(segment, *this);
 
-        const string ncFileName = variable.getFileName();
+        const string ncFileName = variable.getNcFileName();
 
         if (!exists(varIdMap, varName)) {
             throw logic_error("Unknown variable '" + varName + "'.");
@@ -89,14 +89,14 @@ void SynL2Writer::stop(Context& context) {
 }
 
 void SynL2Writer::createNcVar(const Variable& variable, const Grid& grid) {
-    const string ncFileName = variable.getFileName();
-    const string varName = variable.getSymbolicName();
+    const string ncFileName = variable.getNcFileName();
+    const string varName = variable.getName();
 
     if (exists(varIdMap, varName)) {
         throw logic_error("Variable '" + varName + "' already exists.");
     }
     if (!exists(fileIdMap, ncFileName)) {
-        int fileId = NetCDF::createFile(variable.getFileName().append(".nc").c_str());
+        int fileId = NetCDF::createFile(variable.getNcFileName().append(".nc").c_str());
 
         const size_t sizeK = grid.getSizeK();
         const size_t sizeL = grid.getMaxL() - grid.getMinL() + 1;
@@ -112,7 +112,7 @@ void SynL2Writer::createNcVar(const Variable& variable, const Grid& grid) {
     }
     const int fileId = fileIdMap[ncFileName];
     const valarray<int>& dimIds = dimIdMap[ncFileName];
-    int varId = NetCDF::defineVariable(fileId, variable.getNcName().c_str(), variable.getType(), 3, &dimIds[0]);
+    int varId = NetCDF::defineVariable(fileId, variable.getNcVarName().c_str(), variable.getType(), 3, &dimIds[0]);
     varIdMap[varName] = varId;
 
     const vector<Attribute*> attributes = variable.getAttributes();
