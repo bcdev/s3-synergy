@@ -24,8 +24,8 @@
 #include <stdexcept>
 
 #include "Dictionary.h"
-#include "VariableImpl.h"
 #include "../util/IOUtils.h"
+#include "VariableImpl.h"
 
 using std::ifstream;
 using boost::algorithm::trim_copy;
@@ -186,7 +186,6 @@ vector<Attribute*> Dictionary::parseAttributes(string& file, string& variableNam
     vector<Attribute*> attributes;
     for (size_t i = 0; i < attributeNames.size(); i++) {
         string attributeName = attributeNames[i];
-        query = "/dataset/variables/variable[name=\"" + variableName + "\"]/attributes/attribute[name=\"" + attributeName + "\"]/type";
         int type = mapToNcType(xmlParser.evaluateToString(file, query));
         query = "/dataset/variables/variable[name=\"" + variableName + "\"]/attributes/attribute[name=\"" + attributeName + "\"]/value";
         string value = xmlParser.evaluateToString(file, query);
@@ -197,6 +196,38 @@ vector<Attribute*> Dictionary::parseAttributes(string& file, string& variableNam
 }
 
 int Dictionary::mapToNcType(const string& typeString) {
-    // TODO - implement
-    return 0;
+    if (typeString.compare("byte") == 0) {
+        return NC_BYTE;
+    }
+    if (typeString.compare("ubyte") == 0) {
+        return NC_UBYTE;
+    }
+    if (typeString.compare("short") == 0) {
+        return NC_SHORT;
+    }
+    if (typeString.compare("ushort") == 0) {
+        return NC_USHORT;
+    }
+    if (typeString.compare("int") == 0) {
+        return NC_INT;
+    }
+    if (typeString.compare("uint") == 0) {
+        return NC_UINT;
+    }
+    if (typeString.compare("long") == 0) {
+        return NC_INT64;
+    }
+    if (typeString.compare("ulong") == 0) {
+        return NC_UINT64;
+    }
+    if (typeString.compare("float") == 0) {
+        return NC_FLOAT;
+    }
+    if (typeString.compare("double") == 0) {
+        return NC_DOUBLE;
+    }
+    if (typeString.compare("string") == 0) {
+        return NC_STRING;
+    }
+    return NC_CHAR;
 }
