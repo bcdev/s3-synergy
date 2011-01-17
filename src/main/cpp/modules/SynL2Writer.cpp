@@ -56,7 +56,7 @@ void SynL2Writer::process(Context& context) {
             context.getLogging()->progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
         }
         const Accessor& accessor = segment.getAccessor(varName);
-        NetCDF::putData(ncId, varId, &starts[0], &sizes[0], accessor.getUntypedData());
+        NetCDF::putData(ncId, varId, starts, sizes, accessor.getUntypedData());
 
         setMaxLComputed(context, varName, dict, endL);
     }
@@ -112,7 +112,7 @@ void SynL2Writer::createNcVar(const Variable& variable, const Grid& grid) {
     }
     const int fileId = fileIdMap[ncFileName];
     const valarray<int>& dimIds = dimIdMap[ncFileName];
-    int varId = NetCDF::defineVariable(fileId, variable.getNcVarName().c_str(), variable.getType(), 3, &dimIds[0]);
+    int varId = NetCDF::defineVariable(fileId, variable.getNcVarName().c_str(), variable.getType(), dimIds);
     varIdMap[varName] = varId;
 
     const vector<Attribute*> attributes = variable.getAttributes();
