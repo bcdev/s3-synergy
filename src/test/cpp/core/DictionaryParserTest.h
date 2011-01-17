@@ -27,8 +27,8 @@
 
 class DictionaryParserTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(DictionaryParserTest);
-    CPPUNIT_TEST(testDictionaryParsing);
     CPPUNIT_TEST(testGetNcVarNameAndGetFileName);
+    CPPUNIT_TEST(testDictionaryParsing);
     CPPUNIT_TEST_SUITE_END();
     
 public:

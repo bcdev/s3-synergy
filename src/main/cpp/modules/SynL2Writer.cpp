@@ -22,7 +22,7 @@ SynL2Writer::~SynL2Writer() {
 void SynL2Writer::process(Context& context) {
     Dictionary& dict = *context.getDictionary();
     const vector<SegmentDescriptor*> segmentDescriptors =
-            dict.getProductDescriptor(Constants::SYMBOLIC_NAME_SYL2).getSegmentDescriptors();
+            dict.getProductDescriptor(Constants::SYMBOLIC_NAME_L2).getSegmentDescriptors();
 
     foreach(SegmentDescriptor* segmentDescriptor, segmentDescriptors) {
         const Segment& segment = context.getSegment(segmentDescriptor->getName());
@@ -68,7 +68,7 @@ void SynL2Writer::start(Context& context) {
     Dictionary& dict = *context.getDictionary();
 
     const vector<SegmentDescriptor*> segmentDescriptors =
-            dict.getProductDescriptor(Constants::SYMBOLIC_NAME_SYL2).getSegmentDescriptors();
+            dict.getProductDescriptor(Constants::SYMBOLIC_NAME_L2).getSegmentDescriptors();
 
     foreach(SegmentDescriptor* segmentDescriptor, segmentDescriptors) {
         const Segment& segment = context.getSegment(segmentDescriptor->getName());

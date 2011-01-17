@@ -37,23 +37,23 @@ void DictionaryTest::tearDown() {
 }
 
 void DictionaryTest::testContainers() {
-    ProductDescriptor& productDescriptor = dictionary->addElement("L1C");
+    ProductDescriptor& productDescriptor = dictionary->addProductDescriptor("L1C");
     CPPUNIT_ASSERT(productDescriptor.getName().compare("L1C") == 0);
 
-    vector<ProductDescriptor*> volumes = dictionary->getElements();
+    vector<ProductDescriptor*> volumes = dictionary->getProductDescriptors();
     CPPUNIT_ASSERT(volumes.size() == 1);
     CPPUNIT_ASSERT(volumes[0] == &productDescriptor);
 
-    CPPUNIT_ASSERT(&dictionary->getElement("L1C") == &productDescriptor);
-    CPPUNIT_ASSERT_THROW(dictionary->getElement("L2"), std::out_of_range);
+    CPPUNIT_ASSERT(&dictionary->getProductDescriptor("L1C") == &productDescriptor);
+    CPPUNIT_ASSERT_THROW(dictionary->getProductDescriptor("L2"), std::out_of_range);
 
-    CPPUNIT_ASSERT(dictionary->hasElement("L1C"));
-    CPPUNIT_ASSERT(!dictionary->hasElement("L2"));
+    CPPUNIT_ASSERT(dictionary->hasProductDescriptor("L1C"));
+    CPPUNIT_ASSERT(!dictionary->hasProductDescriptor("L2"));
 
-    SegmentDescriptor& segmentDescriptor = productDescriptor.addElement("SYN_COLLOCATED");
+    SegmentDescriptor& segmentDescriptor = productDescriptor.addSegmentDescriptor("SYN_COLLOCATED");
 
-    CPPUNIT_ASSERT(productDescriptor.hasElement(segmentDescriptor.getName()));
-    CPPUNIT_ASSERT(&productDescriptor.getElement("SYN_COLLOCATED") == &segmentDescriptor);
+    CPPUNIT_ASSERT(productDescriptor.hasSegmentDescriptor(segmentDescriptor.getName()));
+    CPPUNIT_ASSERT(&productDescriptor.getSegmentDescriptor("SYN_COLLOCATED") == &segmentDescriptor);
 
     Attribute& volAttribute = productDescriptor.addAttribute(1, "Version", "37");
 
@@ -64,4 +64,8 @@ void DictionaryTest::testContainers() {
 
     CPPUNIT_ASSERT(segmentDescriptor.hasAttribute(sectAttribute.getName()));
     CPPUNIT_ASSERT(&segmentDescriptor.getAttribute("Vendor") == &sectAttribute);
+
+    VariableDescriptor& variableDescriptor = segmentDescriptor.addVariableDescriptor("reflec_1");
+
+    CPPUNIT_ASSERT(dictionary->getProductDescriptor("L1C").getVariables().size() == 1);
 }

@@ -78,7 +78,7 @@ public:
 
     A& getAttribute(const string& name) const {
         if (!hasAttribute(name)) {
-            throw out_of_range("Container '" + this->name + "' contains no attribute '" + name + "'.");
+            throw out_of_range("Descriptor '" + this->name + "' contains no attribute '" + name + "'.");
         }
         return *attributeMap.at(name);
     }
@@ -95,7 +95,7 @@ public:
 
     E& getElement(const string& name) const {
         if (!hasElement(name)) {
-            throw out_of_range("Container '" + this->name + "' contains no element '" + name + "'.");
+            throw out_of_range("Descriptor '" + this->name + "' contains no element '" + name + "'.");
         }
         return *elementMap.at(name);
     }
@@ -455,6 +455,8 @@ public:
     }
 
     vector<VariableDescriptor*> getVariables() const;
+
+    VariableDescriptor* getVariable(const string& name) const;
 };
 
 /**

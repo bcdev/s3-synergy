@@ -42,7 +42,7 @@ void SynL2WriterTest::testWriter() {
     CPPUNIT_ASSERT(writer != 0);
 
     Dictionary dictionary;
-    VariableDescriptor& a = dictionary.addProductDescriptor(Constants::SYMBOLIC_NAME_SYL2).addSegmentDescriptor(Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED).addVariableDescriptor("SDR_1");
+    VariableDescriptor& a = dictionary.addProductDescriptor(Constants::SYMBOLIC_NAME_L2).addSegmentDescriptor(Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED).addVariableDescriptor("SDR_1");
     a.setNcVarName("SDR_1");
     a.setNcFileName("test");
     a.setType(NC_BYTE);
@@ -58,7 +58,7 @@ void SynL2WriterTest::testWriter() {
     a.addAttribute(NC_FLOAT, "F", "9.1");
     a.addAttribute(NC_DOUBLE, "D", "9.2");
     a.addAttribute(NC_STRING, "Str", "Zehn");
-    VariableDescriptor& b = dictionary.getProductDescriptor(Constants::SYMBOLIC_NAME_SYL2).getSegmentDescriptor(Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED).addVariableDescriptor("SDR_1_er");
+    VariableDescriptor& b = dictionary.getProductDescriptor(Constants::SYMBOLIC_NAME_L2).getSegmentDescriptor(Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED).addVariableDescriptor("SDR_1_er");
     b.setNcVarName("SDR_1_er");
     b.setNcFileName("test");
     b.setType(NC_FLOAT);

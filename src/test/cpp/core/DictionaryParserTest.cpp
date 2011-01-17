@@ -46,6 +46,7 @@ void DictionaryParserTest::tearDown() {
 }
 
 static VariableDescriptor* getVariableDescriptor(const string& symbolicName, const vector<VariableDescriptor*>& descriptors) {
+
     foreach(VariableDescriptor* descriptor, descriptors) {
         if (descriptor->getName().compare(symbolicName) == 0) {
             return descriptor;
@@ -67,18 +68,34 @@ void DictionaryParserTest::testGetNcVarNameAndGetFileName() {
     string symbolicName11 = "air_pressure";
     string symbolicName12 = "SLO_TP_lon";
 
-    ProductDescriptor productDescriptor = dict->getProductDescriptor(Constants::SYMBOLIC_NAME_L1C);
-    string varName2 = getVariableDescriptor(symbolicName2, productDescriptor.getVariables())->getName();
-    string varName3 = getVariableDescriptor(symbolicName3, productDescriptor.getVariables())->getName();
-    string varName4 = getVariableDescriptor(symbolicName4, productDescriptor.getVariables())->getName();
-    string varName5 = getVariableDescriptor(symbolicName5, productDescriptor.getVariables())->getName();
-    string varName6 = getVariableDescriptor(symbolicName6, productDescriptor.getVariables())->getName();
-    string varName7 = getVariableDescriptor(symbolicName7, productDescriptor.getVariables())->getName();
-    string varName8 = getVariableDescriptor(symbolicName8, productDescriptor.getVariables())->getName();
-    string varName9 = getVariableDescriptor(symbolicName9, productDescriptor.getVariables())->getName();
-    string varName10 = getVariableDescriptor(symbolicName10, productDescriptor.getVariables())->getName();
-    string varName11 = getVariableDescriptor(symbolicName11, productDescriptor.getVariables())->getName();
-    string varName12 = getVariableDescriptor(symbolicName12, productDescriptor.getVariables())->getName();
+    string symbolicName13 = "SDR_1";
+
+    CPPUNIT_ASSERT(dict->hasProductDescriptor(Constants::SYMBOLIC_NAME_L1C));
+    CPPUNIT_ASSERT(dict->hasProductDescriptor(Constants::SYMBOLIC_NAME_L2));
+    ProductDescriptor& l1cProductDescriptor = dict->getProductDescriptor(Constants::SYMBOLIC_NAME_L1C);
+    ProductDescriptor& l2ProductDescriptor = dict->getProductDescriptor(Constants::SYMBOLIC_NAME_L2);
+
+    int segmentDescriptorsCount = l1cProductDescriptor.getSegmentDescriptors().size();
+    CPPUNIT_ASSERT(segmentDescriptorsCount > 0);
+
+    foreach(SegmentDescriptor* s, l1cProductDescriptor.getSegmentDescriptors()) {
+        std::cout << s->getName() << "\n";
+    }
+    //    CPPUNIT_ASSERT(l1cProductDescriptor.hasSegmentDescriptor("SYN_COLLOCATION"));
+
+    string varName2 = getVariableDescriptor(symbolicName2, l1cProductDescriptor.getVariables())->getName();
+    string varName3 = getVariableDescriptor(symbolicName3, l1cProductDescriptor.getVariables())->getName();
+    string varName4 = getVariableDescriptor(symbolicName4, l1cProductDescriptor.getVariables())->getName();
+    string varName5 = getVariableDescriptor(symbolicName5, l1cProductDescriptor.getVariables())->getName();
+    string varName6 = getVariableDescriptor(symbolicName6, l1cProductDescriptor.getVariables())->getName();
+    string varName7 = getVariableDescriptor(symbolicName7, l1cProductDescriptor.getVariables())->getName();
+    string varName8 = getVariableDescriptor(symbolicName8, l1cProductDescriptor.getVariables())->getName();
+    string varName9 = getVariableDescriptor(symbolicName9, l1cProductDescriptor.getVariables())->getName();
+    string varName10 = getVariableDescriptor(symbolicName10, l1cProductDescriptor.getVariables())->getName();
+    string varName11 = getVariableDescriptor(symbolicName11, l1cProductDescriptor.getVariables())->getName();
+    string varName12 = getVariableDescriptor(symbolicName12, l1cProductDescriptor.getVariables())->getName();
+
+    string varName13 = getVariableDescriptor(symbolicName13, l2ProductDescriptor.getVariables())->getName();
 
     CPPUNIT_ASSERT(varName2.compare("TOA_Radiance_Meas") == 0);
     CPPUNIT_ASSERT(varName3.compare("TOA_Radiance_Meas") == 0);
@@ -92,26 +109,31 @@ void DictionaryParserTest::testGetNcVarNameAndGetFileName() {
     CPPUNIT_ASSERT(varName11.compare("sea_level_pressure") == 0);
     CPPUNIT_ASSERT(varName12.compare("SLST_L1b_TP_Longitude") == 0);
 
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName3, productDescriptor.getVariables())->getNcFileName().compare("OLC_RADIANCE_O16") == 0);
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName4, productDescriptor.getVariables())->getNcFileName().compare("OLC_RADIANCE_O21") == 0);
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName5, productDescriptor.getVariables())->getNcFileName().compare("SLST_NAD_RADIANCE_S5") == 0);
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName6, productDescriptor.getVariables())->getNcFileName().compare("SLST_ALT_RADIANCE_S4") == 0);
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName7, productDescriptor.getVariables())->getNcFileName().compare("GEOLOCATION_REF") == 0);
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName8, productDescriptor.getVariables())->getNcFileName().compare("L2_SYN_time_stamps") == 0);
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName9, productDescriptor.getVariables())->getNcFileName().compare("PIX_ANNOT_OLC") == 0);
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName10, productDescriptor.getVariables())->getNcFileName().compare("SUBS_ANNOT_GEOM_OLC") == 0);
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName11, productDescriptor.getVariables())->getNcFileName().compare("L2_SYN_geophysical_atmospheric_data") == 0);
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName12, productDescriptor.getVariables())->getNcFileName().compare("SUBS_ANNOT_SLST_ALT") == 0);
+    CPPUNIT_ASSERT(varName13.compare("SDR_1") == 0);
+
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName3, l1cProductDescriptor.getVariables())->getNcFileName().compare("OLC_RADIANCE_O16") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName4, l1cProductDescriptor.getVariables())->getNcFileName().compare("OLC_RADIANCE_O21") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName5, l1cProductDescriptor.getVariables())->getNcFileName().compare("SLST_NAD_RADIANCE_S5") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName6, l1cProductDescriptor.getVariables())->getNcFileName().compare("SLST_ALT_RADIANCE_S4") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName7, l1cProductDescriptor.getVariables())->getNcFileName().compare("GEOLOCATION_REF") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName8, l1cProductDescriptor.getVariables())->getNcFileName().compare("L2_SYN_time_stamps") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName9, l1cProductDescriptor.getVariables())->getNcFileName().compare("PIX_ANNOT_OLC") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName10, l1cProductDescriptor.getVariables())->getNcFileName().compare("SUBS_ANNOT_GEOM_OLC") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName11, l1cProductDescriptor.getVariables())->getNcFileName().compare("L2_SYN_geophysical_atmospheric_data") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName12, l1cProductDescriptor.getVariables())->getNcFileName().compare("SUBS_ANNOT_SLST_ALT") == 0);
+
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName13, l2ProductDescriptor.getVariables())->getNcFileName().compare("L2_SYN_surface_directional_reflectance_1") == 0);
 }
 
 void DictionaryParserTest::testDictionaryParsing() {
-//    testSDRVariable(dict->getL2Variable("SDR_1"));
-//    testA550Variable(dict->getL2Variable("A550"));
-//    testT550Variable(dict->getL2Variable("T550"));
-//    testAMINVariable(dict->getL2Variable("AMIN"));
-//    testAir_pressureVariable(dict->getL2Variable("air_pressure"));
-//    testLatitudeVariable(dict->getL2Variable("latitude"));
-//    testSLN_flagsVariable(dict->getL2Variable("SLN_flags"));
+    ProductDescriptor productDescriptor = dict->getProductDescriptor(Constants::SYMBOLIC_NAME_L2);
+    testSDRVariable(*productDescriptor.getVariable("SDR_1"));
+    testA550Variable(*productDescriptor.getVariable("A550"));
+    testT550Variable(*productDescriptor.getVariable("T550"));
+    testAMINVariable(*productDescriptor.getVariable("AMIN"));
+    testAir_pressureVariable(*productDescriptor.getVariable("air_pressure"));
+    testLatitudeVariable(*productDescriptor.getVariable("latitude"));
+    testSLN_flagsVariable(*productDescriptor.getVariable("SLN_flags"));
 }
 
 void DictionaryParserTest::testSDRVariable(VariableDescriptor& var) {
@@ -122,7 +144,7 @@ void DictionaryParserTest::testSDRVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(1 == var.getAttribute(attributeName).getInt());
 
     string expected = "L2_SYN_surface_directional_reflectance_1";
-    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcVarName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
 }
 
 void DictionaryParserTest::testT550Variable(VariableDescriptor& var) {
@@ -133,7 +155,7 @@ void DictionaryParserTest::testT550Variable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(32767 == var.getAttribute(attributeName).getInt());
 
     string expected = "L2_SYN_aerosol_optical_thickness";
-    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcVarName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
 }
 
 void DictionaryParserTest::testA550Variable(VariableDescriptor& var) {
@@ -157,7 +179,7 @@ void DictionaryParserTest::testSLN_flagsVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(0 == var.getAttribute(attributeName).getShort());
 
     string expected = "L2_SYN_status_flags";
-    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcVarName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
 }
 
 void DictionaryParserTest::testLatitudeVariable(VariableDescriptor& var) {
@@ -195,7 +217,7 @@ void DictionaryParserTest::testAir_pressureVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(1100.0 == var.getAttribute(attributeName).getFloat());
 
     string expected = "L2_SYN_geophysical_atmospheric_data";
-    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcVarName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
 }
 
 void DictionaryParserTest::testLatVariable(VariableDescriptor& var) {
@@ -214,7 +236,7 @@ void DictionaryParserTest::testB0_PVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(10000.0 == var.getAttribute(attributeName).getFloat());
 
     string expected = "VGT_P_B0_TOA_reflectance";
-    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcVarName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
 }
 
 void DictionaryParserTest::testB0_SVariable(VariableDescriptor& var) {
@@ -225,7 +247,7 @@ void DictionaryParserTest::testB0_SVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(10000.0 == var.getAttribute(attributeName).getFloat());
 
     string expected = "VGT_S_B0_surface_reflectance";
-    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcVarName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
 }
 
 void DictionaryParserTest::testMIR_PVariable(VariableDescriptor& var) {
@@ -236,7 +258,7 @@ void DictionaryParserTest::testMIR_PVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(10000.0 == var.getAttribute(attributeName).getFloat());
 
     string expected = "VGT_P_MIR_TOA_reflectance";
-    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcVarName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
 }
 
 void DictionaryParserTest::testMIR_SVariable(VariableDescriptor& var) {
@@ -247,7 +269,7 @@ void DictionaryParserTest::testMIR_SVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(10000.0 == var.getAttribute(attributeName).getFloat());
 
     string expected = "VGT_S_MIR_surface_reflectance";
-    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcVarName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
 }
 
 void DictionaryParserTest::testSAA_PVariable(VariableDescriptor& var) {
@@ -258,7 +280,7 @@ void DictionaryParserTest::testSAA_PVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(120 == var.getAttribute(attributeName).getShort());
 
     string expected = "VGT_P_solar_azimuth_angle";
-    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcVarName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
 }
 
 void DictionaryParserTest::testSAA_SVariable(VariableDescriptor& var) {
@@ -269,7 +291,7 @@ void DictionaryParserTest::testSAA_SVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(120 == var.getAttribute(attributeName).getShort());
 
     string expected = "VGT_S_solar_azimuth_angle";
-    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcVarName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
 }
 
 void DictionaryParserTest::testAGVariable(VariableDescriptor& var) {
@@ -280,7 +302,7 @@ void DictionaryParserTest::testAGVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(127 == var.getAttribute(attributeName).getShort());
 
     string expected = "VGT_P_aerosol";
-    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcVarName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
 }
 
 void DictionaryParserTest::testOGVariable(VariableDescriptor& var) {
@@ -294,7 +316,7 @@ void DictionaryParserTest::testOGVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(-1 == var.getAttribute(attributeName).getShort());
 
     string expected = "VGT_P_ozone";
-    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcVarName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
 }
 
 void DictionaryParserTest::testWVGVariable(VariableDescriptor& var) {
@@ -308,7 +330,7 @@ void DictionaryParserTest::testWVGVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(-1 == var.getAttribute(attributeName).getShort());
 
     string expected = "VGT_P_water_vapour";
-    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcVarName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
 }
 
 void DictionaryParserTest::testNDVIVariable(VariableDescriptor& var) {
@@ -322,7 +344,7 @@ void DictionaryParserTest::testNDVIVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(-0.1 == var.getAttribute(attributeName).getDouble());
 
     string expected = "VGT_S_NDVI";
-    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcVarName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
 }
 
 void DictionaryParserTest::testTGVariable(VariableDescriptor& var) {
@@ -333,5 +355,5 @@ void DictionaryParserTest::testTGVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(-1 == var.getAttribute(attributeName).getShort());
 
     string expected = "VGT_S_synthesis_time";
-    CPPUNIT_ASSERT(expected.compare(dict->getL2NcFileName(var.getNcVarName())) == 0);
+    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
 }

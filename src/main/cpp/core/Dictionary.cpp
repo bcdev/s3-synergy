@@ -20,6 +20,7 @@
 
 #include "Dictionary.h"
 #include "../util/IOUtils.h"
+#include "Constants.h"
 
 Attribute::Attribute(int type, const string& name, const string& value) : name(name), type(type) {
     this->value = value;
@@ -72,6 +73,17 @@ vector<VariableDescriptor*> ProductDescriptor::getVariables() const {
     return variableDescriptors;
 }
 
+VariableDescriptor* ProductDescriptor::getVariable(const string& name) const {
+    foreach(SegmentDescriptor* segmentDescriptor, getSegmentDescriptors()) {
+        foreach(VariableDescriptor* variableDescriptor, segmentDescriptor->getVariableDescriptors()) {
+            if (variableDescriptor->getName().compare(name) == 0) {
+                return variableDescriptor;
+            }
+        }
+    }
+    throw std::invalid_argument("Dictionary::getVariable: no variable descriptor with name '" + name + "'.");
+}
+
 string VariableDescriptor::toString() const {
     std::ostringstream oss;
     oss << "Variable " << "[";
@@ -94,11 +106,11 @@ Dictionary::~Dictionary() {
 }
 
 void Dictionary::init() {
-    const string L1C_IDENTIFIER = "L1C";
-    const string L2_IDENTIFIER = "L2";
+    const string L1C_IDENTIFIER = Constants::SYMBOLIC_NAME_L1C;
+    const string L2_IDENTIFIER = Constants::SYMBOLIC_NAME_L2;
     string variableDefPath = xmlParser.evaluateToString(configFile, "/Config/Variable_Definition_Files_Path");
-    ProductDescriptor l1c = addElement(L1C_IDENTIFIER);
-    ProductDescriptor l2 = addElement(L2_IDENTIFIER);
+    ProductDescriptor l1c = addProductDescriptor(L1C_IDENTIFIER);
+    ProductDescriptor l2 = addProductDescriptor(L2_IDENTIFIER);
 
     string L1CPath = variableDefPath + "/" + L1C_IDENTIFIER;
     string L2SynPath = variableDefPath + "/" + L2_IDENTIFIER;
@@ -113,7 +125,7 @@ void Dictionary::init() {
     }
 }
 
-void Dictionary::parseVariablesFile(string& variableDefPath, string& file, ProductDescriptor& volume) {
+void Dictionary::parseVariablesFile(string& variableDefPath, string& file, ProductDescriptor& productDescriptor) {
     string path = variableDefPath + "/" + file;
     const vector<string> ncVariableNames = xmlParser.evaluateToStringList(path, "/dataset/variables/variable/name/child::text()");
 
@@ -126,11 +138,10 @@ void Dictionary::parseVariablesFile(string& variableDefPath, string& file, Produ
         }
         query = "/dataset/variables/variable[name=\"" + ncVariableName + "\"]/segment_name";
         string segmentName = xmlParser.evaluateToString(path, query);
-        if (!volume.hasSegmentDescriptor(segmentName)) {
-            volume.addSegmentDescriptor(segmentName);
+        if (!productDescriptor.hasSegmentDescriptor(segmentName)) {
+            productDescriptor.addSegmentDescriptor(segmentName);
         }
-
-        VariableDescriptor& var = volume.getSegmentDescriptor(segmentName).addVariableDescriptor(symbolicName);
+        VariableDescriptor& var = productDescriptor.getSegmentDescriptor(segmentName).addVariableDescriptor(symbolicName);
         var.setNcVarName(ncVariableName);
         var.setNcFileName(xmlParser.evaluateToString(path, "/dataset/global_attributes/attribute[name=\"dataset_name\"]/value"));
         var.setSegmentName(segmentName);
