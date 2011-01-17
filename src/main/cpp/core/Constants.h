@@ -38,6 +38,9 @@ public:
     static const char SYMBOLIC_NAME_DIMENSION_N_DET_CAM[];
     static const char SYMBOLIC_NAME_DIMENSION_N_LINE_OLC[];
 
+    static const char SYMBOLIC_NAME_SYL2[];
+    static const char SYMBOLIC_NAME_L1C[];
+
 private:
     Constants() {
     }

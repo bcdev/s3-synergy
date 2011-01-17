@@ -20,20 +20,16 @@ class Reader : public DefaultModule {
 public:
     Reader();
     virtual ~Reader();
+    void start(Context& context);
+    void stop(Context& context);
     void process(Context& context);
 
 private:
     void modifyBoundsOfSegments(const Context& context);
-    const int findFile(string& sourceDir, string& fileName);
-    void addDimsToVariable(Variable& variable, size_t camCount, size_t lineCount, size_t colCount);
-    const bool hasSegmentComplete(const string& symbolicName) const;
-    const bool isSegmentComputedByAllVariables(Segment& segment, Dictionary& dict);
-    void setMaxLineComputed(Context& context, Segment* segment, string& symbolicName, Dictionary& dict, size_t endLine);
-    map<string, int> openedFiles;
-    map<string, string> completedSegments;
-    map<string, set<string> > segmentVariableMap;
+    const int findFile(const string& sourceDir, const string& fileName);
     const size_t stepSize;
-    const Grid* olciGrid;
+    map<string, int> fileIdMap;
+    map<string, int> varIdMap;
 };
 
 #endif	/* READER_H */

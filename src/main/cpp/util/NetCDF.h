@@ -40,11 +40,11 @@ using std::valarray;
 class NetCDF {
 public:
 
-    static int openFile(const string fileName);
+    static int openFile(const string& fileName);
 
     static nc_type getVariableType(int fileId, int varId);
 
-    static int getVariableId(int fileId, const string varName);
+    static int getVariableId(int fileId, const string& varName);
 
     static int getDimCountForVariable(int fileId, int varId);
 
@@ -52,16 +52,19 @@ public:
 
     static size_t getDimLength(int fileId, int dimId);
 
-    static void putData(int fileId, int varId, const valarray<size_t> startVector,
-            const valarray<size_t> sizeVector, const void* dataArray);
+    static void getData(int fileId, int varId, const valarray<size_t>& startVector,
+            const valarray<size_t>& sizeVector, void* dataArray);
 
-    static int createFile(const string fileName);
+    static void putData(int fileId, int varId, const valarray<size_t>& startVector,
+            const valarray<size_t>& sizeVector, const void* dataArray);
 
-    static int defineDimension(int fileId, const string dimName, size_t size);
+    static int createFile(const string& fileName);
 
-    static int defineVariable(int fileId, const string varName, int type, const valarray<int> dimIds);
+    static int defineDimension(int fileId, const string& dimName, size_t size);
 
-    static void addAttribute(int fileId, int varId, Attribute attribute);
+    static int defineVariable(int fileId, const string& varName, int type, const valarray<int>& dimIds);
+
+    static void addAttribute(int fileId, int varId, const Attribute& attribute);
 
     static void setDefinitionPhaseFinished(int ncId);
 
@@ -70,11 +73,11 @@ public:
 private:
 
     template<class T>
-    static void putAttribute(int fileId, int varId, Attribute attribute, T t);
+    static void putAttribute(int fileId, int varId, const Attribute& attribute, const T& t);
 
-    static void putAttributeString(int fileId, int varId, Attribute attribute);
+    static void putAttributeString(int fileId, int varId, const Attribute& attribute);
 
-    static void checkStatus(int status, string action);
+    static void checkStatus(int status, const string& action);
 
 };
 #endif	/* NETCDF_H */

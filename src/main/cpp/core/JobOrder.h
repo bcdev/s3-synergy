@@ -34,7 +34,7 @@ public:
     virtual ~JobOrder();
     Configuration getConfig() const;
     vector<ProcessorConfiguration*> getProcessorList() const;
-    ProcessorConfiguration& getProcessorConfiguration(string& id) const;
+    ProcessorConfiguration& getProcessorConfiguration(const string& id) const;
     void log();
 private:
     Configuration config;

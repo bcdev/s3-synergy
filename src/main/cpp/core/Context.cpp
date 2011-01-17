@@ -24,6 +24,7 @@
 
 #include <iostream>
 
+#include "Boost.h"
 #include "Context.h"
 #include "DefaultModule.h"
 #include "SegmentImpl.h"
@@ -40,8 +41,9 @@ Context::Context() : moduleList(), objectMap(), segmentMap(), segmentList() {
 }
 
 Context::~Context() {
-    for (size_t i = segmentList.size(); i-- > 0;) {
-        delete segmentList[i];
+
+    reverse_foreach(Segment* segment, segmentList) {
+        delete segment;
     }
 }
 
@@ -130,18 +132,35 @@ bool Context::isCompleted() const {
     return true;
 }
 
-size_t Context::getMaxLComputed(const Segment& segment, const Module& module) const {
-    if (hasMaxLComputed(segment, module)) {
-        return maxLineComputedMap.at(&segment).at(&module);
+void Context::shift(Segment& segment) const {
+    size_t maxLComputed = segment.getGrid().getStartL() - 1;
+    const ModuleLineMap& map = maxLComputedMap.at(&segment);
+    for (ModuleLineMap::const_iterator iter = map.begin(); iter != map.end(); iter++) {
+        maxLComputed = min(maxLComputed, iter->second);
     }
-    return 0;
+    size_t minRequiredLine = getMinLRequired(segment, maxLComputed + 1);
+    segment.setStartL(minRequiredLine);
 }
 
-size_t Context::getMaxLWritable(const Segment& segment, const Writer& writer) {
+void Context::shift() const {
+
+    foreach(Segment* segment, segmentList) {
+        shift(*segment);
+    }
+}
+
+size_t Context::getMaxLComputed(const Segment& segment, const Module& module) const {
+    if (hasMaxLComputed(segment, module)) {
+        return maxLComputedMap.at(&segment).at(&module);
+    }
+    throw invalid_argument("Context::getMaxLComputed(): no maxL defined for segment '" + segment.getId() + "' and module '" + module.getId() + "'.");
+}
+
+size_t Context::getMaxLWritable(const Segment& segment, const Writer& writer) const {
     size_t maxLWritable = segment.getGrid().getStartL() + segment.getGrid().getSizeL() - 1;
-    ModuleLineMap map = maxLineComputedMap[&segment];
-    for (ModuleLineMap::iterator iter = map.begin(); iter != map.end(); iter++) {
-        if (&iter->first != (const Module* const*)&writer) {
+    const ModuleLineMap& map = maxLComputedMap.at(&segment);
+    for (ModuleLineMap::const_iterator iter = map.begin(); iter != map.end(); iter++) {
+        if (&iter->first != (const Module * const*) &writer) {
             maxLWritable = min(maxLWritable, iter->second);
         }
     }
@@ -149,12 +168,16 @@ size_t Context::getMaxLWritable(const Segment& segment, const Writer& writer) {
 }
 
 bool Context::hasMaxLComputed(const Segment& segment, const Module& module) const {
-    return exists(maxLineComputedMap, &segment)
-            && exists(maxLineComputedMap.at(&segment), &module);
+    return exists(maxLComputedMap, &segment)
+            && exists(maxLComputedMap.at(&segment), &module);
 }
 
-void Context::setMaxLComputed(const Segment& segment, const Module& module, size_t line) {
-    maxLineComputedMap[&segment][&module] = line;
+void Context::setMaxLComputed(const Segment& segment, const Module& module, size_t l) {
+    if ((l < hasMaxLComputed(segment, module) && getMaxLComputed(segment, module))
+            || l > segment.getGrid().getMaxL()) {
+        throw invalid_argument("Context::setMaxLComputed(): invalid argument l = " + lexical_cast<string > (l));
+    }
+    maxLComputedMap[&segment][&module] = l;
 }
 
 size_t Context::getMinLRequired(const Segment& segment, size_t l) const {

@@ -166,7 +166,7 @@ public:
      * @return The index of the maximum row in a segment, which has been
      * computed by all modules except the provided writer.
      */
-    size_t getMaxLWritable(const Segment& segment, const Writer& writer);
+    size_t getMaxLWritable(const Segment& segment, const Writer& writer) const;
 
     /**
      * Returns the index of the minimum row in a segment, which is required for
@@ -207,12 +207,15 @@ public:
 
     bool isCompleted() const;
 
+    void shift() const;
+
 private:
 
     template <class K, class V>
     bool exists(const map<K, V>& map, const K& key) const {
         return map.find(key) != map.end();
     }
+    void shift(Segment& segment) const;
     void removeObject(Object& object);
     void removeSegment(Segment& segment);
 
@@ -226,7 +229,7 @@ private:
     vector<Segment*> segmentList;
 
     typedef map<const Module*, size_t> ModuleLineMap;
-    map<const Segment*, ModuleLineMap> maxLineComputedMap;
+    map<const Segment*, ModuleLineMap> maxLComputedMap;
 };
 
 #endif	/* CONTEXT_H */

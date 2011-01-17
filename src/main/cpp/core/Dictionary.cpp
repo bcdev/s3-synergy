@@ -52,17 +52,27 @@ string Dimension::toString() const {
     return oss.str();
 }
 
-Variable::Variable(const string& name) : Container<Attribute, Dimension>(name) {
+VariableDescriptor::VariableDescriptor(const string& name) : Descriptor<Attribute, Dimension>(name) {
     type = 0;
     ncFileName = "";
     ncVarName = "";
     segmentName = "";
 }
 
-Variable::~Variable() {
+VariableDescriptor::~VariableDescriptor() {
 }
 
-string Variable::toString() const {
+vector<VariableDescriptor*> ProductDescriptor::getVariables() const {
+    vector<VariableDescriptor*> variableDescriptors;
+    foreach(SegmentDescriptor* segmentDescriptor, getSegmentDescriptors()) {
+        foreach(VariableDescriptor* variableDescriptor, segmentDescriptor->getVariableDescriptors()) {
+            variableDescriptors.push_back(variableDescriptor);
+        }
+    }
+    return variableDescriptors;
+}
+
+string VariableDescriptor::toString() const {
     std::ostringstream oss;
     oss << "Variable " << "[";
     oss << "name = " << getName() << ", ";
@@ -73,10 +83,10 @@ string Variable::toString() const {
     return oss.str();
 };
 
-Dictionary::Dictionary() : Container<Attribute, Volume>("Dictionary") {
+Dictionary::Dictionary() : Descriptor<Attribute, ProductDescriptor>("Dictionary") {
 }
 
-Dictionary::Dictionary(string config) : Container<Attribute, Volume>("Dictionary"), configFile(config) {
+Dictionary::Dictionary(string config) : Descriptor<Attribute, ProductDescriptor>("Dictionary"), configFile(config) {
     init();
 }
 
@@ -87,8 +97,8 @@ void Dictionary::init() {
     const string L1C_IDENTIFIER = "L1C";
     const string L2_IDENTIFIER = "L2";
     string variableDefPath = xmlParser.evaluateToString(configFile, "/Config/Variable_Definition_Files_Path");
-    Volume l1c = addElement(L1C_IDENTIFIER);
-    Volume l2 = addElement(L2_IDENTIFIER);
+    ProductDescriptor l1c = addElement(L1C_IDENTIFIER);
+    ProductDescriptor l2 = addElement(L2_IDENTIFIER);
 
     string L1CPath = variableDefPath + "/" + L1C_IDENTIFIER;
     string L2SynPath = variableDefPath + "/" + L2_IDENTIFIER;
@@ -103,78 +113,7 @@ void Dictionary::init() {
     }
 }
 
-vector<string> Dictionary::getVariables(bool l1c) const {
-//    vector<string> result;
-//    if (l1c) {
-//        for (size_t i = 0; i < l1cVariables.size(); i++) {
-//            result.push_back(l1cVariables[i]->getName());
-//        }
-//    } else {
-//        for (size_t i = 0; i < l2Variables.size(); i++) {
-//            result.push_back(l2Variables[i]->getName());
-//        }
-//    }
-//    return result;
-}
-
-Variable& Dictionary::getL1cVariable(const string& symbolicName) {
-//    for (size_t i = 0; i < l1cVariables.size(); i++) {
-//        if (l1cVariables[i]->getName().compare(symbolicName) == 0) {
-//            return *(l1cVariables[i]);
-//        }
-//    }
-//    throw std::invalid_argument("No L1C-variable with symbolic name " + symbolicName + ".");
-}
-
-Variable& Dictionary::getL2Variable(const string& symbolicName) {
-//    for (size_t i = 0; i < l2Variables.size(); i++) {
-//        if (l2Variables[i]->getName().compare(symbolicName) == 0) {
-//            return *(l2Variables[i]);
-//        }
-//    }
-//    throw std::invalid_argument("No L2-variable with symbolic name " + symbolicName + ".");
-}
-
-const string Dictionary::getL2NcFileName(const string& ncName) const {
-//    for (size_t i = 0; i < l2Variables.size(); i++) {
-//        if (l2Variables[i]->getNcVarName().compare(ncName) == 0) {
-//            return l2Variables[i]->getNcFileName();
-//        }
-//    }
-//    throw std::invalid_argument("No filename for variable " + ncName + ".");
-}
-
-const string Dictionary::getL1cNcFileNameForSymbolicName(const string& symbolicName) const {
-//    for (size_t i = 0; i < l1cVariables.size(); i++) {
-//        if (l1cVariables[i]->getName().compare(symbolicName) == 0) {
-//            return l1cVariables[i]->getNcFileName();
-//        }
-//    }
-//    throw std::invalid_argument("No filename for variable " + symbolicName + ".");
-}
-
-const string Dictionary::getL2NcFileNameForSymbolicName(const string& symbolicName) const {
-//    for (size_t i = 0; i < l2Variables.size(); i++) {
-//        if (l2Variables[i]->getName().compare(symbolicName) == 0) {
-//            return l2Variables[i]->getNcFileName();
-//        }
-//    }
-//    throw std::invalid_argument("No filename for variable " + symbolicName + ".");
-}
-
-string Dictionary::getL1cNcVarName(const string& symbolicName) {
-    return getL1cVariable(symbolicName).getNcVarName();
-}
-
-const string Dictionary::getSegmentNameForL1c(const string& symbolicName) {
-    return getL1cVariable(symbolicName).getSegmentName();
-}
-
-const string Dictionary::getSegmentNameForL2(const string& symbolicName) {
-    return getL2Variable(symbolicName).getSegmentName();
-}
-
-void Dictionary::parseVariablesFile(string& variableDefPath, string& file, Volume& volume) {
+void Dictionary::parseVariablesFile(string& variableDefPath, string& file, ProductDescriptor& volume) {
     string path = variableDefPath + "/" + file;
     const vector<string> ncVariableNames = xmlParser.evaluateToStringList(path, "/dataset/variables/variable/name/child::text()");
 
@@ -187,11 +126,11 @@ void Dictionary::parseVariablesFile(string& variableDefPath, string& file, Volum
         }
         query = "/dataset/variables/variable[name=\"" + ncVariableName + "\"]/segment_name";
         string segmentName = xmlParser.evaluateToString(path, query);
-        if (!volume.hasSection(segmentName)) {
-            volume.addSection(segmentName);
+        if (!volume.hasSegmentDescriptor(segmentName)) {
+            volume.addSegmentDescriptor(segmentName);
         }
 
-        Variable& var = volume.getSection(segmentName).addVariable(symbolicName);
+        VariableDescriptor& var = volume.getSegmentDescriptor(segmentName).addVariableDescriptor(symbolicName);
         var.setNcVarName(ncVariableName);
         var.setNcFileName(xmlParser.evaluateToString(path, "/dataset/global_attributes/attribute[name=\"dataset_name\"]/value"));
         var.setSegmentName(segmentName);
@@ -200,16 +139,14 @@ void Dictionary::parseVariablesFile(string& variableDefPath, string& file, Volum
     }
 }
 
-void Dictionary::parseAttributes(string& file, string& variableName, Variable& var) {
+void Dictionary::parseAttributes(string& file, string& variableName, VariableDescriptor& var) {
     string query = "/dataset/variables/variable[name=\"" + variableName + "\"]/attributes/attribute/name/child::text()";
     const vector<string> attributeNames = xmlParser.evaluateToStringList(file, query);
-    vector<Attribute*> attributes;
     for (size_t i = 0; i < attributeNames.size(); i++) {
         string attributeName = attributeNames[i];
         int type = mapToNcType(xmlParser.evaluateToString(file, query));
         query = "/dataset/variables/variable[name=\"" + variableName + "\"]/attributes/attribute[name=\"" + attributeName + "\"]/value";
         string value = xmlParser.evaluateToString(file, query);
-
         var.addAttribute(type, attributeName, value);
     }
 }

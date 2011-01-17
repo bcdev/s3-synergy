@@ -39,13 +39,13 @@ using std::string;
 using std::vector;
 
 template<class A, class E>
-class Container {
+class Descriptor {
 public:
 
-    Container(const string& name) : name(name), attributeMap(), elementMap() {
+    Descriptor(const string& name) : name(name), attributeMap(), elementMap() {
     }
 
-    virtual ~Container() {
+    virtual ~Descriptor() {
         pair<string, A*> apair;
         pair<string, E*> tpair;
 
@@ -291,7 +291,7 @@ private:
  * variables are instantiated using the Dictionary. The pixel values,
  * however, are not stored in the variables but in the current Segment.
  */
-class Variable : public Container<Attribute, Dimension> {
+class VariableDescriptor : public Descriptor<Attribute, Dimension> {
 public:
 
     /**
@@ -299,12 +299,12 @@ public:
      * @param name The symbolic name of the variable, by which it is
      * addresses within the processing.
      */
-    Variable(const string& name);
+    VariableDescriptor(const string& name);
 
     /**
      * Destructor.
      */
-    ~Variable();
+    ~VariableDescriptor();
 
     /**
      * Getter for the variable's type.
@@ -403,56 +403,58 @@ private:
     string segmentName;
 };
 
-class Section : public Container<Attribute, Variable> {
+class SegmentDescriptor : public Descriptor<Attribute, VariableDescriptor> {
 public:
 
-    Section(const string& name) : Container<Attribute, Variable>(name) {
+    SegmentDescriptor(const string& name) : Descriptor<Attribute, VariableDescriptor>(name) {
     }
 
-    ~Section() {
+    ~SegmentDescriptor() {
     }
 
-    Variable& addVariable(const string& name) {
+    VariableDescriptor& addVariableDescriptor(const string& name) {
         return addElement(name);
     }
 
-    Variable& getVariable(const string& name) const {
+    VariableDescriptor& getVariableDescriptor(const string& name) const {
         return getElement(name);
     }
 
-    vector<Variable*> getVariables() const {
+    vector<VariableDescriptor*> getVariableDescriptors() const {
         return getElements();
     }
 
-    bool hasVariable(const string& name) const {
+    bool hasVariableDescriptor(const string& name) const {
         return hasElement(name);
     }
 };
 
-class Volume : public Container<Attribute, Section> {
+class ProductDescriptor : public Descriptor<Attribute, SegmentDescriptor> {
 public:
 
-    Volume(const string& name) : Container<Attribute, Section>(name) {
+    ProductDescriptor(const string& name) : Descriptor<Attribute, SegmentDescriptor>(name) {
     }
 
-    ~Volume() {
+    ~ProductDescriptor() {
     }
 
-    Section& addSection(const string& name) {
+    SegmentDescriptor& addSegmentDescriptor(const string& name) {
         return addElement(name);
     }
 
-    Section& getSection(const string& name) const {
+    SegmentDescriptor& getSegmentDescriptor(const string& name) const {
         return getElement(name);
     }
 
-    vector<Section*> getSections() const {
+    vector<SegmentDescriptor*> getSegmentDescriptors() const {
         return getElements();
     }
 
-    bool hasSection(const string& name) const {
+    bool hasSegmentDescriptor(const string& name) const {
         return hasElement(name);
     }
+
+    vector<VariableDescriptor*> getVariables() const;
 };
 
 /**
@@ -463,110 +465,33 @@ public:
  * @param configFile The file comprising the path to the output variable
  * definitions.
  */
-class Dictionary : public Container<Attribute, Volume> {
+class Dictionary : public Descriptor<Attribute, ProductDescriptor> {
 public:
     Dictionary();
     Dictionary(string configFile);
     virtual ~Dictionary();
 
-    Volume& addVolume(const string& name) {
+    ProductDescriptor& addProductDescriptor(const string& name) {
         return addElement(name);
     }
 
-    Volume& getVolume(const string& name) const {
+    ProductDescriptor& getProductDescriptor(const string& name) const {
         return getElement(name);
     }
 
-    vector<Volume*> getVolumes() const {
+    vector<ProductDescriptor*> getProductDescriptors() const {
         return getElements();
     }
 
-    bool hasVolume(const string& name) const {
+    bool hasProductDescriptor(const string& name) const {
         return hasElement(name);
     }
-
-    /**
-     * Returns the list of symbolic names of the variables, which are to be read
-     * from the input L1C-product. To be used by the reader.
-     * @return The list of variables to be read.
-     */
-    vector<string> getVariables(bool l1c) const;
-
-    /**
-     * Returns a L1C-variable for a given symbolic name.
-     * @param varId The symbolic name of the variable to return.
-     * @return The variable with the given symbolic name.
-     */
-    Variable& getL1cVariable(const string& symbolicName);
-
-    /**
-     * Returns a L2-variable for a given symbolic name. To be used by modules in
-     * order to get needed attributes for the variable.
-     * @param varId The symbolic name of the variable to return.
-     * @return The variable with the given symbolic name.
-     */
-    Variable& getL2Variable(const string& symbolicName);
-
-    /**
-     * Returns the name of the given L1C-variable as it appears in the source
-     * netcdf-file. To be used by the reader in order to read data from the
-     * variable from a file and to store the data in structures addressed by
-     * the (unique) symbolic name.
-     * @param symbolicName The symbolic name to get the netcdf-name for.
-     * @return The netcdf-name.
-     */
-    string getL1cNcVarName(const string& symbolicName);
-
-    /**
-     * Returns the name of the netCDF-file for a given L2 variable name.
-     * Important note: this method is only to be used for output variables,
-     * since the input variable file names are ambiguous! In search for the
-     * file name of an input variable, use getL1CNcFileNameForSymbolicName().
-     * @param ncName The output L2-variable name to get the name of the
-     * netCDF-file for.
-     * @return The netCDF-filename.
-     */
-    const string getL2NcFileName(const string& ncName) const;
-
-    /**
-     * Returns the name of the netCDF-file for a given symbolic L1C-variable name.
-     * @param ncName The symbolic variable name to get the name of the
-     * netCDF-file for.
-     * @return The netCDF-filename.
-     */
-    const string getL1cNcFileNameForSymbolicName(const string& symbolicName) const;
-
-    /**
-     * Returns the name of the netCDF-file for a given symbolic L2-variable name.
-     * @param ncName The symbolic variable name to get the name of the
-     * netCDF-file for.
-     * @return The netCDF-filename.
-     */
-    const string getL2NcFileNameForSymbolicName(const string& symbolicName) const;
-
-    /**
-     * Returns the name of the segment the (L1c-)variable uses during the
-     * processing.
-     * @return The segment's name.
-     */
-    const string getSegmentNameForL1c(const string& symbolicName);
-
-    /**
-     * Returns the name of the segment the (L2-)variable uses during the
-     * processing.
-     * @return The segment's name.
-     */
-    const string getSegmentNameForL2(const string& symbolicName);
-
-    Variable& addVariable(const string& sectionId, const string& symbolicVarName, const string& ncVarName);
-
-    bool hasVariable(const string& sectionId, const string& symbolicVarName);
 
 private:
     void init();
     string filePath;
-    void parseVariablesFile(string& variableDefPath, string& file, Volume& vol);
-    void parseAttributes(string& file, string& variableName, Variable& var);
+    void parseVariablesFile(string& variableDefPath, string& file, ProductDescriptor& vol);
+    void parseAttributes(string& file, string& variableName, VariableDescriptor& var);
     int mapToNcType(const string& typeString);
 
     XmlParser xmlParser;

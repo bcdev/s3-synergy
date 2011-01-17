@@ -37,31 +37,31 @@ void DictionaryTest::tearDown() {
 }
 
 void DictionaryTest::testContainers() {
-    Volume& volume = dictionary->addElement("L1C");
-    CPPUNIT_ASSERT(volume.getName().compare("L1C") == 0);
+    ProductDescriptor& productDescriptor = dictionary->addElement("L1C");
+    CPPUNIT_ASSERT(productDescriptor.getName().compare("L1C") == 0);
 
-    vector<Volume*> volumes = dictionary->getElements();
+    vector<ProductDescriptor*> volumes = dictionary->getElements();
     CPPUNIT_ASSERT(volumes.size() == 1);
-    CPPUNIT_ASSERT(volumes[0] == &volume);
+    CPPUNIT_ASSERT(volumes[0] == &productDescriptor);
 
-    CPPUNIT_ASSERT(&dictionary->getElement("L1C") == &volume);
+    CPPUNIT_ASSERT(&dictionary->getElement("L1C") == &productDescriptor);
     CPPUNIT_ASSERT_THROW(dictionary->getElement("L2"), std::out_of_range);
 
     CPPUNIT_ASSERT(dictionary->hasElement("L1C"));
     CPPUNIT_ASSERT(!dictionary->hasElement("L2"));
 
-    Section& section = volume.addElement("SYN_COLLOCATED");
+    SegmentDescriptor& segmentDescriptor = productDescriptor.addElement("SYN_COLLOCATED");
 
-    CPPUNIT_ASSERT(volume.hasElement(section.getName()));
-    CPPUNIT_ASSERT(&volume.getElement("SYN_COLLOCATED") == &section);
+    CPPUNIT_ASSERT(productDescriptor.hasElement(segmentDescriptor.getName()));
+    CPPUNIT_ASSERT(&productDescriptor.getElement("SYN_COLLOCATED") == &segmentDescriptor);
 
-    Attribute& volAttribute = volume.addAttribute(1, "Version", "37");
+    Attribute& volAttribute = productDescriptor.addAttribute(1, "Version", "37");
 
-    CPPUNIT_ASSERT(volume.hasAttribute(volAttribute.getName()));
-    CPPUNIT_ASSERT(&volume.getAttribute("Version") == &volAttribute);
+    CPPUNIT_ASSERT(productDescriptor.hasAttribute(volAttribute.getName()));
+    CPPUNIT_ASSERT(&productDescriptor.getAttribute("Version") == &volAttribute);
 
-    Attribute& sectAttribute = section.addAttribute(0, "Vendor", "BC");
+    Attribute& sectAttribute = segmentDescriptor.addAttribute(0, "Vendor", "BC");
 
-    CPPUNIT_ASSERT(section.hasAttribute(sectAttribute.getName()));
-    CPPUNIT_ASSERT(&section.getAttribute("Vendor") == &sectAttribute);
+    CPPUNIT_ASSERT(segmentDescriptor.hasAttribute(sectAttribute.getName()));
+    CPPUNIT_ASSERT(&segmentDescriptor.getAttribute("Vendor") == &sectAttribute);
 }

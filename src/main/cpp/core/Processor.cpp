@@ -27,6 +27,7 @@ void Processor::process(Context& context) {
         for (size_t i = 0; i < modules.size(); i++) {
             modules[i]->process(context);
         }
+        context.shift();
     }
     for (size_t i = 0; i < modules.size(); i++) {
         modules[i]->stop(context);

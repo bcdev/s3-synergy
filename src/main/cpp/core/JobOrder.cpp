@@ -49,7 +49,7 @@ vector<ProcessorConfiguration*> JobOrder::getProcessorList() const {
     return processorConfigs;
 }
 
-ProcessorConfiguration& JobOrder::getProcessorConfiguration(string& id) const {
+ProcessorConfiguration& JobOrder::getProcessorConfiguration(const string& id) const {
     for (size_t i = 0; i < processorConfigs.size(); i++) {
         if( processorConfigs[i]->getTaskName().compare( id ) == 0 ) {
             return *processorConfigs[i];

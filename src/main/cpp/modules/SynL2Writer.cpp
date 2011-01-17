@@ -20,45 +20,46 @@ SynL2Writer::~SynL2Writer() {
 }
 
 void SynL2Writer::process(Context& context) {
+    Dictionary& dict = *context.getDictionary();
+    const vector<SegmentDescriptor*> segmentDescriptors =
+            dict.getProductDescriptor(Constants::SYMBOLIC_NAME_SYL2).getSegmentDescriptors();
 
-    for (size_t i = 0; i < variablesToWrite.size(); i++) {
-        Dictionary& dict = *context.getDictionary();
-        const Variable& variable = dict.getL2Variable(variablesToWrite[i]);
-        const string varName = variable.getName();
-
-        string segmentName = dict.getSegmentNameForL2(varName);
-        const Segment& segment = context.getSegment(segmentName);
+    foreach(SegmentDescriptor* segmentDescriptor, segmentDescriptors) {
+        const Segment& segment = context.getSegment(segmentDescriptor->getName());
         const Grid& grid = segment.getGrid();
+        const vector<VariableDescriptor*> variableDescriptors =
+                segmentDescriptor->getVariableDescriptors();
         const size_t startL = getStartL(context, segment);
-        size_t endL = context.getMaxLWritable(segment, *this);
+        const size_t endL = context.getMaxLWritable(segment, *this);
 
-        const string ncFileName = variable.getNcFileName();
+        foreach(VariableDescriptor* variableDescriptor, variableDescriptors) {
+            const string varName = variableDescriptor->getName();
 
-        if (!exists(varIdMap, varName)) {
-            throw logic_error("Unknown variable '" + varName + "'.");
+            const string ncFileName = variableDescriptor->getNcFileName();
+
+            if (!exists(varIdMap, varName)) {
+                throw logic_error("Unknown variable '" + varName + "'.");
+            }
+            if (!exists(fileIdMap, ncFileName)) {
+                throw logic_error("Unknown netCDF file '" + ncFileName + "'.");
+            }
+            if (!exists(dimIdMap, ncFileName)) {
+                throw logic_error("Unknown netCDF file '" + ncFileName + "'.");
+            }
+            const int varId = varIdMap[varName];
+            const int ncId = fileIdMap[ncFileName];
+            const valarray<int>& dimIds = dimIdMap[ncFileName];
+
+            valarray<size_t> starts = IOUtils::createStartVector(dimIds.size(), startL);
+            valarray<size_t> sizes = IOUtils::createCountVector(dimIds.size(), grid.getSizeK(), endL - startL + 1, grid.getSizeM());
+
+            if (context.getLogging() != 0) {
+                context.getLogging()->progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
+            }
+            const Accessor& accessor = segment.getAccessor(varName);
+            NetCDF::putData(ncId, varId, starts, sizes, accessor.getUntypedData());
         }
-        if (!exists(fileIdMap, ncFileName)) {
-            throw logic_error("Unknown netCDF file '" + ncFileName + "'.");
-        }
-        const int varId = varIdMap[varName];
-        const int ncId = fileIdMap[ncFileName];
-
-        valarray<size_t> starts(3);
-        valarray<size_t> sizes(3);
-        starts[0] = grid.getStartK();
-        starts[1] = startL;
-        starts[2] = grid.getStartM();
-        sizes[0] = grid.getSizeK();
-        sizes[1] = endL - startL + 1;
-        sizes[2] = grid.getSizeM();
-
-        if (context.getLogging() != 0) {
-            context.getLogging()->progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
-        }
-        const Accessor& accessor = segment.getAccessor(varName);
-        NetCDF::putData(ncId, varId, starts, sizes, accessor.getUntypedData());
-
-        setMaxLComputed(context, varName, dict, endL);
+        context.setMaxLComputed(segment, *this, endL);
     }
 }
 
@@ -66,90 +67,89 @@ void SynL2Writer::start(Context& context) {
     // todo: extract directory path from job order ...
     Dictionary& dict = *context.getDictionary();
 
-    variablesToWrite = dict.getVariables(false);
-    for (size_t i = 0; i < variablesToWrite.size(); i++) {
-        const Variable& variable = dict.getL2Variable(variablesToWrite[i]);
-        const string segmentName = variable.getSegmentName();
-        const Segment& segment = context.getSegment(segmentName);
-        createNcVar(variable, segment.getGrid());
+    const vector<SegmentDescriptor*> segmentDescriptors =
+            dict.getProductDescriptor(Constants::SYMBOLIC_NAME_SYL2).getSegmentDescriptors();
+
+    foreach(SegmentDescriptor* segmentDescriptor, segmentDescriptors) {
+        const Segment& segment = context.getSegment(segmentDescriptor->getName());
+        const vector<VariableDescriptor*> variableDescriptors =
+                segmentDescriptor->getVariableDescriptors();
+
+        foreach(VariableDescriptor* variableDescriptor, variableDescriptors) {
+            createNcVar(*variableDescriptor, segment.getGrid());
+        }
     }
-    // TODO - set global attributes
-    for (map<string, int>::iterator i = fileIdMap.begin(); i != fileIdMap.end(); i++) {
-        NetCDF::setDefinitionPhaseFinished(i->second);
+    // TODO - global attributes ...
+
+    pair<string, int> fileIdPair;
+
+    foreach(fileIdPair, fileIdMap) {
+        NetCDF::setDefinitionPhaseFinished(fileIdPair.second);
     }
 }
 
 void SynL2Writer::stop(Context& context) {
-    for (map<string, int>::iterator i = fileIdMap.begin(); i != fileIdMap.end(); i++) {
-        NetCDF::closeFile(i->second);
+    pair<string, int> fileIdPair;
+
+    foreach(fileIdPair, fileIdMap) {
+        NetCDF::closeFile(fileIdPair.second);
     }
+
     fileIdMap.clear();
     dimIdMap.clear();
     varIdMap.clear();
 }
 
-void SynL2Writer::createNcVar(const Variable& variable, const Grid& grid) {
-    const string ncFileName = variable.getNcFileName();
-    const string varName = variable.getName();
+void SynL2Writer::createNcVar(const VariableDescriptor& variableDescriptor, const Grid& grid) {
+    const string ncFileName = variableDescriptor.getNcFileName();
+    const string varName = variableDescriptor.getName();
 
     if (exists(varIdMap, varName)) {
         throw logic_error("Variable '" + varName + "' already exists.");
     }
     if (!exists(fileIdMap, ncFileName)) {
-        int fileId = NetCDF::createFile(variable.getNcFileName().append(".nc").c_str());
+        int fileId = NetCDF::createFile(variableDescriptor.getNcFileName().append(".nc").c_str());
 
         const size_t sizeK = grid.getSizeK();
         const size_t sizeL = grid.getMaxL() - grid.getMinL() + 1;
         const size_t sizeM = grid.getSizeM();
-
-        valarray<int> dimIds(3);
-        dimIds[0] = NetCDF::defineDimension(fileId, Constants::SYMBOLIC_NAME_DIMENSION_N_CAM, sizeK);
-        dimIds[1] = NetCDF::defineDimension(fileId, Constants::SYMBOLIC_NAME_DIMENSION_N_LINE_OLC, sizeL);
-        dimIds[2] = NetCDF::defineDimension(fileId, Constants::SYMBOLIC_NAME_DIMENSION_N_DET_CAM, sizeM);
+        vector<Dimension*> dims = variableDescriptor.getDimensions();
+        size_t dimCount = 0;
+        if (grid.getSizeK() > 1) {
+            dimCount++;
+        }
+        if (grid.getSizeL() > 1) {
+            dimCount++;
+        }
+        if (grid.getSizeM() > 1) {
+            dimCount++;
+        }
+        if (dimCount != dims.size()) {
+            throw logic_error("dimCount != dims.size()");
+        }
+        valarray<int> dimIds(dimCount);
+        int dimIndex = 0;
+        if (sizeK > 1) {
+            dimIds[dimIndex] = NetCDF::defineDimension(fileId, dims[dimIndex]->getName(), sizeK);
+            dimIndex++;
+        }
+        if (grid.getSizeL() > 1) {
+            dimIds[dimIndex] = NetCDF::defineDimension(fileId, dims[dimIndex]->getName(), sizeL);
+            dimIndex++;
+        }
+        if (sizeM > 1) {
+            dimIds[dimIndex] = NetCDF::defineDimension(fileId, dims[dimIndex]->getName(), sizeM);
+        }
 
         fileIdMap[ncFileName] = fileId;
         dimIdMap.insert(make_pair(ncFileName, dimIds));
     }
     const int fileId = fileIdMap[ncFileName];
     const valarray<int>& dimIds = dimIdMap[ncFileName];
-    int varId = NetCDF::defineVariable(fileId, variable.getNcVarName().c_str(), variable.getType(), dimIds);
+    int varId = NetCDF::defineVariable(fileId, variableDescriptor.getNcVarName().c_str(), variableDescriptor.getType(), dimIds);
     varIdMap[varName] = varId;
 
-    const vector<Attribute*> attributes = variable.getAttributes();
-    for (vector<Attribute*>::const_iterator iter = attributes.begin(); iter != attributes.end(); iter++) {
-        NetCDF::addAttribute(fileId, varId, **iter);
+    foreach(Attribute* attribute, variableDescriptor.getAttributes()) {
+        NetCDF::addAttribute(fileId, varId, *attribute);
     }
-}
-
-void SynL2Writer::setMaxLComputed(Context& context, string symbolicName, Dictionary& dict, size_t endLine ) {
-    string segmentName = dict.getSegmentNameForL2(symbolicName);
-    Segment* segment = &context.getSegment(segmentName);
-    if (segmentVariableMap.find(segmentName) == segmentVariableMap.end()) {
-        set<string> variables;
-        segmentVariableMap[segmentName] = variables;
-    }
-    segmentVariableMap[segmentName].insert(symbolicName);
-    if (isSegmentComputedByAllVariables(*segment, dict)) {
-        segmentVariableMap.clear();
-        context.setMaxLComputed(*segment, *this, endLine);
-    }
-}
-
-const bool SynL2Writer::isSegmentComputedByAllVariables(Segment& segment, Dictionary& dict) {
-    vector<string> variables = dict.getVariables(true);
-    vector<string> varsForSegment;
-    for (size_t i = 0; i < variables.size(); i++) {
-        string varName = variables[i];
-        string segmentName = dict.getSegmentNameForL2(varName);
-        if (segment.getId().compare(segmentName) == 0) {
-            varsForSegment.push_back(varName);
-        }
-    }
-    set<string> varsInSegment = segmentVariableMap[segment.getId()];
-    for (size_t j = 0; j < varsForSegment.size(); j++) {
-        if (varsInSegment.find(varsForSegment[j]) == varsInSegment.end()) {
-            return false;
-        }
-    }
-    return true;
 }

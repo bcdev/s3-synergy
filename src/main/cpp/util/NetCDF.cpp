@@ -20,7 +20,7 @@
 
 #include "NetCDF.h"
 
-int NetCDF::openFile(const string fileName) {
+int NetCDF::openFile(const string& fileName) {
     int ncId;
     int status = nc_open(fileName.c_str(), NC_NOWRITE, &ncId);
     checkStatus(status, "opening file");
@@ -34,7 +34,7 @@ nc_type NetCDF::getVariableType(int fileId, int varId) {
     return type;
 }
 
-int NetCDF::getVariableId(int fileId, const string varName) {
+int NetCDF::getVariableId(int fileId, const string& varName) {
     int varId;
     int status = nc_inq_varid(fileId, varName.c_str(), &varId);
     checkStatus(status, "getting variable id");
@@ -63,34 +63,40 @@ size_t NetCDF::getDimLength(int fileId, int dimId) {
     return dimLength;
 }
 
-void NetCDF::putData(int fileId, int varId, const valarray<size_t> startVector,
-        const valarray<size_t> sizeVector, const void* dataArray) {
+void NetCDF::getData(int fileId, int varId, const valarray<size_t>& startVector,
+        const valarray<size_t>& sizeVector, void* dataArray) {
+    int status = nc_get_vars(fileId, varId, &startVector[0], &sizeVector[0], 0, dataArray);
+    checkStatus(status, "putting data into file");
+}
+
+void NetCDF::putData(int fileId, int varId, const valarray<size_t>& startVector,
+        const valarray<size_t>& sizeVector, const void* dataArray) {
     int status = nc_put_vars(fileId, varId, &startVector[0], &sizeVector[0], 0, dataArray);
     checkStatus(status, "putting data into file");
 }
 
-int NetCDF::createFile(const string fileName) {
+int NetCDF::createFile(const string& fileName) {
     int ncId;
     int status = nc_create(fileName.c_str(), NC_NETCDF4, &ncId);
     checkStatus(status, "creating file");
     return ncId;
 }
 
-int NetCDF::defineDimension(int fileId, const string dimName, size_t size) {
+int NetCDF::defineDimension(int fileId, const string& dimName, size_t size) {
     int dimId;
     int status = nc_def_dim(fileId, dimName.c_str(), size, &dimId);
     checkStatus(status, "defining dimension");
     return dimId;
 }
 
-int NetCDF::defineVariable(int fileId, const string varName, int type, const valarray<int> dimIds) {
+int NetCDF::defineVariable(int fileId, const string& varName, int type, const valarray<int>& dimIds) {
     int varId;
     int status = nc_def_var(fileId, varName.c_str(), type, dimIds.size(), &dimIds[0], &varId);
     checkStatus(status, "defining variable");
     return varId;
 }
 
-void NetCDF::addAttribute(int fileId, int varId, Attribute attribute) {
+void NetCDF::addAttribute(int fileId, int varId, const Attribute& attribute) {
     switch (attribute.getType()) {
         case NC_BYTE:
         {
@@ -160,19 +166,19 @@ void NetCDF::closeFile(int ncId) {
 }
 
 template<class T>
-void NetCDF::putAttribute(int fileId, int varId, Attribute attribute, T t) {
-    T v = t;
+void NetCDF::putAttribute(int fileId, int varId, const Attribute& attribute, const T& t) {
+    const T v = t;
     int status = nc_put_att(fileId, varId, attribute.getName().c_str(), attribute.getType(), 1, &v);
     checkStatus(status, "putting attribute");
 }
 
-void NetCDF::putAttributeString(int fileId, int varId, Attribute attribute) {
+void NetCDF::putAttributeString(int fileId, int varId, const Attribute& attribute) {
     const string& value = attribute.getValue();
     int status = nc_put_att(fileId, varId, attribute.getName().c_str(), NC_CHAR, value.size(), value.c_str());
     checkStatus(status, "putting attribute");
 }
 
-void NetCDF::checkStatus(int status, const string action) {
+void NetCDF::checkStatus(int status, const string& action) {
     if (status != NC_NOERR) {
         std::stringstream message;
         message << "NetCDF-error ";

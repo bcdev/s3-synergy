@@ -27,6 +27,7 @@
 
 #include "../core/Boost.h"
 #include "../core/Dictionary.h"
+#include "../util/NetCDF.h"
 #include "../core/Segment.h"
 
 using std::vector;
@@ -34,14 +35,14 @@ using std::vector;
 class IOUtils {
 public:
 
-    static int* getNcDims(int ncId, vector<Dimension*> dims) {
+    static int* getNcDims(int fileId, vector<Dimension*> dims) {
         valarray<int> ncDims(dims.size());
         for (size_t i = 0; i < dims.size(); i++) {
             int dimId;
-            int status = nc_inq_dimid(ncId, dims[i]->getName().c_str(), &dimId);
+            int status = nc_inq_dimid(fileId, dims[i]->getName().c_str(), &dimId);
             if (status != NC_NOERR) {
                 int currentDimId;
-                nc_def_dim(ncId, dims[i]->getName().c_str(), dims[i]->getSize(), &currentDimId);
+                nc_def_dim(fileId, dims[i]->getName().c_str(), dims[i]->getSize(), &currentDimId);
                 ncDims[i] = currentDimId;
             } else {
                 ncDims[i] = dimId;
@@ -62,7 +63,7 @@ public:
             count[1] = colCount;
             return count;
         } else if (dimCount == 1) {
-            count[0] = lineCount;
+            count[0] = colCount;
             return count;
         }
         throw std::invalid_argument("Wrong number of dimensions.");
@@ -80,14 +81,14 @@ public:
             start[1] = 0;
             return start;
         } else if (dimCount == 1) {
-            start[0] = startLine;
+            start[0] = 0;
             return start;
         }
         throw std::invalid_argument("Wrong number of dimensions.");
     }
 
-    static void readData(int ncId, int varId, Accessor& accessor, const Grid& grid,
-            const size_t dimCount, const size_t startLine) {
+    static void readData(int fileId, int varId, Accessor& accessor, const Grid& grid,
+            const size_t startLine) {
 
         if (startLine > grid.getStartL() + grid.getSizeL() - 1) {
             throw std::out_of_range("startLine > grid.getStartL() + grid.getSizeL() - 1");
@@ -97,18 +98,19 @@ public:
 
         size_t linesToRead = grid.getStartL() + grid.getSizeL() - startLine;
         size_t startIndex = grid.getIndex(0, startLine, 0);
+        size_t dimCount = NetCDF::getDimCountForVariable(fileId, varId);
         valarray<size_t> startVector = createStartVector(dimCount, startLine);
         valarray<size_t> countVector = createCountVector(dimCount, 1, linesToRead, grid.getSizeM());
 
         nc_type type;
-        nc_inq_vartype(ncId, varId, &type);
+        nc_inq_vartype(fileId, varId, &type);
         switch (type) {
             case NC_BYTE:
             {
                 int8_t* buffer = &accessor.getByteData()[startIndex];
                 for (size_t k = grid.getStartK(); k < grid.getStartK() + grid.getSizeK(); k++) {
                     startVector[0] = k;
-                    nc_get_vara_schar(ncId, varId, &startVector[0], &countVector[0], buffer);
+                    nc_get_vara_schar(fileId, varId, &startVector[0], &countVector[0], buffer);
                     buffer += grid.getStrideK();
                 }
                 break;
@@ -118,7 +120,7 @@ public:
                 uint8_t* buffer = &accessor.getUByteData()[startIndex];
                 for (size_t k = grid.getStartK(); k < grid.getStartK() + grid.getSizeK(); k++) {
                     startVector[0] = k;
-                    nc_get_vara_ubyte(ncId, varId, &startVector[0], &countVector[0], buffer);
+                    nc_get_vara_ubyte(fileId, varId, &startVector[0], &countVector[0], buffer);
                     buffer += grid.getStrideK();
                 }
                 break;
@@ -128,7 +130,7 @@ public:
                 int16_t* buffer = &accessor.getShortData()[startIndex];
                 for (size_t k = grid.getStartK(); k < grid.getStartK() + grid.getSizeK(); k++) {
                     startVector[0] = k;
-                    nc_get_vara_short(ncId, varId, &startVector[0], &countVector[0], buffer);
+                    nc_get_vara_short(fileId, varId, &startVector[0], &countVector[0], buffer);
                     buffer += grid.getStrideK();
                 }
                 break;
@@ -138,7 +140,7 @@ public:
                 uint16_t* buffer = &accessor.getUShortData()[startIndex];
                 for (size_t k = grid.getStartK(); k < grid.getStartK() + grid.getSizeK(); k++) {
                     startVector[0] = k;
-                    nc_get_vara_ushort(ncId, varId, &startVector[0], &countVector[0], buffer);
+                    nc_get_vara_ushort(fileId, varId, &startVector[0], &countVector[0], buffer);
                     buffer += grid.getStrideK();
                 }
                 break;
@@ -148,7 +150,7 @@ public:
                 int32_t* buffer = &accessor.getIntData()[startIndex];
                 for (size_t k = grid.getStartK(); k < grid.getStartK() + grid.getSizeK(); k++) {
                     startVector[0] = k;
-                    nc_get_vara_int(ncId, varId, &startVector[0], &countVector[0], buffer);
+                    nc_get_vara_int(fileId, varId, &startVector[0], &countVector[0], buffer);
                     buffer += grid.getStrideK();
                 }
                 break;
@@ -158,7 +160,7 @@ public:
                 uint32_t* buffer = &accessor.getUIntData()[startIndex];
                 for (size_t k = grid.getStartK(); k < grid.getStartK() + grid.getSizeK(); k++) {
                     startVector[0] = k;
-                    nc_get_vara_uint(ncId, varId, &startVector[0], &countVector[0], buffer);
+                    nc_get_vara_uint(fileId, varId, &startVector[0], &countVector[0], buffer);
                     buffer += grid.getStrideK();
                 }
                 break;
@@ -168,7 +170,7 @@ public:
                 int64_t* buffer = &accessor.getLongData()[startIndex];
                 for (size_t k = grid.getStartK(); k < grid.getStartK() + grid.getSizeK(); k++) {
                     startVector[0] = k;
-                    nc_get_vara_long(ncId, varId, &startVector[0], &countVector[0], buffer);
+                    nc_get_vara_long(fileId, varId, &startVector[0], &countVector[0], buffer);
                     buffer += grid.getStrideK();
                 }
                 break;
@@ -180,7 +182,7 @@ public:
                 int64_t* buffer = (int64_t*) & accessor.getULongData()[startIndex];
                 for (size_t k = grid.getStartK(); k < grid.getStartK() + grid.getSizeK(); k++) {
                     startVector[0] = k;
-                    nc_get_vara_long(ncId, varId, &startVector[0], &countVector[0], buffer);
+                    nc_get_vara_long(fileId, varId, &startVector[0], &countVector[0], buffer);
                     buffer += grid.getStrideK();
                 }
                 break;
@@ -190,7 +192,7 @@ public:
                 float* buffer = &accessor.getFloatData()[startIndex];
                 for (size_t k = grid.getStartK(); k < grid.getStartK() + grid.getSizeK(); k++) {
                     startVector[0] = k;
-                    nc_get_vara_float(ncId, varId, &startVector[0], &countVector[0], buffer);
+                    nc_get_vara_float(fileId, varId, &startVector[0], &countVector[0], buffer);
                     buffer += grid.getStrideK();
                 }
                 break;
@@ -200,7 +202,7 @@ public:
                 double* buffer = &accessor.getDoubleData()[startIndex];
                 for (size_t k = grid.getStartK(); k < grid.getStartK() + grid.getSizeK(); k++) {
                     startVector[0] = k;
-                    nc_get_vara_double(ncId, varId, &startVector[0], &countVector[0], buffer);
+                    nc_get_vara_double(fileId, varId, &startVector[0], &countVector[0], buffer);
                     buffer += grid.getStrideK();
                 }
                 break;
@@ -356,7 +358,7 @@ public:
         }
     }
 
-    static vector<string> getFiles(string& directory) {
+    static vector<string> getFiles(const string& directory) {
         vector<string> files;
         if (is_directory(directory)) {
             for (directory_iterator iter(directory); iter != directory_iterator(); ++iter) {

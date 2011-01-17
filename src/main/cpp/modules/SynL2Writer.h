@@ -26,19 +26,11 @@ public:
 
 private:
 
-    template<class K, class V>
-    bool exists(const map<K, V>& map, const K& key) const {
-        return map.find(key) != map.end();
-    }
-    void createNcVar(const Variable& variable, const Grid& grid);
-    vector<string> variablesToWrite;
-    void setMaxLComputed(Context& context, string symbolicName, Dictionary& dict, size_t endLine);
-    const bool isSegmentComputedByAllVariables(Segment& segment, Dictionary& dict);
+    void createNcVar(const VariableDescriptor& variable, const Grid& grid);
 
     map<string, int> fileIdMap;
     map<string, valarray<int> > dimIdMap;
     map<string, int> varIdMap;
-    map<string, set<string> > segmentVariableMap;
 };
 
 #endif	/* SYNL2WRITER_H */
