@@ -28,7 +28,7 @@
 		</attributes>
 	</variable>
 	<variable>
-		<name>longitude</name>
+		<name>SLO_TP_LON</name>
 		<type>double</type>
 		<attributes>
 			<attribute>

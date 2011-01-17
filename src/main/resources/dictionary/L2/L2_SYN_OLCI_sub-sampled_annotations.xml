@@ -33,7 +33,7 @@
 		</attributes>
 	</variable>
 	<variable>
-		<name>longitude</name>
+		<name>OLC_TP_LON</name>
 		<attributes>
 			<attribute>
 				<name>standard_name</name>
