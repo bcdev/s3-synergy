@@ -40,14 +40,15 @@ const string XmlParser::evaluateToString(const string& path, const char* express
     XalanDOMChar* expr = XMLString::transcode(expression);
     XObjectPtr result = evaluator.evaluate(support, xalanDoc, expr);
 
-    // cleaning up
-    XMLString::release(&expr);
-    delete parser;
-
     const xalanc::XalanDOMString& resultString = result->str();
     char* resultChars = XMLString::transcode(resultString.data());
     string resultStr(resultChars);
+
+    // cleaning up
+    XMLString::release(&expr);
+    delete parser;
     XMLString::release(&resultChars);
+
     return resultStr;
 }
 
@@ -78,6 +79,7 @@ const vector<string> XmlParser::evaluateToStringList(string& path, const char* e
         const XMLCh* name = nodeSet.item(i)->getNodeValue().data();
         char* value = XMLString::transcode(name);
         output.push_back(value);
+        XMLString::release(&value);
     }
     delete parser;
     return output;

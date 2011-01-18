@@ -19,8 +19,8 @@
  */
 
 #include <iostream>
-#include <boost/lexical_cast.hpp>
 
+#include "Boost.h"
 #include "ProcessorConfiguration.h"
 #include "../util/Logger.h"
 
@@ -41,6 +41,15 @@ ProcessorConfiguration::ProcessorConfiguration(string taskName,
 }
 
 ProcessorConfiguration::~ProcessorConfiguration() {
+    foreach(BreakpointFile* bpf, breakpointFiles) {
+        delete bpf;
+    }
+    foreach(Input* input, inputList) {
+        delete input;
+    }
+    foreach(Output* output, outputList) {
+        delete output;
+    }
 }
 
 vector<Output*> ProcessorConfiguration::getOutputList() const {
@@ -130,6 +139,12 @@ Input::Input(string fileType, string fileNameType, vector<string> fileNames, vec
     this->fileNameType = fileNameType;
     this->fileNames = fileNames;
     this->timeIntervals = timeIntervals;
+}
+
+Input::~Input() {
+    foreach(TimeInterval* ti, timeIntervals) {
+        delete ti;
+    }
 }
 
 void Input::log() const {
