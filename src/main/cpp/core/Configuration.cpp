@@ -6,8 +6,8 @@
  */
 
 #include <iostream>
-#include <boost/lexical_cast.hpp>
 
+#include "Boost.h"
 #include "Configuration.h"
 #include "../util/Logger.h"
 
@@ -23,7 +23,9 @@ Configuration::Configuration() {
 }
 
 Configuration::~Configuration() {
-
+    foreach(ProcessingParameter* pp, processingParameters) {
+        delete pp;
+    }
 }
 
 string Configuration::getProcessorName() {
