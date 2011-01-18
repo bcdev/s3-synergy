@@ -160,7 +160,6 @@ vector<BreakpointFile*> JobOrderParser::parseBreakpointFiles(string baseQuery) {
     string breakPointFilesQuery = baseQuery + "/BreakPoint/List_of_Brk_Files/Brk_File";
     int breakPointFilesCount = evaluateToStringList(path, breakPointFilesQuery).size();
     for (int i = 1; i <= breakPointFilesCount; i++) {
-
         string query = breakPointFilesQuery + "[" + lexical_cast<string > (i) + "]";
         breakpointFiles.push_back(parseBreakpointFile(query));
     }
@@ -193,7 +192,6 @@ vector<Input*> JobOrderParser::parseInputs(string baseQuery) {
     string inputQuery = baseQuery + "/List_of_Inputs/Input";
     int inputCount = evaluateToStringList(path, inputQuery).size();
     for (int i = 1; i <= inputCount; i++) {
-
         string query = inputQuery + "[" + lexical_cast<string > (i) + "]";
         inputs.push_back(parseInput(query));
     }

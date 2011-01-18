@@ -19,6 +19,7 @@
  */
 
 #include "NetCDF.h"
+#include "../core/SynException.h"
 
 int NetCDF::openFile(const string& fileName) {
     int ncId;
@@ -61,6 +62,13 @@ size_t NetCDF::getDimLength(int fileId, int dimId) {
     int status = nc_inq_dimlen(fileId, dimId, &dimLength);
     checkStatus(status, "getting dimension length");
     return dimLength;
+}
+
+string NetCDF::getDimName(int fileId, int dimId) {
+    char dimName[NC_MAX_NAME + 1];
+    int status = nc_inq_dimname(fileId, dimId, dimName);
+    checkStatus(status, "getting dimension name");
+    return string(dimName);
 }
 
 void NetCDF::getData(int fileId, int varId, const valarray<size_t>& startVector,
@@ -184,6 +192,6 @@ void NetCDF::checkStatus(int status, const string& action) {
         message << "NetCDF-error ";
         message << action;
         message << ". Code '" << status << "'.";
-        throw runtime_error(message.str());
+        throw SynException(message.str(), "NetCDF");
     }
 }

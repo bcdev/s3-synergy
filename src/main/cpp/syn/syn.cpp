@@ -50,6 +50,7 @@ int main() {
     Processor processor;
 
     Context context;
+    context.setLogging(logger);
     context.setJobOrder(&jobOrder);
     context.addModule(reader);
     //    context.addModule(writer);

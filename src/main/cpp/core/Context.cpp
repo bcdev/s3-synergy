@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2010 by Brockmann Consult (info@brockmann-consult.de)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -14,15 +14,14 @@
  *
  * File:   Context.cpp
  * Author: ralf
- * 
+ *
  * Created on December 20, 2010, 12:34 PM
  */
 
 #include <algorithm>
+#include <iostream>
 #include <limits>
 #include <stdexcept>
-
-#include <iostream>
 
 #include "Boost.h"
 #include "Context.h"
@@ -35,6 +34,7 @@ using std::min;
 using std::numeric_limits;
 
 Context::Context() : moduleList(), objectMap(), segmentMap(), segmentList() {
+    errorHandler = 0;
     dictionary = 0;
     jobOrder = 0;
     logging = 0;
@@ -123,6 +123,9 @@ bool Context::isCompleted() const {
     }
     for (size_t i = 0; i < moduleList.size(); i++) {
         for (size_t j = 0; j < segmentList.size(); j++) {
+            if (!hasMaxLComputed(*(segmentList[j]), *(moduleList[i]))) {
+                return false;
+            }
             size_t maxLComputed = getMaxLComputed(*(segmentList[j]), *(moduleList[i]));
             if (maxLComputed != segmentList[j]->getGrid().getMaxL()) {
                 return false;
@@ -132,8 +135,20 @@ bool Context::isCompleted() const {
     return true;
 }
 
+void Context::setErrorHandler(ErrorHandler* errorHandler) {
+    this->errorHandler = errorHandler;
+}
+
+void Context::handleError(SynException& e) {
+    if (errorHandler == 0) {
+        throw (e);
+    } else {
+        errorHandler->handleError(*this, e);
+    }
+}
+
 void Context::shift(Segment& segment) const {
-    size_t maxLComputed = segment.getGrid().getStartL() - 1;
+    size_t maxLComputed = segment.getGrid().getStartL() + segment.getGrid().getSizeL() - 1;
     const ModuleLineMap& map = maxLComputedMap.at(&segment);
     for (ModuleLineMap::const_iterator iter = map.begin(); iter != map.end(); iter++) {
         maxLComputed = min(maxLComputed, iter->second);
@@ -168,8 +183,8 @@ size_t Context::getMaxLWritable(const Segment& segment, const Writer& writer) co
 }
 
 bool Context::hasMaxLComputed(const Segment& segment, const Module& module) const {
-    return exists(maxLComputedMap, &segment)
-            && exists(maxLComputedMap.at(&segment), &module);
+    return contains(maxLComputedMap, &segment)
+            && contains(maxLComputedMap.at(&segment), &module);
 }
 
 void Context::setMaxLComputed(const Segment& segment, const Module& module, size_t l) {

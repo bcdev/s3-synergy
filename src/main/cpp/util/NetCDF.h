@@ -22,7 +22,6 @@
 #define	NETCDF_H
 
 #include <netcdf.h>
-#include <boost/algorithm/string/split.hpp>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -51,6 +50,8 @@ public:
     static valarray<int> getDimIdsForVariable(int fileId, int varId);
 
     static size_t getDimLength(int fileId, int dimId);
+
+    static string getDimName(int fileId, int dimId);
 
     static void getData(int fileId, int varId, const valarray<size_t>& startVector,
             const valarray<size_t>& sizeVector, void* dataArray);

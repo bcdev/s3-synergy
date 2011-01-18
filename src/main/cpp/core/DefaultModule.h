@@ -102,7 +102,7 @@ protected:
 protected:
 
     template<class K, class V>
-    bool exists(const map<K, V>& map, const K& key) const {
+    bool contains(const map<K, V>& map, const K& key) const {
         return map.find(key) != map.end();
     }
 

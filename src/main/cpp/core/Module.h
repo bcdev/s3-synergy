@@ -21,7 +21,11 @@
 #ifndef MODULE_H
 #define	MODULE_H
 
+#include <exception>
+
 #include "Context.h"
+
+using std::exception;
 
 /**
  * Interface representing a processing module.

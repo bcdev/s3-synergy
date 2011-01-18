@@ -37,13 +37,13 @@ void SynL2Writer::process(Context& context) {
 
             const string ncFileName = variableDescriptor->getNcFileName();
 
-            if (!exists(varIdMap, varName)) {
+            if (!contains(varIdMap, varName)) {
                 throw logic_error("Unknown variable '" + varName + "'.");
             }
-            if (!exists(fileIdMap, ncFileName)) {
+            if (!contains(fileIdMap, ncFileName)) {
                 throw logic_error("Unknown netCDF file '" + ncFileName + "'.");
             }
-            if (!exists(dimIdMap, ncFileName)) {
+            if (!contains(dimIdMap, ncFileName)) {
                 throw logic_error("Unknown netCDF file '" + ncFileName + "'.");
             }
             const int varId = varIdMap[varName];
@@ -104,10 +104,10 @@ void SynL2Writer::createNcVar(const VariableDescriptor& variableDescriptor, cons
     const string ncFileName = variableDescriptor.getNcFileName();
     const string varName = variableDescriptor.getName();
 
-    if (exists(varIdMap, varName)) {
+    if (contains(varIdMap, varName)) {
         throw logic_error("Variable '" + varName + "' already exists.");
     }
-    if (!exists(fileIdMap, ncFileName)) {
+    if (!contains(fileIdMap, ncFileName)) {
         int fileId = NetCDF::createFile(variableDescriptor.getNcFileName().append(".nc").c_str());
 
         const size_t sizeK = grid.getSizeK();

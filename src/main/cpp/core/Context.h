@@ -22,19 +22,20 @@
 #define	CONTEXT_H
 
 #include <map>
-#include <stdexcept>
 #include <vector>
 
 #include "Constants.h"
 #include "Dictionary.h"
+#include "../util/ErrorHandler.h"
 #include "Logging.h"
 #include "Segment.h"
+#include "SynException.h"
 #include "Object.h"
 
 using std::map;
-using std::logic_error;
 using std::vector;
 
+class ErrorHandler;
 class JobOrder;
 class Module;
 class Writer;
@@ -208,11 +209,15 @@ public:
     bool isCompleted() const;
 
     void shift() const;
+    
+    void setErrorHandler(ErrorHandler* errorHandler);
+
+    void handleError(SynException& e);
 
 private:
 
     template <class K, class V>
-    bool exists(const map<K, V>& map, const K& key) const {
+    bool contains(const map<K, V>& map, const K& key) const {
         return map.find(key) != map.end();
     }
     void shift(Segment& segment) const;
@@ -222,6 +227,7 @@ private:
     Dictionary* dictionary;
     JobOrder* jobOrder;
     Logging* logging;
+    ErrorHandler* errorHandler;
 
     vector<Module*> moduleList;
     map<string, Object*> objectMap;

@@ -28,6 +28,9 @@ Reader::~Reader() {
 }
 
 void Reader::start(Context& context) {
+    if (context.getJobOrder() == 0) {
+        throw logic_error("Reader::start: job order missing.");
+    }
     const string processorId = "SYL2";
     const string sourceDir = context.getJobOrder()->getProcessorConfiguration(processorId).getInputList()[0]->getFileNames()[0];
     Dictionary& dict = *context.getDictionary();
@@ -47,6 +50,8 @@ void Reader::start(Context& context) {
 
             int fileId = findFile(sourceDir, fileName);
             int varId = NetCDF::getVariableId(fileId, ncVariableName.c_str());
+            const int type = NetCDF::getVariableType(fileId, varId);
+            variableDescriptor->setType(type);
             varIdMap[symbolicName] = varId;
             int dimCount = NetCDF::getDimCountForVariable(fileId, varId);
             valarray<int> dimensionIds = NetCDF::getDimIdsForVariable(fileId, varId);
@@ -60,11 +65,17 @@ void Reader::start(Context& context) {
                 camCount = NetCDF::getDimLength(fileId, dimensionIds[0]);
                 lineCount = NetCDF::getDimLength(fileId, dimensionIds[1]);
                 colCount = NetCDF::getDimLength(fileId, dimensionIds[2]);
+                variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimensionIds[0])).setSize(camCount);
+                variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimensionIds[1])).setSize(lineCount);
+                variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimensionIds[2])).setSize(colCount);
             } else if (dimCount == 2) {
                 lineCount = NetCDF::getDimLength(fileId, dimensionIds[0]);
                 colCount = NetCDF::getDimLength(fileId, dimensionIds[1]);
+                variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimensionIds[0])).setSize(lineCount);
+                variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimensionIds[1])).setSize(colCount);
             } else if (dimCount == 1) {
                 colCount = NetCDF::getDimLength(fileId, dimensionIds[0]);
+                variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimensionIds[0])).setSize(colCount);
             }
 
             const size_t sizeL = min(stepSize, lineCount);
@@ -74,11 +85,7 @@ void Reader::start(Context& context) {
             } else {
                 segment = &context.addSegment(segmentName, sizeL, colCount, camCount, 0, lineCount - 1);
             }
-            if (!segment->hasVariable(symbolicName)) {
-                const int type = NetCDF::getVariableType(fileId, varId);
-                variableDescriptor->setType(type);
-                IOUtils::addVariableToSegment(symbolicName, type, *segment);
-            }
+            IOUtils::addVariableToSegment(symbolicName, type, *segment);
         }
     }
 }
@@ -100,37 +107,37 @@ void Reader::process(Context& context) {
 
     foreach(SegmentDescriptor* segmentDescriptor, segmentDescriptors) {
         const Segment& segment = context.getSegment(segmentDescriptor->getName());
-        if (context.getMaxLComputed(segment, *this) >= segment.getGrid().getMaxL()) {
-            continue;
-        }
         const Grid& grid = segment.getGrid();
-        const vector<VariableDescriptor*> variableDescriptors =
-                segmentDescriptor->getVariableDescriptors();
-        const size_t startL = getStartL(context, segment);
-        const size_t endL = min(startL + grid.getSizeL(), grid.getMaxL());
+        if (!context.hasMaxLComputed(segment, *this) ||
+                context.getMaxLComputed(segment, *this) < grid.getStartL() + grid.getSizeL() - 1) {
+            const vector<VariableDescriptor*> variableDescriptors =
+                    segmentDescriptor->getVariableDescriptors();
+            const size_t startL = getStartL(context, segment);
+            const size_t endL = min(grid.getStartL() + grid.getSizeL() - 1, grid.getMaxL());
 
-        foreach(VariableDescriptor* variableDescriptor, variableDescriptors) {
-            const string varName = variableDescriptor->getName();
-            const string ncFileName = variableDescriptor->getNcFileName();
+            foreach(VariableDescriptor* variableDescriptor, variableDescriptors) {
+                const string varName = variableDescriptor->getName();
+                const string ncFileName = variableDescriptor->getNcFileName();
 
-            if (!exists(varIdMap, varName)) {
-                throw logic_error("Unknown variable '" + varName + "'.");
+                if (!contains(varIdMap, varName)) {
+                    throw (logic_error("Unknown variable '" + varName + "'."));
+                }
+                if (!contains(fileIdMap, ncFileName)) {
+                    throw logic_error("Unknown netCDF file '" + ncFileName + "'.");
+                }
+                const int varId = varIdMap[varName];
+                const int fileId = fileIdMap[ncFileName];
+                const size_t dimCount = variableDescriptor->getDimensions().size();
+                const valarray<size_t> starts = IOUtils::createStartVector(dimCount, startL);
+                const valarray<size_t> counts = IOUtils::createCountVector(dimCount, grid.getSizeK(), endL - startL + 1, grid.getSizeM());
+                if (context.getLogging() != 0) {
+                    context.getLogging()->progress("Reading variable " + varName + " of segment [" + segment.toString() + "]", getId());
+                }
+                const Accessor& accessor = segment.getAccessor(varName);
+                NetCDF::getData(fileId, varId, starts, counts, accessor.getUntypedData());
             }
-            if (!exists(fileIdMap, ncFileName)) {
-                throw logic_error("Unknown netCDF file '" + ncFileName + "'.");
-            }
-            const int varId = varIdMap[varName];
-            const int fileId = fileIdMap[ncFileName];
-            const size_t dimCount = variableDescriptor->getDimensions().size();
-            const valarray<size_t> starts = IOUtils::createStartVector(dimCount, startL);
-            const valarray<size_t> counts = IOUtils::createCountVector(dimCount, grid.getSizeK(), endL - startL + 1, grid.getSizeM());
-            if (context.getLogging() != 0) {
-                context.getLogging()->progress("Reading variable " + varName + " of segment [" + segment.toString() + "]", getId());
-            }
-            const Accessor& accessor = segment.getAccessor(varName);
-            NetCDF::getData(fileId, varId, starts, counts, accessor.getUntypedData());
+            context.setMaxLComputed(segment, *this, endL);
         }
-        context.setMaxLComputed(segment, *this, endL);
     }
 }
 

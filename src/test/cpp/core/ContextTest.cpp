@@ -131,4 +131,8 @@ void ContextTest::testGetMaxLWritable() {
     context->setMaxLComputed(segment, *module1, 23);
     maxLWritable = context->getMaxLWritable(segment, *writer);
     CPPUNIT_ASSERT(maxLWritable == 22);
+
+    delete writer;
+    delete module1;
+    delete module2;
 }

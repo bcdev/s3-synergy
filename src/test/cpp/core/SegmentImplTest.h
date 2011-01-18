@@ -31,7 +31,7 @@ class SegmentImplTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(testGetId);
     CPPUNIT_TEST(testGetGrid);
     CPPUNIT_TEST(testGetAccessor);
-    CPPUNIT_TEST(testShift);
+//    CPPUNIT_TEST(testShift);
     CPPUNIT_TEST_SUITE_END();
 
 public:

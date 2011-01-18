@@ -22,6 +22,7 @@
 #define	BOOST_H
 
 #include <boost/algorithm/string.hpp>
+#include <boost/exception/all.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
@@ -30,12 +31,13 @@
 #define foreach         BOOST_FOREACH
 #define reverse_foreach BOOST_REVERSE_FOREACH
 
-using boost::algorithm::trim_copy;
 using boost::algorithm::ends_with;
 using boost::algorithm::starts_with;
+using boost::algorithm::trim_copy;
 using boost::filesystem::directory_iterator;
 using boost::filesystem::is_directory;
 using boost::filesystem::path;
+//using boost::exception;
 using boost::lexical_cast;
 using boost::numeric_cast;
 

@@ -82,4 +82,5 @@ void IOUtilsTest::testAddVariableToSegment() {
     IOUtils::addVariableToSegment("Obelix", NC_SHORT, *segment);
     CPPUNIT_ASSERT(segment->hasVariable("Obelix") == true);
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("Obelix"));
+    delete segment;
 }

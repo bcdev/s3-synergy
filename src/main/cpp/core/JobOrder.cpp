@@ -20,8 +20,8 @@
 
 #include <stdexcept>
 #include <iostream>
-#include <boost/lexical_cast.hpp>
 
+#include "Boost.h"
 #include "JobOrder.h"
 #include "../util/Logger.h"
 
@@ -34,6 +34,9 @@ JobOrder::JobOrder(Configuration config, vector<ProcessorConfiguration*> process
 }
 
 JobOrder::~JobOrder() {
+    foreach(ProcessorConfiguration* pc, processorConfigs) {
+        delete pc;
+    }
 }
 
 // TODO - replace by toString() and get rid of logger dependency
