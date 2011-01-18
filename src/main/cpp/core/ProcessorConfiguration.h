@@ -71,6 +71,7 @@ private:
 class Input {
 public:
     Input(string fileType, string fileNameType, vector<string> fileNames, vector<TimeInterval*> timeIntervals);
+    ~Input();
     vector<TimeInterval*> getTimeIntervals() const;
     vector<string> getFileNames() const;
     string getFileNameType() const;
