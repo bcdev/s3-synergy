@@ -134,8 +134,8 @@ bool Context::isCompleted() const {
 
 void Context::shift(Segment& segment) const {
     size_t maxLComputed = segment.getGrid().getStartL() - 1;
-    const ModuleLineMap& map = maxLComputedMap.at(&segment);
-    for (ModuleLineMap::const_iterator iter = map.begin(); iter != map.end(); iter++) {
+    const ModuleMaxLComputedMap& map = maxLComputedMap.at(&segment);
+    for (ModuleMaxLComputedMap::const_iterator iter = map.begin(); iter != map.end(); iter++) {
         maxLComputed = min(maxLComputed, iter->second);
     }
     size_t minRequiredLine = getMinLRequired(segment, maxLComputed + 1);
@@ -158,10 +158,12 @@ size_t Context::getMaxLComputed(const Segment& segment, const Module& module) co
 
 size_t Context::getMaxLWritable(const Segment& segment, const Writer& writer) const {
     size_t maxLWritable = segment.getGrid().getStartL() + segment.getGrid().getSizeL() - 1;
-    const ModuleLineMap& map = maxLComputedMap.at(&segment);
-    for (ModuleLineMap::const_iterator iter = map.begin(); iter != map.end(); iter++) {
-        if (&iter->first != (const Module * const*) &writer) {
-            maxLWritable = min(maxLWritable, iter->second);
+    if (exists(maxLComputedMap, &segment)) {
+        const ModuleMaxLComputedMap& map = maxLComputedMap.at(&segment);
+        for (ModuleMaxLComputedMap::const_iterator iter = map.begin(); iter != map.end(); iter++) {
+            if (iter->first != (const Module*) &writer) {
+                maxLWritable = min(maxLWritable, iter->second);
+            }
         }
     }
     return maxLWritable;
@@ -185,6 +187,5 @@ size_t Context::getMinLRequired(const Segment& segment, size_t l) const {
     for (size_t i = 0; i < moduleList.size(); i++) {
         minLineRequired = min(minLineRequired, moduleList[i]->getMinLRequired(segment, l));
     }
-
     return minLineRequired;
 }

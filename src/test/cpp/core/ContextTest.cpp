@@ -110,12 +110,14 @@ void ContextTest::testGetUnknownSegment() {
 
 void ContextTest::testGetMaxLWritable() {
     Segment& segment = context->addSegment("A", 10, 10, 3, 0, 200);
-    const Writer* writer = new SynL2Writer();
 
     Module* module1 = new Reader();
     context->addModule(*module1);
     segment.setStartL(10);
     context->setMaxLComputed(segment, *module1, 13);
+
+    Writer* writer = new SynL2Writer();
+    context->setMaxLComputed(segment, *writer, 7);
 
     size_t maxLWritable = context->getMaxLWritable(segment, *writer);
     CPPUNIT_ASSERT(maxLWritable == 13);
@@ -124,6 +126,8 @@ void ContextTest::testGetMaxLWritable() {
     context->addModule(*module2);
     segment.setStartL(20);
     context->setMaxLComputed(segment, *module2, 22);
+
+    context->addModule(*writer);
 
     maxLWritable = context->getMaxLWritable(segment, *writer);
     CPPUNIT_ASSERT(maxLWritable == 13);
