@@ -1,7 +1,7 @@
 netcdf ${CDL_File_Basename} {
 dimensions:
 	N_DET_SLST_05km = 4 ;
-	N_SCAN_SLST_NAD_L1C = 8800 ;
+	N_SCAN_SLST_ALT_L1C = 8800 ;
 variables:
 	double band_centre(N_DET_SLST_05km) ;
 		band_centre:long_name = "TBD" ;

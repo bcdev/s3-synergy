@@ -234,8 +234,8 @@ private:
     map<string, Segment*> segmentMap;
     vector<Segment*> segmentList;
 
-    typedef map<const Module*, size_t> ModuleLineMap;
-    map<const Segment*, ModuleLineMap> maxLComputedMap;
+    typedef map<const Module*, size_t> ModuleMaxLComputedMap;
+    map<const Segment*, ModuleMaxLComputedMap> maxLComputedMap;
 };
 
 #endif	/* CONTEXT_H */

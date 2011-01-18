@@ -113,32 +113,25 @@ void SynL2Writer::createNcVar(const VariableDescriptor& variableDescriptor, cons
         const size_t sizeK = grid.getSizeK();
         const size_t sizeL = grid.getMaxL() - grid.getMinL() + 1;
         const size_t sizeM = grid.getSizeM();
-        vector<Dimension*> dims = variableDescriptor.getDimensions();
-        size_t dimCount = 0;
-        if (grid.getSizeK() > 1) {
-            dimCount++;
-        }
-        if (grid.getSizeL() > 1) {
-            dimCount++;
-        }
-        if (grid.getSizeM() > 1) {
-            dimCount++;
-        }
-        if (dimCount != dims.size()) {
-            throw logic_error("dimCount != dims.size()");
-        }
+        const vector<Dimension*> dimensions = variableDescriptor.getDimensions();
+        const size_t dimCount = dimensions.size();
+
         valarray<int> dimIds(dimCount);
-        int dimIndex = 0;
-        if (sizeK > 1) {
-            dimIds[dimIndex] = NetCDF::defineDimension(fileId, dims[dimIndex]->getName(), sizeK);
-            dimIndex++;
-        }
-        if (grid.getSizeL() > 1) {
-            dimIds[dimIndex] = NetCDF::defineDimension(fileId, dims[dimIndex]->getName(), sizeL);
-            dimIndex++;
-        }
-        if (sizeM > 1) {
-            dimIds[dimIndex] = NetCDF::defineDimension(fileId, dims[dimIndex]->getName(), sizeM);
+        switch (dimCount) {
+            case 3:
+                dimIds[0] = NetCDF::defineDimension(fileId, dimensions[0]->getName(), sizeK);
+                dimIds[1] = NetCDF::defineDimension(fileId, dimensions[1]->getName(), sizeL);
+                dimIds[2] = NetCDF::defineDimension(fileId, dimensions[2]->getName(), sizeM);
+                break;
+            case 2:
+                dimIds[0] = NetCDF::defineDimension(fileId, dimensions[0]->getName(), sizeL);
+                dimIds[1] = NetCDF::defineDimension(fileId, dimensions[1]->getName(), sizeM);
+                break;
+            case 1:
+                dimIds[0] = NetCDF::defineDimension(fileId, dimensions[0]->getName(), sizeM);
+                break;
+            default:
+                throw logic_error("SynL2Writer::createNcVar(): invalid number of dimensions");
         }
 
         fileIdMap[ncFileName] = fileId;
@@ -146,7 +139,7 @@ void SynL2Writer::createNcVar(const VariableDescriptor& variableDescriptor, cons
     }
     const int fileId = fileIdMap[ncFileName];
     const valarray<int>& dimIds = dimIdMap[ncFileName];
-    int varId = NetCDF::defineVariable(fileId, variableDescriptor.getNcVarName().c_str(), variableDescriptor.getType(), dimIds);
+    const int varId = NetCDF::defineVariable(fileId, variableDescriptor.getNcVarName().c_str(), variableDescriptor.getType(), dimIds);
     varIdMap[varName] = varId;
 
     foreach(Attribute* attribute, variableDescriptor.getAttributes()) {
