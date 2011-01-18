@@ -23,9 +23,6 @@ Configuration::Configuration() {
 }
 
 Configuration::~Configuration() {
-    foreach(ProcessingParameter* pp, processingParameters) {
-        delete pp;
-    }
 }
 
 string Configuration::getProcessorName() {
