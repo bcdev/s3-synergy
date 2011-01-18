@@ -122,14 +122,13 @@ void DictionaryParserTest::testGetNcVarNameAndGetFileName() {
 }
 
 void DictionaryParserTest::testDictionaryParsing() {
-//    ProductDescriptor productDescriptor = dict->getProductDescriptor(Constants::SYMBOLIC_NAME_L2);
-//    testSDRVariable(*productDescriptor.getVariable("SDR_1"));
-//    testA550Variable(*productDescriptor.getVariable("A550"));
-//    testT550Variable(*productDescriptor.getVariable("T550"));
-//    testAMINVariable(*productDescriptor.getVariable("AMIN"));
-//    testAir_pressureVariable(*productDescriptor.getVariable("air_pressure"));
-//    testLatitudeVariable(*productDescriptor.getVariable("latitude"));
-//    testSLN_flagsVariable(*productDescriptor.getVariable("SLN_flags"));
+    ProductDescriptor& productDescriptor = dict->getProductDescriptor(Constants::SYMBOLIC_NAME_L2);
+    testSDRVariable(*productDescriptor.getVariable("SDR_1"));
+    testA550Variable(*productDescriptor.getVariable("A550"));
+    testT550Variable(*productDescriptor.getVariable("T550"));
+    testAMINVariable(*productDescriptor.getVariable("AMIN"));
+    testAir_pressureVariable(*productDescriptor.getVariable("air_pressure"));
+    testLatitudeVariable(*productDescriptor.getVariable("latitude"));
 }
 
 void DictionaryParserTest::testSDRVariable(VariableDescriptor& var) {
@@ -170,14 +169,6 @@ void DictionaryParserTest::testAMINVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(40 == var.getAttribute(attributeName).getShort());
 }
 
-void DictionaryParserTest::testSLN_flagsVariable(VariableDescriptor& var) {
-    string attributeName = "_FillValue";
-    CPPUNIT_ASSERT(0 == var.getAttribute(attributeName).getShort());
-
-    string expected = "L2_SYN_status_flags";
-    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
-}
-
 void DictionaryParserTest::testLatitudeVariable(VariableDescriptor& var) {
     string attributeName = "units";
     CPPUNIT_ASSERT("degrees_north" == var.getAttribute(attributeName).getValue());
@@ -189,22 +180,6 @@ void DictionaryParserTest::testLatitudeVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(-90000000 == var.getAttribute(attributeName).getInt());
 }
 
-void DictionaryParserTest::testTimeVariable(VariableDescriptor& var) {
-    string attributeName = "units";
-    CPPUNIT_ASSERT("microseconds since 2000-1-1 0:0:0" == var.getAttribute(attributeName).getValue());
-
-    attributeName = "valid_max";
-    CPPUNIT_ASSERT(4294967295.0 == var.getAttribute(attributeName).getDouble());
-}
-
-void DictionaryParserTest::testSLN_VAAVariable(VariableDescriptor& var) {
-    string attributeName = "units";
-    CPPUNIT_ASSERT("degrees" == var.getAttribute(attributeName).getValue());
-
-    attributeName = "valid_min";
-    CPPUNIT_ASSERT(-180.0 == var.getAttribute(attributeName).getFloat());
-}
-
 void DictionaryParserTest::testAir_pressureVariable(VariableDescriptor& var) {
     string attributeName = "units";
     CPPUNIT_ASSERT("hPa" == var.getAttribute(attributeName).getValue());
@@ -213,143 +188,5 @@ void DictionaryParserTest::testAir_pressureVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(1100.0 == var.getAttribute(attributeName).getFloat());
 
     string expected = "L2_SYN_geophysical_atmospheric_data";
-    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
-}
-
-void DictionaryParserTest::testLatVariable(VariableDescriptor& var) {
-    string attributeName = "units";
-    CPPUNIT_ASSERT("degrees_north" == var.getAttribute(attributeName).getValue());
-
-    attributeName = "valid_max";
-    CPPUNIT_ASSERT(180.0 == var.getAttribute(attributeName).getFloat());
-}
-
-void DictionaryParserTest::testB0_PVariable(VariableDescriptor& var) {
-    string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.001 == var.getAttribute(attributeName).getDouble());
-
-    attributeName = "valid_max";
-    CPPUNIT_ASSERT(10000.0 == var.getAttribute(attributeName).getFloat());
-
-    string expected = "VGT_P_B0_TOA_reflectance";
-    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
-}
-
-void DictionaryParserTest::testB0_SVariable(VariableDescriptor& var) {
-    string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.001f == var.getAttribute(attributeName).getFloat());
-
-    attributeName = "valid_max";
-    CPPUNIT_ASSERT(10000.0 == var.getAttribute(attributeName).getFloat());
-
-    string expected = "VGT_S_B0_surface_reflectance";
-    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
-}
-
-void DictionaryParserTest::testMIR_PVariable(VariableDescriptor& var) {
-    string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.001f == var.getAttribute(attributeName).getFloat());
-
-    attributeName = "valid_max";
-    CPPUNIT_ASSERT(10000.0 == var.getAttribute(attributeName).getFloat());
-
-    string expected = "VGT_P_MIR_TOA_reflectance";
-    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
-}
-
-void DictionaryParserTest::testMIR_SVariable(VariableDescriptor& var) {
-    string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.001f == var.getAttribute(attributeName).getFloat());
-
-    attributeName = "valid_max";
-    CPPUNIT_ASSERT(10000.0 == var.getAttribute(attributeName).getFloat());
-
-    string expected = "VGT_S_MIR_surface_reflectance";
-    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
-}
-
-void DictionaryParserTest::testSAA_PVariable(VariableDescriptor& var) {
-    string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(1.5 == var.getAttribute(attributeName).getFloat());
-
-    attributeName = "valid_max";
-    CPPUNIT_ASSERT(120 == var.getAttribute(attributeName).getShort());
-
-    string expected = "VGT_P_solar_azimuth_angle";
-    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
-}
-
-void DictionaryParserTest::testSAA_SVariable(VariableDescriptor& var) {
-    string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(1.5 == var.getAttribute(attributeName).getFloat());
-
-    attributeName = "valid_max";
-    CPPUNIT_ASSERT(120 == var.getAttribute(attributeName).getShort());
-
-    string expected = "VGT_S_solar_azimuth_angle";
-    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
-}
-
-void DictionaryParserTest::testAGVariable(VariableDescriptor& var) {
-    string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.004 == var.getAttribute(attributeName).getDouble());
-
-    attributeName = "valid_max";
-    CPPUNIT_ASSERT(127 == var.getAttribute(attributeName).getShort());
-
-    string expected = "VGT_P_aerosol";
-    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
-}
-
-void DictionaryParserTest::testOGVariable(VariableDescriptor& var) {
-    string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.004 == var.getAttribute(attributeName).getDouble());
-
-    attributeName = "units";
-    CPPUNIT_ASSERT("atm cm" == var.getAttribute(attributeName).getValue());
-
-    attributeName = "_FillValue";
-    CPPUNIT_ASSERT(-1 == var.getAttribute(attributeName).getShort());
-
-    string expected = "VGT_P_ozone";
-    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
-}
-
-void DictionaryParserTest::testWVGVariable(VariableDescriptor& var) {
-    string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.04 == var.getAttribute(attributeName).getDouble());
-
-    attributeName = "units";
-    CPPUNIT_ASSERT("g cm-2" == var.getAttribute(attributeName).getValue());
-
-    attributeName = "_FillValue";
-    CPPUNIT_ASSERT(-1 == var.getAttribute(attributeName).getShort());
-
-    string expected = "VGT_P_water_vapour";
-    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
-}
-
-void DictionaryParserTest::testNDVIVariable(VariableDescriptor& var) {
-    string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.004 == var.getAttribute(attributeName).getDouble());
-
-    attributeName = "standard_name";
-    CPPUNIT_ASSERT("normalized_difference_vegetation_index" == var.getAttribute(attributeName).getValue());
-
-    attributeName = "add_offset";
-    CPPUNIT_ASSERT(-0.1 == var.getAttribute(attributeName).getDouble());
-
-    string expected = "VGT_S_NDVI";
-    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
-}
-
-void DictionaryParserTest::testTGVariable(VariableDescriptor& var) {
-    string attributeName = "standard_name";
-    CPPUNIT_ASSERT("time" == var.getAttribute(attributeName).getValue());
-
-    attributeName = "_FillValue";
-    CPPUNIT_ASSERT(-1 == var.getAttribute(attributeName).getShort());
-
-    string expected = "VGT_S_synthesis_time";
     CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
 }
