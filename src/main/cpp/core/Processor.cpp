@@ -21,17 +21,20 @@ Processor::~Processor() {
 void Processor::process(Context& context) {
     try {
         vector<Module*> modules = context.getModules();
-        for (size_t i = 0; i < modules.size(); i++) {
-            modules[i]->start(context);
+
+        foreach(Module* module, modules) {
+            module->start(context);
         }
         while (!context.isCompleted()) {
-            for (size_t i = 0; i < modules.size(); i++) {
-                modules[i]->process(context);
+
+            foreach(Module* module, modules) {
+                module->process(context);
             }
             context.shift();
         }
-        for (size_t i = 0; i < modules.size(); i++) {
-            modules[i]->stop(context);
+
+        reverse_foreach(Module* module, modules) {
+            module->stop(context);
         }
     } catch (exception& e) {
         context.handleError(e);

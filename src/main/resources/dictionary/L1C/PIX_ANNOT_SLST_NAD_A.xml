@@ -3,14 +3,14 @@
   <variables>
     <variable>
       <name>SLST_CW_flags</name>
-      <symbolic_name>SLO_confidence</symbolic_name>
-      <segment_name>SLST_ALT_05km</segment_name>
+      <symbolic_name>SLN_confidence</symbolic_name>
+      <segment_name>SLST_NAD_05km</segment_name>
     </variable>
   </variables>
   <global_attributes>
     <attribute>
       <name>dataset_name</name>
-      <value>PIX_ANNOT_SLST_ALT_TDI</value>
+      <value>PIX_ANNOT_SLST_NAD_A</value>
     </attribute>
   </global_attributes>
 </dataset>

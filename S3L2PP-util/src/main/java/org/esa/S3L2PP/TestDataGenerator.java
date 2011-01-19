@@ -48,7 +48,7 @@ public class TestDataGenerator {
     private static final String SUB_BAND_TDI = "A+B";
 
     private static final String NCGEN_PATH_DEFAULT = "/usr/bin/ncgen";
-    private static final String TARGET_DIR_DEFAULT = "testdata/dummy";
+    private static final String TARGET_DIR_DEFAULT = "testdata/input/dummy";
 
     private static File targetDir;
     private static String ncgenPath;
@@ -90,6 +90,8 @@ public class TestDataGenerator {
         final Properties properties = createProperties();
         properties.setProperty("Template_File_Basename", "PIX_ANNOT_SLST_NAD");
         properties.setProperty("CDL_File_Basename", "${Template_File_Basename}_${Sub_Band}");
+        generateDataset(properties);
+        properties.setProperty("Template_File_Basename", "PIX_ANNOT_SLST_ALT");
         generateDataset(properties);
     }
 

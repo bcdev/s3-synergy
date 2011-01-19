@@ -76,6 +76,17 @@ public:
         return *e;
     }
 
+    // TODO - remove method
+    void clearAttributes() {
+        pair<string, A*> apair;
+
+        reverse_foreach(apair, attributeMap) {
+            delete apair.second;
+        }
+
+        attributeMap.clear();
+    }
+
     A& getAttribute(const string& name) const {
         if (!hasAttribute(name)) {
             BOOST_THROW_EXCEPTION(out_of_range("Descriptor '" + this->name + "' contains no attribute '" + name + "'."));

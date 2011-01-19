@@ -191,6 +191,6 @@ void NetCDF::checkStatus(int status, const string& action) {
         message << "Error ";
         message << action;
         message << ". Code '" << status << "'.";
-        BOOST_THROW_EXCEPTION(logic_error(message.str()));
+        BOOST_THROW_EXCEPTION(std::logic_error(message.str()));
     }
 }

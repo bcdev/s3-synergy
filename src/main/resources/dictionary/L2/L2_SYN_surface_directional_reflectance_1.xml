@@ -4,6 +4,7 @@
 	<variable>
 		<name>SDR_1</name>
 		<type>short</type>
+		<segment_name>SYN_COLLOCATION</segment_name>
 		<attributes>
 			<attribute>
 				<name>long_name</name>

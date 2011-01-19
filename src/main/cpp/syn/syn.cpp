@@ -2,12 +2,14 @@
 #include <unistd.h>
 #include <vector>
 
+#include "../util/ErrorHandler.h"
 #include "../core/Dictionary.h"
 #include "../util/JobOrderParser.h"
 #include "../util/Logger.h"
 #include "../core/Processor.h"
 #include "../modules/L1cReader.h"
 #include "../modules/SynL2Writer.h"
+#include "../modules/TestModule.h"
 
 #include <iostream>
 
@@ -41,19 +43,20 @@ int main() {
 
     // configure modules
     // TODO - use job order for configuration
-    L1cReader reader(".");
-    //TestModule test;
-    SynL2Writer writer(".");
+    L1cReader reader("/mnt/hgfs/S3L2PP/testdata/input/dummy");
+    TestModule test;
+    SynL2Writer writer("/mnt/hgfs/S3L2PP/testdata/output/dummy");
 
     Processor processor;
-
+    ErrorHandler errorHandler;
 
     Context context(*logger);
+    context.setErrorHandler(&errorHandler);
     context.setJobOrder(jobOrder);
     context.addModule(reader);
+    context.addModule(test);
     context.addModule(writer);
     context.setDictionary(&dict);
-
     processor.process(context);
 
     logger->info(createProcessingTimeMessage(start), "Main");
