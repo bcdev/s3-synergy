@@ -25,21 +25,21 @@ int main() {
 
     // TODO - error handler needed
     JobOrderParser parser = JobOrderParser(jobOrderXml);
-    JobOrder jobOrder = parser.parseJobOrder();
+    JobOrder* jobOrder = parser.parseJobOrder();
 
     // set up logger
     // TODO - use argument for log file name/path
     Logger* logger = Logger::get();
     // TODO - set processor version from job order to logger
-    logger->init(jobOrder.getConfig().getOrderId());
-    logger->setOutLogLevel(jobOrder.getConfig().getStandardLogLevel());
-    logger->setErrLogLevel(jobOrder.getConfig().getErrorLogLevel());
+    logger->init(jobOrder->getConfig().getOrderId());
+    logger->setOutLogLevel(jobOrder->getConfig().getStandardLogLevel());
+    logger->setErrLogLevel(jobOrder->getConfig().getErrorLogLevel());
     logger->info("Main process started.", "Main");
     //    jobOrder.log();
     //    logIOParameters(jobOrder, logger);
 
     // TODO - get config file correct for current processor, not simply the first
-    Dictionary dict(jobOrder.getConfig().getConfigFileNames()[0]);
+    Dictionary dict(jobOrder->getConfig().getConfigFileNames()[0]);
 
     // configure modules
     // TODO - use job order for configuration
@@ -51,7 +51,7 @@ int main() {
 
     Context context;
     context.setLogging(logger);
-    context.setJobOrder(&jobOrder);
+    context.setJobOrder(jobOrder);
     context.addModule(reader);
     //    context.addModule(writer);
     context.setDictionary(&dict);

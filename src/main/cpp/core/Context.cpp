@@ -21,7 +21,6 @@
 #include <algorithm>
 #include <iostream>
 #include <limits>
-#include <stdexcept>
 
 #include "Boost.h"
 #include "Context.h"
@@ -139,7 +138,7 @@ void Context::setErrorHandler(ErrorHandler* errorHandler) {
     this->errorHandler = errorHandler;
 }
 
-void Context::handleError(SynException& e) {
+void Context::handleError(exception& e) {
     if (errorHandler == 0) {
         throw (e);
     } else {

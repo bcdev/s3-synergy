@@ -21,11 +21,12 @@
 #ifndef ERRORHANDLER_H
 #define	ERRORHANDLER_H
 
+#include <stdexcept>
 #include <string>
 
 #include "../core/Context.h"
-#include "../core/SynException.h"
 
+using std::exception;
 using std::string;
 
 class Context;
@@ -34,7 +35,7 @@ class ErrorHandler {
 public:
     ErrorHandler();
     ~ErrorHandler();
-    void handleError(Context& context, SynException &e) const;
+    void handleError(Context& context, exception &e) const;
 };
 
 #endif	/* ERRORHANDLER_H */

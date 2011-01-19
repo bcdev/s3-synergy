@@ -49,9 +49,9 @@ void ProcessorTest::testCatching() {
     XPathInitializer init;
     string jobOrderXml = "/mnt/hgfs/S3L2PP/src/test/resources/syn/JobOrder.1.xml";
     JobOrderParser parser = JobOrderParser(jobOrderXml);
-    JobOrder jobOrder = parser.parseJobOrder();
+    JobOrder* jobOrder = parser.parseJobOrder();
     Logger* logger = Logger::get();
-    logger->init(jobOrder.getConfig().getOrderId());
+    logger->init(jobOrder->getConfig().getOrderId());
 
     Reader reader;
 
@@ -63,19 +63,21 @@ void ProcessorTest::testCatching() {
 
     context.setLogging(Logger::get());
 
-    CPPUNIT_ASSERT_THROW(processor.process(context), std::logic_error);
+    ErrorHandler handler;
+    context.setErrorHandler(&handler);
 
-    context.setJobOrder(&jobOrder);
+//    processor.process(context);
+    CPPUNIT_ASSERT_NO_THROW(processor.process(context));
 
-    CPPUNIT_ASSERT_THROW(processor.process(context), std::exception);
+    context.setJobOrder(jobOrder);
+
+//    processor.process(context);
+    CPPUNIT_ASSERT_NO_THROW(processor.process(context));
 
     ProductDescriptor& prodDesc = dict->addProductDescriptor(Constants::SYMBOLIC_NAME_L1C);
     SegmentDescriptor& segDesc = prodDesc.addSegmentDescriptor("segment");
     segDesc.addVariableDescriptor("variable");
 
-    CPPUNIT_ASSERT_THROW(processor.process(context), std::exception);
-
-    ErrorHandler handler;
-    context.setErrorHandler(&handler);
+//    processor.process(context);
     CPPUNIT_ASSERT_NO_THROW(processor.process(context));
 }

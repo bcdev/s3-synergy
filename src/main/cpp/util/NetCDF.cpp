@@ -189,9 +189,9 @@ void NetCDF::putAttributeString(int fileId, int varId, const Attribute& attribut
 void NetCDF::checkStatus(int status, const string& action) {
     if (status != NC_NOERR) {
         std::stringstream message;
-        message << "NetCDF-error ";
+        message << "NetCDF::checkStatus: Error ";
         message << action;
         message << ". Code '" << status << "'.";
-        throw SynException(message.str(), "NetCDF");
+        BOOST_THROW_EXCEPTION(logic_error(message.str()));
     }
 }

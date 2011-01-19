@@ -32,7 +32,7 @@ class JobOrderParser : public XmlParser {
 public:
     JobOrderParser(string path);
     virtual ~JobOrderParser();
-    JobOrder parseJobOrder();
+    JobOrder* parseJobOrder();
 protected:
     string path;
 private:
