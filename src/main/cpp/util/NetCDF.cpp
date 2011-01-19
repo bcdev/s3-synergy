@@ -19,7 +19,6 @@
  */
 
 #include "NetCDF.h"
-#include "../core/SynException.h"
 
 int NetCDF::openFile(const string& fileName) {
     int ncId;
