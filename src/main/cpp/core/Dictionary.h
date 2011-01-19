@@ -344,7 +344,7 @@ public:
      * Getter for the variable's file name.
      * @return The variable's file name.
      */
-    string getNcFileName() const {
+    string getNcFileBasename() const {
         return ncFileName;
     }
 

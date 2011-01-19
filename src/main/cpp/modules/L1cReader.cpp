@@ -29,48 +29,53 @@ void L1cReader::start(Context& context) {
         const string& segmentName = segmentDescriptor->getName();
 
         foreach(VariableDescriptor* variableDescriptor, variableDescriptors) {
-            const string symbolicName = variableDescriptor->getName();
-            const string ncVariableName = variableDescriptor->getNcVarName();
-            const string fileName = variableDescriptor->getNcFileName();
+            const string varName = variableDescriptor->getName();
+            const string ncVarName = variableDescriptor->getNcVarName();
+            const string ncFileBasename = variableDescriptor->getNcFileBasename();
 
-            int fileId = findFile(sourceDirPath.string(), fileName);
-            int varId = NetCDF::getVariableId(fileId, ncVariableName.c_str());
+            const int fileId = openNcFile(sourceDirPath.string(), ncFileBasename);
+            const int varId = NetCDF::getVariableId(fileId, ncVarName.c_str());
+            const int dimCount = NetCDF::getDimCountForVariable(fileId, varId);
+            const valarray<int> dimIds = NetCDF::getDimIdsForVariable(fileId, varId);
+
+            size_t camCount;
+            size_t rowCount;
+            size_t colCount;
+
+            switch (dimCount) {
+                case 3:
+                    camCount = NetCDF::getDimLength(fileId, dimIds[0]);
+                    rowCount = NetCDF::getDimLength(fileId, dimIds[1]);
+                    colCount = NetCDF::getDimLength(fileId, dimIds[2]);
+                    variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimIds[0])).setSize(camCount);
+                    variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimIds[1])).setSize(rowCount);
+                    variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimIds[2])).setSize(colCount);
+                    break;
+                case 2:
+                    camCount = 1;
+                    rowCount = NetCDF::getDimLength(fileId, dimIds[0]);
+                    colCount = NetCDF::getDimLength(fileId, dimIds[1]);
+                    variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimIds[0])).setSize(rowCount);
+                    variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimIds[1])).setSize(colCount);
+                    break;
+                case 1:
+                    camCount = 1;
+                    rowCount = 1;
+                    colCount = NetCDF::getDimLength(fileId, dimIds[0]);
+                    variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimIds[0])).setSize(colCount);
+                    break;
+                default:
+                    BOOST_THROW_EXCEPTION(runtime_error("invalid number of dimensions for variable '" + ncVarName + "'."));
+            }
+            if (!context.hasSegment(segmentName)) {
+                const size_t sizeL = min(chunkSize, rowCount);
+                context.addSegment(segmentName, sizeL, colCount, camCount, 0, rowCount - 1);
+            }
             const int type = NetCDF::getVariableType(fileId, varId);
             variableDescriptor->setType(type);
-            varIdMap[symbolicName] = varId;
-            int dimCount = NetCDF::getDimCountForVariable(fileId, varId);
-            valarray<int> dimensionIds = NetCDF::getDimIdsForVariable(fileId, varId);
-
-            // getting the dimension sizes
-            size_t camCount = 1;
-            size_t rowCount = 1;
-            size_t colCount = 1;
-
-            if (dimCount == 3) {
-                camCount = NetCDF::getDimLength(fileId, dimensionIds[0]);
-                rowCount = NetCDF::getDimLength(fileId, dimensionIds[1]);
-                colCount = NetCDF::getDimLength(fileId, dimensionIds[2]);
-                variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimensionIds[0])).setSize(camCount);
-                variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimensionIds[1])).setSize(rowCount);
-                variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimensionIds[2])).setSize(colCount);
-            } else if (dimCount == 2) {
-                rowCount = NetCDF::getDimLength(fileId, dimensionIds[0]);
-                colCount = NetCDF::getDimLength(fileId, dimensionIds[1]);
-                variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimensionIds[0])).setSize(rowCount);
-                variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimensionIds[1])).setSize(colCount);
-            } else if (dimCount == 1) {
-                colCount = NetCDF::getDimLength(fileId, dimensionIds[0]);
-                variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimensionIds[0])).setSize(colCount);
-            }
-
-            const size_t sizeL = min(chunkSize, rowCount);
-            Segment* segment;
-            if (context.hasSegment(segmentName)) {
-                segment = &context.getSegment(segmentName);
-            } else {
-                segment = &context.addSegment(segmentName, sizeL, colCount, camCount, 0, rowCount - 1);
-            }
-            IOUtils::addVariableToSegment(symbolicName, type, *segment);
+            
+            IOUtils::addVariableToSegment(varName, type, context.getSegment(segmentName));
+            ncVarIdMap[varName] = varId;
         }
     }
 }
@@ -78,15 +83,15 @@ void L1cReader::start(Context& context) {
 void L1cReader::stop(Context& context) {
     pair<string, int> fileIdPair;
 
-    foreach(fileIdPair, fileIdMap) {
+    foreach(fileIdPair, ncFileIdMap) {
         NetCDF::closeFile(fileIdPair.second);
     }
-
-    fileIdMap.clear();
+    ncVarIdMap.clear();
+    ncFileIdMap.clear();
 }
 
 void L1cReader::process(Context& context) {
-    Dictionary& dict = *context.getDictionary();
+    const Dictionary& dict = *context.getDictionary();
     const vector<SegmentDescriptor*> segmentDescriptors =
             dict.getProductDescriptor(Constants::SYMBOLIC_NAME_L1C).getSegmentDescriptors();
 
@@ -102,21 +107,21 @@ void L1cReader::process(Context& context) {
 
             foreach(VariableDescriptor* variableDescriptor, variableDescriptors) {
                 const string varName = variableDescriptor->getName();
-                const string ncFileName = variableDescriptor->getNcFileName();
+                const string ncFileName = variableDescriptor->getNcFileBasename();
 
-                if (!contains(varIdMap, varName)) {
+                if (!contains(ncVarIdMap, varName)) {
                     throw (logic_error("Unknown variable '" + varName + "'."));
                 }
-                if (!contains(fileIdMap, ncFileName)) {
+                if (!contains(ncFileIdMap, ncFileName)) {
                     throw logic_error("Unknown netCDF file '" + ncFileName + "'.");
                 }
-                const int varId = varIdMap[varName];
-                const int fileId = fileIdMap[ncFileName];
+                const int varId = ncVarIdMap[varName];
+                const int fileId = ncFileIdMap[ncFileName];
                 const size_t dimCount = variableDescriptor->getDimensions().size();
                 const valarray<size_t> starts = IOUtils::createStartVector(dimCount, startL);
                 const valarray<size_t> counts = IOUtils::createCountVector(dimCount, grid.getSizeK(), endL - startL + 1, grid.getSizeM());
                 if (context.getLogging() != 0) {
-                    context.getLogging()->progress("Reading variable " + varName + " of segment [" + segment.toString() + "]", getId());
+                    context.getLogging()->progress("Reading variable '" + variableDescriptor->getNcVarName() + "' into segment [" + segment.toString() + "]", getId());
                 }
                 const Accessor& accessor = segment.getAccessor(varName);
                 NetCDF::getData(fileId, varId, starts, counts, accessor.getUntypedData());
@@ -126,10 +131,10 @@ void L1cReader::process(Context& context) {
     }
 }
 
-int L1cReader::findFile(const string& sourceDirPath, const string& fileName) {
+int L1cReader::openNcFile(const string& sourceDirPath, const string& fileName) {
     vector<string> fileNames = IOUtils::getFiles(sourceDirPath);
-    if (fileIdMap.find(fileName) != fileIdMap.end()) {
-        return fileIdMap[fileName];
+    if (ncFileIdMap.find(fileName) != ncFileIdMap.end()) {
+        return ncFileIdMap[fileName];
     }
 
     for (size_t i = 0; i < fileNames.size(); i++) {
@@ -139,7 +144,7 @@ int L1cReader::findFile(const string& sourceDirPath, const string& fileName) {
                     boost::ends_with(currentFileName, fileName)) {
 
                 int fileId = NetCDF::openFile(currentFileName.c_str());
-                fileIdMap[fileName] = fileId;
+                ncFileIdMap[fileName] = fileId;
                 return fileId;
             }
         }

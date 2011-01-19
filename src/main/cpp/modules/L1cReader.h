@@ -24,13 +24,13 @@ public:
     void process(Context& context);
 
 private:
-    int findFile(const string& sourceDirPath, const string& fileName);
+    int openNcFile(const string& sourceDirPath, const string& fileName);
 
     const path sourceDirPath;
     const size_t chunkSize;
 
-    map<string, int> fileIdMap;
-    map<string, int> varIdMap;
+    map<string, int> ncFileIdMap;
+    map<string, int> ncVarIdMap;
 };
 
 #endif	/* L1CREADER_H */
