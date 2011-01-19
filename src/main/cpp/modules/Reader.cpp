@@ -29,7 +29,8 @@ Reader::~Reader() {
 
 void Reader::start(Context& context) {
     if (context.getJobOrder() == 0) {
-        throw logic_error("Reader::start: job order missing.");
+        BOOST_THROW_EXCEPTION(logic_error("job order missing."));
+//        throw logic_error("Reader::start: job order missing.");
     }
     const string processorId = "SYL2";
     const string sourceDir = context.getJobOrder()->getProcessorConfiguration(processorId).getInputList()[0]->getFileNames()[0];

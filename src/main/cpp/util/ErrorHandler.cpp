@@ -18,11 +18,12 @@
  * Created on January 13, 2010, 5:17 PM
  */
 
+#include <iostream>
+
 #include "../core/Boost.h"
 #include "ErrorHandler.h"
 #include "../core/JobOrder.h"
 #include "Logger.h"
-#include "../core/SynException.h"
 
 ErrorHandler::ErrorHandler() {
 }
@@ -30,7 +31,25 @@ ErrorHandler::ErrorHandler() {
 ErrorHandler::~ErrorHandler() {
 }
 
-void ErrorHandler::handleError(Context& context, SynException& e) const {
+void ErrorHandler::handleError(Context& context, exception& e) const {
+    string processorVersion = "unknown";
+    if (context.getJobOrder() != 0) {
+        processorVersion = context.getJobOrder()->getConfig().getVersion();
+    }
 //    string diagnostics = boost::diagnostic_information(e);
-    context.getLogging()->error(e.getMessage(), e.getModuleId(), context.getJobOrder()->getConfig().getVersion());
+//    std::cout << "\n" << diagnostics << "\n";
+//
+//    vector<string> lines;
+//    split(lines, diagnostics, boost::is_any_of("\n"));
+//    foreach(string str, lines) {
+//        std::cout << "\n" << str << "\n";
+//    }
+//
+//    string message = string();
+//    message.append(": ");
+//    message.append(e.what());
+//
+//    string module;
+
+    context.getLogging()->error(e.what(), "module", processorVersion);
 }

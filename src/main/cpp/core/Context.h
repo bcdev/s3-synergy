@@ -21,6 +21,7 @@
 #ifndef CONTEXT_H
 #define	CONTEXT_H
 
+#include <stdexcept>
 #include <map>
 #include <vector>
 
@@ -29,9 +30,9 @@
 #include "../util/ErrorHandler.h"
 #include "Logging.h"
 #include "Segment.h"
-#include "SynException.h"
 #include "Object.h"
 
+using std::exception;
 using std::map;
 using std::vector;
 
@@ -212,7 +213,7 @@ public:
     
     void setErrorHandler(ErrorHandler* errorHandler);
 
-    void handleError(SynException& e);
+    void handleError(exception& e);
 
 private:
 

@@ -33,7 +33,7 @@ void Processor::process(Context& context) {
         for (size_t i = 0; i < modules.size(); i++) {
             modules[i]->stop(context);
         }
-    } catch (SynException& e) {
+    } catch (exception& e) {
         context.handleError(e);
     }
 }

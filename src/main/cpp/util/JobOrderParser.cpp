@@ -36,10 +36,10 @@ JobOrderParser::JobOrderParser(string path) {
 JobOrderParser::~JobOrderParser() {
 }
 
-JobOrder JobOrderParser::parseJobOrder() {
+JobOrder* JobOrderParser::parseJobOrder() {
     Configuration config = parseConfiguration();
     vector<ProcessorConfiguration*> processorConfigurations = parseProcessorConfigurations();
-    JobOrder jobOrder = JobOrder(config, processorConfigurations);
+    JobOrder* jobOrder = new JobOrder(config, processorConfigurations);
     return jobOrder;
 }
 
