@@ -37,13 +37,13 @@ void SynL2Writer::process(Context& context) {
                 if (segment.hasVariable(varName)) {
                     const string ncFileBasename = variableDescriptor->getNcFileBasename();
                     if (!contains(ncVarIdMap, varName)) {
-                        throw logic_error("Unknown variable '" + varName + "'.");
+                        BOOST_THROW_EXCEPTION(logic_error("Unknown variable '" + varName + "'."));
                     }
                     if (!contains(ncFileIdMap, ncFileBasename)) {
-                        throw logic_error("Unknown netCDF file '" + ncFileBasename + "'.");
+                        BOOST_THROW_EXCEPTION(logic_error("Unknown netCDF file '" + ncFileBasename + "'."));
                     }
                     if (!contains(ncDimIdMap, ncFileBasename)) {
-                        throw logic_error("Unknown netCDF file '" + ncFileBasename + "'.");
+                        BOOST_THROW_EXCEPTION(logic_error("Unknown netCDF file '" + ncFileBasename + "'."));
                     }
                     const int varId = ncVarIdMap[varName];
                     const int ncId = ncFileIdMap[ncFileBasename];
@@ -146,7 +146,7 @@ void SynL2Writer::createNcVar(
 
                 break;
             default:
-                throw logic_error("SynL2Writer::createNcVar(): invalid number of dimensions");
+                BOOST_THROW_EXCEPTION(logic_error("SynL2Writer::createNcVar(): invalid number of dimensions"));
         }
 
         ncFileIdMap[ncFileBasename] = fileId;

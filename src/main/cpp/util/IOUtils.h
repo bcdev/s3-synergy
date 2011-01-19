@@ -66,7 +66,7 @@ public:
             count[0] = colCount;
             return count;
         }
-        throw std::invalid_argument("Wrong number of dimensions.");
+        BOOST_THROW_EXCEPTION(std::invalid_argument("Wrong number of dimensions."));
     }
 
     static const valarray<size_t> createStartVector(size_t dimCount, size_t startLine) {
@@ -84,7 +84,7 @@ public:
             start[0] = 0;
             return start;
         }
-        throw std::invalid_argument("Wrong number of dimensions.");
+        BOOST_THROW_EXCEPTION(std::invalid_argument("Wrong number of dimensions."));
     }
 
     static void addVariableToSegment(const string symbolicName, nc_type type, Segment& segment) {
@@ -141,7 +141,7 @@ public:
             }
             default:
             {
-                throw std::invalid_argument("Variable " + symbolicName + " has invalid type.");
+                BOOST_THROW_EXCEPTION(std::invalid_argument("Variable " + symbolicName + " has invalid type."));
             }
         }
     }

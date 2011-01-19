@@ -20,6 +20,7 @@
 
 #include <stdexcept>
 
+#include "Boost.h"
 #include "GridImpl.h"
 #include "Constants.h"
 
@@ -27,10 +28,10 @@ using std::invalid_argument;
 
 GridImpl::GridImpl(size_t sizeK, size_t sizeL, size_t sizeM, size_t minL, size_t maxL) : Grid() {
     if (minL > maxL) {
-        throw invalid_argument("minL > maxL");
+        BOOST_THROW_EXCEPTION(invalid_argument("minL > maxL"));
     }
     if (sizeL - 1 > maxL - minL) {
-        throw invalid_argument("sizeL - 1 > maxL - minL");
+        BOOST_THROW_EXCEPTION(invalid_argument("sizeL - 1 > maxL - minL"));
     }
     this->startK = 0;
     this->startL = minL;
@@ -62,23 +63,23 @@ GridImpl::~GridImpl() {
 
 void GridImpl::setStartL(size_t l) {
     if (l < minL) {
-        throw std::out_of_range("l < minL");
+        BOOST_THROW_EXCEPTION(std::out_of_range("l < minL"));
     }
     if (l + sizeL - 1 > maxL) { //
-        throw std::out_of_range("l + sizeL - 1 > maxL");
+        BOOST_THROW_EXCEPTION(std::out_of_range("l + sizeL - 1 > maxL"));
     }
     this->startL = l;
 }
 
 size_t GridImpl::getIndex(size_t k, size_t l, size_t m) const throw (out_of_range) {
     if (k < startK || k > startK + sizeK - 1) {
-        throw out_of_range("index k is out of range.");
+        BOOST_THROW_EXCEPTION(out_of_range("index k is out of range."));
     }
     if (l < startL || l > startL + sizeL - 1) {
-        throw out_of_range("index l is out of range.");
+        BOOST_THROW_EXCEPTION(out_of_range("index l is out of range."));
     }
     if (m < startM || m > startM + sizeM - 1) {
-        throw out_of_range("index m is out of range.");
+        BOOST_THROW_EXCEPTION(out_of_range("index m is out of range."));
     }
     return (k - startK) * strideK + (l - startL) * strideL + (m - startM) * strideM;
 }

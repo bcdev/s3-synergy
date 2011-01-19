@@ -52,14 +52,14 @@ void Context::addModule(Module& module) {
 
 void Context::addObject(Object& object) throw (logic_error) {
     if (hasObject(object.getId())) {
-        throw logic_error("an object with ID '" + object.getId() + "' has already been added to the context.");
+        BOOST_THROW_EXCEPTION(logic_error("an object with ID '" + object.getId() + "' has already been added to the context."));
     }
     objectMap[object.getId()] = &object;
 }
 
 Segment& Context::addSegment(const string& id, size_t sizeL, size_t sizeM, size_t sizeK, size_t minL, size_t maxL) throw (logic_error) {
     if (hasSegment(id)) {
-        throw logic_error("a segment with ID '" + id + "' has already been added to the context.");
+        BOOST_THROW_EXCEPTION(logic_error("a segment with ID '" + id + "' has already been added to the context."));
     }
     Segment* segment = new SegmentImpl(id, sizeL, sizeM, sizeK, minL, maxL);
     segmentMap[id] = segment;
@@ -140,7 +140,7 @@ void Context::setErrorHandler(ErrorHandler* errorHandler) {
 
 void Context::handleError(exception& e) {
     if (errorHandler == 0) {
-        throw (e);
+        BOOST_THROW_EXCEPTION(e);
     } else {
         errorHandler->handleError(*this, e);
     }
@@ -167,7 +167,7 @@ size_t Context::getMaxLComputed(const Segment& segment, const Module& module) co
     if (hasMaxLComputed(segment, module)) {
         return maxLComputedMap.at(&segment).at(&module);
     }
-    throw invalid_argument("Context::getMaxLComputed(): no maxL defined for segment '" + segment.getId() + "' and module '" + module.getId() + "'.");
+    BOOST_THROW_EXCEPTION(invalid_argument("Context::getMaxLComputed(): no maxL defined for segment '" + segment.getId() + "' and module '" + module.getId() + "'."));
 }
 
 size_t Context::getMaxLWritable(const Segment& segment, const Writer& writer) const {
@@ -191,7 +191,7 @@ bool Context::hasMaxLComputed(const Segment& segment, const Module& module) cons
 void Context::setMaxLComputed(const Segment& segment, const Module& module, size_t l) {
     if ((l < hasMaxLComputed(segment, module) && getMaxLComputed(segment, module))
             || l > segment.getGrid().getMaxL()) {
-        throw invalid_argument("Context::setMaxLComputed(): invalid argument l = " + lexical_cast<string > (l));
+        BOOST_THROW_EXCEPTION(invalid_argument("Context::setMaxLComputed(): invalid argument l = " + lexical_cast<string > (l)));
     }
     maxLComputedMap[&segment][&module] = l;
 }

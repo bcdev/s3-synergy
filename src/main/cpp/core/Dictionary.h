@@ -60,7 +60,7 @@ public:
 
     A& addAttribute(int type, const string& name, const string& value = "") {
         if (hasAttribute(name)) {
-            throw logic_error("Attribute '" + name + "' already exists.");
+            BOOST_THROW_EXCEPTION(logic_error("Attribute '" + name + "' already exists."));
         }
         A* a = new A(type, name, value);
         attributeMap[name] = a;
@@ -69,7 +69,7 @@ public:
 
     E& addElement(const string& name) {
         if (hasElement(name)) {
-            throw logic_error("Element '" + name + "' already exists.");
+            BOOST_THROW_EXCEPTION(logic_error("Element '" + name + "' already exists."));
         }
         E* e = new E(name);
         elementMap[name] = e;
@@ -78,7 +78,7 @@ public:
 
     A& getAttribute(const string& name) const {
         if (!hasAttribute(name)) {
-            throw out_of_range("Descriptor '" + this->name + "' contains no attribute '" + name + "'.");
+            BOOST_THROW_EXCEPTION(out_of_range("Descriptor '" + this->name + "' contains no attribute '" + name + "'."));
         }
         return *attributeMap.at(name);
     }
@@ -95,7 +95,7 @@ public:
 
     E& getElement(const string& name) const {
         if (!hasElement(name)) {
-            throw out_of_range("Descriptor '" + this->name + "' contains no element '" + name + "'.");
+            BOOST_THROW_EXCEPTION(out_of_range("Descriptor '" + this->name + "' contains no element '" + name + "'."));
         }
         return *elementMap.at(name);
     }

@@ -81,7 +81,7 @@ VariableDescriptor* ProductDescriptor::getVariable(const string& name) const {
             }
         }
     }
-    throw std::invalid_argument("Dictionary::getVariable: no variable descriptor with name '" + name + "'.");
+    BOOST_THROW_EXCEPTION(std::invalid_argument("Dictionary::getVariable: no variable descriptor with name '" + name + "'."));
 }
 
 string VariableDescriptor::toString() const {
