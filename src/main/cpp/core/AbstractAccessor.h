@@ -24,9 +24,8 @@
 #include <algorithm>
 #include <typeinfo>
 
-#include <boost/numeric/conversion/cast.hpp>
-
 #include "Accessor.h"
+#include "Boost.h"
 
 using std::copy;
 using std::fill;
@@ -121,43 +120,43 @@ public:
     }
 
     virtual valarray<int8_t>& getByteData() const throw (bad_cast) {
-        throw bad_cast();
+        BOOST_THROW_EXCEPTION(bad_cast());
     }
 
     virtual valarray<double>& getDoubleData() const throw (bad_cast) {
-        throw bad_cast();
+        BOOST_THROW_EXCEPTION(bad_cast());
     }
 
     virtual valarray<float>& getFloatData() const throw (bad_cast) {
-        throw bad_cast();
+        BOOST_THROW_EXCEPTION(bad_cast());
     }
 
     virtual valarray<int32_t>& getIntData() const throw (bad_cast) {
-        throw bad_cast();
+        BOOST_THROW_EXCEPTION(bad_cast());
     }
 
     virtual valarray<int64_t>& getLongData() const throw (bad_cast) {
-        throw bad_cast();
+        BOOST_THROW_EXCEPTION(bad_cast());
     }
 
     virtual valarray<int16_t>& getShortData() const throw (bad_cast) {
-        throw bad_cast();
+        BOOST_THROW_EXCEPTION(bad_cast());
     }
 
     virtual valarray<uint8_t>& getUByteData() const throw (bad_cast) {
-        throw bad_cast();
+        BOOST_THROW_EXCEPTION(bad_cast());
     }
 
     virtual valarray<uint32_t>& getUIntData() const throw (bad_cast) {
-        throw bad_cast();
+        BOOST_THROW_EXCEPTION(bad_cast());
     }
 
     virtual valarray<uint64_t>& getULongData() const throw (bad_cast) {
-        throw bad_cast();
+        BOOST_THROW_EXCEPTION(bad_cast());
     }
 
     virtual valarray<uint16_t>& getUShortData() const throw (bad_cast) {
-        throw bad_cast();
+        BOOST_THROW_EXCEPTION(bad_cast());
     }
 
     void* getUntypedData() const {
@@ -166,13 +165,13 @@ public:
 
     void shift(size_t n, size_t strideK, size_t strideL) {
         if (n * strideL > strideK) {
-            throw invalid_argument("n * strideL > strideK");
+            BOOST_THROW_EXCEPTION(invalid_argument("n * strideL > strideK"));
         }
         if (strideK % strideL != 0) {
-            throw invalid_argument("strideK % strideL != 0");
+            BOOST_THROW_EXCEPTION(invalid_argument("strideK % strideL != 0"));
         }
         if (data.size() % strideK != 0) {
-            throw invalid_argument("data.size() % strideK != 0");
+            BOOST_THROW_EXCEPTION(invalid_argument("data.size() % strideK != 0"));
         }
         for (size_t k = 0; k < data.size(); k += strideK) {
             copy(&data[k + n * strideL], &data[k + strideK], &data[k]);
@@ -198,7 +197,7 @@ private:
         if (i < data.size()) {
             return i;
         }
-        throw out_of_range("index i is out of range.");
+        BOOST_THROW_EXCEPTION(out_of_range("index i is out of range."));
     }
 
     valarray<T> data;

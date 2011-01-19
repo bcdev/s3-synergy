@@ -36,6 +36,13 @@ public:
     ErrorHandler();
     ~ErrorHandler();
     void handleError(Context& context, exception &e) const;
+private:
+    string extractFunctionName(const string firstLine) const;
+    string extractModuleName(const string firstLine) const;
+    string extractLineNumber(const string firstLine) const;
+    vector<string> splitIntoLines(const string toSplit) const;
+    string createMessage(const string module, const string functionName,
+            const string lineNumber, const string exceptionMessage) const;
 };
 
 #endif	/* ERRORHANDLER_H */

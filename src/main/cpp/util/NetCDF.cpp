@@ -19,7 +19,6 @@
  */
 
 #include "NetCDF.h"
-#include "../core/SynException.h"
 
 int NetCDF::openFile(const path& filePath) {
     int ncId;
@@ -189,7 +188,7 @@ void NetCDF::putAttributeString(int fileId, int varId, const Attribute& attribut
 void NetCDF::checkStatus(int status, const string& action) {
     if (status != NC_NOERR) {
         std::stringstream message;
-        message << "NetCDF::checkStatus: Error ";
+        message << "Error ";
         message << action;
         message << ". Code '" << status << "'.";
         BOOST_THROW_EXCEPTION(logic_error(message.str()));

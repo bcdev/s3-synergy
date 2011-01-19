@@ -109,10 +109,10 @@ void L1cReader::process(Context& context) {
                 const string ncFileName = variableDescriptor->getNcFileBasename();
 
                 if (!contains(ncVarIdMap, varName)) {
-                    throw (logic_error("Unknown variable '" + varName + "'."));
+                    BOOST_THROW_EXCEPTION(logic_error("Unknown variable '" + varName + "'."));
                 }
                 if (!contains(ncFileIdMap, ncFileName)) {
-                    throw logic_error("Unknown netCDF file '" + ncFileName + "'.");
+                    BOOST_THROW_EXCEPTION(logic_error("Unknown netCDF file '" + ncFileName + "'."));
                 }
                 const int varId = ncVarIdMap[varName];
                 const int fileId = ncFileIdMap[ncFileName];

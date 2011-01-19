@@ -38,6 +38,7 @@ using boost::algorithm::trim_copy;
 using boost::filesystem::directory_iterator;
 using boost::filesystem::is_directory;
 using boost::filesystem::path;
+using boost::diagnostic_information;
 using boost::lexical_cast;
 using boost::numeric_cast;
 
