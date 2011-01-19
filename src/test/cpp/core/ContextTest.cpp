@@ -22,8 +22,7 @@
 
 #include "ContextTest.h"
 #include "../../../main/cpp/core/DefaultModule.h"
-#include "../../../main/cpp/modules/Reader.h"
-#include "../../../main/cpp/modules/SynL2Writer.h"
+#include "../../../main/cpp/core/Writer.h"
 #include "TestObject.h"
 
 using std::auto_ptr;
@@ -111,32 +110,28 @@ void ContextTest::testGetUnknownSegment() {
 void ContextTest::testGetMaxLWritable() {
     Segment& segment = context->addSegment("A", 10, 10, 3, 0, 200);
 
-    Module* module1 = new Reader();
-    context->addModule(*module1);
+    DefaultModule module1("M1");
+    context->addModule(module1);
     segment.setStartL(10);
-    context->setMaxLComputed(segment, *module1, 13);
+    context->setMaxLComputed(segment, module1, 13);
 
-    Writer* writer = new SynL2Writer();
-    context->setMaxLComputed(segment, *writer, 7);
+    Writer writer("W1");
+    context->setMaxLComputed(segment, writer, 7);
 
-    size_t maxLWritable = context->getMaxLWritable(segment, *writer);
+    size_t maxLWritable = context->getMaxLWritable(segment, writer);
     CPPUNIT_ASSERT(maxLWritable == 13);
 
-    Module* module2 = new Reader();
-    context->addModule(*module2);
+    DefaultModule module2("M2");
+    context->addModule(module2);
     segment.setStartL(20);
-    context->setMaxLComputed(segment, *module2, 22);
+    context->setMaxLComputed(segment, module2, 22);
 
-    context->addModule(*writer);
+    context->addModule(writer);
 
-    maxLWritable = context->getMaxLWritable(segment, *writer);
+    maxLWritable = context->getMaxLWritable(segment, writer);
     CPPUNIT_ASSERT(maxLWritable == 13);
 
-    context->setMaxLComputed(segment, *module1, 23);
-    maxLWritable = context->getMaxLWritable(segment, *writer);
+    context->setMaxLComputed(segment, module1, 23);
+    maxLWritable = context->getMaxLWritable(segment, writer);
     CPPUNIT_ASSERT(maxLWritable == 22);
-
-    delete writer;
-    delete module1;
-    delete module2;
 }

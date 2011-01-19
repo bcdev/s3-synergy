@@ -59,7 +59,7 @@ public:
     static void putData(int fileId, int varId, const valarray<size_t>& startVector,
             const valarray<size_t>& sizeVector, const void* dataArray);
 
-    static int createFile(const string& fileName);
+    static int createFile(const path& fileName);
 
     static int defineDimension(int fileId, const string& dimName, size_t size);
 

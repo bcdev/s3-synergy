@@ -71,9 +71,9 @@ void DictionaryParserTest::testGetNcVarNameAndGetFileName() {
     string symbolicName13 = "SDR_1";
 
     CPPUNIT_ASSERT(dict->hasProductDescriptor(Constants::SYMBOLIC_NAME_L1C));
-    CPPUNIT_ASSERT(dict->hasProductDescriptor(Constants::SYMBOLIC_NAME_L2));
+    CPPUNIT_ASSERT(dict->hasProductDescriptor(Constants::SYMBOLIC_NAME_SYN_L2));
     ProductDescriptor& l1cProductDescriptor = dict->getProductDescriptor(Constants::SYMBOLIC_NAME_L1C);
-    ProductDescriptor& l2ProductDescriptor = dict->getProductDescriptor(Constants::SYMBOLIC_NAME_L2);
+    ProductDescriptor& l2ProductDescriptor = dict->getProductDescriptor(Constants::SYMBOLIC_NAME_SYN_L2);
 
     CPPUNIT_ASSERT(l1cProductDescriptor.hasSegmentDescriptor("SYN_COLLOCATION"));
 
@@ -122,7 +122,7 @@ void DictionaryParserTest::testGetNcVarNameAndGetFileName() {
 }
 
 void DictionaryParserTest::testDictionaryParsing() {
-    ProductDescriptor& productDescriptor = dict->getProductDescriptor(Constants::SYMBOLIC_NAME_L2);
+    ProductDescriptor& productDescriptor = dict->getProductDescriptor(Constants::SYMBOLIC_NAME_SYN_L2);
     testSDRVariable(*productDescriptor.getVariable("SDR_1"));
     testA550Variable(*productDescriptor.getVariable("A550"));
     testT550Variable(*productDescriptor.getVariable("T550"));

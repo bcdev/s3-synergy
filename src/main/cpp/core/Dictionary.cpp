@@ -107,7 +107,7 @@ Dictionary::~Dictionary() {
 
 void Dictionary::init() {
     const string L1C_IDENTIFIER = Constants::SYMBOLIC_NAME_L1C;
-    const string L2_IDENTIFIER = Constants::SYMBOLIC_NAME_L2;
+    const string L2_IDENTIFIER = Constants::SYMBOLIC_NAME_SYN_L2;
     string variableDefPath = xmlParser.evaluateToString(configFile, "/Config/Variable_Definition_Files_Path");
     ProductDescriptor& l1c = addProductDescriptor(L1C_IDENTIFIER);
     ProductDescriptor& l2 = addProductDescriptor(L2_IDENTIFIER);

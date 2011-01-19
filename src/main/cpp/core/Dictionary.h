@@ -286,6 +286,8 @@ private:
     size_t size;
 };
 
+class SegmentDescriptor;
+
 /**
  * Represents the static information about an (input or output) variable. All
  * variables are instantiated using the Dictionary. The pixel values,

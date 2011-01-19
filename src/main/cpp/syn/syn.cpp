@@ -45,7 +45,7 @@ int main() {
     // TODO - use job order for configuration
     Reader reader;
     //TestModule test;
-    SynL2Writer writer;
+    SynL2Writer writer(".");
 
     Processor processor;
 

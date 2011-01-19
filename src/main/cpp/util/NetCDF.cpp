@@ -83,9 +83,9 @@ void NetCDF::putData(int fileId, int varId, const valarray<size_t>& startVector,
     checkStatus(status, "putting data into file");
 }
 
-int NetCDF::createFile(const string& fileName) {
+int NetCDF::createFile(const path& path) {
     int ncId;
-    int status = nc_create(fileName.c_str(), NC_NETCDF4, &ncId);
+    int status = nc_create(path.string().c_str(), NC_NETCDF4, &ncId);
     checkStatus(status, "creating file");
     return ncId;
 }

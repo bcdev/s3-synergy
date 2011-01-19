@@ -8,17 +8,15 @@
 #ifndef SYNL2WRITER_H
 #define	SYNL2WRITER_H
 
-#include <vector>
+#include <valarray>
 
 #include "../core/Writer.h"
 
 using std::map;
-using std::set;
 
 class SynL2Writer : public Writer {
-
 public:
-    SynL2Writer();
+    SynL2Writer(const string& targetDirPath);
     ~SynL2Writer();
     void process(Context& context);
     void start(Context& context);
@@ -26,11 +24,15 @@ public:
 
 private:
 
-    void createNcVar(const VariableDescriptor& variable, const Grid& grid);
+    void createNcVar(const ProductDescriptor& productDescriptor,
+            const SegmentDescriptor& segmentDescriptor,
+            const VariableDescriptor& variable,
+            const Grid& grid);
 
-    map<string, int> fileIdMap;
-    map<string, valarray<int> > dimIdMap;
-    map<string, int> varIdMap;
+    const path targetDirPath;
+    map<string, int> ncFileIdMap;
+    map<string, valarray<int> > ncDimIdMap;
+    map<string, int> ncVarIdMap;
 };
 
 #endif	/* SYNL2WRITER_H */

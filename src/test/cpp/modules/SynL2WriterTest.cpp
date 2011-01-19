@@ -31,7 +31,7 @@ SynL2WriterTest::~SynL2WriterTest() {
 }
 
 void SynL2WriterTest::setUp() {
-    writer = new SynL2Writer();
+    writer = new SynL2Writer(".");
 }
 
 void SynL2WriterTest::tearDown() {
@@ -42,7 +42,7 @@ void SynL2WriterTest::testWriter() {
     CPPUNIT_ASSERT(writer != 0);
 
     Dictionary dictionary;
-    VariableDescriptor& a = dictionary.addProductDescriptor(Constants::SYMBOLIC_NAME_L2).addSegmentDescriptor(Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED).addVariableDescriptor("SDR_1");
+    VariableDescriptor& a = dictionary.addProductDescriptor(Constants::SYMBOLIC_NAME_SYN_L2).addSegmentDescriptor(Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED).addVariableDescriptor("SDR_1");
     a.addDimension(Constants::SYMBOLIC_NAME_DIMENSION_N_CAM);
     a.addDimension(Constants::SYMBOLIC_NAME_DIMENSION_N_LINE_OLC);
     a.addDimension(Constants::SYMBOLIC_NAME_DIMENSION_N_DET_CAM);
@@ -61,7 +61,7 @@ void SynL2WriterTest::testWriter() {
     a.addAttribute(NC_FLOAT, "F", "9.1");
     a.addAttribute(NC_DOUBLE, "D", "9.2");
     a.addAttribute(NC_STRING, "Str", "Zehn");
-    VariableDescriptor& b = dictionary.getProductDescriptor(Constants::SYMBOLIC_NAME_L2).getSegmentDescriptor(Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED).addVariableDescriptor("SDR_1_er");
+    VariableDescriptor& b = dictionary.getProductDescriptor(Constants::SYMBOLIC_NAME_SYN_L2).getSegmentDescriptor(Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED).addVariableDescriptor("SDR_1_er");
     b.addDimension(Constants::SYMBOLIC_NAME_DIMENSION_N_CAM);
     b.addDimension(Constants::SYMBOLIC_NAME_DIMENSION_N_LINE_OLC);
     b.addDimension(Constants::SYMBOLIC_NAME_DIMENSION_N_DET_CAM);

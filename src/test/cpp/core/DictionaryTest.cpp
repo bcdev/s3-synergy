@@ -65,7 +65,6 @@ void DictionaryTest::testContainers() {
     CPPUNIT_ASSERT(segmentDescriptor.hasAttribute(sectAttribute.getName()));
     CPPUNIT_ASSERT(&segmentDescriptor.getAttribute("Vendor") == &sectAttribute);
 
-    VariableDescriptor& variableDescriptor = segmentDescriptor.addVariableDescriptor("reflec_1");
-
+    segmentDescriptor.addVariableDescriptor("reflec_1");
     CPPUNIT_ASSERT(dictionary->getProductDescriptor("L1C").getVariables().size() == 1);
 }
