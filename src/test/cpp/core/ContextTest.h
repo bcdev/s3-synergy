@@ -45,7 +45,6 @@ public:
     void tearDown();
 
 private:
-    Logging* logging;
     Context* context;
     void testInitialState();
     void testAddModule();

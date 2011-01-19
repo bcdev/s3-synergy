@@ -21,7 +21,7 @@
 #include <memory>
 
 #include "ContextTest.h"
-#include "../../../main/cpp/core/DefaultLogging.h"
+#include "../../../main/cpp/core/NullLogging.h"
 #include "../../../main/cpp/core/DefaultModule.h"
 #include "../../../main/cpp/core/Writer.h"
 #include "TestObject.h"
@@ -37,13 +37,11 @@ ContextTest::~ContextTest() {
 }
 
 void ContextTest::setUp() {
-    logging = new DefaultLogging();
-    context = new Context(*logging);
+    context = new Context(NullLogging::getInstance());
 }
 
 void ContextTest::tearDown() {
     delete context;
-    delete logging;
 }
 
 void ContextTest::testInitialState() {

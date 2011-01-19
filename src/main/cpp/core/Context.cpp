@@ -24,7 +24,7 @@
 
 #include "Boost.h"
 #include "Context.h"
-#include "DefaultLogging.h"
+#include "NullLogging.h"
 #include "DefaultModule.h"
 #include "SegmentImpl.h"
 

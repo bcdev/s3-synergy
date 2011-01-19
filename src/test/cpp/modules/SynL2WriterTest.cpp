@@ -20,7 +20,7 @@
 
 #include <netcdf.h>
 
-#include "../../../main/cpp/core/DefaultLogging.h"
+#include "../../../main/cpp/core/NullLogging.h"
 #include "SynL2WriterTest.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(SynL2WriterTest);
@@ -71,8 +71,7 @@ void SynL2WriterTest::testWriter() {
     b.setType(NC_FLOAT);
     b.setSegmentName(Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED);
 
-    DefaultLogging logging;
-    Context context(logging);
+    Context context(NullLogging::getInstance());
     context.setDictionary(&dictionary);
     Segment& segment = context.addSegment(Constants::SYMBOLIC_NAME_SEGMENT_SYN_COLLOCATED, 1, 2, 3, 0, 4);
     segment.addVariableByte(a.getName());

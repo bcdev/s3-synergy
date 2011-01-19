@@ -19,7 +19,7 @@
  */
 
 #include "../../../main/cpp/core/Context.h"
-#include "../../../main/cpp/core/DefaultLogging.h"
+#include "../../../main/cpp/core/NullLogging.h"
 #include "../../../main/cpp/util/ErrorHandler.h"
 #include "../../../main/cpp/core/JobOrder.h"
 #include "../../../main/cpp/util/JobOrderParser.h"
@@ -54,8 +54,7 @@ void ProcessorTest::testCatching() {
     L1cReader reader(".");
 
     Processor processor;
-    DefaultLogging logging;
-    Context context(logging);
+    Context context(NullLogging::getInstance());
     context.addModule(reader);
     context.setDictionary(dict);
 
