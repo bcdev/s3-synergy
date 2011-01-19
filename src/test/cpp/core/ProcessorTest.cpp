@@ -66,18 +66,15 @@ void ProcessorTest::testCatching() {
     ErrorHandler handler;
     context.setErrorHandler(&handler);
 
-//    processor.process(context);
     CPPUNIT_ASSERT_NO_THROW(processor.process(context));
 
     context.setJobOrder(jobOrder);
 
-//    processor.process(context);
     CPPUNIT_ASSERT_NO_THROW(processor.process(context));
 
     ProductDescriptor& prodDesc = dict->addProductDescriptor(Constants::SYMBOLIC_NAME_L1C);
     SegmentDescriptor& segDesc = prodDesc.addSegmentDescriptor("segment");
     segDesc.addVariableDescriptor("variable");
 
-//    processor.process(context);
     CPPUNIT_ASSERT_NO_THROW(processor.process(context));
 }
