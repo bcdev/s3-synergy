@@ -25,7 +25,7 @@
 #include "../../../main/cpp/util/JobOrderParser.h"
 #include "../../../main/cpp/core/Processor.h"
 #include "ProcessorTest.h"
-#include "../../../main/cpp/modules/Reader.h"
+#include "../../../main/cpp/modules/L1cReader.h"
 #include "../../../main/cpp/util/XPathInitializer.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(ProcessorTest);
@@ -53,7 +53,7 @@ void ProcessorTest::testCatching() {
     Logger* logger = Logger::get();
     logger->init(jobOrder->getConfig().getOrderId());
 
-    Reader reader;
+    L1cReader reader(".");
 
     Processor processor;
 
