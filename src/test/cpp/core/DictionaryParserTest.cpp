@@ -107,18 +107,18 @@ void DictionaryParserTest::testGetNcVarNameAndGetFileName() {
 
     CPPUNIT_ASSERT(varName13.compare("SDR_1") == 0);
 
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName3, l1cVariables)->getNcFileName().compare("OLC_RADIANCE_O16") == 0);
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName4, l1cVariables)->getNcFileName().compare("OLC_RADIANCE_O21") == 0);
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName5, l1cVariables)->getNcFileName().compare("SLST_NAD_RADIANCE_S5") == 0);
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName6, l1cVariables)->getNcFileName().compare("SLST_ALT_RADIANCE_S4") == 0);
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName7, l1cVariables)->getNcFileName().compare("GEOLOCATION_REF") == 0);
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName8, l1cVariables)->getNcFileName().compare("TIME_STAMP_OLC") == 0);
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName9, l1cVariables)->getNcFileName().compare("PIX_ANNOT_OLC") == 0);
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName10, l1cVariables)->getNcFileName().compare("SUBS_ANNOT_GEOM_OLC") == 0);
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName11, l1cVariables)->getNcFileName().compare("SUBS_ANNOT_METEO_OLC") == 0);
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName12, l1cVariables)->getNcFileName().compare("SUBS_ANNOT_SLST_ALT") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName3, l1cVariables)->getNcFileBasename().compare("OLC_RADIANCE_O16") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName4, l1cVariables)->getNcFileBasename().compare("OLC_RADIANCE_O21") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName5, l1cVariables)->getNcFileBasename().compare("SLST_NAD_RADIANCE_S5") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName6, l1cVariables)->getNcFileBasename().compare("SLST_ALT_RADIANCE_S4") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName7, l1cVariables)->getNcFileBasename().compare("GEOLOCATION_REF") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName8, l1cVariables)->getNcFileBasename().compare("TIME_STAMP_OLC") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName9, l1cVariables)->getNcFileBasename().compare("PIX_ANNOT_OLC") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName10, l1cVariables)->getNcFileBasename().compare("SUBS_ANNOT_GEOM_OLC") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName11, l1cVariables)->getNcFileBasename().compare("SUBS_ANNOT_METEO_OLC") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName12, l1cVariables)->getNcFileBasename().compare("SUBS_ANNOT_SLST_ALT") == 0);
 
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName13, l2ProductDescriptor.getVariables())->getNcFileName().compare("L2_SYN_surface_directional_reflectance_1") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName13, l2ProductDescriptor.getVariables())->getNcFileBasename().compare("L2_SYN_surface_directional_reflectance_1") == 0);
 }
 
 void DictionaryParserTest::testDictionaryParsing() {
@@ -139,7 +139,7 @@ void DictionaryParserTest::testSDRVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(1 == var.getAttribute(attributeName).getInt());
 
     string expected = "L2_SYN_surface_directional_reflectance_1";
-    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
+    CPPUNIT_ASSERT(expected.compare(var.getNcFileBasename()) == 0);
 }
 
 void DictionaryParserTest::testT550Variable(VariableDescriptor& var) {
@@ -150,7 +150,7 @@ void DictionaryParserTest::testT550Variable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(32767 == var.getAttribute(attributeName).getInt());
 
     string expected = "L2_SYN_aerosol_optical_thickness";
-    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
+    CPPUNIT_ASSERT(expected.compare(var.getNcFileBasename()) == 0);
 }
 
 void DictionaryParserTest::testA550Variable(VariableDescriptor& var) {
@@ -188,5 +188,5 @@ void DictionaryParserTest::testAir_pressureVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT(1100.0 == var.getAttribute(attributeName).getFloat());
 
     string expected = "L2_SYN_geophysical_atmospheric_data";
-    CPPUNIT_ASSERT(expected.compare(var.getNcFileName()) == 0);
+    CPPUNIT_ASSERT(expected.compare(var.getNcFileBasename()) == 0);
 }

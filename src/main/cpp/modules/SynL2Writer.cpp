@@ -35,19 +35,19 @@ void SynL2Writer::process(Context& context) {
             foreach(const VariableDescriptor* variableDescriptor, variableDescriptors) {
                 const string varName = variableDescriptor->getName();
                 if (segment.hasVariable(varName)) {
-                    const string ncFileName = variableDescriptor->getNcFileName();
+                    const string ncFileBasename = variableDescriptor->getNcFileBasename();
                     if (!contains(ncVarIdMap, varName)) {
                         throw logic_error("Unknown variable '" + varName + "'.");
                     }
-                    if (!contains(ncFileIdMap, ncFileName)) {
-                        throw logic_error("Unknown netCDF file '" + ncFileName + "'.");
+                    if (!contains(ncFileIdMap, ncFileBasename)) {
+                        throw logic_error("Unknown netCDF file '" + ncFileBasename + "'.");
                     }
-                    if (!contains(ncDimIdMap, ncFileName)) {
-                        throw logic_error("Unknown netCDF file '" + ncFileName + "'.");
+                    if (!contains(ncDimIdMap, ncFileBasename)) {
+                        throw logic_error("Unknown netCDF file '" + ncFileBasename + "'.");
                     }
                     const int varId = ncVarIdMap[varName];
-                    const int ncId = ncFileIdMap[ncFileName];
-                    const valarray<int>& dimIds = ncDimIdMap[ncFileName];
+                    const int ncId = ncFileIdMap[ncFileBasename];
+                    const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
                     const valarray<size_t> starts = IOUtils::createStartVector(dimIds.size(), startL);
                     const valarray<size_t> sizes = IOUtils::createCountVector(dimIds.size(), grid.getSizeK(), endL - startL + 1, grid.getSizeM());
                     if (context.getLogging() != 0) {
@@ -106,15 +106,15 @@ void SynL2Writer::createNcVar(
         const VariableDescriptor& variableDescriptor,
         const Grid& grid) {
     const string varName = variableDescriptor.getName();
-    const string ncFileName = variableDescriptor.getNcFileName();
+    const string ncFileBasename = variableDescriptor.getNcFileBasename();
 
-    if (!contains(ncFileIdMap, ncFileName)) {
+    if (!contains(ncFileIdMap, ncFileBasename)) {
         if (!boost::filesystem::exists(targetDirPath)) {
             if (!boost::filesystem::create_directories(targetDirPath)) {
                 BOOST_THROW_EXCEPTION(runtime_error("Cannot create directory '" + targetDirPath.string() + "'."));
             }
         }
-        const int fileId = NetCDF::createFile(targetDirPath / variableDescriptor.getNcFileName().append(".nc"));
+        const int fileId = NetCDF::createFile(targetDirPath / variableDescriptor.getNcFileBasename().append(".nc"));
 
         foreach(const Attribute* attribute, productDescriptor.getAttributes()) {
             NetCDF::addAttribute(fileId, NC_GLOBAL, *attribute);
@@ -149,11 +149,11 @@ void SynL2Writer::createNcVar(
                 throw logic_error("SynL2Writer::createNcVar(): invalid number of dimensions");
         }
 
-        ncFileIdMap[ncFileName] = fileId;
-        ncDimIdMap.insert(make_pair(ncFileName, dimIds));
+        ncFileIdMap[ncFileBasename] = fileId;
+        ncDimIdMap.insert(make_pair(ncFileBasename, dimIds));
     }
-    const int fileId = ncFileIdMap[ncFileName];
-    const valarray<int>& dimIds = ncDimIdMap[ncFileName];
+    const int fileId = ncFileIdMap[ncFileBasename];
+    const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
     const int varId = NetCDF::defineVariable(fileId, variableDescriptor.getNcVarName().c_str(), variableDescriptor.getType(), dimIds);
     ncVarIdMap[varName] = varId;
 
