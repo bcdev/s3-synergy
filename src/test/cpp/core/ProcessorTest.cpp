@@ -19,8 +19,8 @@
  */
 
 #include "../../../main/cpp/core/Context.h"
+#include "../../../main/cpp/core/DefaultLogging.h"
 #include "../../../main/cpp/util/ErrorHandler.h"
-#include "../../../main/cpp/util/Logger.h"
 #include "../../../main/cpp/core/JobOrder.h"
 #include "../../../main/cpp/util/JobOrderParser.h"
 #include "../../../main/cpp/core/Processor.h"
@@ -50,18 +50,14 @@ void ProcessorTest::testCatching() {
     string jobOrderXml = "/mnt/hgfs/S3L2PP/src/test/resources/syn/JobOrder.1.xml";
     JobOrderParser parser = JobOrderParser(jobOrderXml);
     JobOrder* jobOrder = parser.parseJobOrder();
-    Logger* logger = Logger::get();
-    logger->init(jobOrder->getConfig().getOrderId());
 
     L1cReader reader(".");
 
     Processor processor;
-
-    Context context;
+    DefaultLogging logging;
+    Context context(logging);
     context.addModule(reader);
     context.setDictionary(dict);
-
-    context.setLogging(Logger::get());
 
     ErrorHandler handler;
     context.setErrorHandler(&handler);

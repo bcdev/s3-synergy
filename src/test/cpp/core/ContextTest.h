@@ -33,7 +33,6 @@ class ContextTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(testAddSegment);
     CPPUNIT_TEST(testSetGetDictionary);
     CPPUNIT_TEST(testSetGetJobOrder);
-    CPPUNIT_TEST(testSetGetLogging);
     CPPUNIT_TEST(testGetUnknownObject);
     CPPUNIT_TEST(testGetUnknownSegment);
     CPPUNIT_TEST(testGetMaxLWritable);
@@ -46,6 +45,7 @@ public:
     void tearDown();
 
 private:
+    Logging* logging;
     Context* context;
     void testInitialState();
     void testAddModule();
@@ -53,7 +53,6 @@ private:
     void testAddSegment();
     void testSetGetDictionary();
     void testSetGetJobOrder();
-    void testSetGetLogging();
     void testGetUnknownObject();
     void testGetUnknownSegment();
     void testGetMaxLWritable();

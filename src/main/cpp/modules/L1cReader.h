@@ -24,7 +24,7 @@ public:
     void process(Context& context);
 
 private:
-    int openNcFile(const string& sourceDirPath, const string& fileName);
+    int getNcFile(const string& ncFileBasename);
 
     const path sourceDirPath;
     const size_t chunkSize;

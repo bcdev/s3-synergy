@@ -32,8 +32,7 @@ void L1cReader::start(Context& context) {
             const string varName = variableDescriptor->getName();
             const string ncVarName = variableDescriptor->getNcVarName();
             const string ncFileBasename = variableDescriptor->getNcFileBasename();
-
-            const int fileId = openNcFile(sourceDirPath.string(), ncFileBasename);
+            const int fileId = getNcFile(ncFileBasename);
             const int varId = NetCDF::getVariableId(fileId, ncVarName.c_str());
             const int dimCount = NetCDF::getDimCountForVariable(fileId, varId);
             const valarray<int> dimIds = NetCDF::getDimIdsForVariable(fileId, varId);
@@ -73,7 +72,7 @@ void L1cReader::start(Context& context) {
             }
             const int type = NetCDF::getVariableType(fileId, varId);
             variableDescriptor->setType(type);
-            
+
             IOUtils::addVariableToSegment(varName, type, context.getSegment(segmentName));
             ncVarIdMap[varName] = varId;
         }
@@ -120,9 +119,7 @@ void L1cReader::process(Context& context) {
                 const size_t dimCount = variableDescriptor->getDimensions().size();
                 const valarray<size_t> starts = IOUtils::createStartVector(dimCount, startL);
                 const valarray<size_t> counts = IOUtils::createCountVector(dimCount, grid.getSizeK(), endL - startL + 1, grid.getSizeM());
-                if (context.getLogging() != 0) {
-                    context.getLogging()->progress("Reading variable '" + variableDescriptor->getNcVarName() + "' into segment [" + segment.toString() + "]", getId());
-                }
+                context.getLogging().progress("Reading variable '" + variableDescriptor->getNcVarName() + "' into segment '" + segment.toString() + "'", getId());
                 const Accessor& accessor = segment.getAccessor(varName);
                 NetCDF::getData(fileId, varId, starts, counts, accessor.getUntypedData());
             }
@@ -131,23 +128,13 @@ void L1cReader::process(Context& context) {
     }
 }
 
-int L1cReader::openNcFile(const string& sourceDirPath, const string& fileName) {
-    vector<string> fileNames = IOUtils::getFiles(sourceDirPath);
-    if (ncFileIdMap.find(fileName) != ncFileIdMap.end()) {
-        return ncFileIdMap[fileName];
+int L1cReader::getNcFile(const string& ncFileBasename) {
+    if (contains(ncFileIdMap, ncFileBasename)) {
+        return ncFileIdMap[ncFileBasename];
     }
+    const path ncFilePath = sourceDirPath / (ncFileBasename + ".nc");
+    const int fileId = NetCDF::openFile(ncFilePath);
+    ncFileIdMap[ncFileBasename] = fileId;
 
-    for (size_t i = 0; i < fileNames.size(); i++) {
-        string currentFileName = sourceDirPath + "/" + fileNames[i];
-        if (boost::ends_with(currentFileName, ".nc")) {
-            if (boost::ends_with(currentFileName, fileName + ".nc") ||
-                    boost::ends_with(currentFileName, fileName)) {
-
-                int fileId = NetCDF::openFile(currentFileName.c_str());
-                ncFileIdMap[fileName] = fileId;
-                return fileId;
-            }
-        }
-    }
-    throw std::runtime_error("No file with name " + fileName + " found.");
+    return fileId;
 }

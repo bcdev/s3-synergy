@@ -47,11 +47,11 @@ int main() {
 
     Processor processor;
 
-    Context context;
-    context.setLogging(logger);
+
+    Context context(*logger);
     context.setJobOrder(jobOrder);
     context.addModule(reader);
-    //    context.addModule(writer);
+    context.addModule(writer);
     context.setDictionary(&dict);
 
     processor.process(context);

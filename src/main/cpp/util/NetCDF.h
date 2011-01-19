@@ -39,7 +39,7 @@ using std::valarray;
 class NetCDF {
 public:
 
-    static int openFile(const string& fileName);
+    static int openFile(const path& filePath);
 
     static nc_type getVariableType(int fileId, int varId);
 
@@ -59,7 +59,7 @@ public:
     static void putData(int fileId, int varId, const valarray<size_t>& startVector,
             const valarray<size_t>& sizeVector, const void* dataArray);
 
-    static int createFile(const path& fileName);
+    static int createFile(const path& filePath);
 
     static int defineDimension(int fileId, const string& dimName, size_t size);
 

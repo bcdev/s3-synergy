@@ -24,6 +24,7 @@
 
 #include "Boost.h"
 #include "Context.h"
+#include "DefaultLogging.h"
 #include "DefaultModule.h"
 #include "SegmentImpl.h"
 
@@ -32,11 +33,10 @@ using std::find;
 using std::min;
 using std::numeric_limits;
 
-Context::Context() : moduleList(), objectMap(), segmentMap(), segmentList() {
+Context::Context(Logging& logging) : logging(logging) {
     errorHandler = 0;
     dictionary = 0;
     jobOrder = 0;
-    logging = 0;
 }
 
 Context::~Context() {
@@ -84,12 +84,8 @@ void Context::setJobOrder(JobOrder* jobOrder) {
     this->jobOrder = jobOrder;
 }
 
-Logging* Context::getLogging() const {
+Logging& Context::getLogging() const {
     return logging;
-}
-
-void Context::setLogging(Logging* logging) {
-    this->logging = logging;
 }
 
 const vector<Module*> Context::getModules() const {

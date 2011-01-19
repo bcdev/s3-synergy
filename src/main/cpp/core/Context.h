@@ -49,7 +49,7 @@ public:
     /**
      * Constructs a new instance of this class.
      */
-    Context();
+    Context(Logging& logging);
 
     /**
      * Destructor.
@@ -112,13 +112,7 @@ public:
      * Returns the logging.
      * @return the logging.
      */
-    Logging* getLogging() const;
-
-    /**
-     * Sets the logging.
-     * @param logging The logging.
-     */
-    void setLogging(Logging* logging);
+    Logging& getLogging() const;
 
     /**
      * Returns the object associated with the supplied object ID.
@@ -225,9 +219,9 @@ private:
     void removeObject(Object& object);
     void removeSegment(Segment& segment);
 
+    Logging& logging;
     Dictionary* dictionary;
     JobOrder* jobOrder;
-    Logging* logging;
     ErrorHandler* errorHandler;
 
     vector<Module*> moduleList;

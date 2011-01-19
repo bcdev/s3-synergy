@@ -50,9 +50,7 @@ void SynL2Writer::process(Context& context) {
                     const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
                     const valarray<size_t> starts = IOUtils::createStartVector(dimIds.size(), startL);
                     const valarray<size_t> sizes = IOUtils::createCountVector(dimIds.size(), grid.getSizeK(), endL - startL + 1, grid.getSizeM());
-                    if (context.getLogging() != 0) {
-                        context.getLogging()->progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
-                    }
+                    context.getLogging().progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
                     const Accessor& accessor = segment.getAccessor(varName);
                     NetCDF::putData(ncId, varId, starts, sizes, accessor.getUntypedData());
                 }
@@ -114,7 +112,8 @@ void SynL2Writer::createNcVar(
                 BOOST_THROW_EXCEPTION(runtime_error("Cannot create directory '" + targetDirPath.string() + "'."));
             }
         }
-        const int fileId = NetCDF::createFile(targetDirPath / variableDescriptor.getNcFileBasename().append(".nc"));
+        const path ncFilePath = targetDirPath / (variableDescriptor.getNcFileBasename() + ".nc");
+        const int fileId = NetCDF::createFile(ncFilePath);
 
         foreach(const Attribute* attribute, productDescriptor.getAttributes()) {
             NetCDF::addAttribute(fileId, NC_GLOBAL, *attribute);

@@ -21,6 +21,7 @@
 #include <memory>
 
 #include "ContextTest.h"
+#include "../../../main/cpp/core/DefaultLogging.h"
 #include "../../../main/cpp/core/DefaultModule.h"
 #include "../../../main/cpp/core/Writer.h"
 #include "TestObject.h"
@@ -36,17 +37,19 @@ ContextTest::~ContextTest() {
 }
 
 void ContextTest::setUp() {
-    context = new Context();
+    logging = new DefaultLogging();
+    context = new Context(*logging);
 }
 
 void ContextTest::tearDown() {
     delete context;
+    delete logging;
 }
 
 void ContextTest::testInitialState() {
     CPPUNIT_ASSERT(context->getDictionary() == 0);
     CPPUNIT_ASSERT(context->getJobOrder() == 0);
-    CPPUNIT_ASSERT(context->getLogging() == 0);
+    CPPUNIT_ASSERT(&context->getLogging() != 0);
     CPPUNIT_ASSERT(context->getModules().size() == 0);
 }
 
@@ -90,13 +93,6 @@ void ContextTest::testSetGetJobOrder() {
     JobOrder* jobOrder = (JobOrder*) 1;
     context->setJobOrder(jobOrder);
     CPPUNIT_ASSERT(context->getJobOrder() == jobOrder);
-}
-
-void ContextTest::testSetGetLogging() {
-    CPPUNIT_ASSERT(context->getLogging() == 0);
-    Logging* logging = (Logging*) 1;
-    context->setLogging(logging);
-    CPPUNIT_ASSERT(context->getLogging() == logging);
 }
 
 void ContextTest::testGetUnknownObject() {

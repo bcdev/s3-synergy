@@ -21,9 +21,9 @@
 #include "NetCDF.h"
 #include "../core/SynException.h"
 
-int NetCDF::openFile(const string& fileName) {
+int NetCDF::openFile(const path& filePath) {
     int ncId;
-    int status = nc_open(fileName.c_str(), NC_NOWRITE, &ncId);
+    int status = nc_open(filePath.file_string().c_str(), NC_NOWRITE, &ncId);
     checkStatus(status, "opening file");
     return ncId;
 }
@@ -83,9 +83,9 @@ void NetCDF::putData(int fileId, int varId, const valarray<size_t>& startVector,
     checkStatus(status, "putting data into file");
 }
 
-int NetCDF::createFile(const path& path) {
+int NetCDF::createFile(const path& filePath) {
     int ncId;
-    int status = nc_create(path.string().c_str(), NC_NETCDF4, &ncId);
+    int status = nc_create(filePath.file_string().c_str(), NC_NETCDF4, &ncId);
     checkStatus(status, "creating file");
     return ncId;
 }

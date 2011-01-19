@@ -51,5 +51,5 @@ void ErrorHandler::handleError(Context& context, exception& e) const {
 //
 //    string module;
 
-    context.getLogging()->error(e.what(), "module", processorVersion);
+    context.getLogging().error(e.what(), "module", processorVersion);
 }
