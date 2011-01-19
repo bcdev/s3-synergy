@@ -1,41 +1,25 @@
 /*
- * File:   Reader.cpp
+ * File:   L1cReader.cpp
  * Author: thomass
  *
  * Created on November 18, 2010, 2:08 PM
  */
 
-#include <algorithm>
-#include <boost/algorithm/string/predicate.hpp>
-#include <iostream>
-#include <stddef.h>
-#include <stdexcept>
-#include <valarray>
-
 #include "../util/IOUtils.h"
-#include "../core/JobOrder.h"
-#include "../util/Logger.h"
 #include "../util/NetCDF.h"
-#include "Reader.h"
+#include "L1cReader.h"
 
 using std::min;
 using std::max;
 
-Reader::Reader() : DefaultModule("READ"), stepSize(2000) {
+L1cReader::L1cReader(const string& sourceDirPath, size_t chunkSize) : DefaultModule("L1C_READER"), sourceDirPath(sourceDirPath), chunkSize(chunkSize) {
 }
 
-Reader::~Reader() {
+L1cReader::~L1cReader() {
 }
 
-void Reader::start(Context& context) {
-    if (context.getJobOrder() == 0) {
-        BOOST_THROW_EXCEPTION(logic_error("job order missing."));
-//        throw logic_error("Reader::start: job order missing.");
-    }
-    const string processorId = "SYL2";
-    const string sourceDir = context.getJobOrder()->getProcessorConfiguration(processorId).getInputList()[0]->getFileNames()[0];
-    Dictionary& dict = *context.getDictionary();
-
+void L1cReader::start(Context& context) {
+    const Dictionary& dict = *context.getDictionary();
     const vector<SegmentDescriptor*> segmentDescriptors =
             dict.getProductDescriptor(Constants::SYMBOLIC_NAME_L1C).getSegmentDescriptors();
 
@@ -49,7 +33,7 @@ void Reader::start(Context& context) {
             const string ncVariableName = variableDescriptor->getNcVarName();
             const string fileName = variableDescriptor->getNcFileName();
 
-            int fileId = findFile(sourceDir, fileName);
+            int fileId = findFile(sourceDirPath.string(), fileName);
             int varId = NetCDF::getVariableId(fileId, ncVariableName.c_str());
             const int type = NetCDF::getVariableType(fileId, varId);
             variableDescriptor->setType(type);
@@ -59,39 +43,39 @@ void Reader::start(Context& context) {
 
             // getting the dimension sizes
             size_t camCount = 1;
-            size_t lineCount = 1;
+            size_t rowCount = 1;
             size_t colCount = 1;
 
             if (dimCount == 3) {
                 camCount = NetCDF::getDimLength(fileId, dimensionIds[0]);
-                lineCount = NetCDF::getDimLength(fileId, dimensionIds[1]);
+                rowCount = NetCDF::getDimLength(fileId, dimensionIds[1]);
                 colCount = NetCDF::getDimLength(fileId, dimensionIds[2]);
                 variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimensionIds[0])).setSize(camCount);
-                variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimensionIds[1])).setSize(lineCount);
+                variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimensionIds[1])).setSize(rowCount);
                 variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimensionIds[2])).setSize(colCount);
             } else if (dimCount == 2) {
-                lineCount = NetCDF::getDimLength(fileId, dimensionIds[0]);
+                rowCount = NetCDF::getDimLength(fileId, dimensionIds[0]);
                 colCount = NetCDF::getDimLength(fileId, dimensionIds[1]);
-                variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimensionIds[0])).setSize(lineCount);
+                variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimensionIds[0])).setSize(rowCount);
                 variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimensionIds[1])).setSize(colCount);
             } else if (dimCount == 1) {
                 colCount = NetCDF::getDimLength(fileId, dimensionIds[0]);
                 variableDescriptor->addDimension(NetCDF::getDimName(fileId, dimensionIds[0])).setSize(colCount);
             }
 
-            const size_t sizeL = min(stepSize, lineCount);
+            const size_t sizeL = min(chunkSize, rowCount);
             Segment* segment;
             if (context.hasSegment(segmentName)) {
                 segment = &context.getSegment(segmentName);
             } else {
-                segment = &context.addSegment(segmentName, sizeL, colCount, camCount, 0, lineCount - 1);
+                segment = &context.addSegment(segmentName, sizeL, colCount, camCount, 0, rowCount - 1);
             }
             IOUtils::addVariableToSegment(symbolicName, type, *segment);
         }
     }
 }
 
-void Reader::stop(Context& context) {
+void L1cReader::stop(Context& context) {
     pair<string, int> fileIdPair;
 
     foreach(fileIdPair, fileIdMap) {
@@ -101,7 +85,7 @@ void Reader::stop(Context& context) {
     fileIdMap.clear();
 }
 
-void Reader::process(Context& context) {
+void L1cReader::process(Context& context) {
     Dictionary& dict = *context.getDictionary();
     const vector<SegmentDescriptor*> segmentDescriptors =
             dict.getProductDescriptor(Constants::SYMBOLIC_NAME_L1C).getSegmentDescriptors();
@@ -142,14 +126,14 @@ void Reader::process(Context& context) {
     }
 }
 
-const int Reader::findFile(const string& sourceDir, const string& fileName) {
-    vector<string> fileNames = IOUtils::getFiles(sourceDir);
+int L1cReader::findFile(const string& sourceDirPath, const string& fileName) {
+    vector<string> fileNames = IOUtils::getFiles(sourceDirPath);
     if (fileIdMap.find(fileName) != fileIdMap.end()) {
         return fileIdMap[fileName];
     }
 
     for (size_t i = 0; i < fileNames.size(); i++) {
-        string currentFileName = sourceDir + "/" + fileNames[i];
+        string currentFileName = sourceDirPath + "/" + fileNames[i];
         if (boost::ends_with(currentFileName, ".nc")) {
             if (boost::ends_with(currentFileName, fileName + ".nc") ||
                     boost::ends_with(currentFileName, fileName)) {

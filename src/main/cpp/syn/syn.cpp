@@ -6,7 +6,7 @@
 #include "../util/JobOrderParser.h"
 #include "../util/Logger.h"
 #include "../core/Processor.h"
-#include "../modules/Reader.h"
+#include "../modules/L1cReader.h"
 #include "../modules/SynL2Writer.h"
 
 #include <iostream>
@@ -15,8 +15,6 @@ static string createProcessingTimeMessage(time_t start);
 void logIOParameters(JobOrder& jobOrder, Logger* logger);
 
 int main() {
-
-
     clock_t start = clock();
     XPathInitializer init;
 
@@ -43,7 +41,7 @@ int main() {
 
     // configure modules
     // TODO - use job order for configuration
-    Reader reader;
+    L1cReader reader(".");
     //TestModule test;
     SynL2Writer writer(".");
 
