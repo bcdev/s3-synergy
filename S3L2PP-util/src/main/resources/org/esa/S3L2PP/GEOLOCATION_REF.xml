@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <variables>
+        <variable>
+            <name>Geodetic_Latitude</name>
+            <symbolic_name>lat</symbolic_name>
+            <segment_name>SYN_COLLOCATION</segment_name>
+        </variable>
+        <variable>
+            <name>Longitude</name>
+            <symbolic_name>lon</symbolic_name>
+            <segment_name>SYN_COLLOCATION</segment_name>
+        </variable>
+        <variable>
+            <name>Altitude</name>
+            <symbolic_name>altitude</symbolic_name>
+            <segment_name>SYN_COLLOCATION</segment_name>
+        </variable>
+    </variables>
+    <global_attributes>
+        <attribute>
+            <name>dataset_name</name>
+            <value>GEOLOCATION_REF</value>
+        </attribute>
+    </global_attributes>
+</dataset>

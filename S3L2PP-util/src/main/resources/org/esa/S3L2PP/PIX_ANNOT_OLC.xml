@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+<variables>
+	<variable>
+		<name>OLCI_QC_flags</name>
+		<symbolic_name>OLC_flags</symbolic_name>
+		<segment_name>SYN_COLLOCATION</segment_name>
+	</variable>
+</variables>
+<global_attributes>
+	<attribute>
+		<name>dataset_name</name>
+		<value>PIX_ANNOT_OLC</value>
+	</attribute>
+</global_attributes>
+</dataset>

@@ -141,7 +141,10 @@ void Dictionary::parseVariablesFile(string& variableDefPath, string& file, Produ
         if (!productDescriptor.hasSegmentDescriptor(segmentName)) {
             productDescriptor.addSegmentDescriptor(segmentName);
         }
+        query = "/dataset/variables/variable[name=\"" + ncVariableName + "\"]/type";
+        int type = mapToNcType(xmlParser.evaluateToString(path, query));
         VariableDescriptor& var = productDescriptor.getSegmentDescriptor(segmentName).addVariableDescriptor(symbolicName);
+        var.setType(type);
         var.setNcVarName(ncVariableName);
         var.setNcFileName(xmlParser.evaluateToString(path, "/dataset/global_attributes/attribute[name=\"dataset_name\"]/value"));
         var.setSegmentName(segmentName);
@@ -155,6 +158,7 @@ void Dictionary::parseAttributes(string& file, string& variableName, VariableDes
     const vector<string> attributeNames = xmlParser.evaluateToStringList(file, query);
     for (size_t i = 0; i < attributeNames.size(); i++) {
         string attributeName = attributeNames[i];
+        query = "/dataset/variables/variable[name=\"" + variableName + "\"]/attributes/attribute[name=\"" + attributeName + "\"]/type";
         int type = mapToNcType(xmlParser.evaluateToString(file, query));
         query = "/dataset/variables/variable[name=\"" + variableName + "\"]/attributes/attribute[name=\"" + attributeName + "\"]/value";
         string value = xmlParser.evaluateToString(file, query);

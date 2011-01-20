@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+<variables>
+	<variable>
+		<name>SLST_L1b_TP_Latitude</name>
+		<symbolic_name>SLO_TP_lat</symbolic_name>
+		<segment_name>N_SLST_L1B_ TP</segment_name>
+	</variable>
+	<variable>
+		<name>SLST_L1b_TP_Longitude</name>
+		<symbolic_name>SLO_TP_lon</symbolic_name>
+		<segment_name>N_SLST_L1B_ TP</segment_name>
+	</variable>
+	<variable>
+		<name>OZA</name>
+		<symbolic_name>SLO_VZA</symbolic_name>
+		<segment_name>N_SLST_L1B_ TP</segment_name>
+	</variable>
+	<variable>
+		<name>OAA</name>
+		<symbolic_name>SLO_VAA</symbolic_name>
+		<segment_name>N_SLST_L1B_ TP</segment_name>
+	</variable>
+</variables>
+<global_attributes>
+	<attribute>
+		<name>dataset_name</name>
+		<value>SUBS_ANNOT_SLST_ALT</value>
+	</attribute>
+</global_attributes>
+</dataset>

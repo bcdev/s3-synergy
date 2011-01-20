@@ -47,6 +47,10 @@ public:
             const string& processorVersion = Constants::PROCESSOR_VERSION) {
     };
 
+    void close() {
+        
+    };
+
     static Logging& getInstance() {
         return instance;
     }

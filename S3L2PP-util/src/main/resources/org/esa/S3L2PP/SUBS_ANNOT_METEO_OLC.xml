@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+<variables>
+	<variable>
+		<name>total_ozone</name>
+		<symbolic_name>ozone</symbolic_name>
+		<segment_name>N_OLC_L1B_TP</segment_name>
+	</variable>
+	<variable>
+		<name>sea_level_pressure</name>
+		<symbolic_name>air_pressure</symbolic_name>
+		<segment_name>N_OLC_L1B_TP</segment_name>
+	</variable>
+</variables>
+<global_attributes>
+	<attribute>
+		<name>dataset_name</name>
+		<value>SUBS_ANNOT_METEO_OLC</value>
+	</attribute>
+</global_attributes>
+</dataset>
