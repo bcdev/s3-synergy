@@ -54,6 +54,8 @@ public:
 private:
     NullLogging();
 
+    NullLogging(const NullLogging& orig);
+
     static NullLogging instance;
 };
 

@@ -48,5 +48,5 @@ void TestModule::stop(Context& context) {
 
 void TestModule::process(Context& context) {
     Segment& segment = context.getSegment("SYN_COLLOCATION");
-    context.setMaxLComputed(segment, *this, segment.getGrid().getStartL() + segment.getGrid().getSizeL() - 1);
+    context.setLastLComputed(segment, *this, segment.getGrid().getFirstL() + segment.getGrid().getSizeL() - 1);
 }

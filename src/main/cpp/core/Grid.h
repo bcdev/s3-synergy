@@ -42,28 +42,28 @@ public:
     }
 
     /**
-     * Returns the start value of the camera index dimension.
-     * @return the start value of the camera index dimension.
+     * Returns the first value of the camera index dimension.
+     * @return the first value of the camera index dimension.
      */
-    virtual size_t getStartK() const = 0;
+    virtual size_t getFirstK() const = 0;
 
     /**
-     * Returns the start value of the row index dimension.
-     * @return the start value of the row index dimension.
+     * Returns the first value of the row index dimension.
+     * @return the first value of the row index dimension.
      */
-    virtual size_t getStartL() const = 0;
+    virtual size_t getFirstL() const = 0;
 
     /**
      * Returns the last value of the row index dimension.
      * @return the last value of the row index dimension.
      */
-    virtual size_t getEndL() const = 0;
+    virtual size_t getLastL() const = 0;
 
     /**
-     * Returns the start value of the column index dimension.
-     * @return the start value of the column index dimension.
+     * Returns the first value of the column index dimension.
+     * @return the first value of the column index dimension.
      */
-    virtual size_t getStartM() const = 0;
+    virtual size_t getFirstM() const = 0;
 
     /**
      * Returns the size of the camera index dimension.

@@ -47,9 +47,9 @@ GridImpl::GridImpl(size_t sizeK, size_t sizeL, size_t sizeM, size_t minL, size_t
 }
 
 GridImpl::GridImpl(const Grid& b) : Grid() {
-    this->startK = b.getStartK();
-    this->startL = b.getStartL();
-    this->startM = b.getStartM();
+    this->startK = b.getFirstK();
+    this->startL = b.getFirstL();
+    this->startM = b.getFirstM();
     this->sizeK = b.getSizeK();
     this->sizeL = b.getSizeL();
     this->sizeM = b.getSizeM();
@@ -61,7 +61,7 @@ GridImpl::GridImpl(const Grid& b) : Grid() {
 GridImpl::~GridImpl() {
 }
 
-void GridImpl::setStartL(size_t l) {
+void GridImpl::setFirstL(size_t l) {
     if (l < minL) {
         BOOST_THROW_EXCEPTION(std::out_of_range("l < minL"));
     }

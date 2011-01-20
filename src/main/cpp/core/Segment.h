@@ -121,7 +121,7 @@ public:
      * Returns the segment grid.
      * @return the segment grid.
      */
-    virtual Grid& getGrid() const = 0;
+    virtual const Grid& getGrid() const = 0;
 
     /**
      * Returns an accessor to a variable's samples.
@@ -145,7 +145,7 @@ public:
      * 
      * @param l The index of the row the segment shall be moved to.
      */
-    virtual void setStartL(size_t l) throw (logic_error) = 0;
+    virtual void moveForward(size_t l) throw (logic_error) = 0;
 
     /**
      * Returns a string representation of the segment.
@@ -159,7 +159,7 @@ public:
      * @return true if this and that segment are the
      *         same, false otherwise.
      */
-    virtual bool operator==(const Segment& that) const {
+    bool operator==(const Segment& that) const {
         return this == &that;
     }
 };

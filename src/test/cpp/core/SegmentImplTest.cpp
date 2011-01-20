@@ -66,9 +66,9 @@ void SegmentImplTest::testGetId() {
 void SegmentImplTest::testGetGrid() {
     const Grid& grid = segment->getGrid();
 
-    CPPUNIT_ASSERT(grid.getStartK() == 0);
-    CPPUNIT_ASSERT(grid.getStartL() == 0);
-    CPPUNIT_ASSERT(grid.getStartM() == 0);
+    CPPUNIT_ASSERT(grid.getFirstK() == 0);
+    CPPUNIT_ASSERT(grid.getFirstL() == 0);
+    CPPUNIT_ASSERT(grid.getFirstM() == 0);
     CPPUNIT_ASSERT(grid.getSizeK() == 5);
     CPPUNIT_ASSERT(grid.getSizeL() == 2000);
     CPPUNIT_ASSERT(grid.getSizeM() == 760);
@@ -117,7 +117,7 @@ void SegmentImplTest::testGetAccessor() {
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("US").getUShortData());
 }
 
-void SegmentImplTest::testShift() {
+void SegmentImplTest::testMoveForward() {
     segment->addVariableUInt("U");
     valarray<uint32_t>& data = segment->getAccessor("U").getUIntData();
 
@@ -131,14 +131,14 @@ void SegmentImplTest::testShift() {
         }
     }
 
-    segment->setStartL(200);
-    CPPUNIT_ASSERT(grid.getStartL() == 200);
+    segment->moveForward(200);
+    CPPUNIT_ASSERT(grid.getFirstL() == 200);
 
     for (size_t k = 0; k < grid.getSizeK(); k++) {
-        for (size_t l = grid.getStartL(); l < grid.getStartL() + grid.getSizeL(); l++) {
+        for (size_t l = grid.getFirstL(); l < grid.getFirstL() + grid.getSizeL(); l++) {
             for (size_t m = 0; m < grid.getSizeM(); m++) {
                 const size_t i = grid.getIndex(k, l, m);
-                if (l < grid.getStartL() + grid.getSizeL() - 200) {
+                if (l < grid.getFirstL() + grid.getSizeL() - 200) {
                     CPPUNIT_ASSERT(data[i] == l);
                 } else {
                     CPPUNIT_ASSERT(data[i] == 0);
@@ -147,17 +147,17 @@ void SegmentImplTest::testShift() {
         }
     }
 
-    CPPUNIT_ASSERT_THROW(segment->setStartL(100), logic_error);
-    CPPUNIT_ASSERT(grid.getStartL() == 200);
+    CPPUNIT_ASSERT_THROW(segment->moveForward(100), logic_error);
+    CPPUNIT_ASSERT(grid.getFirstL() == 200);
 
-    CPPUNIT_ASSERT_THROW(segment->setStartL(2201), logic_error);
-    CPPUNIT_ASSERT(grid.getStartL() == 200);
+    CPPUNIT_ASSERT_THROW(segment->moveForward(2201), logic_error);
+    CPPUNIT_ASSERT(grid.getFirstL() == 200);
 
-    segment->setStartL(2200);
-    CPPUNIT_ASSERT(grid.getStartL() == 2200);
+    segment->moveForward(2200);
+    CPPUNIT_ASSERT(grid.getFirstL() == 2200);
 
     for (size_t k = 0; k < grid.getSizeK(); k++) {
-        for (size_t l = grid.getStartL(); l < grid.getStartL() + grid.getSizeL(); l++) {
+        for (size_t l = grid.getFirstL(); l < grid.getFirstL() + grid.getSizeL(); l++) {
             for (size_t m = 0; m < grid.getSizeM(); m++) {
                 const size_t i = grid.getIndex(k, l, m);
                 CPPUNIT_ASSERT(data[i] == 0);

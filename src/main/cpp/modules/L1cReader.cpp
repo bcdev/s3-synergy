@@ -97,12 +97,12 @@ void L1cReader::process(Context& context) {
     foreach(SegmentDescriptor* segmentDescriptor, segmentDescriptors) {
         const Segment& segment = context.getSegment(segmentDescriptor->getName());
         const Grid& grid = segment.getGrid();
-        if (!context.hasMaxLComputed(segment, *this) ||
-                context.getMaxLComputed(segment, *this) < grid.getStartL() + grid.getSizeL() - 1) {
+        if (!context.hasLastLComputed(segment, *this) ||
+                context.getLastLComputed(segment, *this) < grid.getFirstL() + grid.getSizeL() - 1) {
             const vector<VariableDescriptor*> variableDescriptors =
                     segmentDescriptor->getVariableDescriptors();
-            const size_t startL = getStartL(context, segment);
-            const size_t endL = min(grid.getStartL() + grid.getSizeL() - 1, grid.getMaxL());
+            const size_t firstLComputable = context.getFirstLComputable(segment, *this);
+            const size_t lastLComputable = context.getLastLComputable(segment);
 
             foreach(VariableDescriptor* variableDescriptor, variableDescriptors) {
                 const string varName = variableDescriptor->getName();
@@ -117,13 +117,13 @@ void L1cReader::process(Context& context) {
                 const int varId = ncVarIdMap[varName];
                 const int fileId = ncFileIdMap[ncFileName];
                 const size_t dimCount = variableDescriptor->getDimensions().size();
-                const valarray<size_t> starts = IOUtils::createStartVector(dimCount, startL);
-                const valarray<size_t> counts = IOUtils::createCountVector(dimCount, grid.getSizeK(), endL - startL + 1, grid.getSizeM());
+                const valarray<size_t> starts = IOUtils::createStartVector(dimCount, firstLComputable);
+                const valarray<size_t> counts = IOUtils::createCountVector(dimCount, grid.getSizeK(), lastLComputable - firstLComputable + 1, grid.getSizeM());
                 context.getLogging().progress("Reading variable '" + variableDescriptor->getNcVarName() + "' into segment '" + segment.toString() + "'", getId());
                 const Accessor& accessor = segment.getAccessor(varName);
                 NetCDF::getData(fileId, varId, starts, counts, accessor.getUntypedData());
             }
-            context.setMaxLComputed(segment, *this, endL);
+            context.setLastLComputed(segment, *this, lastLComputable);
         }
     }
 }

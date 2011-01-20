@@ -37,23 +37,21 @@ void GridImplTest::tearDown() {
     delete grid;
 }
 
-void GridImplTest::testStarts() {
-    CPPUNIT_ASSERT(grid->getStartK() == 0);
-    CPPUNIT_ASSERT(grid->getStartL() == 0);
-    CPPUNIT_ASSERT(grid->getStartM() == 0);
-}
+void GridImplTest::testMetrics() {
+    CPPUNIT_ASSERT(grid->getFirstK() == 0);
+    CPPUNIT_ASSERT(grid->getFirstL() == 0);
+    CPPUNIT_ASSERT(grid->getFirstM() == 0);
 
-void GridImplTest::testSizes() {
     CPPUNIT_ASSERT(grid->getSizeK() == 5);
     CPPUNIT_ASSERT(grid->getSizeL() == 2000);
     CPPUNIT_ASSERT(grid->getSizeM() == 760);
     CPPUNIT_ASSERT(grid->getSize() == 5 * 2000 * 760);
-}
 
-void GridImplTest::testStrides() {
     CPPUNIT_ASSERT(grid->getStrideK() == 2000 * 760);
     CPPUNIT_ASSERT(grid->getStrideL() == 760);
     CPPUNIT_ASSERT(grid->getStrideM() == 1);
+
+    CPPUNIT_ASSERT(grid->getLastL() == grid->getFirstL() + grid->getSizeL() - 1);
 }
 
 void GridImplTest::testGetIndex() {
@@ -66,12 +64,15 @@ void GridImplTest::testGetIndex() {
     CPPUNIT_ASSERT_THROW(grid->getIndex(0, 0, 760), out_of_range);
 }
 
-void GridImplTest::testSetGetStartL() {
-    CPPUNIT_ASSERT(grid->getStartL() == 0);
-    grid->setStartL(1000);
-    CPPUNIT_ASSERT(grid->getStartL() == 1000);
-    grid->setStartL(58000);
-    CPPUNIT_ASSERT(grid->getStartL() == 58000);
-    CPPUNIT_ASSERT_THROW(grid->setStartL(58001), out_of_range);
-    CPPUNIT_ASSERT(grid->getStartL() == 58000);
+void GridImplTest::testSetGetFirstL() {
+    grid->setFirstL(1000);
+    CPPUNIT_ASSERT(grid->getFirstL() == 1000);
+    CPPUNIT_ASSERT(grid->getLastL() == grid->getFirstL() + grid->getSizeL() - 1);
+
+    grid->setFirstL(58000);
+    CPPUNIT_ASSERT(grid->getFirstL() == 58000);
+    CPPUNIT_ASSERT(grid->getLastL() == grid->getFirstL() + grid->getSizeL() - 1);
+
+    CPPUNIT_ASSERT_THROW(grid->setFirstL(58001), out_of_range);
+    CPPUNIT_ASSERT(grid->getFirstL() == 58000);
 }

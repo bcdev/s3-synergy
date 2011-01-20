@@ -116,7 +116,7 @@ const string& SegmentImpl::getId() const {
     return id;
 }
 
-Grid& SegmentImpl::getGrid() const {
+const Grid& SegmentImpl::getGrid() const {
     return grid;
 }
 
@@ -127,27 +127,27 @@ Accessor& SegmentImpl::getAccessor(const string& varName) const throw (logic_err
     return *accessorMap.at(varName);
 }
 
-void SegmentImpl::setStartL(size_t l) throw (logic_error) {
-    if (l < grid.getStartL()) {
+void SegmentImpl::moveForward(size_t l) throw (logic_error) {
+    if (l < grid.getFirstL()) {
         BOOST_THROW_EXCEPTION(logic_error("Class: " + className + ": l < grid.getStartL()."));
     }
-    if (l > grid.getStartL() + grid.getSizeL()) {
+    if (l > grid.getFirstL() + grid.getSizeL()) {
         BOOST_THROW_EXCEPTION(logic_error("Class: " + className + ": l > grid.getStartL() + grid.getSizeL()."));
     }
     if (l + grid.getSizeL() - 1 > grid.getMaxL()) {
         l = grid.getMaxL() - grid.getSizeL() + 1;
     }
     for (size_t i = 0; i < accessorList.size(); i++) {
-        accessorList[i]->shift(l - grid.getStartL(), grid.getStrideK(), grid.getStrideL());
+        accessorList[i]->shift(l - grid.getFirstL(), grid.getStrideK(), grid.getStrideL());
     }
-    grid.setStartL(l);
+    grid.setFirstL(l);
 }
 
 string SegmentImpl::toString() const {
     ostringstream oss;
     oss << className << "[";
     oss << "id = " << getId() << ", ";
-    oss << "startL = " << getGrid().getStartL() << ", ";
+    oss << "startL = " << getGrid().getFirstL() << ", ";
     oss << "sizeL = " << getGrid().getSizeL() << "]";
 
     return oss.str();

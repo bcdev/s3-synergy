@@ -27,11 +27,9 @@
 
 class GridImplTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(GridImplTest);
-    CPPUNIT_TEST(testStarts);
-    CPPUNIT_TEST(testSizes);
-    CPPUNIT_TEST(testStrides);
+    CPPUNIT_TEST(testMetrics);
     CPPUNIT_TEST(testGetIndex);
-    CPPUNIT_TEST(testSetGetStartL);
+    CPPUNIT_TEST(testSetGetFirstL);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -42,11 +40,9 @@ public:
 
 private:
     GridImpl* grid;
-    void testStarts();
-    void testSizes();
-    void testStrides();
+    void testMetrics();
     void testGetIndex();
-    void testSetGetStartL();
+    void testSetGetFirstL();
 };
 
 #endif	/* GRIDIMPLTEST_H */

@@ -28,3 +28,4 @@ const char Constants::SYMBOLIC_NAME_DIMENSION_N_DET_CAM[] = "N_DET_CAM";
 const char Constants::SYMBOLIC_NAME_DIMENSION_N_LINE_OLC[] = "N_LINE_OLC";
 const char Constants::SYMBOLIC_NAME_SYN_L2[] = "L2";
 const char Constants::SYMBOLIC_NAME_L1C[] = "L1C";
+

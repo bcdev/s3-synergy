@@ -29,19 +29,19 @@ public:
     GridImpl(const Grid& bounds);
     virtual ~GridImpl();
 
-    size_t getStartK() const {
+    size_t getFirstK() const {
         return startK;
     }
 
-    size_t getStartL() const {
+    size_t getFirstL() const {
         return startL;
     }
 
-    size_t getEndL() const {
+    size_t getLastL() const {
         return startL + sizeL - 1;
     }
 
-    size_t getStartM() const {
+    size_t getFirstM() const {
         return startM;
     }
 
@@ -83,7 +83,7 @@ public:
         return maxL;
     }
 
-    void setStartL(size_t l);
+    void setFirstL(size_t l);
 
 private:
     size_t startK;

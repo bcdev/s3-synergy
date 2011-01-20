@@ -60,43 +60,8 @@ public:
     virtual void process(Context& context) {
     };
 
-    virtual size_t getMinLRequired(const Segment& segment, size_t line) const {
+    virtual size_t getFirstLRequired(const Segment& segment, size_t line) const {
         return line;
-    }
-
-protected:
-
-    /**
-     * Returns the index of the row where this module shall start the processing
-     * of segment data.
-     * @param context The context of this module.
-     * @param segment The segment data.
-     * @return The index of the row where this module shall start the processing
-     *         of the {@code segment}.
-     */
-    size_t getStartL(const Context& context, const Segment& segment) const {
-        if (context.hasMaxLComputed(segment, *this)) {
-            return max(segment.getGrid().getStartL(),
-                    context.getMaxLComputed(segment, *this) + 1);
-        } else {
-            return segment.getGrid().getStartL();
-        }
-    }
-
-    /**
-     * Returns the index of the row where this module shall stop the processing
-     * of segment data.
-     * @param startLine The start line to compute the end line for.
-     * @param grid The segment's grid.
-     * @return The index of the row were this module shall stop the processing
-     *         of segment data.
-     */
-    size_t getDefaultEndL(const size_t startLine, const Grid& grid) const {
-        if (startLine + grid.getSizeL() - 1 > grid.getMaxL() - 1) {
-            return grid.getMaxL();
-        } else {
-            return startLine + grid.getSizeL() - 1;
-        }
     }
 
 protected:

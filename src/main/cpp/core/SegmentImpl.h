@@ -50,9 +50,9 @@ public:
     bool hasVariable(const string& varName) const;
 
     const string& getId() const;
-    Grid& getGrid() const;
+    const Grid& getGrid() const;
     Accessor& getAccessor(const string& varName) const throw (logic_error);
-    void setStartL(size_t l) throw (logic_error);
+    void moveForward(size_t l) throw (logic_error);
     
     string toString() const;
 

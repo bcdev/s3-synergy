@@ -30,7 +30,7 @@ void Processor::process(Context& context) {
             foreach(Module* module, modules) {
                 module->process(context);
             }
-            context.shift();
+            context.moveSegmentsForward();
         } while (!context.isCompleted());
 
         reverse_foreach(Module* module, modules) {

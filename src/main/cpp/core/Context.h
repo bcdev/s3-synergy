@@ -21,6 +21,7 @@
 #ifndef CONTEXT_H
 #define	CONTEXT_H
 
+#include <algorithm>
 #include <stdexcept>
 #include <map>
 #include <vector>
@@ -135,45 +136,64 @@ public:
     const vector<Segment*> getSegments() const;
 
     /**
-     * Returns the index of the maximum row in a segment, which has been
+     * Returns the index of the last row in a segment, which has been
      * computed by a certain module.
      * @param segment The segment.
      * @param module The module.
-     * @return the index of the maximum row in {@code segment}, which has
+     * @return the index of the last row in {@code segment}, which has
      *         been computed by {@code module}.
      */
-    size_t getMaxLComputed(const Segment& segment, const Module& module) const;
+    size_t getLastLComputed(const Segment& segment, const Module& module) const;
 
     /**
-     * Sets the index of the maximum row in a segment, which has been
+     * Sets the index of the last row in a segment, which has been
      * computed by a certain module.
      * @param segment The segment.
      * @param module The module.
-     * @param l The index of the maximum row in {@code segment}, which has
+     * @param l The index of the last row in {@code segment}, which has
      *          been computed by {@code module}.
      */
-    void setMaxLComputed(const Segment& segment, const Module& module, size_t l);
+    void setLastLComputed(const Segment& segment, const Module& module, size_t l);
 
     /**
-     * Returns the index of the maximum row in a segment, which has been
-     * computed by all modules except the provided writer.
+     * Returns the index of the last row in a segment, which has been
+     * computed by all modules but a given writer module.
      * @param segment The segment.
-     * @param writer The writer to exclude.
-     * @return The index of the maximum row in a segment, which has been
-     * computed by all modules except the provided writer.
+     * @param writer The writer module.
+     * @return The index of the last row in a segment, which has been
+     *         computed by all modules but the writer module.
      */
-    size_t getMaxLWritable(const Segment& segment, const Writer& writer) const;
+    size_t getLastLWritable(const Segment& segment, const Writer& writer) const;
 
     /**
-     * Returns the index of the minimum row in a segment, which is required for
-     * processing any block of rows starting with a certain row index.
+     * Returns the index of the first row in a given segment, which has not
+     * been computed by a module.
+     * @param segment The segment.
+     * @param module The module.
+     * @return The index of the first row, which has not been computed by the
+     *         given module.
+     */
+    size_t getFirstLComputable(const Segment& segment, const Module& module) const;
+
+    /**
+     * Returns the index of the last row in a given segment, which can be
+     * computed.
+     * @param segment The segment.
+     * @return The index of the last row in the given segment, which can be
+     *         computed.
+     */
+    size_t getLastLComputable(const Segment& segment) const;
+
+    /**
+     * Returns the index of the first row in a segment, which is required for
+     * processing any block of rows starting with a given row index.
      * @param segment The segment.
      * @param l The row index.
-     * @return the index of the minimum row in {@code segment}, which is
+     * @return the index of the first row in {@code segment}, which is
      *         required for processing a block of rows starting with row
      *         index {@code l}.
      */
-    size_t getMinLRequired(const Segment& segment, size_t l) const;
+    size_t getFirstLRequired(const Segment& segment, size_t l) const;
 
     /**
      * Inquires the context about an object.
@@ -192,19 +212,19 @@ public:
     bool hasSegment(const string& id) const;
 
     /**
-     * Inquires the context about the index of the maximum row in a segment,
+     * Inquires the context about the index of the last row in a segment,
      * which has been computed by a certain module.
      * @param segment The segment.
      * @param module The module.
      * @return {@code true} if the context has the requested information,
      *         {@code false} otherwise.
      */
-    bool hasMaxLComputed(const Segment& segment, const Module& module) const;
+    bool hasLastLComputed(const Segment& segment, const Module& module) const;
 
     bool isCompleted() const;
 
-    void shift() const;
-    
+    void moveSegmentsForward() const;
+
     void setErrorHandler(ErrorHandler* errorHandler);
 
     void handleError(exception& e);
@@ -212,10 +232,16 @@ public:
 private:
 
     template <class K, class V>
-    bool contains(const map<K, V>& map, const K& key) const {
-        return map.find(key) != map.end();
+    bool contains(const map<const K*, V>& map, const K& key) const {
+        return map.find(&key) != map.end();
     }
-    void shift(Segment& segment) const;
+
+    template <class T>
+    bool contains(const vector<T*>& vector, const T& value) const {
+        return std::find(vector.begin(), vector.end(), &value) != vector.end();
+    }
+
+    void moveForward(Segment& segment) const;
     void removeObject(Object& object);
     void removeSegment(Segment& segment);
 
@@ -229,8 +255,7 @@ private:
     map<string, Segment*> segmentMap;
     vector<Segment*> segmentList;
 
-    typedef map<const Module*, size_t> ModuleMaxLComputedMap;
-    map<const Segment*, map<const Module*, size_t > > maxLComputedMap;
+    map<const Segment*, map<const Module*, size_t > > lastLComputedMap;
 };
 
 #endif	/* CONTEXT_H */

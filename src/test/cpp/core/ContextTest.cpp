@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2010 by Brockmann Consult (info@brockmann-consult.de)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -14,7 +14,7 @@
  *
  * File:   ContextTest.cpp
  * Author: ralf
- * 
+ *
  * Created on December 21, 2010, 1:08 PM
  */
 
@@ -101,31 +101,36 @@ void ContextTest::testGetUnknownSegment() {
     CPPUNIT_ASSERT_THROW(context->getSegment("S"), logic_error);
 }
 
-void ContextTest::testGetMaxLWritable() {
-    Segment& segment = context->addSegment("A", 10, 10, 3, 0, 200);
+void ContextTest::testSetGetLastLComputed() {
+    Segment& segment = context->addSegment("S", 100, 1, 1, 0, 200);
+    DefaultModule module("M");
+    CPPUNIT_ASSERT_THROW(context->setLastLComputed(segment, module, 10), logic_error);
+
+    context->addModule(module);
+    context->setLastLComputed(segment, module, 10);
+    CPPUNIT_ASSERT(context->getLastLComputed(segment, module) == 10);
+}
+
+void ContextTest::testGetLastLWritable() {
+    const Segment& segment = context->addSegment("A", 100, 1, 1, 0, 200);
 
     DefaultModule module1("M1");
-    context->addModule(module1);
-    segment.setStartL(10);
-    context->setMaxLComputed(segment, module1, 13);
-
-    Writer writer("W1");
-    context->setMaxLComputed(segment, writer, 7);
-
-    size_t maxLWritable = context->getMaxLWritable(segment, writer);
-    CPPUNIT_ASSERT(maxLWritable == 13);
-
     DefaultModule module2("M2");
-    context->addModule(module2);
-    segment.setStartL(20);
-    context->setMaxLComputed(segment, module2, 22);
+    Writer writer("W");
+    context->addModule(module1);
+    context->setLastLComputed(segment, module1, 5);
+    CPPUNIT_ASSERT_THROW(context->getLastLWritable(segment, writer), logic_error);
 
     context->addModule(writer);
+    CPPUNIT_ASSERT(context->getLastLWritable(segment, writer) == 5);
 
-    maxLWritable = context->getMaxLWritable(segment, writer);
-    CPPUNIT_ASSERT(maxLWritable == 13);
+    context->addModule(module2);
+    context->setLastLComputed(segment, module2, 7);
+    CPPUNIT_ASSERT(context->getLastLWritable(segment, writer) == 5);
 
-    context->setMaxLComputed(segment, module1, 23);
-    maxLWritable = context->getMaxLWritable(segment, writer);
-    CPPUNIT_ASSERT(maxLWritable == 22);
+    context->setLastLComputed(segment, module1, 9);
+    CPPUNIT_ASSERT(context->getLastLWritable(segment, writer) == 7);
+
+    context->setLastLComputed(segment, writer, 3);
+    CPPUNIT_ASSERT(context->getLastLWritable(segment, writer) == 7);
 }

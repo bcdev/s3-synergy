@@ -23,6 +23,9 @@
 NullLogging::NullLogging() : Logging() {
 }
 
+NullLogging::NullLogging(const NullLogging& orig) : Logging() {
+}
+
 NullLogging::~NullLogging() {
 }
 
