@@ -37,6 +37,10 @@ public:
         return startL;
     }
 
+    size_t getEndL() const {
+        return startL + sizeL - 1;
+    }
+
     size_t getStartM() const {
         return startM;
     }

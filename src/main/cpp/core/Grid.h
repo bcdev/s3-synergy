@@ -54,6 +54,12 @@ public:
     virtual size_t getStartL() const = 0;
 
     /**
+     * Returns the last value of the row index dimension.
+     * @return the last value of the row index dimension.
+     */
+    virtual size_t getEndL() const = 0;
+
+    /**
      * Returns the start value of the column index dimension.
      * @return the start value of the column index dimension.
      */
