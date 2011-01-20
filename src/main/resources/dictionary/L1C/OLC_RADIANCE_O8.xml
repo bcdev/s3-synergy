@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
-  <variables>
-    <variable>
-      <name>TOA_Radiance_Meas</name>
-      <symbolic_name>L_8</symbolic_name>
-      <segment_name>SYN_COLLOCATION</segment_name>
-    </variable>
-    <variable>
-      <name>error_estimates</name>
-      <symbolic_name>L_8_er</symbolic_name>
-      <segment_name>SYN_COLLOCATION</segment_name>
-    </variable>
-  </variables>
-  <global_attributes>
-    <attribute>
-      <name>dataset_name</name>
-      <value>OLC_RADIANCE_O8</value>
-    </attribute>
-  </global_attributes>
+<variables>
+	<variable>
+		<name>TOA_Radiance_Meas</name>
+		<symbolic_name>L_8</symbolic_name>
+		<segment_name>SYN_COLLOCATION</segment_name>
+	</variable>
+	<variable>
+		<name>error_estimates</name>
+		<symbolic_name>L_8_er</symbolic_name>
+		<segment_name>SYN_COLLOCATION</segment_name>
+	</variable>
+</variables>
+<global_attributes>
+	<attribute>
+		<name>dataset_name</name>
+		<value>OLC_RADIANCE_O8</value>
+	</attribute>
+</global_attributes>
 </dataset>
-
