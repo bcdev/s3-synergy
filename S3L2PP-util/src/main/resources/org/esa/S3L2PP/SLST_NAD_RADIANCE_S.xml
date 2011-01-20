@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+<variables>
+	<variable>
+		<name>TOA_Radiance_Meas</name>
+		<symbolic_name>L_${j}</symbolic_name>
+        <segment_name>SLST_NAD_05km</segment_name>
+	</variable>
+	<variable>
+		<name>exception</name>
+		<symbolic_name>SLN_exception_${i}</symbolic_name>
+        <segment_name>SLST_NAD_05km</segment_name>
+	</variable>
+</variables>
+<global_attributes>
+	<attribute>
+		<name>dataset_name</name>
+		<value>${dataset_name}</value>
+	</attribute>
+</global_attributes>
+</dataset>
