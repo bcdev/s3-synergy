@@ -44,6 +44,8 @@ void ErrorHandler::handleError(Context& context, exception& e) const {
     string message = createMessage(module, functionName, lineNumber, exceptionMessage);
 
     context.getLogging().error(message, module, processorVersion);
+    context.getLogging().close();
+    exit(128);
 }
 
 string ErrorHandler::extractLineNumber(const string diagnostics) const {

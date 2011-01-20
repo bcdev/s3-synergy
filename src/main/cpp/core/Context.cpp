@@ -136,7 +136,7 @@ void Context::setErrorHandler(ErrorHandler* errorHandler) {
 
 void Context::handleError(exception& e) {
     if (errorHandler == 0) {
-        BOOST_THROW_EXCEPTION(e);
+        throw e;
     } else {
         errorHandler->handleError(*this, e);
     }

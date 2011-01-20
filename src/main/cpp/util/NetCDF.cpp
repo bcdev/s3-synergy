@@ -23,7 +23,7 @@
 int NetCDF::openFile(const path& filePath) {
     int ncId;
     int status = nc_open(filePath.file_string().c_str(), NC_NOWRITE, &ncId);
-    checkStatus(status, "opening file");
+    checkStatus(status, "opening file " + filePath.file_string());
     return ncId;
 }
 

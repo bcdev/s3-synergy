@@ -59,9 +59,11 @@ int main() {
     context.setDictionary(&dict);
     processor.process(context);
 
+    int exitCode = 0;
+//    int exitCode = context.getExitCode();
+
     logger->info(createProcessingTimeMessage(start), "Main");
-    logger->info("Processing complete. Exit code: 0", "Main");
-    logger->close();
+    logger->info("Processing complete. Exit code: " + lexical_cast<string>(exitCode) + ".", "Main");
     return 0;
 }
 
