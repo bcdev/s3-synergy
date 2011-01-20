@@ -3,12 +3,12 @@
 <variables>
 	<variable>
 		<name>delta_col</name>
-		<symbolic_name>delta_x_15</symbolic_name>
+		<symbolic_name>delta_x_14</symbolic_name>
 		<segment_name>SYN_COLLOCATION</segment_name>
 	</variable>
 	<variable>
 		<name>delta_row</name>
-		<symbolic_name>delta_y_15</symbolic_name>
+		<symbolic_name>delta_y_14</symbolic_name>
 		<segment_name>SYN_COLLOCATION</segment_name>
 	</variable>
 </variables>

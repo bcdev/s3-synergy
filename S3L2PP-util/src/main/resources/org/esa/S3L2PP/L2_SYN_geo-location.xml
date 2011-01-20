@@ -4,6 +4,9 @@
 	<variable>
 		<name>latitude</name>
 		<type>int</type>
+		<dimensions>
+            <id>OLCI</id>
+		</dimensions>
 		<attributes>
 			<attribute>
 				<name>long_name</name>
@@ -40,6 +43,9 @@
 	<variable>
 		<name>longitude</name>
 		<type>int</type>
+		<dimensions>
+            <id>OLCI</id>
+		</dimensions>
 		<attributes>
 			<attribute>
 				<name>long_name</name>
@@ -76,6 +82,9 @@
 	<variable>
 		<name>altitude</name>
 		<type>short</type>
+		<dimensions>
+            <id>OLCI</id>
+		</dimensions>
 		<attributes>
 			<attribute>
 				<name>long_name</name>

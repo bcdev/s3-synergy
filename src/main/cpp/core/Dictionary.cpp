@@ -65,7 +65,9 @@ VariableDescriptor::~VariableDescriptor() {
 
 vector<VariableDescriptor*> ProductDescriptor::getVariables() const {
     vector<VariableDescriptor*> variableDescriptors;
+
     foreach(SegmentDescriptor* segmentDescriptor, getSegmentDescriptors()) {
+
         foreach(VariableDescriptor* variableDescriptor, segmentDescriptor->getVariableDescriptors()) {
             variableDescriptors.push_back(variableDescriptor);
         }
@@ -74,7 +76,9 @@ vector<VariableDescriptor*> ProductDescriptor::getVariables() const {
 }
 
 VariableDescriptor* ProductDescriptor::getVariable(const string& name) const {
+
     foreach(SegmentDescriptor* segmentDescriptor, getSegmentDescriptors()) {
+
         foreach(VariableDescriptor* variableDescriptor, segmentDescriptor->getVariableDescriptors()) {
             if (variableDescriptor->getName().compare(name) == 0) {
                 return variableDescriptor;
@@ -106,6 +110,9 @@ Dictionary::~Dictionary() {
 }
 
 void Dictionary::init() {
+    exclusionSet.insert("dimensions.xml");
+    exclusionSet.insert("MISREGIST_OLC_Oref_O17.xml");
+
     const string L1C_IDENTIFIER = Constants::SYMBOLIC_NAME_L1C;
     const string L2_IDENTIFIER = Constants::SYMBOLIC_NAME_SYN_L2;
     string variableDefPath = xmlParser.evaluateToString(configFile, "/Config/Variable_Definition_Files_Path");
@@ -115,17 +122,20 @@ void Dictionary::init() {
     string L1CPath = variableDefPath + "/" + L1C_IDENTIFIER;
     string L2SynPath = variableDefPath + "/" + L2_IDENTIFIER;
 
-    vector<string> L1CFiles = IOUtils::getFiles(L1CPath);
-    for (size_t i = 0; i < L1CFiles.size(); i++) {
-        parseVariablesFile(L1CPath, L1CFiles[i], l1c);
+    vector<string> l1cFiles = IOUtils::getFiles(L1CPath);
+    for (size_t i = 0; i < l1cFiles.size(); i++) {
+        parseVariablesFile(L1CPath, l1cFiles[i], l1c);
     }
-    vector<string> L2SynFiles = IOUtils::getFiles(L2SynPath);
-    for (size_t i = 0; i < L2SynFiles.size(); i++) {
-        parseVariablesFile(L2SynPath, L2SynFiles[i], l2);
+    vector<string> l2SynFiles = IOUtils::getFiles(L2SynPath);
+    for (size_t i = 0; i < l2SynFiles.size(); i++) {
+        parseVariablesFile(L2SynPath, l2SynFiles[i], l2);
     }
 }
 
 void Dictionary::parseVariablesFile(string& variableDefPath, string& file, ProductDescriptor& productDescriptor) {
+    if( contains(exclusionSet, file) ) {
+        return;
+    }
     string path = variableDefPath + "/" + file;
     const vector<string> ncVariableNames = xmlParser.evaluateToStringList(path, "/dataset/variables/variable/name/child::text()");
 
@@ -150,6 +160,7 @@ void Dictionary::parseVariablesFile(string& variableDefPath, string& file, Produ
         var.setSegmentName(segmentName);
 
         parseAttributes(path, ncVariableName, var);
+        parseDimensions(path, ncVariableName, var);
     }
 }
 
@@ -163,6 +174,27 @@ void Dictionary::parseAttributes(string& file, string& variableName, VariableDes
         query = "/dataset/variables/variable[name=\"" + variableName + "\"]/attributes/attribute[name=\"" + attributeName + "\"]/value";
         string value = xmlParser.evaluateToString(file, query);
         var.addAttribute(type, attributeName, value);
+    }
+}
+
+void Dictionary::parseDimensions(string& file, string& variableName, VariableDescriptor& var) {
+    string query = "/dataset/variables/variable[name=\"" + variableName + "\"]/dimensions/id/child::text()";
+    string dimensionId = xmlParser.evaluateToString(file, query);
+    if (dimensionId.empty()) {
+        return;
+    }
+    path dimensionFilePath = path(file);
+    dimensionFilePath = dimensionFilePath.parent_path();
+    dimensionFilePath = dimensionFilePath / "dimensions.xml";
+    string dimensionFileString = dimensionFilePath.file_string();
+    query = "/dataset/set[@name=\"" + dimensionId + "\"]/dimensions/dimension/name/child::text()";
+    vector<string> dimNames = xmlParser.evaluateToStringList(dimensionFileString, query);
+
+    foreach(string dimName, dimNames) {
+        query = "/dataset/set[@name=\"" + dimensionId + "\"]/dimensions/dimension[name=\"" + dimName + "\"]/size/child::text()";
+        int size = lexical_cast<int>(xmlParser.evaluateToString(dimensionFileString, query));
+        Dimension& dim = var.addDimension(dimName);
+        dim.setSize(size);
     }
 }
 

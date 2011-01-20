@@ -4,6 +4,9 @@
 	<variable>
 		<name>time</name>
 		<type>long</type>
+        <dimensions>
+            <id>N_LINE_OLC</id>
+        </dimensions>
 		<attributes>
 			<attribute>
 				<name>standard_name</name>

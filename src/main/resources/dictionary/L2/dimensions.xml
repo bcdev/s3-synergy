@@ -1,0 +1,50 @@
+<dataset>
+    <set name="OLCI">
+    <dimensions>
+        <dimension>
+            <name>N_CAM</name>
+            <size>5</size>
+        </dimension>
+        <dimension>
+            <name>N_LINE_OLC</name>
+            <size>60000</size>
+        </dimension>
+        <dimension>
+            <name>N_DET_CAM</name>
+            <size>740</size>
+        </dimension>
+    </dimensions>
+    </set>
+    <set name="N_LINE_OLC">
+        <dimensions>
+            <dimension>
+                <name>N_LINE_OLC</name>
+                <size>60000</size>
+            </dimension>
+        </dimensions>
+    </set>
+    <set name="N_OLC_TP">
+        <dimensions>
+            <dimension>
+                <name>N_OLC_TP</name>
+                <size>5</size>
+            </dimension>
+        </dimensions>
+    </set>
+    <set name="N_SLN_TP">
+        <dimensions>
+            <dimension>
+                <name>N_SLN_TP</name>
+                <size>5</size>
+            </dimension>
+        </dimensions>
+    </set>
+    <set name="N_SLO_TP">
+        <dimensions>
+            <dimension>
+                <name>N_SLO_TP</name>
+                <size>5</size>
+            </dimension>
+        </dimensions>
+    </set>
+</dataset>

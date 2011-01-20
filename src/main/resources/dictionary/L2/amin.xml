@@ -4,6 +4,9 @@
 	<variable>
 		<name>AMIN</name>
 		<type>ubyte</type>
+		<dimensions>
+            <id>OLCI</id>
+		</dimensions>
 		<attributes>
 			<attribute>
 				<name>long_name</name>

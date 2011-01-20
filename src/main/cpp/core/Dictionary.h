@@ -503,14 +503,19 @@ public:
     }
 
 private:
+    bool contains(set<string> list, string key) {
+        return list.find(key) != list.end();
+    }
     void init();
     string filePath;
-    void parseVariablesFile(string& variableDefPath, string& file, ProductDescriptor& vol);
+    void parseVariablesFile(string& variableDefPath, string& file, ProductDescriptor& prod);
     void parseAttributes(string& file, string& variableName, VariableDescriptor& var);
+    void parseDimensions(string& file, string& variableName, VariableDescriptor& var);
     int mapToNcType(const string& typeString);
 
     XmlParser xmlParser;
     const string configFile;
+    set<string> exclusionSet;
 };
 
 #endif	/* DICTIONARY_H */

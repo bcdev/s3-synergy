@@ -38,9 +38,8 @@ public class DictionaryGenerator {
         generateDatasets(L1C, "GEN_INFO_SLST_ALT_S", 25, 30, 1);
         generateDatasets(L1C, "GEN_INFO_SLST_NAD_S", 19, 24, 1);
         generateDataset(L1C, "GEOLOCATION_REF");
-        int[] excludes = new int[]{14, 15, 17, 20};
-        generateDatasets(L1C, "MISREGIST_OLC_Oref_O", 1, 21, 1, excludes);
-        generateDatasets(L1C, "OLC_RADIANCE_O", 1, 21, 1, excludes);
+        generateDatasets(L1C, "MISREGIST_OLC_Oref_O", 1, 21, 1, new int[]{14, 15, 20});
+        generateDatasets(L1C, "OLC_RADIANCE_O", 1, 21, 1, new int[]{14, 15, 20});
         generateDataset(L1C, "PIX_ANNOT_OLC");
         generateDataset(L1C, "PIX_ANNOT_SLST_ALT_A");
         generateDataset(L1C, "PIX_ANNOT_SLST_NAD_A");
@@ -63,6 +62,7 @@ public class DictionaryGenerator {
         generateDataset(L2, "L2_SYN_SLSTR_oblique_sub-sampled_annotations", "tiepoints_slstr_o");
         generateDataset(L2, "L2_SYN_status_flags", "flags");
         generateDataset(L2, "L2_SYN_time_stamps", "time");
+        generateDataset(L2, "dimensions");
     }
 
     private static void generateSLSTRadianceDatasets(String templateName, int offset) throws Exception {
@@ -93,8 +93,8 @@ public class DictionaryGenerator {
         for (int i = minChannel; i <= maxChannel; i++) {
             if (isExcluded(excludes, i)) {
                 start++;
-                i++;
                 counter++;
+                continue;
             }
             properties.setProperty("i", String.format("%d", i - counter));
             properties.setProperty("dataset_name", templateName + start);

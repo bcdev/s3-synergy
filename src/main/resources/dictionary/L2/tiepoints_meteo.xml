@@ -4,6 +4,9 @@
 	<variable>
 		<name>air_pressure</name>
 		<type>float</type>
+            <dimensions>
+                <id>N_OLC_TP</id>
+            </dimensions>
 		<attributes>
 			<attribute>
 				<name>long_name</name>
@@ -45,6 +48,9 @@
 	<variable>
 		<name>ozone</name>
 		<type>float</type>
+            <dimensions>
+                <id>N_OLC_TP</id>
+            </dimensions>
 		<attributes>
 			<attribute>
 				<name>long_name</name>
@@ -86,6 +92,9 @@
 	<variable>
 		<name>water_vapour</name>
 		<type>float</type>
+            <dimensions>
+                <id>N_OLC_TP</id>
+            </dimensions>
 		<attributes>
 			<attribute>
 				<name>long_name</name>

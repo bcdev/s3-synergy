@@ -18,6 +18,8 @@
  * Created on January 13, 2010, 5:17 PM
  */
 
+#include <iostream>
+
 #include "../core/Boost.h"
 #include "ErrorHandler.h"
 #include "../core/JobOrder.h"
@@ -30,7 +32,7 @@ ErrorHandler::~ErrorHandler() {
 }
 
 void ErrorHandler::handleError(Context& context, exception& e) const {
-    string processorVersion = "unknown";
+    string processorVersion = Constants::PROCESSOR_VERSION;
     if (context.getJobOrder() != 0) {
         processorVersion = context.getJobOrder()->getConfig().getVersion();
     }
@@ -45,6 +47,13 @@ void ErrorHandler::handleError(Context& context, exception& e) const {
 
     context.getLogging().error(message, module, processorVersion);
     context.getLogging().close();
+    exit(128);
+}
+
+void ErrorHandler::handleInitError(exception& e) const {
+    std::cerr << "An error has occurred initializing the processor. Error Message:\n";
+    std::cerr << e.what() << std::endl;
+    std::cerr << "System will exit.";
     exit(128);
 }
 
@@ -73,19 +82,6 @@ string ErrorHandler::extractModuleName(const string diagnostics) const {
     boost::iter_split(temp, temp[1], boost::first_finder("::"));
     boost::iter_split(temp, temp[0], boost::first_finder(" "));
     return temp[temp.size() - 1];
-//    string firstLine = splitIntoLines(diagnostics)[0];
-//    vector<string> tempVector1;
-//    boost::iter_split(tempVector1, firstLine, boost::first_finder("function"));
-//
-//    string temp1 = tempVector1[1];
-//    vector<string> tempVector2;
-//    boost::iter_split(tempVector2, temp1, boost::first_finder("::"));
-//
-//    string temp2 = tempVector2[0];
-//    vector<string> tempVector3;
-//    boost::iter_split(tempVector3, temp2, boost::first_finder(" "));
-//
-//    return tempVector3[tempVector3.size() - 1];
 }
 
 vector<string> ErrorHandler::splitIntoLines(const string toSplit) const {
