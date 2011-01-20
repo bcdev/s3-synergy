@@ -25,13 +25,13 @@ void Processor::process(Context& context) {
         foreach(Module* module, modules) {
             module->start(context);
         }
-        while (!context.isCompleted()) {
+        do {
 
             foreach(Module* module, modules) {
                 module->process(context);
             }
             context.shift();
-        }
+        } while (!context.isCompleted());
 
         reverse_foreach(Module* module, modules) {
             module->stop(context);

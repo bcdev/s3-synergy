@@ -113,18 +113,23 @@ bool Context::hasSegment(const string& id) const {
 }
 
 bool Context::isCompleted() const {
-    if (segmentList.empty()) {
-        return false;
+    pair<const Segment*, ModuleMaxLComputedMap> p;
+    pair<const Module*, size_t> q;
+
+    foreach(p, maxLComputedMap) {
+        const size_t maxL = p.first->getGrid().getMaxL();
+
+        foreach(q, p.second) {
+            if (q.second < maxL) {
+                return false;
+            }
+        }
     }
-    for (size_t i = 0; i < moduleList.size(); i++) {
-        for (size_t j = 0; j < segmentList.size(); j++) {
-            if (!hasMaxLComputed(*(segmentList[j]), *(moduleList[i]))) {
-                return false;
-            }
-            size_t maxLComputed = getMaxLComputed(*(segmentList[j]), *(moduleList[i]));
-            if (maxLComputed != segmentList[j]->getGrid().getMaxL()) {
-                return false;
-            }
+
+    foreach(Segment* segment, segmentList) {
+        const Grid& grid = segment->getGrid();
+        if (grid.getStartL() + grid.getSizeL() - 1 < grid.getMaxL()) {
+            return false;
         }
     }
     return true;

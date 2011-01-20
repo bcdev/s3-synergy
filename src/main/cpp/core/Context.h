@@ -230,7 +230,7 @@ private:
     vector<Segment*> segmentList;
 
     typedef map<const Module*, size_t> ModuleMaxLComputedMap;
-    map<const Segment*, ModuleMaxLComputedMap> maxLComputedMap;
+    map<const Segment*, map<const Module*, size_t > > maxLComputedMap;
 };
 
 #endif	/* CONTEXT_H */
