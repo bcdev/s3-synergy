@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+<variables>
+	<variable>
+		<name>SLO_TP_LAT</name>
+		<type>double</type>
+		<attributes>
+			<attribute>
+				<name>standard_name</name>
+				<type>string</type>
+				<value>latitude</value>
+			</attribute>
+			<attribute>
+				<name>units</name>
+				<type>string</type>
+				<value>degrees_north</value>
+			</attribute>
+			<attribute>
+				<name>valid_min</name>
+				<type>double</type>
+				<value>-90.0</value>
+			</attribute>
+			<attribute>
+				<name>valid_max</name>
+				<type>double</type>
+				<value>90.0</value>
+			</attribute>
+		</attributes>
+	</variable>
+	<variable>
+		<name>SLO_TP_LON</name>
+		<type>double</type>
+		<attributes>
+			<attribute>
+				<name>standard_name</name>
+				<type>string</type>
+				<value>longitude</value>
+			</attribute>
+			<attribute>
+				<name>units</name>
+				<type>string</type>
+				<value>degrees_east</value>
+			</attribute>
+			<attribute>
+				<name>valid_min</name>
+				<type>double</type>
+				<value>-180.0</value>
+			</attribute>
+			<attribute>
+				<name>valid_max</name>
+				<type>double</type>
+				<value>180.0</value>
+			</attribute>
+		</attributes>
+	</variable>
+	<variable>
+		<name>SLO_VAA</name>
+		<type>float</type>
+		<attributes>
+			<attribute>
+				<name>long_name</name>
+				<type>string</type>
+				<value>SLSTR oblique view azimuth angle</value>
+			</attribute>
+			<attribute>
+				<name>units</name>
+				<type>string</type>
+				<value>degrees</value>
+			</attribute>
+			<attribute>
+				<name>valid_min</name>
+				<type>float</type>
+				<value>-180.0</value>
+			</attribute>
+			<attribute>
+				<name>valid_max</name>
+				<type>float</type>
+				<value>180.0</value>
+			</attribute>
+			<attribute>
+				<name>coordinates</name>
+				<type>string</type>
+				<value>SLO_TP_lat SLO_TP_lon</value>
+			</attribute>
+		</attributes>
+	</variable>
+	<variable>
+		<name>SLO_VZA</name>
+		<type>float</type>
+		<attributes>
+			<attribute>
+				<name>long_name</name>
+				<type>string</type>
+				<value>SLSTR oblique view zenith angle</value>
+			</attribute>
+			<attribute>
+				<name>units</name>
+				<type>string</type>
+				<value>degrees</value>
+			</attribute>
+			<attribute>
+				<name>valid_min</name>
+				<type>float</type>
+				<value>0.0</value>
+			</attribute>
+			<attribute>
+				<name>valid_max</name>
+				<type>float</type>
+				<value>90.0</value>
+			</attribute>
+			<attribute>
+				<name>coordinates</name>
+				<type>string</type>
+				<value>SLO_TP_lat SLO_TP_lon</value>
+			</attribute>
+		</attributes>
+	</variable>
+</variables>
+<global_attributes>
+	<attribute>
+		<name>dataset_name</name>
+		<value>tiepoints_slstr_o</value>
+		<type>string</type>
+	</attribute>
+</global_attributes>
+</dataset>
