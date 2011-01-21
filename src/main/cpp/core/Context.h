@@ -232,6 +232,11 @@ public:
 private:
 
     template <class K, class V>
+    bool contains(const map<K, V*>& map, const K& key) const {
+        return map.find(key) != map.end();
+    }
+
+    template <class K, class V>
     bool contains(const map<const K*, V>& map, const K& key) const {
         return map.find(&key) != map.end();
     }

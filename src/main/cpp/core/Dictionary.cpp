@@ -113,8 +113,8 @@ void Dictionary::init() {
     exclusionSet.insert("dimensions.xml");
     exclusionSet.insert("MISREGIST_OLC_Oref_O17.xml");
 
-    const string L1C_IDENTIFIER = Constants::SYMBOLIC_NAME_L1C;
-    const string L2_IDENTIFIER = Constants::SYMBOLIC_NAME_SYN_L2;
+    const string L1C_IDENTIFIER = Constants::PRODUCT_L1C;
+    const string L2_IDENTIFIER = Constants::PRODUCT_SYN_L2;
     string variableDefPath = xmlParser.evaluateToString(configFile, "/Config/Variable_Definition_Files_Path");
     ProductDescriptor& l1c = addProductDescriptor(L1C_IDENTIFIER);
     ProductDescriptor& l2 = addProductDescriptor(L2_IDENTIFIER);

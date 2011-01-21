@@ -21,7 +21,7 @@ L1cReader::~L1cReader() {
 void L1cReader::start(Context& context) {
     const Dictionary& dict = *context.getDictionary();
     const vector<SegmentDescriptor*> segmentDescriptors =
-            dict.getProductDescriptor(Constants::SYMBOLIC_NAME_L1C).getSegmentDescriptors();
+            dict.getProductDescriptor(Constants::PRODUCT_L1C).getSegmentDescriptors();
 
     foreach(SegmentDescriptor* segmentDescriptor, segmentDescriptors) {
         const vector<VariableDescriptor*> variableDescriptors =
@@ -92,7 +92,7 @@ void L1cReader::stop(Context& context) {
 void L1cReader::process(Context& context) {
     const Dictionary& dict = *context.getDictionary();
     const vector<SegmentDescriptor*> segmentDescriptors =
-            dict.getProductDescriptor(Constants::SYMBOLIC_NAME_L1C).getSegmentDescriptors();
+            dict.getProductDescriptor(Constants::PRODUCT_L1C).getSegmentDescriptors();
 
     foreach(SegmentDescriptor* segmentDescriptor, segmentDescriptors) {
         const Segment& segment = context.getSegment(segmentDescriptor->getName());

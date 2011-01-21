@@ -95,11 +95,17 @@ const vector<Module*> Context::getModules() const {
 }
 
 Object& Context::getObject(const string& id) const {
-    return *objectMap.at(id);
+    if (contains(objectMap, id)) {
+        return *objectMap.at(id);
+    }
+    BOOST_THROW_EXCEPTION(out_of_range("no object with id '" + id + "'."));
 }
 
 Segment& Context::getSegment(const string& id) const {
-    return *segmentMap.at(id);
+    if (contains(segmentMap, id)) {
+        return *segmentMap.at(id);
+    }
+    BOOST_THROW_EXCEPTION(out_of_range("no segment with id '" + id + "'."));
 }
 
 const vector<Segment*> Context::getSegments() const {

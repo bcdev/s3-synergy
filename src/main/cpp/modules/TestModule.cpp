@@ -28,8 +28,8 @@ TestModule::~TestModule() {
 }
 
 void TestModule::start(Context& context) {
-    Segment& segment = context.getSegment("SYN_COLLOCATION");
-    SegmentDescriptor& sd = context.getDictionary()->getProductDescriptor(Constants::SYMBOLIC_NAME_SYN_L2).getSegmentDescriptor("SYN_COLLOCATION");
+    Segment& segment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+    SegmentDescriptor& sd = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SYN_L2).getSegmentDescriptor("SYN_COLLOCATION");
 
     VariableDescriptor& vd = sd.getVariableDescriptor("SDR_1");
     // TODO - put this information into dictionary
