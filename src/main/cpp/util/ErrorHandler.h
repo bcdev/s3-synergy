@@ -36,6 +36,7 @@ public:
     ErrorHandler();
     ~ErrorHandler();
     void handleError(Context& context, exception &e) const;
+    void handleInitError(exception& e) const;
 private:
     string extractFunctionName(const string firstLine) const;
     string extractModuleName(const string firstLine) const;

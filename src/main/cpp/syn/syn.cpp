@@ -17,54 +17,55 @@ static string createProcessingTimeMessage(time_t start);
 void logIOParameters(JobOrder& jobOrder, Logger* logger);
 
 int main() {
-    clock_t start = clock();
-    XPathInitializer init;
-
-    // TODO - needed as argument
-    string jobOrderXml = "/mnt/hgfs/S3L2PP/src/test/resources/syn/JobOrder.1.xml";
-
-    // TODO - error handler needed
-    JobOrderParser parser = JobOrderParser(jobOrderXml);
-    JobOrder* jobOrder = parser.parseJobOrder();
-
-    // set up logger
-    // TODO - use argument for log file name/path
-    Logger* logger = Logger::get();
-    // TODO - set processor version from job order to logger
-    logger->init(jobOrder->getConfig().getOrderId());
-    logger->setOutLogLevel(jobOrder->getConfig().getStandardLogLevel());
-    logger->setErrLogLevel(jobOrder->getConfig().getErrorLogLevel());
-    logger->info("Main process started.", "Main");
-    //    jobOrder.log();
-    //    logIOParameters(jobOrder, logger);
-
-    // TODO - get config file correct for current processor, not simply the first
-    Dictionary dict(jobOrder->getConfig().getConfigFileNames()[0]);
-
-    // configure modules
-    // TODO - use job order for configuration
-    L1cReader reader("/mnt/hgfs/S3L2PP/testdata/input/dummy");
-    TestModule test;
-    SynL2Writer writer("/mnt/hgfs/S3L2PP/testdata/output/dummy");
-
-    Processor processor;
     ErrorHandler errorHandler;
+//    try {
+        clock_t start = clock();
+        XPathInitializer init;
 
-    Context context(*logger);
-    context.setErrorHandler(&errorHandler);
-    context.setJobOrder(jobOrder);
-    context.addModule(reader);
-    context.addModule(test);
-    context.addModule(writer);
-    context.setDictionary(&dict);
-    processor.process(context);
+        // TODO - needed as argument
+        string jobOrderXml = "/mnt/hgfs/S3L2PP/src/test/resources/syn/JobOrder.1.xml";
 
-    int exitCode = 0;
-//    int exitCode = context.getExitCode();
+        // TODO - error handler needed
+        JobOrderParser parser = JobOrderParser(jobOrderXml);
+        JobOrder* jobOrder = parser.parseJobOrder();
 
-    logger->info(createProcessingTimeMessage(start), "Main");
-    logger->info("Processing complete. Exit code: " + lexical_cast<string>(exitCode) + ".", "Main");
-    return 0;
+        // set up logger
+        // TODO - use argument for log file name/path
+        Logger* logger = Logger::get();
+        // TODO - set processor version from job order to logger
+        logger->init(jobOrder->getConfig().getOrderId());
+        logger->setOutLogLevel(jobOrder->getConfig().getStandardLogLevel());
+        logger->setErrLogLevel(jobOrder->getConfig().getErrorLogLevel());
+        logger->info("Main process started.", "Main");
+        //    jobOrder.log();
+        //    logIOParameters(jobOrder, logger);
+
+        // TODO - get config file correct for current processor, not simply the first
+        Dictionary dict(jobOrder->getConfig().getConfigFileNames()[0]);
+
+        // configure modules
+        // TODO - use job order for configuration
+        L1cReader reader("/mnt/hgfs/S3L2PP/testdata/input/dummy");
+        TestModule test;
+        SynL2Writer writer("/mnt/hgfs/S3L2PP/testdata/output/dummy");
+
+        Processor processor;
+
+        Context context(*logger);
+        context.setErrorHandler(&errorHandler);
+        context.setJobOrder(jobOrder);
+        context.addModule(reader);
+        context.addModule(test);
+        context.addModule(writer);
+        context.setDictionary(&dict);
+        processor.process(context);
+
+        logger->info(createProcessingTimeMessage(start), "Main");
+        logger->info("Processing complete. Exit code: 0.", "Main");
+        return 0;
+//    } catch (exception e) {
+//        errorHandler.handleInitError(e);
+//    }
 }
 
 void logIOParameters(JobOrder& jobOrder, Logger* logger) {

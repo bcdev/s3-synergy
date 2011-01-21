@@ -18,6 +18,8 @@
  * Created on January 13, 2010, 5:17 PM
  */
 
+#include <iostream>
+
 #include "../core/Boost.h"
 #include "ErrorHandler.h"
 #include "../core/JobOrder.h"
@@ -30,7 +32,7 @@ ErrorHandler::~ErrorHandler() {
 }
 
 void ErrorHandler::handleError(Context& context, exception& e) const {
-    string processorVersion = "unknown";
+    string processorVersion = Constants::PROCESSOR_VERSION;
     if (context.getJobOrder() != 0) {
         processorVersion = context.getJobOrder()->getConfig().getVersion();
     }
@@ -45,6 +47,13 @@ void ErrorHandler::handleError(Context& context, exception& e) const {
 
     context.getLogging().error(message, module, processorVersion);
     context.getLogging().close();
+    exit(128);
+}
+
+void ErrorHandler::handleInitError(exception& e) const {
+    std::cerr << "An error has occurred initializing the processor. Error Message:\n";
+    std::cerr << e.what() << std::endl;
+    std::cerr << "System will exit.";
     exit(128);
 }
 

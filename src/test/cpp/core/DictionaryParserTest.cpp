@@ -75,7 +75,7 @@ void DictionaryParserTest::testGetNcVarNameAndGetFileName() {
     ProductDescriptor& l1cProductDescriptor = dict->getProductDescriptor(Constants::SYMBOLIC_NAME_L1C);
     ProductDescriptor& l2ProductDescriptor = dict->getProductDescriptor(Constants::SYMBOLIC_NAME_SYN_L2);
 
-    CPPUNIT_ASSERT(l1cProductDescriptor.hasSegmentDescriptor("SYN_COLLOCATION"));
+    CPPUNIT_ASSERT(l1cProductDescriptor.hasSegmentDescriptor("OLC"));
 
     const vector<VariableDescriptor*>& l1cVariables = l1cProductDescriptor.getVariables();
 
@@ -118,7 +118,7 @@ void DictionaryParserTest::testGetNcVarNameAndGetFileName() {
     CPPUNIT_ASSERT(getVariableDescriptor(symbolicName11, l1cVariables)->getNcFileBasename().compare("SUBS_ANNOT_METEO_OLC") == 0);
     CPPUNIT_ASSERT(getVariableDescriptor(symbolicName12, l1cVariables)->getNcFileBasename().compare("SUBS_ANNOT_SLST_ALT") == 0);
 
-    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName13, l2ProductDescriptor.getVariables())->getNcFileBasename().compare("L2_SYN_surface_directional_reflectance_1") == 0);
+    CPPUNIT_ASSERT(getVariableDescriptor(symbolicName13, l2ProductDescriptor.getVariables())->getNcFileBasename().compare("r0400") == 0);
 }
 
 void DictionaryParserTest::testDictionaryParsing() {
@@ -138,7 +138,7 @@ void DictionaryParserTest::testSDRVariable(VariableDescriptor& var) {
     attributeName = "channel";
     CPPUNIT_ASSERT(1 == var.getAttribute(attributeName).getInt());
 
-    string expected = "L2_SYN_surface_directional_reflectance_1";
+    string expected = "r0400";
     CPPUNIT_ASSERT(expected.compare(var.getNcFileBasename()) == 0);
 }
 
@@ -149,7 +149,7 @@ void DictionaryParserTest::testT550Variable(VariableDescriptor& var) {
     attributeName = "valid_max";
     CPPUNIT_ASSERT(32767 == var.getAttribute(attributeName).getInt());
 
-    string expected = "L2_SYN_aerosol_optical_thickness";
+    string expected = "t550";
     CPPUNIT_ASSERT(expected.compare(var.getNcFileBasename()) == 0);
 }
 
@@ -187,6 +187,6 @@ void DictionaryParserTest::testAir_pressureVariable(VariableDescriptor& var) {
     attributeName = "valid_max";
     CPPUNIT_ASSERT(1100.0 == var.getAttribute(attributeName).getFloat());
 
-    string expected = "L2_SYN_geophysical_atmospheric_data";
+    string expected = "tiepoints_meteo";
     CPPUNIT_ASSERT(expected.compare(var.getNcFileBasename()) == 0);
 }

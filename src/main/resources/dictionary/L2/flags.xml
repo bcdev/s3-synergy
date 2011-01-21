@@ -1,116 +1,149 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
-<variables>
-	<variable>
-		<name>SYN_flags</name>
-		<type>ushort</type>
-		<attributes>
-			<attribute>
-				<name>long_name</name>
-				<type>string</type>
-				<value>Synergy flags</value>
-			</attribute>
-			<attribute>
-				<name>_FillValue</name>
-				<type>ushort</type>
-				<value>0</value>
-			</attribute>
-			<attribute>
-				<name>flag_masks</name>
-				<type>ushort</type>
-				<value>1 2 4 8 32 256 512 1024 2048 4096 8192 16384 32768</value>
-			</attribute>
-			<attribute>
-				<name>flag_meanings</name>
-				<type>string</type>
-				<value>SYN_cloud SYN_snow_risk SYN_shadow_risk SYN_cloud_filled SYN_land SYN_partly_cloudy SYN_partly_water SYN_border SYN_aerosol_filled SYN_success SYN_negative_curvature SYN_too_low SYN_high_error</value>
-			</attribute>
-		</attributes>
-	</variable>
-	<variable>
-		<name>OLC_flags</name>
-		<type>ushort</type>
-		<attributes>
-			<attribute>
-				<name>long_name</name>
-				<type>string</type>
-				<value>OLCI flags</value>
-			</attribute>
-			<attribute>
-				<name>_FillValue</name>
-				<type>ushort</type>
-				<value>0</value>
-			</attribute>
-			<attribute>
-				<name>flag_masks</name>
-				<type>ushort</type>
-				<value>1 2 4 8 16 256 512 1024 2048 4096</value>
-			</attribute>
-			<attribute>
-				<name>flag_meanings</name>
-				<type>string</type>
-				<value>OLC_saturated OLC_dubious OLC_sun_glint_risk OLC_cosmetic OLC_invalid OLC_bright OLC_tidal_region OLC_fresh_inland_water OLC_coastline OLC_land</value>
-			</attribute>
-		</attributes>
-	</variable>
-	<variable>
-		<name>SLN_flags</name>
-		<type>uint</type>
-		<attributes>
-			<attribute>
-				<name>long_name</name>
-				<type>string</type>
-				<value>SLSTR nadir-view flags</value>
-			</attribute>
-			<attribute>
-				<name>_FillValue</name>
-				<type>uint</type>
-				<value>0</value>
-			</attribute>
-			<attribute>
-				<name>flag_masks</name>
-				<type>uint</type>
-				<value>1 2 4 8 16 32 64 128 256 512 1024 2048 4096 65536 262144 524288 1048576 2097152 4194304 8388608</value>
-			</attribute>
-			<attribute>
-				<name>flag_meanings</name>
-				<type>string</type>
-				<value>SLN_summary_ISP_absent SLN_pixel_absent SLN_not_decompressed SLN_no_signal SLN_saturation SLN_invalid_radiance SLN_no_parameters SLN_unfilled_pixel SLN_coastline SLN_ocean SLN_tidal SLN_land SLN_inland_water SLN_cosmetic SLN_day SLN_twilight SLN_sun_glint SLN_snow SLN_summary_cloud SLN_summary_pointing</value>
-			</attribute>
-		</attributes>
-	</variable>
-	<variable>
-		<name>SLO_flags</name>
-		<type>uint</type>
-		<attributes>
-			<attribute>
-				<name>long_name</name>
-				<type>string</type>
-				<value>SLSTR oblique-view flags</value>
-			</attribute>
-			<attribute>
-				<name>_FillValue</name>
-				<type>uint</type>
-				<value>0</value>
-			</attribute>
-			<attribute>
-				<name>flag_masks</name>
-				<type>uint</type>
-				<value>1 2 4 8 16 32 64 128 256 512 1024 2048 4096 65536 262144 524288 1048576 2097152 4194304 8388608</value>
-			</attribute>
-			<attribute>
-				<name>flag_meanings</name>
-				<type>string</type>
-				<value>SLO_summary_ISP_absent SLO_pixel_absent SLO_not_decompressed SLO_no_signal SLO_saturation SLO_invalid_radiance SLO_no_parameters SLO_unfilled_pixel SLO_coastline SLO_ocean SLO_tidal SLO_land SLO_inland_water SLO_cosmetic SLO_day SLO_twilight SLO_sun_glint SLO_snow SLO_summary_cloud SLO_summary_pointing</value>
-			</attribute>
-		</attributes>
-	</variable>
-</variables>
-<global_attributes>
-	<attribute>
-        <name>dataset_name</name>
-        <value>flags</value>
-        <type>string</type>
-	</attribute>
-</global_attributes>
+    <variables>
+        <variable>
+            <name>SYN_flags</name>
+            <type>ushort</type>
+            <segment_name>SYN_COLLOCATED</segment_name>
+            <dimensions>
+                <id>OLCI</id>
+            </dimensions>
+            <attributes>
+                <attribute>
+                    <name>long_name</name>
+                    <type>string</type>
+                    <value>Synergy flags</value>
+                </attribute>
+                <attribute>
+                    <name>_FillValue</name>
+                    <type>ushort</type>
+                    <value>0</value>
+                </attribute>
+                <attribute>
+                    <name>flag_masks</name>
+                    <type>ushort</type>
+                    <value>1 2 4 8 32 256 512 1024 2048 4096 8192 16384 32768</value>
+                </attribute>
+                <attribute>
+                    <name>flag_meanings</name>
+                    <type>string</type>
+                    <value>SYN_cloud SYN_snow_risk SYN_shadow_risk SYN_cloud_filled SYN_land SYN_partly_cloudy
+                        SYN_partly_water SYN_border SYN_aerosol_filled SYN_success SYN_negative_curvature SYN_too_low
+                        SYN_high_error
+                    </value>
+                </attribute>
+            </attributes>
+        </variable>
+        <variable>
+            <name>OLC_flags</name>
+            <type>ushort</type>
+            <segment_name>SYN_COLLOCATED</segment_name>
+            <dimensions>
+                <id>OLCI</id>
+            </dimensions>
+            <attributes>
+                <attribute>
+                    <name>long_name</name>
+                    <type>string</type>
+                    <value>OLCI flags</value>
+                </attribute>
+                <attribute>
+                    <name>_FillValue</name>
+                    <type>ushort</type>
+                    <value>0</value>
+                </attribute>
+                <attribute>
+                    <name>flag_masks</name>
+                    <type>ushort</type>
+                    <value>1 2 4 8 16 256 512 1024 2048 4096</value>
+                </attribute>
+                <attribute>
+                    <name>flag_meanings</name>
+                    <type>string</type>
+                    <value>OLC_saturated OLC_dubious OLC_sun_glint_risk OLC_cosmetic OLC_invalid OLC_bright
+                        OLC_tidal_region OLC_fresh_inland_water OLC_coastline OLC_land
+                    </value>
+                </attribute>
+            </attributes>
+        </variable>
+        <variable>
+            <name>SLN_flags</name>
+            <type>uint</type>
+            <segment_name>SYN_COLLOCATED</segment_name>
+            <dimensions>
+                <id>OLCI</id>
+            </dimensions>
+            <attributes>
+                <attribute>
+                    <name>long_name</name>
+                    <type>string</type>
+                    <value>SLSTR nadir-view flags</value>
+                </attribute>
+                <attribute>
+                    <name>_FillValue</name>
+                    <type>uint</type>
+                    <value>0</value>
+                </attribute>
+                <attribute>
+                    <name>flag_masks</name>
+                    <type>uint</type>
+                    <value>1 2 4 8 16 32 64 128 256 512 1024 2048 4096 65536 262144 524288 1048576 2097152 4194304
+                        8388608
+                    </value>
+                </attribute>
+                <attribute>
+                    <name>flag_meanings</name>
+                    <type>string</type>
+                    <value>SLN_summary_ISP_absent SLN_pixel_absent SLN_not_decompressed SLN_no_signal SLN_saturation
+                        SLN_invalid_radiance SLN_no_parameters SLN_unfilled_pixel SLN_coastline SLN_ocean SLN_tidal
+                        SLN_land SLN_inland_water SLN_cosmetic SLN_day SLN_twilight SLN_sun_glint SLN_snow
+                        SLN_summary_cloud SLN_summary_pointing
+                    </value>
+                </attribute>
+            </attributes>
+        </variable>
+        <variable>
+            <name>SLO_flags</name>
+            <type>uint</type>
+            <segment_name>SYN_COLLOCATED</segment_name>
+            <dimensions>
+                <id>OLCI</id>
+            </dimensions>
+            <attributes>
+                <attribute>
+                    <name>long_name</name>
+                    <type>string</type>
+                    <value>SLSTR oblique-view flags</value>
+                </attribute>
+                <attribute>
+                    <name>_FillValue</name>
+                    <type>uint</type>
+                    <value>0</value>
+                </attribute>
+                <attribute>
+                    <name>flag_masks</name>
+                    <type>uint</type>
+                    <value>1 2 4 8 16 32 64 128 256 512 1024 2048 4096 65536 262144 524288 1048576 2097152 4194304
+                        8388608
+                    </value>
+                </attribute>
+                <attribute>
+                    <name>flag_meanings</name>
+                    <type>string</type>
+                    <value>SLO_summary_ISP_absent SLO_pixel_absent SLO_not_decompressed SLO_no_signal SLO_saturation
+                        SLO_invalid_radiance SLO_no_parameters SLO_unfilled_pixel SLO_coastline SLO_ocean SLO_tidal
+                        SLO_land SLO_inland_water SLO_cosmetic SLO_day SLO_twilight SLO_sun_glint SLO_snow
+                        SLO_summary_cloud SLO_summary_pointing
+                    </value>
+                </attribute>
+            </attributes>
+        </variable>
+    </variables>
+    <global_attributes>
+        <attribute>
+            <name>dataset_name</name>
+            <value>flags</value>
+            <type>string</type>
+        </attribute>
+    </global_attributes>
 </dataset>

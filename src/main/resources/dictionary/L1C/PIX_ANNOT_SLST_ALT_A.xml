@@ -2,9 +2,9 @@
 <dataset>
   <variables>
     <variable>
-      <name>SLST_CW_flags</name>
-      <symbolic_name>SLO_confidence</symbolic_name>
-      <segment_name>SLST_ALT_05km</segment_name>
+      <ncname>SLST_CW_flags</ncname>
+      <name>SLO_confidence</name>
+      <segment_name>SLO</segment_name>
     </variable>
   </variables>
   <global_attributes>
