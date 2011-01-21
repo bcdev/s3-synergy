@@ -36,7 +36,7 @@ public class DictionaryGenerator {
     private static String targetBaseDir;
 
     public static void main(String[] args) throws Exception {
-        if(args.length == 0) {
+        if (args.length == 0) {
             throw new IllegalArgumentException("Base output path needed as argument.");
         }
         targetBaseDir = args[0];
@@ -87,17 +87,17 @@ public class DictionaryGenerator {
 
     private static void generateDatasets(String level, String templateName, int minChannel, int maxChannel, int start,
                                          int[] excludes) throws Exception {
-        String targetDir = "";
-        if (L1C.equals(level)) {
-            targetDir = targetBaseDir + File.pathSeparator + L1C;
-        } else if (L2.equals(level)) {
-            targetDir = targetBaseDir + File.pathSeparator + L2;
-        }
+        String targetDir = targetBaseDir + File.pathSeparator + level;
+
         final Properties properties = new Properties();
         properties.setProperty("target_dir", targetDir);
         properties.setProperty("Template_File_Basename", templateName);
         int counter = 0;
-        for (int i = minChannel; i <= maxChannel; i++) {
+        for (
+                int i = minChannel;
+                i <= maxChannel; i++)
+
+        {
             if (isExcluded(excludes, i)) {
                 start++;
                 counter++;
@@ -108,6 +108,7 @@ public class DictionaryGenerator {
             generateDataset(properties);
             start++;
         }
+
     }
 
     private static boolean isExcluded(int[] excludes, int i) {
@@ -131,12 +132,7 @@ public class DictionaryGenerator {
 
     private static void generateDataset(String level, String templateName, String datasetName) throws Exception {
         final Properties properties = new Properties();
-        String targetDir = "";
-        if (L1C.equals(level)) {
-            targetDir = targetBaseDir + File.pathSeparator + L1C;
-        } else if (L2.equals(level)) {
-            targetDir = targetBaseDir + File.pathSeparator + L2;
-        }
+        String targetDir = targetBaseDir + File.pathSeparator + level;
         properties.setProperty("target_dir", targetDir);
         properties.setProperty("Template_File_Basename", templateName);
         properties.setProperty("dataset_name", datasetName);
