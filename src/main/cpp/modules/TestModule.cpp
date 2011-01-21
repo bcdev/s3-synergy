@@ -18,8 +18,12 @@
  * Created on January 19, 2011, 5:07 PM
  */
 
-#include "../util/IOUtils.h"
+#include <algorithm>
+
+#include "../util/Utils.h"
 #include "TestModule.h"
+
+using std::min;
 
 TestModule::TestModule() : DefaultModule("TEST") {
 }
@@ -28,25 +32,67 @@ TestModule::~TestModule() {
 }
 
 void TestModule::start(Context& context) {
-    Segment& segment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-    SegmentDescriptor& sd = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SYN_L2).getSegmentDescriptor("SYN_COLLOCATION");
+    vector<SegmentDescriptor*> segmentDescriptors = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SYN_L2).getSegmentDescriptors();
 
-    VariableDescriptor& vd = sd.getVariableDescriptor("SDR_1");
-    // TODO - put this information into dictionary
-    vd.addDimension("K");
-    vd.addDimension("L");
-    vd.addDimension("M");
-    vd.setType(NC_SHORT);
-    // TODO - attribute types in dictionary
-    vd.clearAttributes();
+    foreach(SegmentDescriptor* segDesc, segmentDescriptors) {
+        vector<VariableDescriptor*> variableDescriptors = segDesc->getVariableDescriptors();
+        Segment* segment;
 
-    IOUtils::addVariableToSegment(vd.getName(), vd.getType(), segment);
+        foreach(VariableDescriptor* varDesc, variableDescriptors) {
+            string segmentName = segDesc->getName();
+            if (!context.hasSegment(segmentName)) {
+                valarray<int> gridParams = getGridParams(varDesc);
+//                segment = &context.addSegment(segmentName, min(1000, gridParams[3]), gridParams[0], gridParams[1], gridParams[2], gridParams[3]);
+                segment = &context.addSegment(segmentName, 10, 10, 1, 0, 100);
+            } else {
+                segment = &context.getSegment(segmentName);
+            }
+            if (!segment->hasVariable(varDesc->getName())) {
+                Utils::addVariableToSegment(varDesc->getName(), varDesc->getType(), *segment);
+            }
+            varDesc->clearAttributes();
+        }
+    }
 }
 
 void TestModule::stop(Context& context) {
 }
 
 void TestModule::process(Context& context) {
-    Segment& segment = context.getSegment("SYN_COLLOCATION");
-    context.setLastLComputed(segment, *this, segment.getGrid().getFirstL() + segment.getGrid().getSizeL() - 1);
+    vector<SegmentDescriptor*> segmentDescriptors = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SYN_L2).getSegmentDescriptors();
+    foreach(SegmentDescriptor* segDesc, segmentDescriptors) {
+        Segment& segment = context.getSegment(segDesc->getName());
+        context.setLastLComputed(segment, *this, segment.getGrid().getFirstL() + segment.getGrid().getSizeL() - 1);
+    }
+}
+
+valarray<int> TestModule::getGridParams(VariableDescriptor* varDesc) {
+    vector<Dimension*> dims = varDesc->getDimensions();
+    valarray<int> result(4);
+    switch(dims.size()) {
+        case 3: {
+            result[0] = dims[2]->getSize();     // sizeM
+            result[1] = dims[0]->getSize();     // sizeK
+            result[2] = 0;                      // startL
+            result[3] = dims[1]->getSize();     // sizeL
+            break;
+        }
+        case 2:
+        {
+            result[0] = dims[1]->getSize();
+            result[1] = 1;
+            result[2] = 0;
+            result[3] = dims[0]->getSize();
+            break;
+        }
+        case 1:
+        {
+            result[0] = dims[0]->getSize();
+            result[1] = 1;
+            result[2] = 0;
+            result[3] = 1;
+            break;
+        }
+    }
+    return result;
 }

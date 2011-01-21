@@ -4,17 +4,17 @@
         <variable>
             <ncname>lambda0</ncname>
             <name>wavelength_4</name>
-            <segment_name>OLC</segment_name>
+            <segment_name>OLC_CHANNELS</segment_name>
         </variable>
         <variable>
             <ncname>FWHM</ncname>
             <name>bandwidth_4</name>
-            <segment_name>OLC</segment_name>
+            <segment_name>OLC_CHANNELS</segment_name>
         </variable>
         <variable>
             <ncname>Solar_Flux</ncname>
             <name>solar_irradiance_4</name>
-            <segment_name>OLC</segment_name>
+            <segment_name>OLC_CHANNELS</segment_name>
         </variable>
     </variables>
     <global_attributes>

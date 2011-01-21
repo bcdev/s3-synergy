@@ -5,7 +5,7 @@
  * Created on November 18, 2010, 2:08 PM
  */
 
-#include "../util/IOUtils.h"
+#include "../util/Utils.h"
 #include "../util/NetCDF.h"
 #include "L1cReader.h"
 
@@ -24,8 +24,7 @@ void L1cReader::start(Context& context) {
             dict.getProductDescriptor(Constants::PRODUCT_L1C).getSegmentDescriptors();
 
     foreach(SegmentDescriptor* segmentDescriptor, segmentDescriptors) {
-        const vector<VariableDescriptor*> variableDescriptors =
-                segmentDescriptor->getVariableDescriptors();
+        const vector<VariableDescriptor*> variableDescriptors = segmentDescriptor->getVariableDescriptors();
         const string& segmentName = segmentDescriptor->getName();
 
         foreach(VariableDescriptor* variableDescriptor, variableDescriptors) {
@@ -73,7 +72,7 @@ void L1cReader::start(Context& context) {
             const int type = NetCDF::getVariableType(fileId, varId);
             variableDescriptor->setType(type);
 
-            IOUtils::addVariableToSegment(varName, type, context.getSegment(segmentName));
+            Utils::addVariableToSegment(varName, type, context.getSegment(segmentName));
             ncVarIdMap[varName] = varId;
         }
     }
@@ -117,8 +116,8 @@ void L1cReader::process(Context& context) {
                 const int varId = ncVarIdMap[varName];
                 const int fileId = ncFileIdMap[ncFileName];
                 const size_t dimCount = variableDescriptor->getDimensions().size();
-                const valarray<size_t> starts = IOUtils::createStartVector(dimCount, firstLComputable);
-                const valarray<size_t> counts = IOUtils::createCountVector(dimCount, grid.getSizeK(), lastLComputable - firstLComputable + 1, grid.getSizeM());
+                const valarray<size_t> starts = Utils::createStartVector(dimCount, firstLComputable);
+                const valarray<size_t> counts = Utils::createCountVector(dimCount, grid.getSizeK(), lastLComputable - firstLComputable + 1, grid.getSizeM());
                 context.getLogging().progress("Reading variable '" + variableDescriptor->getNcVarName() + "' into segment '" + segment.toString() + "'", getId());
                 const Accessor& accessor = segment.getAccessor(varName);
                 NetCDF::getData(fileId, varId, starts, counts, accessor.getUntypedData());

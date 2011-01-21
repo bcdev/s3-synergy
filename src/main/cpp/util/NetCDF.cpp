@@ -23,7 +23,7 @@
 int NetCDF::openFile(const path& filePath) {
     int ncId;
     int status = nc_open(filePath.file_string().c_str(), NC_NOWRITE, &ncId);
-    checkStatus(status, "opening file " + filePath.file_string());
+    checkStatus(status, "opening file '" + filePath.file_string() + "'");
     return ncId;
 }
 
@@ -37,7 +37,7 @@ nc_type NetCDF::getVariableType(int fileId, int varId) {
 int NetCDF::getVariableId(int fileId, const string& varName) {
     int varId;
     int status = nc_inq_varid(fileId, varName.c_str(), &varId);
-    checkStatus(status, "getting variable id");
+    checkStatus(status, "getting variable ID for variable '" + varName + "'");
     return varId;
 }
 
@@ -52,7 +52,7 @@ valarray<int> NetCDF::getDimIdsForVariable(int fileId, int varId) {
     int dimCount = getDimCountForVariable(fileId, varId);
     valarray<int> dimensionIds(dimCount);
     int status = nc_inq_vardimid(fileId, varId, &dimensionIds[0]);
-    checkStatus(status, "getting dimension ids");
+    checkStatus(status, "getting dimension IDs");
     return dimensionIds;
 }
 
@@ -73,7 +73,7 @@ string NetCDF::getDimName(int fileId, int dimId) {
 void NetCDF::getData(int fileId, int varId, const valarray<size_t>& startVector,
         const valarray<size_t>& sizeVector, void* dataArray) {
     int status = nc_get_vars(fileId, varId, &startVector[0], &sizeVector[0], 0, dataArray);
-    checkStatus(status, "putting data into file");
+    checkStatus(status, "reading data from file");
 }
 
 void NetCDF::putData(int fileId, int varId, const valarray<size_t>& startVector,
@@ -85,14 +85,14 @@ void NetCDF::putData(int fileId, int varId, const valarray<size_t>& startVector,
 int NetCDF::createFile(const path& filePath) {
     int ncId;
     int status = nc_create(filePath.file_string().c_str(), NC_NETCDF4, &ncId);
-    checkStatus(status, "creating file");
+    checkStatus(status, "creating file '" + filePath.file_string() + "'");
     return ncId;
 }
 
 int NetCDF::defineDimension(int fileId, const string& dimName, size_t size) {
     int dimId;
     int status = nc_def_dim(fileId, dimName.c_str(), size, &dimId);
-    checkStatus(status, "defining dimension");
+    checkStatus(status, "defining dimension '" + dimName + "'");
     return dimId;
 }
 
@@ -176,13 +176,13 @@ template<class T>
 void NetCDF::putAttribute(int fileId, int varId, const Attribute& attribute, const T& t) {
     const T v = t;
     int status = nc_put_att(fileId, varId, attribute.getName().c_str(), attribute.getType(), 1, &v);
-    checkStatus(status, "putting attribute");
+    checkStatus(status, "putting attribute '" + attribute.getName() + "'");
 }
 
 void NetCDF::putAttributeString(int fileId, int varId, const Attribute& attribute) {
     const string& value = attribute.getValue();
     int status = nc_put_att(fileId, varId, attribute.getName().c_str(), NC_CHAR, value.size(), value.c_str());
-    checkStatus(status, "putting attribute");
+    checkStatus(status, "putting attribute '" + attribute.getName() + "'");
 }
 
 void NetCDF::checkStatus(int status, const string& action) {

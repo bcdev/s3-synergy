@@ -7,7 +7,7 @@
 
 #include <stdexcept>
 
-#include "../util/IOUtils.h"
+#include "../util/Utils.h"
 #include "../util/NetCDF.h"
 #include "SynL2Writer.h"
 
@@ -51,8 +51,8 @@ void SynL2Writer::process(Context& context) {
                     const int varId = ncVarIdMap[varName];
                     const int ncId = ncFileIdMap[ncFileBasename];
                     const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
-                    const valarray<size_t> starts = IOUtils::createStartVector(dimIds.size(), firstLWritable);
-                    const valarray<size_t> sizes = IOUtils::createCountVector(dimIds.size(), grid.getSizeK(), lastLWritable - firstLWritable + 1, grid.getSizeM());
+                    const valarray<size_t> starts = Utils::createStartVector(dimIds.size(), firstLWritable);
+                    const valarray<size_t> sizes = Utils::createCountVector(dimIds.size(), grid.getSizeK(), lastLWritable - firstLWritable + 1, grid.getSizeM());
                     context.getLogging().progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
                     const Accessor& accessor = segment.getAccessor(varName);
                     NetCDF::putData(ncId, varId, starts, sizes, accessor.getUntypedData());

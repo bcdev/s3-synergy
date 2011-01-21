@@ -19,7 +19,7 @@
  */
 
 #include "Dictionary.h"
-#include "../util/IOUtils.h"
+#include "../util/Utils.h"
 #include "Constants.h"
 
 Attribute::Attribute(int type, const string& name, const string& value) : name(name), type(type) {
@@ -122,11 +122,11 @@ void Dictionary::init() {
     string L1CPath = variableDefPath + "/" + L1C_IDENTIFIER;
     string L2SynPath = variableDefPath + "/" + L2_IDENTIFIER;
 
-    vector<string> l1cFiles = IOUtils::getFiles(L1CPath);
+    vector<string> l1cFiles = Utils::getFiles(L1CPath);
     for (size_t i = 0; i < l1cFiles.size(); i++) {
         parseVariablesFile(L1CPath, l1cFiles[i], l1c);
     }
-    vector<string> l2SynFiles = IOUtils::getFiles(L2SynPath);
+    vector<string> l2SynFiles = Utils::getFiles(L2SynPath);
     for (size_t i = 0; i < l2SynFiles.size(); i++) {
         parseVariablesFile(L2SynPath, l2SynFiles[i], l2);
     }

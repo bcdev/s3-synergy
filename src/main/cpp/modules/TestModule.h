@@ -33,7 +33,7 @@ public:
     void process(Context& context);
 
 private:
-
+    valarray<int> getGridParams(VariableDescriptor* varDesc);
 };
 
 #endif	/* TESTMODULE_H */
