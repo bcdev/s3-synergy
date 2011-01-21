@@ -4,6 +4,7 @@
         <variable>
             <name>A550</name>
             <type>ubyte</type>
+            <segment_name>SYN_COLLOCATED</segment_name>
             <dimensions>
                 <id>OLCI</id>
             </dimensions>

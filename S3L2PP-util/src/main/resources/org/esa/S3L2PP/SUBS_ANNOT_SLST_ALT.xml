@@ -2,24 +2,24 @@
 <dataset>
 <variables>
 	<variable>
-		<name>SLST_L1b_TP_Latitude</name>
-		<symbolic_name>SLO_TP_lat</symbolic_name>
-		<segment_name>N_SLST_L1B_ TP</segment_name>
+		<ncname>SLST_L1b_TP_Latitude</ncname>
+		<name>SLO_TP_lat</name>
+		<segment_name>${segmentName}</segment_name>
 	</variable>
 	<variable>
-		<name>SLST_L1b_TP_Longitude</name>
-		<symbolic_name>SLO_TP_lon</symbolic_name>
-		<segment_name>N_SLST_L1B_ TP</segment_name>
+		<ncname>SLST_L1b_TP_Longitude</ncname>
+		<name>SLO_TP_lon</name>
+		<segment_name>${segmentName}</segment_name>
 	</variable>
 	<variable>
-		<name>OZA</name>
-		<symbolic_name>SLO_VZA</symbolic_name>
-		<segment_name>N_SLST_L1B_ TP</segment_name>
+		<ncname>OZA</ncname>
+		<name>SLO_VZA</name>
+		<segment_name>${segmentName}</segment_name>
 	</variable>
 	<variable>
-		<name>OAA</name>
-		<symbolic_name>SLO_VAA</symbolic_name>
-		<segment_name>N_SLST_L1B_ TP</segment_name>
+		<ncname>OAA</ncname>
+		<name>SLO_VAA</name>
+		<segment_name>${segmentName}</segment_name>
 	</variable>
 </variables>
 <global_attributes>

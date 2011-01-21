@@ -4,6 +4,7 @@
         <variable>
             <name>SLN_TP_LAT</name>
             <type>double</type>
+            <segment_name>${segmentName}</segment_name>
             <dimensions>
                 <id>N_SLN_TP</id>
             </dimensions>
@@ -33,6 +34,7 @@
         <variable>
             <name>SLN_TP_LON</name>
             <type>double</type>
+            <segment_name>${segmentName}</segment_name>
             <dimensions>
                 <id>N_SLN_TP</id>
             </dimensions>
@@ -62,6 +64,7 @@
         <variable>
             <name>SLN_VAA</name>
             <type>float</type>
+            <segment_name>${segmentName}</segment_name>
             <dimensions>
                 <id>N_SLN_TP</id>
             </dimensions>
@@ -96,6 +99,7 @@
         <variable>
             <name>SLN_VZA</name>
             <type>float</type>
+            <segment_name>${segmentName}</segment_name>
             <dimensions>
                 <id>N_SLN_TP</id>
             </dimensions>

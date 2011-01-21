@@ -4,6 +4,7 @@
         <variable>
             <name>A550</name>
             <type>ubyte</type>
+            <segment_name>${segmentName}</segment_name>
             <dimensions>
                 <id>OLCI</id>
             </dimensions>

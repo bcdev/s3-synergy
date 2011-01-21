@@ -2,9 +2,9 @@
 <dataset>
 <variables>
 	<variable>
-		<name>OLCI_time_stamps</name>
-		<symbolic_name>time</symbolic_name>
-		<segment_name>N_LINE_OLC</segment_name>
+		<ncname>OLCI_time_stamps</ncname>
+		<name>time</name>
+		<segment_name>${segmentName}</segment_name>
 	</variable>
 </variables>
 <global_attributes>

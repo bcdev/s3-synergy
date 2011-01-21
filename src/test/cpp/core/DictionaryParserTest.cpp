@@ -75,7 +75,7 @@ void DictionaryParserTest::testGetNcVarNameAndGetFileName() {
     ProductDescriptor& l1cProductDescriptor = dict->getProductDescriptor(Constants::SYMBOLIC_NAME_L1C);
     ProductDescriptor& l2ProductDescriptor = dict->getProductDescriptor(Constants::SYMBOLIC_NAME_SYN_L2);
 
-    CPPUNIT_ASSERT(l1cProductDescriptor.hasSegmentDescriptor("SYN_COLLOCATION"));
+    CPPUNIT_ASSERT(l1cProductDescriptor.hasSegmentDescriptor("OLC"));
 
     const vector<VariableDescriptor*>& l1cVariables = l1cProductDescriptor.getVariables();
 

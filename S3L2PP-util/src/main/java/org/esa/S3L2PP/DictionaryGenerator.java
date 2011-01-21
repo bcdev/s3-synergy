@@ -34,12 +34,15 @@ public class DictionaryGenerator {
     private static final String L2 = "L2";
 
     private static String targetBaseDir;
+    private static Properties segmentNames;
 
     public static void main(String[] args) throws Exception {
         if (args.length == 0) {
             throw new IllegalArgumentException("Base output path needed as argument.");
         }
         targetBaseDir = args[0];
+
+        loadSegmentNames();
 
         generateDatasets(L1C, "GEN_INFO_OLC_", 1, 18);
         generateDatasets(L1C, "GEN_INFO_SLST_ALT_S", 25, 30, 1);
@@ -72,9 +75,15 @@ public class DictionaryGenerator {
         generateDataset(L2, "dimensions");
     }
 
+    private static void loadSegmentNames() throws IOException {
+        segmentNames = new Properties();
+        segmentNames.load(DictionaryGenerator.class.getResourceAsStream("segment_names.properties"));
+    }
+
     private static void generateSLSTRadianceDatasets(String templateName, int offset) throws Exception {
-        String targetDir = targetBaseDir + File.pathSeparator + L1C;
+        String targetDir = targetBaseDir + File.separator + L1C;
         final Properties properties = new Properties();
+        setSegmentName(templateName, properties);
         properties.setProperty("target_dir", targetDir);
         properties.setProperty("Template_File_Basename", templateName);
         for (int i = 1; i <= 6; i++) {
@@ -87,17 +96,14 @@ public class DictionaryGenerator {
 
     private static void generateDatasets(String level, String templateName, int minChannel, int maxChannel, int start,
                                          int[] excludes) throws Exception {
-        String targetDir = targetBaseDir + File.pathSeparator + level;
+        String targetDir = targetBaseDir + File.separator + level;
 
         final Properties properties = new Properties();
+        setSegmentName(templateName, properties);
         properties.setProperty("target_dir", targetDir);
         properties.setProperty("Template_File_Basename", templateName);
         int counter = 0;
-        for (
-                int i = minChannel;
-                i <= maxChannel; i++)
-
-        {
+        for (int i = minChannel; i <= maxChannel; i++) {
             if (isExcluded(excludes, i)) {
                 start++;
                 counter++;
@@ -108,7 +114,6 @@ public class DictionaryGenerator {
             generateDataset(properties);
             start++;
         }
-
     }
 
     private static boolean isExcluded(int[] excludes, int i) {
@@ -132,11 +137,19 @@ public class DictionaryGenerator {
 
     private static void generateDataset(String level, String templateName, String datasetName) throws Exception {
         final Properties properties = new Properties();
-        String targetDir = targetBaseDir + File.pathSeparator + level;
-        properties.setProperty("target_dir", targetDir);
+        String targetDir = targetBaseDir + File.separator + level;
+        setSegmentName(templateName, properties);
         properties.setProperty("Template_File_Basename", templateName);
+        properties.setProperty("target_dir", targetDir);
         properties.setProperty("dataset_name", datasetName);
         generateDataset(properties);
+    }
+
+    private static void setSegmentName(String templateName, Properties properties) {
+        String segmentName = segmentNames.getProperty(templateName);
+        if (segmentName != null) {
+            properties.setProperty("segmentName", segmentName);
+        }
     }
 
     private static void generateDatasets(String level, String templateName, int minChannel, int maxChannel) throws
@@ -149,7 +162,8 @@ public class DictionaryGenerator {
         final CsvReader csvReader = new CsvReader(new InputStreamReader(csv), new char[]{','});
         final List<String[]> wavelengths = csvReader.readStringRecords();
         final Properties properties = new Properties();
-        String targetDir = targetBaseDir + File.pathSeparator + L2;
+        String targetDir = targetBaseDir + File.separator + L2;
+        setSegmentName("L2_SYN_Surface_Directional_Reflectance", properties);
         properties.setProperty("target_dir", targetDir);
         properties.setProperty("Template_File_Basename", "L2_SYN_Surface_Directional_Reflectance");
         properties.setProperty("SDR", "SDR_${i}");

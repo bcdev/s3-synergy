@@ -4,6 +4,7 @@
         <variable>
             <name>${SDR}</name>
             <type>short</type>
+            <segment_name>${segmentName}</segment_name>
             <dimensions>
                 <id>OLCI</id>
             </dimensions>
@@ -68,6 +69,7 @@
         <variable>
             <name>${SDR_er}</name>
             <type>short</type>
+            <segment_name>${segmentName}</segment_name>
             <dimensions>
                 <id>OLCI</id>
             </dimensions>

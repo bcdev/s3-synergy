@@ -4,6 +4,7 @@
         <variable>
             <name>SDR_15</name>
             <type>short</type>
+            <segment_name>SYN_COLLOCATED</segment_name>
             <dimensions>
                 <id>OLCI</id>
             </dimensions>
@@ -68,6 +69,7 @@
         <variable>
             <name>SDR_15_er</name>
             <type>short</type>
+            <segment_name>SYN_COLLOCATED</segment_name>
             <dimensions>
                 <id>OLCI</id>
             </dimensions>

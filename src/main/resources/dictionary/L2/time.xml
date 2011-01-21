@@ -1,46 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
-<variables>
-	<variable>
-		<name>time</name>
-		<type>long</type>
-        <dimensions>
-            <id>N_LINE_OLC</id>
-        </dimensions>
-		<attributes>
-			<attribute>
-				<name>standard_name</name>
-				<type>string</type>
-				<value>time</value>
-			</attribute>
-			<attribute>
-				<name>units</name>
-				<type>string</type>
-				<value>microseconds since 2000-1-1 0:0:0</value>
-			</attribute>
-			<attribute>
-				<name>_FillValue</name>
-				<type>long</type>
-				<value>-1</value>
-			</attribute>
-			<attribute>
-				<name>valid_min</name>
-				<type>long</type>
-				<value>0.0</value>
-			</attribute>
-			<attribute>
-				<name>valid_max</name>
-				<type>long</type>
-				<value>4294967295.0</value>
-			</attribute>
-		</attributes>
-	</variable>
-</variables>
-<global_attributes>
-	<attribute>
-		<name>dataset_name</name>
-		<value>time</value>
-		<type>string</type>
-	</attribute>
-</global_attributes>
+    <variables>
+        <variable>
+            <name>time</name>
+            <type>long</type>
+            <segment_name>OLC_TIME_STAMPS</segment_name>
+            <dimensions>
+                <id>N_LINE_OLC</id>
+            </dimensions>
+            <attributes>
+                <attribute>
+                    <name>standard_name</name>
+                    <type>string</type>
+                    <value>time</value>
+                </attribute>
+                <attribute>
+                    <name>units</name>
+                    <type>string</type>
+                    <value>microseconds since 2000-1-1 0:0:0</value>
+                </attribute>
+                <attribute>
+                    <name>_FillValue</name>
+                    <type>long</type>
+                    <value>-1</value>
+                </attribute>
+                <attribute>
+                    <name>valid_min</name>
+                    <type>long</type>
+                    <value>0.0</value>
+                </attribute>
+                <attribute>
+                    <name>valid_max</name>
+                    <type>long</type>
+                    <value>4294967295.0</value>
+                </attribute>
+            </attributes>
+        </variable>
+    </variables>
+    <global_attributes>
+        <attribute>
+            <name>dataset_name</name>
+            <value>time</value>
+            <type>string</type>
+        </attribute>
+    </global_attributes>
 </dataset>

@@ -4,6 +4,7 @@
         <variable>
             <name>OLC_TP_LAT</name>
             <type>int</type>
+            <segment_name>${segmentName}</segment_name>
             <dimensions>
                 <id>N_OLC_TP</id>
             </dimensions>
@@ -38,6 +39,7 @@
         <variable>
             <name>OLC_TP_LON</name>
             <type>int</type>
+            <segment_name>${segmentName}</segment_name>
             <dimensions>
                 <id>N_OLC_TP</id>
             </dimensions>
@@ -72,6 +74,7 @@
         <variable>
             <name>SAA</name>
             <type>int</type>
+            <segment_name>${segmentName}</segment_name>
             <dimensions>
                 <id>N_OLC_TP</id>
             </dimensions>
@@ -116,6 +119,7 @@
         <variable>
             <name>SZA</name>
             <type>uint</type>
+            <segment_name>${segmentName}</segment_name>
             <dimensions>
                 <id>N_OLC_TP</id>
             </dimensions>
@@ -160,6 +164,7 @@
         <variable>
             <name>OLC_VAA</name>
             <type>int</type>
+            <segment_name>${segmentName}</segment_name>
             <dimensions>
                 <id>N_OLC_TP</id>
             </dimensions>
@@ -199,6 +204,7 @@
         <variable>
             <name>OLC_VZA</name>
             <type>uint</type>
+            <segment_name>${segmentName}</segment_name>
             <dimensions>
                 <id>N_OLC_TP</id>
             </dimensions>

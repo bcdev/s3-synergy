@@ -2,9 +2,9 @@
 <dataset>
 <variables>
 	<variable>
-		<name>OLCI_QC_flags</name>
-		<symbolic_name>OLC_flags</symbolic_name>
-		<segment_name>SYN_COLLOCATION</segment_name>
+		<ncname>OLCI_QC_flags</ncname>
+		<name>OLC_flags</name>
+		<segment_name>OLC</segment_name>
 	</variable>
 </variables>
 <global_attributes>

@@ -133,34 +133,34 @@ void Dictionary::init() {
 }
 
 void Dictionary::parseVariablesFile(string& variableDefPath, string& file, ProductDescriptor& productDescriptor) {
-    if( contains(exclusionSet, file) ) {
+    if (contains(exclusionSet, file)) {
         return;
     }
     string path = variableDefPath + "/" + file;
-    const vector<string> ncVariableNames = xmlParser.evaluateToStringList(path, "/dataset/variables/variable/name/child::text()");
+    const vector<string> symbolicNames = xmlParser.evaluateToStringList(path, "/dataset/variables/variable/name/child::text()");
 
-    for (size_t i = 0; i < ncVariableNames.size(); i++) {
-        string ncVariableName = ncVariableNames[i];
-        string query = "/dataset/variables/variable[name=\"" + ncVariableName + "\"]/symbolic_name";
-        string symbolicName = xmlParser.evaluateToString(path, query);
-        if (symbolicName.empty()) {
-            symbolicName = ncVariableName;
+    for (size_t i = 0; i < symbolicNames.size(); i++) {
+        string symbolicName = symbolicNames[i];
+        string query = "/dataset/variables/variable[name=\"" + symbolicName + "\"]/ncname";
+        string ncName = xmlParser.evaluateToString(path, query);
+        if (ncName.empty()) {
+            ncName = symbolicName;
         }
-        query = "/dataset/variables/variable[name=\"" + ncVariableName + "\"]/segment_name";
+        query = "/dataset/variables/variable[name=\"" + symbolicName + "\"]/segment_name";
         string segmentName = xmlParser.evaluateToString(path, query);
         if (!productDescriptor.hasSegmentDescriptor(segmentName)) {
             productDescriptor.addSegmentDescriptor(segmentName);
         }
-        query = "/dataset/variables/variable[name=\"" + ncVariableName + "\"]/type";
+        query = "/dataset/variables/variable[name=\"" + symbolicName + "\"]/type";
         int type = mapToNcType(xmlParser.evaluateToString(path, query));
         VariableDescriptor& var = productDescriptor.getSegmentDescriptor(segmentName).addVariableDescriptor(symbolicName);
         var.setType(type);
-        var.setNcVarName(ncVariableName);
+        var.setNcVarName(ncName);
         var.setNcFileName(xmlParser.evaluateToString(path, "/dataset/global_attributes/attribute[name=\"dataset_name\"]/value"));
         var.setSegmentName(segmentName);
 
-        parseAttributes(path, ncVariableName, var);
-        parseDimensions(path, ncVariableName, var);
+        parseAttributes(path, symbolicName, var);
+        parseDimensions(path, symbolicName, var);
     }
 }
 
@@ -191,10 +191,13 @@ void Dictionary::parseDimensions(string& file, string& variableName, VariableDes
     vector<string> dimNames = xmlParser.evaluateToStringList(dimensionFileString, query);
 
     foreach(string dimName, dimNames) {
-        query = "/dataset/set[@name=\"" + dimensionId + "\"]/dimensions/dimension[name=\"" + dimName + "\"]/size/child::text()";
-        int size = lexical_cast<int>(xmlParser.evaluateToString(dimensionFileString, query));
         Dimension& dim = var.addDimension(dimName);
-        dim.setSize(size);
+        query = "/dataset/set[@name=\"" + dimensionId + "\"]/dimensions/dimension[name=\"" + dimName + "\"]/size/child::text()";
+        string sizeString = xmlParser.evaluateToString(dimensionFileString, query);
+        if (!sizeString.empty()) {
+            int size = lexical_cast<int>(sizeString);
+            dim.setSize(size);
+        }
     }
 }
 

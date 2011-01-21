@@ -11,7 +11,7 @@
         </dimension>
         <dimension>
             <name>N_DET_CAM</name>
-            <size>740</size>
+            <size>760</size>
         </dimension>
     </dimensions>
     </set>
@@ -27,7 +27,6 @@
         <dimensions>
             <dimension>
                 <name>N_OLC_TP</name>
-                <size>5</size>
             </dimension>
         </dimensions>
     </set>
@@ -35,7 +34,6 @@
         <dimensions>
             <dimension>
                 <name>N_SLN_TP</name>
-                <size>5</size>
             </dimension>
         </dimensions>
     </set>
@@ -43,7 +41,6 @@
         <dimensions>
             <dimension>
                 <name>N_SLO_TP</name>
-                <size>5</size>
             </dimension>
         </dimensions>
     </set>

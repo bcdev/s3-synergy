@@ -2,14 +2,14 @@
 <dataset>
 <variables>
 	<variable>
-		<name>delta_col</name>
-		<symbolic_name>delta_x_${i}</symbolic_name>
-		<segment_name>SYN_COLLOCATION</segment_name>
+		<ncname>delta_col</ncname>
+		<name>delta_x_${i}</name>
+		<segment_name>${segmentName}</segment_name>
 	</variable>
 	<variable>
-		<name>delta_row</name>
-		<symbolic_name>delta_y_${i}</symbolic_name>
-		<segment_name>SYN_COLLOCATION</segment_name>
+		<ncname>delta_row</ncname>
+		<name>delta_y_${i}</name>
+		<segment_name>${segmentName}</segment_name>
 	</variable>
 </variables>
 <global_attributes>

@@ -4,6 +4,7 @@
         <variable>
             <name>SLO_TP_LAT</name>
             <type>double</type>
+            <segment_name>${segmentName}</segment_name>
             <dimensions>
                 <id>N_SLO_TP</id>
             </dimensions>
@@ -33,6 +34,7 @@
         <variable>
             <name>SLO_TP_LON</name>
             <type>double</type>
+            <segment_name>${segmentName}</segment_name>
             <dimensions>
                 <id>N_SLO_TP</id>
             </dimensions>
@@ -62,6 +64,7 @@
         <variable>
             <name>SLO_VAA</name>
             <type>float</type>
+            <segment_name>${segmentName}</segment_name>
             <dimensions>
                 <id>N_SLO_TP</id>
             </dimensions>
@@ -96,6 +99,7 @@
         <variable>
             <name>SLO_VZA</name>
             <type>float</type>
+            <segment_name>${segmentName}</segment_name>
             <dimensions>
                 <id>N_SLO_TP</id>
             </dimensions>

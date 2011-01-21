@@ -4,6 +4,7 @@
         <variable>
             <name>T550</name>
             <type>short</type>
+            <segment_name>${segmentName}</segment_name>
             <dimensions>
                 <id>OLCI</id>
             </dimensions>
@@ -53,6 +54,7 @@
         <variable>
             <name>T550_er</name>
             <type>short</type>
+            <segment_name>${segmentName}</segment_name>
             <dimensions>
                 <id>OLCI</id>
             </dimensions>
