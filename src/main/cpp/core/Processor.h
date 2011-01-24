@@ -24,7 +24,8 @@ public:
 
 private:
     void setCompleted(bool completed);
-    
+    void wrapException(exception& e, string moduleName, string sourceMethod);
+
     bool completed;
 };
 

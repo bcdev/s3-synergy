@@ -22,6 +22,7 @@
 
 #include "../util/Utils.h"
 #include "TestModule.h"
+#include "../util/ModuleException.h"
 
 using std::min;
 
