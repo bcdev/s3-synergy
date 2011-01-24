@@ -27,12 +27,12 @@
                 <attribute>
                     <name>valid_min</name>
                     <type>long</type>
-                    <value>0.0</value>
+                    <value>0</value>
                 </attribute>
                 <attribute>
                     <name>valid_max</name>
                     <type>long</type>
-                    <value>4294967295.0</value>
+                    <value>4294967295</value>
                 </attribute>
             </attributes>
         </variable>

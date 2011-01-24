@@ -25,6 +25,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <valarray>
 #include <vector>
 
 #include "Boost.h"
@@ -36,6 +37,7 @@ using std::out_of_range;
 using std::pair;
 using std::set;
 using std::string;
+using std::valarray;
 using std::vector;
 
 template<class A, class E>
@@ -73,18 +75,8 @@ public:
         }
         E* e = new E(name);
         elementMap[name] = e;
+        elementList.push_back(e);
         return *e;
-    }
-
-    // TODO - remove method
-    void clearAttributes() {
-        pair<string, A*> apair;
-
-        reverse_foreach(apair, attributeMap) {
-            delete apair.second;
-        }
-
-        attributeMap.clear();
     }
 
     A& getAttribute(const string& name) const {
@@ -113,10 +105,9 @@ public:
 
     vector<E*> getElements() const {
         vector<E*> elements;
-        pair<string, E*> pair;
 
-        foreach(pair, elementMap) {
-            elements.push_back(pair.second);
+        foreach(E* e, elementList) {
+            elements.push_back(e);
         }
         return elements;
     }
@@ -137,6 +128,7 @@ private:
     const string name;
     map<string, A*> attributeMap;
     map<string, E*> elementMap;
+    vector<E*> elementList;
 };
 
 /**
@@ -158,44 +150,56 @@ public:
      */
     ~Attribute();
 
-    int8_t getByte() const {
-        return boost::numeric_cast<int8_t > (boost::lexical_cast<int16_t > (value));
+    valarray<int8_t> getBytes() const {
+        vector<string> tokens;
+        split(tokens, value, boost::is_any_of(" "));
+        valarray<int8_t> result(tokens.size());
+        for (size_t i = 0; i < tokens.size(); i++) {
+            result[i] = numeric_cast<int8_t > (lexical_cast<int16_t > (tokens[i]));
+        }
+        return result;
     }
 
-    int8_t getUByte() const {
-        return boost::numeric_cast<uint8_t > (boost::lexical_cast<uint16_t > (value));
+    valarray<uint8_t> getUBytes() const {
+        vector<string> tokens;
+        split(tokens, value, boost::is_any_of(" "));
+        valarray<uint8_t> result(tokens.size());
+        for (size_t i = 0; i < tokens.size(); i++) {
+            result[i] = numeric_cast<uint8_t > (lexical_cast<uint16_t > (tokens[i]));
+        }
+        return result;
     }
 
-    int32_t getShort() const {
-        return boost::lexical_cast<int32_t > (value);
+    valarray<int32_t> getShorts() const {
+        return getNumericValues<int32_t > ();
     }
 
-    uint32_t getUShort() const {
-        return boost::lexical_cast<uint32_t > (value);
+    valarray<uint32_t> getUShorts() const {
+        return getNumericValues<uint32_t > ();
     }
 
-    int32_t getInt() const {
-        return boost::lexical_cast<int32_t > (value);
+    valarray<int32_t> getInts() const {
+        return getNumericValues<int32_t > ();
     }
 
-    uint32_t getUInt() const {
-        return boost::lexical_cast<uint32_t > (value);
+    valarray<uint32_t> getUInts() const {
+        return getNumericValues<uint32_t > ();
     }
 
-    int64_t getLong() const {
-        return boost::lexical_cast<int64_t > (value);
+    valarray<int64_t> getLongs() const {
+        return getNumericValues<int64_t > ();
     }
 
-    uint64_t getULong() const {
-        return boost::lexical_cast<uint64_t > (value);
+    valarray<uint64_t> getULongs() const {
+        return getNumericValues<uint64_t > ();
     }
 
-    float getFloat() const {
-        return boost::lexical_cast<float> (value);
+    valarray<float> getFloats() const {
+        return getNumericValues<float> ();
     }
 
-    double getDouble() const {
-        return boost::lexical_cast<double> (value);
+    valarray<double> getDoubles() const {
+        return getNumericValues<double> ();
     }
 
     /**
@@ -237,6 +241,18 @@ public:
     string toString() const;
 
 private:
+
+    template<class T>
+    valarray<T> getNumericValues() const {
+        vector<string> tokens;
+        split(tokens, value, boost::is_any_of(" "));
+        valarray<T> result(tokens.size());
+        for (size_t i = 0; i < tokens.size(); i++) {
+            result[i] = lexical_cast<T > (tokens[i]);
+        }
+        return result;
+    }
+
     const string name;
     const int type;
     string value;
@@ -336,6 +352,7 @@ public:
     }
 
     Dimension& addDimension(const string& name) {
+
         return addElement(name);
     }
 
@@ -503,6 +520,7 @@ public:
     }
 
 private:
+
     bool contains(set<string> list, string key) {
         return list.find(key) != list.end();
     }

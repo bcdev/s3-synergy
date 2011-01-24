@@ -133,10 +133,10 @@ void DictionaryParserTest::testDictionaryParsing() {
 
 void DictionaryParserTest::testSDRVariable(VariableDescriptor& var) {
     string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.0001 == var.getAttribute(attributeName).getDouble());
+    CPPUNIT_ASSERT(0.0001 == var.getAttribute(attributeName).getDoubles()[0]);
 
     attributeName = "channel";
-    CPPUNIT_ASSERT(1 == var.getAttribute(attributeName).getInt());
+    CPPUNIT_ASSERT(1 == var.getAttribute(attributeName).getInts()[0]);
 
     string expected = "r0400";
     CPPUNIT_ASSERT(expected.compare(var.getNcFileBasename()) == 0);
@@ -144,10 +144,10 @@ void DictionaryParserTest::testSDRVariable(VariableDescriptor& var) {
 
 void DictionaryParserTest::testT550Variable(VariableDescriptor& var) {
     string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.0001 == var.getAttribute(attributeName).getDouble());
+    CPPUNIT_ASSERT(0.0001 == var.getAttribute(attributeName).getDoubles()[0]);
 
     attributeName = "valid_max";
-    CPPUNIT_ASSERT(32767 == var.getAttribute(attributeName).getInt());
+    CPPUNIT_ASSERT(32767 == var.getAttribute(attributeName).getInts()[0]);
 
     string expected = "t550";
     CPPUNIT_ASSERT(expected.compare(var.getNcFileBasename()) == 0);
@@ -155,18 +155,18 @@ void DictionaryParserTest::testT550Variable(VariableDescriptor& var) {
 
 void DictionaryParserTest::testA550Variable(VariableDescriptor& var) {
     string attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.015 == var.getAttribute(attributeName).getDouble());
+    CPPUNIT_ASSERT(0.015 == var.getAttribute(attributeName).getDoubles()[0]);
 
     attributeName = "valid_max";
-    CPPUNIT_ASSERT(255 == var.getAttribute(attributeName).getShort());
+    CPPUNIT_ASSERT(255 == var.getAttribute(attributeName).getShorts()[0]);
 }
 
 void DictionaryParserTest::testAMINVariable(VariableDescriptor& var) {
     string attributeName = "_FillValue";
-    CPPUNIT_ASSERT(0 == var.getAttribute(attributeName).getShort());
+    CPPUNIT_ASSERT(0 == var.getAttribute(attributeName).getShorts()[0]);
 
     attributeName = "valid_max";
-    CPPUNIT_ASSERT(40 == var.getAttribute(attributeName).getShort());
+    CPPUNIT_ASSERT(40 == var.getAttribute(attributeName).getShorts()[0]);
 }
 
 void DictionaryParserTest::testLatitudeVariable(VariableDescriptor& var) {
@@ -174,10 +174,10 @@ void DictionaryParserTest::testLatitudeVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT("degrees_north" == var.getAttribute(attributeName).getValue());
 
     attributeName = "scale_factor";
-    CPPUNIT_ASSERT(0.000001 == var.getAttribute(attributeName).getDouble());
+    CPPUNIT_ASSERT(0.000001 == var.getAttribute(attributeName).getDoubles()[0]);
 
     attributeName = "valid_min";
-    CPPUNIT_ASSERT(-90000000 == var.getAttribute(attributeName).getInt());
+    CPPUNIT_ASSERT(-90000000 == var.getAttribute(attributeName).getInts()[0]);
 }
 
 void DictionaryParserTest::testAir_pressureVariable(VariableDescriptor& var) {
@@ -185,7 +185,7 @@ void DictionaryParserTest::testAir_pressureVariable(VariableDescriptor& var) {
     CPPUNIT_ASSERT("hPa" == var.getAttribute(attributeName).getValue());
 
     attributeName = "valid_max";
-    CPPUNIT_ASSERT(1100.0 == var.getAttribute(attributeName).getFloat());
+    CPPUNIT_ASSERT(1100.0 == var.getAttribute(attributeName).getFloats()[0]);
 
     string expected = "tiepoints_meteo";
     CPPUNIT_ASSERT(expected.compare(var.getNcFileBasename()) == 0);

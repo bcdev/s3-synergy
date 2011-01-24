@@ -107,52 +107,52 @@ void NetCDF::addAttribute(int fileId, int varId, const Attribute& attribute) {
     switch (attribute.getType()) {
         case NC_BYTE:
         {
-            putAttribute(fileId, varId, attribute, attribute.getByte());
+            putAttribute(fileId, varId, attribute, attribute.getBytes());
             break;
         }
         case NC_UBYTE:
         {
-            putAttribute(fileId, varId, attribute, attribute.getUByte());
+            putAttribute(fileId, varId, attribute, attribute.getUBytes());
             break;
         }
         case NC_SHORT:
         {
-            putAttribute(fileId, varId, attribute, attribute.getShort());
+            putAttribute(fileId, varId, attribute, attribute.getShorts());
             break;
         }
         case NC_USHORT:
         {
-            putAttribute(fileId, varId, attribute, attribute.getUShort());
+            putAttribute(fileId, varId, attribute, attribute.getUShorts());
             break;
         }
         case NC_INT:
         {
-            putAttribute(fileId, varId, attribute, attribute.getInt());
+            putAttribute(fileId, varId, attribute, attribute.getInts());
             break;
         }
         case NC_UINT:
         {
-            putAttribute(fileId, varId, attribute, attribute.getUInt());
+            putAttribute(fileId, varId, attribute, attribute.getUInts());
             break;
         }
         case NC_INT64:
         {
-            putAttribute(fileId, varId, attribute, attribute.getLong());
+            putAttribute(fileId, varId, attribute, attribute.getLongs());
             break;
         }
         case NC_UINT64:
         {
-            putAttribute(fileId, varId, attribute, attribute.getULong());
+            putAttribute(fileId, varId, attribute, attribute.getULongs());
             break;
         }
         case NC_FLOAT:
         {
-            putAttribute(fileId, varId, attribute, attribute.getFloat());
+            putAttribute(fileId, varId, attribute, attribute.getFloats());
             break;
         }
         case NC_DOUBLE:
         {
-            putAttribute(fileId, varId, attribute, attribute.getDouble());
+            putAttribute(fileId, varId, attribute, attribute.getDoubles());
             break;
         }
         default:
@@ -174,8 +174,7 @@ void NetCDF::closeFile(int ncId) {
 
 template<class T>
 void NetCDF::putAttribute(int fileId, int varId, const Attribute& attribute, const T& t) {
-    const T v = t;
-    int status = nc_put_att(fileId, varId, attribute.getName().c_str(), attribute.getType(), 1, &v);
+    int status = nc_put_att(fileId, varId, attribute.getName().c_str(), attribute.getType(), t.size(), &t[0]);
     checkStatus(status, "putting attribute '" + attribute.getName() + "'");
 }
 

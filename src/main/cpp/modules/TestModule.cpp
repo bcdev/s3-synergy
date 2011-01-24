@@ -36,21 +36,17 @@ void TestModule::start(Context& context) {
 
     foreach(SegmentDescriptor* segDesc, segmentDescriptors) {
         vector<VariableDescriptor*> variableDescriptors = segDesc->getVariableDescriptors();
-        Segment* segment;
 
         foreach(VariableDescriptor* varDesc, variableDescriptors) {
-            string segmentName = segDesc->getName();
+            const string& segmentName = segDesc->getName();
             if (!context.hasSegment(segmentName)) {
                 valarray<int> gridParams = getGridParams(varDesc);
-//                segment = &context.addSegment(segmentName, min(1000, gridParams[3]), gridParams[0], gridParams[1], gridParams[2], gridParams[3]);
-                segment = &context.addSegment(segmentName, 10, 10, 1, 0, 100);
-            } else {
-                segment = &context.getSegment(segmentName);
+                context.addSegment(segmentName, min(1000, gridParams[3]), gridParams[0], gridParams[1], gridParams[2], gridParams[3] - 1);
+            } 
+            Segment& segment = context.getSegment(segmentName);
+            if (!segment.hasVariable(varDesc->getName())) {
+                Utils::addVariableToSegment(varDesc->getName(), varDesc->getType(), segment);
             }
-            if (!segment->hasVariable(varDesc->getName())) {
-                Utils::addVariableToSegment(varDesc->getName(), varDesc->getType(), *segment);
-            }
-            varDesc->clearAttributes();
         }
     }
 }
@@ -62,7 +58,7 @@ void TestModule::process(Context& context) {
     vector<SegmentDescriptor*> segmentDescriptors = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SYN_L2).getSegmentDescriptors();
     foreach(SegmentDescriptor* segDesc, segmentDescriptors) {
         Segment& segment = context.getSegment(segDesc->getName());
-        context.setLastLComputed(segment, *this, segment.getGrid().getFirstL() + segment.getGrid().getSizeL() - 1);
+        context.setLastLComputed(segment, *this, segment.getGrid().getLastL());
     }
 }
 
