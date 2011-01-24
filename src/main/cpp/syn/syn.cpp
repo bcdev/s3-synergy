@@ -16,16 +16,18 @@
 static string createProcessingTimeMessage(time_t start);
 void logIOParameters(JobOrder& jobOrder, Logger* logger);
 
-int main() {
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        std::cerr << "Missing job order file." << std::endl;
+        std::cerr << "Usage: " << argv[0] << " <jobOrderFile>.";
+    }
     ErrorHandler errorHandler;
-//    try {
+    try {
         clock_t start = clock();
         XPathInitializer init;
 
-        // TODO - needed as argument
-        string jobOrderXml = "/mnt/hgfs/S3L2PP/src/test/resources/syn/JobOrder.1.xml";
+        string jobOrderXml = string(argv[1]);
 
-        // TODO - error handler needed
         JobOrderParser parser = JobOrderParser(jobOrderXml);
         JobOrder* jobOrder = parser.parseJobOrder();
 
@@ -63,9 +65,9 @@ int main() {
         logger->info(createProcessingTimeMessage(start), "Main");
         logger->info("Processing complete. Exit code: 0.", "Main");
         return 0;
-//    } catch (exception e) {
-//        errorHandler.handleInitError(e);
-//    }
+    } catch (exception e) {
+        errorHandler.handleInitError(e);
+    }
 }
 
 void logIOParameters(JobOrder& jobOrder, Logger* logger) {
