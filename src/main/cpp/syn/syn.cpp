@@ -19,7 +19,7 @@ void logIOParameters(JobOrder& jobOrder, Logger* logger);
 int main(int argc, char* argv[]) {
     if (argc < 2) {
         std::cerr << "Missing job order file." << std::endl;
-        std::cerr << "Usage: " << argv[0] << " <jobOrderFile>.";
+        std::cerr << "Usage: " << argv[0] << " <jobOrderFile>." << std::endl;
         exit(128);
     }
     ErrorHandler errorHandler;
@@ -35,21 +35,19 @@ int main(int argc, char* argv[]) {
         // set up logger
         // TODO - use argument for log file name/path
         Logger* logger = Logger::get();
-        // TODO - set processor version from job order to logger
+        logger->setProcessorVersion(jobOrder->getConfig().getVersion());
         logger->init(jobOrder->getConfig().getOrderId());
         logger->setOutLogLevel(jobOrder->getConfig().getStandardLogLevel());
         logger->setErrLogLevel(jobOrder->getConfig().getErrorLogLevel());
         logger->info("Main process started.", "Main");
-        //    logIOParameters(jobOrder, logger);
 
-        // TODO - get config file correct for current processor, not simply the first
         Dictionary dict(jobOrder->getConfig().getConfigFileNames()[0]);
 
         // configure modules
-        // TODO - use job order for configuration
-        L1cReader reader("/mnt/hgfs/S3L2PP/testdata/input/dummy");
+        // TODO - replace "SYL2" by 'argv[0]'
+        L1cReader reader(jobOrder->getProcessorConfiguration("SYL2").getInputList()[0]->getFileNames()[0]);
         TestModule test;
-        SynL2Writer writer("/mnt/hgfs/S3L2PP/testdata/output/dummy");
+        SynL2Writer writer(jobOrder->getProcessorConfiguration("SYL2").getOutputList()[0]->getFileName());
 
         Processor processor;
 

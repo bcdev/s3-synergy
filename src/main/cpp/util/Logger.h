@@ -35,15 +35,22 @@ public:
     ~Logger();
     static Logger* get();
     void debug(const string& message, const string& moduleName,
-            const string& processorVersion = Constants::PROCESSOR_VERSION);
+            const string& processorVersion);
+    void debug(const string& message, const string& moduleName);
     void info(const string& message, const string& moduleName,
-            const string& processorVersion = Constants::PROCESSOR_VERSION);
+            const string& processorVersion);
+    void info(const string& message, const string& moduleName);
     void progress(const string& message, const string& moduleName,
-            const string& processorVersion = Constants::PROCESSOR_VERSION);
+            const string& processorVersion);
+    void progress(const string& message, const string& moduleName);
     void warning(const string& message, const string& moduleName,
-            const string& processorVersion = Constants::PROCESSOR_VERSION);
+            const string& processorVersion);
+    void warning(const string& message, const string& moduleName);
     void error(const string& message, const string& moduleName,
-            const string& processorVersion = Constants::PROCESSOR_VERSION);
+            const string& processorVersion);
+    void error(const string& message, const string& moduleName);
+    
+    void setProcessorVersion(const string& processorVersion);
     void setOutLogLevel(const string& outLogLevel);
     void setErrLogLevel(const string& errLogLevel);
     vector<string*> getMessageBuffer() const;
@@ -62,6 +69,7 @@ private:
     string orderId;
     Logger(const Logger&);
     ofstream logFile;
+    string processorVersion;
 };
 
 #endif	/* LOGGER_H */

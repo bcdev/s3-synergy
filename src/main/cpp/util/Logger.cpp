@@ -34,13 +34,19 @@ Logger::Logger() {
 Logger::~Logger() {
 }
 
-// TODO - remove module version and replace by processor version
+void Logger::debug(const string& message, const string& moduleName) {
+    debug(message, moduleName, processorVersion);
+}
 
 void Logger::debug(const string& message, const string& moduleName,
         const string& processorVersion) {
     if (this->outLogLevel.compare("DEBUG") == 0) {
         logToStdout(message, moduleName, processorVersion, "[D]");
     }
+}
+
+void Logger::info(const string& message, const string& moduleName) {
+    info(message, moduleName, processorVersion);
 }
 
 void Logger::info(const string& message, const string& moduleName,
@@ -51,6 +57,10 @@ void Logger::info(const string& message, const string& moduleName,
     }
 }
 
+void Logger::progress(const string& message, const string& moduleName) {
+    progress(message, moduleName, processorVersion);
+}
+
 void Logger::progress(const string& message, const string& moduleName,
         const string& processorVersion) {
     if (this->outLogLevel.compare("DEBUG") == 0 ||
@@ -58,6 +68,10 @@ void Logger::progress(const string& message, const string& moduleName,
             this->outLogLevel.compare("PROGRESS") == 0) {
         logToStdout(message, moduleName, processorVersion, "[P]");
     }
+}
+
+void Logger::warning(const string& message, const string& moduleName) {
+    warning(message, moduleName, processorVersion);
 }
 
 void Logger::warning(const string& message, const string& moduleName,
@@ -70,9 +84,17 @@ void Logger::warning(const string& message, const string& moduleName,
     }
 }
 
+void Logger::error(const string& message, const string& moduleName) {
+    error(message, moduleName, processorVersion);
+}
+
 void Logger::error(const string& message, const string& moduleName,
         const string& processorVersion) {
     logToError(message, moduleName, processorVersion);
+}
+
+void Logger::setProcessorVersion(const string& processorVersion) {
+    
 }
 
 void Logger::setOutLogLevel(const string& outLogLevel) {

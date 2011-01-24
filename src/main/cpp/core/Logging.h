@@ -29,16 +29,16 @@ public:
     virtual ~Logging() {
     }
 
-    virtual void debug(const string& message, const string& moduleName,
-            const string& processorVersion = Constants::PROCESSOR_VERSION) = 0;
-    virtual void info(const string& message, const string& moduleName,
-            const string& processorVersion = Constants::PROCESSOR_VERSION) = 0;
-    virtual void progress(const string& message, const string& moduleName,
-            const string& processorVersion = Constants::PROCESSOR_VERSION) = 0;
-    virtual void warning(const string& message, const string& moduleName,
-            const string& processorVersion = Constants::PROCESSOR_VERSION) = 0;
-    virtual void error(const string& message, const string& moduleName,
-            const string& processorVersion = Constants::PROCESSOR_VERSION) = 0;
+    virtual void debug(const string& message, const string& moduleName) = 0;
+    virtual void debug(const string& message, const string& moduleName, const string& processorVersion) = 0;
+    virtual void info(const string& message, const string& moduleName) = 0;
+    virtual void info(const string& message, const string& moduleName, const string& processorVersion) = 0;
+    virtual void progress(const string& message, const string& moduleName) = 0;
+    virtual void progress(const string& message, const string& moduleName, const string& processorVersion) = 0;
+    virtual void warning(const string& message, const string& moduleName) = 0;
+    virtual void warning(const string& message, const string& moduleName, const string& processorVersion) = 0;
+    virtual void error(const string& message, const string& moduleName) = 0;
+    virtual void error(const string& message, const string& moduleName, const string& processorVersion) = 0;
     virtual void close() = 0;
 };
 
