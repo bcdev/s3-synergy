@@ -18,6 +18,14 @@ SynL2Writer::SynL2Writer(const string& targetDirPath) : Writer("SYN_L2_WRITER"),
 }
 
 SynL2Writer::~SynL2Writer() {
+    pair<string, int> fileIdPair;
+    foreach(fileIdPair, ncFileIdMap) {
+        try {
+            NetCDF::closeFile(fileIdPair.second);
+        } catch (exception& ignored) {
+            // ok
+        }
+    }
 }
 
 void SynL2Writer::process(Context& context) {

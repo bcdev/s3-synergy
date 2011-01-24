@@ -16,6 +16,14 @@ L1cReader::L1cReader(const string& sourceDirPath, size_t chunkSize) : DefaultMod
 }
 
 L1cReader::~L1cReader() {
+    pair<string, int> fileIdPair;
+    foreach(fileIdPair, ncFileIdMap) {
+        try {
+            NetCDF::closeFile(fileIdPair.second);
+        } catch (exception& ignored) {
+            // ok
+        }
+    }
 }
 
 void L1cReader::start(Context& context) {

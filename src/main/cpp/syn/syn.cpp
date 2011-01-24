@@ -39,7 +39,6 @@ int main(int argc, char* argv[]) {
         logger->setOutLogLevel(jobOrder->getConfig().getStandardLogLevel());
         logger->setErrLogLevel(jobOrder->getConfig().getErrorLogLevel());
         logger->info("Main process started.", "Main");
-        //    jobOrder.log();
         //    logIOParameters(jobOrder, logger);
 
         // TODO - get config file correct for current processor, not simply the first
