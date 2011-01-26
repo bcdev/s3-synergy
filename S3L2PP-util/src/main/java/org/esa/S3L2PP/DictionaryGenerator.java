@@ -29,7 +29,10 @@ import java.util.Properties;
 public class DictionaryGenerator {
 
     private static final String L1C = "L1C";
+    // todo - rq/ts-20110126: name 'L2' also applies to VGT P; use e.g. 'SY2' instead
     private static final String L2 = "L2";
+    // todo - rq/ts-20110126: use 'VGP' for VGT P
+    // todo - rq/ts-20110126: use 'VGS' for VGT S
 
     private static String targetBaseDir;
     private static Properties segmentNames;
