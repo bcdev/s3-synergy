@@ -146,12 +146,12 @@
                 </attribute>
                 <attribute>
                     <name>valid_min</name>
-                    <type>byte</type>
+                    <type>uint</type>
                     <value>0</value>
                 </attribute>
                 <attribute>
                     <name>valid_max</name>
-                    <type>byte</type>
+                    <type>uint</type>
                     <value>90000000</value>
                 </attribute>
                 <attribute>

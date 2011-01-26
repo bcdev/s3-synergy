@@ -16,8 +16,6 @@
 
 package org.esa.S3L2PP;
 
-import org.esa.beam.util.io.CsvReader;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -182,7 +180,11 @@ public class DictionaryGenerator {
             if (i > 24) {
                 suffix = "o";
             }
-            properties.setProperty("dataset_name", "r0" + roundedCentralWavelength + suffix);
+            if (roundedCentralWavelength < 1000) {
+                properties.setProperty("dataset_name", "r0" + roundedCentralWavelength + suffix);
+            }                                  else {
+                properties.setProperty("dataset_name", "r" + roundedCentralWavelength + suffix);
+            }
             properties.setProperty("i", String.format("%d", i));
             generateDataset(properties);
         }

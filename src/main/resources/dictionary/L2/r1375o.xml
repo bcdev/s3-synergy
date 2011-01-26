@@ -2,7 +2,7 @@
 <dataset>
     <variables>
         <variable>
-            <name>SDR_22</name>
+            <name>SDR_28</name>
             <type>short</type>
             <segment_name>SYN_COLLOCATED</segment_name>
             <dimensions>
@@ -12,7 +12,7 @@
                 <attribute>
                     <name>long_name</name>
                     <type>string</type>
-                    <value>Surface directional reflectance for SYN channel 22</value>
+                    <value>Surface directional reflectance for SYN channel 28</value>
                 </attribute>
                 <attribute>
                     <name>standard_name</name>
@@ -42,7 +42,7 @@
                 <attribute>
                     <name>ancillary_variables</name>
                     <type>string</type>
-                    <value>SDR_22_er</value>
+                    <value>SDR_28_er</value>
                 </attribute>
                 <attribute>
                     <name>channel</name>
@@ -67,7 +67,7 @@
             </attributes>
         </variable>
         <variable>
-            <name>SDR_22_er</name>
+            <name>SDR_28_er</name>
             <type>short</type>
             <segment_name>SYN_COLLOCATED</segment_name>
             <dimensions>
@@ -77,7 +77,7 @@
                 <attribute>
                     <name>long_name</name>
                     <type>string</type>
-                    <value>Surface directional reflectance standard error for SYN channel 22</value>
+                    <value>Surface directional reflectance standard error for SYN channel 28</value>
                 </attribute>
                 <attribute>
                     <name>standard_name</name>
@@ -130,7 +130,7 @@
     <global_attributes>
         <attribute>
             <name>dataset_name</name>
-            <value>r01375n</value>
+            <value>r1375o</value>
             <type>string</type>
         </attribute>
     </global_attributes>

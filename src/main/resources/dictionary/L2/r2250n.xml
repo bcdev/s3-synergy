@@ -130,7 +130,7 @@
     <global_attributes>
         <attribute>
             <name>dataset_name</name>
-            <value>r02250n</value>
+            <value>r2250n</value>
             <type>string</type>
         </attribute>
     </global_attributes>

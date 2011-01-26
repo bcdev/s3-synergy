@@ -2,7 +2,7 @@
 <dataset>
     <variables>
         <variable>
-            <name>SDR_30</name>
+            <name>SDR_29</name>
             <type>short</type>
             <segment_name>SYN_COLLOCATED</segment_name>
             <dimensions>
@@ -12,7 +12,7 @@
                 <attribute>
                     <name>long_name</name>
                     <type>string</type>
-                    <value>Surface directional reflectance for SYN channel 30</value>
+                    <value>Surface directional reflectance for SYN channel 29</value>
                 </attribute>
                 <attribute>
                     <name>standard_name</name>
@@ -42,7 +42,7 @@
                 <attribute>
                     <name>ancillary_variables</name>
                     <type>string</type>
-                    <value>SDR_30_er</value>
+                    <value>SDR_29_er</value>
                 </attribute>
                 <attribute>
                     <name>channel</name>
@@ -52,22 +52,22 @@
                 <attribute>
                     <name>central_wavelength</name>
                     <type>float</type>
-                    <value>2250</value>
+                    <value>1610</value>
                 </attribute>
                 <attribute>
                     <name>min_wavelength</name>
                     <type>float</type>
-                    <value>2225</value>
+                    <value>1580</value>
                 </attribute>
                 <attribute>
                     <name>max_wavelength</name>
                     <type>float</type>
-                    <value>2275</value>
+                    <value>1640</value>
                 </attribute>
             </attributes>
         </variable>
         <variable>
-            <name>SDR_30_er</name>
+            <name>SDR_29_er</name>
             <type>short</type>
             <segment_name>SYN_COLLOCATED</segment_name>
             <dimensions>
@@ -77,7 +77,7 @@
                 <attribute>
                     <name>long_name</name>
                     <type>string</type>
-                    <value>Surface directional reflectance standard error for SYN channel 30</value>
+                    <value>Surface directional reflectance standard error for SYN channel 29</value>
                 </attribute>
                 <attribute>
                     <name>standard_name</name>
@@ -112,17 +112,17 @@
                 <attribute>
                     <name>central_wavelength</name>
                     <type>float</type>
-                    <value>2250</value>
+                    <value>1610</value>
                 </attribute>
                 <attribute>
                     <name>min_wavelength</name>
                     <type>float</type>
-                    <value>2225</value>
+                    <value>1580</value>
                 </attribute>
                 <attribute>
                     <name>max_wavelength</name>
                     <type>float</type>
-                    <value>2275</value>
+                    <value>1640</value>
                 </attribute>
             </attributes>
         </variable>
@@ -130,7 +130,7 @@
     <global_attributes>
         <attribute>
             <name>dataset_name</name>
-            <value>r02250o</value>
+            <value>r1610o</value>
             <type>string</type>
         </attribute>
     </global_attributes>
