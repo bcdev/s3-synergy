@@ -25,7 +25,7 @@ Configuration::Configuration() {
 Configuration::~Configuration() {
 }
 
-string Configuration::getProcessorName() {
+string Configuration::getProcessorName() const {
     return processorName;
 }
 
@@ -33,26 +33,23 @@ void Configuration::setProcessorName(string processorName) {
     this->processorName = processorName;
 }
 
-// TODO - replace by toString() and remove Logger dependency
-
-void Configuration::log() {
-    Logger* logger = Logger::get();
-    logger->debug("order_id = " + getOrderId(), "JobOrder");
-    logger->debug("processorName = " + getProcessorName(), "JobOrder");
-    logger->debug("version = " + getVersion(), "JobOrder");
-    logger->debug("stdLogLevel = " + getStandardLogLevel(), "JobOrder");
-    logger->debug("errorLogLevel = " + getErrorLogLevel(), "JobOrder");
-    logger->debug("Test = " + boolToString(isTest()), "JobOrder");
-    logger->debug("breakpoint enabled = " + boolToString(isBreakpointEnable()), "JobOrder");
-    logger->debug("acquisition station = " + getAcquisitionStation(), "JobOrder");
-    logger->debug("processing station = " + getProcessingStation(), "JobOrder");
-    logger->debug("start time = " + getSensingTimeStart(), "JobOrder");
-    logger->debug("stop time = " + getSensingTimeStop(), "JobOrder");
+void Configuration::log(Logging& logging) const {
+    logging.debug("order_id = " + getOrderId(), "JobOrder");
+    logging.debug("processorName = " + getProcessorName(), "JobOrder");
+    logging.debug("version = " + getVersion(), "JobOrder");
+    logging.debug("stdLogLevel = " + getStandardLogLevel(), "JobOrder");
+    logging.debug("errorLogLevel = " + getErrorLogLevel(), "JobOrder");
+    logging.debug("Test = " + boolToString(isTest()), "JobOrder");
+    logging.debug("breakpoint enabled = " + boolToString(isBreakpointEnable()), "JobOrder");
+    logging.debug("acquisition station = " + getAcquisitionStation(), "JobOrder");
+    logging.debug("processing station = " + getProcessingStation(), "JobOrder");
+    logging.debug("start time = " + getSensingTimeStart(), "JobOrder");
+    logging.debug("stop time = " + getSensingTimeStop(), "JobOrder");
     for (size_t i = 0; i < getConfigFileNames().size(); i++) {
-        logger->debug("config file " + boost::lexical_cast<string>(i + 1) + ": " + getConfigFileNames().at(i), "JobOrder");
+        logging.debug("config file " + boost::lexical_cast<string>(i + 1) + ": " + getConfigFileNames().at(i), "JobOrder");
     }
     for (size_t i = 0; i < getProcessingParameters().size(); i++) {
-        getProcessingParameters().at(i)->log();
+        getProcessingParameters().at(i)->log(logging);
     }
 }
 
@@ -152,7 +149,7 @@ string Configuration::getOrderId() const {
     return orderId;
 }
 
-string Configuration::boolToString(bool input) {
+string Configuration::boolToString(bool input) const {
     if (input) {
         return "true";
     } else {
@@ -185,6 +182,6 @@ string ProcessingParameter::getName() const {
     return name;
 }
 
-void ProcessingParameter::log() const {
-    Logger::get()->debug(getName() + " = " + getValue(), "JobOrder");
+void ProcessingParameter::log(Logging& logging) const {
+    logging.debug(getName() + " = " + getValue(), "JobOrder");
 }

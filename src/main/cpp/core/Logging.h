@@ -39,7 +39,6 @@ public:
     virtual void warning(const string& message, const string& moduleName, const string& processorVersion) = 0;
     virtual void error(const string& message, const string& moduleName) = 0;
     virtual void error(const string& message, const string& moduleName, const string& processorVersion) = 0;
-    virtual void close() = 0;
 };
 
 #endif	/* LOGGING_H */

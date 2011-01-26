@@ -24,6 +24,7 @@
 #include <vector>
 
 #include "Configuration.h"
+#include "Logging.h"
 #include "ProcessorConfiguration.h"
 
 using std::vector;
@@ -32,10 +33,13 @@ class JobOrder {
 public:
     JobOrder(Configuration config, vector<ProcessorConfiguration*> processorConfigs);
     virtual ~JobOrder();
+    
     Configuration getConfig() const;
     vector<ProcessorConfiguration*> getProcessorList() const;
     ProcessorConfiguration& getProcessorConfiguration(const string& id) const;
-    void log();
+
+    void log(Logging& logging) const;
+
 private:
     Configuration config;
     vector<ProcessorConfiguration*> processorConfigs;

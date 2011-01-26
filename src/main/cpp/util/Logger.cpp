@@ -28,10 +28,17 @@
 using std::cout;
 using std::cerr;
 
-Logger::Logger() {
+Logger::Logger(const string& logFileName) : logFile() {
+    logFile.open(logFileName.c_str());
+}
+
+Logger::Logger(const Logger& logger) {
 }
 
 Logger::~Logger() {
+    if (logFile.is_open()) {
+        logFile.close();
+    }
 }
 
 void Logger::debug(const string& message, const string& moduleName) {
@@ -94,7 +101,7 @@ void Logger::error(const string& message, const string& moduleName,
 }
 
 void Logger::setProcessorVersion(const string& processorVersion) {
-    
+
 }
 
 void Logger::setOutLogLevel(const string& outLogLevel) {
@@ -103,12 +110,6 @@ void Logger::setOutLogLevel(const string& outLogLevel) {
 
 void Logger::setErrLogLevel(const string& errLogLevel) {
     this->errLogLevel = errLogLevel;
-}
-
-void Logger::init(const string& orderId) {
-    string fileName = "LOG.";
-    fileName.append(orderId);
-    logFile.open(fileName.c_str());
 }
 
 string Logger::createMessageHeader(const string& moduleName, const string& moduleVersion) {
@@ -122,7 +123,7 @@ string Logger::createMessageHeader(const string& moduleName, const string& modul
     header.append(" ");
     header.append(moduleVersion);
     header.append(" [");
-    header.append(boost::lexical_cast<string>((int) getpid()));
+    header.append(boost::lexical_cast<string > ((int) getpid()));
     header.append("]: ");
     return header;
 }
@@ -156,16 +157,4 @@ string Logger::getTimeString() {
     char timeBuffer [80];
     strftime(timeBuffer, 80, "%Y-%m-%dT%H:%M:%S.000000", timer);
     return timeBuffer;
-}
-
-Logger* Logger::instance = 0;
-
-Logger* Logger::get() {
-    if (instance == 0)
-        instance = new Logger();
-    return instance;
-}
-
-void Logger::close() {
-    logFile.close();
 }

@@ -32,8 +32,9 @@ using std::ofstream;
 
 class Logger : public virtual Logging {
 public:
+    Logger(const string& logFileName);
     ~Logger();
-    static Logger* get();
+    
     void debug(const string& message, const string& moduleName,
             const string& processorVersion);
     void debug(const string& message, const string& moduleName);
@@ -49,27 +50,25 @@ public:
     void error(const string& message, const string& moduleName,
             const string& processorVersion);
     void error(const string& message, const string& moduleName);
-    
+
     void setProcessorVersion(const string& processorVersion);
     void setOutLogLevel(const string& outLogLevel);
     void setErrLogLevel(const string& errLogLevel);
-    vector<string*> getMessageBuffer() const;
-    void init(const string& orderId);
-    void close();
-protected:
-    Logger();
+
 private:
+    Logger(const Logger& logger);
+
     string createMessageHeader(const string& moduleName, const string& moduleVersion);
     void logToError(const string& message, const string& moduleName, const string& moduleVersion);
     void logToStdout(const string& message, const string& moduleName, const string& moduleVersion, const string& logType);
     string getTimeString();
-    static Logger *instance;
+
+    string processorVersion;
     string outLogLevel;
     string errLogLevel;
     string orderId;
-    Logger(const Logger&);
+
     ofstream logFile;
-    string processorVersion;
 };
 
 #endif	/* LOGGER_H */

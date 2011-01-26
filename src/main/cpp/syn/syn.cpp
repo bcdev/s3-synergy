@@ -34,12 +34,13 @@ int main(int argc, char* argv[]) {
 
         // set up logger
         // TODO - use argument for log file name/path
-        Logger* logger = Logger::get();
-        logger->setProcessorVersion(jobOrder->getConfig().getVersion());
-        logger->init(jobOrder->getConfig().getOrderId());
-        logger->setOutLogLevel(jobOrder->getConfig().getStandardLogLevel());
-        logger->setErrLogLevel(jobOrder->getConfig().getErrorLogLevel());
-        logger->info("Main process started.", "Main");
+        string logFileName = "LOG.";
+        logFileName.append(jobOrder->getConfig().getOrderId());
+        Logger logger(logFileName);
+        logger.setProcessorVersion(jobOrder->getConfig().getVersion());
+        logger.setOutLogLevel(jobOrder->getConfig().getStandardLogLevel());
+        logger.setErrLogLevel(jobOrder->getConfig().getErrorLogLevel());
+        logger.info("Main process started.", "Main");
 
         Dictionary dict(jobOrder->getConfig().getConfigFileNames()[0]);
 
@@ -51,7 +52,7 @@ int main(int argc, char* argv[]) {
 
         Processor processor;
 
-        Context context(*logger);
+        Context context(logger);
         context.setErrorHandler(&errorHandler);
         context.setJobOrder(jobOrder);
         context.addModule(reader);
@@ -60,8 +61,8 @@ int main(int argc, char* argv[]) {
         context.setDictionary(&dict);
         processor.process(context);
 
-        logger->info(createProcessingTimeMessage(start), "Main");
-        logger->info("Processing complete. Exit code: 0.", "Main");
+        logger.info(createProcessingTimeMessage(start), "Main");
+        logger.info("Processing complete. Exit code: 0.", "Main");
         return 0;
     } catch (exception e) {
         errorHandler.handleInitError(e);

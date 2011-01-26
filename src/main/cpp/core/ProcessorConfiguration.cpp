@@ -26,10 +26,6 @@
 
 using std::cout;
 
-/*
- * implementation of ProcessorConfiguration
- */
-
 ProcessorConfiguration::ProcessorConfiguration(string taskName,
         string taskVersion, vector<BreakpointFile*> breakpointFiles,
         vector<Input*> inputList, vector<Output*> outputList) {
@@ -72,29 +68,22 @@ string ProcessorConfiguration::getTaskName() const {
     return taskName;
 }
 
-// TODO - replace by toString()
-
-void ProcessorConfiguration::log() {
-    Logger* logger = Logger::get();
-    logger->debug("taskName = " + taskName, "JobOrder");
-    logger->debug("taskVersion = " + taskVersion, "JobOrder");
+void ProcessorConfiguration::log(Logging& logging) const {
+    logging.debug("taskName = " + taskName, "JobOrder");
+    logging.debug("taskVersion = " + taskVersion, "JobOrder");
     for (size_t i = 0; i < breakpointFiles.size(); i++) {
-        logger->debug("parsing breakpointFile " + boost::lexical_cast<string > (i + 1) + ": ", "JobOrder");
-        breakpointFiles.at(i)->log();
+        logging.debug("parsing breakpointFile " + boost::lexical_cast<string > (i + 1) + ": ", "JobOrder");
+        breakpointFiles[i]->log(logging);
     }
     for (size_t i = 0; i < inputList.size(); i++) {
-        logger->debug("parsing input " + boost::lexical_cast<string > (i + 1) + ": ", "JobOrder");
-        inputList.at(i)->log();
+        logging.debug("parsing input " + boost::lexical_cast<string > (i + 1) + ": ", "JobOrder");
+        inputList[i]->log(logging);
     }
     for (size_t i = 0; i < outputList.size(); i++) {
-        logger->debug("parsing output " + boost::lexical_cast<string>(i + 1) + ": ", "JobOrder");
-        outputList.at(i)->log();
+        logging.debug("parsing output " + boost::lexical_cast<string>(i + 1) + ": ", "JobOrder");
+        outputList[i]->log(logging);
     }
 }
-
-/*
- * implementation of BreakpointFile
- */
 
 BreakpointFile::BreakpointFile(string enable, string fileType, string fileNameType, string fileName) {
     this->enable = enable;
@@ -106,12 +95,11 @@ BreakpointFile::BreakpointFile(string enable, string fileType, string fileNameTy
 BreakpointFile::~BreakpointFile() {
 }
 
-void BreakpointFile::log() const {
-    Logger* logger = Logger::get();
-    logger->debug("enable = " + enable, "JobOrder");
-    logger->debug("fileType = " + fileType, "JobOrder");
-    logger->debug("fileNameType = " + fileNameType, "JobOrder");
-    logger->debug("fileName = " + fileName, "JobOrder");
+void BreakpointFile::log(Logging& logging) const {
+    logging.debug("enable = " + enable, "JobOrder");
+    logging.debug("fileType = " + fileType, "JobOrder");
+    logging.debug("fileNameType = " + fileNameType, "JobOrder");
+    logging.debug("fileName = " + fileName, "JobOrder");
 }
 
 string BreakpointFile::getFileName() const {
@@ -130,10 +118,6 @@ string BreakpointFile::getEnable() const {
     return enable;
 }
 
-/*
- * implementation of Input
- */
-
 Input::Input(string fileType, string fileNameType, vector<string> fileNames, vector<TimeInterval*> timeIntervals) {
     this->fileType = fileType;
     this->fileNameType = fileNameType;
@@ -147,15 +131,14 @@ Input::~Input() {
     }
 }
 
-void Input::log() const {
-    Logger* logger = Logger::get();
-    logger->debug("fileType = " + fileType, "JobOrder");
-    logger->debug("fileNameType = " + fileNameType, "JobOrder");
+void Input::log(Logging& logging) const {
+    logging.debug("fileType = " + fileType, "JobOrder");
+    logging.debug("fileNameType = " + fileNameType, "JobOrder");
     for (size_t i = 0; i < fileNames.size(); i++) {
-        logger->debug("fileName " + boost::lexical_cast<string>(i + 1) + ": " + fileNames.at(i), "JobOrder");
+        logging.debug("fileName " + boost::lexical_cast<string>(i + 1) + ": " + fileNames[i], "JobOrder");
     }
     for (size_t i = 0; i < timeIntervals.size(); i++) {
-        timeIntervals.at(i)->log();
+        timeIntervals[i]->log(logging);
     }
 }
 
@@ -197,16 +180,11 @@ string Output::getFileType() const {
     return fileType;
 }
 
-void Output::log() const {
-    Logger* logger = Logger::get();
-    logger->debug("fileType = " + fileType, "JobOrder");
-    logger->debug("fileNameType = " + fileNameType, "JobOrder");
-    logger->debug("fileName = " + fileName, "JobOrder");
+void Output::log(Logging& logging) const {
+    logging.debug("fileType = " + fileType, "JobOrder");
+    logging.debug("fileNameType = " + fileNameType, "JobOrder");
+    logging.debug("fileName = " + fileName, "JobOrder");
 }
-
-/*
- * implementation of TimeInterval
- */
 
 TimeInterval::TimeInterval(string start, string stop) {
     this->start = start;
@@ -221,8 +199,7 @@ string TimeInterval::getStart() const {
     return start;
 }
 
-void TimeInterval::log() const {
-    Logger* logger = Logger::get();
-    logger->debug("start = " + start, "JobOrder");
-    logger->debug("stop = " + stop, "JobOrder");
+void TimeInterval::log(Logging& logging) const {
+    logging.debug("start = " + start, "JobOrder");
+    logging.debug("stop = " + stop, "JobOrder");
 }

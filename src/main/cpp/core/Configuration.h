@@ -11,10 +11,25 @@
 #include <string>
 #include <vector>
 
+#include "Logging.h"
+
 using std::string;
 using std::vector;
 
-class ProcessingParameter;
+class ProcessingParameter {
+public:
+    ProcessingParameter(string name, string value);
+    ~ProcessingParameter();
+    void setValue(string value);
+    string getValue() const;
+    void setName(string name);
+    string getName() const;
+    void log(Logging& logging) const;
+
+private:
+    string name;
+    string value;
+};
 
 class Configuration {
 private:
@@ -32,18 +47,18 @@ private:
     vector<string> configFileNames;
     vector<ProcessingParameter*> processingParameters;
 
-    string boolToString(bool input);
+    string boolToString(bool input) const;
 public:
 
     Configuration();
     ~Configuration();
 
-    string getProcessorName();
+    string getProcessorName() const;
     void setProcessorName(string processorName);
 
     void setOrderId(string orderId);
     string getOrderId() const;
-    void log();
+    void log(Logging& logging) const;
     void setVersion(string version);
     string getVersion() const;
     void setConfigFileNames(vector<string> configFileNames);
@@ -66,21 +81,6 @@ public:
     string getStandardLogLevel() const;
     void setProcessingParameters(vector<ProcessingParameter*> processingParameters);
     vector<ProcessingParameter*> getProcessingParameters() const;
-};
-
-class ProcessingParameter {
-public:
-    ProcessingParameter(string name, string value);
-    ~ProcessingParameter();
-    void setValue(string value);
-    string getValue() const;
-    void setName(string name);
-    string getName() const;
-    void log() const;
-
-private:
-    string name;
-    string value;
 };
 
 #endif /* CONFIGURATION_H_ */

@@ -23,7 +23,6 @@
 
 #include "Boost.h"
 #include "JobOrder.h"
-#include "../util/Logger.h"
 
 using std::cout;
 using std::invalid_argument;
@@ -34,17 +33,17 @@ JobOrder::JobOrder(Configuration config, vector<ProcessorConfiguration*> process
 }
 
 JobOrder::~JobOrder() {
+
     foreach(ProcessorConfiguration* pc, processorConfigs) {
         delete pc;
     }
 }
 
-// TODO - replace by toString() and get rid of logger dependency
-void JobOrder::log() {
-    config.log();
+void JobOrder::log(Logging& logging) const {
+    config.log(logging);
     for (size_t i = 0; i < processorConfigs.size(); i++) {
-        Logger::get()->debug("parsing processor config " + boost::lexical_cast<string>(i + 1) + ":", "JobOrder");
-        processorConfigs.at(i)->log();
+        logging.debug("parsing processor config " + boost::lexical_cast<string > (i + 1) + ":", "JobOrder");
+        processorConfigs[i]->log(logging);
     }
 }
 
@@ -54,7 +53,7 @@ vector<ProcessorConfiguration*> JobOrder::getProcessorList() const {
 
 ProcessorConfiguration& JobOrder::getProcessorConfiguration(const string& id) const {
     for (size_t i = 0; i < processorConfigs.size(); i++) {
-        if( processorConfigs[i]->getTaskName().compare( id ) == 0 ) {
+        if (processorConfigs[i]->getTaskName().compare(id) == 0) {
             return *processorConfigs[i];
         }
     }

@@ -24,6 +24,8 @@
 #include <string>
 #include <vector>
 
+#include "Logging.h"
+
 using std::string;
 using std::vector;
 
@@ -43,7 +45,7 @@ public:
     vector<BreakpointFile*> getBreakpointFiles() const;
     vector<Input*> getInputList() const;
     vector<Output*> getOutputList() const;
-    void log();
+    void log(Logging& logging) const;
 private:
     string taskName;
     string taskVersion;
@@ -60,7 +62,7 @@ public:
     string getFileNameType() const;
     string getFileType() const;
     string getEnable() const;
-    void log() const;
+    void log(Logging& logging) const;
 private:
     string enable;
     string fileType;
@@ -76,7 +78,7 @@ public:
     vector<string> getFileNames() const;
     string getFileNameType() const;
     string getFileType() const;
-    void log() const;
+    void log(Logging& logging) const;
 private:
     string fileType;
     string fileNameType;
@@ -87,7 +89,7 @@ private:
 class Output {
 public:
     Output(string fileType, string fileNameType, string fileName);
-    void log() const;
+    void log(Logging& logging) const;
     string getFileName() const;
     string getFileNameType() const;
     string getFileType() const;
@@ -102,7 +104,7 @@ private:
     string start;
     string stop;
 public:
-    void log() const;
+    void log(Logging& logging) const;
     TimeInterval(string start, string stop);
     string getStop() const;
     string getStart() const;
