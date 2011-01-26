@@ -2,23 +2,16 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <dependencies>
-        <dependency>
-            <groupId>org.esa.beam</groupId>
-            <artifactId>beam-core</artifactId>
-            <version>4.8.1</version>
-        </dependency>
-    </dependencies>
 
     <parent>
-        <groupId>int.esa.S3L2PP</groupId>
+        <groupId>org.esa.S3L2PP</groupId>
         <artifactId>S3L2PP</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
     <packaging>jar</packaging>
 
-    <groupId>int.esa.S3L2PP</groupId>
+    <groupId>org.esa.S3L2PP</groupId>
     <artifactId>S3L2PP-util</artifactId>
     <name>S3L2PP Utilities</name>
     <description>S3L2PP Utilities</description>
