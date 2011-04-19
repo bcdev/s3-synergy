@@ -36,6 +36,7 @@ public:
     SegmentImpl(const string& id, size_t sizeL, size_t sizeM = Constants::N_DET_CAM, size_t sizeK = Constants::N_CAM, size_t minL = 0, size_t maxL = Constants::N_LINE_OLC - 1);
     virtual ~SegmentImpl();
 
+    // todo - add type parameter (nf-20110419)
     void addVariableByte(const string& varName) throw (logic_error);
     void addVariableDouble(const string& varName) throw (logic_error);
     void addVariableFloat(const string& varName) throw (logic_error);

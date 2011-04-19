@@ -29,6 +29,7 @@ using std::max;
 /**
  * A default module, doing nothing.
  */
+// rename to BasicModule or AbstractModule (nf-20110419)
 class DefaultModule : public Module {
 public:
 
@@ -57,6 +58,7 @@ public:
     virtual void stop(Context& context) {
     };
 
+    // todo - make abstract (nf ...)
     virtual void process(Context& context) {
     };
 

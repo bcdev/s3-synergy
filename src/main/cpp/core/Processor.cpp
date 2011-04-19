@@ -20,6 +20,7 @@ Processor::~Processor() {
 }
 
 void Processor::process(Context& context) {
+    // todo - extract methods start, process, and stop (nf-20110419)
     try {
         vector<Module*> modules = context.getModules();
         foreach(Module* module, modules) {

@@ -45,6 +45,7 @@ class Writer;
 /**
  * Represents the context of a processing.
  */
+// todo - divide context into ModuleContext, ProcessorContext, RuntimeContext (nf-20110419)
 class Context {
 public:
     /**
@@ -70,7 +71,7 @@ public:
     void addObject(Object& object) throw (logic_error);
 
     /**
-     * Adds a segement to the context.
+     * Adds a segment to the context.
      * @param id The segment ID.
      * @param sizeL The size of the segment's row index dimension.
      * @param sizeM The size of the segment's column index dimension.
@@ -143,6 +144,7 @@ public:
      * @return the index of the last row in {@code segment}, which has
      *         been computed by {@code module}.
      */
+    // todo - L shall be last letter (nf-20110419)
     size_t getLastLComputed(const Segment& segment, const Module& module) const;
 
     /**
@@ -153,6 +155,7 @@ public:
      * @param l The index of the last row in {@code segment}, which has
      *          been computed by {@code module}.
      */
+    // todo - L shall be last letter (nf-20110419)
     void setLastLComputed(const Segment& segment, const Module& module, size_t l);
 
     /**
@@ -163,6 +166,7 @@ public:
      * @return The index of the last row in a segment, which has been
      *         computed by all modules but the writer module.
      */
+    // todo - L shall be last letter (nf-20110419)
     size_t getLastLWritable(const Segment& segment, const Writer& writer) const;
 
     /**
@@ -173,6 +177,7 @@ public:
      * @return The index of the first row, which has not been computed by the
      *         given module.
      */
+    // todo - L shall be last letter (nf-20110419)
     size_t getFirstLComputable(const Segment& segment, const Module& module) const;
 
     /**
@@ -182,6 +187,7 @@ public:
      * @return The index of the last row in the given segment, which can be
      *         computed.
      */
+    // todo - L shall be last letter (nf-20110419)
     size_t getLastLComputable(const Segment& segment) const;
 
     /**
@@ -193,6 +199,7 @@ public:
      *         required for processing a block of rows starting with row
      *         index {@code l}.
      */
+    // todo - L shall be last letter (nf-20110419)
     size_t getFirstLRequired(const Segment& segment, size_t l) const;
 
     /**

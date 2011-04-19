@@ -29,6 +29,7 @@ using std::string;
  * Interface for a general object exhibiting an ID. Implementing
  * classes shall implement the copy contructor.
  */
+// todo - rename to indetifiable (nf-20110419)
 class Object {
 public:
 

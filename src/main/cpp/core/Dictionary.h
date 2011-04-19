@@ -484,8 +484,10 @@ public:
         return hasElement(name);
     }
 
+    // todo - rename into getVariableDescriptors (nf-20110419)
     vector<VariableDescriptor*> getVariables() const;
 
+    // todo - rename into getVariable (nf-20110419)
     VariableDescriptor* getVariable(const string& name) const;
 };
 
