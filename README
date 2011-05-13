@@ -61,9 +61,21 @@ Build Instructions
 
 For the first build:
 
-1. Edit 'CMakeCache.txt' (todo - describe which properties need to be edited)
-2. Edit 'CMakeLists.txt' (todo - describe which properties need to be edited)
-3. Type 'cmake -G 'Unix Makefiles'
+1. Type 'cmake -i' and adapt the variables listed below to suit your system
+   environment
+ 
+   - CMAKE_BUILD_TYPE
+   - CMAKE_INSTALL_PREFIX
+   - JAVA_HOME
+   - OS_ARCH
+   - SAFE_HOME
+   
+2. The variables JAVA_HOME and OS_ARCH are used in the file 'CMakeLists.txt'
+   for building the include and link paths to the header files and libraries
+   included in the Java SDK. If on your system the JDK directory structure
+   follows a different scheme, you will have to adapt the paths manually.
+
+3. Type 'cmake -G 'Unix Makefiles''
 4. Type 'make'
 
 For subsequent builds simply type 'make'.
