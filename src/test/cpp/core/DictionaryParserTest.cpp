@@ -38,7 +38,7 @@ DictionaryParserTest::~DictionaryParserTest() {
 void DictionaryParserTest::setUp() {
     // Initialize Xerces and XPath
     XPathInitializer init;
-    dict = new Dictionary("/mnt/hgfs/S3L2PP/src/test/resources/syn/config/config.xml");
+    dict = new Dictionary("/mnt/hgfs/s3-syn/src/test/resources/syn/config/config.xml");
 }
 
 void DictionaryParserTest::tearDown() {

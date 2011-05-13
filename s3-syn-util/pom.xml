@@ -4,17 +4,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.esa.S3L2PP</groupId>
-        <artifactId>S3L2PP</artifactId>
+        <groupId>org.esa.s3.o.l2pp.syn</groupId>
+        <artifactId>s3-syn</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
     <packaging>jar</packaging>
 
-    <groupId>org.esa.S3L2PP</groupId>
-    <artifactId>S3L2PP-util</artifactId>
-    <name>S3L2PP Utilities</name>
-    <description>S3L2PP Utilities</description>
+    <name>Sentinel-3 O-L2PP Synergy Utilities</name>
+    <artifactId>s3-syn-util</artifactId>
 
 </project>
-

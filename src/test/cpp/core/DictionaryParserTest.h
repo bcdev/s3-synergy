@@ -27,8 +27,8 @@
 
 class DictionaryParserTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(DictionaryParserTest);
-    CPPUNIT_TEST(testGetNcVarNameAndGetFileName);
-    CPPUNIT_TEST(testDictionaryParsing);
+    CPPUNIT_TEST(testGetNcVarNameAndGetFileName); // todo - rq/ts test depends on configuration file, configure in test setup instead 
+    CPPUNIT_TEST(testDictionaryParsing); // todo - rq/ts test test depends on configuration file, configure in test setup instead
     CPPUNIT_TEST_SUITE_END();
     
 public:

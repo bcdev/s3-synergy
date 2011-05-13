@@ -14,7 +14,7 @@
  * with this program; if not, see http://www.gnu.org/licenses/
  */
 
-package org.esa.S3L2PP;
+package org.esa.s3.o.l2pp.syn;
 
 import org.junit.Test;
 
