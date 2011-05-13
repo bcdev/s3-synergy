@@ -56,6 +56,19 @@ Dependencies
 7.  CMake 2.8.2 (build)
 
 
+Build Instructions
+==================
+
+For the first build:
+
+1. Edit 'CMakeCache.txt' (todo - describe which properties need to be edited)
+2. Edit 'CMakeLists.txt' (todo - describe which properties need to be edited)
+3. Type 'cmake -G 'Unix Makefiles'
+4. Type 'make'
+
+For subsequent builds simply type 'make'.
+ 
+
 Contact Information
 ===================
 
