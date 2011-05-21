@@ -5,6 +5,7 @@
 *.iws
 *.cmake
 *.mk
+CMakeCache.txt
 CMakeFiles/
 nbproject/
 catalog.xml

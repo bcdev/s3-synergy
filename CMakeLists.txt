@@ -34,7 +34,7 @@ link_directories(
 ##
 # Sytem include directories
 #
-include_directories(SYSTEM
+include_directories(
 	${JAVA_HOME}/include}
 	${JAVA_HOME}/include/linux
 	${SAFE_HOME}/include
