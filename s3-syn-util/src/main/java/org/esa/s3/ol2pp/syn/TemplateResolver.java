@@ -13,7 +13,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-package org.esa.s3.o.l2pp.syn;
+package org.esa.s3.ol2pp.syn;
 
 import java.util.Properties;
 import java.util.regex.Matcher;

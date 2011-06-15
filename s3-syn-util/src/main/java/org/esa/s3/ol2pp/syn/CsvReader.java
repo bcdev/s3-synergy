@@ -14,7 +14,7 @@
  * with this program; if not, see http://www.gnu.org/licenses/
  */
 
-package org.esa.s3.o.l2pp.syn;
+package org.esa.s3.ol2pp.syn;
 
 import java.io.IOException;
 import java.io.LineNumberReader;
