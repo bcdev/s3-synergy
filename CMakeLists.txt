@@ -37,7 +37,7 @@ link_directories(
 include_directories(
 	${JAVA_HOME}/include}
 	${JAVA_HOME}/include/linux
-	${SAFE_HOME}/include
+#	${SAFE_HOME}/include
 )
 
 include_directories(SYSTEM /usr/local/include /usr/include)
@@ -49,7 +49,7 @@ link_directories(
 	${JAVA_HOME}/jre/lib/${OS_ARCH}
 	${JAVA_HOME}/jre/lib/${OS_ARCH}/client
 	${JAVA_HOME}/jre/lib/${OS_ARCH}/server
-	${SAFE_HOME}/lib/c++/LINUX
+#	${SAFE_HOME}/lib/c++/LINUX
 )
 
 link_directories(/usr/lib /usr/local/lib)
@@ -65,7 +65,7 @@ add_executable(core_test
 target_link_libraries(core_test 
 	cppunit 
 	netcdf 
-	Xfdu 
+#	Xfdu 
 	xerces-c 
 	xalan-c 
 	boost_system 
@@ -82,7 +82,7 @@ add_executable(util_test
 target_link_libraries(util_test
 	cppunit
 	netcdf
-	Xfdu
+#	Xfdu
 	xerces-c
 	xalan-c
 	boost_system
@@ -136,8 +136,8 @@ add_executable(syn
 )
 target_link_libraries(syn
 	netcdf
-	Safe
-	Xfdu
+#	Safe
+#	Xfdu
 	xerces-c
 	xalan-c
 	boost_system

@@ -2,17 +2,17 @@
 <dataset>
     <variables>
         <variable>
-            <ncname>Geodetic_Latitude</ncname>
+            <ncname>latitude</ncname>
             <name>lat</name>
             <segment_name>OLC</segment_name>
         </variable>
         <variable>
-            <ncname>Longitude</ncname>
+            <ncname>longitude</ncname>
             <name>lon</name>
             <segment_name>OLC</segment_name>
         </variable>
         <variable>
-            <ncname>Altitude</ncname>
+            <ncname>altitude</ncname>
             <name>altitude</name>
             <segment_name>OLC</segment_name>
         </variable>

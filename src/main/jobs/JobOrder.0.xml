@@ -10,7 +10,7 @@
         <Acquisition_Station>unknown</Acquisition_Station>
         <Processing_Station>unknown</Processing_Station>
         <Config_Files>
-            <Conf_File_Name>config.xml</Conf_File_Name>
+            <Conf_File_Name>src/main/config/config.xml</Conf_File_Name>
         </Config_Files>
         <Sensing_Time>
             <Start>20101214_000000.0000</Start>
@@ -52,7 +52,7 @@
                     <File_Type>S3L1C</File_Type>
                     <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
                     <List_of_File_Names count="1">
-                        <File_Name>/mnt/hgfs/testdata/S3/L1C/dummy</File_Name>
+                        <File_Name>/data/s3-syn/L1C/S3A_SY_1_SYN________2013621T10920_2013621T101412_1_00292_1_DMS_TD04_00</File_Name>
                     </List_of_File_Names>
                 </Input>
             </List_of_Inputs>
@@ -60,7 +60,7 @@
                 <Output>
                     <File_Type>SYL2</File_Type>
                     <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
-                    <File_Name>/mnt/hgfs/testdata/S3/SYN/dummy</File_Name>
+                    <File_Name>/data/s3-syn/SYN/dummy</File_Name>
                 </Output>
             </List_of_Outputs>
         </Ipf_Proc>
