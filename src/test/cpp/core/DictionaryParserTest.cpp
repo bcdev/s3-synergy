@@ -38,7 +38,7 @@ DictionaryParserTest::~DictionaryParserTest() {
 void DictionaryParserTest::setUp() {
     // Initialize Xerces and XPath
     XPathInitializer init;
-    dict = new Dictionary("/mnt/hgfs/s3-syn/src/test/resources/syn/config/config.xml");
+    dict = new Dictionary("src/test/resources/syn/config/config.xml");
 }
 
 void DictionaryParserTest::tearDown() {
@@ -98,7 +98,7 @@ void DictionaryParserTest::testGetNcVarNameAndGetFileName() {
     CPPUNIT_ASSERT(varName4.compare("TOA_Radiance_Meas") == 0);
     CPPUNIT_ASSERT(varName5.compare("TOA_Radiance_Meas") == 0);
     CPPUNIT_ASSERT(varName6.compare("TOA_Radiance_Meas") == 0);
-    CPPUNIT_ASSERT(varName7.compare("Geodetic_Latitude") == 0);
+    CPPUNIT_ASSERT(varName7.compare("latitude") == 0);
     CPPUNIT_ASSERT(varName8.compare("OLCI_time_stamps") == 0);
     CPPUNIT_ASSERT(varName9.compare("OLCI_QC_flags") == 0);
     CPPUNIT_ASSERT(varName10.compare("OAA") == 0);
