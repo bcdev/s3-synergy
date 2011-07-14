@@ -21,14 +21,24 @@
 #ifndef ACCESSOR_H
 #define	ACCESSOR_H
 
-#include <cstdint>
 #include <stdexcept>
 #include <typeinfo>
 #include <valarray>
 
+#include <boost/cstdint.hpp>
+
 using std::bad_cast;
 using std::out_of_range;
 using std::valarray;
+
+using boost::int8_t;
+using boost::int16_t;
+using boost::int32_t;
+using boost::int64_t;
+using boost::uint8_t;
+using boost::uint16_t;
+using boost::uint32_t;
+using boost::uint64_t;
 
 /**
  * Represents an accessor to the samples of a variable. An accessor provides

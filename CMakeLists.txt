@@ -2,8 +2,8 @@ project (SYN)
 set (SYN_VERSION_MAJOR 1)
 set (SYN_VERSION_MINOR 0)
 
-set(CMAKE_CXX_FLAGS "-std=c++0x -O3 -Wall")
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -Wall")
+set(CMAKE_CXX_FLAGS "-O3 -Wall -DBOOST_FILESYSTEM_VERSION=2")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -Wall -DBOOST_FILESYSTEM_VERSION=2")
 
 cmake_minimum_required (VERSION 2.8)
 
@@ -35,8 +35,8 @@ link_directories(
 # Sytem include directories
 #
 include_directories(
-	${JAVA_HOME}/include}
-	${JAVA_HOME}/include/linux
+#	${JAVA_HOME}/include}
+#	${JAVA_HOME}/include/linux
 #	${SAFE_HOME}/include
 )
 
@@ -46,9 +46,9 @@ include_directories(SYSTEM /usr/local/include /usr/include)
 # System link directories
 #
 link_directories(
-	${JAVA_HOME}/jre/lib/${OS_ARCH}
-	${JAVA_HOME}/jre/lib/${OS_ARCH}/client
-	${JAVA_HOME}/jre/lib/${OS_ARCH}/server
+#	${JAVA_HOME}/jre/lib/${OS_ARCH}
+#	${JAVA_HOME}/jre/lib/${OS_ARCH}/client
+#	${JAVA_HOME}/jre/lib/${OS_ARCH}/server
 #	${SAFE_HOME}/lib/c++/LINUX
 )
 
@@ -69,7 +69,7 @@ target_link_libraries(core_test
 	xerces-c 
 #	xalan-c
         xqilla 
-	boost_system 
+	boost_system-mt 
 	boost_filesystem-mt
 )
 set_property(TARGET core_test PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
@@ -87,7 +87,7 @@ target_link_libraries(util_test
 	xerces-c
 #	xalan-c
         xqilla
-	boost_system
+	boost_system-mt
 	boost_filesystem-mt
 )
 set_property(TARGET util_test PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
@@ -106,7 +106,7 @@ set_property(TARGET util_test PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #	Xfdu
 #	xerces-c
 #	xalan-c
-#	boost_system
+#	boost_system-mt
 #	boost_filesystem-mt
 #)
 #set_property(TARGET modules_test PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
@@ -143,7 +143,7 @@ target_link_libraries(syn
 	xerces-c
 #	xalan-c
         xqilla
-	boost_system
+	boost_system-mt
 	boost_filesystem-mt
 )
 set_property(TARGET syn PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
