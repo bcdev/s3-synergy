@@ -43,7 +43,6 @@ private:
     void parseDebugLevel(Configuration* config, DOMElement* node);
     void parseInputLocation(DOMElement* childNode, Configuration* config);
     bool stringToBool(string in);
-    string getStringFromNode(const XObject* result);
     vector<BreakpointFile*> parseBreakpointFiles(string baseQuery);
     BreakpointFile* parseBreakpointFile(string baseQuery);
     vector<Input*> parseInputs(string baseQuery);

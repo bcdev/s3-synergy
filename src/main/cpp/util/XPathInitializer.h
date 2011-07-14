@@ -8,19 +8,13 @@
 #ifndef XPATHINITIALIZER_H
 #define	XPATHINITIALIZER_H
 
-#include <xercesc/dom/DOMDocument.hpp>
-#include <xercesc/dom/DOMElement.hpp>
-#include <xercesc/dom/DOMException.hpp>
-#include <xercesc/dom/DOMXPathException.hpp>
-#include <xercesc/dom/DOMXPathExpression.hpp>
-#include <xercesc/dom/DOMNode.hpp>
-#include <xercesc/dom/DOMNodeList.hpp>
-#include <xercesc/dom/DOMXPathResult.hpp>
+#include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLException.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
+/*
 #include <xalanc/XPath/XPath.hpp>
 #include <xalanc/XPath/XPathEvaluator.hpp>
 #include <xalanc/DOMSupport/XalanDocumentPrefixResolver.hpp>
@@ -29,6 +23,9 @@
 #include <xalanc/XercesParserLiaison/XercesDOMSupport.hpp>
 #include <xalanc/XPath/XObject.hpp>
 #include <xalanc/XPath/XPathFactory.hpp>
+ */
+
+#include <xqilla/xqilla-dom3.hpp>
 
 using xercesc::DOMDocument;
 using xercesc::DOMElement;
@@ -43,6 +40,7 @@ using xercesc::XMLException;
 using xercesc::XMLPlatformUtils;
 using xercesc::XMLString;
 
+/*
 using xalanc::NodeRefListBase;
 using xalanc::XalanDocument;
 using xalanc::XalanDocumentPrefixResolver;
@@ -55,6 +53,7 @@ using xalanc::XPath;
 using xalanc::XPathEvaluator;
 using xalanc::XPathFactory;
 using xalanc::XalanDOMChar;
+ */
 
 class XPathInitializer {
 public:

@@ -67,7 +67,7 @@ target_link_libraries(core_test
 	netcdf 
 #	Xfdu 
 	xerces-c 
-	xalan-c
+#	xalan-c
         xqilla 
 	boost_system 
 	boost_filesystem-mt
@@ -85,7 +85,7 @@ target_link_libraries(util_test
 	netcdf
 #	Xfdu
 	xerces-c
-	xalan-c
+#	xalan-c
         xqilla
 	boost_system
 	boost_filesystem-mt
@@ -141,7 +141,7 @@ target_link_libraries(syn
 #	Safe
 #	Xfdu
 	xerces-c
-	xalan-c
+#	xalan-c
         xqilla
 	boost_system
 	boost_filesystem-mt

@@ -9,11 +9,13 @@
 
 XPathInitializer::XPathInitializer() {
     XMLPlatformUtils::Initialize();
-    XPathEvaluator::initialize();
+    //XPathEvaluator::initialize();
+    XQillaPlatformUtils::initialize();
 }
 
 XPathInitializer::~XPathInitializer() {
-    XPathEvaluator::terminate();
+    XQillaPlatformUtils::terminate();
+    //XPathEvaluator::terminate();
     XMLPlatformUtils::Terminate();
 }
 

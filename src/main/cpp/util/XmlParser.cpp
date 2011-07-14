@@ -12,6 +12,8 @@
 
 #include "XmlParser.h"
 
+XERCES_CPP_NAMESPACE_USE;
+
 using std::cout;
 using std::exception;
 using std::list;
@@ -28,6 +30,7 @@ const string XmlParser::evaluateToString(const string& path, const string& expre
 }
 
 const string XmlParser::evaluateToString(const string& path, const char* expression) {
+    /*
     parse(path);
     // Create a XalanDocument based on doc.
     XercesDOMSupport support;
@@ -50,6 +53,30 @@ const string XmlParser::evaluateToString(const string& path, const char* express
     XMLString::release(&resultChars);
 
     return resultStr;
+     */
+    DOMImplementation* xqillaImplementation =
+            DOMImplementationRegistry::getDOMImplementation(X("XPath2 3.0"));
+
+    AutoRelease<DOMLSParser> parser(xqillaImplementation->createLSParser(DOMImplementationLS::MODE_SYNCHRONOUS, 0));
+    parser->getDomConfig()->setParameter(XMLUni::fgDOMNamespaces, true);
+    parser->getDomConfig()->setParameter(XMLUni::fgXercesSchema, true);
+    parser->getDomConfig()->setParameter(XMLUni::fgDOMValidateIfSchema, true);
+
+    DOMDocument *document = parser->parseURI(path.c_str());
+
+    AutoRelease<DOMXPathNSResolver> resolver(document->createNSResolver(document->getDocumentElement()));
+
+    AutoRelease<DOMXPathExpression> parsedExpression(document->createExpression(X(expression), resolver));
+    
+    AutoRelease<DOMXPathResult> iteratorResult(parsedExpression->evaluate(document->getDocumentElement(), DOMXPathResult::ORDERED_NODE_ITERATOR_TYPE, 0));
+
+    while (iteratorResult->iterateNext()) {
+        if (iteratorResult->isNode()) {
+            return XMLString::transcode(iteratorResult->getStringValue());
+        }
+    }
+
+    return "";
 }
 
 const vector<string> XmlParser::evaluateToStringList(string& path, string& expression) {
@@ -57,6 +84,7 @@ const vector<string> XmlParser::evaluateToStringList(string& path, string& expre
 }
 
 const vector<string> XmlParser::evaluateToStringList(string& path, const char* expression) {
+    /*
     parse(path);
     // Create a XalanDocument based on doc.
     XercesDOMSupport support;
@@ -82,6 +110,31 @@ const vector<string> XmlParser::evaluateToStringList(string& path, const char* e
         XMLString::release(&value);
     }
     delete parser;
+    return output;
+     */
+    DOMImplementation* xqillaImplementation =
+            DOMImplementationRegistry::getDOMImplementation(X("XPath2 3.0"));
+
+    AutoRelease<DOMLSParser> parser(xqillaImplementation->createLSParser(DOMImplementationLS::MODE_SYNCHRONOUS, 0));
+    parser->getDomConfig()->setParameter(XMLUni::fgDOMNamespaces, true);
+    parser->getDomConfig()->setParameter(XMLUni::fgXercesSchema, true);
+    parser->getDomConfig()->setParameter(XMLUni::fgDOMValidateIfSchema, true);
+
+    DOMDocument *document = parser->parseURI(path.c_str());
+
+    AutoRelease<DOMXPathNSResolver> resolver(document->createNSResolver(document->getDocumentElement()));
+
+    AutoRelease<DOMXPathExpression> parsedExpression(document->createExpression(X(expression), resolver));
+
+    AutoRelease<DOMXPathResult> iteratorResult(parsedExpression->evaluate(document->getDocumentElement(), DOMXPathResult::ORDERED_NODE_ITERATOR_TYPE, 0));
+
+    vector<string> output;
+    while (iteratorResult->iterateNext()) {
+        if (iteratorResult->isNode()) {
+            output.push_back(XMLString::transcode(iteratorResult->getStringValue()));
+        }
+    }
+
     return output;
 }
 
