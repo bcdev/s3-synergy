@@ -15,6 +15,6 @@ Makefile
 /auxdata/
 /config/
 /jobs/
-/data/
+/data
 target/
 LOG.*
