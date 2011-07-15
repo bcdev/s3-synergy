@@ -48,8 +48,8 @@ Dependencies
 ============
 
 1.  Boost 1.4.2 (compile)
-2.  Apache Xalan-C 1.1.0 (compile)
-3.  Apache Xerces-C 2.8.0 (compile)
+2.  Apache Xerces-C 3.1.1 (compile)
+3.  XQilla 2.2.4 (compile)
 4.  NetCDF 4.1.1 (compile)
 5.  SAFE Suite 1.2 (compile)
 6.  Sun JDK 6 (runtime)

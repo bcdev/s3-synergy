@@ -35,8 +35,8 @@ link_directories(
 # Sytem include directories
 #
 include_directories(
-#	${JAVA_HOME}/include}
-#	${JAVA_HOME}/include/linux
+	${JAVA_HOME}/include}
+	${JAVA_HOME}/include/linux
 #	${SAFE_HOME}/include
 )
 
@@ -46,9 +46,9 @@ include_directories(SYSTEM /usr/local/include /usr/include)
 # System link directories
 #
 link_directories(
-#	${JAVA_HOME}/jre/lib/${OS_ARCH}
-#	${JAVA_HOME}/jre/lib/${OS_ARCH}/client
-#	${JAVA_HOME}/jre/lib/${OS_ARCH}/server
+	${JAVA_HOME}/jre/lib/${OS_ARCH}
+	${JAVA_HOME}/jre/lib/${OS_ARCH}/client
+	${JAVA_HOME}/jre/lib/${OS_ARCH}/server
 #	${SAFE_HOME}/lib/c++/LINUX
 )
 
@@ -67,7 +67,6 @@ target_link_libraries(core_test
 	netcdf 
 #	Xfdu 
 	xerces-c 
-#	xalan-c
         xqilla 
 	boost_system-mt 
 	boost_filesystem-mt
@@ -85,7 +84,6 @@ target_link_libraries(util_test
 	netcdf
 #	Xfdu
 	xerces-c
-#	xalan-c
         xqilla
 	boost_system-mt
 	boost_filesystem-mt
@@ -105,7 +103,7 @@ set_property(TARGET util_test PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #	netcdf
 #	Xfdu
 #	xerces-c
-#	xalan-c
+#	xqilla
 #	boost_system-mt
 #	boost_filesystem-mt
 #)
@@ -122,7 +120,7 @@ set_property(TARGET util_test PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #	Xfdu
 #	cppunit
 #	xerces-c
-#	xalan-c
+#	xqilla
 #	)
 #set_property(TARGET syn_test PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 
@@ -141,7 +139,6 @@ target_link_libraries(syn
 #	Safe
 #	Xfdu
 	xerces-c
-#	xalan-c
         xqilla
 	boost_system-mt
 	boost_filesystem-mt
