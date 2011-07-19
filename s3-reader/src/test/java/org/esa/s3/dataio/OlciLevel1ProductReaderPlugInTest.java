@@ -1,11 +1,15 @@
 package org.esa.s3.dataio;
 
 import org.esa.beam.framework.dataio.DecodeQualification;
+import org.esa.beam.framework.dataio.ProductIOPlugInManager;
 import org.esa.beam.framework.dataio.ProductReader;
+import org.esa.beam.framework.dataio.ProductReaderPlugIn;
+import org.esa.beam.framework.datamodel.Product;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.Iterator;
 
 import static org.junit.Assert.*;
 
@@ -16,6 +20,16 @@ public class OlciLevel1ProductReaderPlugInTest {
     @Before
     public void setup() {
         plugIn = new OlciLevel1ProductReaderPlugIn();
+    }
+
+    @Test
+    public void testIfPlugInIsLoaded() {
+        ProductIOPlugInManager ioPlugInManager = ProductIOPlugInManager.getInstance();
+        Iterator<ProductReaderPlugIn> readerPlugIns = ioPlugInManager.getReaderPlugIns(
+                OlciLevel1ProductReaderPlugIn.FORMAT_NAME_OLCI_L1B);
+        assertTrue(readerPlugIns.hasNext());
+        assertTrue(readerPlugIns.next() instanceof OlciLevel1ProductReaderPlugIn);
+
     }
 
     @Test
@@ -45,8 +59,14 @@ public class OlciLevel1ProductReaderPlugInTest {
     }
 
     @Test
-    public void testDecodeQualificationWithoutSAFEExtensions() {
-        String invalidPath = "/OL_1_ERR_TTTTTTTTTTTT_instanceID_GGG_CCCC_VV/someFile.nc";
+    public void testDecodeQualificationWithoutFile() {
+        String invalidPath = "/OL_1_ERR_TTTTTTTTTTTT_instanceID_GGG_CCCC_VV";
+        assertEquals(DecodeQualification.UNABLE, plugIn.getDecodeQualification(invalidPath));
+    }
+
+    @Test
+    public void testDecodeQualificationWithWrongFile() {
+        String invalidPath = "/OL_1_ERR_TTTTTTTTTTTT_instanceID_GGG_CCCC_VV/someFile.doc";
         assertEquals(DecodeQualification.UNABLE, plugIn.getDecodeQualification(invalidPath));
     }
 
@@ -66,8 +86,8 @@ public class OlciLevel1ProductReaderPlugInTest {
         assertNotSame(secondInstance, firstInstance);
     }
     private String createPath(String dataSource, String mode) {
-        String validParentDirectory = String.format("/%s_1_%s_TTTTTTTTTTTT_instanceID_GGG_CCCC_VV.SAFE/", dataSource, mode);
-        String aFileInDirectory = "someFile.nc";
+        String validParentDirectory = String.format("/%s_1_%s_TTTTTTTTTTTT_instanceID_GGG_CCCC_VV/", dataSource, mode);
+        String aFileInDirectory = "L1b_EO_manifest.xml";
         return validParentDirectory + aFileInDirectory;
     }
 }

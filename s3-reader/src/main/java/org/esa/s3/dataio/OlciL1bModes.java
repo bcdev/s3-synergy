@@ -6,6 +6,6 @@ package org.esa.s3.dataio;
  * @author Marco Peters
  * @since 1.0
  */
-public enum OlciL1bModes {
-    EFR, ERR,  RAC, SPC, BRW
+enum OlciL1bModes {
+    EFR, ERR
 }

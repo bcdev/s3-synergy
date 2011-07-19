@@ -17,22 +17,35 @@ import java.util.regex.Pattern;
  */
 public class OlciLevel1ProductReaderPlugIn implements ProductReaderPlugIn {
 
+    public static final String FORMAT_NAME_OLCI_L1B = "OLCI L1b";
+
     private static final Class[] SUPPORTED_INPUT_TYPES = new Class[]{String.class, File.class};
-    private static final String description = "OLCI L1b Product Reader";
+    private static final String DESCRIPTION = "OLCI L1b SAFE Format";
+    private static final String MANIFEST_FILE_EXTENSION = ".xml";
+    private static final String[] DEFAULT_FILE_EXTENSIONS = new String[]{MANIFEST_FILE_EXTENSION};
+    private static final String[] FORMAT_NAMES = new String[]{FORMAT_NAME_OLCI_L1B};
 
     @Override
     public DecodeQualification getDecodeQualification(Object input) {
-        File inputFile = new File(input.toString());
-        String parentDirectoryName = inputFile.getParentFile().getName();
-        if (isDirectoryNameValid(parentDirectoryName)) {
+        if (isInputValid(input)) {
             return DecodeQualification.INTENDED;
         } else {
             return DecodeQualification.UNABLE;
         }
     }
 
+    private boolean isInputValid(Object input) {
+        File inputFile = new File(input.toString());
+        String parentDirectoryName = inputFile.getParentFile().getName();
+        return isInputFileNameValid(inputFile.getName()) && isDirectoryNameValid(parentDirectoryName);
+    }
+
+    private boolean isInputFileNameValid(String name) {
+        return "L1b_EO_manifest.xml".equals(name);
+    }
+
     private boolean isDirectoryNameValid(String parentDirectoryName) {
-        Pattern pattern = Pattern.compile(".*OL_1_(ERR|EFR)_.*.SAFE");
+        Pattern pattern = Pattern.compile(".*OL_1_(ERR|EFR)_.*");
         return pattern.matcher(parentDirectoryName).matches();
     }
 
@@ -43,27 +56,27 @@ public class OlciLevel1ProductReaderPlugIn implements ProductReaderPlugIn {
 
     @Override
     public ProductReader createReaderInstance() {
-        return new OlciLevel1ProductReader();
+        return new OlciLevel1ProductReader(this);
     }
 
     @Override
     public String[] getFormatNames() {
-        return new String[0];
+        return FORMAT_NAMES;
     }
 
     @Override
     public String[] getDefaultFileExtensions() {
-        return new String[0];
+        return DEFAULT_FILE_EXTENSIONS;
     }
 
     @Override
     public String getDescription(Locale locale) {
-        return description;
+        return DESCRIPTION;
     }
 
     @Override
     public BeamFileFilter getProductFileFilter() {
-        return new BeamFileFilter("OLCI L1b", ".nc", "OLCI L1b SAFE format");
+        return new BeamFileFilter(FORMAT_NAMES[0], MANIFEST_FILE_EXTENSION, DESCRIPTION);
     }
 
 }
