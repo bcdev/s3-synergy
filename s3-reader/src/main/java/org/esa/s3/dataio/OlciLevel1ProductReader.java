@@ -1,13 +1,17 @@
 package org.esa.s3.dataio;
 
+import com.bc.ceres.binding.dom.DomElement;
 import com.bc.ceres.core.ProgressMonitor;
+import com.bc.ceres.glevel.MultiLevelImage;
 import org.esa.beam.framework.dataio.AbstractProductReader;
 import org.esa.beam.framework.dataio.ProductIO;
 import org.esa.beam.framework.datamodel.Band;
+import org.esa.beam.framework.datamodel.MetadataAttribute;
+import org.esa.beam.framework.datamodel.MetadataElement;
 import org.esa.beam.framework.datamodel.Product;
 import org.esa.beam.framework.datamodel.ProductData;
+import org.esa.beam.framework.datamodel.TiePointGrid;
 import org.esa.beam.util.ProductUtils;
-import org.hsqldb.Index;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -18,7 +22,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,12 +36,12 @@ import java.util.logging.Logger;
  */
 class OlciLevel1ProductReader extends AbstractProductReader {
 
+    private final Logger logger;
     private List<Product> bandProducts;
-    private Logger logger;
+    private List<Product> annotationProducts;
 
     protected OlciLevel1ProductReader(OlciLevel1ProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
-
         logger = Logger.getLogger(getClass().getSimpleName());
     }
 
@@ -49,36 +55,114 @@ class OlciLevel1ProductReader extends AbstractProductReader {
     private Product createProduct(Manifest manifest) {
         Product product = new Product(manifest.getProductName(), manifest.getProductType(),
                                       manifest.getColumnCount(), manifest.getLineCount());
+        product.setDescription(manifest.getDescription());
+        product.setStartTime(manifest.getStartTime());
+        product.setEndTime(manifest.getStopTime());
+        MetadataElement root = product.getMetadataRoot();
+        root.addElement(manifest.getFixedHeader());
+        root.addElement(manifest.getMainProductHeader());
+        root.addElement(manifest.getSpecificProductHeader());
+        attachBandsToProduct(manifest, product);
+        attachAnnotationDataToProduct(manifest, product);
 
-        List<DataSetPointer> dataSetPointers = manifest.getDataSetPointers(DataSetPointer.Type.M);
-        dataSetPointers = removeNotExistingDataSetPointers(dataSetPointers);
-        bandProducts = createBandProducts(dataSetPointers);
-        addBands(bandProducts, product);
         return product;
     }
 
-    private List<Product> createBandProducts(List<DataSetPointer> dataSetPointers) {
-        List<Product> bandProducts = new ArrayList<Product>();
+    private void attachAnnotationDataToProduct(Manifest manifest, Product product) {
+        List<DataSetPointer> annotationPointers = manifest.getDataSetPointers(DataSetPointer.Type.A);
+        annotationPointers = removeNotExistingDataSetPointers(annotationPointers);
+        annotationProducts = createDataSetProducts(annotationPointers);
+        attachGeoCodingToProduct(annotationProducts, product);
+        attachFlagCodingToProduct(annotationProducts, product);
+        attachTiePointsToProduct(annotationProducts, product);
+    }
+
+    private void attachTiePointsToProduct(List<Product> annotationProducts, Product product) {
+        for (Product annotationProduct : annotationProducts) {
+            if ("TiePoints".equals(annotationProduct.getName())) {
+                Band[] tiePointBands = annotationProduct.getBands();
+                MetadataElement metadataRoot = annotationProduct.getMetadataRoot();
+                MetadataElement globalAttributes = metadataRoot.getElement("Global_Attributes");
+                int subsampling = globalAttributes.getAttributeInt("subsampling_factor");
+                for (Band band : tiePointBands) {
+                    MultiLevelImage sourceImage = band.getGeophysicalImage();
+
+                    int width = sourceImage.getWidth();
+                    int height = sourceImage.getHeight();
+                    float[] tiePointData = new float[width * height];
+                    sourceImage.getData().getSamples(0,0, width, height, 0, tiePointData);
+                    TiePointGrid tiePointGrid = new TiePointGrid(band.getName(), band.getRasterWidth(),
+                                                                 band.getRasterHeight(), 0, 0, subsampling,
+                                                                 subsampling, tiePointData, true);
+                    product.addTiePointGrid(tiePointGrid);
+                }
+            }
+        }
+    }
+
+    private void attachFlagCodingToProduct(List<Product> annotationProducts, Product product) {
+        for (Product annotationProduct : annotationProducts) {
+            if(annotationProduct.getFlagCodingGroup().getNodeCount() > 0) {
+                ProductUtils.copyFlagBands(annotationProduct, product);
+            }
+        }
+    }
+
+    private void attachGeoCodingToProduct(List<Product> annotationProducts, Product product) {
+        for (Product annotationProduct : annotationProducts) {
+            if(annotationProduct.getGeoCoding() != null) {
+                ProductUtils.copyGeoCoding(annotationProduct, product);
+            }
+        }
+    }
+
+    private void attachBandsToProduct(Manifest manifest, Product product) {
+        List<DataSetPointer> measurementPointers = manifest.getDataSetPointers(DataSetPointer.Type.M);
+        measurementPointers = removeNotExistingDataSetPointers(measurementPointers);
+        bandProducts = createDataSetProducts(measurementPointers);
+        addRadianceBands(bandProducts, product);
+    }
+
+    private List<Product> createDataSetProducts(List<DataSetPointer> dataSetPointers) {
+        List<Product> dataSetProducts = new ArrayList<Product>();
         for (DataSetPointer dataSetPointer : dataSetPointers) {
             try {
-                bandProducts.add(ProductIO.readProduct(new File(getParentInputDirectory(), dataSetPointer.getFileName())));
+                File dataSetFile = new File(getParentInputDirectory(), dataSetPointer.getFileName());
+                Product product = ProductIO.readProduct(dataSetFile);
+                if (product != null) {
+                    dataSetProducts.add(product);
+                }else {
+                    String msg = String.format("Could not read file '%s. No appropriate reader found.",
+                                               dataSetPointer.getFileName());
+                    logger.log(Level.WARNING, msg);
+                }
             } catch (IOException e) {
                 String msg = String.format("Not able to read file '%s.", dataSetPointer.getFileName());
                 logger.log(Level.WARNING, msg, e);
             }
         }
-        return bandProducts;
+        return dataSetProducts;
     }
 
-    private void addBands(List<Product> bandProducts, Product product) {
+    private void addRadianceBands(List<Product> bandProducts, Product product) {
         for (Product bandProduct : bandProducts) {
             Band[] bands = bandProduct.getBands();
             for (Band band : bands) {
-                Band targetBand = ProductUtils.copyBand(band.getName(), bandProduct, product);
-                targetBand.setSourceImage(band.getSourceImage());
+                if(hasSameRasterDimension(product, bandProduct)) {
+                    Band targetBand = ProductUtils.copyBand(band.getName(), bandProduct, product);
+                    targetBand.setSourceImage(band.getSourceImage());
+                }
             }
         }
 
+    }
+
+    private boolean hasSameRasterDimension(Product productOne, Product productTwo) {
+        int widthOne = productOne.getSceneRasterWidth();
+        int heightOne = productOne.getSceneRasterHeight();
+        int widthTwo = productTwo.getSceneRasterWidth();
+        int heightTwo = productTwo.getSceneRasterHeight();
+        return widthOne == widthTwo && heightOne == heightTwo;
     }
 
     private List<DataSetPointer> removeNotExistingDataSetPointers(List<DataSetPointer> dataSetPointers) {
@@ -157,6 +241,9 @@ class OlciLevel1ProductReader extends AbstractProductReader {
     public void close() throws IOException {
         for (Product bandProduct : bandProducts) {
             bandProduct.dispose();
+        }
+        for (Product annotationProduct : annotationProducts) {
+            annotationProduct.dispose();
         }
         super.close();
 

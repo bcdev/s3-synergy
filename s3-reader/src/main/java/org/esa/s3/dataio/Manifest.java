@@ -1,13 +1,15 @@
 package org.esa.s3.dataio;
 
+import org.esa.beam.framework.datamodel.MetadataAttribute;
+import org.esa.beam.framework.datamodel.MetadataElement;
+import org.esa.beam.framework.datamodel.ProductData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +25,8 @@ class Manifest {
     public static final String MPH_BASE_PATH = "/Earth_Explorer_Header/Variable_Header/Main_Product_Header/";
     public static final String SPH_BASE_PATH = "/Earth_Explorer_Header/Variable_Header/Specific_Product_Header/";
 
-    private Document doc;
-    private XPath xpath;
+    private final Document doc;
+    private final XPathHelper xPathHelper;
 
     /**
      * Creates an instance of this class by using the given W3C document.
@@ -33,64 +35,105 @@ class Manifest {
      */
     Manifest(Document manifestDocument) {
         this.doc = manifestDocument;
-        xpath = XPathFactory.newInstance().newXPath();
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        xPathHelper = new XPathHelper(xPath);
     }
 
     public String getProductName() {
-        return getString(MPH_BASE_PATH + "Product_Name", doc);
+        return xPathHelper.getString(FIXED_HEADER_BASE_PATH + "File_Name", doc);
     }
 
     public String getDescription() {
-        return getString(FIXED_HEADER_BASE_PATH + "File_Description", doc);
+        return xPathHelper.getString(FIXED_HEADER_BASE_PATH + "File_Description", doc);
     }
 
     public String getProductType() {
-        return getString(FIXED_HEADER_BASE_PATH + "File_Type", doc);
+        return xPathHelper.getString(FIXED_HEADER_BASE_PATH + "File_Type", doc);
     }
 
     public int getLineCount() {
-        return Integer.parseInt(getString(SPH_BASE_PATH + "Image_Size/Lines_Number", doc));
+        return Integer.parseInt(xPathHelper.getString(SPH_BASE_PATH + "Image_Size/Lines_Number", doc));
     }
 
     public int getColumnCount() {
-        return Integer.parseInt(getString(SPH_BASE_PATH + "Columns_Number", doc));
+        return Integer.parseInt(xPathHelper.getString(SPH_BASE_PATH + "Columns_Number", doc));
     }
 
-    private String getString(String pathExpr, Node node) {
+    public ProductData.UTC getStartTime() {
+        String utcString = xPathHelper.getString(MPH_BASE_PATH + "Start_Time", doc);
         try {
-            return xpath.evaluate(pathExpr, node);
-        } catch (XPathExpressionException e) {
-            throw new IllegalArgumentException("xpath '" + pathExpr + "' invalid.", e);
+            return ProductData.UTC.parse(utcString, "'UTC='yyyy-MM-dd'T'HH:mm:ss");
+        } catch (ParseException ignored) {
+            return null;
+        }
+    }
+
+    public ProductData.UTC getStopTime() {
+        String utcString = xPathHelper.getString(MPH_BASE_PATH + "Stop_Time", doc);
+        try {
+            return ProductData.UTC.parse(utcString, "'UTC='yyyy-MM-dd'T'HH:mm:ss");
+        } catch (ParseException ignored) {
+            return null;
         }
     }
 
     public List<DataSetPointer> getDataSetPointers(DataSetPointer.Type type) {
-        NodeList nodeList = getNodeList(doc, SPH_BASE_PATH + "List_of_Data_Objects/Data_Object_Descriptor[Type='M']");
+        String xPath = String.format("%sList_of_Data_Objects/Data_Object_Descriptor[Type='%s']", SPH_BASE_PATH, type);
+        NodeList nodeList = xPathHelper.getNodeList(xPath, doc);
         List<DataSetPointer> dataSetPointers = new ArrayList<DataSetPointer>();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node dataObjectDescriptorNode = nodeList.item(i);
-            String fileName = getString("Filename", dataObjectDescriptorNode);
-            String fileFormat = getString("File_Format", dataObjectDescriptorNode);
+            String fileName = xPathHelper.getString("Filename", dataObjectDescriptorNode);
+            String fileFormat = xPathHelper.getString("File_Format", dataObjectDescriptorNode);
             dataSetPointers.add(new DataSetPointer(fileName, fileFormat, type));
         }
 
         return dataSetPointers;
     }
 
-    private NodeList getNodeList(Node refNode, String pathExpr) {
-        try {
-            return (NodeList) xpath.evaluate(pathExpr, refNode, XPathConstants.NODESET);
-        } catch (XPathExpressionException e) {
-            throw new IllegalArgumentException("xpath '" + pathExpr + "' invalid.", e);
-        }
+    public MetadataElement getFixedHeader() {
+        Node node = xPathHelper.getNode("/Earth_Explorer_Header/Fixed_Header", doc);
+        return convertNodeToMetadataElement(node, new MetadataElement(node.getNodeName()));
     }
 
-    private Node getNode(String pathExpr) {
-        try {
-            return (Node) xpath.evaluate(pathExpr, doc, XPathConstants.NODE);
-        } catch (XPathExpressionException e) {
-            throw new IllegalArgumentException("xpath '" + pathExpr + "' invalid.", e);
+    public MetadataElement getMainProductHeader() {
+        Node node = xPathHelper.getNode("/Earth_Explorer_Header/Variable_Header/Main_Product_Header", doc);
+        return convertNodeToMetadataElement(node, new MetadataElement(node.getNodeName()));
+    }
+
+    public MetadataElement getSpecificProductHeader() {
+        Node node = xPathHelper.getNode("/Earth_Explorer_Header/Variable_Header/Specific_Product_Header", doc);
+        return convertNodeToMetadataElement(node, new MetadataElement(node.getNodeName()));
+    }
+
+    private MetadataElement convertNodeToMetadataElement(Node rootNode, MetadataElement rootMetadata) {
+        NodeList childNodes = rootNode.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node node = childNodes.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                if (hasElementChildNodes(node)) {
+                    MetadataElement element = new MetadataElement(node.getNodeName());
+                    convertNodeToMetadataElement(node, element);
+                    rootMetadata.addElement(element);
+                } else {
+                    String nodevalue = node.getTextContent();
+                    ProductData textContent = ProductData.createInstance(nodevalue);
+                    rootMetadata.addAttribute(new MetadataAttribute(node.getNodeName(), textContent, true));
+                }
+            }
         }
 
+        return rootMetadata;
+    }
+
+    private boolean hasElementChildNodes(Node rootNode) {
+        NodeList childNodes = rootNode.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node node = childNodes.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                return true;
+            }
+        }
+        return false;
     }
 }
