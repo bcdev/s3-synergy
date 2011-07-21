@@ -47,13 +47,21 @@ public class OlciL2ManifestTest {
     }
 
     @Test
-    public void testGetMeasurementFiles() {
+    public void testGetMeasurementFileNames() {
         List<String> measurementFiles = manifestTest.getMeasurementFileNames();
         assertEquals(28, measurementFiles.size());
         assertEquals("r400.nc", measurementFiles.get(0));
         assertEquals("r560.nc", measurementFiles.get(5));
         assertEquals("chl_nn.nc", measurementFiles.get(18));
         assertEquals("wqsf.nc", measurementFiles.get(27));
+    }
 
+    @Test
+    public void testGetGeoCoordinatesFileName() {
+        assertEquals("geoCoordinates.nc", manifestTest.getGeoCoordinatesFileName());
+    }
+    @Test
+    public void testGetTiePointsFileName() {
+        assertEquals("tiePoints.nc", manifestTest.getTiePointsFileName());
     }
 }

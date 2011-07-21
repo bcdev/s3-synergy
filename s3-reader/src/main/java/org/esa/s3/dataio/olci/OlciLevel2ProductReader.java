@@ -1,11 +1,14 @@
 package org.esa.s3.dataio.olci;
 
 import com.bc.ceres.core.ProgressMonitor;
+import com.bc.ceres.glevel.MultiLevelImage;
 import org.esa.beam.framework.dataio.AbstractProductReader;
 import org.esa.beam.framework.dataio.ProductIO;
 import org.esa.beam.framework.datamodel.Band;
+import org.esa.beam.framework.datamodel.MetadataElement;
 import org.esa.beam.framework.datamodel.Product;
 import org.esa.beam.framework.datamodel.ProductData;
+import org.esa.beam.framework.datamodel.TiePointGrid;
 import org.esa.beam.util.ProductUtils;
 import org.esa.beam.util.io.FileUtils;
 import org.w3c.dom.Document;
@@ -32,6 +35,8 @@ public class OlciLevel2ProductReader extends AbstractProductReader {
 
     private final Logger logger;
     private List<Product> measurementProducts;
+    private Product geoCoordinatesProduct;
+    private Product tiePointsProduct;
 
     public OlciLevel2ProductReader(OlciLevel2ProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
@@ -60,11 +65,56 @@ public class OlciLevel2ProductReader extends AbstractProductReader {
         int width = measurementProducts.get(0).getSceneRasterWidth();
         int height = measurementProducts.get(0).getSceneRasterHeight();
         Product product = new Product(getProductName(), getProductType(), width, height, this);
-        addMeasurementBands(measurementProducts, product);
+        product.setStartTime(manifest.getStartTime());
+        product.setEndTime(manifest.getStopTime());
+        product.setFileLocation(getInputFile());
+        attachMeasurementBands(measurementProducts, product);
+        attachAnnotationData(manifest, product);
         return product;
     }
 
-    private void addMeasurementBands(List<Product> measurementProducts, Product product) {
+    private void attachAnnotationData(OlciL2Manifest manifest, Product product) {
+        attachGeoCoodinatesToProduct(manifest.getGeoCoordinatesFileName(), product);
+        attachTiePointsToProduct(manifest.getTiePointsFileName(), product);
+    }
+
+    private void attachTiePointsToProduct(String tiePointsFileName, Product product) {
+        try {
+            tiePointsProduct = readProduct(tiePointsFileName);
+            Band[] tiePointBands = tiePointsProduct.getBands();
+            MetadataElement metadataRoot = tiePointsProduct.getMetadataRoot();
+            MetadataElement globalAttributes = metadataRoot.getElement("Global_Attributes");
+            int subsampling = globalAttributes.getAttributeInt("subsampling_factor");
+            for (Band band : tiePointBands) {
+                MultiLevelImage sourceImage = band.getGeophysicalImage();
+
+                int width = sourceImage.getWidth();
+                int height = sourceImage.getHeight();
+                float[] tiePointData = new float[width * height];
+                sourceImage.getData().getSamples(0, 0, width, height, 0, tiePointData);
+                TiePointGrid tiePointGrid = new TiePointGrid(band.getName(), band.getRasterWidth(),
+                                                             band.getRasterHeight(), 0, 0, subsampling,
+                                                             subsampling, tiePointData, true);
+                product.addTiePointGrid(tiePointGrid);
+            }
+
+        } catch (IOException e) {
+            String msg = String.format("Not able to read file '%s.", tiePointsFileName);
+            logger.log(Level.WARNING, msg, e);
+        }
+    }
+
+    private void attachGeoCoodinatesToProduct(String geoCoordinatesFileName, Product product) {
+        try {
+            geoCoordinatesProduct = readProduct(geoCoordinatesFileName);
+            geoCoordinatesProduct.transferGeoCodingTo(product, null);
+        } catch (IOException e) {
+            String msg = String.format("Not able to read file '%s.", geoCoordinatesFileName);
+            logger.log(Level.WARNING, msg, e);
+        }
+    }
+
+    private void attachMeasurementBands(List<Product> measurementProducts, Product product) {
         for (Product bandProduct : measurementProducts) {
             Band[] bands = bandProduct.getBands();
             for (Band band : bands) {
@@ -72,7 +122,6 @@ public class OlciLevel2ProductReader extends AbstractProductReader {
                 targetBand.setSourceImage(band.getSourceImage());
             }
         }
-
     }
 
     private String getProductName() {
@@ -89,20 +138,23 @@ public class OlciLevel2ProductReader extends AbstractProductReader {
         List<Product> products = new ArrayList<Product>();
         for (String fileName : measurementFileNames) {
             try {
-                File dataSetFile = new File(getParentInputDirectory(), fileName);
-                Product product = ProductIO.readProduct(dataSetFile);
-                if (product != null) {
-                    products.add(product);
-                } else {
-                    String msg = String.format("Could not read file '%s. No appropriate reader found.", fileName);
-                    logger.log(Level.WARNING, msg);
-                }
+                products.add(readProduct(fileName));
             } catch (IOException e) {
                 String msg = String.format("Not able to read file '%s.", fileName);
                 logger.log(Level.WARNING, msg, e);
             }
         }
         return products;
+    }
+
+    private Product readProduct(String fileName) throws IOException {
+        File dataSetFile = new File(getParentInputDirectory(), fileName);
+        Product product = ProductIO.readProduct(dataSetFile);
+        if (product == null) {
+            String msg = String.format("Could not read file '%s. No appropriate reader found.", fileName);
+            throw new IOException(msg);
+        }
+        return product;
     }
 
     private OlciL2Manifest createManifestFile(File inputFile) throws IOException {
@@ -139,6 +191,12 @@ public class OlciLevel2ProductReader extends AbstractProductReader {
     public void close() throws IOException {
         for (Product product : measurementProducts) {
             product.dispose();
+        }
+        if (geoCoordinatesProduct != null) {
+            geoCoordinatesProduct.dispose();
+        }
+        if (tiePointsProduct != null) {
+            tiePointsProduct.dispose();
         }
         super.close();
 

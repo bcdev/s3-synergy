@@ -22,7 +22,7 @@ class OlciL2Manifest {
     private Document doc;
     private XPathHelper xPathHelper;
 
-    public OlciL2Manifest(Document manifestDocument) {
+    OlciL2Manifest(Document manifestDocument) {
         doc = manifestDocument;
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPathHelper = new XPathHelper(xPath);
@@ -59,7 +59,8 @@ class OlciL2Manifest {
     }
 
     public List<String> getMeasurementFileNames() {
-        NodeList dataObjects = xPathHelper.getNodeList("/XFDU/dataObjectSection/dataObject[@repID='measurementDataSchema']", doc);
+        NodeList dataObjects = xPathHelper.getNodeList(
+                "/XFDU/dataObjectSection/dataObject[@repID='measurementDataSchema']", doc);
         List<String> fileNames = new ArrayList<String>();
         for (int i = 0; i < dataObjects.getLength(); i++) {
             Node item = dataObjects.item(i);
@@ -68,5 +69,17 @@ class OlciL2Manifest {
         }
 
         return fileNames;
+    }
+
+    public String getGeoCoordinatesFileName() {
+        Node geoDataObject = xPathHelper.getNode("/XFDU/dataObjectSection/dataObject[@repID='geoCoordinatesSchema']",
+                                                 doc);
+        return xPathHelper.getString("./byteStream/fileLocation/@href", geoDataObject);
+    }
+
+    public String getTiePointsFileName() {
+        Node geoDataObject = xPathHelper.getNode("/XFDU/dataObjectSection/dataObject[@repID='tiepointsDataSchema']",
+                                                 doc);
+        return xPathHelper.getString("./byteStream/fileLocation/@href", geoDataObject);
     }
 }

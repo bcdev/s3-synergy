@@ -54,13 +54,13 @@ class OlciLevel1ProductReader extends AbstractProductReader {
         product.setDescription(manifest.getDescription());
         product.setStartTime(manifest.getStartTime());
         product.setEndTime(manifest.getStopTime());
+        product.setFileLocation(getInputFile());
         MetadataElement root = product.getMetadataRoot();
         root.addElement(manifest.getFixedHeader());
         root.addElement(manifest.getMainProductHeader());
         root.addElement(manifest.getSpecificProductHeader());
         attachBandsToProduct(manifest, product);
         attachAnnotationDataToProduct(manifest, product);
-
         return product;
     }
 
