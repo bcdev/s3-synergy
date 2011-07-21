@@ -44,13 +44,13 @@ class OlciLevel1ProductReader extends AbstractProductReader {
     @Override
     protected Product readProductNodesImpl() throws IOException {
         File inputFile = getInputFile();
-        Manifest manifest = createManifestFile(inputFile);
+        OlciL1bManifest manifest = createManifestFile(inputFile);
         return createProduct(manifest);
     }
 
-    private Product createProduct(Manifest manifest) {
+    private Product createProduct(OlciL1bManifest manifest) {
         Product product = new Product(manifest.getProductName(), manifest.getProductType(),
-                                      manifest.getColumnCount(), manifest.getLineCount());
+                                      manifest.getColumnCount(), manifest.getLineCount(), this);
         product.setDescription(manifest.getDescription());
         product.setStartTime(manifest.getStartTime());
         product.setEndTime(manifest.getStopTime());
@@ -64,7 +64,7 @@ class OlciLevel1ProductReader extends AbstractProductReader {
         return product;
     }
 
-    private void attachAnnotationDataToProduct(Manifest manifest, Product product) {
+    private void attachAnnotationDataToProduct(OlciL1bManifest manifest, Product product) {
         List<DataSetPointer> annotationPointers = manifest.getDataSetPointers(DataSetPointer.Type.A);
         annotationPointers = removeNotExistingDataSetPointers(annotationPointers);
         annotationProducts = createDataSetProducts(annotationPointers);
@@ -112,7 +112,7 @@ class OlciLevel1ProductReader extends AbstractProductReader {
         }
     }
 
-    private void attachBandsToProduct(Manifest manifest, Product product) {
+    private void attachBandsToProduct(OlciL1bManifest manifest, Product product) {
         List<DataSetPointer> measurementPointers = manifest.getDataSetPointers(DataSetPointer.Type.M);
         measurementPointers = removeNotExistingDataSetPointers(measurementPointers);
         bandProducts = createDataSetProducts(measurementPointers);
@@ -197,10 +197,10 @@ class OlciLevel1ProductReader extends AbstractProductReader {
         return fileName.indexOf('.') == 13;
     }
 
-    private Manifest createManifestFile(File inputFile) throws IOException {
+    private OlciL1bManifest createManifestFile(File inputFile) throws IOException {
         InputStream manifestInputStream = new FileInputStream(inputFile);
         try {
-            return new Manifest(createXmlDocument(manifestInputStream));
+            return new OlciL1bManifest(createXmlDocument(manifestInputStream));
         } finally {
             manifestInputStream.close();
         }
@@ -231,6 +231,7 @@ class OlciLevel1ProductReader extends AbstractProductReader {
                                           int sourceStepX, int sourceStepY, Band destBand, int destOffsetX,
                                           int destOffsetY, int destWidth, int destHeight, ProductData destBuffer,
                                           ProgressMonitor pm) throws IOException {
+        throw new IllegalStateException(String.format("No source to read from for band '%s'.", destBand.getName()));
     }
 
     @Override

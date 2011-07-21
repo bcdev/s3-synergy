@@ -14,12 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class encapsulating the manifest file.
+ * Class encapsulating the manifest file of an Olci Level 1b product.
  *
  * @author Marco Peters
  * @since 1.0
  */
-class Manifest {
+class OlciL1bManifest {
 
     public static final String FIXED_HEADER_BASE_PATH = "/Earth_Explorer_Header/Fixed_Header/";
     public static final String MPH_BASE_PATH = "/Earth_Explorer_Header/Variable_Header/Main_Product_Header/";
@@ -33,8 +33,8 @@ class Manifest {
      *
      * @param manifestDocument the W3C manifest document.
      */
-    Manifest(Document manifestDocument) {
-        this.doc = manifestDocument;
+    OlciL1bManifest(Document manifestDocument) {
+        doc = manifestDocument;
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPathHelper = new XPathHelper(xPath);
     }

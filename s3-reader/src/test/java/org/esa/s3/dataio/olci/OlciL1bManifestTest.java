@@ -2,8 +2,6 @@ package org.esa.s3.dataio.olci;
 
 import org.esa.beam.framework.datamodel.MetadataElement;
 import org.esa.beam.framework.datamodel.ProductData;
-import org.esa.s3.dataio.olci.DataSetPointer;
-import org.esa.s3.dataio.olci.Manifest;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -18,16 +16,16 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class ManifestTest {
+public class OlciL1bManifestTest {
 
-    private Manifest manifestTest;
+    private OlciL1bManifest manifestTest;
 
     @Before
     public void before() throws ParserConfigurationException, IOException, SAXException {
         InputStream stream = getClass().getResourceAsStream("L1b_TEST_manifest.xml");
         try {
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(stream);
-            manifestTest = new Manifest(doc);
+            manifestTest = new OlciL1bManifest(doc);
         } finally {
             stream.close();
         }

@@ -21,11 +21,11 @@ import java.io.StringReader;
  * @author Marco Peters
  * @since 1.0
  */
-public class XPathHelper {
+class XPathHelper {
 
     private XPath xPath;
 
-    public XPathHelper(XPath xPath) {
+    XPathHelper(XPath xPath) {
         this.xPath = xPath;
     }
 
@@ -33,7 +33,7 @@ public class XPathHelper {
         try {
             return xPath.evaluate(pathExpr, node);
         } catch (XPathExpressionException e) {
-            throw new IllegalArgumentException("xpath '" + pathExpr + "' invalid.", e);
+            throw new IllegalArgumentException("XPath '" + pathExpr + "' invalid.", e);
         }
     }
 
@@ -41,7 +41,7 @@ public class XPathHelper {
         try {
             return (NodeList) xPath.evaluate(pathExpr, node, XPathConstants.NODESET);
         } catch (XPathExpressionException e) {
-            throw new IllegalArgumentException("xpath '" + pathExpr + "' invalid.", e);
+            throw new IllegalArgumentException("XPath '" + pathExpr + "' invalid.", e);
         }
     }
 
@@ -49,7 +49,7 @@ public class XPathHelper {
         try {
             return (Node) xPath.evaluate(pathExpr, node, XPathConstants.NODE);
         } catch (XPathExpressionException e) {
-            throw new IllegalArgumentException("xpath '" + pathExpr + "' invalid.", e);
+            throw new IllegalArgumentException("XPpath '" + pathExpr + "' invalid.", e);
         }
 
     }
