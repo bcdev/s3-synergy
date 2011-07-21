@@ -1,4 +1,4 @@
-package org.esa.s3.dataio;
+package org.esa.s3.dataio.olci;
 
 import org.esa.beam.framework.datamodel.MetadataAttribute;
 import org.esa.beam.framework.datamodel.MetadataElement;

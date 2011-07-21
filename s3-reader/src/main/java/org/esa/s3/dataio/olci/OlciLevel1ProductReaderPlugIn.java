@@ -1,4 +1,4 @@
-package org.esa.s3.dataio;
+package org.esa.s3.dataio.olci;
 
 import org.esa.beam.framework.dataio.DecodeQualification;
 import org.esa.beam.framework.dataio.ProductReader;

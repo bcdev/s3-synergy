@@ -1,5 +1,6 @@
-package org.esa.s3.dataio;
+package org.esa.s3.dataio.olci;
 
+import org.esa.s3.dataio.olci.XPathHelper;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;

@@ -1,4 +1,4 @@
-package org.esa.s3.dataio;
+package org.esa.s3.dataio.olci;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
