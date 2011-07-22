@@ -1,4 +1,4 @@
-package org.esa.s3.dataio;
+package org.esa.s3.dataio.olci;
 
 import org.esa.beam.framework.dataio.DecodeQualification;
 import org.esa.beam.framework.dataio.ProductReader;
@@ -10,20 +10,20 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
- * PlugIn class which provides the Sentinel 3 product reader to the framework.
+ * PlugIn class which provides a Level 2 Sentinel 3 product reader to the framework.
  *
  * @author Marco Peters
  * @since 1.0
  */
-public class OlciLevel1ProductReaderPlugIn implements ProductReaderPlugIn {
+public class OlciLevel2ProductReaderPlugIn implements ProductReaderPlugIn {
 
-    public static final String FORMAT_NAME_OLCI_L1B = "OLCI L1b";
+    public static final String FORMAT_NAME_OLCI_L2 = "OLCI-L2";
 
     private static final Class[] SUPPORTED_INPUT_TYPES = new Class[]{String.class, File.class};
-    private static final String DESCRIPTION = "OLCI L1b SAFE Format";
+    private static final String DESCRIPTION = "OLCI L2b SAFE Format";
     private static final String MANIFEST_FILE_EXTENSION = ".xml";
     private static final String[] DEFAULT_FILE_EXTENSIONS = new String[]{MANIFEST_FILE_EXTENSION};
-    private static final String[] FORMAT_NAMES = new String[]{FORMAT_NAME_OLCI_L1B};
+    private static final String[] FORMAT_NAMES = new String[]{FORMAT_NAME_OLCI_L2};
 
     @Override
     public DecodeQualification getDecodeQualification(Object input) {
@@ -41,11 +41,11 @@ public class OlciLevel1ProductReaderPlugIn implements ProductReaderPlugIn {
     }
 
     private boolean isInputFileNameValid(String name) {
-        return "L1b_EO_manifest.xml".equals(name);
+        return "manifest.xml".equals(name);
     }
 
     private boolean isDirectoryNameValid(String parentDirectoryName) {
-        Pattern pattern = Pattern.compile(".*OL_1_(ERR|EFR)_.*");
+        Pattern pattern = Pattern.compile("S3_OL_2_..._.*.SAFE");
         return pattern.matcher(parentDirectoryName).matches();
     }
 
@@ -56,7 +56,7 @@ public class OlciLevel1ProductReaderPlugIn implements ProductReaderPlugIn {
 
     @Override
     public ProductReader createReaderInstance() {
-        return new OlciLevel1ProductReader(this);
+        return new OlciLevel2ProductReader(this);
     }
 
     @Override
@@ -78,5 +78,4 @@ public class OlciLevel1ProductReaderPlugIn implements ProductReaderPlugIn {
     public BeamFileFilter getProductFileFilter() {
         return new BeamFileFilter(FORMAT_NAMES[0], MANIFEST_FILE_EXTENSION, DESCRIPTION);
     }
-
 }

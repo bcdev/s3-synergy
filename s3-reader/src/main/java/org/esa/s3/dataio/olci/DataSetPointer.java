@@ -1,4 +1,4 @@
-package org.esa.s3.dataio;
+package org.esa.s3.dataio.olci;
 
 /**
  * Serves as a pointer to a measurement data set file.

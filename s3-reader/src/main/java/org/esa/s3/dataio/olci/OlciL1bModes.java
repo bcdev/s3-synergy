@@ -1,4 +1,4 @@
-package org.esa.s3.dataio;
+package org.esa.s3.dataio.olci;
 
 /**
  * Enumeration of the modes defined for OLCI Level 1b

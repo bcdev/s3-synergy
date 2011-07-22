@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>Sentinel-3 O-L2PP Synergy</name>
-    <groupId>org.esa.s3</groupId>
+    <groupId>org.esa.s3.ol2pp.syn</groupId>
     <artifactId>s3-syn</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -60,13 +60,8 @@
     </modules>
 
     <properties>
-        <!--
-        In version 3 of Maven the sourceEncoding property will be embedded in the
-        build tag. For now the convention is to that it as property.
-        TODO: Move the sourceEncoding property to the build tag when version 3 is released
-        -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <ceresVersion>0.11</ceresVersion>
+        <ceresVersion>0.12</ceresVersion>
         <beamVersion>4.9</beamVersion>
     </properties>
     
@@ -144,16 +139,16 @@
                 <version>${beamVersion}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.esa.beam</groupId>
+                <artifactId>beam-netcdf</artifactId>
+                <version>1.0.101</version>
+            </dependency>
+
             <!-- S3L2PP Libraries ############################################# -->
 
             <dependency>
-                <groupId>org.esa.s3</groupId>
-                <artifactId>s3-reader</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.esa.s3</groupId>
+                <groupId>org.esa.s3.ol2pp.syn</groupId>
                 <artifactId>s3-syn-util</artifactId>
                 <version>${project.version}</version>
             </dependency>
