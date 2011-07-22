@@ -15,7 +15,11 @@
 
 package org.esa.s3.ol2pp.syn;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Properties;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -90,6 +94,49 @@ public class TemplateResolver {
                     sb.replace(start, end, replacement);
                     matcher = pattern.matcher(sb.toString());
                     start += replacement.length();
+                } else {
+                    start += key.length() + 3;
+                }
+            }
+        }
+
+        return sb.toString();
+    }
+
+    public String resolve(String line, Writer writer) throws IOException {
+        if (line == null) {
+            return line;
+        }
+
+        final StringBuilder sb = new StringBuilder(line);
+
+        Matcher matcher = pattern.matcher(sb.toString());
+
+        for (int i = 0; i < 1; i++) {
+            int start = 0;
+            while (matcher.find(start)) {
+                start = matcher.start();
+                final int end = matcher.end();
+
+                final String key = sb.substring(start + 2, end - 1);
+                final String replacement = properties.getProperty(key, System.getProperty(key));
+
+                if (replacement != null) {
+                    writer.write(sb.toString().substring(0, start));
+                    final Scanner scanner = new Scanner(new File(replacement), "US-ASCII");
+                    try {
+                        while (scanner.hasNextLine()) {
+                            writer.write(scanner.nextLine());
+                            if (scanner.hasNextLine()) {
+                                writer.write("\n");
+                            }
+                        }
+                    } finally {
+                        scanner.close();
+                    }
+                    sb.delete(0, end);
+                    matcher = pattern.matcher(sb.toString());
+                    start = 0;
                 } else {
                     start += key.length() + 3;
                 }

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>Sentinel-3 O-L2PP Synergy</name>
-    <groupId>org.esa.s3.ol2pp.syn</groupId>
+    <groupId>org.esa.s3</groupId>
     <artifactId>s3-syn</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -67,7 +67,7 @@
         -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ceresVersion>0.11</ceresVersion>
-        <beamVersion>4.8</beamVersion>
+        <beamVersion>4.9</beamVersion>
     </properties>
     
     <dependencyManagement>
@@ -147,7 +147,13 @@
             <!-- S3L2PP Libraries ############################################# -->
 
             <dependency>
-                <groupId>org.esa.beam.S3L2PP</groupId>
+                <groupId>org.esa.s3</groupId>
+                <artifactId>s3-reader</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.esa.s3</groupId>
                 <artifactId>s3-syn-util</artifactId>
                 <version>${project.version}</version>
             </dependency>
