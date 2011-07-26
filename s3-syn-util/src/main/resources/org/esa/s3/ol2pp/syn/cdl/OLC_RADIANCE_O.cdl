@@ -1,0 +1,26 @@
+netcdf ${CDL_File_Basename} {
+dimensions:
+	N_LINE_OLC = 60000 ;
+	N_DET_CAM = 740 ;
+	N_CAM = 5 ;
+variables:
+	ushort TOA_Radiance_Meas(N_CAM, N_LINE_OLC, N_DET_CAM) ;
+		TOA_Radiance_Meas:long_name = "TOA_radiances_Oa${ii}" ;
+		TOA_Radiance_Meas:standard_name = "toa_upwelling_spectral_radiance" ;
+		TOA_Radiance_Meas:units = "mW.m-2.sr-1.nm-1" ;
+		TOA_Radiance_Meas:add_offset = 0.f ;
+		TOA_Radiance_Meas:scale_factor = 1.f ;
+		TOA_Radiance_Meas:valid_min = 1 ;
+		TOA_Radiance_Meas:valid_max = 65535 ;
+		TOA_Radiance_Meas:_FillValue = 0US ;
+	ushort error_estimates(N_CAM, N_LINE_OLC, N_DET_CAM) ;
+		error_estimates:long_name = "error_estimates_Oa${ii}" ;
+		error_estimates:units = "mW.m-2.sr-1.nm-1" ;
+		error_estimates:add_offset = 0.f ;
+		error_estimates:scale_factor = 1.f ;
+		error_estimates:valid_min = 1 ;
+		error_estimates:valid_max = 65535 ;
+		error_estimates:_FillValue = 0US ;
+
+${Global_Attributes}
+}

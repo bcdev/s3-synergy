@@ -23,11 +23,15 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -56,29 +60,12 @@ public class LookupTableGeneratorTest {
             144.0,
             180.0
     };
-    private static final double[] WAV = new double[]{
-            400.00,
-            412.50,
-            442.50,
-            490.00,
-            510.00,
-            550.00,
-            560.00,
-            620.00,
-            665.00,
-            673.75,
-            681.25,
-            708.75,
-            753.75,
-            761.25,
-            778.75,
-            865.00,
-            885.00,
-            900.00,
-            1020.00,
-            1375.00,
-            1610.00,
-            2250.00
+
+    private static final double[] AOT = new double[]{
+            0.0,
+            0.1,
+            0.6,
+            4.0
     };
 
     private static final double[] SYN_WAV = new double[]{
@@ -144,12 +131,23 @@ public class LookupTableGeneratorTest {
             2250.00
     };
 
-    private static final double[] AOT = new double[]{
-            0.0,
-            0.1,
-            0.6,
-            4.0
-    };
+    private static final double[] VGP_WAV = new double[914];
+
+    static {
+        int i = 0;
+        for (int k = 0; k < 91; k++, i++) {
+            VGP_WAV[i] = 410.0 + k;
+        }
+        for (int k = 0; k < 221; k++, i++) {
+            VGP_WAV[i] = 560.0 + k;
+        }
+        for (int k = 0; k < 301; k++, i++) {
+            VGP_WAV[i] = 700.0 + k;
+        }
+        for (int k = 0; k < 301; k++, i++) {
+            VGP_WAV[i] = 1500.0 + k;
+        }
+    }
 
     private static final float[] SYN_ADA = new float[]{
             0.f,
@@ -196,64 +194,65 @@ public class LookupTableGeneratorTest {
             24.5f,
             28.f,
             31.5f,
-            34.f,
-            37.5f,
-            41.f,
-            44.f,
+            35.f,
+            38.5f,
+            42.f,
+            45.5f,
             49.f,
-            53.f,
-            57.f,
-            61.f,
-            65.f,
+            52.5f,
+            56.f,
+            59.5f,
+            63.f,
+            66.5f,
             70.f
     };
 
     private static final float[] OLC_VZA = new float[]{
-            0.0f,
-            3.0f,
-            6.0f,
-            9.0f,
-            12.0f,
-            15.0f,
-            18.0f,
-            21.0f,
-            24.0f,
-            27.0f,
-            30.0f,
-            33.0f,
-            36.0f,
-            39.0f,
-            42.0f,
-            45.0f,
-            50.0f,
-            55.0f
+            0.f,
+            3.5f,
+            7.f,
+            10.5f,
+            14.f,
+            17.5f,
+            21.f,
+            24.5f,
+            28.f,
+            31.f,
+            34.f,
+            37.f,
+            40.f,
+            43.f,
+            46.f,
+            49.f,
+            52.f,
+            55.f
     };
 
     private static final float[] SLN_VZA = new float[]{
-            6.0f,
-            9.0f,
-            12.0f,
-            15.0f,
-            18.0f,
-            21.0f,
-            24.0f,
-            27.0f,
-            30.0f,
-            33.0f,
-            36.0f,
-            39.0f,
-            42.0f,
-            45.0f,
-            48.0f,
-            51.0f,
-            54.0f,
-            58.0f
+            6.f,
+            9.5f,
+            13.f,
+            16.f,
+            19.f,
+            22.f,
+            25.f,
+            28.f,
+            31.f,
+            34.f,
+            37.f,
+            40.f,
+            43.f,
+            46.f,
+            49.f,
+            52.f,
+            55.f,
+            58.f
     };
     private static final float[] SLO_VZA = new float[]{
             55.0f
     };
 
-    private static final float[] T550 = new float[]{
+    private static final float[] SYN_T550 = new float[]{
             0.f,
             0.05f,
             0.1f,
@@ -273,31 +272,88 @@ public class LookupTableGeneratorTest {
             1030.f
     };
 
+    private static final float[] VGP_ADA = {
+            0.f,
+            18.f,
+            36.f,
+            54.f,
+            72.f,
+            90.f,
+            108.f,
+            126.f,
+            144.f,
+            162.f,
+            180.f
+    };
+    private static final float[] VGP_SZA = {
+            0.f,
+            10.f,
+            20.f,
+            30.f,
+            40.f,
+            50.f,
+            60.f,
+            70.f
+    };
+    private static final float[] VGP_VZA = {
+            0.f,
+            9.5f,
+            19.f,
+            28.f,
+            37.f,
+            46.f,
+            55.f
+    };
+    private static final float[] VGP_T550 = {
+            0.f,
+            0.1f,
+            0.4f,
+            1.f,
+            2.f,
+            4.f
+    };
+
     private static final int WATER_VAPOUR = 3;
     private static final int AMIN = 40;
 
+    private static final String TARGET_DIR_DEFAULT = ".";
+    private static final String NCGEN_PATH_DEFAULT = "/usr/local/bin/ncgen";
+
+    private static File targetDir;
+    private static String ncgenPath;
+
+
     @SuppressWarnings({"ForLoopReplaceableByForEach"})
     @Test
-    public void testLookupTableGeneration() throws Exception {
-        final double[] irradiances = new double[WAV.length];
-        readIrradiances(irradiances);
+    public void writeSynL2RadiativeTransferSimulationDataset() throws Exception {
+        final File propertiesFile = new File("auxdata.properties");
+        if (propertiesFile.exists()) {
+            System.getProperties().load(new FileReader(propertiesFile));
+        }
 
-        final double[] intensities = new double[AOT.length * WAV.length * SZA.length * VZA.length * ADA.length];
-        readIntensities(intensities);
+        targetDir = new File(System.getProperty("targetDir", TARGET_DIR_DEFAULT));
+        ncgenPath = System.getProperty("ncgenPath", NCGEN_PATH_DEFAULT);
 
-        final double[] spherAlbs = new double[AOT.length * WAV.length];
-        readSpherAlbs(spherAlbs);
+        final double[][] irradianceSpectrum = readSpectrum("dat/syn_irradiance.dat");
+        final double[] wavelengths = irradianceSpectrum[0];
+        final double[] irradiances = irradianceSpectrum[1];
 
-        final double[] transmissions = new double[AOT.length * WAV.length];
-        readTransmissions(transmissions);
+        final double[] intensities = new double[AOT.length * wavelengths.length * SZA.length * VZA.length * ADA.length];
+        readIntensities(intensities, "dat/syn_intensity.dat");
 
-        final double[] rAtm = computePathReflectance(irradiances, intensities);
-        final double[] t = new double[AOT.length * SZA.length * WAV.length];
+        final double[] sphericalAlbedos = new double[AOT.length * wavelengths.length];
+        readSphericalAlbedos(sphericalAlbedos, "dat/syn_spher_alb_up.dat");
+
+        final double[] transmissions = new double[AOT.length * wavelengths.length];
+        readTransmissions(transmissions, "dat/syn_spher_alb_dn.dat");
+
+        final double[] pathReflectances = computePathReflectance(irradiances, intensities);
+        final double[] t = new double[AOT.length * SZA.length * wavelengths.length];
 
         int n = 0;
         int m = 0;
         for (int i = 0; i < AOT.length; i++) {
-            for (int k = 0; k < WAV.length; k++) {
+            for (int k = 0; k < wavelengths.length; k++) {
                 for (int j = 0; j < SZA.length; j++) {
                     t[n] = Math.pow(transmissions[m], 1.0 / Math.cos(SZA[j]));
                     n++;
@@ -306,39 +362,234 @@ public class LookupTableGeneratorTest {
             }
         }
 
-        final LookupTable lutRatm = new LookupTable(rAtm, AOT, WAV, SZA, VZA, ADA);
-        final LookupTable lutRhoAtm = new LookupTable(spherAlbs, AOT, WAV);
-        final LookupTable lutT = new LookupTable(t, AOT, WAV, SZA);
+        final LookupTable lutRAtm = new LookupTable(pathReflectances, AOT, wavelengths, SZA, VZA, ADA);
+        final LookupTable lutRhoAtm = new LookupTable(sphericalAlbedos, AOT, wavelengths);
+        final LookupTable lutT = new LookupTable(t, AOT, wavelengths, SZA);
 
-        // 	ubyte OLC_R_atm(ADA, SZA, OLC_VZA, air_pressure, water_vapour, T550, AMIN, OLC_channel) ;
+        final String olcRAtmPath = createTempFile("olc_ratm", true);
+        final String slnRAtmPath = createTempFile("sln_ratm", true);
+        final String sloRAtmPath = createTempFile("slo_ratm", true);
+        final String rhoAtmPath = createTempFile("rho_atm", true);
+        final String tPath = createTempFile("t__", true);
+        final String dPath = createTempFile("d__", true);
 
-        writeRatm(lutRatm, OLC_VZA, OLC_WAV, "olc_ratm.dat");
-        writeRatm(lutRatm, SLN_VZA, SLS_WAV, "sln_ratm.dat");
-        writeRatm(lutRatm, SLO_VZA, SLS_WAV, "slo_ratm.dat");
-
-        // float rho_atm(air_pressure, water_vapour, T550, AMIN, SYN_channel) ;
-
-        writeRhoAtm(lutRhoAtm, SYN_WAV, "rho_atm.dat");
-
-        // float t(SZA, air_pressure, water_vapour, T550, AMIN, SYN_channel) ;
-
-        writeT(lutT, SYN_WAV, "t.dat");
-
-        // float D(SZA, air_pressure, T550, AMIN, SLS_band) ;
-
-        writeD(SLS_WAV, "d.dat");
+        writeRatm(lutRAtm, OLC_WAV, SYN_ADA, OLC_VZA, SYN_SZA, SYN_T550, AMIN, olcRAtmPath);
+        writeRatm(lutRAtm, SLS_WAV, SYN_ADA, SLN_VZA, SYN_SZA, SYN_T550, AMIN, slnRAtmPath);
+        writeRatm(lutRAtm, SLS_WAV, SYN_ADA, SLO_VZA, SYN_SZA, SYN_T550, AMIN, sloRAtmPath);
+        writeRhoAtm(lutRhoAtm, SYN_WAV, SYN_T550, AMIN, rhoAtmPath);
+        writeT(lutT, SYN_WAV, SYN_SZA, SYN_T550, AMIN, tPath);
+        writeD(SLS_WAV, dPath);
 
         final Properties properties = new Properties();
         properties.setProperty("Template_File_Basename", "S3__SY_2_SYRTAX_template");
         properties.setProperty("CDL_File_Basename", "S3__SY_2_SYRTAX");
-        properties.setProperty("OLC_R_ATM", "olc_ratm.dat");
-        properties.setProperty("SLN_R_ATM", "sln_ratm.dat");
-        properties.setProperty("SLO_R_ATM", "slo_ratm.dat");
-        properties.setProperty("RHO_ATM", "rho_atm.dat");
-        properties.setProperty("T", "t.dat");
-        properties.setProperty("D", "d.dat");
+        properties.setProperty("OLC_R_ATM", olcRAtmPath);
+        properties.setProperty("SLN_R_ATM", slnRAtmPath);
+        properties.setProperty("SLO_R_ATM", sloRAtmPath);
+        properties.setProperty("RHO_ATM", rhoAtmPath);
+        properties.setProperty("T", tPath);
+        properties.setProperty("D", dPath);
 
         generateDataset(properties);
+    }
+
+    @SuppressWarnings({"ForLoopReplaceableByForEach"})
+    @Test
+    public void writeSynL2ConfigurationParametersDataset() throws Exception {
+        final File propertiesFile = new File("auxdata.properties");
+        if (propertiesFile.exists()) {
+            System.getProperties().load(new FileReader(propertiesFile));
+        }
+
+        targetDir = new File(System.getProperty("targetDir", TARGET_DIR_DEFAULT));
+        ncgenPath = System.getProperty("ncgenPath", NCGEN_PATH_DEFAULT);
+
+        final double[][] vegSpectrum = readSpectrum("dat/veg.dat");
+        final double[][] soilSpectrum = readSpectrum("dat/soil.dat");
+
+        final LookupTable vegLut = new LookupTable(vegSpectrum[1], vegSpectrum[0]);
+        final LookupTable soilLut = new LookupTable(soilSpectrum[1], vegSpectrum[0]);
+
+        final String vegPath = createTempFile("veg", true);
+        final String soilPath = createTempFile("soil", true);
+
+        writeSpectrum(vegLut, SYN_WAV, vegPath);
+        writeSpectrum(soilLut, SYN_WAV, soilPath);
+
+        final Properties properties = new Properties();
+        properties.setProperty("Template_File_Basename", "S3__SY_2_SYCPAX_template");
+        properties.setProperty("CDL_File_Basename", "S3__SY_2_SYCPAX");
+        properties.setProperty("R_VEG", vegPath);
+        properties.setProperty("R_SOIL", soilPath);
+
+        generateDataset(properties);
+    }
+
+    @SuppressWarnings({"ForLoopReplaceableByForEach"})
+    @Test
+    public void writeVgtPRadiativeTransferSimulationDataset() throws Exception {
+        final File propertiesFile = new File("auxdata.properties");
+        if (propertiesFile.exists()) {
+            System.getProperties().load(new FileReader(propertiesFile));
+        }
+
+        targetDir = new File(System.getProperty("targetDir", TARGET_DIR_DEFAULT));
+        ncgenPath = System.getProperty("ncgenPath", NCGEN_PATH_DEFAULT);
+
+        final double[][] irradianceSpectrum = readSpectrum("dat/vgp_irradiance.dat");
+        final double[] wavelengths = irradianceSpectrum[0];
+        final double[] irradiances = irradianceSpectrum[1];
+
+        final double[] intensities = new double[AOT.length * wavelengths.length * SZA.length * VZA.length * ADA.length];
+        readIntensities(intensities, "dat/vgp_intensity.dat");
+
+        final double[] sphericalAlbedos = new double[AOT.length * wavelengths.length];
+        readSphericalAlbedos(sphericalAlbedos, "dat/vgp_spher_alb_up.dat");
+
+        final double[] transmissions = new double[AOT.length * wavelengths.length];
+        readTransmissions(transmissions, "dat/vgp_spher_alb_dn.dat");
+
+        final double[] pathReflectances = computePathReflectance(irradiances, intensities);
+        final double[] t = new double[AOT.length * SZA.length * wavelengths.length];
+
+        int n = 0;
+        int m = 0;
+        for (int i = 0; i < AOT.length; i++) {
+            for (int k = 0; k < wavelengths.length; k++) {
+                for (int j = 0; j < SZA.length; j++) {
+                    t[n] = Math.pow(transmissions[m], 1.0 / Math.cos(SZA[j]));
+                    n++;
+                }
+                m++;
+            }
+        }
+
+        final LookupTable lutRAtm = new LookupTable(pathReflectances, AOT, wavelengths, SZA, VZA, ADA);
+        final LookupTable lutRhoAtm = new LookupTable(sphericalAlbedos, AOT, wavelengths);
+        final LookupTable lutT = new LookupTable(t, AOT, wavelengths, SZA);
+
+        final String rAtmPath = createTempFile("vgp_ratm", true);
+        final String rhoAtmPath = createTempFile("rho_atm", true);
+        final String tPath = createTempFile("t__", true);
+        final String cO3Path = createTempFile("cO3", true);
+        final String wavelengthPath = createTempFile("wavelength", true);
+
+        writeRatm(lutRAtm, VGP_WAV, VGP_ADA, VGP_VZA, VGP_SZA, VGP_T550, 1, rAtmPath);
+        writeRhoAtm(lutRhoAtm, VGP_WAV, SYN_T550, AMIN, rhoAtmPath);
+        writeT(lutT, VGP_WAV, SYN_SZA, SYN_T550, AMIN, tPath);
+        writeCO3(VGP_WAV, cO3Path);
+        writeWavelength(VGP_WAV, wavelengthPath);
+
+        final Properties properties = new Properties();
+        properties.setProperty("Template_File_Basename", "S3__SY_2_VPRTAX_template");
+        properties.setProperty("CDL_File_Basename", "S3__SY_2_VPRTAX");
+        properties.setProperty("R_ATM", rAtmPath);
+        properties.setProperty("RHO_ATM", rhoAtmPath);
+        properties.setProperty("T", tPath);
+        properties.setProperty("C_O3", cO3Path);
+        properties.setProperty("WAVELENGTH", wavelengthPath);
+
+        generateDataset(properties);
+    }
+
+    @SuppressWarnings({"ForLoopReplaceableByForEach"})
+    @Test
+    public void writeVgtPSpectralResponseDataset() throws Exception {
+        final File propertiesFile = new File("auxdata.properties");
+        if (propertiesFile.exists()) {
+            System.getProperties().load(new FileReader(propertiesFile));
+        }
+
+        targetDir = new File(System.getProperty("targetDir", TARGET_DIR_DEFAULT));
+        ncgenPath = System.getProperty("ncgenPath", NCGEN_PATH_DEFAULT);
+
+        final double[][] irradianceSpectrum = readSpectrum("dat/vgp_irradiance.dat");
+        final LookupTable irradianceLut = new LookupTable(irradianceSpectrum[1], irradianceSpectrum[0]);
+
+        final double[] b0 = calculateResponse(VGP_WAV, 450.0, 40.0);
+        final double[] b2 = calculateResponse(VGP_WAV, 645, 70.0);
+        final double[] b3 = calculateResponse(VGP_WAV, 850.0, 110.0);
+        final double[] b4 = calculateResponse(VGP_WAV, 1660, 195.0);
+
+        final String wavelengthPath = createTempFile("wavelength", true);
+        final String b0Path = createTempFile("b0_", true);
+        final String b2Path = createTempFile("b2_", true);
+        final String b3Path = createTempFile("b3_", true);
+        final String b4Path = createTempFile("b4_", true);
+        final String irradiancePath = createTempFile("irradiance", true);
+
+        writeWavelength(VGP_WAV, wavelengthPath);
+        writeWavelength(b0, b0Path);
+        writeWavelength(b2, b2Path);
+        writeWavelength(b3, b3Path);
+        writeWavelength(b4, b4Path);
+        writeSpectrum(irradianceLut, VGP_WAV, irradiancePath);
+
+        final Properties properties = new Properties();
+        properties.setProperty("Template_File_Basename", "S3__SY_2_VPSRAX_template");
+        properties.setProperty("CDL_File_Basename", "S3__SY_2_VPSRAX");
+        properties.setProperty("WAVELENGTH", wavelengthPath);
+        properties.setProperty("B0_SRF", b0Path);
+        properties.setProperty("B2_SRF", b2Path);
+        properties.setProperty("B3_SRF", b3Path);
+        properties.setProperty("MIR_SRF", b4Path);
+        properties.setProperty("SOLAR_IRRADIANCE", irradiancePath);
+
+        generateDataset(properties);
+    }
+
+    private double[] calculateResponse(double[] wavelengths, double center, double bandwidth) {
+        final double[] response = new double[VGP_WAV.length];
+        double sum = 0.0;
+        for (int i = 0; i < response.length; i++) {
+            final double x = wavelengths[i] - center;
+            final double s = 0.5 * bandwidth;
+            final double v = x / s;
+            response[i] = Math.exp(-0.5 * v * v);
+            sum += response[i];
+        }
+        for (int i = 0; i < response.length; i++) {
+            response[i] /= sum;
+        }
+        return response;
+    }
+
+
+    private void writeCO3(double[] wav, String path) throws FileNotFoundException {
+        final PrintWriter writer = new PrintWriter(path);
+        try {
+            for (int i = 0; i < wav.length; i++) {
+                if (i > 0) {
+                    writer.print(", ");
+                }
+                writer.print("0.f");
+            }
+        } finally {
+            writer.close();
+        }
+    }
+
+    private void writeWavelength(double[] w, String path) throws FileNotFoundException {
+        final PrintWriter writer = new PrintWriter(path);
+        try {
+            for (int i = 0; i < w.length; i++) {
+                if (i > 0) {
+                    writer.print(", ");
+                }
+                writer.print(Math.round(w[i] * 1000000.0) / 1000000.0);
+                writer.print("f");
+            }
+        } finally {
+            writer.close();
+        }
+    }
+
+    private static String createTempFile(String prefix, boolean deleteOnExit) throws IOException {
+        final File file = File.createTempFile(prefix, ".cdl", new File("."));
+        if (deleteOnExit) {
+            file.deleteOnExit();
+        }
+        return file.getPath();
     }
 
     @SuppressWarnings({"ForLoopReplaceableByForEach"})
@@ -362,19 +613,20 @@ public class LookupTableGeneratorTest {
     }
 
     @SuppressWarnings({"ForLoopReplaceableByForEach"})
-    private void writeRatm(LookupTable lut, float[] vza, double[] wav, String fileName) throws FileNotFoundException {
+    private void writeRatm(LookupTable lut, double[] wav, float[] ada, float[] vza, float[] sza, float[] t550,
+                           int amin, String fileName) throws FileNotFoundException {
         final PrintWriter writer = new PrintWriter(fileName);
         try {
             int r = 0;
-            for (int i = 0; i < SYN_ADA.length; i++) {
-                for (int j = 0; j < SYN_SZA.length; j++) {
+            for (int i = 0; i < ada.length; i++) {
+                for (int j = 0; j < sza.length; j++) {
                     for (int k = 0; k < vza.length; k++) {
                         for (int l = 0; l < AIR_PRESSURE.length; l++) {
                             for (int m = 0; m < WATER_VAPOUR; m++) {
-                                for (int o = 0; o < T550.length; o++) {
-                                    for (int p = 0; p < AMIN; p++) {
+                                for (int o = 0; o < t550.length; o++) {
+                                    for (int p = 0; p < amin; p++) {
                                         for (int q = 0; q < wav.length; q++) {
-                                            final double value = lut.getValue(T550[o],
+                                            final double value = lut.getValue(SYN_T550[o],
                                                                               wav[q],
                                                                               SYN_SZA[j],
                                                                               vza[k],
@@ -401,16 +653,17 @@ public class LookupTableGeneratorTest {
     }
 
     @SuppressWarnings({"ForLoopReplaceableByForEach"})
-    private void writeRhoAtm(LookupTable lut, double[] wav, String fileName) throws FileNotFoundException {
+    private void writeRhoAtm(LookupTable lut, double[] wav, float[] t550, int amin, String fileName) throws
+                                                                                                     FileNotFoundException {
         final PrintWriter writer = new PrintWriter(fileName);
         try {
             int r = 0;
             for (int i = 0; i < AIR_PRESSURE.length; i++) {
                 for (int j = 0; j < WATER_VAPOUR; j++) {
-                    for (int k = 0; k < T550.length; k++) {
-                        for (int l = 0; l < AMIN; l++) {
+                    for (int k = 0; k < t550.length; k++) {
+                        for (int l = 0; l < amin; l++) {
                             for (int m = 0; m < wav.length; m++) {
-                                final double value = lut.getValue(T550[k], wav[m]);
+                                final double value = lut.getValue(SYN_T550[k], wav[m]);
                                 if (r > 0) {
                                     writer.print(", ");
                                     if (r % wav.length == 0) {
@@ -431,17 +684,18 @@ public class LookupTableGeneratorTest {
     }
 
     @SuppressWarnings({"ForLoopReplaceableByForEach"})
-    private void writeT(LookupTable lut, double[] wav, String fileName) throws FileNotFoundException {
+    private void writeT(LookupTable lut, double[] wav, float[] sza, float[] t550, int amin, String fileName) throws
+                                                                                                             FileNotFoundException {
         final PrintWriter writer = new PrintWriter(fileName);
         try {
             int r = 0;
-            for (int i = 0; i < SYN_SZA.length; i++) {
+            for (int i = 0; i < sza.length; i++) {
                 for (int j = 0; j < AIR_PRESSURE.length; j++) {
                     for (int k = 0; k < WATER_VAPOUR; k++) {
-                        for (int l = 0; l < T550.length; l++) {
-                            for (int m = 0; m < AMIN; m++) {
+                        for (int l = 0; l < t550.length; l++) {
+                            for (int m = 0; m < amin; m++) {
                                 for (int n = 0; n < wav.length; n++) {
-                                    final double value = transmission(wav[n], T550[l], SYN_SZA[i], AIR_PRESSURE[j]);
+                                    final double value = transmission(wav[n], SYN_T550[l], SYN_SZA[i], AIR_PRESSURE[j]);
                                     //final double value = lut.getValue(T550[o], wav[q], SYN_SZA[j]);
                                     if (r > 0) {
                                         writer.print(", ");
@@ -470,11 +724,11 @@ public class LookupTableGeneratorTest {
             int r = 0;
             for (int i = 0; i < SYN_SZA.length; i++) {
                 for (int j = 0; j < AIR_PRESSURE.length; j++) {
-                    for (int k = 0; k < T550.length; k++) {
+                    for (int k = 0; k < SYN_T550.length; k++) {
                         for (int l = 0; l < AMIN; l++) {
                             for (int m = 0; m < wav.length; m++) {
                                 final double value = diffuseFraction(wav[m],
-                                                                     T550[k],
+                                                                     SYN_T550[k],
                                                                      SYN_SZA[i],
                                                                      AIR_PRESSURE[j]);
                                 if (r > 0) {
@@ -496,6 +750,25 @@ public class LookupTableGeneratorTest {
         }
     }
 
+    @SuppressWarnings({"ForLoopReplaceableByForEach"})
+    private void writeSpectrum(LookupTable lut, double[] wav, String fileName) throws FileNotFoundException {
+        final PrintWriter writer = new PrintWriter(fileName);
+        try {
+            int r = 0;
+            for (int n = 0; n < wav.length; n++) {
+                final double value = lut.getValue(wav[n]);
+                if (r > 0) {
+                    writer.print(", ");
+                }
+                writer.print(Math.round(value * 1000000.0) / 1000000.0);
+                writer.print("f");
+                r++;
+            }
+        } finally {
+            writer.close();
+        }
+    }
+
     private void generateDataset(Properties properties) throws Exception {
         final TemplateResolver resolver = new TemplateResolver(properties);
         final File cdlFile = new File(resolver.resolveProperty("CDL_File_Basename") + ".cdl");
@@ -503,7 +776,7 @@ public class LookupTableGeneratorTest {
         BufferedWriter writer = null;
         try {
             final String templateName = resolver.resolveProperty("Template_File_Basename");
-            final InputStream is = getClass().getResourceAsStream("aux/" + templateName + ".cdl");
+            final InputStream is = getClass().getResourceAsStream("cdl/" + templateName + ".cdl");
             reader = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
             writer = new BufferedWriter(new FileWriter(cdlFile));
             String line = reader.readLine();
@@ -524,27 +797,48 @@ public class LookupTableGeneratorTest {
                 // ignore
             }
         }
+        generateNcFile(cdlFile);
     }
 
-    private void readIrradiances(double[] irradiances) {
-        final InputStream is = getClass().getResourceAsStream("aux/irradiance.dat");
+    private static void generateNcFile(File cdlFile) throws Exception {
+        final File ncFile = new File(targetDir, cdlFile.getName().replace(".cdl", ".nc"));
+        final String command = ncgenPath + " -k 3 -o " + ncFile.getPath() + " " + cdlFile.getPath();
+        final Process process = Runtime.getRuntime().exec(command);
+        if (process.waitFor() != 0) {
+            throw new Exception(
+                    MessageFormat.format("process <code>{0}</code> terminated with exit value {1}",
+                                         command, process.exitValue()));
+        }
+    }
+
+    private double[][] readSpectrum(String name) {
+        final InputStream is = getClass().getResourceAsStream(name);
         assertNotNull(is);
         final Scanner scanner = new Scanner(is, "US-ASCII");
+        final List<double[]> pointList = new ArrayList<double[]>();
 
-        int i = 0;
         while (scanner.hasNextLine()) {
             final String line = scanner.nextLine().trim();
             if (line.startsWith("#") || line.isEmpty()) {
                 continue;
             }
             final String[] tokens = line.split("\\s+");
-            irradiances[i] = Double.parseDouble(tokens[1]);
-            i++;
+            final double[] point = new double[2];
+            point[0] = Double.parseDouble(tokens[0]);
+            point[1] = Double.parseDouble(tokens[1]);
+            pointList.add(point);
         }
+        final double[][] spectrum = new double[2][pointList.size()];
+        for (int i = 0, pointListSize = pointList.size(); i < pointListSize; i++) {
+            final double[] point = pointList.get(i);
+            spectrum[0][i] = point[0];
+            spectrum[1][i] = point[1];
+        }
+        return spectrum;
     }
 
-    private void readIntensities(double[] intensities) {
-        final InputStream is = getClass().getResourceAsStream("aux/intensity.dat");
+    private void readIntensities(double[] intensities, String name) {
+        final InputStream is = getClass().getResourceAsStream(name);
         assertNotNull(is);
         final Scanner scanner = new Scanner(is, "US-ASCII");
 
@@ -562,8 +856,8 @@ public class LookupTableGeneratorTest {
         }
     }
 
-    private void readSpherAlbs(double[] spherAlbs) {
-        final InputStream is = getClass().getResourceAsStream("aux/spher_alb_up.dat");
+    private void readSphericalAlbedos(double[] spherAlbs, String name) {
+        final InputStream is = getClass().getResourceAsStream(name);
         assertNotNull(is);
         final Scanner scanner = new Scanner(is, "US-ASCII");
 
@@ -579,8 +873,8 @@ public class LookupTableGeneratorTest {
         }
     }
 
-    private void readTransmissions(double[] transmissions) {
-        final InputStream is = getClass().getResourceAsStream("aux/spher_alb_dn.dat");
+    private void readTransmissions(double[] transmissions, String name) {
+        final InputStream is = getClass().getResourceAsStream(name);
         assertNotNull(is);
         final Scanner scanner = new Scanner(is, "US-ASCII");
 
@@ -596,67 +890,57 @@ public class LookupTableGeneratorTest {
         }
     }
 
-    private double diffuseFraction(double wav, double aot, double sza, double p) {
+    private static double diffuseFraction(double wav, double aot, double sza, double p) {
         // test if wavelength is in um or nm
         if (wav > 100.0) {
             wav /= 1000.0;
         }
-
-        double diff_frac;
         if (aot < 0) {
-            diff_frac = 0.0;
+            return 0.0;
         } else {
-            double dmeff = 0.55;
-            double ryfrac = 0.5;
-            double aerfrac = 0.75;
-            double k = -1.25;
-            double a = aot / Math.pow(0.55, k);
-            double p0 = 1013.25;
-            double tau_rayl = (p / p0) / Math.cos(sza / 180.0 * Math.PI) *
-                              (0.008569 * Math.pow(wav, -4.0) * (1.0 + 0.0113 * Math.pow(wav,
-                                                                                         -2.0) + 0.00013 * Math.pow(wav,
-                                                                                                                    -4.0)));
-            double tau_aero = dmeff * a * Math.pow(wav, k) / Math.cos(sza / 180 * Math.PI);
-            double tau_tot = tau_rayl + tau_aero;
+            final double dmeff = 0.55;
+            final double ryfrac = 0.5;
+            final double aerfrac = 0.75;
+            final double k = -1.25;
+            final double a = aot / Math.pow(0.55, k);
+            final double p0 = 1013.25;
+            final double tauRay = tauRayleigh(wav, sza, p, p0);
+            final double tauAer = dmeff * a * Math.pow(wav, k) / Math.cos(Math.toRadians(sza));
+            final double tauTot = tauRay + tauAer;
+            final double dir = Math.exp(-tauTot);
+            final double diff = ryfrac * (1.0 - Math.exp(-tauRay)) + aerfrac * (1.0 - Math.exp(-tauAer));
 
-            double dir = Math.exp(-tau_tot);
-            double diff = ryfrac * (1.0 - Math.exp(-tau_rayl)) + aerfrac * (1.0 - Math.exp(-tau_aero));
-
-            diff_frac = diff / (dir + diff);
+            return diff / (dir + diff);
         }
-
-        return diff_frac;
     }
 
-    private double transmission(double wav, double aot, double sza, double p) {
+    private static double transmission(double wav, double aot, double sza, double p) {
         // test if wavelength is in um or nm
         if (wav > 100.0) {
             wav /= 1000.0;
         }
-
-        double t;
         if (aot < 0) {
-            t = 0.0;
+            return 0.0;
         } else {
-            double dmeff = 0.55;
-            double ryfrac = 0.5;
-            double aerfrac = 0.75;
-            double k = -1.25;
-            double a = aot / Math.pow(0.55, k);
-            double p0 = 1013.25;
-            double tau_rayl = (p / p0) / Math.cos(sza / 180.0 * Math.PI) *
-                              (0.008569 * Math.pow(wav, -4.0) * (1.0 + 0.0113 * Math.pow(wav,
-                                                                                         -2.0) + 0.00013 * Math.pow(wav,
-                                                                                                                    -4.0)));
-            double tau_aero = dmeff * a * Math.pow(wav, k) / Math.cos(sza / 180 * Math.PI);
-            double tau_tot = tau_rayl + tau_aero;
+            final double dmeff = 0.55;
+            final double ryfrac = 0.5;
+            final double aerfrac = 0.75;
+            final double k = -1.25;
+            final double a = aot / Math.pow(0.55, k);
+            final double p0 = 1013.25;
+            final double tauRay = tauRayleigh(wav, sza, p, p0);
+            final double tauAer = dmeff * a * Math.pow(wav, k) / Math.cos(Math.toRadians(sza));
+            final double tauTot = tauRay + tauAer;
+            final double dir = Math.exp(-tauTot);
+            final double diff = ryfrac * (1.0 - Math.exp(-tauRay)) + aerfrac * (1.0 - Math.exp(-tauAer));
 
-            double dir = Math.exp(-tau_tot);
-            double diff = ryfrac * (1.0 - Math.exp(-tau_rayl)) + aerfrac * (1.0 - Math.exp(-tau_aero));
-
-            t = dir + diff;
+            return dir + diff;
         }
-        return t;
+    }
+
+    private static double tauRayleigh(double wav, double sza, double p, double p0) {
+        return (p / p0) / Math.cos(Math.toRadians(sza) * (0.008569 * Math.pow(wav, -4.0) * (1.0 + 0.0113 * Math.pow(
+                wav, -2.0) + 0.00013 * Math.pow(wav, -4.0))));
     }
 
 }

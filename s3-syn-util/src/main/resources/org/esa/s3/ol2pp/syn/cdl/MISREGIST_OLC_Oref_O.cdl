@@ -1,0 +1,23 @@
+netcdf ${CDL_File_Basename} {
+dimensions:
+	N_LINE_OLC = 60000 ;
+	N_DET_CAM = 740 ;
+	N_CAM = 5 ;
+variables:
+	short delta_row(N_CAM, N_LINE_OLC, N_DET_CAM) ;
+		delta_row:long_name = "TBD" ;
+		delta_row:units = "NA" ;
+		delta_row:scale_factor = 1.f ;
+		delta_row:valid_min = -32767 ;
+		delta_row:valid_max = 32767 ;
+		delta_row:_FillValue = -32768 ;
+	short delta_col(N_CAM, N_LINE_OLC, N_DET_CAM) ;
+		delta_row:long_name = "TBD" ;
+		delta_row:units = "NA" ;
+		delta_row:scale_factor = 1.f ;
+		delta_row:valid_min = -32767 ;
+		delta_row:valid_max = 32767 ;
+		delta_row:_FillValue = -32768 ;
+
+${Global_Attributes}
+}

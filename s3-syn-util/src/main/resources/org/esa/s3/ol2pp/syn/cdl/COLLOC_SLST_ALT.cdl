@@ -1,0 +1,26 @@
+netcdf ${CDL_File_Basename} {
+dimensions:
+	N_LINE_OLC = 60000 ;
+	N_DET_CAM = 740 ;
+	N_CAM = 5 ;
+variables:
+	uint row_corresp(N_CAM, N_LINE_OLC, N_DET_CAM) ;
+		row_corresp:long_name = "TBD" ;
+		row_corresp:units = "NA" ;
+		row_corresp:scale_factor = 1.f ;
+		row_corresp:add_offset = 0.f ;
+		row_corresp:valid_min = 0 ;
+		row_corresp:valid_max = 4294967294 ;
+		row_corresp:_FillValue = 4294967295 ;
+	uint col_corresp(N_CAM, N_LINE_OLC, N_DET_CAM) ;
+		col_corresp:long_name = "TBD" ;
+		col_corresp:units = "NA" ;
+		col_corresp:scale_factor = 1.f ;
+		col_corresp:add_offset = 0.f ;
+		col_corresp:valid_min = 0 ;
+		col_corresp:valid_max = 4294967294 ;
+		col_corresp:_FillValue = 4294967295 ;
+
+${Global_Attributes}
+        :sub_band = "${Sub_Band}";
+}

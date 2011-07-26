@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+<variables>
+	<variable>
+		<ncname>OLCI_QC_flags</ncname>
+		<name>OLC_flags</name>
+		<segment_name>${segmentName}</segment_name>
+	</variable>
+</variables>
+<global_attributes>
+	<attribute>
+		<name>dataset_name</name>
+		<value>PIX_ANNOT_OLC</value>
+	</attribute>
+</global_attributes>
+</dataset>

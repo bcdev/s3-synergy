@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+<variables>
+	<variable>
+		<ncname>band_centre</ncname>
+		<name>wavelength_${i}</name>
+		<segment_name>${segmentName}</segment_name>
+	</variable>
+	<variable>
+		<ncname>bandwidth</ncname>
+		<name>bandwidth_${i}</name>
+		<segment_name>${segmentName}</segment_name>
+	</variable>
+	<variable>
+		<ncname>solar_irradiance</ncname>
+		<name>solar_irradiance_${i}</name>
+		<segment_name>${segmentName}</segment_name>
+	</variable>
+</variables>
+<global_attributes>
+	<attribute>
+		<name>dataset_name</name>
+		<value>${dataset_name}</value>
+	</attribute>
+</global_attributes>
+</dataset>

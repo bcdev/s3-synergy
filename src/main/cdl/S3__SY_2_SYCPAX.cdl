@@ -26,32 +26,32 @@ variables:
 		SLS_view:valid_max = 2 ;
 	float NDVI(NDVI) ;
 		NDVI:long_name = "Normalized difference vegetation index" ;
-		NDVI:valid_min = -1.0 ;
-		NDVI:valid_max = 1.0 ;
+		NDVI:valid_min = -1.0f ;
+		NDVI:valid_max = 1.0f ;
 	float R_soil(SYN_channel) ;
-		R_soil:valid_min = 0.0 ;
-		R_soil:valid_max = 1.0 ;
+		R_soil:valid_min = 0.0f ;
+		R_soil:valid_max = 1.0f ;
 	float R_veg(SYN_channel) ;
-		R_veg:valid_min = 0.0 ;
-		R_veg:valid_max = 1.0 ;
+		R_veg:valid_min = 0.0f ;
+		R_veg:valid_max = 1.0f ;
 	float weight_spec(SYN_channel) ;
-		weight_spec:valid_min = 0.0 ;
-		weight_spec:valid_max = 1.0 ;
+		weight_spec:valid_min = 0.0f ;
+		weight_spec:valid_max = 1.0f ;
 	float weight_ang(SLS_view, SLS_band) ;
-		weight_ang:valid_min = 0.0 ;
-		weight_ang:valid_max = 1.0 ;
+		weight_ang:valid_min = 0.0f ;
+		weight_ang:valid_max = 1.0f ;
 	float weight_ang_tot(NDVI) ;
-		weight_ang_tot:valid_min = 0.0 ;
-		weight_ang_tot:valid_max = 1.0 ;
+		weight_ang_tot:valid_min = 0.0f ;
+		weight_ang_tot:valid_max = 1.0f ;
 	float T550_ini ;
-		T550_ini:valid_min = 0.0 ;
-		T550_ini:valid_max = 0.5 ;
+		T550_ini:valid_min = 0.0f ;
+		T550_ini:valid_max = 0.5f ;
 	float v_ini(SLS_view) ;
-		v_ini:valid_min = 0.0 ;
-		v_ini:valid_max = 1.0 ;
+		v_ini:valid_min = 0.0f ;
+		v_ini:valid_max = 1.0f ;
 	float w_ini(SLS_band) ;
-		v_ini:valid_min = 0.0 ;
-		v_ini:valid_max = 1.0 ;	
+		v_ini:valid_min = 0.0f ;
+		v_ini:valid_max = 1.0f ;
 	
 	float gamma ;
 	float kappa ;
@@ -67,7 +67,7 @@ variables:
 		:references = "S3-L2-SD-08-S-BC-IODD" ;
 		:contact = "info@brockmann-consult.de" ;
 		:netCDF_version = "netCDF-4" ;
-		:dataset_name = "S3__SY_2_SYCPAX_20101201T000000_20110301T000000_20101207T120000__BC__D_NT_AUX_01.nc" ;
+		:dataset_name = "S3__SY_2_SYCPAX_20110701T000000_20120701T000000_20112007T120000__BC__D_NT_AUX_01.nc" ;
 		:creation_time = "20101207T120000Z" ;
 		:validity_start = "20101201T000000Z" ;
 		:validity_stop = "20110301T000000Z" ;
@@ -85,23 +85,23 @@ data:
  
  SLS_view = 1, 2 ;
  
- NDVI = -1.0, 0.1, 0.7, 1.0 ;
+ NDVI = -1.f, 0.1f, 0.7f, 1.f ;
 
- weight_spec = 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 1.00, 1.00, 0.05, 0.05, 1.00, 1.00, 1.00, 1.00, 0.05, 0.05, 1.00, 1.00 ;
+ weight_spec = 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 0.05f, 0.05f, 0.05f, 0.05f, 0.05f, 0.05f, 0.05f, 0.05f, 1.f, 1.f, 0.05f, 0.05f, 1.f, 1.f, 1.f, 1.f, 0.05f, 0.05f, 1.f, 1.f ;
  
- weight_ang = 1.5, 1.0, 0.5, 0.5, 1.0, 1.0, 1.5, 1.0, 0.5, 0.5, 1.0, 1.0;
+ weight_ang = 1.5f, 1.f, 0.5f, 0.5f, 1.f, 1.f, 1.5f, 1.f, 0.5f, 0.5f, 1.f, 1.f;
  
- weight_ang_tot = 1.0, 1.0, 0.5, 0.5 ;
+ weight_ang_tot = 1.f, 1.f, 0.5f, 0.5f ;
  
- T550_ini = 0.1 ;
+ T550_ini = 0.1f ;
  
- v_ini = 0.5, 0.3 ;
+ v_ini = 0.5f, 0.3f ;
  
- w_ini = 0.1, 0.1, 0.1, 0.1, 0.1, 0.1 ;
+ w_ini = 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f ;
  
- gamma = 0.3 ;
+ gamma = 0.3f ;
  
- kappa = 1.58 ;
+ kappa = 1.58f ;
   
  ave_square = 8 ;
 }

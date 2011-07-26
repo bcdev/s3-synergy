@@ -29,7 +29,7 @@ public class DictionaryGeneratorTest {
     @Test
     public void testLoadProperties() throws IOException {
         Properties segmentNames = new Properties();
-        final InputStream is = DictionaryGenerator.class.getResourceAsStream("segment_names.properties");
+        final InputStream is = DictionaryGenerator.class.getResourceAsStream("dictionary/segment_names.properties");
         assertNotNull(is);
         segmentNames.load(is);
         assertEquals(segmentNames.getProperty("L2_SYN_Surface_Directional_Reflectance"), "SYN_COLLOCATED");

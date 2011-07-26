@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+<variables>
+	<variable>
+		<ncname>OLCI_time_stamps</ncname>
+		<name>time</name>
+		<segment_name>${segmentName}</segment_name>
+	</variable>
+</variables>
+<global_attributes>
+	<attribute>
+		<name>dataset_name</name>
+		<value>TIME_STAMP_OLC</value>
+	</attribute>
+</global_attributes>
+</dataset>

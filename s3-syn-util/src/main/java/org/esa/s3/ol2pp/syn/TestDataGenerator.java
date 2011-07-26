@@ -126,7 +126,7 @@ public class TestDataGenerator {
         BufferedWriter writer = null;
         try {
             final String templateName = resolver.resolveProperty("Template_File_Basename");
-            final InputStream is = TestDataGenerator.class.getResourceAsStream(templateName + ".cdl");
+            final InputStream is = TestDataGenerator.class.getResourceAsStream("cdl/" + templateName + ".cdl");
             reader = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
             writer = new BufferedWriter(new FileWriter(cdlFile));
             String line = reader.readLine();

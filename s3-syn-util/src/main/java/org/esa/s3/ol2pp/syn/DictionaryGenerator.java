@@ -159,7 +159,7 @@ public class DictionaryGenerator {
     }
 
     private static void generateSDRDataset(int minChannel, int maxChannel) throws Exception {
-        InputStream csv = DictionaryGenerator.class.getResourceAsStream("wavelengths.csv");
+        InputStream csv = DictionaryGenerator.class.getResourceAsStream("dictionary/wavelengths.csv");
         final CsvReader csvReader = new CsvReader(new InputStreamReader(csv), new char[]{','});
         final List<String[]> wavelengths = csvReader.readStringRecords();
         final Properties properties = new Properties();
@@ -185,7 +185,7 @@ public class DictionaryGenerator {
             }
             if (roundedCentralWavelength < 1000) {
                 properties.setProperty("dataset_name", "r0" + roundedCentralWavelength + suffix);
-            }                                  else {
+            } else {
                 properties.setProperty("dataset_name", "r" + roundedCentralWavelength + suffix);
             }
             properties.setProperty("i", String.format("%d", i));
@@ -201,7 +201,7 @@ public class DictionaryGenerator {
         BufferedWriter writer = null;
         try {
             final String templateName = resolver.resolveProperty("Template_File_Basename");
-            final InputStream is = DictionaryGenerator.class.getResourceAsStream(templateName + ".xml");
+            final InputStream is = DictionaryGenerator.class.getResourceAsStream("dictionary/" + templateName + ".xml");
             reader = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
             writer = new BufferedWriter(new FileWriter(targetFile));
             String line = reader.readLine();

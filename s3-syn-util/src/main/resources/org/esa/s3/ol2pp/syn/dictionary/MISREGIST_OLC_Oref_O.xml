@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+<variables>
+	<variable>
+		<ncname>delta_col</ncname>
+		<name>delta_x_${i}</name>
+		<segment_name>${segmentName}</segment_name>
+	</variable>
+	<variable>
+		<ncname>delta_row</ncname>
+		<name>delta_y_${i}</name>
+		<segment_name>${segmentName}</segment_name>
+	</variable>
+</variables>
+<global_attributes>
+	<attribute>
+		<name>dataset_name</name>
+		<value>${dataset_name}</value>
+	</attribute>
+</global_attributes>
+</dataset>
