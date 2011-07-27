@@ -1,5 +1,7 @@
-package org.esa.s3.dataio.olci;
+package org.esa.beam.dataio.olci;
 
+import org.esa.beam.dataio.olci.DataSetPointer;
+import org.esa.beam.dataio.olci.OlciL1bManifest;
 import org.esa.beam.framework.datamodel.MetadataElement;
 import org.esa.beam.framework.datamodel.ProductData;
 import org.junit.Before;

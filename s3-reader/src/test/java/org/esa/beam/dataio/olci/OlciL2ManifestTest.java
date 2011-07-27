@@ -1,5 +1,6 @@
-package org.esa.s3.dataio.olci;
+package org.esa.beam.dataio.olci;
 
+import org.esa.beam.dataio.olci.OlciL2Manifest;
 import org.esa.beam.framework.datamodel.ProductData;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,2 +1,2 @@
-org.esa.s3.dataio.olci.OlciLevel1ProductReaderPlugIn
-org.esa.s3.dataio.olci.OlciLevel2ProductReaderPlugIn
+org.esa.beam.dataio.olci.OlciLevel1ProductReaderPlugIn
+org.esa.beam.dataio.olci.OlciLevel2ProductReaderPlugIn

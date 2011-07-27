@@ -1,4 +1,4 @@
-package org.esa.s3.dataio.olci;
+package org.esa.beam.dataio.olci;
 
 import com.bc.ceres.core.ProgressMonitor;
 import com.bc.ceres.glevel.MultiLevelImage;

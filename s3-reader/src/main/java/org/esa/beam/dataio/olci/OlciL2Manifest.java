@@ -1,4 +1,4 @@
-package org.esa.s3.dataio.olci;
+package org.esa.beam.dataio.olci;
 
 import org.esa.beam.framework.datamodel.ProductData;
 import org.w3c.dom.Document;

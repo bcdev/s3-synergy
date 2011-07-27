@@ -1,11 +1,11 @@
-package org.esa.s3.dataio.olci;
+package org.esa.beam.dataio.olci;
 
+import org.esa.beam.dataio.olci.OlciL1bModes;
+import org.esa.beam.dataio.olci.OlciLevel1ProductReaderPlugIn;
 import org.esa.beam.framework.dataio.DecodeQualification;
 import org.esa.beam.framework.dataio.ProductIOPlugInManager;
 import org.esa.beam.framework.dataio.ProductReader;
 import org.esa.beam.framework.dataio.ProductReaderPlugIn;
-import org.esa.s3.dataio.olci.OlciL1bModes;
-import org.esa.s3.dataio.olci.OlciLevel1ProductReaderPlugIn;
 import org.junit.Before;
 import org.junit.Test;
 
