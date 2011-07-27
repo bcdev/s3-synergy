@@ -83,27 +83,27 @@ variables:
 		:validity_stop = "20110301T000000Z" ;
 data:
 
- ADA = 0.f, 18.f, 36.f, 54.f, 72.f, 90.f, 108.f, 126.f, 144.f, 162.f, 180.f ;
+    ADA = 0.f, 18.f, 36.f, 54.f, 72.f, 90.f, 108.f, 126.f, 144.f, 162.f, 180.f ;
 
- SZA = 0.f, 10.f, 20.f, 30.f, 40.f, 50.f, 60.f, 70.f ;
+    SZA = 0.f, 10.f, 20.f, 30.f, 40.f, 50.f, 60.f, 70.f ;
 
- VZA = 0.f, 9.5f, 19.f, 28.f, 37.f, 46.f, 55.f ;
+    VZA = 0.f, 9.5f, 19.f, 28.f, 37.f, 46.f, 55.f ;
 
- air_pressure = 800.f, 900.f, 1000.f, 1030.f ;
+    air_pressure = 800.f, 900.f, 1000.f, 1030.f ;
 
- water_vapour = 0.f, 2.f, 5.f ;
+    water_vapour = 0.f, 2.f, 5.f ;
  
- AMIN = 22 ;
+    AMIN = 22 ;
 
- T550 = 0.f, 0.1f, 0.4f, 1.f, 2.f, 4.f ;
+    T550 = 0.f, 0.1f, 0.4f, 1.f, 2.f, 4.f ;
  
- wavelength = ${WAVELENGTH} ;
+    wavelength = ${WAVELENGTH} ;
 
- R_atm = ${R_ATM} ;
+    R_atm = ${R_ATM} ;
 
- t = ${T} ;
+    t = ${T} ;
 
- rho_atm = ${RHO_ATM} ;
+    rho_atm = ${RHO_ATM} ;
 
- C_O3 = ${C_O3};
+    C_O3 = ${C_O3};
 }

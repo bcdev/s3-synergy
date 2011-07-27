@@ -40,29 +40,15 @@ variables:
 		:validity_stop = "20110301T000000Z" ;
 data:
 
- ADA = 0.f, 18.f, 36.f, 54.f, 72.f, 90.f, 108.f, 126.f, 144.f, 162.f, 180.f ;
+    wavelength = ${WAVELENGTH} ;
 
- SZA = 0.f, 10.f, 20.f, 30.f, 40.f, 50.f, 60.f, 70.f ;
+    B0_SRF = ${B0_SRF} ;
 
- VZA = 0.f, 9.5f, 19.f, 28.f, 37.f, 46.f, 55.f ;
+    B2_SRF = ${B2_SRF} ;
 
- air_pressure = 800.f, 900.f, 1000.f, 1030.f ;
+    B3_SRF = ${B3_SRF} ;
 
- water_vapour = 0.f, 2.f, 5.f ;
+    MIR_SRF = ${MIR_SRF} ;
 
- AMIN = 22 ;
-
- T550 = 0.f, 0.1f, 0.4f, 1.f, 2.f, 4.f ;
-
- wavelength = ${WAVELENGTH} ;
-
- B0_SRF = ${B0_SRF} ;
-
- B2_SRF = ${B2_SRF} ;
-
- B3_SRF = ${B3_SRF} ;
-
- MIR_SRF = ${MIR_SRF} ;
-
- solar_irradiance = ${SOLAR_IRRADIANCE} ;
+    solar_irradiance = ${SOLAR_IRRADIANCE} ;
 }
