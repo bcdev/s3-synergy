@@ -1,6 +1,5 @@
 package org.esa.beam.dataio.olci;
 
-import org.esa.beam.dataio.olci.XPathHelper;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -14,6 +13,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.io.StringReader;
+
+import static org.junit.Assert.assertEquals;
 
 
 public class XPathHelperTest {

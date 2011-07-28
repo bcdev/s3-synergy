@@ -1,13 +1,13 @@
 netcdf s3__sy_2_sycpax {
 dimensions:
-	N_AMIN = 40 ;
+	AMIN = 40 ;
 	SYN_channel = 30 ;
 	SLS_band = 6 ;
 	SLS_view = 2 ;
 	NDVI = 4 ;
 	NDV_channel = 2 ;
 variables:
-	short AMIN(N_AMIN) ;
+	short AMIN(AMIN) ;
 		AMIN:long_name = "Aerosol model index number" ;
 		AMIN:valid_min = 1 ;
 		AMIN:valid_max = 40 ;
@@ -68,9 +68,9 @@ variables:
 		:contact = "info@brockmann-consult.de" ;
 		:netCDF_version = "netCDF-4" ;
 		:dataset_name = "S3__SY_2_SYCPAX_20110701T000000_20120701T000000_20112007T120000__BC__D_NT_AUX_01.nc" ;
-		:creation_time = "20101207T120000Z" ;
-		:validity_start = "20101201T000000Z" ;
-		:validity_stop = "20110301T000000Z" ;
+		:creation_time = "20110720T120000Z" ;
+		:validity_start = "20110701T000000Z" ;
+		:validity_stop = "20120701T000000Z" ;
 
 data:
 

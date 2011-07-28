@@ -538,6 +538,42 @@ public class LookupTableGeneratorTest {
         generateDataset(properties);
     }
 
+    @SuppressWarnings({"ForLoopReplaceableByForEach"})
+    @Test
+    public void writeVgtPConfigurationParametersDataset() throws Exception {
+        final File propertiesFile = new File("auxdata.properties");
+        if (propertiesFile.exists()) {
+            System.getProperties().load(new FileReader(propertiesFile));
+        }
+
+        targetDir = new File(System.getProperty("targetDir", TARGET_DIR_DEFAULT));
+        ncgenPath = System.getProperty("ncgenPath", NCGEN_PATH_DEFAULT);
+
+        final Properties properties = new Properties();
+        properties.setProperty("Template_File_Basename", "S3__SY_2_VPCPAX_template");
+        properties.setProperty("CDL_File_Basename", "S3__SY_2_VPCPAX");
+
+        generateDataset(properties);
+    }
+
+    @SuppressWarnings({"ForLoopReplaceableByForEach"})
+    @Test
+    public void writeVgtSConfigurationParametersDataset() throws Exception {
+        final File propertiesFile = new File("auxdata.properties");
+        if (propertiesFile.exists()) {
+            System.getProperties().load(new FileReader(propertiesFile));
+        }
+
+        targetDir = new File(System.getProperty("targetDir", TARGET_DIR_DEFAULT));
+        ncgenPath = System.getProperty("ncgenPath", NCGEN_PATH_DEFAULT);
+
+        final Properties properties = new Properties();
+        properties.setProperty("Template_File_Basename", "S3__SY_2_VSCPAX_template");
+        properties.setProperty("CDL_File_Basename", "S3__SY_2_VSCPAX");
+
+        generateDataset(properties);
+    }
+
     private double[] calculateResponse(double[] wavelengths, double center, double bandwidth) {
         final double[] response = new double[VGP_WAV.length];
         double sum = 0.0;
