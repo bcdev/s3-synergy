@@ -7,7 +7,7 @@ dimensions:
 	air_pressure = 4 ;
 	water_vapour = 3 ;
 	T550 = 11 ;
-	channel = 4;
+	VGT_channel = 4;
 variables:
 	float ADA(ADA) ;
 		ADA:long_name = "Azimuth difference angle" ;
@@ -44,24 +44,24 @@ variables:
 		T550:valid_min = 0.f ;
 		T550:valid_max = 4.f ;
 		T550:standard_name = "atmosphere_optical_thickness_due_to_aerosol" ;
-	short channel(channel) ;
-		channel:long_name = "VGT channel index number" ;
-		channel:valid_min = 1 ;
-		channel:valid_max = 4 ;
-	ubyte VGT_R_atm(ADA, SZA, VZA, air_pressure, water_vapour, T550, AMIN, channel) ;
+	short VGT_channel(VGT_channel) ;
+		VGT_channel:long_name = "VGT channel index number" ;
+		VGT_channel:valid_min = 1 ;
+		VGT_channel:valid_max = 4 ;
+	ubyte VGT_R_atm(ADA, SZA, VZA, air_pressure, water_vapour, T550, AMIN, VGT_channel) ;
 		VGT_R_atm:long_name = "Atmospheric scattering term" ;
 		VGT_R_atm:scale_factor = 0.004;
 		VGT_R_atm:valid_min = 0 ;
 		VGT_R_atm:valid_max = 250 ;
-	float t(SZA, air_pressure, water_vapour, T550, AMIN, channel) ;
+	float t(SZA, air_pressure, water_vapour, T550, AMIN, VGT_channel) ;
 		t:long_name = "Atmospheric transmission" ;
 		t:valid_min = 0.0 ;
 		t:valid_max = 1.0 ;
-	float rho_atm(air_pressure, water_vapour, T550,  AMIN, channel) ;
+	float rho_atm(air_pressure, water_vapour, T550,  AMIN, VGT_channel) ;
 		rho_atm:long_name = "Atmospheric bihemispherical Albedo" ;
 		rho_atm:valid_min = 0.0 ;
 		rho_atm:valid_max = 1.0 ;
-	float C_O3(channel) ;
+	float C_O3(VGT_channel) ;
 		C_O3:long_name = "Ozone correction factor" ;
 		C_O3:valid_min = 0.0 ;
 		C_O3:valid_max = 1.0 ;
@@ -106,8 +106,6 @@ data:
     t  = ${T} ;
 
     rho_atm  = ${RHO_ATM} ;
-
-    D =  ${D} ;
 
     C_O3 =  0.f, 0.f, 0.f, 0.f ;
 }
