@@ -24,7 +24,6 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertNotNull;
 
-@Ignore
 public class LookupTableGeneratorTest {
 
     private LookupTableGenerator generator;

@@ -350,23 +350,8 @@ class LookupTableGenerator {
         final double[] sphericalAlbedos = new double[AOT.length * wavelengths.length];
         readSphericalAlbedos(sphericalAlbedos, "dat/syn_spher_alb_up.dat");
 
-        final double[] transmissions = new double[AOT.length * wavelengths.length];
-        readTransmissions(transmissions, "dat/syn_spher_alb_dn.dat");
-
         final double[] pathReflectances = computePathReflectance(irradiances, intensities);
         final double[] t = new double[AOT.length * SZA.length * wavelengths.length];
-
-        int n = 0;
-        int m = 0;
-        for (int i = 0; i < AOT.length; i++) {
-            for (int k = 0; k < wavelengths.length; k++) {
-                for (int j = 0; j < SZA.length; j++) {
-                    t[n] = Math.pow(transmissions[m], 1.0 / Math.cos(SZA[j]));
-                    n++;
-                }
-                m++;
-            }
-        }
 
         final LookupTable lutRAtm = new LookupTable(pathReflectances, AOT, wavelengths, SZA, VZA, ADA);
         final LookupTable lutRhoAtm = new LookupTable(sphericalAlbedos, AOT, wavelengths);
@@ -432,23 +417,8 @@ class LookupTableGenerator {
         final double[] sphericalAlbedos = new double[AOT.length * wavelengths.length];
         readSphericalAlbedos(sphericalAlbedos, "dat/vgp_spher_alb_up.dat");
 
-        final double[] transmissions = new double[AOT.length * wavelengths.length];
-        readTransmissions(transmissions, "dat/vgp_spher_alb_dn.dat");
-
         final double[] pathReflectances = computePathReflectance(irradiances, intensities);
         final double[] t = new double[AOT.length * SZA.length * wavelengths.length];
-
-        int n = 0;
-        int m = 0;
-        for (int i = 0; i < AOT.length; i++) {
-            for (int k = 0; k < wavelengths.length; k++) {
-                for (int j = 0; j < SZA.length; j++) {
-                    t[n] = Math.pow(transmissions[m], 1.0 / Math.cos(SZA[j]));
-                    n++;
-                }
-                m++;
-            }
-        }
 
         final LookupTable lutRAtm = new LookupTable(pathReflectances, AOT, wavelengths, SZA, VZA, ADA);
         final LookupTable lutRhoAtm = new LookupTable(sphericalAlbedos, AOT, wavelengths);
@@ -549,23 +519,8 @@ class LookupTableGenerator {
         final double[] sphericalAlbedos = new double[AOT.length * wavelengths.length];
         readSphericalAlbedos(sphericalAlbedos, "dat/vgs_spher_alb_up.dat");
 
-        final double[] transmissions = new double[AOT.length * wavelengths.length];
-        readTransmissions(transmissions, "dat/vgs_spher_alb_dn.dat");
-
         final double[] pathReflectances = computePathReflectance(irradiances, intensities);
         final double[] t = new double[AOT.length * SZA.length * wavelengths.length];
-
-        int n = 0;
-        int m = 0;
-        for (int i = 0; i < AOT.length; i++) {
-            for (int k = 0; k < wavelengths.length; k++) {
-                for (int j = 0; j < SZA.length; j++) {
-                    t[n] = Math.pow(transmissions[m], 1.0 / Math.cos(SZA[j]));
-                    n++;
-                }
-                m++;
-            }
-        }
 
         final LookupTable lutRAtm = new LookupTable(pathReflectances, AOT, wavelengths, SZA, VZA, ADA);
         final LookupTable lutRhoAtm = new LookupTable(sphericalAlbedos, AOT, wavelengths);
@@ -912,6 +867,10 @@ class LookupTableGenerator {
             }
             final String[] tokens = line.split("\\s+");
             spherAlbs[i] = Double.parseDouble(tokens[1]);
+            if (spherAlbs[i] > 1.0) {
+                // we have read a line that does not contain spherical albedo
+                continue;
+            }
             i++;
         }
     }
