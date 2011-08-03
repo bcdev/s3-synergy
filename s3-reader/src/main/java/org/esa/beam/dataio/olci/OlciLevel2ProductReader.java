@@ -64,7 +64,7 @@ public class OlciLevel2ProductReader extends AbstractProductReader {
         measurementProducts = loadMeasurementProducts(manifest.getMeasurementFileNames());
         int width = measurementProducts.get(0).getSceneRasterWidth();
         int height = measurementProducts.get(0).getSceneRasterHeight();
-        Product product = new Product(getProductName(), getProductType(), width, height, this);
+        Product product = new Product(getProductName(), OlciLevel2ProductReaderPlugIn.FORMAT_NAME_OLCI_L2, width, height, this);
         product.setStartTime(manifest.getStartTime());
         product.setEndTime(manifest.getStopTime());
         product.setFileLocation(getInputFile());
@@ -126,12 +126,6 @@ public class OlciLevel2ProductReader extends AbstractProductReader {
 
     private String getProductName() {
         return FileUtils.getFilenameWithoutExtension(getParentInputDirectory());
-    }
-
-    private String getProductType() {
-        int typeStartindex = 3;
-        int typeLength = "OL_2_WRR".length();
-        return getProductName().substring(typeStartindex, typeStartindex + typeLength);
     }
 
     private List<Product> loadMeasurementProducts(List<String> measurementFileNames) {

@@ -45,7 +45,7 @@ public class OlciLevel2ProductReaderPlugIn implements ProductReaderPlugIn {
     }
 
     private boolean isDirectoryNameValid(String parentDirectoryName) {
-        Pattern pattern = Pattern.compile("S3_OL_2_..._.*.SAFE");
+        Pattern pattern = Pattern.compile("S3.?_OL_2_..._.*.SAFE");
         return pattern.matcher(parentDirectoryName).matches();
     }
 
