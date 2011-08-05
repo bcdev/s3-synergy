@@ -16,5 +16,6 @@ Makefile
 /config/
 /jobs/
 /data/
+modules/
 target/
 LOG.*
