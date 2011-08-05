@@ -17,12 +17,12 @@
 package org.esa.s3.synergy.util;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertNotNull;
-
+@Ignore
 public class LookupTableGeneratorTest {
 
     private LookupTableGenerator generator;
@@ -35,7 +35,6 @@ public class LookupTableGeneratorTest {
             throw new IllegalStateException(e);
         }
     }
-
 
     @SuppressWarnings({"ForLoopReplaceableByForEach"})
     @Test
@@ -69,13 +68,13 @@ public class LookupTableGeneratorTest {
 
     @SuppressWarnings({"ForLoopReplaceableByForEach"})
     @Test
-    public void writeVgtSConfigurationParametersDataset() throws Exception {
-        generator.writeVgtSConfigurationParametersDataset();
+    public void writeVgtSRadiativeTransferSimulationDataset() throws Exception {
+        generator.writeVgtSRadiativeTransferSimulationDataset();
     }
 
     @SuppressWarnings({"ForLoopReplaceableByForEach"})
     @Test
-    public void writeSynVgsRadiativeTransferSimulationDataset() throws Exception {
-        generator.writeVgtSRadiativeTransferSimulationDataset();
+    public void writeVgtSConfigurationParametersDataset() throws Exception {
+        generator.writeVgtSConfigurationParametersDataset();
     }
 }
