@@ -61,22 +61,13 @@ Build Instructions
 
 For the first build:
 
-1. Type 'cmake -C CMakeCache.ini .'
-
-2. Type 'cmake -i' and adapt the variables listed below to suit your system
-   environment
- 
-   - CMAKE_BUILD_TYPE
-   - CMAKE_INSTALL_PREFIX
-   - JAVA_HOME
-   - OS_ARCH
-   - SAFE_HOME
-   
+1. Type 'cmake -C CMakeCache.linux .'
+2. Type 'cmake -i' and adapt the variables prompted to your system
 3. Type 'cmake .'
 4. Type 'make'
 
 For subsequent builds simply type 'make'.
- 
+
 
 Contact Information
 ===================
