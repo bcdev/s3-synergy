@@ -47,17 +47,20 @@ Coding Conventions
 Dependencies
 ============
 
-1.  Boost 1.4.2 (compile)
+1.  Boost 1.4.x (compile)
 2.  Apache Xerces-C 3.1.1 (compile)
 3.  XQilla 2.2.4 (compile)
-4.  NetCDF 4.1.1 (compile)
-5.  SAFE Suite 1.2 (compile)
+4.  NetCDF 4.1.x (compile)
+5.  SAFE Suite 1.3 (compile)
 6.  Sun JDK 6 (runtime)
 7.  CMake 2.8.2 (build)
 
 
 Build Instructions
 ==================
+
+Linux
+-----
 
 For the first build:
 
@@ -68,6 +71,18 @@ For the first build:
 5. Type 'make'
 
 For subsequent builds simply type 'make'.
+
+
+Mac OS X
+--------
+
+1. Change to the project root directory and type 'mkdir xcode.build'
+2. Type 'cd xcode.build'
+3. Type 'cmake -C CMakeCache.macosx -G Xcode ../src'
+4. Type 'cmake -i ../src' and adapt the prompted variables to your system 
+
+Then use Xcode for building. Alternatively, ou may also use GNU make in
+manner analogous to the bulid instructions for Linux. 
 
 
 Contact Information
