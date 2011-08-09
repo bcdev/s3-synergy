@@ -61,10 +61,11 @@ Build Instructions
 
 For the first build:
 
-1. Type 'cmake -C CMakeCache.linux .'
-2. Type 'cmake -i' and adapt the variables prompted to your system
-3. Type 'cmake .'
-4. Type 'make'
+1. Change to the project root directory and type 'mkdir build.make'
+2. Type 'cd build.make'
+3. Type 'cmake -C CMakeCache.linux ../src'
+4. Type 'cmake -i ../src' and adapt the prompted variables to your system 
+5. Type 'make'
 
 For subsequent builds simply type 'make'.
 

@@ -18,5 +18,5 @@ Makefile
 /data/
 install/
 modules/
-target/
+build.*/
 LOG.*

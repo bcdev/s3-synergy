@@ -10,14 +10,14 @@ cmake_minimum_required (VERSION 2.8)
 ##
 # SYN source files
 #
-file(GLOB_RECURSE CORE_MAIN_SOURCES src/main/cpp/core/*.cpp)
-file(GLOB_RECURSE CORE_TEST_SOURCES src/test/cpp/core/*.cpp)
-file(GLOB_RECURSE MODULES_MAIN_SOURCES src/main/cpp/modules/*.cpp)
-file(GLOB_RECURSE MODULES_TEST_SOURCES src/test/cpp/modules/*.cpp)
-file(GLOB_RECURSE UTIL_MAIN_SOURCES src/main/cpp/util/*.cpp)
-file(GLOB_RECURSE UTIL_TEST_SOURCES src/test/cpp/util/*.cpp)
-file(GLOB_RECURSE SYN_MAIN_SOURCES src/main/cpp/syn/*.cpp)
-file(GLOB_RECURSE SYN_TEST_SOURCES src/test/cpp/syn/*.cpp)
+file(GLOB_RECURSE CORE_MAIN_SOURCES main/cpp/core/*.cpp)
+file(GLOB_RECURSE CORE_TEST_SOURCES test/cpp/core/*.cpp)
+file(GLOB_RECURSE MODULES_MAIN_SOURCES main/cpp/modules/*.cpp)
+file(GLOB_RECURSE MODULES_TEST_SOURCES test/cpp/modules/*.cpp)
+file(GLOB_RECURSE UTIL_MAIN_SOURCES main/cpp/util/*.cpp)
+file(GLOB_RECURSE UTIL_TEST_SOURCES test/cpp/util/*.cpp)
+file(GLOB_RECURSE SYN_MAIN_SOURCES main/cpp/syn/*.cpp)
+file(GLOB_RECURSE SYN_TEST_SOURCES test/cpp/syn/*.cpp)
 
 ##
 # SYN link directories
