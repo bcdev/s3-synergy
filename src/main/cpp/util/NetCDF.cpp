@@ -72,13 +72,15 @@ string NetCDF::getDimName(int fileId, int dimId) {
 
 void NetCDF::getData(int fileId, int varId, const valarray<size_t>& startVector,
         const valarray<size_t>& sizeVector, void* dataArray) {
-    int status = nc_get_vars(fileId, varId, &startVector[0], &sizeVector[0], 0, dataArray);
+    const valarray<ptrdiff_t> strides(1, startVector.size());
+    const int status = nc_get_vars(fileId, varId, &startVector[0], &sizeVector[0], &strides[0], dataArray);
     checkStatus(status, "reading data from file");
 }
 
 void NetCDF::putData(int fileId, int varId, const valarray<size_t>& startVector,
-        const valarray<size_t>& sizeVector, const void* dataArray) {
-    int status = nc_put_vars(fileId, varId, &startVector[0], &sizeVector[0], 0, dataArray);
+        const valarray<size_t>& sizeVector, const void* dataArray) {  
+    const valarray<ptrdiff_t> strides(1, startVector.size());
+    const int status = nc_put_vars(fileId, varId, &startVector[0], &sizeVector[0], &strides[0], dataArray);
     checkStatus(status, "putting data into file");
 }
 

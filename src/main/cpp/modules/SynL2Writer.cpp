@@ -23,7 +23,6 @@ SynL2Writer::~SynL2Writer() {
         try {
             NetCDF::closeFile(fileIdPair.second);
         } catch (exception& ignored) {
-            // ok
         }
     }
 }

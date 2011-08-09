@@ -10,6 +10,7 @@
 
 #include <valarray>
 
+#include "../core/Boost.h"
 #include "../core/Writer.h"
 
 using std::map;
