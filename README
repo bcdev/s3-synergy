@@ -72,7 +72,6 @@ For the first build:
 
 For subsequent builds simply type 'make'.
 
-
 Mac OS X
 --------
 
@@ -81,8 +80,8 @@ Mac OS X
 3. Type 'cmake -C CMakeCache.macosx -G Xcode ../src'
 4. Type 'cmake -i ../src' and adapt the prompted variables to your system 
 
-Then use Xcode for building. Alternatively, ou may also use GNU make in
-manner analogous to the bulid instructions for Linux. 
+Then use Xcode for building. Alternatively, you may also use GNU make for
+building in a manner analogous to the build instruction for Linux. 
 
 
 Contact Information
