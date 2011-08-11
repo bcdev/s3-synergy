@@ -25,11 +25,11 @@ XmlParser::XmlParser() {
 XmlParser::~XmlParser() {
 }
 
-const string XmlParser::evaluateToString(const string& path, const string& expression) {
+const string XmlParser::evaluateToString(const string& path, const string& expression) const {
     return evaluateToString(path, expression.c_str());
 }
 
-const string XmlParser::evaluateToString(const string& path, const char* expression) {
+const string XmlParser::evaluateToString(const string& path, const char* expression) const {
     /*
     parse(path);
     // Create a XalanDocument based on doc.
@@ -79,11 +79,11 @@ const string XmlParser::evaluateToString(const string& path, const char* express
     return "";
 }
 
-const vector<string> XmlParser::evaluateToStringList(string& path, string& expression) {
+const vector<string> XmlParser::evaluateToStringList(const string& path, const string& expression) const {
     return evaluateToStringList(path, expression.c_str());
 }
 
-const vector<string> XmlParser::evaluateToStringList(string& path, const char* expression) {
+const vector<string> XmlParser::evaluateToStringList(const string& path, const char* expression) const {
     /*
     parse(path);
     // Create a XalanDocument based on doc.

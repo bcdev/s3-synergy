@@ -32,7 +32,7 @@ using std::string;
 class ModuleException : public exception, public boost::exception {
 public:
     ModuleException();
-    ~ModuleException() throw();
+    virtual ~ModuleException() throw();
     void setMessage(string message);
     const char* what() const throw ();
 private:

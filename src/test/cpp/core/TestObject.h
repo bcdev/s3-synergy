@@ -29,7 +29,7 @@ public:
     TestObject(const string& objectId) : Object(), id(objectId) {
     }
 
-    ~TestObject() {
+    virtual ~TestObject() {
     }
 
     const string& getId() const {

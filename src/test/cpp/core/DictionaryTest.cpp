@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2011 by Brockmann Consult (info@brockmann-consult.de)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -14,7 +14,7 @@
  *
  * File:   DictionaryTest.cpp
  * Author: ralf
- * 
+ *
  * Created on January 14, 2011, 10:03 AM
  */
 
@@ -36,35 +36,35 @@ void DictionaryTest::tearDown() {
     delete dictionary;
 }
 
-void DictionaryTest::testContainers() {
+void DictionaryTest::testDescriptors() {
     ProductDescriptor& productDescriptor = dictionary->addProductDescriptor("L1C");
     CPPUNIT_ASSERT(productDescriptor.getName().compare("L1C") == 0);
 
-    vector<ProductDescriptor*> volumes = dictionary->getProductDescriptors();
-    CPPUNIT_ASSERT(volumes.size() == 1);
-    CPPUNIT_ASSERT(volumes[0] == &productDescriptor);
+    vector<ProductDescriptor*> productDescriptors = dictionary->getProductDescriptors();
+    CPPUNIT_ASSERT(productDescriptors.size() == 1);
+    CPPUNIT_ASSERT(productDescriptors[0] == &productDescriptor);
 
     CPPUNIT_ASSERT(&dictionary->getProductDescriptor("L1C") == &productDescriptor);
-    CPPUNIT_ASSERT_THROW(dictionary->getProductDescriptor("L2"), std::out_of_range);
+    CPPUNIT_ASSERT_THROW(dictionary->getProductDescriptor("SYL2"), std::out_of_range);
 
     CPPUNIT_ASSERT(dictionary->hasProductDescriptor("L1C"));
-    CPPUNIT_ASSERT(!dictionary->hasProductDescriptor("L2"));
+    CPPUNIT_ASSERT(!dictionary->hasProductDescriptor("SYL2"));
 
     SegmentDescriptor& segmentDescriptor = productDescriptor.addSegmentDescriptor("SYN_COLLOCATED");
 
     CPPUNIT_ASSERT(productDescriptor.hasSegmentDescriptor(segmentDescriptor.getName()));
     CPPUNIT_ASSERT(&productDescriptor.getSegmentDescriptor("SYN_COLLOCATED") == &segmentDescriptor);
 
-    Attribute& volAttribute = productDescriptor.addAttribute(1, "Version", "37");
+    Attribute& productDescriptorAttribute = productDescriptor.addAttribute(Constants::TYPE_BYTE, "Version", "37");
 
-    CPPUNIT_ASSERT(productDescriptor.hasAttribute(volAttribute.getName()));
-    CPPUNIT_ASSERT(&productDescriptor.getAttribute("Version") == &volAttribute);
+    CPPUNIT_ASSERT(productDescriptor.hasAttribute(productDescriptorAttribute.getName()));
+    CPPUNIT_ASSERT(&productDescriptor.getAttribute("Version") == &productDescriptorAttribute);
 
-    Attribute& sectAttribute = segmentDescriptor.addAttribute(0, "Vendor", "BC");
+    Attribute& segmentAttribute = segmentDescriptor.addAttribute(Constants::TYPE_CHAR, "Vendor", "BC");
 
-    CPPUNIT_ASSERT(segmentDescriptor.hasAttribute(sectAttribute.getName()));
-    CPPUNIT_ASSERT(&segmentDescriptor.getAttribute("Vendor") == &sectAttribute);
+    CPPUNIT_ASSERT(segmentDescriptor.hasAttribute(segmentAttribute.getName()));
+    CPPUNIT_ASSERT(&segmentDescriptor.getAttribute("Vendor") == &segmentAttribute);
 
     segmentDescriptor.addVariableDescriptor("reflec_1");
-    CPPUNIT_ASSERT(dictionary->getProductDescriptor("L1C").getVariables().size() == 1);
+    CPPUNIT_ASSERT(dictionary->getProductDescriptor("L1C").getVariableDescriptors().size() == 1);
 }

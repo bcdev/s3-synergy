@@ -61,7 +61,7 @@ private:
     void testWVGVariable(VariableDescriptor& var);
     void testNDVIVariable(VariableDescriptor& var);
     void testTGVariable(VariableDescriptor& var);
-    Dictionary* dict;
+    Dictionary* dictionary;
 };
 
 #endif	/* DICTIONARYPARSERTEST_H */

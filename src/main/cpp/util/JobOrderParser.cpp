@@ -83,7 +83,7 @@ Configuration JobOrderParser::parseConfiguration() {
     value = evaluateToString(path, query);
     try {
         config.setTest(lexical_cast<bool>(value));
-    } catch (bad_cast) {
+    } catch (bad_cast& e) {
         config.setTest((value.compare("true") == 0)
                 || (value.compare("True") == 0)
                 || (value.compare("TRUE") == 0));

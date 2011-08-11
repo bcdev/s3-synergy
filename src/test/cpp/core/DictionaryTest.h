@@ -23,15 +23,11 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <boost/foreach.hpp>
-#include <string>
-#include <vector>
-
 #include "../../../main/cpp/core/Dictionary.h"
 
 class DictionaryTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(DictionaryTest);
-    CPPUNIT_TEST(testContainers);
+    CPPUNIT_TEST(testDescriptors);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -42,7 +38,7 @@ public:
 
 private:
     Dictionary* dictionary;
-    void testContainers();
+    void testDescriptors();
 };
 
 #endif	/* DICTIONARYTEST_H */

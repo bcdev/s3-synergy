@@ -145,19 +145,5 @@ public:
             }
         }
     }
-
-    static vector<string> getFiles(const string& directory) {
-        vector<string> files;
-        if (is_directory(directory)) {
-            for (directory_iterator iter(directory); iter != directory_iterator(); ++iter) {
-                path file = iter->path();
-                if (!is_directory(file)) {
-                    files.push_back(file.filename());
-                }
-            }
-        }
-
-        return files;
-    }
 };
 #endif	/* UTILS_H */

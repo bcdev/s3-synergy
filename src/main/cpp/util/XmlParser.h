@@ -21,16 +21,17 @@ class XmlParser {
 public:
     XmlParser();
     ~XmlParser();
+
     void readXml();
     void outputNodes();
     void cleanUp();
     string getTextContent(DOMNode* node);
     string getNodeName(DOMElement* node);
     string getNodeAttribute(DOMElement* node, string attributeName);
-    const string evaluateToString(const string& path, const char* expression);
-    const string evaluateToString(const string& path, const string& expression);
-    const vector<string> evaluateToStringList(string& path, string& expression);
-    const vector<string> evaluateToStringList(string& path, const char* expression);
+    const string evaluateToString(const string& path, const char* expression) const;
+    const string evaluateToString(const string& path, const string& expression) const;
+    const vector<string> evaluateToStringList(const string& path, const string& expression) const;
+    const vector<string> evaluateToStringList(const string& path, const char* expression) const;
     
 protected:
     XercesDOMParser* parser;
@@ -40,7 +41,6 @@ protected:
 private:
     list<string> getNodeNames(DOMElement * root);
     void parse(const string& path);
-
 };
 
 #endif /* XMLPARSER_H_ */

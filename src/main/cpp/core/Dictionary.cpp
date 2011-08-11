@@ -19,8 +19,6 @@
  */
 
 #include "Dictionary.h"
-#include "../util/Utils.h"
-#include "Constants.h"
 
 Attribute::Attribute(int type, const string& name, const string& value) : name(name), type(type) {
     this->value = value;
@@ -63,7 +61,7 @@ VariableDescriptor::VariableDescriptor(const string& name) : Descriptor<Attribut
 VariableDescriptor::~VariableDescriptor() {
 }
 
-vector<VariableDescriptor*> ProductDescriptor::getVariables() const {
+vector<VariableDescriptor*> ProductDescriptor::getVariableDescriptors() const {
     vector<VariableDescriptor*> variableDescriptors;
 
     foreach(SegmentDescriptor* segmentDescriptor, getSegmentDescriptors()) {
@@ -75,7 +73,7 @@ vector<VariableDescriptor*> ProductDescriptor::getVariables() const {
     return variableDescriptors;
 }
 
-VariableDescriptor* ProductDescriptor::getVariable(const string& name) const {
+VariableDescriptor* ProductDescriptor::getVariableDescriptor(const string& name) const {
 
     foreach(SegmentDescriptor* segmentDescriptor, getSegmentDescriptors()) {
 
@@ -102,138 +100,5 @@ string VariableDescriptor::toString() const {
 Dictionary::Dictionary() : Descriptor<Attribute, ProductDescriptor>("Dictionary") {
 }
 
-Dictionary::Dictionary(string config) : Descriptor<Attribute, ProductDescriptor>("Dictionary"), configFile(config) {
-    init();
-}
-
 Dictionary::~Dictionary() {
-}
-
-void Dictionary::init() {
-    exclusionSet.insert("dimensions.xml");
-    exclusionSet.insert("MISREGIST_OLC_Oref_O17.xml");
-
-    const string L1C_IDENTIFIER = Constants::PRODUCT_L1C;
-    const string L2_IDENTIFIER = Constants::PRODUCT_SYN_L2;
-    string variableDefPath = xmlParser.evaluateToString(configFile, "/Config/Variable_Definition_Files_Path");
-    ProductDescriptor& l1c = addProductDescriptor(L1C_IDENTIFIER);
-    ProductDescriptor& l2 = addProductDescriptor(L2_IDENTIFIER);
-
-    string L1CPath = variableDefPath + "/" + L1C_IDENTIFIER;
-    string L2SynPath = variableDefPath + "/" + L2_IDENTIFIER;
-
-    vector<string> l1cFiles = Utils::getFiles(L1CPath);
-    for (size_t i = 0; i < l1cFiles.size(); i++) {
-        parseVariablesFile(L1CPath, l1cFiles[i], l1c);
-    }
-    vector<string> l2SynFiles = Utils::getFiles(L2SynPath);
-    for (size_t i = 0; i < l2SynFiles.size(); i++) {
-        parseVariablesFile(L2SynPath, l2SynFiles[i], l2);
-    }
-}
-
-void Dictionary::parseVariablesFile(string& variableDefPath, string& file, ProductDescriptor& productDescriptor) {
-    if (contains(exclusionSet, file)) {
-        return;
-    }
-    string path = variableDefPath + "/" + file;
-    const vector<string> symbolicNames = xmlParser.evaluateToStringList(path, "/dataset/variables/variable/name/child::text()");
-
-    for (size_t i = 0; i < symbolicNames.size(); i++) {
-        string symbolicName = symbolicNames[i];
-        string query = "/dataset/variables/variable[name=\"" + symbolicName + "\"]/ncname";
-        string ncName = xmlParser.evaluateToString(path, query);
-        if (ncName.empty()) {
-            ncName = symbolicName;
-        }
-        query = "/dataset/variables/variable[name=\"" + symbolicName + "\"]/segment_name";
-        string segmentName = xmlParser.evaluateToString(path, query);
-        if (!productDescriptor.hasSegmentDescriptor(segmentName)) {
-            productDescriptor.addSegmentDescriptor(segmentName);
-        }
-        query = "/dataset/variables/variable[name=\"" + symbolicName + "\"]/type";
-        int type = mapToNcType(xmlParser.evaluateToString(path, query));
-        VariableDescriptor& var = productDescriptor.getSegmentDescriptor(segmentName).addVariableDescriptor(symbolicName);
-        var.setType(type);
-        var.setNcVarName(ncName);
-        var.setNcFileName(xmlParser.evaluateToString(path, "/dataset/global_attributes/attribute[name=\"dataset_name\"]/value"));
-        var.setSegmentName(segmentName);
-
-        parseAttributes(path, symbolicName, var);
-        parseDimensions(path, symbolicName, var);
-    }
-}
-
-void Dictionary::parseAttributes(string& file, string& variableName, VariableDescriptor& var) {
-    string query = "/dataset/variables/variable[name=\"" + variableName + "\"]/attributes/attribute/name/child::text()";
-    const vector<string> attributeNames = xmlParser.evaluateToStringList(file, query);
-    for (size_t i = 0; i < attributeNames.size(); i++) {
-        string attributeName = attributeNames[i];
-        query = "/dataset/variables/variable[name=\"" + variableName + "\"]/attributes/attribute[name=\"" + attributeName + "\"]/type";
-        int type = mapToNcType(xmlParser.evaluateToString(file, query));
-        query = "/dataset/variables/variable[name=\"" + variableName + "\"]/attributes/attribute[name=\"" + attributeName + "\"]/value";
-        string value = xmlParser.evaluateToString(file, query);
-        var.addAttribute(type, attributeName, value);
-    }
-}
-
-void Dictionary::parseDimensions(string& file, string& variableName, VariableDescriptor& var) {
-    string query = "/dataset/variables/variable[name=\"" + variableName + "\"]/dimensions/id/child::text()";
-    string dimensionId = xmlParser.evaluateToString(file, query);
-    if (dimensionId.empty()) {
-        return;
-    }
-    path dimensionFilePath = path(file);
-    dimensionFilePath = dimensionFilePath.parent_path();
-    dimensionFilePath = dimensionFilePath / "dimensions.xml";
-    string dimensionFileString = dimensionFilePath.file_string();
-    query = "/dataset/set[@name=\"" + dimensionId + "\"]/dimensions/dimension/name/child::text()";
-    vector<string> dimNames = xmlParser.evaluateToStringList(dimensionFileString, query);
-
-    foreach(string dimName, dimNames) {
-        Dimension& dim = var.addDimension(dimName);
-        query = "/dataset/set[@name=\"" + dimensionId + "\"]/dimensions/dimension[name=\"" + dimName + "\"]/size/child::text()";
-        string sizeString = xmlParser.evaluateToString(dimensionFileString, query);
-        if (!sizeString.empty()) {
-            int size = lexical_cast<int>(sizeString);
-            dim.setSize(size);
-        }
-    }
-}
-
-int Dictionary::mapToNcType(const string& typeString) {
-    if (typeString.compare("byte") == 0) {
-        return NC_BYTE;
-    }
-    if (typeString.compare("ubyte") == 0) {
-        return NC_UBYTE;
-    }
-    if (typeString.compare("short") == 0) {
-        return NC_SHORT;
-    }
-    if (typeString.compare("ushort") == 0) {
-        return NC_USHORT;
-    }
-    if (typeString.compare("int") == 0) {
-        return NC_INT;
-    }
-    if (typeString.compare("uint") == 0) {
-        return NC_UINT;
-    }
-    if (typeString.compare("long") == 0) {
-        return NC_INT64;
-    }
-    if (typeString.compare("ulong") == 0) {
-        return NC_UINT64;
-    }
-    if (typeString.compare("float") == 0) {
-        return NC_FLOAT;
-    }
-    if (typeString.compare("double") == 0) {
-        return NC_DOUBLE;
-    }
-    if (typeString.compare("string") == 0) {
-        return NC_STRING;
-    }
-    return NC_CHAR;
 }

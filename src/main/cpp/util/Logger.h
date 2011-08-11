@@ -33,7 +33,7 @@ using std::ofstream;
 class Logger : public virtual Logging {
 public:
     Logger(const string& logFileName);
-    ~Logger();
+    virtual ~Logger();
     
     void debug(const string& message, const string& moduleName,
             const string& processorVersion);

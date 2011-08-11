@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
         logger.setErrLogLevel(jobOrder->getConfig().getErrorLogLevel());
         logger.info("Main process started.", "Main");
 
-        Dictionary dict(jobOrder->getConfig().getConfigFileNames()[0]);
+        Dictionary* dict = new Dictionary();
 
         // configure modules
         // TODO - replace "SYL2" by 'argv[0]'
@@ -58,13 +58,13 @@ int main(int argc, char* argv[]) {
         context.addModule(reader);
         context.addModule(test);
         context.addModule(writer);
-        context.setDictionary(&dict);
+        context.setDictionary(dict);
         processor.process(context);
 
         logger.info(createProcessingTimeMessage(start), "Main");
         logger.info("Processing complete. Exit code: 0.", "Main");
         return 0;
-    } catch (exception e) {
+    } catch (exception& e) {
         errorHandler.handleInitError(e);
     }
 }

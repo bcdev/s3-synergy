@@ -23,19 +23,17 @@
 
 #include <stdexcept>
 #include <map>
-#include <set>
 #include <string>
 #include <valarray>
 #include <vector>
 
 #include "Boost.h"
-#include "../util/XmlParser.h"
+#include "Constants.h"
 
 using std::logic_error;
 using std::map;
 using std::out_of_range;
 using std::pair;
-using std::set;
 using std::string;
 using std::valarray;
 using std::vector;
@@ -398,7 +396,7 @@ public:
      * netCDF-file.
      * @param ncVariableName The name to set.
      */
-    void setNcVarName(const string& ncVarName) {
+    void setNcName(const string& ncVarName) {
         this->ncVarName = ncVarName;
     }
 
@@ -484,15 +482,13 @@ public:
         return hasElement(name);
     }
 
-    // todo - rename into getVariableDescriptors (nf-20110419)
-    vector<VariableDescriptor*> getVariables() const;
+    vector<VariableDescriptor*> getVariableDescriptors() const;
 
-    // todo - rename into getVariable (nf-20110419)
-    VariableDescriptor* getVariable(const string& name) const;
+    VariableDescriptor* getVariableDescriptor(const string& name) const;
 };
 
 /**
- * A dictionary serves as source for static information about variables, i.e. 
+ * A dictionary serves as source for static information about variables, i.e.
  * the name, type, dimensions, and attributes of variables both to be written
  * and read.
  *
@@ -502,7 +498,6 @@ public:
 class Dictionary : public Descriptor<Attribute, ProductDescriptor> {
 public:
     Dictionary();
-    Dictionary(string configFile);
     virtual ~Dictionary();
 
     ProductDescriptor& addProductDescriptor(const string& name) {
@@ -520,22 +515,6 @@ public:
     bool hasProductDescriptor(const string& name) const {
         return hasElement(name);
     }
-
-private:
-
-    bool contains(set<string> list, string key) {
-        return list.find(key) != list.end();
-    }
-    void init();
-    string filePath;
-    void parseVariablesFile(string& variableDefPath, string& file, ProductDescriptor& prod);
-    void parseAttributes(string& file, string& variableName, VariableDescriptor& var);
-    void parseDimensions(string& file, string& variableName, VariableDescriptor& var);
-    int mapToNcType(const string& typeString);
-
-    XmlParser xmlParser;
-    const string configFile;
-    set<string> exclusionSet;
 };
 
 #endif	/* DICTIONARY_H */

@@ -18,7 +18,7 @@ using std::map;
 class SynL2Writer : public Writer {
 public:
     SynL2Writer(const string& targetDirPath);
-    ~SynL2Writer();
+    virtual ~SynL2Writer();
     void process(Context& context);
     void start(Context& context);
     void stop(Context& context);
