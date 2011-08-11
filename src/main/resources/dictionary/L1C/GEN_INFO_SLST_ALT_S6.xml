@@ -3,18 +3,18 @@
 <variables>
 	<variable>
 		<ncname>band_centre</ncname>
-		<name>wavelength_30</name>
-		<segment_name>SLO_GEN_INFO</segment_name>
+		<name>wavelength_6</name>
+		<segment_name>SLO_INFO</segment_name>
 	</variable>
 	<variable>
 		<ncname>bandwidth</ncname>
-		<name>bandwidth_30</name>
-		<segment_name>SLO_GEN_INFO</segment_name>
+		<name>bandwidth_6</name>
+		<segment_name>SLO_INFO</segment_name>
 	</variable>
 	<variable>
 		<ncname>solar_irradiance</ncname>
-		<name>solar_irradiance_30</name>
-		<segment_name>SLO_GEN_INFO</segment_name>
+		<name>solar_irradiance_6</name>
+		<segment_name>SLO_INFO</segment_name>
 	</variable>
 </variables>
 <global_attributes>

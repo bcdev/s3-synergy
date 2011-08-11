@@ -4,7 +4,7 @@
 	<variable>
 		<ncname>OLCI_time_stamps</ncname>
 		<name>time</name>
-		<segment_name>OLC_TIME_STAMPS</segment_name>
+		<segment_name>OLC_TIME</segment_name>
 	</variable>
 </variables>
 <global_attributes>

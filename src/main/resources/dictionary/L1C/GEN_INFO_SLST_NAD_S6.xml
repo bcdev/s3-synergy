@@ -3,17 +3,17 @@
 <variables>
 	<variable>
 		<ncname>band_centre</ncname>
-		<name>wavelength_24</name>
+		<name>wavelength_6</name>
 		<segment_name>SLN_GEN_INFO</segment_name>
 	</variable>
 	<variable>
 		<ncname>bandwidth</ncname>
-		<name>bandwidth_24</name>
+		<name>bandwidth_6</name>
 		<segment_name>SLN_GEN_INFO</segment_name>
 	</variable>
 	<variable>
 		<ncname>solar_irradiance</ncname>
-		<name>solar_irradiance_24</name>
+		<name>solar_irradiance_6</name>
 		<segment_name>SLN_GEN_INFO</segment_name>
 	</variable>
 </variables>

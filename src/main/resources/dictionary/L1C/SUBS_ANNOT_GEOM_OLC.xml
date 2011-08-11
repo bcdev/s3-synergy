@@ -4,32 +4,32 @@
 	<variable>
 		<ncname>OLC_L1b_TP_Latitude</ncname>
 		<name>OLC_TP_lat</name>
-		<segment_name>OLC_TIE_POINTS</segment_name>
+		<segment_name>OLC_TP</segment_name>
 	</variable>
 	<variable>
 		<ncname>OLC_L1b_TP_Longitude</ncname>
 		<name>OLC_TP_lon</name>
-		<segment_name>OLC_TIE_POINTS</segment_name>
+		<segment_name>OLC_TP</segment_name>
 	</variable>
 	<variable>
 		<ncname>SZA</ncname>
 		<name>SZA</name>
-		<segment_name>OLC_TIE_POINTS</segment_name>
+		<segment_name>OLC_TP</segment_name>
 	</variable>
 	<variable>
 		<ncname>SAA</ncname>
 		<name>SAA</name>
-		<segment_name>OLC_TIE_POINTS</segment_name>
+		<segment_name>OLC_TP</segment_name>
 	</variable>
 	<variable>
 		<ncname>OZA</ncname>
 		<name>OLC_VZA</name>
-		<segment_name>OLC_TIE_POINTS</segment_name>
+		<segment_name>OLC_TP</segment_name>
 	</variable>
 	<variable>
 		<ncname>OAA</ncname>
 		<name>OLC_VAA</name>
-		<segment_name>OLC_TIE_POINTS</segment_name>
+		<segment_name>OLC_TP</segment_name>
 	</variable>
 </variables>
 <global_attributes>

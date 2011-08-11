@@ -1,16 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
-  <variables>
-    <variable>
-      <ncname>SLST_CW_flags</ncname>
-      <name>SLN_confidence</name>
-      <segment_name>SLN</segment_name>
-    </variable>
-  </variables>
-  <global_attributes>
-    <attribute>
-      <name>dataset_name</name>
-      <value>PIX_ANNOT_SLST_NAD_A</value>
-    </attribute>
-  </global_attributes>
+    <variables>
+        <variable>
+            <ncname>SLST_cloud_flags</ncname>
+            <name>SLN_cloud</name>
+            <segment_name>SLN</segment_name>
+        </variable>
+        <variable>
+            <ncname>SLST_CW_flags</ncname>
+            <name>SLN_confidence</name>
+            <segment_name>SLN</segment_name>
+        </variable>
+        <variable>
+            <ncname>SLST_pointing_flags</ncname>
+            <name>SLN_pointing</name>
+            <segment_name>SLN</segment_name>
+        </variable>
+    </variables>
+    <global_attributes>
+        <attribute>
+            <name>dataset_name</name>
+            <value>PIX_ANNOT_SLST_NAD_A</value>
+        </attribute>
+    </global_attributes>
 </dataset>

@@ -3,12 +3,12 @@
 <variables>
 	<variable>
 		<ncname>TOA_Radiance_Meas</ncname>
-		<name>L_22</name>
+		<name>L_4</name>
         <segment_name>SLN</segment_name>
 	</variable>
 	<variable>
 		<ncname>exception</ncname>
-		<name>SLN_exception_4</name>
+		<name>L_4_exception</name>
         <segment_name>SLN</segment_name>
 	</variable>
 </variables>
