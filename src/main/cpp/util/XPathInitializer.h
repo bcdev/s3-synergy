@@ -14,17 +14,6 @@
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
-/*
-#include <xalanc/XPath/XPath.hpp>
-#include <xalanc/XPath/XPathEvaluator.hpp>
-#include <xalanc/DOMSupport/XalanDocumentPrefixResolver.hpp>
-#include <xalanc/XalanTransformer/XercesDOMWrapperParsedSource.hpp>
-#include <xalanc/XercesParserLiaison/XercesParserLiaison.hpp>
-#include <xalanc/XercesParserLiaison/XercesDOMSupport.hpp>
-#include <xalanc/XPath/XObject.hpp>
-#include <xalanc/XPath/XPathFactory.hpp>
- */
-
 #include <xqilla/xqilla-dom3.hpp>
 
 using xercesc::DOMDocument;
@@ -40,27 +29,15 @@ using xercesc::XMLException;
 using xercesc::XMLPlatformUtils;
 using xercesc::XMLString;
 
-/*
-using xalanc::NodeRefListBase;
-using xalanc::XalanDocument;
-using xalanc::XalanDocumentPrefixResolver;
-using xalanc::XercesDOMSupport;
-using xalanc::XercesDOMWrapperParsedSource;
-using xalanc::XercesParserLiaison;
-using xalanc::XObjectPtr;
-using xalanc::XObject;
-using xalanc::XPath;
-using xalanc::XPathEvaluator;
-using xalanc::XPathFactory;
-using xalanc::XalanDOMChar;
- */
-
 class XPathInitializer {
 public:
-    XPathInitializer();
-    virtual ~XPathInitializer();
-private:
+	XPathInitializer() {
+	    XQillaPlatformUtils::initialize();
+	}
 
+	~XPathInitializer() {
+		XQillaPlatformUtils::terminate();
+	}
 };
 
 #endif	/* XPATHINITIALIZER_H */

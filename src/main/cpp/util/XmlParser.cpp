@@ -5,18 +5,13 @@
  *      Author: thomass
  */
 
-#include <cstddef>
-#include <exception>
-#include <iostream>
-#include <valarray>
+#include "../core/Boost.h"
 
 #include "XmlParser.h"
 
-XERCES_CPP_NAMESPACE_USE;
+XERCES_CPP_NAMESPACE_USE
 
 using std::cout;
-using std::exception;
-using std::list;
 using std::string;
 
 XmlParser::XmlParser() {
@@ -25,194 +20,91 @@ XmlParser::XmlParser() {
 XmlParser::~XmlParser() {
 }
 
-const string XmlParser::evaluateToString(const string& path, const string& expression) const {
-    return evaluateToString(path, expression.c_str());
+const string XmlParser::evaluateToString(const string& path,
+		const string& expression) const throw (invalid_argument) {
+	return evaluateToString(path, expression.c_str());
 }
 
-const string XmlParser::evaluateToString(const string& path, const char* expression) const {
-    /*
-    parse(path);
-    // Create a XalanDocument based on doc.
-    XercesDOMSupport support;
-    XercesParserLiaison liaison(support);
-    XercesDOMWrapperParsedSource src(doc, liaison, support);
-    XalanDocument* xalanDoc = src.getDocument();
+const string XmlParser::evaluateToString(const string& path,
+		const char* expression) const throw (invalid_argument) {
+	DOMImplementation* xqillaImplementation =
+			DOMImplementationRegistry::getDOMImplementation(X("XPath2 3.0"));
 
-    // Evaluate an XPath expression to obtain the text node and its content
-    XPathEvaluator evaluator;
-    XalanDOMChar* expr = XMLString::transcode(expression);
-    XObjectPtr result = evaluator.evaluate(support, xalanDoc, expr);
+	AutoRelease<DOMLSParser> parser(
+			xqillaImplementation->createLSParser(
+					DOMImplementationLS::MODE_SYNCHRONOUS, 0));
+	parser->getDomConfig()->setParameter(XMLUni::fgDOMNamespaces, true);
+	parser->getDomConfig()->setParameter(XMLUni::fgXercesSchema, true);
+	parser->getDomConfig()->setParameter(XMLUni::fgDOMValidateIfSchema, true);
 
-    const xalanc::XalanDOMString& resultString = result->str();
-    char* resultChars = XMLString::transcode(resultString.data());
-    string resultStr(resultChars);
+	DOMDocument *document = parser->parseURI(path.c_str());
+	if (document == 0) {
+		BOOST_THROW_EXCEPTION(
+				invalid_argument("Path '" + path + "' does not refer to an XML document."));
+	}
+	AutoRelease<DOMXPathNSResolver> resolver(
+			document->createNSResolver(document->getDocumentElement()));
+	AutoRelease<DOMXPathExpression> parsedExpression(
+			document->createExpression(X(expression), resolver));
+	AutoRelease<DOMXPathResult> iteratorResult(
+			parsedExpression->evaluate(document->getDocumentElement(),
+					DOMXPathResult::ORDERED_NODE_ITERATOR_TYPE, 0));
 
-    // cleaning up
-    XMLString::release(&expr);
-    delete parser;
-    XMLString::release(&resultChars);
+	string result = "";
+	while (iteratorResult->iterateNext()) {
+		if (iteratorResult->isNode()) {
+			char* buffer = XMLString::transcode(
+					iteratorResult->getStringValue());
+			result = buffer;
+			XMLString::release(&buffer);
+			break;
+		}
+	}
 
-    return resultStr;
-     */
-    DOMImplementation* xqillaImplementation =
-            DOMImplementationRegistry::getDOMImplementation(X("XPath2 3.0"));
-
-    AutoRelease<DOMLSParser> parser(xqillaImplementation->createLSParser(DOMImplementationLS::MODE_SYNCHRONOUS, 0));
-    parser->getDomConfig()->setParameter(XMLUni::fgDOMNamespaces, true);
-    parser->getDomConfig()->setParameter(XMLUni::fgXercesSchema, true);
-    parser->getDomConfig()->setParameter(XMLUni::fgDOMValidateIfSchema, true);
-
-    DOMDocument *document = parser->parseURI(path.c_str());
-
-    AutoRelease<DOMXPathNSResolver> resolver(document->createNSResolver(document->getDocumentElement()));
-
-    AutoRelease<DOMXPathExpression> parsedExpression(document->createExpression(X(expression), resolver));
-    
-    AutoRelease<DOMXPathResult> iteratorResult(parsedExpression->evaluate(document->getDocumentElement(), DOMXPathResult::ORDERED_NODE_ITERATOR_TYPE, 0));
-
-    while (iteratorResult->iterateNext()) {
-        if (iteratorResult->isNode()) {
-            return XMLString::transcode(iteratorResult->getStringValue());
-        }
-    }
-
-    return "";
+	return result;
 }
 
-const vector<string> XmlParser::evaluateToStringList(const string& path, const string& expression) const {
-    return evaluateToStringList(path, expression.c_str());
+const vector<string> XmlParser::evaluateToStringList(const string& path,
+		const string& expression) const throw (invalid_argument) {
+	return evaluateToStringList(path, expression.c_str());
 }
 
-const vector<string> XmlParser::evaluateToStringList(const string& path, const char* expression) const {
-    /*
-    parse(path);
-    // Create a XalanDocument based on doc.
-    XercesDOMSupport support;
-    XercesParserLiaison liaison(support);
-    XercesDOMWrapperParsedSource src(doc, liaison, support);
-    XalanDocument* xalanDoc = src.getDocument();
+const vector<string> XmlParser::evaluateToStringList(const string& path,
+		const char* expression) const throw (invalid_argument) {
+	DOMImplementation* xqillaImplementation =
+			DOMImplementationRegistry::getDOMImplementation(X("XPath2 3.0"));
 
-    // Evaluate an XPath expression to obtain the text node and its content
-    XPathEvaluator evaluator;
-    XalanDOMChar* expr = XMLString::transcode(expression);
-    XObjectPtr result = evaluator.evaluate(support, xalanDoc, expr);
+	AutoRelease<DOMLSParser> parser(
+			xqillaImplementation->createLSParser(
+					DOMImplementationLS::MODE_SYNCHRONOUS, 0));
+	parser->getDomConfig()->setParameter(XMLUni::fgDOMNamespaces, true);
+	parser->getDomConfig()->setParameter(XMLUni::fgXercesSchema, true);
+	parser->getDomConfig()->setParameter(XMLUni::fgDOMValidateIfSchema, true);
 
-    // cleaning up
-    XMLString::release(&expr);
+	DOMDocument *document = parser->parseURI(path.c_str());
+	if (document == 0) {
+		BOOST_THROW_EXCEPTION(
+				invalid_argument("Path '" + path + "' does not refer to an XML document."));
+	}
 
-    const NodeRefListBase& nodeSet = result->nodeset();
+	AutoRelease<DOMXPathNSResolver> resolver(
+			document->createNSResolver(document->getDocumentElement()));
+	AutoRelease<DOMXPathExpression> parsedExpression(
+			document->createExpression(X(expression), resolver));
+	AutoRelease<DOMXPathResult> iteratorResult(
+			parsedExpression->evaluate(document->getDocumentElement(),
+					DOMXPathResult::ORDERED_NODE_ITERATOR_TYPE, 0));
 
-    vector<string> output;
-    for (size_t i = 0; i < nodeSet.getLength(); i++) {
-        const XMLCh* name = nodeSet.item(i)->getNodeValue().data();
-        char* value = XMLString::transcode(name);
-        output.push_back(value);
-        XMLString::release(&value);
-    }
-    delete parser;
-    return output;
-     */
-    DOMImplementation* xqillaImplementation =
-            DOMImplementationRegistry::getDOMImplementation(X("XPath2 3.0"));
+	vector<string> resultList;
+	while (iteratorResult->iterateNext()) {
+		if (iteratorResult->isNode()) {
+			char *buffer = XMLString::transcode(
+					iteratorResult->getStringValue());
+			const string result = buffer;
+			resultList.push_back(result);
+			XMLString::release(&buffer);
+		}
+	}
 
-    AutoRelease<DOMLSParser> parser(xqillaImplementation->createLSParser(DOMImplementationLS::MODE_SYNCHRONOUS, 0));
-    parser->getDomConfig()->setParameter(XMLUni::fgDOMNamespaces, true);
-    parser->getDomConfig()->setParameter(XMLUni::fgXercesSchema, true);
-    parser->getDomConfig()->setParameter(XMLUni::fgDOMValidateIfSchema, true);
-
-    DOMDocument *document = parser->parseURI(path.c_str());
-
-    AutoRelease<DOMXPathNSResolver> resolver(document->createNSResolver(document->getDocumentElement()));
-
-    AutoRelease<DOMXPathExpression> parsedExpression(document->createExpression(X(expression), resolver));
-
-    AutoRelease<DOMXPathResult> iteratorResult(parsedExpression->evaluate(document->getDocumentElement(), DOMXPathResult::ORDERED_NODE_ITERATOR_TYPE, 0));
-
-    vector<string> output;
-    while (iteratorResult->iterateNext()) {
-        if (iteratorResult->isNode()) {
-            output.push_back(XMLString::transcode(iteratorResult->getStringValue()));
-        }
-    }
-
-    return output;
-}
-
-void XmlParser::parse(const string& path) {
-    try {
-        // construct a DOM parser
-        parser = new XercesDOMParser();
-        parser->setValidationScheme(XercesDOMParser::Val_Always);
-        parser->setCreateEntityReferenceNodes(false);
-        parser->setIncludeIgnorableWhitespace(false);
-
-        // todo - register error handler
-        // parser.setErrorHandler(&errorHandler);
-
-        // Parse xml
-        parser->parse(path.c_str());
-        doc = parser->getDocument();
-        if (doc == 0) {
-            // todo replace with logging
-            std::cerr << "\nPath " << path << " does not point to a valid xml file. System will exit.";
-            std::exit(2);
-        }
-        root = doc->getDocumentElement();
-    } catch (const XMLException& toCatch) {
-        char* message = XMLString::transcode(toCatch.getMessage());
-        // todo replace with logging
-        cout << "Exception message is: \n" << message << "\n";
-        XMLString::release(&message);
-    } catch (const DOMException& e) {
-        cout << "xml error: " << XMLString::transcode(e.getMessage()) << "\n";
-        std::exit(2);
-    } catch (const std::exception& e) {
-        cout << e.what() << "\n";
-        std::exit(2);
-    }
-
-}
-
-std::string XmlParser::getNodeName(DOMElement * node) {
-    const XMLCh * tagName = node->getTagName();
-    return XMLString::transcode(tagName);
-}
-
-std::string XmlParser::getTextContent(DOMNode * node) {
-    const XMLCh * content = node->getTextContent();
-    return XMLString::transcode(content);
-}
-
-std::string XmlParser::getNodeAttribute(DOMElement * node, std::string attributeName) {
-    const XMLCh * attributeXmlName = XMLString::transcode(attributeName.c_str());
-    const XMLCh * attributeXmlValue = node->getAttribute(attributeXmlName);
-    return XMLString::transcode(attributeXmlValue);
-}
-
-void XmlParser::outputNodes() {
-    list<std::string> names = getNodeNames(root);
-    for (list<std::string>::const_iterator it = names.begin(); it != names.end(); ++it) {
-        cout << *it << "\n";
-    }
-}
-
-list<std::string> XmlParser::getNodeNames(DOMElement * root) {
-    list<std::string> names;
-    names.push_front(getNodeName(root));
-    DOMNodeList * childNodes = root->getChildNodes();
-    if (childNodes != NULL) {
-        for (XMLSize_t i = 0; i < childNodes->getLength(); i++) {
-            DOMNode * item = childNodes->item(i);
-            // important check! Without check, program runs but treats every node as element,
-            // in spite of the cast
-            if (item->getNodeType() && item->getNodeType() == DOMNode::ELEMENT_NODE) {
-                list<std::string> names_rec = getNodeNames((DOMElement*) item);
-                for (list<std::string>::const_iterator iter = names_rec.begin(); iter
-                        != names_rec.end(); ++iter) {
-                    names.push_front(*iter);
-                }
-            }
-        }
-    }
-    return names;
+	return resultList;
 }

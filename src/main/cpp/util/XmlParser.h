@@ -8,39 +8,29 @@
 #ifndef XMLPARSER_H_
 #define XMLPARSER_H_
 
-#include <list>
+#include <string>
+#include <exception>
 #include <vector>
 
 #include "XPathInitializer.h"
 
-using std::list;
+using std::invalid_argument;
 using std::string;
 using std::vector;
 
 class XmlParser {
 public:
-    XmlParser();
-    ~XmlParser();
+	XmlParser();
+	~XmlParser();
 
-    void readXml();
-    void outputNodes();
-    void cleanUp();
-    string getTextContent(DOMNode* node);
-    string getNodeName(DOMElement* node);
-    string getNodeAttribute(DOMElement* node, string attributeName);
-    const string evaluateToString(const string& path, const char* expression) const;
-    const string evaluateToString(const string& path, const string& expression) const;
-    const vector<string> evaluateToStringList(const string& path, const string& expression) const;
-    const vector<string> evaluateToStringList(const string& path, const char* expression) const;
-    
-protected:
-    XercesDOMParser* parser;
-    DOMDocument* doc;
-    DOMElement* root;
-
-private:
-    list<string> getNodeNames(DOMElement * root);
-    void parse(const string& path);
+	const string evaluateToString(const string& path,
+			const char* expression) const throw (invalid_argument);
+	const string evaluateToString(const string& path,
+			const string& expression) const throw (invalid_argument);
+	const vector<string> evaluateToStringList(const string& path,
+			const string& expression) const throw (invalid_argument);
+	const vector<string> evaluateToStringList(const string& path,
+			const char* expression) const throw (invalid_argument);
 };
 
 #endif /* XMLPARSER_H_ */
