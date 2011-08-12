@@ -72,6 +72,7 @@ void L1cReader::start(Context& context) {
                     break;
                 default:
                     BOOST_THROW_EXCEPTION(runtime_error("invalid number of dimensions for variable '" + ncVarName + "'."));
+                    break;
             }
             if (!context.hasSegment(segmentName)) {
                 const size_t sizeL = min(chunkSize, rowCount);

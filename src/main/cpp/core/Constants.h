@@ -34,23 +34,26 @@ namespace Constants {
 
     const string PROCESSOR_VERSION = "1.0-SNAPSHOT";
 
-    const string SEGMENT_SYN_COLLOCATED = "SYN_COLLOCATED";
+    const string PRODUCT_L1C = "L1C";
+    const string PRODUCT_SYL2 = "SYL2";
+    const string PRODUCT_VGTP = "VGTP";
+    const string PRODUCT_VGTS = "VGTS";
+
+    const string SEGMENT_OLC = "OLC";
     const string SEGMENT_OLC_TP = "OLC_TP";
+    const string SEGMENT_OLC_INFO = "OLC_INFO";
+    const string SEGMENT_OLC_TIME = "OLC_TIME";
+    const string SEGMENT_SLN = "SLN";
+    const string SEGMENT_SLO = "SLO";
     const string SEGMENT_SLN_TP = "SLN_TP";
     const string SEGMENT_SLO_TP = "SLO_TP";
-    const string SEGMENT_OLC_TIME = "OLC_TIME";
-    const string SEGMENT_OLC = "OLC";
-    const string SEGMENT_SLO_INFO = "SLO_INFO";
     const string SEGMENT_SLN_INFO = "SLN_INFO";
-    const string SEGMENT_SLO = "SLO";
-    const string SEGMENT_SLN = "SLN";
+    const string SEGMENT_SLO_INFO = "SLO_INFO";
+    const string SEGMENT_SYN_COLLOCATED = "SYN_COLLOCATED";
 
     const string DIMENSION_N_CAM = "N_CAM";
     const string DIMENSION_N_DET_CAM = "N_DET_CAM";
     const string DIMENSION_N_LINE_OLC = "N_LINE_OLC";
-
-    const string PRODUCT_L1C = "L1C";
-    const string PRODUCT_SYL2 = "SYL2";
 
     const int TYPE_BYTE = NC_BYTE;
     const int TYPE_INT = NC_INT;
