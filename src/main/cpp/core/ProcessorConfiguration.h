@@ -36,27 +36,27 @@ class TimeInterval;
 
 class ProcessorConfiguration {
 public:
-    ProcessorConfiguration(string taskName, string taskVersion,
-            vector<BreakpointFile*> breakpointFiles,
-            vector<Input*> inputList, vector<Output*> outputList);
-    virtual ~ProcessorConfiguration();
+    ProcessorConfiguration(const string& taskName, const string& taskVersion,
+            const vector<BreakpointFile>& breakpointFiles,
+            const vector<Input>& inputList, const vector<Output>& outputList);
+    ~ProcessorConfiguration();
     string getTaskName() const;
     string getTaskVersion() const;
-    vector<BreakpointFile*> getBreakpointFiles() const;
-    vector<Input*> getInputList() const;
-    vector<Output*> getOutputList() const;
+    const vector<BreakpointFile>& getBreakpointFiles() const;
+    const vector<Input>& getInputList() const;
+    const vector<Output>& getOutputList() const;
     void log(Logging& logging) const;
 private:
     string taskName;
     string taskVersion;
-    vector<BreakpointFile*> breakpointFiles;
-    vector<Input*> inputList;
-    vector<Output*> outputList;
+    vector<BreakpointFile> breakpointFiles;
+    vector<Input> inputList;
+    vector<Output> outputList;
 };
 
 class BreakpointFile {
 public:
-    BreakpointFile(string enable, string fileType, string fileNameType, string fileName);
+    BreakpointFile(const string& enable, const string& fileType, const string& fileNameType, const string& fileName);
     ~BreakpointFile();
     string getFileName() const;
     string getFileNameType() const;
@@ -72,10 +72,10 @@ private:
 
 class Input {
 public:
-    Input(string fileType, string fileNameType, vector<string> fileNames, vector<TimeInterval*> timeIntervals);
+    Input(const string& fileType, const string& fileNameType, const vector<string>& fileNames, const vector<TimeInterval>& timeIntervals);
     ~Input();
-    vector<TimeInterval*> getTimeIntervals() const;
-    vector<string> getFileNames() const;
+    const vector<TimeInterval>& getTimeIntervals() const;
+    const vector<string>& getFileNames() const;
     string getFileNameType() const;
     string getFileType() const;
     void log(Logging& logging) const;
@@ -83,12 +83,13 @@ private:
     string fileType;
     string fileNameType;
     vector<string> fileNames;
-    vector<TimeInterval*> timeIntervals;
+    vector<TimeInterval> timeIntervals;
 };
 
 class Output {
 public:
-    Output(string fileType, string fileNameType, string fileName);
+    Output(const string& fileType, const string& fileNameType, const string& fileName);
+    ~Output();
     void log(Logging& logging) const;
     string getFileName() const;
     string getFileNameType() const;
@@ -100,14 +101,15 @@ private:
 };
 
 class TimeInterval {
+public:
+    TimeInterval(const string& start, const string& stop);
+    ~TimeInterval();
+    void log(Logging& logging) const;
+    string getStop() const;
+    string getStart() const;
 private:
     string start;
     string stop;
-public:
-    void log(Logging& logging) const;
-    TimeInterval(string start, string stop);
-    string getStop() const;
-    string getStart() const;
 };
 
 #endif	/* PROCESSORCONFIGURATION_H */

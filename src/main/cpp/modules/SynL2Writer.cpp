@@ -155,6 +155,7 @@ void SynL2Writer::createNcVar(
                 break;
             default:
                 BOOST_THROW_EXCEPTION(logic_error("SynL2Writer::createNcVar(): invalid number of dimensions"));
+                break;
         }
 
         ncFileIdMap[ncFileBasename] = fileId;

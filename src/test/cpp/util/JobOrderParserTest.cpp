@@ -12,34 +12,33 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * File:   JobOrderParseTest.h
+ * File:   JobOrderParseTest.cpp
  * Author: thomass
- *
+ * 
  * Created on November 15, 2010, 4:21 PM
  */
 
-#ifndef JOBORDERPARSETEST_H
-#define	JOBORDERPARSETEST_H
+#include "JobOrderParserTest.h"
 
-#include <cppunit/extensions/HelperMacros.h>
-#include "../../../main/cpp/common/JobOrderParser.h"
+CPPUNIT_TEST_SUITE_REGISTRATION(JobOrderParserTest);
 
-class JobOrderParseTest : public CPPUNIT_NS::TestFixture {
-    CPPUNIT_TEST_SUITE(JobOrderParseTest);
-    CPPUNIT_TEST(testParsing);
-    CPPUNIT_TEST_SUITE_END();
+const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
 
-public:
-    JobOrderParseTest();
-    virtual ~JobOrderParseTest();
-    void setUp();
-    void tearDown();
+JobOrderParserTest::JobOrderParserTest() {
+}
 
-private:
-    void testParsing();
-    void initializeXerces();
-    void terminateXerces();
-};
+JobOrderParserTest::~JobOrderParserTest() {
+}
 
-#endif	/* JOBORDERPARSETEST_H */
+void JobOrderParserTest::setUp() {
+	parser = new JobOrderParser();
+}
 
+void JobOrderParserTest::tearDown() {
+	delete parser;
+}
+
+void JobOrderParserTest::testParsing() {
+    XPathInitializer init;
+    parser->parseJobOrder(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.0.xml");
+}

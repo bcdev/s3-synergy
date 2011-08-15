@@ -29,235 +29,261 @@
 using std::string;
 using std::bad_cast;
 
-JobOrderParser::JobOrderParser(string path) {
-    this->path = path;
+JobOrderParser::JobOrderParser() :
+		parser() {
 }
 
 JobOrderParser::~JobOrderParser() {
 }
 
-JobOrder* JobOrderParser::parseJobOrder() {
-    Configuration config = parseConfiguration();
-    vector<ProcessorConfiguration*> processorConfigurations = parseProcessorConfigurations();
-    JobOrder* jobOrder = new JobOrder(config, processorConfigurations);
-    return jobOrder;
+JobOrder JobOrderParser::parseJobOrder(const string& path) const {
+	Configuration config = parseConfiguration(path);
+	vector<ProcessorConfiguration> processorConfigurations =
+			parseProcessorConfigurations(path);
+	JobOrder jobOrder(config, processorConfigurations);
+	return jobOrder;
 }
 
-Configuration JobOrderParser::parseConfiguration() {
-    Configuration config;
-    string query = "/Ipf_Job_Order/Ipf_Conf/Stdout_Log_Level";
-    string value = evaluateToString(path, query);
-    if (value.empty() && value.compare("INFO") != 0 &&
-            value.compare("DEBUG") != 0 &&
-            value.compare("WARNING") != 0 &&
-            value.compare("PROGRESS") != 0 &&
-            value.compare("ERROR") != 0) {
-        value = "INFO"; // default value
-    }
-    config.setStandardLogLevel(value);
+Configuration JobOrderParser::parseConfiguration(const string& path) const {
+	Configuration configuration;
+	string value = parser.evaluateToString(path,
+			"/Ipf_Job_Order/Ipf_Conf/Stdout_Log_Level");
+	if (value.empty()
+			|| (value.compare("INFO") != 0 && value.compare("DEBUG") != 0
+					&& value.compare("WARNING") != 0
+					&& value.compare("PROGRESS") != 0
+					&& value.compare("ERROR") != 0)) {
+		value = "INFO"; // default value
+	}
+	configuration.setStandardLogLevel(value);
 
-    query = "/Ipf_Job_Order/Ipf_Conf/Stderr_Log_Level";
-    value = evaluateToString(path, query);
-    if (value.empty() && value.compare("INFO") != 0 &&
-            value.compare("DEBUG") != 0 &&
-            value.compare("WARNING") != 0 &&
-            value.compare("PROGRESS") != 0 &&
-            value.compare("ERROR") != 0) {
-        value = "INFO"; // default value
-    }
-    config.setErrorLogLevel(value);
+	value = parser.evaluateToString(path,
+			"/Ipf_Job_Order/Ipf_Conf/Stderr_Log_Level");
+	if (value.empty()
+			|| (value.compare("INFO") != 0 && value.compare("DEBUG") != 0
+					&& value.compare("WARNING") != 0
+					&& value.compare("PROGRESS") != 0
+					&& value.compare("ERROR") != 0)) {
+		value = "INFO"; // default value
+	}
+	configuration.setErrorLogLevel(value);
 
-    size_t firstDotIndex = path.find_first_of(".");
-    string orderIdWithExt = path.substr(firstDotIndex + 1);
-    config.setOrderId(orderIdWithExt.substr(0, orderIdWithExt.length() - 4));
+	const size_t firstDotIndex = path.find_first_of(".");
+	const string orderIdWithExt = path.substr(firstDotIndex + 1);
+	configuration.setOrderId(
+			orderIdWithExt.substr(0, orderIdWithExt.length() - 4));
 
-    query = "/Ipf_Job_Order/Ipf_Conf/Processor_Name";
-    value = evaluateToString(path, query);
-    config.setProcessorName(value);
+	value = parser.evaluateToString(path,
+			"/Ipf_Job_Order/Ipf_Conf/Processor_Name");
+	configuration.setProcessorName(value);
 
-    query = "/Ipf_Job_Order/Ipf_Conf/Version";
-    value = evaluateToString(path, query);
-    config.setVersion(value);
+	value = parser.evaluateToString(path, "/Ipf_Job_Order/Ipf_Conf/Version");
+	configuration.setVersion(value);
 
-    query = "/Ipf_Job_Order/Ipf_Conf/Test";
-    value = evaluateToString(path, query);
-    try {
-        config.setTest(lexical_cast<bool>(value));
-    } catch (bad_cast& e) {
-        config.setTest((value.compare("true") == 0)
-                || (value.compare("True") == 0)
-                || (value.compare("TRUE") == 0));
-    }
+	value = parser.evaluateToString(path, "/Ipf_Job_Order/Ipf_Conf/Test");
+	try {
+		configuration.setTest(lexical_cast<bool>(value));
+	} catch (bad_cast& e) {
+		configuration.setTest(
+				value.compare("true") == 0 || value.compare("True") == 0
+						|| value.compare("TRUE") == 0);
+	}
 
-    query = "/Ipf_Job_Order/Ipf_Conf/Acquisition_Station";
-    value = evaluateToString(path, query);
-    config.setAcquisitionStation(value);
+	value = parser.evaluateToString(path,
+			"/Ipf_Job_Order/Ipf_Conf/Acquisition_Station");
+	configuration.setAcquisitionStation(value);
 
-    query = "/Ipf_Job_Order/Ipf_Conf/Processing_Station";
-    value = evaluateToString(path, query);
-    config.setProcessingStation(value);
+	value = parser.evaluateToString(path,
+			"/Ipf_Job_Order/Ipf_Conf/Processing_Station");
+	configuration.setProcessingStation(value);
 
-    query = "/Ipf_Job_Order/Ipf_Conf/Sensing_Time/Start";
-    value = evaluateToString(path, query);
-    config.setSensingTimeStart(value);
+	value = parser.evaluateToString(path,
+			"/Ipf_Job_Order/Ipf_Conf/Sensing_Time/Start");
+	configuration.setSensingTimeStart(value);
 
-    query = "/Ipf_Job_Order/Ipf_Conf/Sensing_Time/Stop";
-    value = evaluateToString(path, query);
-    config.setSensingTimeStop(value);
+	value = parser.evaluateToString(path,
+			"/Ipf_Job_Order/Ipf_Conf/Sensing_Time/Stop");
+	configuration.setSensingTimeStop(value);
 
-    query = "/Ipf_Job_Order/Ipf_Conf/Dynamic_Processing_Parameters/Processing_Parameter/Name/child::text()";
-    string query2 = "/Ipf_Job_Order/Ipf_Conf/Dynamic_Processing_Parameters/Processing_Parameter/Value/child::text()";
-    vector<string> keys = evaluateToStringList(path, query);
-    vector<string> values = evaluateToStringList(path, query2);
-    vector<ProcessingParameter*> parameters;
-    for (size_t i = 0; i < keys.size(); i++) {
-        parameters.push_back(new ProcessingParameter(keys.at(i), values.at(i)));
-    }
-    config.setProcessingParameters(parameters);
+	vector<string> keys =
+			parser.evaluateToStringList(
+					path,
+					"/Ipf_Job_Order/Ipf_Conf/Dynamic_Processing_Parameters/Processing_Parameter/Name/child::text()");
+	vector<string> values =
+			parser.evaluateToStringList(
+					path,
+					"/Ipf_Job_Order/Ipf_Conf/Dynamic_Processing_Parameters/Processing_Parameter/Value/child::text()");
+	vector<ProcessingParameter> parameters;
+	for (size_t i = 0; i < keys.size(); i++) {
+		parameters.push_back(ProcessingParameter(keys.at(i), values.at(i)));
+	}
+	configuration.setProcessingParameters(parameters);
 
-    query = "/Ipf_Job_Order/Ipf_Conf/Config_Files/Conf_File_Name/child::text()";
-    vector<string> strings = evaluateToStringList(path, query);
-    config.setConfigFileNames(strings);
+	vector<string> configFileNames =
+			parser.evaluateToStringList(
+					path,
+					"/Ipf_Job_Order/Ipf_Conf/Config_Files/Conf_File_Name/child::text()");
+	configuration.setConfigFileNames(configFileNames);
 
-    return config;
+	return configuration;
 }
 
-vector<ProcessorConfiguration*> JobOrderParser::parseProcessorConfigurations() {
-    vector<ProcessorConfiguration*> result;
-    string query = "/Ipf_Job_Order/List_of_Ipf_Procs/Ipf_Proc";
-    vector<string> values = evaluateToStringList(path, query);
-    int numberOfProcConfigurations = values.size();
-    for (int i = 1; i <= numberOfProcConfigurations; i++) {
-
-        result.push_back(parseProcessorConfiguration(i));
-    }
-    return result;
+vector<ProcessorConfiguration> JobOrderParser::parseProcessorConfigurations(
+		const string& path) const {
+	vector<string> values = parser.evaluateToStringList(path,
+			"/Ipf_Job_Order/List_of_Ipf_Procs/Ipf_Proc");
+	vector<ProcessorConfiguration> result;
+	for (size_t i = 0; i < values.size(); i++) {
+		result.push_back(parseProcessorConfiguration(path, i + 1));
+	}
+	return result;
 }
 
-ProcessorConfiguration* JobOrderParser::parseProcessorConfiguration(int index) {
-    string baseQuery = "/Ipf_Job_Order/List_of_Ipf_Procs/Ipf_Proc[";
-    baseQuery.append(lexical_cast<string > (index));
-    baseQuery.append("]");
+ProcessorConfiguration JobOrderParser::parseProcessorConfiguration(
+		const string& path, int index) const {
+	string baseQuery = "/Ipf_Job_Order/List_of_Ipf_Procs/Ipf_Proc[";
+	baseQuery.append(lexical_cast<string>(index));
+	baseQuery.append("]");
 
-    string taskNameQuery = baseQuery + "/Task_Name";
-    string taskName = evaluateToString(path, taskNameQuery);
+	const string taskNameQuery = baseQuery + "/Task_Name";
+	const string taskName = parser.evaluateToString(path, taskNameQuery);
 
-    string taskVersionQuery = baseQuery + "/Task_Version";
-    string taskVersion = evaluateToString(path, taskVersionQuery);
+	const string taskVersionQuery = baseQuery + "/Task_Version";
+	const string taskVersion = parser.evaluateToString(path, taskVersionQuery);
 
-    vector<BreakpointFile*> breakpointFiles = parseBreakpointFiles(baseQuery);
-    vector<Input*> inputList = parseInputs(baseQuery);
-    vector<Output*> outputList = parseOutputs(baseQuery);
+	vector<BreakpointFile> breakpointFiles = parseBreakpointFiles(path,
+			baseQuery);
+	vector<Input> inputList = parseInputs(path, baseQuery);
+	vector<Output> outputList = parseOutputs(path, baseQuery);
+	ProcessorConfiguration processorConfigurartion(taskName, taskVersion,
+			breakpointFiles, inputList, outputList);
 
-    ProcessorConfiguration* config = new ProcessorConfiguration(taskName,
-            taskVersion, breakpointFiles, inputList, outputList);
-
-    return config;
+	return processorConfigurartion;
 }
 
-vector<BreakpointFile*> JobOrderParser::parseBreakpointFiles(string baseQuery) {
-    vector<BreakpointFile*> breakpointFiles;
-    string breakPointFilesQuery = baseQuery + "/BreakPoint/List_of_Brk_Files/Brk_File";
-    int breakPointFilesCount = evaluateToStringList(path, breakPointFilesQuery).size();
-    for (int i = 1; i <= breakPointFilesCount; i++) {
-        string query = breakPointFilesQuery + "[" + lexical_cast<string > (i) + "]";
-        breakpointFiles.push_back(parseBreakpointFile(query));
-    }
-    return breakpointFiles;
+vector<BreakpointFile> JobOrderParser::parseBreakpointFiles(const string& path,
+		const string& baseQuery) const {
+	const string breakPointFilesQuery = baseQuery
+			+ "/BreakPoint/List_of_Brk_Files/Brk_File";
+	const size_t breakPointFileCount = parser.evaluateToStringList(path,
+			breakPointFilesQuery).size();
+	vector<BreakpointFile> breakpointFiles;
+	for (size_t i = 0; i < breakPointFileCount; i++) {
+		const string query = breakPointFilesQuery + "["
+				+ lexical_cast<string>(i + 1) + "]";
+		breakpointFiles.push_back(parseBreakpointFile(path, query));
+	}
+	return breakpointFiles;
 }
 
-BreakpointFile* JobOrderParser::parseBreakpointFile(string baseQuery) {
-    string enableQuery = baseQuery + "/Enable";
-    string enable = evaluateToString(path, enableQuery);
+BreakpointFile JobOrderParser::parseBreakpointFile(const string& path,
+		const string& baseQuery) const {
+	const string enableQuery = baseQuery + "/Enable";
+	const string enable = parser.evaluateToString(path, enableQuery);
 
-    string fileTypeQuery = baseQuery + "/File_Type";
-    string fileType = evaluateToString(path, fileTypeQuery);
+	const string fileTypeQuery = baseQuery + "/File_Type";
+	const string fileType = parser.evaluateToString(path, fileTypeQuery);
 
-    string fileNameTypeQuery = baseQuery + "/File_Name_Type";
-    string fileNameType = evaluateToString(path, fileNameTypeQuery);
-    if (fileNameType.compare("") == 0) {
-        fileNameType = "Physical";
-    }
+	const string fileNameTypeQuery = baseQuery + "/File_Name_Type";
+	string fileNameType = parser.evaluateToString(path, fileNameTypeQuery);
+	if (fileNameType.compare("") == 0) {
+		fileNameType = "Physical";
+	}
 
-    string fileNameQuery = baseQuery + "/File_Name";
-    string fileName = evaluateToString(path, fileNameQuery);
+	const string fileNameQuery = baseQuery + "/File_Name";
+	const string fileName = parser.evaluateToString(path, fileNameQuery);
 
-    BreakpointFile* breakpointFile = new BreakpointFile(enable, fileType, fileNameType, fileName);
+	BreakpointFile breakpointFile(enable, fileType, fileNameType, fileName);
 
-    return breakpointFile;
+	return breakpointFile;
 }
 
-vector<Input*> JobOrderParser::parseInputs(string baseQuery) {
-    vector<Input*> inputs;
-    string inputQuery = baseQuery + "/List_of_Inputs/Input";
-    int inputCount = evaluateToStringList(path, inputQuery).size();
-    for (int i = 1; i <= inputCount; i++) {
-        string query = inputQuery + "[" + lexical_cast<string > (i) + "]";
-        inputs.push_back(parseInput(query));
-    }
-    return inputs;
+vector<Input> JobOrderParser::parseInputs(const string& path,
+		const string& baseQuery) const {
+	const string inputQuery = baseQuery + "/List_of_Inputs/Input";
+	const size_t inputCount =
+			parser.evaluateToStringList(path, inputQuery).size();
+	vector<Input> inputs;
+	for (size_t i = 0; i < inputCount; i++) {
+		const string query = inputQuery + "[" + lexical_cast<string>(i + 1)
+				+ "]";
+		inputs.push_back(parseInput(path, query));
+	}
+	return inputs;
 }
 
-Input* JobOrderParser::parseInput(string baseQuery) {
-    string fileTypeQuery = baseQuery + "/File_Type";
-    string fileType = evaluateToString(path, fileTypeQuery);
+Input JobOrderParser::parseInput(const string& path,
+		const string& baseQuery) const {
+	const string fileTypeQuery = baseQuery + "/File_Type";
+	const string fileType = parser.evaluateToString(path, fileTypeQuery);
 
-    string fileNameTypeQuery = baseQuery + "/File_Name_Type";
-    string fileNameType = evaluateToString(path, fileNameTypeQuery);
-    if (fileNameType.compare("") == 0) {
-        fileNameType = "Physical";
-    }
+	const string fileNameTypeQuery = baseQuery + "/File_Name_Type";
+	string fileNameType = parser.evaluateToString(path, fileNameTypeQuery);
+	if (fileNameType.compare("") == 0) {
+		fileNameType = "Physical";
+	}
 
-    vector<string> fileNames;
-    string fileNamesQuery = baseQuery + "/List_of_File_Names/File_Name";
-    int fileNameCount = evaluateToStringList(path, fileNamesQuery).size();
-    for (int i = 1; i <= fileNameCount; i++) {
-        string fileNameQuery = fileNamesQuery + "[" + lexical_cast<string > (i) + "]";
-        fileNames.push_back(evaluateToString(path, fileNameQuery));
-    }
+	const string fileNamesQuery = baseQuery + "/List_of_File_Names/File_Name";
+	const size_t fileNameCount = parser.evaluateToStringList(path,
+			fileNamesQuery).size();
+	vector<string> fileNames;
+	for (size_t i = 0; i < fileNameCount; i++) {
+		const string fileNameQuery = fileNamesQuery + "["
+				+ lexical_cast<string>(i + 1) + "]";
+		fileNames.push_back(parser.evaluateToString(path, fileNameQuery));
+	}
 
-    vector<TimeInterval*> timeIntervals;
-    string timeIntervalsQuery = baseQuery + "/List_of_Time_Intervals/Time_Interval";
-    int timeIntervalsCount = evaluateToStringList(path, timeIntervalsQuery).size();
-    for (int i = 1; i <= timeIntervalsCount; i++) {
-        string timeIntervalsStartQuery = timeIntervalsQuery + "[" + lexical_cast<string > (i) + "]/Start";
-        string timeIntervalsStopQuery = timeIntervalsQuery + "[" + lexical_cast<string > (i) + "]/Stop";
-        string start = evaluateToString(path, timeIntervalsStartQuery);
-        string stop = evaluateToString(path, timeIntervalsStopQuery);
-        TimeInterval* timeInterval = new TimeInterval(start, stop);
-        timeIntervals.push_back(timeInterval);
-    }
+	const string timeIntervalsQuery = baseQuery
+			+ "/List_of_Time_Intervals/Time_Interval";
+	const size_t timeIntervalsCount = parser.evaluateToStringList(path,
+			timeIntervalsQuery).size();
+	vector<TimeInterval> timeIntervals;
+	for (size_t i = 0; i < timeIntervalsCount; i++) {
+		const string timeIntervalsStartQuery = timeIntervalsQuery + "["
+				+ lexical_cast<string>(i + 1) + "]/Start";
+		const string timeIntervalsStopQuery = timeIntervalsQuery + "["
+				+ lexical_cast<string>(i + 1) + "]/Stop";
+		const string start = parser.evaluateToString(path,
+				timeIntervalsStartQuery);
+		const string stop = parser.evaluateToString(path,
+				timeIntervalsStopQuery);
+		TimeInterval timeInterval(start, stop);
+		timeIntervals.push_back(timeInterval);
+	}
+	Input input(fileType, fileNameType, fileNames, timeIntervals);
 
-    Input* input = new Input(fileType, fileNameType, fileNames, timeIntervals);
-
-    return input;
+	return input;
 }
 
-vector<Output*> JobOrderParser::parseOutputs(string baseQuery) {
-    vector<Output*> outputs;
-    string outputQuery = baseQuery + "/List_of_Outputs/Output";
-    int outputCount = evaluateToStringList(path, outputQuery).size();
-    for (int i = 1; i <= outputCount; i++) {
-
-        string query = outputQuery + "[" + lexical_cast<string > (i) + "]";
-        outputs.push_back(parseOutput(query));
-    }
-    return outputs;
+vector<Output> JobOrderParser::parseOutputs(const string& path,
+		const string& baseQuery) const {
+	const string outputQuery = baseQuery + "/List_of_Outputs/Output";
+	const size_t outputCount =
+			parser.evaluateToStringList(path, outputQuery).size();
+	vector<Output> outputs;
+	for (size_t i = 0; i < outputCount; i++) {
+		const string query = outputQuery + "[" + lexical_cast<string>(i + 1)
+				+ "]";
+		outputs.push_back(parseOutput(path, query));
+	}
+	return outputs;
 }
 
-Output* JobOrderParser::parseOutput(string baseQuery) {
-    string fileTypeQuery = baseQuery + "/File_Type";
-    string fileType = evaluateToString(path, fileTypeQuery);
+Output JobOrderParser::parseOutput(const string& path,
+		const string& baseQuery) const {
+	const string fileTypeQuery = baseQuery + "/File_Type";
+	const string fileType = parser.evaluateToString(path, fileTypeQuery);
 
-    string fileNameTypeQuery = baseQuery + "/File_Name_Type";
-    string fileNameType = evaluateToString(path, fileNameTypeQuery);
-    if (fileNameType.compare("") == 0) {
-        fileNameType = "Physical";
-    }
+	const string fileNameTypeQuery = baseQuery + "/File_Name_Type";
+	string fileNameType = parser.evaluateToString(path, fileNameTypeQuery);
+	if (fileNameType.compare("") == 0) {
+		fileNameType = "Physical";
+	}
 
-    string fileNameQuery = baseQuery + "/File_Name";
-    string fileName = evaluateToString(path, fileNameQuery);
+	const string fileNameQuery = baseQuery + "/File_Name";
+	const string fileName = parser.evaluateToString(path, fileNameQuery);
 
-    Output* output = new Output(fileType, fileNameType, fileName);
-    return output;
+	Output output(fileType, fileNameType, fileName);
+	return output;
 }
+

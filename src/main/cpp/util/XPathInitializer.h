@@ -8,26 +8,7 @@
 #ifndef XPATHINITIALIZER_H
 #define	XPATHINITIALIZER_H
 
-#include <xercesc/dom/DOM.hpp>
-#include <xercesc/util/PlatformUtils.hpp>
-#include <xercesc/util/XMLException.hpp>
-#include <xercesc/util/XMLString.hpp>
-#include <xercesc/parsers/XercesDOMParser.hpp>
-
 #include <xqilla/xqilla-dom3.hpp>
-
-using xercesc::DOMDocument;
-using xercesc::DOMElement;
-using xercesc::DOMException;
-using xercesc::DOMNode;
-using xercesc::DOMNodeList;
-using xercesc::DOMXPathException;
-using xercesc::DOMXPathExpression;
-using xercesc::DOMXPathResult;
-using xercesc::XercesDOMParser;
-using xercesc::XMLException;
-using xercesc::XMLPlatformUtils;
-using xercesc::XMLString;
 
 class XPathInitializer {
 public:

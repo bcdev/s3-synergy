@@ -22,8 +22,8 @@
 
 int NetCDF::openFile(const path& filePath) {
     int ncId;
-    int status = nc_open(filePath.file_string().c_str(), NC_NOWRITE, &ncId);
-    checkStatus(status, "opening file '" + filePath.file_string() + "'");
+    int status = nc_open(filePath.string().c_str(), NC_NOWRITE, &ncId);
+    checkStatus(status, "opening file '" + filePath.string() + "'");
     return ncId;
 }
 
@@ -86,8 +86,8 @@ void NetCDF::putData(int fileId, int varId, const valarray<size_t>& startVector,
 
 int NetCDF::createFile(const path& filePath) {
     int ncId;
-    int status = nc_create(filePath.file_string().c_str(), NC_NETCDF4, &ncId);
-    checkStatus(status, "creating file '" + filePath.file_string() + "'");
+    int status = nc_create(filePath.string().c_str(), NC_NETCDF4, &ncId);
+    checkStatus(status, "creating file '" + filePath.string() + "'");
     return ncId;
 }
 
@@ -160,6 +160,7 @@ void NetCDF::addAttribute(int fileId, int varId, const Attribute& attribute) {
         default:
         {
             putAttributeString(fileId, varId, attribute);
+            break;
         }
     }
 }

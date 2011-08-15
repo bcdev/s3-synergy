@@ -9,7 +9,7 @@
 #define XMLPARSER_H_
 
 #include <string>
-#include <exception>
+#include <stdexcept>
 #include <vector>
 
 #include "XPathInitializer.h"

@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2010 by Brockmann Consult (info@brockmann-consult.de)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -11,39 +11,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
- * File:   JobOrder.h
+ *
+ * File:   JobOrderParseTest.h
  * Author: thomass
  *
- * Created on November 23, 2010, 1:35 PM
+ * Created on November 15, 2010, 4:21 PM
  */
 
-#ifndef JOBORDER_H
-#define	JOBORDER_H
+#ifndef JOBORDERPARSETEST_H
+#define	JOBORDERPARSETEST_H
 
-#include <vector>
+#include <cppunit/extensions/HelperMacros.h>
 
-#include "Configuration.h"
-#include "Logging.h"
-#include "ProcessorConfiguration.h"
+#include "../../../main/cpp/util/JobOrderParser.h"
 
-using std::vector;
+class JobOrderParserTest : public CPPUNIT_NS::TestFixture {
+    CPPUNIT_TEST_SUITE(JobOrderParserTest);
+    CPPUNIT_TEST(testParsing);
+    CPPUNIT_TEST_SUITE_END();
 
-class JobOrder {
 public:
-    JobOrder(const Configuration& configuration, const vector<ProcessorConfiguration>& processorConfigurations);
-    virtual ~JobOrder();
-    
-    const Configuration& getConfig() const;
-    const vector<ProcessorConfiguration>& getProcessorConfigurations() const;
-    const ProcessorConfiguration& getProcessorConfiguration(const string& id) const;
-
-    void log(Logging& logging) const;
+    JobOrderParserTest();
+    virtual ~JobOrderParserTest();
+    void setUp();
+    void tearDown();
 
 private:
-    Configuration configuration;
-    vector<ProcessorConfiguration> processorConfigurations;
+    void testParsing();
+    
+    JobOrderParser* parser;
 };
 
-#endif	/* JOBORDER_H */
+#endif	/* JOBORDERPARSETEST_H */
 

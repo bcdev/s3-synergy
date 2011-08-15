@@ -5,14 +5,14 @@
  *      Author: thomass
  */
 
+#include <xercesc/dom/DOM.hpp>
+#include <xercesc/util/XMLString.hpp>
+
 #include "../core/Boost.h"
 
 #include "XmlParser.h"
 
 XERCES_CPP_NAMESPACE_USE
-
-using std::cout;
-using std::string;
 
 XmlParser::XmlParser() {
 }
@@ -40,7 +40,7 @@ const string XmlParser::evaluateToString(const string& path,
 	DOMDocument *document = parser->parseURI(path.c_str());
 	if (document == 0) {
 		BOOST_THROW_EXCEPTION(
-				invalid_argument("Path '" + path + "' does not refer to an XML document."));
+				invalid_argument("Path '" + path + "' does not refer to a valid XML document."));
 	}
 	AutoRelease<DOMXPathNSResolver> resolver(
 			document->createNSResolver(document->getDocumentElement()));
@@ -84,7 +84,7 @@ const vector<string> XmlParser::evaluateToStringList(const string& path,
 	DOMDocument *document = parser->parseURI(path.c_str());
 	if (document == 0) {
 		BOOST_THROW_EXCEPTION(
-				invalid_argument("Path '" + path + "' does not refer to an XML document."));
+				invalid_argument("Path '" + path + "' does not refer to a valid XML document."));
 	}
 
 	AutoRelease<DOMXPathNSResolver> resolver(

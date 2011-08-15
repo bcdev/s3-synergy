@@ -29,7 +29,7 @@ string Configuration::getProcessorName() const {
     return processorName;
 }
 
-void Configuration::setProcessorName(string processorName) {
+void Configuration::setProcessorName(const string& processorName) {
     this->processorName = processorName;
 }
 
@@ -45,11 +45,11 @@ void Configuration::log(Logging& logging) const {
     logging.debug("processing station = " + getProcessingStation(), "JobOrder");
     logging.debug("start time = " + getSensingTimeStart(), "JobOrder");
     logging.debug("stop time = " + getSensingTimeStop(), "JobOrder");
-    for (size_t i = 0; i < getConfigFileNames().size(); i++) {
-        logging.debug("config file " + boost::lexical_cast<string>(i + 1) + ": " + getConfigFileNames().at(i), "JobOrder");
+    for (size_t i = 0; i < configFileNames.size(); i++) {
+        logging.debug("configuration file " + boost::lexical_cast<string>(i + 1) + ": " + configFileNames[i], "JobOrder");
     }
-    for (size_t i = 0; i < getProcessingParameters().size(); i++) {
-        getProcessingParameters().at(i)->log(logging);
+    for (size_t i = 0; i < processingParameters.size(); i++) {
+        processingParameters[i].log(logging);
     }
 }
 
@@ -61,7 +61,7 @@ string Configuration::getVersion() const {
     return version;
 }
 
-void Configuration::setConfigFileNames(vector<string> configFileNames) {
+void Configuration::setConfigFileNames(const vector<string>& configFileNames) {
     this->configFileNames = configFileNames;
 }
 
@@ -69,7 +69,7 @@ vector<string> Configuration::getConfigFileNames() const {
     return configFileNames;
 }
 
-void Configuration::setSensingTimeStop(string sensingTimeStop) {
+void Configuration::setSensingTimeStop(const string& sensingTimeStop) {
     this->sensingTimeStop = sensingTimeStop;
 }
 
@@ -77,7 +77,7 @@ string Configuration::getSensingTimeStop() const {
     return sensingTimeStop;
 }
 
-void Configuration::setSensingTimeStart(string sensingTimeStart) {
+void Configuration::setSensingTimeStart(const string& sensingTimeStart) {
     this->sensingTimeStart = sensingTimeStart;
 }
 
@@ -85,7 +85,7 @@ string Configuration::getSensingTimeStart() const {
     return sensingTimeStart;
 }
 
-void Configuration::setProcessingStation(string processingStation) {
+void Configuration::setProcessingStation(const string& processingStation) {
     this->processingStation = processingStation;
 }
 
@@ -93,7 +93,7 @@ string Configuration::getProcessingStation() const {
     return processingStation;
 }
 
-void Configuration::setAcquisitionStation(string acquisitionStation) {
+void Configuration::setAcquisitionStation(const string& acquisitionStation) {
     this->acquisitionStation = acquisitionStation;
 }
 
@@ -117,7 +117,7 @@ bool Configuration::isTest() const {
     return test;
 }
 
-void Configuration::setErrorLogLevel(string errorLogLevel) {
+void Configuration::setErrorLogLevel(const string& errorLogLevel) {
     this->errorLogLevel = errorLogLevel;
 }
 
@@ -125,7 +125,7 @@ string Configuration::getErrorLogLevel() const {
     return errorLogLevel;
 }
 
-void Configuration::setStandardLogLevel(string standardLogLevel) {
+void Configuration::setStandardLogLevel(const string& standardLogLevel) {
     this->standardLogLevel = standardLogLevel;
 }
 
@@ -133,15 +133,15 @@ string Configuration::getStandardLogLevel() const {
     return standardLogLevel;
 }
 
-void Configuration::setProcessingParameters(vector<ProcessingParameter*> processingParameters) {
+void Configuration::setProcessingParameters(const vector<ProcessingParameter>& processingParameters) {
     this->processingParameters = processingParameters;
 }
 
-vector<ProcessingParameter*> Configuration::getProcessingParameters() const {
+vector<ProcessingParameter> Configuration::getProcessingParameters() const {
     return processingParameters;
 }
 
-void Configuration::setOrderId(string orderId) {
+void Configuration::setOrderId(const string& orderId) {
     this->orderId = orderId;
 }
 
@@ -157,7 +157,7 @@ string Configuration::boolToString(bool input) const {
     }
 }
 
-ProcessingParameter::ProcessingParameter(string name, string value) {
+ProcessingParameter::ProcessingParameter(const string& name, const string& value) {
     this->name = name;
     this->value = value;
 }
@@ -166,7 +166,7 @@ ProcessingParameter::~ProcessingParameter() {
 
 }
 
-void ProcessingParameter::setValue(string value) {
+void ProcessingParameter::setValue(const string& value) {
     this->value = value;
 }
 
@@ -174,7 +174,7 @@ string ProcessingParameter::getValue() const {
     return value;
 }
 
-void ProcessingParameter::setName(string name) {
+void ProcessingParameter::setName(const string& name) {
     this->name = name;
 }
 

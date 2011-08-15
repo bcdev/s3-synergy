@@ -27,39 +27,35 @@
 using std::cout;
 using std::invalid_argument;
 
-JobOrder::JobOrder(Configuration config, vector<ProcessorConfiguration*> processorConfigs) {
-    this->config = config;
-    this->processorConfigs = processorConfigs;
+JobOrder::JobOrder(const Configuration& configuration, const vector<ProcessorConfiguration>& processorConfigurations) {
+    this->configuration = configuration;
+    this->processorConfigurations = processorConfigurations;
 }
 
 JobOrder::~JobOrder() {
-
-    foreach(ProcessorConfiguration* pc, processorConfigs) {
-        delete pc;
-    }
 }
 
 void JobOrder::log(Logging& logging) const {
-    config.log(logging);
-    for (size_t i = 0; i < processorConfigs.size(); i++) {
-        logging.debug("parsing processor config " + boost::lexical_cast<string > (i + 1) + ":", "JobOrder");
-        processorConfigs[i]->log(logging);
+    configuration.log(logging);
+    for (size_t i = 0; i < processorConfigurations.size(); i++) {
+        logging.debug("parsing processor configuration " + boost::lexical_cast<string > (i + 1) + ":", "JobOrder");
+        processorConfigurations[i].log(logging);
     }
 }
 
-vector<ProcessorConfiguration*> JobOrder::getProcessorList() const {
-    return processorConfigs;
+const vector<ProcessorConfiguration>& JobOrder::getProcessorConfigurations() const {
+    return processorConfigurations;
 }
 
-ProcessorConfiguration& JobOrder::getProcessorConfiguration(const string& id) const {
-    for (size_t i = 0; i < processorConfigs.size(); i++) {
-        if (processorConfigs[i]->getTaskName().compare(id) == 0) {
-            return *processorConfigs[i];
+const ProcessorConfiguration& JobOrder::getProcessorConfiguration(const string& id) const {
+    for (size_t i = 0; i < processorConfigurations.size(); i++) {
+        if (processorConfigurations[i].getTaskName().compare(id) == 0) {
+            return processorConfigurations[i];
         }
     }
     BOOST_THROW_EXCEPTION(invalid_argument("no processor configuration with name " + id + "."));
 }
 
-Configuration JobOrder::getConfig() const {
-    return config;
+const Configuration& JobOrder::getConfig() const {
+    return configuration;
 }

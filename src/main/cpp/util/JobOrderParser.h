@@ -24,32 +24,30 @@
 #include "../core/Configuration.h"
 #include "../core/JobOrder.h"
 #include "../core/ProcessorConfiguration.h"
+
 #include "XmlParser.h"
 
 using std::string;
 
-class JobOrderParser : public XmlParser {
+class JobOrderParser {
 public:
-    JobOrderParser(string path);
-    virtual ~JobOrderParser();
-    JobOrder* parseJobOrder();
-protected:
-    string path;
+	JobOrderParser();
+	virtual ~JobOrderParser();
+
+	JobOrder parseJobOrder(const string& path) const;
+
 private:
-    Configuration parseConfiguration();
-    vector<ProcessorConfiguration*> parseProcessorConfigurations();
-    ProcessorConfiguration* parseProcessorConfiguration(int index);
-    void parseId(Configuration* config, DOMElement* node);
-    void parseDebugLevel(Configuration* config, DOMElement* node);
-    void parseInputLocation(DOMElement* childNode, Configuration* config);
-    bool stringToBool(string in);
-    vector<BreakpointFile*> parseBreakpointFiles(string baseQuery);
-    BreakpointFile* parseBreakpointFile(string baseQuery);
-    vector<Input*> parseInputs(string baseQuery);
-    Input* parseInput(string baseQuery);
-    vector<Output*> parseOutputs(string baseQuery);
-    Output* parseOutput(string baseQuery);
-    string intToString(int toConvert);
+	Configuration parseConfiguration(const string& path) const;
+	vector<ProcessorConfiguration> parseProcessorConfigurations(const string& path) const;
+	ProcessorConfiguration parseProcessorConfiguration(const string& path, int index) const;
+	vector<BreakpointFile> parseBreakpointFiles(const string& path, const string& baseQuery) const;
+	BreakpointFile parseBreakpointFile(const string& path, const string& baseQuery) const;
+	vector<Input> parseInputs(const string& path, const string& baseQuery) const;
+	Input parseInput(const string& path, const string& baseQuery) const;
+	vector<Output> parseOutputs(const string& path, const string& baseQuery) const;
+	Output parseOutput(const string& path, const string& baseQuery) const;
+
+	XmlParser parser;
 };
 
 #endif	/* JOBORDERPARSER_H */
