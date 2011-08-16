@@ -34,7 +34,7 @@ ErrorHandler::~ErrorHandler() {
 void ErrorHandler::handleError(Context& context, exception& e) const {
     string processorVersion = Constants::PROCESSOR_VERSION;
     if (context.getJobOrder() != 0) {
-        processorVersion = context.getJobOrder()->getConfig().getVersion();
+        processorVersion = context.getJobOrder()->getConfiguration().getVersion();
     }
     string diagnostics = diagnostic_information(e);
 

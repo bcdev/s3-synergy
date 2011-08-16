@@ -10,7 +10,7 @@
         <Acquisition_Station>unknown</Acquisition_Station>
         <Processing_Station>unknown</Processing_Station>
         <Config_Files>
-            <Conf_File_Name>src/main/config/config.xml</Conf_File_Name>
+            <Conf_File_Name>src/test/resources/config/config.xml</Conf_File_Name>
         </Config_Files>
         <Sensing_Time>
             <Start>20101214_000000.0000</Start>
@@ -60,50 +60,7 @@
                 <Output>
                     <File_Type>SYL2</File_Type>
                     <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
-                    <File_Name>data/SYN/test</File_Name>
-                </Output>
-            </List_of_Outputs>
-        </Ipf_Proc>
-        <Ipf_Proc>
-            <Task_Name>VGTP</Task_Name>
-            <Task_Version>01.00</Task_Version>
-            <List_of_Inputs count="1">
-                <Input>
-                    <File_Type>S3L1C</File_Type>
-                    <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
-                    <List_of_File_Names count="1">
-                        <File_Name>input.safe</File_Name>
-                    </List_of_File_Names>
-                </Input>
-            </List_of_Inputs>
-            <List_of_Outputs count="1">
-                <Output>
-                    <File_Type>VGTP</File_Type>
-                    <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
-                    <File_Name>output_vgtp.safe</File_Name>
-                </Output>
-            </List_of_Outputs>
-        </Ipf_Proc>
-        <Ipf_Proc>
-            <Task_Name>VGTS</Task_Name>
-            <Task_Version>01.00</Task_Version>
-            <List_of_Inputs count="1">
-                <Input>
-                    <File_Type>S3L1C</File_Type>
-                    <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
-                    <List_of_File_Names count="4">
-                        <File_Name>input_1.safe</File_Name>
-                        <File_Name>input_2.safe</File_Name>
-                        <File_Name>input_3.safe</File_Name>
-                        <File_Name>input_4.safe</File_Name>
-                    </List_of_File_Names>
-                </Input>
-            </List_of_Inputs>
-            <List_of_Outputs count="1">
-                <Output>
-                    <File_Type>VGTS</File_Type>
-                    <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
-                    <File_Name>output_vgts.safe</File_Name>
+                    <File_Name>data/SYN/test/some_file_name</File_Name>
                 </Output>
             </List_of_Outputs>
         </Ipf_Proc>

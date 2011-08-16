@@ -65,7 +65,7 @@ public:
 	void setVersion(string version);
 	string getVersion() const;
 	void setConfigFileNames(const vector<string>& configFileNames);
-	vector<string> getConfigFileNames() const;
+	vector<string> getConfigFiles() const;
 	void setSensingTimeStop(const string& sensingTimeStop);
 	string getSensingTimeStop() const;
 	void setSensingTimeStart(const string& sensingTimeStart);
@@ -83,7 +83,7 @@ public:
 	void setStandardLogLevel(const string& standardLogLevel);
 	string getStandardLogLevel() const;
 	void setProcessingParameters(const vector<ProcessingParameter>& processingParameters);
-	vector<ProcessingParameter> getProcessingParameters() const;
+	vector<ProcessingParameter> getDynamicProcessingParameters() const;
 };
 
 #endif /* CONFIGURATION_H_ */

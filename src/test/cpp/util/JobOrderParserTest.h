@@ -18,29 +18,30 @@
  * Created on November 15, 2010, 4:21 PM
  */
 
-#ifndef JOBORDERPARSETEST_H
-#define	JOBORDERPARSETEST_H
+#ifndef JOBORDERPARSERTEST_H
+#define	JOBORDERPARSERTEST_H
 
 #include <cppunit/extensions/HelperMacros.h>
 
 #include "../../../main/cpp/util/JobOrderParser.h"
 
-class JobOrderParserTest : public CPPUNIT_NS::TestFixture {
-    CPPUNIT_TEST_SUITE(JobOrderParserTest);
-    CPPUNIT_TEST(testParsing);
-    CPPUNIT_TEST_SUITE_END();
+class JobOrderParserTest: public CPPUNIT_NS::TestFixture {
+CPPUNIT_TEST_SUITE(JobOrderParserTest);
+		CPPUNIT_TEST(testJobOrderParsing);
+	CPPUNIT_TEST_SUITE_END();
 
 public:
-    JobOrderParserTest();
-    virtual ~JobOrderParserTest();
-    void setUp();
-    void tearDown();
-
+	JobOrderParserTest();
+	virtual ~JobOrderParserTest();
+	void setUp();
+	void tearDown();
 private:
-    void testParsing();
-    
-    JobOrderParser* parser;
+	void testJobOrderParsing();
+	void checkConfiguration(const JobOrder& jobOrder);
+	void checkProcessorConfigurations(const JobOrder& jobOrder);
+
+	JobOrderParser* parser;
 };
 
-#endif	/* JOBORDERPARSETEST_H */
+#endif	/* JOBORDERPARSERTEST_H */
 

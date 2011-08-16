@@ -35,11 +35,11 @@ int main(int argc, char* argv[]) {
 		// set up logger
 		// TODO - use argument for log file name/path
 		string logFileName = "LOG.";
-		logFileName.append(jobOrder.getConfig().getOrderId());
+		logFileName.append(jobOrder.getConfiguration().getOrderId());
 		Logger logger(logFileName);
-		logger.setProcessorVersion(jobOrder.getConfig().getVersion());
-		logger.setOutLogLevel(jobOrder.getConfig().getStandardLogLevel());
-		logger.setErrLogLevel(jobOrder.getConfig().getErrorLogLevel());
+		logger.setProcessorVersion(jobOrder.getConfiguration().getVersion());
+		logger.setOutLogLevel(jobOrder.getConfiguration().getStandardLogLevel());
+		logger.setErrLogLevel(jobOrder.getConfiguration().getErrorLogLevel());
 		logger.info("Main process started.", "Main");
 
 		Dictionary* dict = new Dictionary();

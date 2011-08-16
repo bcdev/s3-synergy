@@ -65,7 +65,7 @@ void Configuration::setConfigFileNames(const vector<string>& configFileNames) {
     this->configFileNames = configFileNames;
 }
 
-vector<string> Configuration::getConfigFileNames() const {
+vector<string> Configuration::getConfigFiles() const {
     return configFileNames;
 }
 
@@ -137,7 +137,7 @@ void Configuration::setProcessingParameters(const vector<ProcessingParameter>& p
     this->processingParameters = processingParameters;
 }
 
-vector<ProcessingParameter> Configuration::getProcessingParameters() const {
+vector<ProcessingParameter> Configuration::getDynamicProcessingParameters() const {
     return processingParameters;
 }
 

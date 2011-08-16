@@ -56,6 +56,6 @@ const ProcessorConfiguration& JobOrder::getProcessorConfiguration(const string& 
     BOOST_THROW_EXCEPTION(invalid_argument("no processor configuration with name " + id + "."));
 }
 
-const Configuration& JobOrder::getConfig() const {
+const Configuration& JobOrder::getConfiguration() const {
     return configuration;
 }

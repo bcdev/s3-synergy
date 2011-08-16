@@ -38,7 +38,90 @@ void JobOrderParserTest::tearDown() {
 	delete parser;
 }
 
-void JobOrderParserTest::testParsing() {
-    XPathInitializer init;
-    parser->parseJobOrder(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.0.xml");
+void JobOrderParserTest::testJobOrderParsing() {
+	XPathInitializer init;
+	const JobOrder jobOrder = parser->parseJobOrder(
+			S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.0.xml");
+
+	checkConfiguration(jobOrder);
+	checkProcessorConfigurations(jobOrder);
+}
+
+void JobOrderParserTest::checkConfiguration(const JobOrder& jobOrder) {
+	const Configuration configuration = jobOrder.getConfiguration();
+
+	CPPUNIT_ASSERT(configuration.getOrderId().compare("0") == 0);
+	CPPUNIT_ASSERT(configuration.getProcessorName().compare("S3L2PP-SYN") == 0);
+	CPPUNIT_ASSERT(configuration.getVersion().compare("01.00") == 0);
+	CPPUNIT_ASSERT(configuration.getStandardLogLevel().compare("DEBUG") == 0);
+	CPPUNIT_ASSERT(configuration.getErrorLogLevel().compare("DEBUG") == 0);
+	CPPUNIT_ASSERT(configuration.isTest());
+	CPPUNIT_ASSERT(
+			configuration.getAcquisitionStation().compare("unknown") == 0);
+	CPPUNIT_ASSERT(
+			configuration.getProcessingStation().compare("unknown") == 0);
+	CPPUNIT_ASSERT(configuration.getConfigFiles().size() == 1);
+	CPPUNIT_ASSERT(
+			configuration.getConfigFiles().at(0).compare("src/test/resources/config/config.xml") == 0);
+	CPPUNIT_ASSERT(
+			configuration.getSensingTimeStart().compare("20101214_000000.0000") == 0);
+	CPPUNIT_ASSERT(
+			configuration.getSensingTimeStop().compare("20101214_235959.9999") == 0);
+	CPPUNIT_ASSERT(configuration.getDynamicProcessingParameters().size() == 6);
+	CPPUNIT_ASSERT(
+			configuration.getDynamicProcessingParameters().at(0).getName().compare("Segment_Line_Count") == 0);
+	CPPUNIT_ASSERT(
+			configuration.getDynamicProcessingParameters().at(0).getValue().compare("400") == 0);
+	CPPUNIT_ASSERT(
+			configuration.getDynamicProcessingParameters().at(1).getName().compare("VGT_Northernmost_Latitude") == 0);
+	CPPUNIT_ASSERT(
+			configuration.getDynamicProcessingParameters().at(1).getValue().compare("75.0") == 0);
+	CPPUNIT_ASSERT(
+			configuration.getDynamicProcessingParameters().at(2).getName().compare("VGT_Southernmost_Latitude") == 0);
+	CPPUNIT_ASSERT(
+			configuration.getDynamicProcessingParameters().at(2).getValue().compare("-56.0") == 0);
+	CPPUNIT_ASSERT(
+			configuration.getDynamicProcessingParameters().at(3).getName().compare("VGT_Westernmost_Longitude") == 0);
+	CPPUNIT_ASSERT(
+			configuration.getDynamicProcessingParameters().at(3).getValue().compare("-180.0") == 0);
+	CPPUNIT_ASSERT(
+			configuration.getDynamicProcessingParameters().at(4).getName().compare("VGT_Easternmost_Longitude") == 0);
+	CPPUNIT_ASSERT(
+			configuration.getDynamicProcessingParameters().at(4).getValue().compare("180.0") == 0);
+	CPPUNIT_ASSERT(
+			configuration.getDynamicProcessingParameters().at(5).getName().compare("VGT_Synthesis_Period") == 0);
+	CPPUNIT_ASSERT(
+			configuration.getDynamicProcessingParameters().at(5).getValue().compare("1") == 0);
+}
+
+void JobOrderParserTest::checkProcessorConfigurations(
+		const JobOrder& jobOrder) {
+	const vector<ProcessorConfiguration> processorConfigurations =
+			jobOrder.getProcessorConfigurations();
+
+	CPPUNIT_ASSERT(processorConfigurations.size() == 1);
+	CPPUNIT_ASSERT(
+			processorConfigurations.at(0).getTaskName().compare("SYL2") == 0);
+	CPPUNIT_ASSERT(
+			processorConfigurations.at(0).getTaskVersion().compare("01.00") == 0);
+	CPPUNIT_ASSERT(processorConfigurations.at(0).getInputList().size() == 1);
+	CPPUNIT_ASSERT(
+			processorConfigurations.at(0).getInputList().at(0).getFileType().compare("S3L1C") == 0);
+	CPPUNIT_ASSERT(
+			processorConfigurations.at(0).getInputList().at(0).getFileNameType().compare("Physical") == 0);
+	CPPUNIT_ASSERT(
+			processorConfigurations.at(0).getInputList().at(0).getFileNames().size() == 1);
+	CPPUNIT_ASSERT(
+			processorConfigurations.at(0).getInputList().at(0).getFileNames().at(0).compare("data/L1C/S3A_SY_1_SYN________2013621T10920_2013621T101412_1_00292_1_DMS_TD04_00") == 0);
+
+	CPPUNIT_ASSERT(processorConfigurations.at(0).getOutputList().size() == 1);
+	CPPUNIT_ASSERT(
+			processorConfigurations.at(0).getOutputList().at(0).getFileType().compare("SYL2") == 0);
+	CPPUNIT_ASSERT(
+			processorConfigurations.at(0).getOutputList().at(0).getFileNameType().compare("Physical") == 0);
+	CPPUNIT_ASSERT(
+			processorConfigurations.at(0).getOutputList().at(0).getFileName().compare("data/SYN/test/some_file_name") == 0);
+
+	CPPUNIT_ASSERT(
+			processorConfigurations.at(0).getBreakpointFiles().size() == 0);
 }
