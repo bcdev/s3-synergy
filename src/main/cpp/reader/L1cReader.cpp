@@ -160,7 +160,7 @@ void L1cReader::stop(Context& context) {
 	foreach(fileIdPair, ncFileIdMap)
 			{
 				context.getLogging()->info(
-						"closing netCDF file '" + fileIdPair.second + "'",
+						"closing netCDF file '" + fileIdPair.first + "'",
 						getId());
 				NetCDF::closeFile(fileIdPair.second);
 			}
