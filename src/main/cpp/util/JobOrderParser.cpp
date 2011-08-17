@@ -21,10 +21,8 @@
 #include <stdexcept>
 
 #include "../core/Boost.h"
-#include "../core/Configuration.h"
+
 #include "JobOrderParser.h"
-#include "../core/ProcessorConfiguration.h"
-#include "Logger.h"
 
 using std::string;
 using std::bad_cast;
@@ -36,35 +34,34 @@ JobOrderParser::JobOrderParser() :
 JobOrderParser::~JobOrderParser() {
 }
 
-JobOrder JobOrderParser::parseJobOrder(const string& path) const {
-	Configuration config = parseConfiguration(path);
-	vector<ProcessorConfiguration> processorConfigurations =
-			parseProcessorConfigurations(path);
-	JobOrder jobOrder(config, processorConfigurations);
-	return jobOrder;
+JobOrder* JobOrderParser::parse(const string& path) const {
+	IpfConfiguration config = parseIpfConfiguration(path);
+	vector<IpfProcessor> ipfProcessors =
+			parseIpfProcessors(path);
+	return new JobOrder(config, ipfProcessors);
 }
 
-Configuration JobOrderParser::parseConfiguration(const string& path) const {
-	Configuration configuration;
+IpfConfiguration JobOrderParser::parseIpfConfiguration(const string& path) const {
+	IpfConfiguration configuration;
 	string value = parser.evaluateToString(path,
 			"/Ipf_Job_Order/Ipf_Conf/Stdout_Log_Level");
 	if (value.empty()
-			|| (value.compare("INFO") != 0 && value.compare("DEBUG") != 0
-					&& value.compare("WARNING") != 0
-					&& value.compare("PROGRESS") != 0
-					&& value.compare("ERROR") != 0)) {
-		value = "INFO"; // default value
+			|| (value.compare(Logging::LOG_LEVEL_INFO) != 0 && value.compare(Logging::LOG_LEVEL_DEBUG) != 0
+					&& value.compare(Logging::LOG_LEVEL_WARNING) != 0
+					&& value.compare(Logging::LOG_LEVEL_PROGRESS) != 0
+					&& value.compare(Logging::LOG_LEVEL_ERROR) != 0)) {
+		value = Logging::LOG_LEVEL_INFO; // default value
 	}
 	configuration.setStandardLogLevel(value);
 
 	value = parser.evaluateToString(path,
 			"/Ipf_Job_Order/Ipf_Conf/Stderr_Log_Level");
 	if (value.empty()
-			|| (value.compare("INFO") != 0 && value.compare("DEBUG") != 0
-					&& value.compare("WARNING") != 0
-					&& value.compare("PROGRESS") != 0
-					&& value.compare("ERROR") != 0)) {
-		value = "INFO"; // default value
+			|| (value.compare(Logging::LOG_LEVEL_INFO) != 0 && value.compare(Logging::LOG_LEVEL_DEBUG) != 0
+					&& value.compare(Logging::LOG_LEVEL_WARNING) != 0
+					&& value.compare(Logging::LOG_LEVEL_PROGRESS) != 0
+					&& value.compare(Logging::LOG_LEVEL_ERROR) != 0)) {
+		value = Logging::LOG_LEVEL_INFO; // default value
 	}
 	configuration.setErrorLogLevel(value);
 
@@ -117,7 +114,7 @@ Configuration JobOrderParser::parseConfiguration(const string& path) const {
 	for (size_t i = 0; i < keys.size(); i++) {
 		parameters.push_back(ProcessingParameter(keys.at(i), values.at(i)));
 	}
-	configuration.setProcessingParameters(parameters);
+	configuration.setDynamicProcessingParameters(parameters);
 
 	vector<string> configFileNames =
 			parser.evaluateToStringList(
@@ -128,18 +125,18 @@ Configuration JobOrderParser::parseConfiguration(const string& path) const {
 	return configuration;
 }
 
-vector<ProcessorConfiguration> JobOrderParser::parseProcessorConfigurations(
+vector<IpfProcessor> JobOrderParser::parseIpfProcessors(
 		const string& path) const {
 	vector<string> values = parser.evaluateToStringList(path,
 			"/Ipf_Job_Order/List_of_Ipf_Procs/Ipf_Proc");
-	vector<ProcessorConfiguration> result;
+	vector<IpfProcessor> result;
 	for (size_t i = 0; i < values.size(); i++) {
-		result.push_back(parseProcessorConfiguration(path, i + 1));
+		result.push_back(parseIpfProcessor(path, i + 1));
 	}
 	return result;
 }
 
-ProcessorConfiguration JobOrderParser::parseProcessorConfiguration(
+IpfProcessor JobOrderParser::parseIpfProcessor(
 		const string& path, int index) const {
 	string baseQuery = "/Ipf_Job_Order/List_of_Ipf_Procs/Ipf_Proc[";
 	baseQuery.append(lexical_cast<string>(index));
@@ -155,7 +152,7 @@ ProcessorConfiguration JobOrderParser::parseProcessorConfiguration(
 			baseQuery);
 	vector<Input> inputList = parseInputs(path, baseQuery);
 	vector<Output> outputList = parseOutputs(path, baseQuery);
-	ProcessorConfiguration processorConfigurartion(taskName, taskVersion,
+	IpfProcessor processorConfigurartion(taskName, taskVersion,
 			breakpointFiles, inputList, outputList);
 
 	return processorConfigurartion;

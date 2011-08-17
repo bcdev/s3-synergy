@@ -21,28 +21,23 @@
 #ifndef JOBORDER_H
 #define	JOBORDER_H
 
-#include <vector>
-
-#include "Configuration.h"
-#include "Logging.h"
-#include "ProcessorConfiguration.h"
-
-using std::vector;
+#include "IpfConfiguration.h"
+#include "IpfProcessor.h"
 
 class JobOrder {
 public:
-    JobOrder(const Configuration& configuration, const vector<ProcessorConfiguration>& processorConfigurations);
+    JobOrder(const IpfConfiguration& configuration, const vector<IpfProcessor>& ipfProcessors);
     virtual ~JobOrder();
     
-    const Configuration& getConfiguration() const;
-    const vector<ProcessorConfiguration>& getProcessorConfigurations() const;
-    const ProcessorConfiguration& getProcessorConfiguration(const string& id) const;
+    const IpfConfiguration& getIpfConfiguration() const;
+    const vector<IpfProcessor>& getIpfProcessors() const;
+    const IpfProcessor& getIpfProcessor(const string& id) const;
 
     void log(Logging& logging) const;
 
 private:
-    Configuration configuration;
-    vector<ProcessorConfiguration> processorConfigurations;
+    IpfConfiguration ipfConfiguration;
+    vector<IpfProcessor> ipfProcessors;
 };
 
 #endif	/* JOBORDER_H */

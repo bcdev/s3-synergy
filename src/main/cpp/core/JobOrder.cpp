@@ -27,35 +27,35 @@
 using std::cout;
 using std::invalid_argument;
 
-JobOrder::JobOrder(const Configuration& configuration, const vector<ProcessorConfiguration>& processorConfigurations) {
-    this->configuration = configuration;
-    this->processorConfigurations = processorConfigurations;
+JobOrder::JobOrder(const IpfConfiguration& ipfConfiguration, const vector<IpfProcessor>& ipfProcessors) {
+    this->ipfConfiguration = ipfConfiguration;
+    this->ipfProcessors = ipfProcessors;
 }
 
 JobOrder::~JobOrder() {
 }
 
 void JobOrder::log(Logging& logging) const {
-    configuration.log(logging);
-    for (size_t i = 0; i < processorConfigurations.size(); i++) {
-        logging.debug("parsing processor configuration " + boost::lexical_cast<string > (i + 1) + ":", "JobOrder");
-        processorConfigurations[i].log(logging);
+    ipfConfiguration.log(logging);
+    for (size_t i = 0; i < ipfProcessors.size(); i++) {
+        logging.debug("parsing IPF processors " + boost::lexical_cast<string > (i + 1) + ":", "JobOrder");
+        ipfProcessors[i].log(logging);
     }
 }
 
-const vector<ProcessorConfiguration>& JobOrder::getProcessorConfigurations() const {
-    return processorConfigurations;
+const vector<IpfProcessor>& JobOrder::getIpfProcessors() const {
+    return ipfProcessors;
 }
 
-const ProcessorConfiguration& JobOrder::getProcessorConfiguration(const string& id) const {
-    for (size_t i = 0; i < processorConfigurations.size(); i++) {
-        if (processorConfigurations[i].getTaskName().compare(id) == 0) {
-            return processorConfigurations[i];
+const IpfProcessor& JobOrder::getIpfProcessor(const string& id) const {
+    for (size_t i = 0; i < ipfProcessors.size(); i++) {
+        if (ipfProcessors[i].getTaskName().compare(id) == 0) {
+            return ipfProcessors[i];
         }
     }
-    BOOST_THROW_EXCEPTION(invalid_argument("no processor configuration with name " + id + "."));
+    BOOST_THROW_EXCEPTION(invalid_argument("no IPF processor with name " + id + "."));
 }
 
-const Configuration& JobOrder::getConfiguration() const {
-    return configuration;
+const IpfConfiguration& JobOrder::getIpfConfiguration() const {
+    return ipfConfiguration;
 }

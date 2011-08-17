@@ -21,8 +21,11 @@
 #include <iostream>
 
 #include "../core/Boost.h"
-#include "ErrorHandler.h"
+#include "../core/Context.h"
+#include "../core/ExitCode.h"
 #include "../core/JobOrder.h"
+
+#include "ErrorHandler.h"
 #include "Logger.h"
 
 ErrorHandler::ErrorHandler() {
@@ -34,7 +37,7 @@ ErrorHandler::~ErrorHandler() {
 void ErrorHandler::handleError(Context& context, exception& e) const {
     string processorVersion = Constants::PROCESSOR_VERSION;
     if (context.getJobOrder() != 0) {
-        processorVersion = context.getJobOrder()->getConfiguration().getVersion();
+        processorVersion = context.getJobOrder()->getIpfConfiguration().getVersion();
     }
     string diagnostics = diagnostic_information(e);
 
@@ -45,18 +48,18 @@ void ErrorHandler::handleError(Context& context, exception& e) const {
 
     string message = createMessage(module, functionName, lineNumber, exceptionMessage);
 
-    context.getLogging().error(message, module, processorVersion);
-    exit(128);
+    context.getLogging()->error(message, module, processorVersion);
+    exit(ExitCode::FAILURE);
 }
 
-void ErrorHandler::handleInitError(exception& e) const {
-    std::cerr << "An error has occurred initializing the processor. Error Message:\n";
+void ErrorHandler::handleInitializationError(exception& e) const {
+    std::cerr << "An error has occurred while initializing the processor. Error Message:\n";
     std::cerr << e.what() << std::endl;
-    std::cerr << "System will exit.";
-    exit(128);
+    std::cerr << "The system will exit.";
+    exit(ExitCode::FAILURE);
 }
 
-string ErrorHandler::extractLineNumber(const string diagnostics) const {
+string ErrorHandler::extractLineNumber(const string& diagnostics) const {
     string firstLine = splitIntoLines(diagnostics)[0];
     vector<string> temp;
     boost::iter_split(temp, firstLine, boost::first_finder("("));
@@ -64,7 +67,7 @@ string ErrorHandler::extractLineNumber(const string diagnostics) const {
     return temp[0];
 }
 
-string ErrorHandler::extractFunctionName(const string diagnostics) const {
+string ErrorHandler::extractFunctionName(const string& diagnostics) const {
     string firstLine = splitIntoLines(diagnostics)[0];
     vector<string> temp;
     boost::iter_split(temp, firstLine, boost::first_finder("function"));
@@ -74,7 +77,7 @@ string ErrorHandler::extractFunctionName(const string diagnostics) const {
     return temp[0];
 }
 
-string ErrorHandler::extractModuleName(const string diagnostics) const {
+string ErrorHandler::extractModuleName(const string& diagnostics) const {
     string firstLine = splitIntoLines(diagnostics)[0];
     vector<string> temp;
     boost::iter_split(temp, firstLine, boost::first_finder("function"));
@@ -83,14 +86,14 @@ string ErrorHandler::extractModuleName(const string diagnostics) const {
     return temp[temp.size() - 1];
 }
 
-vector<string> ErrorHandler::splitIntoLines(const string toSplit) const {
+vector<string> ErrorHandler::splitIntoLines(const string& toSplit) const {
     vector<string> lines;
     boost::iter_split(lines, toSplit, boost::first_finder("\n"));
     return lines;
 }
 
-string ErrorHandler::createMessage(const string module, const string functionName,
-        const string lineNumber, const string exceptionMessage) const {
+string ErrorHandler::createMessage(const string& module, const string& functionName,
+        const string& lineNumber, const string& exceptionMessage) const {
 
     string infoString = "";
     if (!module.empty() && !functionName.empty() && !lineNumber.empty()) {

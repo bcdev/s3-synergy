@@ -21,9 +21,9 @@
 #ifndef TESTMODULE_H
 #define	TESTMODULE_H
 
-#include "../core/DefaultModule.h"
+#include "../core/BasicModule.h"
 
-class TestModule : public DefaultModule {
+class TestModule : public BasicModule {
 public:
     TestModule();
     virtual ~TestModule();

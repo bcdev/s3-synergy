@@ -21,8 +21,8 @@
 #include <memory>
 
 #include "ContextTest.h"
+#include "../../../main/cpp/core/BasicModule.h"
 #include "../../../main/cpp/core/NullLogging.h"
-#include "../../../main/cpp/core/DefaultModule.h"
 #include "../../../main/cpp/core/Writer.h"
 #include "TestObject.h"
 
@@ -37,7 +37,7 @@ ContextTest::~ContextTest() {
 }
 
 void ContextTest::setUp() {
-    context = new Context(NullLogging::getInstance());
+    context = new Context();
 }
 
 void ContextTest::tearDown() {
@@ -47,13 +47,13 @@ void ContextTest::tearDown() {
 void ContextTest::testInitialState() {
     CPPUNIT_ASSERT(context->getDictionary() == 0);
     CPPUNIT_ASSERT(context->getJobOrder() == 0);
-    CPPUNIT_ASSERT(&context->getLogging() != 0);
+    CPPUNIT_ASSERT(context->getLogging() != 0);
     CPPUNIT_ASSERT(context->getModules().size() == 0);
 }
 
 void ContextTest::testAddModule() {
-    const auto_ptr<Module> a(new DefaultModule("A"));
-    const auto_ptr<Module> b(new DefaultModule("B"));
+    const auto_ptr<Module> a(new BasicModule("A"));
+    const auto_ptr<Module> b(new BasicModule("B"));
     context->addModule(*a);
     context->addModule(*b);
     const vector<Module*> modules = context->getModules();
@@ -103,7 +103,7 @@ void ContextTest::testGetUnknownSegment() {
 
 void ContextTest::testSetGetLastLComputed() {
     Segment& segment = context->addSegment("S", 100, 1, 1, 0, 200);
-    DefaultModule module("M");
+    BasicModule module("M");
     CPPUNIT_ASSERT_THROW(context->setLastLComputed(segment, module, 10), logic_error);
 
     context->addModule(module);
@@ -114,8 +114,8 @@ void ContextTest::testSetGetLastLComputed() {
 void ContextTest::testGetLastLWritable() {
     const Segment& segment = context->addSegment("A", 100, 1, 1, 0, 200);
 
-    DefaultModule module1("M1");
-    DefaultModule module2("M2");
+    BasicModule module1("M1");
+    BasicModule module2("M2");
     Writer writer("W");
     context->addModule(module1);
     context->setLastLComputed(segment, module1, 5);

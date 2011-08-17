@@ -10,6 +10,7 @@
 
 #include "Context.h"
 #include "Module.h"
+#include "ModuleException.h"
 
 using std::vector;
 
@@ -24,7 +25,7 @@ public:
 
 private:
     void setCompleted(bool completed);
-    void wrapException(exception& e, string moduleName, string sourceMethod);
+    ModuleException wrapException(exception& e, const string& moduleName, const string& sourceMethod) const;
 
     bool completed;
 };

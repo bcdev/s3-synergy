@@ -23,27 +23,29 @@
 
 #include <stdexcept>
 #include <string>
-
-#include "../core/Context.h"
+#include <vector>
 
 using std::exception;
 using std::string;
+using std::vector;
 
 class Context;
 
 class ErrorHandler {
 public:
-    ErrorHandler();
-    ~ErrorHandler();
-    void handleError(Context& context, exception &e) const;
-    void handleInitError(exception& e) const;
+	ErrorHandler();
+	~ErrorHandler();
+
+	void handleError(Context& context, exception& e) const;
+	void handleInitializationError(exception& e) const;
+
 private:
-    string extractFunctionName(const string firstLine) const;
-    string extractModuleName(const string firstLine) const;
-    string extractLineNumber(const string firstLine) const;
-    vector<string> splitIntoLines(const string toSplit) const;
-    string createMessage(const string module, const string functionName,
-            const string lineNumber, const string exceptionMessage) const;
+	string extractFunctionName(const string& firstLine) const;
+	string extractModuleName(const string& firstLine) const;
+	string extractLineNumber(const string& firstLine) const;
+	vector<string> splitIntoLines(const string& toSplit) const;
+	string createMessage(const string& module, const string& functionName,
+			const string& lineNumber, const string& exceptionMessage) const;
 };
 
 #endif	/* ERRORHANDLER_H */

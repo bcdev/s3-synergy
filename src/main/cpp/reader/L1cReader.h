@@ -11,14 +11,15 @@
 #include <map>
 #include <netcdf.h>
 
-#include "../core/DefaultModule.h"
+#include "../core/BasicModule.h"
 
 using std::map;
 
-class L1cReader : public DefaultModule {
+class L1cReader : public BasicModule {
 public:
-    L1cReader(const string& sourceDirPath, size_t chunkSize = 1000);
+    L1cReader();
     virtual ~L1cReader();
+
     void start(Context& context);
     void stop(Context& context);
     void process(Context& context);
@@ -26,8 +27,8 @@ public:
 private:
     int getNcFile(const string& ncFileBasename);
 
-    const path sourceDirPath;
-    const size_t chunkSize;
+    path sourceDirPath;
+    size_t segmentLineCount;
 
     map<string, int> ncFileIdMap;
     map<string, int> ncVarIdMap;

@@ -60,7 +60,7 @@ void SynL2Writer::process(Context& context) {
                     const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
                     const valarray<size_t> starts = Utils::createStartVector(dimIds.size(), firstLWritable);
                     const valarray<size_t> sizes = Utils::createCountVector(dimIds.size(), grid.getSizeK(), lastLWritable - firstLWritable + 1, grid.getSizeM());
-                    context.getLogging().progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
+                    context.getLogging()->progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
                     const Accessor& accessor = segment.getAccessor(varName);
                     NetCDF::putData(ncId, varId, starts, sizes, accessor.getUntypedData());
                 }

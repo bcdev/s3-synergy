@@ -2,6 +2,7 @@
 .project
 .settings/
 .idea/
+nbproject/
 *.iml
 *.ipr
 *.iws
@@ -15,3 +16,4 @@ CMakeCache.txt
 CMakeFiles/
 LOG.*
 Makefile
+/nbproject/private/

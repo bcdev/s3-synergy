@@ -21,9 +21,7 @@
 #ifndef JOBORDERPARSER_H
 #define	JOBORDERPARSER_H
 
-#include "../core/Configuration.h"
 #include "../core/JobOrder.h"
-#include "../core/ProcessorConfiguration.h"
 
 #include "XmlParser.h"
 
@@ -34,12 +32,12 @@ public:
 	JobOrderParser();
 	virtual ~JobOrderParser();
 
-	JobOrder parseJobOrder(const string& path) const;
+	JobOrder* parse(const string& path) const;
 
 private:
-	Configuration parseConfiguration(const string& path) const;
-	vector<ProcessorConfiguration> parseProcessorConfigurations(const string& path) const;
-	ProcessorConfiguration parseProcessorConfiguration(const string& path, int index) const;
+	IpfConfiguration parseIpfConfiguration(const string& path) const;
+	vector<IpfProcessor> parseIpfProcessors(const string& path) const;
+	IpfProcessor parseIpfProcessor(const string& path, int index) const;
 	vector<BreakpointFile> parseBreakpointFiles(const string& path, const string& baseQuery) const;
 	BreakpointFile parseBreakpointFile(const string& path, const string& baseQuery) const;
 	vector<Input> parseInputs(const string& path, const string& baseQuery) const;

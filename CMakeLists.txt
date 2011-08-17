@@ -12,12 +12,14 @@ cmake_minimum_required (VERSION 2.8)
 #
 file(GLOB_RECURSE CORE_MAIN_SOURCES src/main/cpp/core/*.cpp)
 file(GLOB_RECURSE CORE_TEST_SOURCES src/test/cpp/core/*.cpp)
+file(GLOB_RECURSE READER_MAIN_SOURCES src/main/cpp/reader/*.cpp)
+file(GLOB_RECURSE READER_TEST_SOURCES src/test/cpp/reader/*.cpp)
 file(GLOB_RECURSE MODULES_MAIN_SOURCES src/main/cpp/modules/*.cpp)
 file(GLOB_RECURSE MODULES_TEST_SOURCES src/test/cpp/modules/*.cpp)
 file(GLOB_RECURSE UTIL_MAIN_SOURCES src/main/cpp/util/*.cpp)
 file(GLOB_RECURSE UTIL_TEST_SOURCES src/test/cpp/util/*.cpp)
-file(GLOB_RECURSE SYN_MAIN_SOURCES src/main/cpp/syn/*.cpp)
-file(GLOB_RECURSE SYN_TEST_SOURCES src/test/cpp/syn/*.cpp)
+
+file(GLOB_RECURSE SYL2_MAIN_SOURCES src/main/cpp/syl2/*.cpp)
 
 ##
 # Sytem include directories
@@ -60,18 +62,37 @@ target_link_libraries(sy_unt_gen
 	boost_filesystem-mt
 )
 set_property(TARGET sy_unt_gen PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+#
+add_executable(sy_unt_rea
+    src/test/cpp/SyUntSreRunner.cpp
+	${CORE_MAIN_SOURCES}
+	${UTIL_MAIN_SOURCES}
+	${READER_MAIN_SOURCES}
+	${READER_TEST_SOURCES}
+)
+target_link_libraries(sy_unt_rea
+	cppunit
+	netcdf
+	Xfdu
+	xerces-c
+	xqilla
+	boost_system-mt
+	boost_filesystem-mt
+)
+set_property(TARGET sy_unt_rea PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 
 
 ##
 # Project main targets
 #
-add_executable(syn
-	${SYN_MAIN_SOURCES}
+add_executable(syl2
+	${SYL2_MAIN_SOURCES}
+	${READER_MAIN_SOURCES}
 	${MODULES_MAIN_SOURCES}
 	${CORE_MAIN_SOURCES}
 	${UTIL_MAIN_SOURCES}
 )
-target_link_libraries(syn
+target_link_libraries(syl2
 	netcdf
 	Safe
 	Xfdu
@@ -80,4 +101,4 @@ target_link_libraries(syn
 	boost_system-mt
 	boost_filesystem-mt
 )
-set_property(TARGET syn PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+set_property(TARGET syl2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)

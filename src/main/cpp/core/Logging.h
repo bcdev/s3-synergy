@@ -39,6 +39,12 @@ public:
     virtual void warning(const string& message, const string& moduleName, const string& processorVersion) = 0;
     virtual void error(const string& message, const string& moduleName) = 0;
     virtual void error(const string& message, const string& moduleName, const string& processorVersion) = 0;
+
+    const static string LOG_LEVEL_INFO;
+    const static string LOG_LEVEL_PROGRESS;
+    const static string LOG_LEVEL_DEBUG;
+    const static string LOG_LEVEL_WARNING;
+    const static string LOG_LEVEL_ERROR;
 };
 
 #endif	/* LOGGING_H */

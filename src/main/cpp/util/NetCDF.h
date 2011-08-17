@@ -41,7 +41,7 @@ public:
 
     static int openFile(const path& filePath);
 
-    static nc_type getVariableType(int fileId, int varId);
+    static int getVariableType(int fileId, int varId);
 
     static int getVariableId(int fileId, const string& varName);
 

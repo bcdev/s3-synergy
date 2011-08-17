@@ -28,6 +28,7 @@
 
 #include "Constants.h"
 #include "Dictionary.h"
+#include "JobOrder.h"
 #include "../util/ErrorHandler.h"
 #include "Logging.h"
 #include "Segment.h"
@@ -37,8 +38,6 @@ using std::exception;
 using std::map;
 using std::vector;
 
-class ErrorHandler;
-class JobOrder;
 class Module;
 class Writer;
 
@@ -51,7 +50,7 @@ public:
     /**
      * Constructs a new instance of this class.
      */
-    Context(Logging& logging);
+    Context();
 
     /**
      * Destructor.
@@ -114,7 +113,13 @@ public:
      * Returns the logging.
      * @return the logging.
      */
-    Logging& getLogging() const;
+    Logging* getLogging() const;
+
+    /**
+     * Sets the logging.
+     * @param logging The logging.
+     */
+    void setLogging(Logging* logging);
 
     /**
      * Returns the object associated with the supplied object ID.
@@ -236,6 +241,8 @@ public:
 
     void handleError(exception& e);
 
+    void removeModule(Module& module);
+
 private:
 
     template <class K, class V>
@@ -254,10 +261,8 @@ private:
     }
 
     void moveForward(Segment& segment) const;
-    void removeObject(Object& object);
-    void removeSegment(Segment& segment);
 
-    Logging& logging;
+    Logging* logging;
     Dictionary* dictionary;
     JobOrder* jobOrder;
     ErrorHandler* errorHandler;

@@ -21,12 +21,12 @@
 #ifndef WRITER_H
 #define	WRITER_H
 
-#include "DefaultModule.h"
+#include "BasicModule.h"
 
-class Writer : public DefaultModule {
+class Writer : public BasicModule {
 public:
 
-    Writer(const string& moduleId, const string& moduleVersion = "") : DefaultModule(moduleId, moduleVersion) {
+    Writer(const string& moduleId, const string& moduleVersion = "") : BasicModule(moduleId, moduleVersion) {
     }
 
     virtual ~Writer() {

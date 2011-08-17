@@ -6,7 +6,6 @@
  */
 
 // CppUnit site http://sourceforge.net/projects/cppunit/files
-
 #include <cstdlib>
 #include <iostream>
 
@@ -17,9 +16,28 @@
 #include <cppunit/TestResultCollector.h>
 #include <cppunit/TestRunner.h>
 
+#include "../../../src/main/cpp/core/Context.h"
+#include "../../../src/main/cpp/util/Logger.h"
+
 using std::cout;
 using std::endl;
 using std::getenv;
+
+Context* context;
+
+static void createContext() {
+	Logger* logger = new Logger("LOG.SY_UNT_REA");
+	logger->setProcessorVersion(Constants::PROCESSOR_VERSION);
+	logger->setOutLogLevel(Logging::LOG_LEVEL_INFO);
+	logger->setErrLogLevel(Logging::LOG_LEVEL_INFO);
+	context = new Context();
+	context->setLogging(logger);
+}
+
+static void releaseContext() {
+	delete context->getLogging();
+	delete context;
+}
 
 int main() {
 	if (getenv("S3_SYNERGY_HOME") == 0) {
@@ -28,6 +46,7 @@ int main() {
 		cout << "been set." << endl;
 		return 1;
 	}
+	createContext();
 
 	// Create the event manager and test controller
 	CPPUNIT_NS::TestResult controller;
@@ -48,6 +67,8 @@ int main() {
 	// Print test in a compiler compatible format.
 	CPPUNIT_NS::CompilerOutputter outputter(&result, CPPUNIT_NS::stdCOut());
 	outputter.write();
+
+	releaseContext();
 
 	return result.wasSuccessful() ? 0 : 1;
 }

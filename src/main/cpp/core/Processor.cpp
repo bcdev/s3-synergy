@@ -8,7 +8,6 @@
 #include <iostream>
 #include <vector>
 
-#include "../util/ModuleException.h"
 #include "Processor.h"
 
 using std::vector;
@@ -29,7 +28,7 @@ void Processor::process(Context& context) {
             } catch (ModuleException& e) {
                 BOOST_THROW_EXCEPTION(e);
             } catch (exception& e) {
-                wrapException(e, module->getId(), "start");
+            	BOOST_THROW_EXCEPTION(wrapException(e, module->getId(), "start"));
             }
         }
         do {
@@ -37,9 +36,9 @@ void Processor::process(Context& context) {
                 try {
                     module->process(context);
                 } catch (ModuleException& e) {
-                    throw e;
+                    BOOST_THROW_EXCEPTION(e);
                 } catch (exception& e) {
-                    wrapException(e, module->getId(), "process");
+                	BOOST_THROW_EXCEPTION(wrapException(e, module->getId(), "process"));
                 }
             }
             context.moveSegmentsForward();
@@ -48,9 +47,9 @@ void Processor::process(Context& context) {
             try {
                 module->stop(context);
             } catch (ModuleException& e) {
-                throw e;
+                BOOST_THROW_EXCEPTION(e);
             } catch (exception& e) {
-                wrapException(e, module->getId(), "stop");
+            	BOOST_THROW_EXCEPTION(wrapException(e, module->getId(), "stop"));
             }
         }
     } catch (exception& e) {
@@ -58,10 +57,12 @@ void Processor::process(Context& context) {
     }
 }
 
-void Processor::wrapException(exception& e, string moduleName, string sourceMethod) {
-    ModuleException me;
-    string message = "Module '" + moduleName + "' has thrown an exception in method '" + sourceMethod + "()'. Exception content:\n";
+ModuleException Processor::wrapException(exception& e, const string& moduleName, const string& sourceMethod) const {
+    string message = "Module '" + moduleName + "' has thrown an exception in method '" + sourceMethod + "()':\n";
     message.append(e.what());
+
+    ModuleException me;
     me.setMessage(message);
-    BOOST_THROW_EXCEPTION(me);
+
+    return me;
 }

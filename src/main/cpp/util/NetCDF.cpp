@@ -27,8 +27,8 @@ int NetCDF::openFile(const path& filePath) {
     return ncId;
 }
 
-nc_type NetCDF::getVariableType(int fileId, int varId) {
-    nc_type type;
+int NetCDF::getVariableType(int fileId, int varId) {
+    int type;
     int status = nc_inq_vartype(fileId, varId, &type);
     checkStatus(status, "getting variable type");
     return type;
