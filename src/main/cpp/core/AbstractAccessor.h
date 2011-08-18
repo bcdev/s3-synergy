@@ -32,175 +32,177 @@ using std::fill;
 using std::invalid_argument;
 
 template<class T>
-class AbstractAccessor : public virtual Accessor {
+class AbstractAccessor: public virtual Accessor {
 public:
 
-    int8_t getByte(size_t i) const throw (bad_cast, out_of_range) {
-        return boost::numeric_cast<int8_t > (data[at(i)]);
-    }
+	int8_t getByte(size_t i) const throw (bad_cast, out_of_range) {
+		return boost::numeric_cast<int8_t>(data[at(i)]);
+	}
 
-    void setByte(size_t i, int8_t value) throw (bad_cast, out_of_range) {
-        data[at(i)] = boost::numeric_cast<T > (value);
-    }
+	void setByte(size_t i, int8_t value) throw (bad_cast, out_of_range) {
+		data[at(i)] = boost::numeric_cast<T>(value);
+	}
 
-    double getDouble(size_t i) const throw (bad_cast, out_of_range) {
-        return boost::numeric_cast<double > (data[at(i)]);
-    }
+	double getDouble(size_t i) const throw (bad_cast, out_of_range) {
+		return boost::numeric_cast<double>(data[at(i)]);
+	}
 
-    void setDouble(size_t i, double value) throw (bad_cast, out_of_range) {
-        data[at(i)] = boost::numeric_cast<T > (value);
-    }
+	void setDouble(size_t i, double value) throw (bad_cast, out_of_range) {
+		data[at(i)] = boost::numeric_cast<T>(value);
+	}
 
-    float getFloat(size_t i) const throw (bad_cast, out_of_range) {
-        return boost::numeric_cast<float > (data[at(i)]);
-    }
+	float getFloat(size_t i) const throw (bad_cast, out_of_range) {
+		return boost::numeric_cast<float>(data[at(i)]);
+	}
 
-    void setFloat(size_t i, float value) throw (bad_cast, out_of_range) {
-        data[at(i)] = boost::numeric_cast<T > (value);
-    }
+	void setFloat(size_t i, float value) throw (bad_cast, out_of_range) {
+		data[at(i)] = boost::numeric_cast<T>(value);
+	}
 
-    int32_t getInt(size_t i) const throw (bad_cast, out_of_range) {
-        return boost::numeric_cast<int32_t > (data[at(i)]);
-    }
+	int32_t getInt(size_t i) const throw (bad_cast, out_of_range) {
+		return boost::numeric_cast<int32_t>(data[at(i)]);
+	}
 
-    void setInt(size_t i, int32_t value) throw (bad_cast, out_of_range) {
-        data[at(i)] = boost::numeric_cast<T > (value);
-    }
+	void setInt(size_t i, int32_t value) throw (bad_cast, out_of_range) {
+		data[at(i)] = boost::numeric_cast<T>(value);
+	}
 
-    int64_t getLong(size_t i) const throw (bad_cast, out_of_range) {
-        return boost::numeric_cast<int64_t > (data[at(i)]);
-    }
+	int64_t getLong(size_t i) const throw (bad_cast, out_of_range) {
+		return boost::numeric_cast<int64_t>(data[at(i)]);
+	}
 
-    void setLong(size_t i, int64_t value) throw (bad_cast, out_of_range) {
-        data[at(i)] = boost::numeric_cast<T > (value);
-    }
+	void setLong(size_t i, int64_t value) throw (bad_cast, out_of_range) {
+		data[at(i)] = boost::numeric_cast<T>(value);
+	}
 
-    int16_t getShort(size_t i) const throw (bad_cast, out_of_range) {
-        return boost::numeric_cast<int16_t > (data[at(i)]);
-    }
+	int16_t getShort(size_t i) const throw (bad_cast, out_of_range) {
+		return boost::numeric_cast<int16_t>(data[at(i)]);
+	}
 
-    void setShort(size_t i, int16_t value) throw (bad_cast, out_of_range) {
-        data[at(i)] = boost::numeric_cast<int16_t > (value);
-    }
+	void setShort(size_t i, int16_t value) throw (bad_cast, out_of_range) {
+		data[at(i)] = boost::numeric_cast<int16_t>(value);
+	}
 
-    uint8_t getUByte(size_t i) const throw (bad_cast, out_of_range) {
-        return boost::numeric_cast<uint8_t > (data[at(i)]);
-    }
+	uint8_t getUByte(size_t i) const throw (bad_cast, out_of_range) {
+		return boost::numeric_cast<uint8_t>(data[at(i)]);
+	}
 
-    void setUByte(size_t i, uint8_t value) throw (bad_cast, out_of_range) {
-        data[at(i)] = boost::numeric_cast<T > (value);
-    }
+	void setUByte(size_t i, uint8_t value) throw (bad_cast, out_of_range) {
+		data[at(i)] = boost::numeric_cast<T>(value);
+	}
 
-    uint32_t getUInt(size_t i) const throw (bad_cast, out_of_range) {
-        return boost::numeric_cast<uint32_t > (data[at(i)]);
-    }
+	uint32_t getUInt(size_t i) const throw (bad_cast, out_of_range) {
+		return boost::numeric_cast<uint32_t>(data[at(i)]);
+	}
 
-    void setUInt(size_t i, uint32_t value) throw (bad_cast, out_of_range) {
-        data[at(i)] = boost::numeric_cast<T > (value);
-    }
+	void setUInt(size_t i, uint32_t value) throw (bad_cast, out_of_range) {
+		data[at(i)] = boost::numeric_cast<T>(value);
+	}
 
-    uint64_t getULong(size_t i) const throw (bad_cast, out_of_range) {
-        return boost::numeric_cast<uint64_t > (data[at(i)]);
-    }
+	uint64_t getULong(size_t i) const throw (bad_cast, out_of_range) {
+		return boost::numeric_cast<uint64_t>(data[at(i)]);
+	}
 
-    void setULong(size_t i, uint64_t value) throw (bad_cast, out_of_range) {
-        data[at(i)] = boost::numeric_cast<T > (value);
-    }
+	void setULong(size_t i, uint64_t value) throw (bad_cast, out_of_range) {
+		data[at(i)] = boost::numeric_cast<T>(value);
+	}
 
-    uint16_t getUShort(size_t i) const throw (bad_cast, out_of_range) {
-        return boost::numeric_cast<uint16_t > (data[at(i)]);
-    }
+	uint16_t getUShort(size_t i) const throw (bad_cast, out_of_range) {
+		return boost::numeric_cast<uint16_t>(data[at(i)]);
+	}
 
-    void setUShort(size_t i, uint16_t value) throw (bad_cast, out_of_range) {
-        data[at(i)] = boost::numeric_cast<T > (value);
-    }
+	void setUShort(size_t i, uint16_t value) throw (bad_cast, out_of_range) {
+		data[at(i)] = boost::numeric_cast<T>(value);
+	}
 
-    const size_t getSampleCount() const {
-        return data.size();
-    }
+	const size_t getSampleCount() const {
+		return data.size();
+	}
 
-    virtual valarray<int8_t>& getByteData() const throw (bad_cast) {
-        BOOST_THROW_EXCEPTION(bad_cast());
-    }
+	virtual valarray<int8_t>& getByteData() const throw (bad_cast) {
+		BOOST_THROW_EXCEPTION(bad_cast());
+	}
 
-    virtual valarray<double>& getDoubleData() const throw (bad_cast) {
-        BOOST_THROW_EXCEPTION(bad_cast());
-    }
+	virtual valarray<double>& getDoubleData() const throw (bad_cast) {
+		BOOST_THROW_EXCEPTION(bad_cast());
+	}
 
-    virtual valarray<float>& getFloatData() const throw (bad_cast) {
-        BOOST_THROW_EXCEPTION(bad_cast());
-    }
+	virtual valarray<float>& getFloatData() const throw (bad_cast) {
+		BOOST_THROW_EXCEPTION(bad_cast());
+	}
 
-    virtual valarray<int32_t>& getIntData() const throw (bad_cast) {
-        BOOST_THROW_EXCEPTION(bad_cast());
-    }
+	virtual valarray<int32_t>& getIntData() const throw (bad_cast) {
+		BOOST_THROW_EXCEPTION(bad_cast());
+	}
 
-    virtual valarray<int64_t>& getLongData() const throw (bad_cast) {
-        BOOST_THROW_EXCEPTION(bad_cast());
-    }
+	virtual valarray<int64_t>& getLongData() const throw (bad_cast) {
+		BOOST_THROW_EXCEPTION(bad_cast());
+	}
 
-    virtual valarray<int16_t>& getShortData() const throw (bad_cast) {
-        BOOST_THROW_EXCEPTION(bad_cast());
-    }
+	virtual valarray<int16_t>& getShortData() const throw (bad_cast) {
+		BOOST_THROW_EXCEPTION(bad_cast());
+	}
 
-    virtual valarray<uint8_t>& getUByteData() const throw (bad_cast) {
-        BOOST_THROW_EXCEPTION(bad_cast());
-    }
+	virtual valarray<uint8_t>& getUByteData() const throw (bad_cast) {
+		BOOST_THROW_EXCEPTION(bad_cast());
+	}
 
-    virtual valarray<uint32_t>& getUIntData() const throw (bad_cast) {
-        BOOST_THROW_EXCEPTION(bad_cast());
-    }
+	virtual valarray<uint32_t>& getUIntData() const throw (bad_cast) {
+		BOOST_THROW_EXCEPTION(bad_cast());
+	}
 
-    virtual valarray<uint64_t>& getULongData() const throw (bad_cast) {
-        BOOST_THROW_EXCEPTION(bad_cast());
-    }
+	virtual valarray<uint64_t>& getULongData() const throw (bad_cast) {
+		BOOST_THROW_EXCEPTION(bad_cast());
+	}
 
-    virtual valarray<uint16_t>& getUShortData() const throw (bad_cast) {
-        BOOST_THROW_EXCEPTION(bad_cast());
-    }
+	virtual valarray<uint16_t>& getUShortData() const throw (bad_cast) {
+		BOOST_THROW_EXCEPTION(bad_cast());
+	}
 
-    void* getUntypedData() const {
-        return (void*) &data[0];
-    }
+	void* getUntypedData() const {
+		return (void*) &data[0];
+	}
 
-    void shift(size_t n, size_t strideK, size_t strideL) {
-        if (n * strideL > strideK) {
-            BOOST_THROW_EXCEPTION(invalid_argument("n * strideL > strideK"));
-        }
-        if (strideK % strideL != 0) {
-            BOOST_THROW_EXCEPTION(invalid_argument("strideK % strideL != 0"));
-        }
-        if (data.size() % strideK != 0) {
-            BOOST_THROW_EXCEPTION(invalid_argument("data.size() % strideK != 0"));
-        }
-        for (size_t k = 0; k < data.size(); k += strideK) {
-            copy(&data[k + n * strideL], &data[k + strideK], &data[k]);
-            fill(&data[k + strideK - n * strideL], &data[k + strideK], T(0));
-        }
-    }
+	void shift(size_t n, size_t strideK, size_t strideL) {
+		if (n * strideL > strideK) {
+			BOOST_THROW_EXCEPTION(invalid_argument("n * strideL > strideK"));
+		}
+		if (strideK % strideL != 0) {
+			BOOST_THROW_EXCEPTION(invalid_argument("strideK % strideL != 0"));
+		}
+		if (data.size() % strideK != 0) {
+			BOOST_THROW_EXCEPTION(
+					invalid_argument("data.size() % strideK != 0"));
+		}
+		for (size_t k = 0; k < data.size(); k += strideK) {
+			copy(&data[k + n * strideL], &data[k + strideK], &data[k]);
+			fill(&data[k + strideK - n * strideL], &data[k + strideK], T(0));
+		}
+	}
 
 protected:
 
-    AbstractAccessor(size_t n) : Accessor(), data(n) {
-    }
+	AbstractAccessor(size_t n) :
+			Accessor(), data(n) {
+	}
 
-    virtual ~AbstractAccessor() {
-    }
+	virtual ~AbstractAccessor() {
+	}
 
-    valarray<T>& getTypedData() const {
-        return const_cast<valarray<T>&> (data);
-    }
+	valarray<T>& getTypedData() const {
+		return const_cast<valarray<T>&>(data);
+	}
 
 private:
 
-    size_t at(size_t i) const {
-        if (i < data.size()) {
-            return i;
-        }
-        BOOST_THROW_EXCEPTION(out_of_range("index i is out of range."));
-    }
+	size_t at(size_t i) const {
+		if (i < data.size()) {
+			return i;
+		}
+		BOOST_THROW_EXCEPTION(out_of_range("index i is out of range."));
+	}
 
-    valarray<T> data;
+	valarray<T> data;
 };
 
 #endif	/* ABSTRACTACCESSOR_H */

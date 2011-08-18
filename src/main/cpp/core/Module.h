@@ -24,13 +24,14 @@
 #include <exception>
 
 #include "Context.h"
+#include "Identifiable.h"
 
 using std::exception;
 
 /**
  * Interface representing a processing module.
  */
-class Module {
+class Module : public Identifiable {
 public:
 
     /**
@@ -38,12 +39,6 @@ public:
      */
     virtual ~Module() {
     };
-
-    /**
-     * Returns the module ID.
-     * @return the module ID.
-     */
-    virtual const string& getId() const = 0;
 
     /**
      * Returns the module version.

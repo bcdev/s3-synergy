@@ -21,12 +21,12 @@
 #ifndef TESTOBJECT_H
 #define	TESTOBJECT_H
 
-#include "../../../main/cpp/core/Object.h"
+#include "../../../main/cpp/core/Identifiable.h"
 
-class TestObject : public Object {
+class TestObject : public Identifiable {
 public:
 
-    TestObject(const string& objectId) : Object(), id(objectId) {
+    TestObject(const string& objectId) : Identifiable(), id(objectId) {
     }
 
     virtual ~TestObject() {

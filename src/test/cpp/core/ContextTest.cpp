@@ -63,7 +63,7 @@ void ContextTest::testAddModule() {
 }
 
 void ContextTest::testAddObject() {
-    const auto_ptr<Object> o(new TestObject("O"));
+    const auto_ptr<Identifiable> o(new TestObject("O"));
     CPPUNIT_ASSERT(context->hasObject(o->getId()) == false);
     context->addObject(*o);
     CPPUNIT_ASSERT(context->hasObject(o->getId()));

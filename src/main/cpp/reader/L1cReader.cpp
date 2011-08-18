@@ -76,10 +76,10 @@ void L1cReader::start(Context& context) {
 							const int fileId = getNcFile(ncFileBasename);
 							const int varId = NetCDF::getVariableId(fileId,
 									ncVarName.c_str());
-							const int dimCount = NetCDF::getDimCountForVariable(
+							const int dimCount = NetCDF::getDimensionCount(
 									fileId, varId);
 							const valarray<int> dimIds =
-									NetCDF::getDimIdsForVariable(fileId, varId);
+									NetCDF::getDimensionIds(fileId, varId);
 
 							size_t camCount;
 							size_t rowCount;
@@ -87,42 +87,42 @@ void L1cReader::start(Context& context) {
 
 							switch (dimCount) {
 							case 3:
-								camCount = NetCDF::getDimLength(fileId,
+								camCount = NetCDF::getDimensionLength(fileId,
 										dimIds[0]);
-								rowCount = NetCDF::getDimLength(fileId,
+								rowCount = NetCDF::getDimensionLength(fileId,
 										dimIds[1]);
-								colCount = NetCDF::getDimLength(fileId,
+								colCount = NetCDF::getDimensionLength(fileId,
 										dimIds[2]);
 								variableDescriptor->addDimension(
-										NetCDF::getDimName(fileId, dimIds[0])).setSize(
+										NetCDF::getDimensionName(fileId, dimIds[0])).setSize(
 										camCount);
 								variableDescriptor->addDimension(
-										NetCDF::getDimName(fileId, dimIds[1])).setSize(
+										NetCDF::getDimensionName(fileId, dimIds[1])).setSize(
 										rowCount);
 								variableDescriptor->addDimension(
-										NetCDF::getDimName(fileId, dimIds[2])).setSize(
+										NetCDF::getDimensionName(fileId, dimIds[2])).setSize(
 										colCount);
 								break;
 							case 2:
 								camCount = 1;
-								rowCount = NetCDF::getDimLength(fileId,
+								rowCount = NetCDF::getDimensionLength(fileId,
 										dimIds[0]);
-								colCount = NetCDF::getDimLength(fileId,
+								colCount = NetCDF::getDimensionLength(fileId,
 										dimIds[1]);
 								variableDescriptor->addDimension(
-										NetCDF::getDimName(fileId, dimIds[0])).setSize(
+										NetCDF::getDimensionName(fileId, dimIds[0])).setSize(
 										rowCount);
 								variableDescriptor->addDimension(
-										NetCDF::getDimName(fileId, dimIds[1])).setSize(
+										NetCDF::getDimensionName(fileId, dimIds[1])).setSize(
 										colCount);
 								break;
 							case 1:
 								camCount = 1;
 								rowCount = 1;
-								colCount = NetCDF::getDimLength(fileId,
+								colCount = NetCDF::getDimensionLength(fileId,
 										dimIds[0]);
 								variableDescriptor->addDimension(
-										NetCDF::getDimName(fileId, dimIds[0])).setSize(
+										NetCDF::getDimensionName(fileId, dimIds[0])).setSize(
 										colCount);
 								break;
 							default:
@@ -238,7 +238,7 @@ int L1cReader::getNcFile(const string& ncFileBasename) {
 		return ncFileIdMap[ncFileBasename];
 	}
 	const path ncFilePath = sourceDirPath / (ncFileBasename + ".nc");
-	const int fileId = NetCDF::openFile(ncFilePath);
+	const int fileId = NetCDF::openFile(ncFilePath.string());
 	ncFileIdMap[ncFileBasename] = fileId;
 
 	return fileId;

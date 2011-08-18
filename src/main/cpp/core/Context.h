@@ -28,11 +28,11 @@
 
 #include "Constants.h"
 #include "Dictionary.h"
+#include "Identifiable.h"
 #include "JobOrder.h"
 #include "ErrorHandler.h"
 #include "Logging.h"
 #include "Segment.h"
-#include "Object.h"
 
 using std::exception;
 using std::map;
@@ -67,7 +67,7 @@ public:
      * Adds an object to the context.
      * @param object The object.
      */
-    void addObject(Object& object) throw (logic_error);
+    void addObject(Identifiable& object) throw (logic_error);
 
     /**
      * Adds a segment to the context.
@@ -126,7 +126,7 @@ public:
      * @param id The object ID.
      * @return the object associated with {@code id}.
      */
-    Object& getObject(const string& id) const;
+    Identifiable& getObject(const string& id) const;
 
     /**
      * Returns the segment associated with the supplied segment ID.
@@ -268,7 +268,7 @@ private:
     ErrorHandler* errorHandler;
 
     vector<Module*> moduleList;
-    map<string, Object*> objectMap;
+    map<string, Identifiable*> objectMap;
     map<string, Segment*> segmentMap;
     vector<Segment*> segmentList;
 

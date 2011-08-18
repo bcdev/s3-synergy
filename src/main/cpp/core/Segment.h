@@ -26,6 +26,7 @@
 
 #include "Accessor.h"
 #include "Grid.h"
+#include "Identifiable.h"
 
 using std::logic_error;
 using std::string;
@@ -33,7 +34,7 @@ using std::string;
 /**
  * A container for variables, which exhibit the same Grid.
  */
-class Segment {
+class Segment : public Identifiable {
 public:
 
     /**

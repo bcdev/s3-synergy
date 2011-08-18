@@ -93,7 +93,7 @@ void SynL2Writer::start(Context& context) {
     pair<string, int> fileIdPair;
 
     foreach(fileIdPair, ncFileIdMap) {
-        NetCDF::setDefinitionPhaseFinished(fileIdPair.second);
+        NetCDF::terminateDefinition(fileIdPair.second);
     }
 }
 
@@ -123,7 +123,7 @@ void SynL2Writer::createNcVar(
             }
         }
         const path ncFilePath = targetDirPath / (variableDescriptor.getNcFileBasename() + ".nc");
-        const int fileId = NetCDF::createFile(ncFilePath);
+        const int fileId = NetCDF::createFile(ncFilePath.string());
 
         foreach(const Attribute* attribute, productDescriptor.getAttributes()) {
             NetCDF::addAttribute(fileId, NC_GLOBAL, *attribute);

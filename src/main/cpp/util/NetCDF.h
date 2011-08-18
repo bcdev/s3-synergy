@@ -27,7 +27,6 @@
 #include <string>
 #include <valarray>
 
-#include "../core/Boost.h"
 #include "../core/Dictionary.h"
 
 using std::string;
@@ -41,27 +40,29 @@ using std::valarray;
 class NetCDF {
 public:
 
-    static int openFile(const path& filePath);
+    ~NetCDF();
+
+    static int openFile(const string& path);
 
     static int getVariableType(int fileId, int varId);
 
     static int getVariableId(int fileId, const string& varName);
 
-    static int getDimCountForVariable(int fileId, int varId);
+    static int getDimensionCount(int fileId, int varId);
 
-    static valarray<int> getDimIdsForVariable(int fileId, int varId);
+    static valarray<int> getDimensionIds(int fileId, int varId);
 
-    static size_t getDimLength(int fileId, int dimId);
+    static size_t getDimensionLength(int fileId, int dimId);
 
-    static string getDimName(int fileId, int dimId);
+    static string getDimensionName(int fileId, int dimId);
 
-    static void getData(int fileId, int varId, const valarray<size_t>& startVector,
-            const valarray<size_t>& sizeVector, void* dataArray);
+    static void getData(int fileId, int varId, const valarray<size_t>& origin,
+            const valarray<size_t>& shape, void* dataArray);
 
-    static void putData(int fileId, int varId, const valarray<size_t>& startVector,
-            const valarray<size_t>& sizeVector, const void* dataArray);
+    static void putData(int fileId, int varId, const valarray<size_t>& origin,
+            const valarray<size_t>& shape, const void* dataArray);
 
-    static int createFile(const path& filePath);
+    static int createFile(const string& path);
 
     static int defineDimension(int fileId, const string& dimName, size_t size);
 
@@ -69,17 +70,16 @@ public:
 
     static void addAttribute(int fileId, int varId, const Attribute& attribute);
 
-    static void setDefinitionPhaseFinished(int ncId);
+    static void terminateDefinition(int ncId);
 
     static void closeFile(int ncId);
 
 private:
+    NetCDF();
 
     template<class T>
     static void putAttribute(int fileId, int varId, const Attribute& attribute, const T& t);
-
     static void putAttributeString(int fileId, int varId, const Attribute& attribute);
-
     static void checkStatus(int status, const string& action);
 
 };

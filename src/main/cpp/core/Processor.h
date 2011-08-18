@@ -21,10 +21,8 @@ public:
     ~Processor();
 
     void process(Context& context);
-    bool isCompleted() const;
 
 private:
-    void setCompleted(bool completed);
     ModuleException wrapException(exception& e, const string& moduleName, const string& sourceMethod) const;
 
     bool completed;

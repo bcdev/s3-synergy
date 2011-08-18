@@ -59,7 +59,7 @@ void Context::removeModule(Module& module) {
     }
 }
 
-void Context::addObject(Object& object) throw (logic_error) {
+void Context::addObject(Identifiable& object) throw (logic_error) {
 	if (hasObject(object.getId())) {
 		BOOST_THROW_EXCEPTION(
 				invalid_argument("An object with ID '" + object.getId() + "' already exists in the context."));
@@ -108,7 +108,7 @@ const vector<Module*> Context::getModules() const {
 	return moduleList;
 }
 
-Object& Context::getObject(const string& id) const {
+Identifiable& Context::getObject(const string& id) const {
 	if (contains(objectMap, id)) {
 		return *objectMap.at(id);
 	}
