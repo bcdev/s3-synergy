@@ -142,7 +142,7 @@ vector<ProcessingParameter> IpfConfiguration::getDynamicProcessingParameters() c
 }
 
 string IpfConfiguration::getDynamicProcessingParameter(const string& name) const {
-    for (int i = 0; i < processingParameters.size(); i++) {
+    for (size_t i = 0; i < processingParameters.size(); i++) {
     	if (processingParameters[i].getName().compare(name) == 0) {
     		return processingParameters[i].getValue();
     	}

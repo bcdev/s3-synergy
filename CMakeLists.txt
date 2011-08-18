@@ -63,14 +63,14 @@ target_link_libraries(sy_unt_gen
 )
 set_property(TARGET sy_unt_gen PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_unt_rea
+add_executable(sy_unt_sre
     src/test/cpp/SyUntSreRunner.cpp
 	${CORE_MAIN_SOURCES}
 	${UTIL_MAIN_SOURCES}
 	${READER_MAIN_SOURCES}
 	${READER_TEST_SOURCES}
 )
-target_link_libraries(sy_unt_rea
+target_link_libraries(sy_unt_sre
 	cppunit
 	netcdf
 	Xfdu
@@ -79,7 +79,7 @@ target_link_libraries(sy_unt_rea
 	boost_system-mt
 	boost_filesystem-mt
 )
-set_property(TARGET sy_unt_rea PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+set_property(TARGET sy_unt_sre PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 
 
 ##

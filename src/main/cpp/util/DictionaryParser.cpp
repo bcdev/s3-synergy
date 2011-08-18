@@ -148,7 +148,7 @@ vector<string> DictionaryParser::getDirectoryNames(const string& directory) cons
     if (is_directory(directory)) {
         for (directory_iterator iter(directory); iter != directory_iterator(); ++iter) {
             if (is_directory(iter->path())) {
-                directoryNames.push_back(iter->path().filename());
+                directoryNames.push_back(iter->path().filename().c_str());
             }
         }
     }
@@ -160,7 +160,7 @@ vector<string> DictionaryParser::getFileNames(const string& directory) const {
     if (is_directory(directory)) {
         for (directory_iterator iter(directory); iter != directory_iterator(); ++iter) {
             if (!is_directory(iter->path())) {
-                fileNames.push_back(iter->path().filename());
+                fileNames.push_back(iter->path().filename().c_str());
             }
         }
     }

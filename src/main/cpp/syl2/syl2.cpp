@@ -2,11 +2,9 @@
 #include <unistd.h>
 #include <vector>
 
-#include "../util/ErrorHandler.h"
-#include "../core/Dictionary.h"
+#include "../core/Processor.h"
 #include "../util/JobOrderParser.h"
 #include "../util/Logger.h"
-#include "../core/Processor.h"
 #include "../reader/L1cReader.h"
 #include "../modules/SynL2Writer.h"
 #include "../modules/TestModule.h"

@@ -27,8 +27,10 @@
 #include <string>
 #include <valarray>
 
+#include "../core/Boost.h"
 #include "../core/Dictionary.h"
 
+using std::string;
 using std::runtime_error;
 using std::valarray;
 

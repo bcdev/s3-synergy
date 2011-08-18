@@ -20,13 +20,11 @@
 
 #include <iostream>
 
-#include "../core/Boost.h"
-#include "../core/Context.h"
-#include "../core/ExitCode.h"
-#include "../core/JobOrder.h"
+#include "Boost.h"
+#include "Context.h"
+#include "ExitCode.h"
 
 #include "ErrorHandler.h"
-#include "Logger.h"
 
 ErrorHandler::ErrorHandler() {
 }

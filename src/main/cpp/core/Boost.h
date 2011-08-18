@@ -21,10 +21,6 @@
 #ifndef BOOST_H
 #define	BOOST_H
 
-#ifndef BOOST_FILESYSTEM_VERSION
-#define BOOST_FILESYSTEM_VERSION 2
-#endif
-
 #include <boost/algorithm/string.hpp>
 #include <boost/exception/all.hpp>
 #include <boost/filesystem.hpp>

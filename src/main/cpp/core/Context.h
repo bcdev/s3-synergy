@@ -29,7 +29,7 @@
 #include "Constants.h"
 #include "Dictionary.h"
 #include "JobOrder.h"
-#include "../util/ErrorHandler.h"
+#include "ErrorHandler.h"
 #include "Logging.h"
 #include "Segment.h"
 #include "Object.h"
