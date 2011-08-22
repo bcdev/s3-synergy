@@ -5,33 +5,106 @@
  *      Author: ralf
  */
 
+#include <functional>
+#include <numeric>
+
+#include "../core/Constants.h"
 #include "NetCDF.h"
 #include "LookupTableReader.h"
 
-LookupTableReader::LookupTableReader() {
+using std::accumulate;
+using std::multiplies;
+
+LookupTableReader::LookupTableReader(const string& path) {
+	fileId = NetCDF::openFile(path);
 }
 
 LookupTableReader::~LookupTableReader() {
+	NetCDF::closeFile(fileId);
 }
 
-LookupTable<float>* LookupTableReader::readFloat(const string& path,
-		const string& varName) const {
-	const int fileId = NetCDF::openFile(path);
+template <class W>
+LookupTable<W>* LookupTableReader::readLookupTable(const string& varName) const {
 	const int varId = NetCDF::getVariableId(fileId, varName);
-	const valarray<int> dimIds = NetCDF::getDimensionIds(fileId, varId);
+	const valarray<int> dimensionIds = NetCDF::getDimensionIds(fileId, varId);
+	const size_t dimensionCount = dimensionIds.size();
 
-	valarray<string> dimensionNames(dimIds.size());
-	valarray<size_t> origin(dimIds.size());
-	valarray<size_t> shape(dimIds.size());
-	size_t valueCount = 1;
-	for (size_t i = 0; i < dimIds.size(); i++) {
-		dimensionNames[i] = NetCDF::getDimensionName(fileId, dimIds[i]);
-		shape[i] = NetCDF::getDimensionLength(fileId, dimIds[i]);
-		valueCount *= shape[i];
+	valarray<string> dimensionNames(dimensionCount);
+	valarray<size_t> dimensionLengths(dimensionCount);
+	vector<valarray<W> > dimensions(dimensionCount);
+
+	for (size_t i = 0; i < dimensionCount; i++) {
+		dimensionNames[i] = NetCDF::getDimensionName(fileId, dimensionIds[i]);
+		dimensionLengths[i] = NetCDF::getDimensionLength(fileId,
+				dimensionIds[i]);
+		dimensions.push_back(valarray<W>(dimensionLengths[i]));
 	}
-	valarray<float> values(valueCount);
-	NetCDF::getData(fileId, varId, origin, shape, &values[0]);
+	for (size_t i = 0; i < dimensionCount; i++) {
+		const int varId = NetCDF::getVariableId(fileId, dimensionNames[i]);
+		NetCDF::getDataFloat(fileId, varId, valarray<size_t>(1),
+				valarray<size_t>(dimensions[i].size(), 1), &dimensions[i][0]);
+	}
 
+	const size_t valueCount = accumulate(&dimensionLengths[0],
+			&dimensionLengths[dimensionCount], size_t(1), multiplies<size_t>());
+	const int varType = NetCDF::getVariableType(fileId, varId);
 
-	return 0;
+	switch (varType) {
+	case Constants::TYPE_BYTE: {
+		valarray<int8_t> values(valueCount);
+		NetCDF::getData(fileId, varId, valarray<size_t>(dimensionCount),
+				dimensionLengths, &values[0]);
+		return LookupTable<W>::newLookupTable(varName, dimensions, values);
+	}
+	case Constants::TYPE_UBYTE: {
+		valarray<uint8_t> values(valueCount);
+		NetCDF::getData(fileId, varId, valarray<size_t>(dimensionCount),
+				dimensionLengths, &values[0]);
+		return LookupTable<W>::newLookupTable(varName, dimensions, values);
+	}
+	case Constants::TYPE_SHORT: {
+		valarray<int16_t> values(valueCount);
+		NetCDF::getData(fileId, varId, valarray<size_t>(dimensionCount),
+				dimensionLengths, &values[0]);
+		return LookupTable<W>::newLookupTable(varName, dimensions, values);
+	}
+	case Constants::TYPE_USHORT: {
+		valarray<uint16_t> values(valueCount);
+		NetCDF::getData(fileId, varId, valarray<size_t>(dimensionCount),
+				dimensionLengths, &values[0]);
+		return LookupTable<W>::newLookupTable(varName, dimensions, values);
+	}
+	case Constants::TYPE_INT: {
+		valarray<int32_t> values(valueCount);
+		NetCDF::getData(fileId, varId, valarray<size_t>(dimensionCount),
+				dimensionLengths, &values[0]);
+		return LookupTable<W>::newLookupTable(varName, dimensions, values);
+	}
+	case Constants::TYPE_UINT: {
+		valarray<uint32_t> values(valueCount);
+		NetCDF::getData(fileId, varId, valarray<size_t>(dimensionCount),
+				dimensionLengths, &values[0]);
+		return LookupTable<W>::newLookupTable(varName, dimensions, values);
+	}
+	case Constants::TYPE_UINT: {
+		valarray<uint32_t> values(valueCount);
+		NetCDF::getData(fileId, varId, valarray<size_t>(dimensionCount),
+				dimensionLengths, &values[0]);
+		return LookupTable<W>::newLookupTable(varName, dimensions, values);
+	}
+	case Constants::TYPE_FLOAT: {
+		valarray<float> values(valueCount);
+		NetCDF::getData(fileId, varId, valarray<size_t>(dimensionCount),
+				dimensionLengths, &values[0]);
+		return LookupTable<W>::newLookupTable(varName, dimensions, values);
+	}
+	case Constants::TYPE_DOUBLE: {
+		valarray<double> values(valueCount);
+		NetCDF::getData(fileId, varId, valarray<size_t>(dimensionCount),
+				dimensionLengths, &values[0]);
+		return LookupTable<W>::newLookupTable(varName, dimensions, values);
+	}
+	default:
+		return 0;
+	}
 }

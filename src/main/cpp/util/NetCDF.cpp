@@ -18,6 +18,9 @@
  * Created on January 13, 2011, 5:41 PM
  */
 
+#include <netcdf.h>
+#include <sstream>
+
 #include "NetCDF.h"
 
 NetCDF::NetCDF() {
@@ -80,6 +83,13 @@ void NetCDF::getData(int fileId, int varId, const valarray<size_t>& origin,
         const valarray<size_t>& shape, void* dataArray) {
     const valarray<ptrdiff_t> strides(1, origin.size());
     const int status = nc_get_vars(fileId, varId, &origin[0], &shape[0], &strides[0], dataArray);
+    checkStatus(status, "reading data from file");
+}
+
+void NetCDF::getDataFloat(int fileId, int varId, const valarray<size_t>& origin,
+        const valarray<size_t>& shape, float* dataArray) {
+    const valarray<ptrdiff_t> strides(1, origin.size());
+    const int status = nc_get_vars_float(fileId, varId, &origin[0], &shape[0], &strides[0], dataArray);
     checkStatus(status, "reading data from file");
 }
 

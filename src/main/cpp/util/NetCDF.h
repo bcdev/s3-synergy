@@ -21,8 +21,6 @@
 #ifndef NETCDF_H
 #define	NETCDF_H
 
-#include <netcdf.h>
-#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <valarray>
@@ -58,6 +56,9 @@ public:
 
     static void getData(int fileId, int varId, const valarray<size_t>& origin,
             const valarray<size_t>& shape, void* dataArray);
+
+    static void getDataFloat(int fileId, int varId, const valarray<size_t>& origin,
+            const valarray<size_t>& shape, float* dataArray);
 
     static void putData(int fileId, int varId, const valarray<size_t>& origin,
             const valarray<size_t>& shape, const void* dataArray);

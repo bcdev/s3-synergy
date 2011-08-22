@@ -23,79 +23,85 @@
 
 #include <algorithm>
 #include <cassert>
-#include <iostream>
 #include <valarray>
+#include <vector>
 
+#include "Boost.h"
 #include "Identifiable.h"
 
-using std::copy;
-using std::gslice;
-using std::istream;
-using std::ostream;
-using std::reverse;
-using std::reverse_copy;
 using std::valarray;
+using std::vector;
 
-template<class Wp>
+template<class T, class W>
+class LookupTableImpl;
+
+template<class W>
 class LookupTable: public Identifiable {
 public:
-	typedef valarray<Wp> Axis;
+	typedef valarray<W> Dimension;
 
-	LookupTable(const string& id);
-	LookupTable(const string& id, const Axis axes[], size_t numAxes);
-	LookupTable(const string& id, const Axis axes[], size_t numAxes,
-			const Wp values[]);
-	LookupTable(const string& id, const Axis* axes[], size_t numAxes,
-			const Wp values[]);
-	virtual ~LookupTable();
+	virtual ~LookupTable() {
+	}
 
-	Wp operator()(const Wp coordinates[]) const;
+	virtual W operator()(const W coordinates[]) const = 0;
+
+	template<class T>
+	static LookupTable<W>* newLookupTable(const string& id,
+			const vector<Dimension>& dims, const valarray<T>& values,
+			W scaleFactor = W(1), W addOffset = W(0)) {
+		return new LookupTableImpl<T, W>(id, &dims[0], dims.size(), &values[0],
+				scaleFactor, addOffset);
+	}
+};
+
+template<class T, class W>
+class LookupTableImpl: public LookupTable<W> {
+public:
+	typedef valarray<W> Dimension;
+
+	LookupTableImpl(const string& id, W scaleFactor = W(1), W addOffset = W(0));
+	LookupTableImpl(const string& id, const Dimension dims[], size_t dimCount,
+			W scaleFactor = W(1), W addOffset = W(0));
+	LookupTableImpl(const string& id, const Dimension dims[], size_t dimCount,
+			const T values[], W scaleFactor = W(1), W addOffset = W(0));
+	LookupTableImpl(const string& id, const Dimension* dims[], size_t dimCount,
+			const T values[], W scaleFactor = W(1), W addOffset = W(0));
+	virtual ~LookupTableImpl();
+
+	W operator()(const W coordinates[]) const;
 
 	const string& getId() const;
 
-	Wp maxCoordinate(size_t axisIndex) const;
-	Wp minCoordinate(size_t axisIndex) const;
-	bool isValidCoordinate(size_t axisIndex, Wp coordinate) const;
+	W maxCoordinate(size_t dimIndex) const;
+	W minCoordinate(size_t dimIndex) const;
+	bool isValidCoordinate(size_t dimIndex, W coordinate) const;
 
-	void degrade(size_t axisIndex, Wp coordinate);
-
-	void reset(const Axis axes[], size_t numAxes);
-	void reset(const Axis axes[], size_t numAxes, const Wp values[]);
-	void reset(const Axis* axes[], size_t numAxes, const Wp values[]);
-
-	istream& read(istream& is);
-	ostream& write(ostream& os) const;
-	istream& readValues(istream& is);
-	ostream& writeValues(ostream& os) const;
+	void reset(const Dimension dims[], size_t dimCount);
+	void reset(const Dimension dims[], size_t dimCount, const T values[]);
+	void reset(const Dimension* dims[], size_t dimCount, const T values[]);
 
 private:
 	void updateSizesAndStrides();
-	void getVertexes(const Wp coordinates[], size_t vertexes[]) const;
-	void interpolate(Wp values[], const Wp values2[], size_t numValues,
-			Wp interpolationFactor) const;
+	void getVertexes(const W coordinates[], size_t vertexes[]) const;
+	void interpolate(W values[], const W values2[], size_t numValues,
+			W interpolationFactor) const;
 
-	Wp interpolationFactor(size_t axisIndex, Wp coordinate,
-			size_t vertex) const;
+	W interpolationFactor(size_t dimIndex, W coordinate, size_t vertex) const;
 
 	size_t valueIndex(const size_t vertexes[]) const;
-	size_t vertex(size_t axisIndex, Wp coordinate) const;
+	size_t vertex(size_t dimIndex, W coordinate) const;
 
-	static size_t numValues(const size_t sizes[], size_t numAxes);
-	static size_t numValues(const Axis axes[], size_t numAxes);
-	static size_t numValues(const Axis* axes[], size_t numAxes);
-	static bool isBigEndian();
-
-	template<class T>
-	static istream& read(istream& is, T* first, size_t n);
-
-	template<class T>
-	static ostream& write(ostream& is, const T* first, size_t n);
+	static size_t valueCount(const size_t sizes[], size_t dimCount);
+	static size_t valueCount(const Dimension dims[], size_t dimCount);
+	static size_t valueCount(const Dimension* dims[], size_t dimCount);
 
 	const string id;
+	const W scaleFactor;
+	const W addOffset;
 
-	valarray<Axis> x;
-	// coordinate axes = vertex coordinates
-	valarray<Wp> y;
+	valarray<Dimension> x;
+	// coordinate dimensions = vertex coordinates
+	valarray<T> y;
 	// tabulated values
 
 	valarray<size_t> sizes;
@@ -106,206 +112,134 @@ private:
 	// table dimension = number of coordinate axes
 };
 
-template<class Wp>
-LookupTable<Wp>::LookupTable(const string& id) :
-		id(id), x(), y(), sizes(), strides(), indexes(), n(0) {
+template<class T, class W>
+LookupTableImpl<T, W>::LookupTableImpl(const string& id, W scaleFactor,
+		W addOffset) :
+		id(id), scaleFactor(scaleFactor), addOffset(addOffset), x(), y(), sizes(), strides(), indexes(), n(
+				0) {
 }
 
-template<class Wp>
-LookupTable<Wp>::LookupTable(const string& id, const Axis axes[],
-		size_t numAxes) :
-		id(id), x(), y(), sizes(), strides(), indexes(), n(0) {
-	reset(axes, numAxes);
+template<class T, class W>
+LookupTableImpl<T, W>::LookupTableImpl(const string& id, const Dimension dims[],
+		size_t dimCount, W scaleFactor, W addOffset) :
+		id(id), scaleFactor(scaleFactor), addOffset(addOffset), x(), y(), sizes(), strides(), indexes(), n(
+				0) {
+	reset(dims, dimCount);
 }
 
-template<class Wp>
-LookupTable<Wp>::LookupTable(const string& id, const Axis axes[],
-		size_t numAxes, const Wp values[]) :
-		id(id), x(), y(), sizes(), strides(), indexes(), n(0) {
-	reset(axes, numAxes, values);
+template<class T, class W>
+LookupTableImpl<T, W>::LookupTableImpl(const string& id, const Dimension dims[],
+		size_t dimCount, const T values[], W scaleFactor, W addOffset) :
+		id(id), scaleFactor(scaleFactor), addOffset(addOffset), x(), y(), sizes(), strides(), indexes(), n(
+				0) {
+	reset(dims, dimCount, values);
 }
 
-template<class Wp>
-LookupTable<Wp>::LookupTable(const string& id, const Axis* axes[],
-		size_t numAxes, const Wp values[]) :
-		id(id), x(), y(), sizes(), strides(), indexes(), n(0) {
-	reset(axes, numAxes, values);
+template<class T, class W>
+LookupTableImpl<T, W>::LookupTableImpl(const string& id,
+		const Dimension* dims[], size_t dimCount, const T values[],
+		W scaleFactor, W addOffset) :
+		id(id), scaleFactor(scaleFactor), addOffset(addOffset), x(), y(), sizes(), strides(), indexes(), n(
+				0) {
+	reset(dims, dimCount, values);
 }
 
-template<class Wp>
-LookupTable<Wp>::~LookupTable() {
+template<class T, class W>
+LookupTableImpl<T, W>::~LookupTableImpl() {
 }
 
-template<class Wp>
-Wp LookupTable<Wp>::operator()(const Wp coordinates[]) const {
-	using std::valarray;
-
+template<class T, class W>
+W LookupTableImpl<T, W>::operator()(const W coordinates[]) const {
 	valarray<size_t> v(n);
 	getVertexes(coordinates, &v[0]);
-
-	valarray<Wp> values = y[indexes + valueIndex(&v[0])];
-	// extract the y-values at the vertexes of the smallest n-cube
-	// containing the interpolation point
-	for (size_t i = 0, j = values.size(); j >>= 1 != 0; ++i)
+	const size_t origin = valueIndex(&v[0]);
+	valarray<W> values(indexes.size());
+	for (size_t i = 0; i < indexes.size(); ++i) {
+		values[i] = boost::numeric_cast<W>(y[indexes[i] + origin]) * scaleFactor
+				+ addOffset;
+	}
+	// extract the y-values at the vertexes of the smallest n-cube,
+	// which contains the interpolation point
+	for (size_t i = 0, j = indexes.size(); j >>= 1 != 0; ++i) {
 		interpolate(&values[0], &values[j], j,
 				interpolationFactor(i, coordinates[i], v[i]));
+	}
 
 	return values[0];
 }
 
-template<class Wp>
-const string& LookupTable<Wp>::getId() const {
+template<class T, class W>
+const string& LookupTableImpl<T, W>::getId() const {
 	return id;
 }
 
-template<class Wp>
-inline Wp LookupTable<Wp>::maxCoordinate(size_t axisIndex) const {
-	assert(axisIndex < n and sizes[axisIndex] > 0);
-	return x[axisIndex][sizes[axisIndex] - 1];
+template<class T, class W>
+inline W LookupTableImpl<T, W>::maxCoordinate(size_t dimIndex) const {
+	assert(dimIndex < n and sizes[dimIndex] > 0);
+	return x[dimIndex][sizes[dimIndex] - 1];
 }
 
-template<class Wp>
-inline Wp LookupTable<Wp>::minCoordinate(size_t axisIndex) const {
-	assert(axisIndex < n and sizes[axisIndex] > 0);
-	return x[axisIndex][0];
+template<class T, class W>
+inline W LookupTableImpl<T, W>::minCoordinate(size_t dimIndex) const {
+	assert(dimIndex < n and sizes[dimIndex] > 0);
+	return x[dimIndex][0];
 }
 
-template<class Wp>
-bool LookupTable<Wp>::isValidCoordinate(size_t axisIndex, Wp coordinate) const {
-	return coordinate >= minCoordinate(axisIndex)
-			&& coordinate <= maxCoordinate(axisIndex);
+template<class T, class W>
+bool LookupTableImpl<T, W>::isValidCoordinate(size_t dimIndex,
+		W coordinate) const {
+	return coordinate >= minCoordinate(dimIndex)
+			&& coordinate <= maxCoordinate(dimIndex);
 }
 
-template<class Wp>
-void LookupTable<Wp>::degrade(size_t axisIndex, Wp coordinate) {
-	using std::gslice;
-	using std::valarray;
-
-	if (n > 1) {
-		const size_t v = vertex(axisIndex, coordinate);
-		const size_t start = v * strides[axisIndex];
-
-		sizes[axisIndex] = 1;
-
-		valarray<Wp> values = y[gslice(start, sizes, strides)];
-		const valarray<Wp> values2 = y[gslice(start + strides[axisIndex], sizes,
-				strides)];
-		valarray<Axis> axes(n - 1);
-
-		for (size_t i = 0; i < axisIndex; ++i) {
-			axes[i].resize(sizes[i]);
-			axes[i] = x[i];
-		}
-		for (size_t i = axisIndex; i < n - 1; ++i) {
-			axes[i].resize(sizes[i + 1]);
-			axes[i] = x[i + 1];
-		}
-		interpolate(&values[0], &values2[0], values.size(),
-				interpolationFactor(axisIndex, coordinate, v));
-
-		reset(&axes[0], n - 1, &values[0]);
-	}
+template<class T, class W>
+inline W LookupTableImpl<T, W>::interpolationFactor(size_t dimIndex,
+		W coordinate, size_t vertex) const {
+	return (coordinate - x[dimIndex][vertex])
+			/ (x[dimIndex][vertex + 1] - x[dimIndex][vertex]);
 }
 
-template<class Wp>
-std::istream&
-LookupTable<Wp>::read(std::istream& is) {
-	using std::valarray;
+template<class T, class W>
+size_t LookupTableImpl<T, W>::valueCount(const size_t sizes[],
+		size_t dimCount) {
+	size_t valueCount = 1;
 
-	if (is) {
-		size_t n;
-		read(is, &n, 1);
-
-		valarray<size_t> sizes(n);
-		valarray<Axis> axes(n);
-
-		for (size_t i = 0; i < n; ++i) {
-			read(is, &sizes[i], 1);
-			axes[i].resize(sizes[i]);
-			read(is, &axes[i][0], sizes[i]);
-		}
-
-		valarray<Wp> values(numValues(&sizes[0], n));
-		read(is, &values[0], values.size());
-
-		if (is) {
-			reset(&axes[0], n, &values[0]);
-		}
-	}
-
-	return is;
-}
-
-template<class Wp>
-ostream&
-LookupTable<Wp>::write(ostream& os) const {
-	if (os) {
-		write(os, &n, 1);
-		for (size_t i = 0; i < n; ++i) {
-			write(os, &sizes[i], 1);
-			write(os, &x[i][0], sizes[i]);
-		}
-		write(os, &y[0], y.size());
-	}
-
-	return os;
-}
-
-template<class Wp>
-ostream&
-LookupTable<Wp>::writeValues(ostream& os) const {
-	if (os) {
-		write(os, &y[0], y.size());
-	}
-
-	return os;
-}
-
-template<class Wp>
-inline Wp LookupTable<Wp>::interpolationFactor(size_t axisIndex, Wp coordinate,
-		size_t vertex) const {
-	return (coordinate - x[axisIndex][vertex])
-			/ (x[axisIndex][vertex + 1] - x[axisIndex][vertex]);
-}
-
-template<class Wp>
-size_t LookupTable<Wp>::numValues(const size_t sizes[], size_t numAxes) {
-	size_t numValues = 1;
-
-	for (size_t i = 0; i < numAxes; ++i) {
+	for (size_t i = 0; i < dimCount; ++i) {
 		assert(sizes[i] > 0);
-		numValues *= sizes[i];
+		valueCount *= sizes[i];
 	}
 
-	return numValues;
+	return valueCount;
 }
 
-template<class Wp>
-size_t LookupTable<Wp>::numValues(const Axis axes[], size_t numAxes) {
-	size_t numValues = 1;
+template<class T, class W>
+size_t LookupTableImpl<T, W>::valueCount(const Dimension dims[],
+		size_t dimCount) {
+	size_t valueCount = 1;
 
-	for (size_t i = 0; i < numAxes; ++i) {
-		assert(axes[i].size() > 0);
-		numValues *= axes[i].size();
+	for (size_t i = 0; i < dimCount; ++i) {
+		assert(dims[i].size() > 0);
+		valueCount *= dims[i].size();
 	}
 
-	return numValues;
+	return valueCount;
 }
 
-template<class Wp>
-size_t LookupTable<Wp>::numValues(const Axis* axes[], size_t numAxes) {
-	size_t numValues = 1;
+template<class T, class W>
+size_t LookupTableImpl<T, W>::valueCount(const Dimension* dims[],
+		size_t dimCount) {
+	size_t valueCount = 1;
 
-	for (size_t i = 0; i < numAxes; ++i) {
-		assert(axes[i]->size() > 0);
-		numValues *= axes[i]->size();
+	for (size_t i = 0; i < dimCount; ++i) {
+		assert(dims[i]->size() > 0);
+		valueCount *= dims[i]->size();
 	}
 
-	return numValues;
+	return valueCount;
 }
 
-template<class Wp>
-size_t LookupTable<Wp>::valueIndex(const size_t vertexes[]) const {
+template<class T, class W>
+size_t LookupTableImpl<T, W>::valueIndex(const size_t vertexes[]) const {
 	size_t index = 0;
 
 	for (size_t i = 0; i < n; ++i) {
@@ -316,19 +250,19 @@ size_t LookupTable<Wp>::valueIndex(const size_t vertexes[]) const {
 	return index;
 }
 
-template<class Wp>
-size_t LookupTable<Wp>::vertex(size_t axisIndex, Wp coordinate) const {
-	assert(axisIndex < n and sizes[axisIndex] > 0);
+template<class T, class W>
+size_t LookupTableImpl<T, W>::vertex(size_t dimIndex, W coordinate) const {
+	assert(dimIndex < n and sizes[dimIndex] > 0);
 	assert(
-			coordinate >= x[axisIndex][0] and coordinate <= x[axisIndex][sizes[axisIndex] - 1]);
+			coordinate >= x[dimIndex][0] and coordinate <= x[dimIndex][sizes[dimIndex] - 1]);
 
 	size_t i = 0;
-	size_t k = sizes[axisIndex] - 1;
+	size_t k = sizes[dimIndex] - 1;
 
 	while (k > i + 1) {
 		const size_t j = (i + k) >> 1;
 
-		if (coordinate > x[axisIndex][j])
+		if (coordinate > x[dimIndex][j])
 			i = j;
 		else
 			k = j;
@@ -337,23 +271,23 @@ size_t LookupTable<Wp>::vertex(size_t axisIndex, Wp coordinate) const {
 	return i;
 }
 
-template<class Wp>
-void LookupTable<Wp>::getVertexes(const Wp coordinates[],
+template<class T, class W>
+void LookupTableImpl<T, W>::getVertexes(const W coordinates[],
 		size_t vertexes[]) const {
 	for (size_t i = 0; i < n; ++i)
 		vertexes[i] = vertex(i, coordinates[i]);
 }
 
-template<class Wp>
-void LookupTable<Wp>::interpolate(Wp values[], const Wp values2[],
-		size_t numValues, Wp interpolationFactor) const {
+template<class T, class W>
+void LookupTableImpl<T, W>::interpolate(W values[], const W values2[],
+		size_t numValues, W interpolationFactor) const {
 	for (size_t i = 0; i < numValues; ++i)
-		values[i] = (Wp(1) - interpolationFactor) * values[i]
+		values[i] = (W(1) - interpolationFactor) * values[i]
 				+ interpolationFactor * values2[i];
 }
 
-template<class Wp>
-void LookupTable<Wp>::updateSizesAndStrides() {
+template<class T, class W>
+void LookupTableImpl<T, W>::updateSizesAndStrides() {
 	sizes.resize(x.size());
 	strides.resize(x.size());
 
@@ -367,18 +301,21 @@ void LookupTable<Wp>::updateSizesAndStrides() {
 	n = x.size();
 }
 
-template<class Wp>
-void LookupTable<Wp>::reset(const Axis axes[], size_t numAxes) {
-	const size_t numValues = this->numValues(axes, numAxes);
+template<class T, class W>
+void LookupTableImpl<T, W>::reset(const Dimension dims[], size_t dimCount) {
+	using std::copy;
+	using std::gslice;
 
-	x.resize(numAxes);
+	const size_t numValues = this->valueCount(dims, dimCount);
+
+	x.resize(dimCount);
 	y.resize(numValues);
 
-	for (size_t i = 0; i < numAxes; ++i) {
-		const Axis& axis = axes[i];
+	for (size_t i = 0; i < dimCount; ++i) {
+		const Dimension& dim = dims[i];
 
-		x[i].resize(axis.size());
-		copy(&axis[0], &axis[axis.size()], &x[i][0]);
+		x[i].resize(dim.size());
+		copy(&dim[0], &dim[dim.size()], &x[i][0]);
 	}
 
 	updateSizesAndStrides();
@@ -390,41 +327,19 @@ void LookupTable<Wp>::reset(const Axis axes[], size_t numAxes) {
 	indexes = numbers[gslice(0, valarray<size_t>(2, n), strides)];
 }
 
-template<class Wp>
-void LookupTable<Wp>::reset(const Axis axes[], size_t numAxes,
-		const Wp values[]) {
-	const size_t numValues = this->numValues(axes, numAxes);
+template<class T, class W>
+void LookupTableImpl<T, W>::reset(const Dimension dims[], size_t dimCount,
+		const T values[]) {
+	using std::copy;
+	using std::gslice;
 
-	x.resize(numAxes);
+	const size_t numValues = this->valueCount(dims, dimCount);
+
+	x.resize(dimCount);
 	y.resize(numValues);
 
-	for (size_t i = 0; i < numAxes; ++i) {
-		const Axis& axis = axes[i];
-
-		x[i].resize(axis.size());
-		copy(&axis[0], &axis[axis.size()], &x[i][0]);
-	}
-	copy(&values[0], &values[numValues], &y[0]);
-
-	updateSizesAndStrides();
-
-	valarray<size_t> numbers(numValues);
-	for (size_t i = 0; i < numValues; ++i)
-		numbers[i] = i;
-	indexes.resize(1 << n);
-	indexes = numbers[gslice(0, valarray<size_t>(2, n), strides)];
-}
-
-template<class Wp>
-void LookupTable<Wp>::reset(const Axis* axes[], size_t numAxes,
-		const Wp values[]) {
-	const size_t numValues = this->numValues(axes, numAxes);
-
-	x.resize(numAxes);
-	y.resize(numValues);
-
-	for (size_t i = 0; i < numAxes; ++i) {
-		const Axis& axis = *axes[i];
+	for (size_t i = 0; i < dimCount; ++i) {
+		const Dimension& axis = dims[i];
 
 		x[i].resize(axis.size());
 		copy(&axis[0], &axis[axis.size()], &x[i][0]);
@@ -440,49 +355,32 @@ void LookupTable<Wp>::reset(const Axis* axes[], size_t numAxes,
 	indexes = numbers[gslice(0, valarray<size_t>(2, n), strides)];
 }
 
-template<class Wp>
-bool LookupTable<Wp>::isBigEndian() {
-	const unsigned long test = 1;
+template<class T, class W>
+void LookupTableImpl<T, W>::reset(const Dimension* dims[], size_t dimCount,
+		const T values[]) {
+	using std::copy;
+	using std::gslice;
 
-	return *reinterpret_cast<const unsigned char*>(&test) == 0;
-}
+	const size_t numValues = this->valueCount(dims, dimCount);
 
-template<class Wp>
-template<class T>
-istream&
-LookupTable<Wp>::read(istream& is, T* first, size_t n) {
-	if (isBigEndian()) {
-		is.read(reinterpret_cast<char*>(first), sizeof(T) * n);
-	} else {
-		char bytes[sizeof(T)];
+	x.resize(dimCount);
+	y.resize(numValues);
 
-		for (size_t i = 0; i < n; ++i, ++first) {
-			is.read(bytes, sizeof(T));
-			reverse(bytes, bytes + sizeof(T));
-			*first = *reinterpret_cast<T*>(bytes);
-		}
+	for (size_t i = 0; i < dimCount; ++i) {
+		const Dimension& axis = *dims[i];
+
+		x[i].resize(axis.size());
+		copy(&axis[0], &axis[axis.size()], &x[i][0]);
 	}
+	copy(&values[0], &values[numValues], &y[0]);
 
-	return is;
-}
+	updateSizesAndStrides();
 
-template<class Wp>
-template<class T>
-ostream&
-LookupTable<Wp>::write(ostream& os, const T* first, size_t n) {
-	if (isBigEndian()) {
-		os.write(reinterpret_cast<const char*>(first), sizeof(T) * n);
-	} else {
-		char bytes[sizeof(T)];
-
-		for (size_t i = 0; i < n; ++i, ++first) {
-			reverse_copy(reinterpret_cast<const char*>(first),
-					reinterpret_cast<const char*>(first) + sizeof(T), bytes);
-			os.write(bytes, sizeof(T));
-		}
-	}
-
-	return os;
+	valarray<size_t> numbers(numValues);
+	for (size_t i = 0; i < numValues; ++i)
+		numbers[i] = i;
+	indexes.resize(1 << n);
+	indexes = numbers[gslice(0, valarray<size_t>(2, n), strides)];
 }
 
 #endif	/* LOOKUPTABLE_H */

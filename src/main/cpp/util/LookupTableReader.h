@@ -12,10 +12,14 @@
 
 class LookupTableReader {
 public:
-	LookupTableReader();
+	LookupTableReader(const string& path);
 	~LookupTableReader();
 
-	LookupTable<float>* readFloat(const string& path, const string& variableName) const;
+	template<class W>
+	LookupTable<W>* readLookupTable(const string& variableName) const;
+
+private:
+	int fileId;
 };
 
 #endif /* LOOKUPTABLEREADER_H_ */
