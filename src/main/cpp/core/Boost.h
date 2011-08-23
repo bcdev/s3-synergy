@@ -27,6 +27,8 @@
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <boost/shared_array.hpp>
+#include <boost/shared_ptr.hpp>
 
 #define foreach         BOOST_FOREACH
 #define reverse_foreach BOOST_REVERSE_FOREACH
@@ -41,6 +43,9 @@ using boost::filesystem::path;
 using boost::diagnostic_information;
 using boost::lexical_cast;
 using boost::numeric_cast;
+using boost::numeric_cast;
+using boost::shared_array;
+using boost::shared_ptr;
 
 #endif	/* BOOST_H */
 

@@ -5,9 +5,9 @@
  *      Author: ralf
  */
 
-#include "../../../main/cpp/util/LookupTableReader.h"
-
 #include "LookupTableReaderTest.h"
+
+CPPUNIT_TEST_SUITE_REGISTRATION(LookupTableReaderTest);
 
 const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
 
@@ -18,19 +18,105 @@ LookupTableReaderTest::~LookupTableReaderTest() {
 }
 
 void LookupTableReaderTest::setUp() {
+	reader = new LookupTableReader(S3_SYNERGY_HOME + "/data/SYN/aux/v1/S3__SY_2_SYRTAX.nc");
 }
 
 void LookupTableReaderTest::tearDown() {
+	delete reader;
 }
 
-void LookupTableReaderTest::testA() {
-	const LookupTableReader reader(S3_SYNERGY_HOME + "/data/SYN/aux/v1/S3__SY_2_SYRTAX.nc");
-
-	const LookupTable<float>* lut = reader.readLookupTable<float>("OLC_R_atm");
+void LookupTableReaderTest::testRead_OLC_R_atm() {
+	const LookupTable<float>* lut = reader->readLookupTable<float>("OLC_R_atm");
 
 	CPPUNIT_ASSERT(lut != 0);
+	CPPUNIT_ASSERT(lut->getId().compare("OLC_R_atm") == 0);
+	CPPUNIT_ASSERT(lut->getDimensionCount() == 8);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(0) == 0.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(0) == 180.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(1) == 0.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(1) == 70.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(2) == 0.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(2) == 55.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(3) == 800.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(3) == 1030.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(4) == 0.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(4) == 5.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(5) == 0.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(5) == 4.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(6) == 1.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(6) == 40.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(7) == 1.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(7) == 18.0f);
 }
 
-void LookupTableReaderTest::testB() {
+void LookupTableReaderTest::testRead_SLN_R_atm() {
+	const LookupTable<float>* lut = reader->readLookupTable<float>("SLN_R_atm");
 
+	CPPUNIT_ASSERT(lut != 0);
+	CPPUNIT_ASSERT(lut->getId().compare("SLN_R_atm") == 0);
+	CPPUNIT_ASSERT(lut->getDimensionCount() == 8);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(0) == 0.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(0) == 180.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(1) == 0.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(1) == 70.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(2) == 6.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(2) == 58.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(3) == 800.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(3) == 1030.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(4) == 0.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(4) == 5.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(5) == 0.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(5) == 4.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(6) == 1.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(6) == 40.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(7) == 19.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(7) == 24.0f);
+}
+
+void LookupTableReaderTest::testRead_SLO_R_atm() {
+	const LookupTable<float>* lut = reader->readLookupTable<float>("SLO_R_atm");
+
+	CPPUNIT_ASSERT(lut != 0);
+	CPPUNIT_ASSERT(lut->getId().compare("SLO_R_atm") == 0);
+	CPPUNIT_ASSERT(lut->getDimensionCount() == 8);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(0) == 0.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(0) == 180.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(1) == 0.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(1) == 70.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(2) == 55.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(2) == 55.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(3) == 800.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(3) == 1030.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(4) == 0.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(4) == 5.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(5) == 0.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(5) == 4.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(6) == 1.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(6) == 40.0f);
+
+	CPPUNIT_ASSERT(lut->minCoordinate(7) == 25.0f);
+	CPPUNIT_ASSERT(lut->maxCoordinate(7) == 30.0f);
 }
