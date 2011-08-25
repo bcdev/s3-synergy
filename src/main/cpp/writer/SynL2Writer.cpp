@@ -9,6 +9,7 @@
 
 #include "../util/Utils.h"
 #include "../util/NetCDF.h"
+
 #include "SynL2Writer.h"
 
 using std::make_pair;
@@ -126,11 +127,11 @@ void SynL2Writer::createNcVar(
         const int fileId = NetCDF::createFile(ncFilePath.string());
 
         foreach(const Attribute* attribute, productDescriptor.getAttributes()) {
-            NetCDF::addAttribute(fileId, NC_GLOBAL, *attribute);
+            NetCDF::putAttribute(fileId, NC_GLOBAL, *attribute);
         }
 
         foreach(const Attribute* attribute, segmentDescriptor.getAttributes()) {
-            NetCDF::addAttribute(fileId, NC_GLOBAL, *attribute);
+            NetCDF::putAttribute(fileId, NC_GLOBAL, *attribute);
         }
 
         const size_t sizeK = grid.getSizeK();
@@ -167,6 +168,6 @@ void SynL2Writer::createNcVar(
     ncVarIdMap[varName] = varId;
 
     foreach(const Attribute* attribute, variableDescriptor.getAttributes()) {
-        NetCDF::addAttribute(fileId, varId, *attribute);
+        NetCDF::putAttribute(fileId, varId, *attribute);
     }
 }

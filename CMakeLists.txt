@@ -16,6 +16,8 @@ file(GLOB_RECURSE READER_MAIN_SOURCES src/main/cpp/reader/*.cpp)
 file(GLOB_RECURSE READER_TEST_SOURCES src/test/cpp/reader/*.cpp)
 file(GLOB_RECURSE MODULES_MAIN_SOURCES src/main/cpp/modules/*.cpp)
 file(GLOB_RECURSE MODULES_TEST_SOURCES src/test/cpp/modules/*.cpp)
+file(GLOB_RECURSE WRITER_MAIN_SOURCES src/main/cpp/writer/*.cpp)
+file(GLOB_RECURSE WRITER_TEST_SOURCES src/test/cpp/writer/*.cpp)
 file(GLOB_RECURSE UTIL_MAIN_SOURCES src/main/cpp/util/*.cpp)
 file(GLOB_RECURSE UTIL_TEST_SOURCES src/test/cpp/util/*.cpp)
 
@@ -89,6 +91,7 @@ add_executable(syl2
 	${SYL2_MAIN_SOURCES}
 	${READER_MAIN_SOURCES}
 	${MODULES_MAIN_SOURCES}
+	${WRITER_MAIN_SOURCES}
 	${CORE_MAIN_SOURCES}
 	${UTIL_MAIN_SOURCES}
 )

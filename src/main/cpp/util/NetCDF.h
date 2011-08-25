@@ -38,50 +38,67 @@ using std::valarray;
 class NetCDF {
 public:
 
-    ~NetCDF();
+	~NetCDF();
 
-    static int openFile(const string& path);
+	static void closeFile(int ncId);
 
-    static int getVariableType(int fileId, int varId);
+	static int createFile(const string& path);
 
-    static int getVariableId(int fileId, const string& varName);
+	static int defineDimension(int fileId, const string& dimName, size_t size);
 
-    static int getDimensionCount(int fileId, int varId);
+	static int defineVariable(int fileId, const string& varName, int type,
+			const valarray<int>& dimIds);
 
-    static valarray<int> getDimensionIds(int fileId, int varId);
+	static int getAttributeType(int fileId, int varId,
+			const string& attributeName);
 
-    static size_t getDimensionLength(int fileId, int dimId);
+	static double getAttributeDouble(int fileId, int varId,
+			const string& attributeName, double defaultValue);
 
-    static string getDimensionName(int fileId, int dimId);
+	static float getAttributeFloat(int fileId, int varId,
+			const string& attributeName, float defaultValue);
 
-    static void getData(int fileId, int varId, const valarray<size_t>& origin,
-            const valarray<size_t>& shape, void* dataArray);
+	static void getData(int fileId, int varId, const valarray<size_t>& origin,
+			const valarray<size_t>& shape, void* dataArray);
 
-    static void getDataFloat(int fileId, int varId, const valarray<size_t>& origin,
-            const valarray<size_t>& shape, float* dataArray);
+	static void getData(int fileId, int varId,
+			const valarray<size_t>& origin, const valarray<size_t>& shape,
+			float* dataArray);
 
-    static void putData(int fileId, int varId, const valarray<size_t>& origin,
-            const valarray<size_t>& shape, const void* dataArray);
+	static void getData(int fileId, int varId,
+			const valarray<size_t>& origin, const valarray<size_t>& shape,
+			double* dataArray);
 
-    static int createFile(const string& path);
+	static int getDimensionCount(int fileId, int varId);
 
-    static int defineDimension(int fileId, const string& dimName, size_t size);
+	static valarray<int> getDimensionIds(int fileId, int varId);
 
-    static int defineVariable(int fileId, const string& varName, int type, const valarray<int>& dimIds);
+	static size_t getDimensionLength(int fileId, int dimId);
 
-    static void addAttribute(int fileId, int varId, const Attribute& attribute);
+	static string getDimensionName(int fileId, int dimId);
 
-    static void terminateDefinition(int ncId);
+	static int getVariableId(int fileId, const string& varName);
 
-    static void closeFile(int ncId);
+	static int getVariableType(int fileId, int varId);
+
+	static int openFile(const string& path);
+
+	static void putData(int fileId, int varId, const valarray<size_t>& origin,
+			const valarray<size_t>& shape, const void* dataArray);
+
+	static void putAttribute(int fileId, int varId, const Attribute& attribute);
+
+	static void terminateDefinition(int ncId);
 
 private:
-    NetCDF();
+	NetCDF();
 
-    template<class T>
-    static void putAttribute(int fileId, int varId, const Attribute& attribute, const T& t);
-    static void putAttributeString(int fileId, int varId, const Attribute& attribute);
-    static void checkStatus(int status, const string& action);
+	template<class T>
+	static void putAttribute(int fileId, int varId, const Attribute& attribute,
+			const T& t);
+	static void putAttributeString(int fileId, int varId,
+			const Attribute& attribute);
+	static void checkStatus(int status, const string& action);
 
 };
 #endif	/* NETCDF_H */

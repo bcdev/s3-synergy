@@ -21,6 +21,7 @@
 #include <algorithm>
 
 #include "../util/Utils.h"
+
 #include "TestModule.h"
 
 using std::min;

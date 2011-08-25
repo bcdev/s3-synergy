@@ -6,7 +6,7 @@
 #include "../util/JobOrderParser.h"
 #include "../util/Logger.h"
 #include "../reader/L1cReader.h"
-#include "../modules/SynL2Writer.h"
+#include "../writer/SynL2Writer.h"
 #include "../modules/TestModule.h"
 
 #include <iostream>

@@ -18,7 +18,7 @@ LookupTableReaderTest::~LookupTableReaderTest() {
 }
 
 void LookupTableReaderTest::setUp() {
-	reader = new LookupTableReader(S3_SYNERGY_HOME + "/data/SYN/aux/v1/S3__SY_2_SYRTAX.nc");
+	reader = new LookupTableReader(S3_SYNERGY_HOME + "/auxdata/v1/S3__SY_2_SYRTAX.nc");
 }
 
 void LookupTableReaderTest::tearDown() {
@@ -31,6 +31,9 @@ void LookupTableReaderTest::testRead_OLC_R_atm() {
 	CPPUNIT_ASSERT(lut != 0);
 	CPPUNIT_ASSERT(lut->getId().compare("OLC_R_atm") == 0);
 	CPPUNIT_ASSERT(lut->getDimensionCount() == 8);
+	CPPUNIT_ASSERT(lut->getScaleFactor() == 0.004f);
+	CPPUNIT_ASSERT(lut->getAddOffset() == 0.0f);
+
 
 	CPPUNIT_ASSERT(lut->minCoordinate(0) == 0.0f);
 	CPPUNIT_ASSERT(lut->maxCoordinate(0) == 180.0f);
@@ -55,6 +58,15 @@ void LookupTableReaderTest::testRead_OLC_R_atm() {
 
 	CPPUNIT_ASSERT(lut->minCoordinate(7) == 1.0f);
 	CPPUNIT_ASSERT(lut->maxCoordinate(7) == 18.0f);
+
+	valarray<float> coordinates(8);
+	coordinates[3] = 800.0f;
+	coordinates[6] = 1.0f;
+	coordinates[7] = 1.0f;
+
+	const float result = lut->operator()(&coordinates[0]);
+
+	CPPUNIT_ASSERT(result >= 0.0f);
 }
 
 void LookupTableReaderTest::testRead_SLN_R_atm() {
@@ -63,6 +75,8 @@ void LookupTableReaderTest::testRead_SLN_R_atm() {
 	CPPUNIT_ASSERT(lut != 0);
 	CPPUNIT_ASSERT(lut->getId().compare("SLN_R_atm") == 0);
 	CPPUNIT_ASSERT(lut->getDimensionCount() == 8);
+	CPPUNIT_ASSERT(lut->getScaleFactor() == 0.004f);
+	CPPUNIT_ASSERT(lut->getAddOffset() == 0.0f);
 
 	CPPUNIT_ASSERT(lut->minCoordinate(0) == 0.0f);
 	CPPUNIT_ASSERT(lut->maxCoordinate(0) == 180.0f);
@@ -95,6 +109,8 @@ void LookupTableReaderTest::testRead_SLO_R_atm() {
 	CPPUNIT_ASSERT(lut != 0);
 	CPPUNIT_ASSERT(lut->getId().compare("SLO_R_atm") == 0);
 	CPPUNIT_ASSERT(lut->getDimensionCount() == 8);
+	CPPUNIT_ASSERT(lut->getScaleFactor() == 0.004f);
+	CPPUNIT_ASSERT(lut->getAddOffset() == 0.0f);
 
 	CPPUNIT_ASSERT(lut->minCoordinate(0) == 0.0f);
 	CPPUNIT_ASSERT(lut->maxCoordinate(0) == 180.0f);

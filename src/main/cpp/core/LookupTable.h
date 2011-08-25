@@ -30,6 +30,7 @@
 #include "Identifiable.h"
 
 using std::valarray;
+using std::vector;
 
 template<class T, class W>
 class LookupTableImpl;
@@ -45,12 +46,15 @@ public:
 	virtual W operator()(const W coordinates[]) const = 0;
 
 	virtual size_t getDimensionCount() const = 0;
+	virtual W getScaleFactor() const = 0;
+	virtual W getAddOffset() const = 0;
 	virtual W maxCoordinate(size_t dimIndex) const = 0;
 	virtual W minCoordinate(size_t dimIndex) const = 0;
+	virtual bool isValidCoordinate(size_t dimIndex, W coordinate) const = 0;
 
 	template<class T>
 	static LookupTable<W>* newLookupTable(const string& id,
-			const valarray<Dimension>& dims, const shared_array<T>& values,
+			const vector<Dimension>& dims, const shared_array<T>& values,
 			W scaleFactor = W(1), W addOffset = W(0)) {
 		return new LookupTableImpl<T, W>(id, dims, values, scaleFactor,
 				addOffset);
@@ -62,15 +66,18 @@ class LookupTableImpl: public LookupTable<W> {
 public:
 	typedef valarray<W> Dimension;
 
-	LookupTableImpl(const string& id, const valarray<Dimension>& dims,
+	LookupTableImpl(const string& id, const vector<Dimension>& dims,
 			const shared_array<T>& values, W scaleFactor = W(1), W addOffset =
 					W(0));
 	virtual ~LookupTableImpl();
 
+	const string& getId() const;
+
 	W operator()(const W coordinates[]) const;
 
-	const string& getId() const;
 	size_t getDimensionCount() const;
+	W getScaleFactor() const;
+	W getAddOffset() const;
 	W maxCoordinate(size_t dimIndex) const;
 	W minCoordinate(size_t dimIndex) const;
 	bool isValidCoordinate(size_t dimIndex, W coordinate) const;
@@ -89,7 +96,7 @@ private:
 	const W scaleFactor;
 	const W addOffset;
 
-	const valarray<Dimension> x;
+	const vector<Dimension> x;
 	// coordinate dimensions = vertex coordinates
 	const shared_array<T> y;
 	// tabulated values
@@ -104,7 +111,7 @@ private:
 
 template<class T, class W>
 LookupTableImpl<T, W>::LookupTableImpl(const string& id,
-		const valarray<Dimension>& dims, const shared_array<T>& values,
+		const vector<Dimension>& dims, const shared_array<T>& values,
 		W scaleFactor, W addOffset) :
 		id(id), scaleFactor(scaleFactor), addOffset(addOffset), x(dims), y(
 				values), sizes(dims.size()), strides(dims.size()), offsets(
@@ -136,28 +143,37 @@ W LookupTableImpl<T, W>::operator()(const W coordinates[]) const {
 	getVertexes(coordinates, &v[0]);
 	const size_t origin = getIndex(&v[0]);
 	valarray<W> values(offsets.size());
-	for (size_t i = 0; i < offsets.size(); ++i) {
-		values[i] = boost::numeric_cast<W>(y[offsets[i] + origin]) * scaleFactor
-				+ addOffset;
-	}
 	// extract the y-values at the vertexes of the smallest n-cube,
 	// which contains the interpolation point
+	for (size_t i = 0; i < offsets.size(); ++i) {
+		values[i] = boost::numeric_cast<W>(y[offsets[i] + origin]);
+	}
 	for (size_t i = 0, j = offsets.size(); j >>= 1 != 0; ++i) {
 		interpolate(&values[0], &values[j], j,
 				interpolationFactor(i, coordinates[i], v[i]));
 	}
 
-	return values[0];
+	return values[0] * scaleFactor + addOffset;
 }
 
 template<class T, class W>
-const string& LookupTableImpl<T, W>::getId() const {
+inline const string& LookupTableImpl<T, W>::getId() const {
 	return id;
 }
 
 template<class T, class W>
-size_t LookupTableImpl<T, W>::getDimensionCount() const {
+inline size_t LookupTableImpl<T, W>::getDimensionCount() const {
 	return n;
+}
+
+template<class T, class W>
+inline W LookupTableImpl<T, W>::getScaleFactor() const {
+	return scaleFactor;
+}
+
+template<class T, class W>
+inline W LookupTableImpl<T, W>::getAddOffset() const {
+	return addOffset;
 }
 
 template<class T, class W>

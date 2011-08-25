@@ -5,12 +5,15 @@
  * Created on November 18, 2010, 2:08 PM
  */
 
+#include <cstdlib>
+
 #include "../util/Utils.h"
 #include "../util/NetCDF.h"
 #include "../core/JobOrder.h"
 
 #include "L1cReader.h"
 
+using std::getenv;
 using std::min;
 using std::max;
 
@@ -51,10 +54,7 @@ void L1cReader::start(Context& context) {
 					context.getJobOrder()->getIpfProcessors().at(0).getInputList().at(
 							0).getFileNames().at(0));
 	if (!sourceDirPath.has_root_directory()) {
-		const char* installationDirPath = getenv("S3_SYNERGY_HOME");
-		if (installationDirPath != 0) {
-			sourceDirPath = installationDirPath / sourceDirPath;
-		}
+		sourceDirPath = getInstallationPath() / sourceDirPath;
 	}
 	context.getLogging()->info(
 			"source product path is '" + sourceDirPath.string() + "'", getId());
@@ -94,14 +94,14 @@ void L1cReader::start(Context& context) {
 								colCount = NetCDF::getDimensionLength(fileId,
 										dimIds[2]);
 								variableDescriptor->addDimension(
-										NetCDF::getDimensionName(fileId, dimIds[0])).setSize(
-										camCount);
+										NetCDF::getDimensionName(fileId,
+												dimIds[0])).setSize(camCount);
 								variableDescriptor->addDimension(
-										NetCDF::getDimensionName(fileId, dimIds[1])).setSize(
-										rowCount);
+										NetCDF::getDimensionName(fileId,
+												dimIds[1])).setSize(rowCount);
 								variableDescriptor->addDimension(
-										NetCDF::getDimensionName(fileId, dimIds[2])).setSize(
-										colCount);
+										NetCDF::getDimensionName(fileId,
+												dimIds[2])).setSize(colCount);
 								break;
 							case 2:
 								camCount = 1;
@@ -110,11 +110,11 @@ void L1cReader::start(Context& context) {
 								colCount = NetCDF::getDimensionLength(fileId,
 										dimIds[1]);
 								variableDescriptor->addDimension(
-										NetCDF::getDimensionName(fileId, dimIds[0])).setSize(
-										rowCount);
+										NetCDF::getDimensionName(fileId,
+												dimIds[0])).setSize(rowCount);
 								variableDescriptor->addDimension(
-										NetCDF::getDimensionName(fileId, dimIds[1])).setSize(
-										colCount);
+										NetCDF::getDimensionName(fileId,
+												dimIds[1])).setSize(colCount);
 								break;
 							case 1:
 								camCount = 1;
@@ -122,12 +122,12 @@ void L1cReader::start(Context& context) {
 								colCount = NetCDF::getDimensionLength(fileId,
 										dimIds[0]);
 								variableDescriptor->addDimension(
-										NetCDF::getDimensionName(fileId, dimIds[0])).setSize(
-										colCount);
+										NetCDF::getDimensionName(fileId,
+												dimIds[0])).setSize(colCount);
 								break;
 							default:
 								BOOST_THROW_EXCEPTION(
-										runtime_error("invalid number of dimensions for variable '" + ncVarName + "'."));
+										runtime_error("Invalid number of dimensions for variable '" + ncVarName + "'."));
 								break;
 							}
 							if (!context.hasSegment(segmentName)) {
