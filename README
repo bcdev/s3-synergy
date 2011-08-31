@@ -42,6 +42,8 @@ Coding Conventions
 17. Write brief but clear and precise API documentation
 18. Write '(x)' but not '( x )'
 19. Write 'a = b', 'a + b' etc. but not 'a=b', 'a+b' etc.
+20. Use 'shared_ptr' whenever you create objects with 'new'
+21. Use 'array_ptr' whenever you create arrays with 'new[]'
 
 
 Dependencies
