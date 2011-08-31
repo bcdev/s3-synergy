@@ -9,33 +9,41 @@
 #define TIEPOINTINTERPOLATOR_H_
 
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <valarray>
-#include <vector>
 
-using std::copy;
-using std::lower_bound;
-using std::sort;
-using std::valarray;
-using std::vector;
+#include "Array.h"
 
+/**
+ * Interpolates between a set of (lon, lat) tie points by means of inverse
+ * distance weighting.
+ *
+ * The current implementation uses the reciprocal arc distance, which is the
+ * most precise, but also the most costly weight.
+ *
+ * @author Ralf Quast
+ */
 template<class W>
 class TiePointInterpolator {
 public:
-	TiePointInterpolator(const valarray<W>& lons, const valarray<W>& lats,
-			const vector<valarray<W> >& fields);
+	TiePointInterpolator(const Array<W>& lons, const Array<W>& lats);
 	~TiePointInterpolator();
 
-	void findIndexes(W lon, W lat, valarray<size_t>& indexes) const;
+	void prepare(W lon, W lat, valarray<W>& weights,
+			valarray<size_t>& indexes) const;
+	W interpolate(const Array<W>& field, const valarray<W>& weights,
+			const valarray<size_t>& indexes) const;
 
 private:
-	class Cmp {
+	class TiePointIndexComparator {
 	public:
-		Cmp(const valarray<W>& lons, const valarray<W>& lats) :
+		TiePointIndexComparator(const valarray<W>& lons,
+				const valarray<W>& lats) :
 				lons(lons), lats(lats) {
 		}
 
-		~Cmp() {
+		~TiePointIndexComparator() {
 		}
 
 		bool operator()(const size_t i1, const size_t i2) const {
@@ -44,32 +52,34 @@ private:
 	private:
 		const valarray<W>& lons;
 		const valarray<W>& lats;
-
 	};
+
 	void reorder(valarray<W>& array, const valarray<size_t>& reordering) const;
-	W greatCircleDistance(W lon, W lat, size_t i) const;
+	W cosineDistance(W lon, W lat, size_t i) const;
 
 	valarray<W> lons;
 	valarray<W> lats;
-	valarray<valarray<W> > fields;
+	valarray<size_t> ordering;
 
 	static const W RAD = W(3.14159265358979323846) / W(180.0);
 };
 
 template<class W>
-TiePointInterpolator<W>::TiePointInterpolator(const valarray<W>& lons,
-		const valarray<W>& lats, const vector<valarray<W> >& fields) :
-		lons(lons), lats(lats), fields(fields) {
-	valarray<size_t> indexes(lats.size());
-	for (size_t i = 0; i < indexes.size(); i++) {
-		indexes[i] = i;
+TiePointInterpolator<W>::TiePointInterpolator(const Array<W>& lons,
+		const Array<W>& lats) :
+		lons(lons.size()), lats(lats.size()), ordering(lats.size()) {
+	using std::sort;
+
+	lons.getData(this->lons);
+	lats.getData(this->lats);
+
+	for (size_t i = 0; i < ordering.size(); i++) {
+		ordering[i] = i;
 	}
-	sort(&indexes[0], &indexes[indexes.size()], Cmp(lons, lats));
-	reorder(lons, indexes);
-	reorder(lats, indexes);
-	for (size_t i = 0; i < fields.size(); i++) {
-		reorder(fields[i], indexes);
-	}
+	sort(&ordering[0], &ordering[ordering.size()],
+			TiePointIndexComparator(this->lons, this->lats));
+	reorder(this->lons, ordering);
+	reorder(this->lats, ordering);
 }
 
 template<class W>
@@ -79,48 +89,85 @@ TiePointInterpolator<W>::~TiePointInterpolator() {
 template<class W>
 void TiePointInterpolator<W>::reorder(valarray<W>& array,
 		const valarray<size_t>& reordering) const {
+	using std::copy;
+
 	const valarray<W> reorderedArray = array[reordering];
 	copy(&reorderedArray[0], &reorderedArray[reorderedArray.size()], &array[0]);
 }
 
 template<class W>
-void TiePointInterpolator<W>::findIndexes(W lon, W lat,
+void TiePointInterpolator<W>::prepare(W lon, W lat, valarray<W>& weights,
 		valarray<size_t>& indexes) const {
+	using std::abs;
+	using std::acos;
+	using std::fill;
+	using std::lower_bound;
+	using std::sqrt;
 
-	const size_t foundIndex = lower_bound(&lats[0], &lats[lats.size()], lat)
+	assert(weights.size() == indexes.size());
+
+	const size_t n = weights.size();
+	const size_t range = 150;
+	const size_t midIndex = lower_bound(&lats[0], &lats[lats.size()], lat)
 			- &lats[0];
-	const size_t firstIndex = foundIndex >= 100 ? foundIndex - 100 : 0;
-	const size_t lastIndex =
-			firstIndex + 200 <= lat.size() ? firstIndex + 200 : lat.size();
+	const size_t minIndex = midIndex >= range ? midIndex - range : 0;
+	const size_t maxIndex =
+			midIndex <= lats.size() - range ? midIndex + range : lats.size();
+	fill(&weights[0], &weights[n], W(-1));
 
-	valarray<W> distances(W(-1), 4);
-
-	for (size_t i = firstIndex; i < lastIndex; i++) {
-		const W d = greatCircleDistance(lon, lat, i);
-		for (size_t k = 0; k < 4; k++) {
-			if (d > distances[k]) {
-				for (size_t l = 3; l > k; l--) {
-					distances[l] = distances[l - 1];
+	for (size_t i = minIndex; i < maxIndex; i++) {
+		const W d = cosineDistance(lon, lat, i);
+		for (size_t k = 0; k < n; k++) {
+			if (d > weights[k]) {
+				for (size_t l = n - 1; l > k; l--) {
+					weights[l] = weights[l - 1];
 					indexes[l] = indexes[l - 1];
 				}
-				distances[k] = d;
-				indexes[k] = i;
+				weights[k] = d;
+				indexes[k] = ordering[i];
+				break;
 			}
 		}
+	}
+
+	W sum = W(0.0);
+	for (size_t i = 0; i < n; i++) {
+		const W d = abs(acos(weights[i])); // arc distance
+		if (d == W(0)) {
+			for (size_t k = 0; k < n; k++) {
+				weights[k] = k != i ? W(0) : W(1);
+			}
+			return;
+		}
+		weights[i] = W(1) / d;
+		sum += weights[i];
+	}
+	for (size_t i = 0; i < n; i++) {
+		weights[i] /= sum;
 	}
 }
 
 template<class W>
-inline W TiePointInterpolator<W>::greatCircleDistance(W lon, W lat,
-		size_t i) const {
-	using std::abs;
+W TiePointInterpolator<W>::interpolate(const Array<W>& field,
+		const valarray<W>& weights, const valarray<size_t>& indexes) const {
+	assert(weights.size() == indexes.size());
+
+	const size_t n = weights.size();
+
+	W v = W(0);
+	for (size_t i = 0; i < n; i++) {
+		v += weights[indexes[i]] * field.get(indexes[i]);
+	}
+	return v;
+}
+
+template<class W>
+inline W TiePointInterpolator<W>::cosineDistance(W lon, W lat, size_t i) const {
 	using std::cos;
 	using std::sin;
-
-	return abs(
-			sin(lat * RAD) * sin(lats[i] * RAD)
-					+ cos(lon * RAD) * cos(lons[i] * RAD)
-							* cos((lon - lons[i]) * RAD));
+	// http://www.movable-type.co.uk/scripts/latlong.html
+	return sin(lat * RAD) * sin(lats[i] * RAD)
+			+ cos(lat * RAD) * cos(lats[i] * RAD) * cos((lon - lons[i]) * RAD);
 }
 
 #endif /* TIEPOINTINTERPOLATOR_H_ */

@@ -24,7 +24,7 @@ void ArrayTest::tearDown() {
 void ArrayTest::testByteArray() {
 	valarray<uint8_t> byteArray(2);
 
-	Array<double>* array = Array<double>::newArray(byteArray, 1.0, 0.0);
+	shared_ptr<Array<double> > array = Array<double>::newArray(byteArray, 1.0, 0.0);
 	CPPUNIT_ASSERT(array->size() == 2);
 	CPPUNIT_ASSERT(array->get(0) == 0.0);
 	CPPUNIT_ASSERT(array->get(1) == 0.0);
@@ -41,7 +41,7 @@ void ArrayTest::testByteArray() {
 void ArrayTest::testByteArrayScaled() {
 	valarray<uint8_t> byteArray(2);
 
-	Array<double>* array = Array<double>::newArray(byteArray, 0.1, 0.0);
+	shared_ptr<Array<double> > array = Array<double>::newArray(byteArray, 0.1, 0.0);
 
 	CPPUNIT_ASSERT(array->size() == 2);
 	CPPUNIT_ASSERT(array->get(0) == 0.0);
@@ -64,7 +64,7 @@ void ArrayTest::testByteArrayScaled() {
 void ArrayTest::testDoubleArray() {
 	valarray<double> doubleArray(2);
 
-	Array<double>* array = Array<double>::newArray(doubleArray, 1.0, 0.0);
+	shared_ptr<Array<double> > array = Array<double>::newArray(doubleArray, 1.0, 0.0);
 	CPPUNIT_ASSERT(array->size() == 2);
 	CPPUNIT_ASSERT(array->get(0) == 0.0);
 	CPPUNIT_ASSERT(array->get(1) == 0.0);
@@ -81,7 +81,7 @@ void ArrayTest::testDoubleArray() {
 void ArrayTest::testDoubleArrayScaled() {
 	valarray<double> doubleArray(2);
 
-	Array<double>* array = Array<double>::newArray(doubleArray, 2.0, 0.0);
+	shared_ptr<Array<double> > array = Array<double>::newArray(doubleArray, 2.0, 0.0);
 
 	CPPUNIT_ASSERT(array->size() == 2);
 	CPPUNIT_ASSERT(array->get(0) == 0.0);

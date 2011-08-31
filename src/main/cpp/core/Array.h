@@ -28,6 +28,11 @@ using boost::uint64_t;
 template<class T, class W>
 class ArrayImpl;
 
+/**
+ * Represents an array of values.
+ *
+ * @author Ralf Quast
+ */
 template<class W>
 class Array {
 public:
@@ -38,16 +43,22 @@ public:
 	virtual size_t size() const = 0;
 	virtual W getScaleFactor() const = 0;
 	virtual W getAddOffset() const = 0;
-
+	virtual valarray<W>& getData(valarray<W>& target) const = 0;
     virtual void* getUntypedData() const = 0;
 
     virtual void resize(size_t n) = 0;
 	virtual void set(size_t i, W value) = 0;
 
 	template<class T>
-	static Array<W>* newArray(const valarray<T>& data, W scaleFactor = W(1),
+	static shared_ptr<Array<W> > newArray(const valarray<T>& data, W scaleFactor = W(1),
 			W addOffset = W(0)) {
-		return new ArrayImpl<T, W>(data, scaleFactor, addOffset);
+		return shared_ptr<Array<W> >(new ArrayImpl<T, W>(data, scaleFactor, addOffset));
+	}
+
+	template<class T>
+	static shared_ptr<Array<W> > newArray(const T* data, size_t size, W scaleFactor = W(1),
+			W addOffset = W(0)) {
+		return shared_ptr<Array<W> >(new ArrayImpl<T, W>(valarray<T>(data, size), scaleFactor, addOffset));
 	}
 };
 
@@ -59,6 +70,13 @@ public:
 	}
 
 	virtual ~ArrayImpl() {
+	}
+
+	valarray<W>& getData(valarray<W>& target) const {
+		for (size_t i = 0; i < data.size(); i++) {
+			target[i] = get(i);
+		}
+		return target;
 	}
 
 	W get(size_t i) const {

@@ -35,6 +35,11 @@ using std::vector;
 template<class T, class W>
 class LookupTableImpl;
 
+/**
+ * A lookup table.
+ *
+ * @author Ralf Quast
+ */
 template<class W>
 class LookupTable: public Identifiable {
 public:
@@ -53,11 +58,12 @@ public:
 	virtual bool isValidCoordinate(size_t dimIndex, W coordinate) const = 0;
 
 	template<class T>
-	static LookupTable<W>* newLookupTable(const string& id,
+	static shared_ptr<LookupTable<W> > newLookupTable(const string& id,
 			const vector<Dimension>& dims, const shared_array<T>& values,
 			W scaleFactor = W(1), W addOffset = W(0)) {
-		return new LookupTableImpl<T, W>(id, dims, values, scaleFactor,
-				addOffset);
+		return shared_ptr<LookupTable<W> >(
+				new LookupTableImpl<T, W>(id, dims, values, scaleFactor,
+						addOffset));
 	}
 };
 

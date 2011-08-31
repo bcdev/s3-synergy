@@ -8,6 +8,7 @@
 #ifndef LOOKUPTABLEREADER_H_
 #define LOOKUPTABLEREADER_H_
 
+#include <stdexcept>
 #include <functional>
 #include <numeric>
 
@@ -22,7 +23,7 @@ public:
 	~LookupTableReader();
 
 	template<class W>
-	LookupTable<W>* readLookupTable(const string& variableName) const;
+	shared_ptr<LookupTable<W> > readLookupTable(const string& variableName) const;
 
 private:
 	int fileId;
@@ -37,7 +38,7 @@ LookupTableReader::~LookupTableReader() {
 }
 
 template<class W>
-LookupTable<W>* LookupTableReader::readLookupTable(
+shared_ptr<LookupTable<W> > LookupTableReader::readLookupTable(
 		const string& varName) const {
 	using std::accumulate;
 	using std::multiplies;
@@ -131,7 +132,7 @@ LookupTable<W>* LookupTableReader::readLookupTable(
 		return LookupTable<W>::newLookupTable(varName, dimensions, values, scaleFactor, addOffset);
 	}
 	default:
-		return 0;
+		BOOST_THROW_EXCEPTION(std::runtime_error("Unsupported data type."));
 	}
 }
 
