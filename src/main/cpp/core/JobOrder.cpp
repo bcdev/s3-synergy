@@ -27,6 +27,9 @@
 using std::cout;
 using std::invalid_argument;
 
+JobOrder::JobOrder() : ipfConfiguration(), ipfProcessors() {
+}
+
 JobOrder::JobOrder(const IpfConfiguration& ipfConfiguration, const vector<IpfProcessor>& ipfProcessors) {
     this->ipfConfiguration = ipfConfiguration;
     this->ipfProcessors = ipfProcessors;

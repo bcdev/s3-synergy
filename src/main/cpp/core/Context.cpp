@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <iostream>
 #include <limits>
+#include <stdexcept>
 
 #include "Boost.h"
 #include "Context.h"
@@ -35,10 +36,10 @@ using std::min;
 using std::numeric_limits;
 
 Context::Context() {
-	logging = &NullLogging::getInstance();
-	errorHandler = 0;
-	dictionary = 0;
-	jobOrder = 0;
+	logging = NullLogging::getInstance();
+	errorHandler = shared_ptr<ErrorHandler>();
+	dictionary = shared_ptr<Dictionary>();
+	jobOrder = shared_ptr<JobOrder>();
 }
 
 Context::~Context() {
@@ -53,10 +54,19 @@ void Context::addModule(Module& module) {
 }
 
 void Context::removeModule(Module& module) {
-    vector<Module*>::iterator position = find(moduleList.begin(), moduleList.end(), &module);
-    if (position != moduleList.end()) {
-    	moduleList.erase(position);
-    }
+	vector<Module*>::iterator position = find(moduleList.begin(),
+			moduleList.end(), &module);
+	if (position != moduleList.end()) {
+		moduleList.erase(position);
+
+		typedef pair<const Segment*, map<const Module*, size_t> > P;
+		typedef pair<const Module*, size_t> Q;
+
+		foreach(P p, lastLComputedMap)
+				{
+					p.second.erase(&module);
+				}
+	}
 }
 
 void Context::addObject(Identifiable& object) throw (logic_error) {
@@ -80,31 +90,31 @@ Segment& Context::addSegment(const string& id, size_t sizeL, size_t sizeM,
 	return *segment;
 }
 
-Dictionary* Context::getDictionary() const {
+shared_ptr<Dictionary> Context::getDictionary() const {
 	return dictionary;
 }
 
-void Context::setDictionary(Dictionary* dictionary) {
+void Context::setDictionary(shared_ptr<Dictionary> dictionary) {
 	this->dictionary = dictionary;
 }
 
-JobOrder* Context::getJobOrder() const {
+shared_ptr<JobOrder> Context::getJobOrder() const {
 	return jobOrder;
 }
 
-void Context::setJobOrder(JobOrder* jobOrder) {
+void Context::setJobOrder(shared_ptr<JobOrder> jobOrder) {
 	this->jobOrder = jobOrder;
 }
 
-Logging* Context::getLogging() const {
+shared_ptr<Logging> Context::getLogging() const {
 	return logging;
 }
 
-void Context::setLogging(Logging* logging) {
+void Context::setLogging(shared_ptr<Logging> logging) {
 	this->logging = logging;
 }
 
-const vector<Module*> Context::getModules() const {
+vector<Module*> Context::getModules() const {
 	return moduleList;
 }
 
@@ -112,17 +122,19 @@ Identifiable& Context::getObject(const string& id) const {
 	if (contains(objectMap, id)) {
 		return *objectMap.at(id);
 	}
-	BOOST_THROW_EXCEPTION(out_of_range("no object with id '" + id + "'."));
+	BOOST_THROW_EXCEPTION(
+			invalid_argument("No object with id '" + id + "' exists in the context."));
 }
 
 Segment& Context::getSegment(const string& id) const {
 	if (contains(segmentMap, id)) {
 		return *segmentMap.at(id);
 	}
-	BOOST_THROW_EXCEPTION(out_of_range("no segment with id '" + id + "'."));
+	BOOST_THROW_EXCEPTION(
+			invalid_argument("No segment with id '" + id + "' exists in the context."));
 }
 
-const vector<Segment*> Context::getSegments() const {
+vector<Segment*> Context::getSegments() const {
 	return segmentList;
 }
 
@@ -159,12 +171,12 @@ bool Context::isCompleted() const {
 	return true;
 }
 
-void Context::setErrorHandler(ErrorHandler* errorHandler) {
+void Context::setErrorHandler(shared_ptr<ErrorHandler> errorHandler) {
 	this->errorHandler = errorHandler;
 }
 
 void Context::handleError(exception& e) {
-	if (errorHandler == 0) {
+	if (errorHandler.get() == 0) {
 		BOOST_THROW_EXCEPTION(e);
 	} else {
 		errorHandler->handleError(*this, e);
@@ -218,7 +230,7 @@ size_t Context::getLastLWritable(const Segment& segment,
 
 		foreach(Q q, lastLComputedMap.at(&segment))
 				{
-					if (q.first != (const Module*) &writer) {
+					if (q.first != &writer) {
 						lastLWritable = min(lastLWritable, q.second);
 					}
 				}

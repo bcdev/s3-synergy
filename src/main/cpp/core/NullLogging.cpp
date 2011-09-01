@@ -29,4 +29,4 @@ NullLogging::NullLogging(const NullLogging& orig) : Logging() {
 NullLogging::~NullLogging() {
 }
 
-NullLogging NullLogging::instance = NullLogging();
+shared_ptr<Logging> NullLogging::instance = shared_ptr<Logging>(new NullLogging());

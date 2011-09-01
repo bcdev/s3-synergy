@@ -48,7 +48,7 @@ private:
     void checkLongitudeVariable(VariableDescriptor& v);
     void checkAirPressureVariable(VariableDescriptor& v);
 
-    Dictionary* dictionary;
+    shared_ptr<Dictionary> dictionary;
 };
 
 #endif	/* DICTIONARYPARSERTEST_H */

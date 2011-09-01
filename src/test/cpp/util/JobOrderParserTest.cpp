@@ -40,14 +40,15 @@ void JobOrderParserTest::tearDown() {
 
 void JobOrderParserTest::testJobOrderParsing() {
 	XPathInitializer init;
-	const JobOrder* jobOrder = parser->parse(
+	shared_ptr<JobOrder> jobOrder = parser->parse(
 			S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.0.xml");
 
 	checkConfiguration(jobOrder);
 	checkProcessorConfigurations(jobOrder);
 }
 
-void JobOrderParserTest::checkConfiguration(const JobOrder* jobOrder) {
+void JobOrderParserTest::checkConfiguration(
+		const shared_ptr<JobOrder> jobOrder) {
 	const IpfConfiguration configuration = jobOrder->getIpfConfiguration();
 
 	CPPUNIT_ASSERT(configuration.getOrderId().compare("0") == 0);
@@ -95,7 +96,7 @@ void JobOrderParserTest::checkConfiguration(const JobOrder* jobOrder) {
 }
 
 void JobOrderParserTest::checkProcessorConfigurations(
-		const JobOrder* jobOrder) {
+		const shared_ptr<JobOrder> jobOrder) {
 	const vector<IpfProcessor> processorConfigurations =
 			jobOrder->getIpfProcessors();
 

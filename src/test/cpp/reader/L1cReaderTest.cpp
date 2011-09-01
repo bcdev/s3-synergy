@@ -14,7 +14,7 @@
 
 #include "L1cReaderTest.h"
 
-extern Context* context;
+extern shared_ptr<Context> context;
 
 using std::getenv;
 
@@ -33,7 +33,7 @@ void L1cReaderTest::setUp() {
 
     dictionary = DictionaryParser().parse(S3_SYNERGY_HOME + "/src/main/resources/dictionary");
     jobOrder = JobOrderParser().parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_SRE.xml");
-    reader = new L1cReader();
+    reader = shared_ptr<Module>(new L1cReader());
 
     context->setDictionary(dictionary);
     context->setJobOrder(jobOrder);
@@ -42,12 +42,8 @@ void L1cReaderTest::setUp() {
 
 void L1cReaderTest::tearDown() {
 	context->removeModule(*reader);
-	context->setJobOrder(0);
-	context->setDictionary(0);
-
-	delete reader;
-	delete jobOrder;
-	delete dictionary;
+	context->setJobOrder(shared_ptr<JobOrder>());
+	context->setDictionary(shared_ptr<Dictionary>());
 }
 
 void L1cReaderTest::testReader() {

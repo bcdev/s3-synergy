@@ -27,9 +27,9 @@ public:
 private:
     void testReader();
 
-    Dictionary* dictionary;
-    JobOrder* jobOrder;
-    L1cReader* reader;
+    shared_ptr<Dictionary> dictionary;
+    shared_ptr<JobOrder> jobOrder;
+    shared_ptr<Module> reader;
 };
 
 #endif	/* L1CREADERTEST_H */

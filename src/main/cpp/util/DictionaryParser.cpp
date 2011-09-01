@@ -5,9 +5,6 @@
  * Created on August 10, 2011, 3:19 PM
  */
 
-#include "../core/Boost.h"
-#include "../core/Constants.h"
-
 #include "DictionaryParser.h"
 
 DictionaryParser::DictionaryParser() : xmlParser(), exclusionSet() {
@@ -20,8 +17,8 @@ DictionaryParser::DictionaryParser(const DictionaryParser& orig) {
 DictionaryParser::~DictionaryParser() {
 }
 
-Dictionary* DictionaryParser::parse(const string& dictionaryPath) {
-    Dictionary* dictionary = new Dictionary();
+shared_ptr<Dictionary> DictionaryParser::parse(const string& dictionaryPath) {
+	shared_ptr<Dictionary> dictionary = shared_ptr<Dictionary>(new Dictionary());
     vector<string> productDescriptorNames = getDirectoryNames(dictionaryPath);
 
     foreach(string productDescriptorName, productDescriptorNames) {

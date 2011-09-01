@@ -42,7 +42,6 @@ void DictionaryParserTest::setUp() {
 }
 
 void DictionaryParserTest::tearDown() {
-    delete dictionary;
 }
 
 void DictionaryParserTest::testSentinel3L1cProductDescriptor() {

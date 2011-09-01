@@ -34,11 +34,11 @@ JobOrderParser::JobOrderParser() :
 JobOrderParser::~JobOrderParser() {
 }
 
-JobOrder* JobOrderParser::parse(const string& path) const {
+shared_ptr<JobOrder> JobOrderParser::parse(const string& path) const {
 	IpfConfiguration config = parseIpfConfiguration(path);
 	vector<IpfProcessor> ipfProcessors =
 			parseIpfProcessors(path);
-	return new JobOrder(config, ipfProcessors);
+	return shared_ptr<JobOrder>(new JobOrder(config, ipfProcessors));
 }
 
 IpfConfiguration JobOrderParser::parseIpfConfiguration(const string& path) const {

@@ -23,20 +23,15 @@ using std::cout;
 using std::endl;
 using std::getenv;
 
-Context* context;
+shared_ptr<Context> context;
 
 static void createContext() {
-	Logger* logger = new Logger("LOG.SY_UNT_REA");
+	shared_ptr<Logger> logger = shared_ptr<Logger>(new Logger("LOG.SY_UNT_SRE"));
 	logger->setProcessorVersion(Constants::PROCESSOR_VERSION);
 	logger->setOutLogLevel(Logging::LOG_LEVEL_INFO);
 	logger->setErrLogLevel(Logging::LOG_LEVEL_INFO);
-	context = new Context();
+	context = shared_ptr<Context>(new Context());
 	context->setLogging(logger);
-}
-
-static void releaseContext() {
-	delete context->getLogging();
-	delete context;
 }
 
 int main() {
@@ -67,8 +62,6 @@ int main() {
 	// Print test in a compiler compatible format.
 	CPPUNIT_NS::CompilerOutputter outputter(&result, CPPUNIT_NS::stdCOut());
 	outputter.write();
-
-	releaseContext();
 
 	return result.wasSuccessful() ? 0 : 1;
 }

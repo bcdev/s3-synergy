@@ -9,11 +9,9 @@
 #define	DICTIONARYPARSER_H
 
 #include <set>
-#include <string>
-#include <vector>
 
-#include "../core/Boost.h"
 #include "../core/Dictionary.h"
+
 #include "XmlParser.h"
 
 using std::set;
@@ -23,7 +21,7 @@ public:
     DictionaryParser();
     virtual ~DictionaryParser();
 
-    Dictionary* parse(const string& path);
+    shared_ptr<Dictionary> parse(const string& path);
 
 private:
     DictionaryParser(const DictionaryParser& orig);

@@ -26,6 +26,7 @@
 #include <map>
 #include <vector>
 
+#include "Boost.h"
 #include "Constants.h"
 #include "Dictionary.h"
 #include "Identifiable.h"
@@ -83,43 +84,43 @@ public:
      * Returns a list of modules, which have been added to the context.
      * @return a list of modules, which have been added to the context.
      */
-    const vector<Module*> getModules() const;
+    vector<Module*> getModules() const;
 
     /**
      * Returns the dictionary.
      * @return the dictionary.
      */
-    Dictionary* getDictionary() const;
+    shared_ptr<Dictionary> getDictionary() const;
 
     /**
      * Sets the dictionary.
      * @param dictionary The dictionary.
      */
-    void setDictionary(Dictionary* dictionary);
+    void setDictionary(shared_ptr<Dictionary> dictionary);
 
     /**
      * Returns the job order.
      * @return the job order.
      */
-    JobOrder* getJobOrder() const;
+    shared_ptr<JobOrder> getJobOrder() const;
 
     /**
      * Sets the job order.
      * @param jobOrder The job order.
      */
-    void setJobOrder(JobOrder* jobOrder);
+    void setJobOrder(shared_ptr<JobOrder> jobOrder);
 
     /**
      * Returns the logging.
      * @return the logging.
      */
-    Logging* getLogging() const;
+    shared_ptr<Logging> getLogging() const;
 
     /**
      * Sets the logging.
      * @param logging The logging.
      */
-    void setLogging(Logging* logging);
+    void setLogging(shared_ptr<Logging> logging);
 
     /**
      * Returns the object associated with the supplied object ID.
@@ -139,7 +140,7 @@ public:
      * Returns a vector containing pointers to all segments.
      * @return A vector containing pointers to all segments.
      */
-    const vector<Segment*> getSegments() const;
+    vector<Segment*> getSegments() const;
 
     /**
      * Returns the index of the last row in a segment, which has been
@@ -237,7 +238,7 @@ public:
 
     void moveSegmentsForward() const;
 
-    void setErrorHandler(ErrorHandler* errorHandler);
+    void setErrorHandler(shared_ptr<ErrorHandler> errorHandler);
 
     void handleError(exception& e);
 
@@ -262,10 +263,10 @@ private:
 
     void moveForward(Segment& segment) const;
 
-    Logging* logging;
-    Dictionary* dictionary;
-    JobOrder* jobOrder;
-    ErrorHandler* errorHandler;
+    shared_ptr<Logging> logging;
+    shared_ptr<Dictionary> dictionary;
+    shared_ptr<JobOrder> jobOrder;
+    shared_ptr<ErrorHandler> errorHandler;
 
     vector<Module*> moduleList;
     map<string, Identifiable*> objectMap;

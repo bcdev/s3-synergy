@@ -32,7 +32,7 @@ public:
 	JobOrderParser();
 	virtual ~JobOrderParser();
 
-	JobOrder* parse(const string& path) const;
+	shared_ptr<JobOrder> parse(const string& path) const;
 
 private:
 	IpfConfiguration parseIpfConfiguration(const string& path) const;

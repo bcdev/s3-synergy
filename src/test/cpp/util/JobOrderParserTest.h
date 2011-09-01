@@ -37,8 +37,8 @@ public:
 	void tearDown();
 private:
 	void testJobOrderParsing();
-	void checkConfiguration(const JobOrder* jobOrder);
-	void checkProcessorConfigurations(const JobOrder* jobOrder);
+	void checkConfiguration(const shared_ptr<JobOrder> jobOrder);
+	void checkProcessorConfigurations(const shared_ptr<JobOrder> jobOrder);
 
 	JobOrderParser* parser;
 };

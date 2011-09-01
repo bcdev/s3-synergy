@@ -21,6 +21,7 @@
 #ifndef NULLLOGGING_H
 #define	NULLLOGGING_H
 
+#include "Boost.h"
 #include "Logging.h"
 
 class NullLogging : public Logging {
@@ -62,7 +63,7 @@ public:
             const string& processorVersion = Constants::PROCESSOR_VERSION) {
     };
 
-    static Logging& getInstance() {
+    static shared_ptr<Logging> getInstance() {
         return instance;
     }
     
@@ -71,7 +72,7 @@ private:
 
     NullLogging(const NullLogging& orig);
 
-    static NullLogging instance;
+    static shared_ptr<Logging> instance;
 };
 
 #endif	/* NULLLOGGING_H */

@@ -87,21 +87,21 @@ set_property(TARGET sy_unt_sre PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 ##
 # Project main targets
 #
-add_executable(syl2
-	${SYL2_MAIN_SOURCES}
-	${READER_MAIN_SOURCES}
-	${MODULES_MAIN_SOURCES}
-	${WRITER_MAIN_SOURCES}
-	${CORE_MAIN_SOURCES}
-	${UTIL_MAIN_SOURCES}
-)
-target_link_libraries(syl2
-	netcdf
-	Safe
-	Xfdu
-	xerces-c
-	xqilla
-	boost_system-mt
-	boost_filesystem-mt
-)
-set_property(TARGET syl2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+#add_executable(syl2
+#	${SYL2_MAIN_SOURCES}
+#	${READER_MAIN_SOURCES}
+#	${MODULES_MAIN_SOURCES}
+#	${WRITER_MAIN_SOURCES}
+#	${CORE_MAIN_SOURCES}
+#	${UTIL_MAIN_SOURCES}
+#)
+#target_link_libraries(syl2
+#	netcdf
+#	Safe
+#	Xfdu
+#	xerces-c
+#	xqilla
+#	boost_system-mt
+#	boost_filesystem-mt
+#)
+#set_property(TARGET syl2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)

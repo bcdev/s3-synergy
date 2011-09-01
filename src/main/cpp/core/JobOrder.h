@@ -21,11 +21,13 @@
 #ifndef JOBORDER_H
 #define	JOBORDER_H
 
+#include "Boost.h"
 #include "IpfConfiguration.h"
 #include "IpfProcessor.h"
 
 class JobOrder {
 public:
+	JobOrder();
     JobOrder(const IpfConfiguration& configuration, const vector<IpfProcessor>& ipfProcessors);
     virtual ~JobOrder();
     

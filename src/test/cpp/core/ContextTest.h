@@ -46,7 +46,6 @@ public:
     void tearDown();
 
 private:
-    Context* context;
     void testInitialState();
     void testAddModule();
     void testAddObject();
@@ -57,6 +56,8 @@ private:
     void testGetUnknownSegment();
     void testSetGetLastLComputed();
     void testGetLastLWritable();
+
+    shared_ptr<Context> context;
 };
 
 #endif	/* CONTEXTTEST_H */
