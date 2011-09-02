@@ -48,232 +48,286 @@ class Writer;
 // todo - divide context into ModuleContext, ProcessorContext, RuntimeContext (nf-20110419)
 class Context {
 public:
-    /**
-     * Constructs a new instance of this class.
-     */
-    Context();
+	/**
+	 * Constructs a new instance of this class.
+	 */
+	Context();
 
-    /**
-     * Destructor.
-     */
-    ~Context();
+	/**
+	 * Destructor.
+	 */
+	~Context();
 
-    /**
-     * Adds a module to the context.
-     * @param module The module.
-     */
-    void addModule(Module& module);
+	/**
+	 * Adds a module to the context.
+	 * @param module The module.
+	 */
+	void addModule(shared_ptr<Module> module) {
+		moduleList.push_back(module);
+	}
 
-    /**
-     * Adds an object to the context.
-     * @param object The object.
-     */
-    void addObject(Identifiable& object) throw (logic_error);
+	void removeModule(shared_ptr<Module> module);
 
-    /**
-     * Adds a segment to the context.
-     * @param id The segment ID.
-     * @param sizeL The size of the segment's row index dimension.
-     * @param sizeM The size of the segment's column index dimension.
-     * @param sizeK The size of the segment's camara index dimension.
-     * @return a reference to the segment added.
-     */
-    Segment& addSegment(const string& id, size_t sizeL, size_t sizeM = Constants::N_DET_CAM, size_t sizeK = Constants::N_CAM, size_t minL = 0, size_t maxL = Constants::N_LINE_OLC - 1) throw (logic_error);
+	/**
+	 * Adds an object to the context.
+	 * @param object The object.
+	 */
+	void addObject(shared_ptr<Identifiable> object) throw (logic_error);
 
-    /**
-     * Returns a list of modules, which have been added to the context.
-     * @return a list of modules, which have been added to the context.
-     */
-    vector<Module*> getModules() const;
+	/**
+	 * Adds a segment to the context.
+	 * @param id The segment ID.
+	 * @param sizeL The size of the segment's row index dimension.
+	 * @param sizeM The size of the segment's column index dimension.
+	 * @param sizeK The size of the segment's camera index dimension.
+	 * @return a reference to the segment added.
+	 */
+	Segment& addSegment(const string& id, size_t sizeL, size_t sizeM =
+			Constants::N_DET_CAM, size_t sizeK = Constants::N_CAM, size_t minL =
+			0, size_t maxL = Constants::N_LINE_OLC - 1) throw (logic_error);
 
-    /**
-     * Returns the dictionary.
-     * @return the dictionary.
-     */
-    shared_ptr<Dictionary> getDictionary() const;
+	void removeSegment(const string& id);
 
-    /**
-     * Sets the dictionary.
-     * @param dictionary The dictionary.
-     */
-    void setDictionary(shared_ptr<Dictionary> dictionary);
+	/**
+	 * Returns a list of modules, which have been added to the context.
+	 * @return a list of modules, which have been added to the context.
+	 */
+	vector<shared_ptr<Module> > getModules() const {
+		return moduleList;
+	}
 
-    /**
-     * Returns the job order.
-     * @return the job order.
-     */
-    shared_ptr<JobOrder> getJobOrder() const;
+	/**
+	 * Returns the dictionary.
+	 * @return the dictionary.
+	 */
+	shared_ptr<Dictionary> getDictionary() const {
+		return dictionary;
+	}
 
-    /**
-     * Sets the job order.
-     * @param jobOrder The job order.
-     */
-    void setJobOrder(shared_ptr<JobOrder> jobOrder);
+	/**
+	 * Sets the dictionary.
+	 * @param dictionary The dictionary.
+	 */
+	void setDictionary(shared_ptr<Dictionary> dictionary) {
+		this->dictionary = dictionary;
+	}
 
-    /**
-     * Returns the logging.
-     * @return the logging.
-     */
-    shared_ptr<Logging> getLogging() const;
+	/**
+	 * Returns the job order.
+	 * @return the job order.
+	 */
+	shared_ptr<JobOrder> getJobOrder() const {
+		return jobOrder;
+	}
 
-    /**
-     * Sets the logging.
-     * @param logging The logging.
-     */
-    void setLogging(shared_ptr<Logging> logging);
+	/**
+	 * Sets the job order.
+	 * @param jobOrder The job order.
+	 */
+	void setJobOrder(shared_ptr<JobOrder> jobOrder) {
+		this->jobOrder = jobOrder;
+	}
 
-    /**
-     * Returns the object associated with the supplied object ID.
-     * @param id The object ID.
-     * @return the object associated with {@code id}.
-     */
-    Identifiable& getObject(const string& id) const;
+	/**
+	 * Returns the logging.
+	 * @return the logging.
+	 */
+	shared_ptr<Logging> getLogging() const {
+		return logging;
+	}
 
-    /**
-     * Returns the segment associated with the supplied segment ID.
-     * @param id The segment ID.
-     * @return the segment associated with {@code id}.
-     */
-    Segment& getSegment(const string& id) const;
+	/**
+	 * Sets the logging.
+	 * @param logging The logging.
+	 */
+	void setLogging(shared_ptr<Logging> logging) {
+		this->logging = logging;
+	}
 
-    /**
-     * Returns a vector containing pointers to all segments.
-     * @return A vector containing pointers to all segments.
-     */
-    vector<Segment*> getSegments() const;
+	/**
+	 * Returns the object associated with the supplied object ID.
+	 * @param id The object ID.
+	 * @return the object associated with {@code id}.
+	 */
+	shared_ptr<Identifiable> getObject(const string& id) const;
 
-    /**
-     * Returns the index of the last row in a segment, which has been
-     * computed by a certain module.
-     * @param segment The segment.
-     * @param module The module.
-     * @return the index of the last row in {@code segment}, which has
-     *         been computed by {@code module}.
-     */
-    // todo - L shall be last letter (nf-20110419)
-    size_t getLastLComputed(const Segment& segment, const Module& module) const;
+	/**
+	 * Returns the segment associated with the supplied segment ID.
+	 * @param id The segment ID.
+	 * @return the segment associated with {@code id}.
+	 */
+	Segment& getSegment(const string& id) const;
 
-    /**
-     * Sets the index of the last row in a segment, which has been
-     * computed by a certain module.
-     * @param segment The segment.
-     * @param module The module.
-     * @param l The index of the last row in {@code segment}, which has
-     *          been computed by {@code module}.
-     */
-    // todo - L shall be last letter (nf-20110419)
-    void setLastLComputed(const Segment& segment, const Module& module, size_t l);
+	/**
+	 * Returns a vector containing pointers to all segments.
+	 * @return A vector containing pointers to all segments.
+	 */
+	vector<string> getSegmentIds() const {
+		vector<string> ids(segmentList.size());
+		foreach (shared_ptr<Segment> s, segmentList)
+				{
+					ids.push_back(s->getId());
+				}
+		return ids;
+	}
 
-    /**
-     * Returns the index of the last row in a segment, which has been
-     * computed by all modules but a given writer module.
-     * @param segment The segment.
-     * @param writer The writer module.
-     * @return The index of the last row in a segment, which has been
-     *         computed by all modules but the writer module.
-     */
-    // todo - L shall be last letter (nf-20110419)
-    size_t getLastLWritable(const Segment& segment, const Writer& writer) const;
+	/**
+	 * Returns the index of the last row in a segment, which has been
+	 * computed by a certain module.
+	 * @param segment The segment.
+	 * @param module The module.
+	 * @return the index of the last row in {@code segment}, which has
+	 *         been computed by {@code module}.
+	 */
+	size_t getLastComputedL(const Segment& segment, const Module& module) const;
 
-    /**
-     * Returns the index of the first row in a given segment, which has not
-     * been computed by a module.
-     * @param segment The segment.
-     * @param module The module.
-     * @return The index of the first row, which has not been computed by the
-     *         given module.
-     */
-    // todo - L shall be last letter (nf-20110419)
-    size_t getFirstLComputable(const Segment& segment, const Module& module) const;
+	/**
+	 * Sets the index of the last row in a segment, which has been
+	 * computed by a certain module.
+	 * @param segment The segment.
+	 * @param module The module.
+	 * @param l The index of the last row in {@code segment}, which has
+	 *          been computed by {@code module}.
+	 */
+	void setLastComputedL(const Segment& segment, const Module& module,
+			size_t l);
 
-    /**
-     * Returns the index of the last row in a given segment, which can be
-     * computed.
-     * @param segment The segment.
-     * @return The index of the last row in the given segment, which can be
-     *         computed.
-     */
-    // todo - L shall be last letter (nf-20110419)
-    size_t getLastLComputable(const Segment& segment) const;
+	/**
+	 * Returns the index of the last row in a segment, which has been
+	 * computed by all modules but a given writer module.
+	 * @param segment The segment.
+	 * @param writer The writer module.
+	 * @return The index of the last row in a segment, which has been
+	 *         computed by all modules but the writer module.
+	 */
+	size_t getLastWritableL(const Segment& segment, const Writer& writer) const;
 
-    /**
-     * Returns the index of the first row in a segment, which is required for
-     * processing any block of rows starting with a given row index.
-     * @param segment The segment.
-     * @param l The row index.
-     * @return the index of the first row in {@code segment}, which is
-     *         required for processing a block of rows starting with row
-     *         index {@code l}.
-     */
-    // todo - L shall be last letter (nf-20110419)
-    size_t getFirstLRequired(const Segment& segment, size_t l) const;
+	/**
+	 * Returns the index of the first row in a given segment, which has not
+	 * been computed by a module.
+	 * @param segment The segment.
+	 * @param module The module.
+	 * @return The index of the first row, which has not been computed by the
+	 *         given module.
+	 */
+	size_t getFirstComputableL(const Segment& segment,
+			const Module& module) const;
 
-    /**
-     * Inquires the context about an object.
-     * @param id The object ID.
-     * @return {@code true} if an object with the given ID has been added to
-     *         the context, {@code false} otherwise.
-     */
-    bool hasObject(const string& id) const;
+	/**
+	 * Returns the index of the last row in a given segment, which can be
+	 * computed.
+	 * @param segment The segment.
+	 * @return The index of the last row in the given segment, which can be
+	 *         computed.
+	 */
+	size_t getLastComputableL(const Segment& segment) const;
 
-    /**
-     * Inquires the context about a segment.
-     * @param id The segment ID.
-     * @return {@code true} if a segement with the given ID has been added to
-     *         the context, {@code false} otherwise.
-     */
-    bool hasSegment(const string& id) const;
+	/**
+	 * Returns the index of the first row in a segment, which is required for
+	 * processing any block of rows starting with a given row index.
+	 * @param segment The segment.
+	 * @param l The row index.
+	 * @return the index of the first row in {@code segment}, which is
+	 *         required for processing a block of rows starting with row
+	 *         index {@code l}.
+	 */
+	size_t getFirstRequiredL(const Segment& segment, size_t l) const;
 
-    /**
-     * Inquires the context about the index of the last row in a segment,
-     * which has been computed by a certain module.
-     * @param segment The segment.
-     * @param module The module.
-     * @return {@code true} if the context has the requested information,
-     *         {@code false} otherwise.
-     */
-    bool hasLastLComputed(const Segment& segment, const Module& module) const;
+	/**
+	 * Inquires the context about an object.
+	 * @param id The object ID.
+	 * @return {@code true} if an object with the given ID has been added to
+	 *         the context, {@code false} otherwise.
+	 */
+	bool hasObject(const string& id) const;
 
-    bool isCompleted() const;
+	/**
+	 * Inquires the context about a segment.
+	 * @param id The segment ID.
+	 * @return {@code true} if a segement with the given ID has been added to
+	 *         the context, {@code false} otherwise.
+	 */
+	bool hasSegment(const string& id) const;
 
-    void moveSegmentsForward() const;
+	/**
+	 * Inquires the context about the index of the last row in a segment,
+	 * which has been computed by a certain module.
+	 * @param segment The segment.
+	 * @param module The module.
+	 * @return {@code true} if the context has the requested information,
+	 *         {@code false} otherwise.
+	 */
+	bool hasLastLComputed(const Segment& segment, const Module& module) const;
 
-    void setErrorHandler(shared_ptr<ErrorHandler> errorHandler);
+	bool isCompleted() const;
 
-    void handleError(exception& e);
+	void moveSegmentsForward() const;
 
-    void removeModule(Module& module);
+	void setErrorHandler(shared_ptr<ErrorHandler> errorHandler);
+
+	void handleError(exception& e);
 
 private:
+	template<class Identifiable>
+	class Id {
+	public:
+		Id(const string& id) :
+				id(id) {
+		}
+		~Id() {
+		}
 
-    template <class K, class V>
-    bool contains(const map<K, V*>& map, const K& key) const {
-        return map.find(key) != map.end();
-    }
+		bool operator()(shared_ptr<Identifiable> identifiable) {
+			return identifiable->getId().compare(id) == 0;
+		}
+	private:
+		const string& id;
+	};
 
-    template <class K, class V>
-    bool contains(const map<const K*, V>& map, const K& key) const {
-        return map.find(&key) != map.end();
-    }
+	template<class K, class V>
+	bool contains(const map<K, V>& map, const K& key) const {
+		return map.find(key) != map.end();
+	}
 
-    template <class T>
-    bool contains(const vector<T*>& vector, const T& value) const {
-        return std::find(vector.begin(), vector.end(), &value) != vector.end();
-    }
+	template<class K, class V>
+	bool contains(const map<const K*, V>& map, const K* key) const {
+		return map.find(key) != map.end();
+	}
 
-    void moveForward(Segment& segment) const;
+	template<class K, class V>
+	bool contains(const map<const K*, V>& map, const K& key) const {
+		return map.find(&key) != map.end();
+	}
 
-    shared_ptr<Logging> logging;
-    shared_ptr<Dictionary> dictionary;
-    shared_ptr<JobOrder> jobOrder;
-    shared_ptr<ErrorHandler> errorHandler;
+	template<class T>
+	bool contains(const vector<T*>& vector, const T& value) const {
+		return std::find(vector.begin(), vector.end(), &value) != vector.end();
+	}
 
-    vector<Module*> moduleList;
-    map<string, Identifiable*> objectMap;
-    map<string, Segment*> segmentMap;
-    vector<Segment*> segmentList;
+	template<class T>
+	bool contains(const vector<shared_ptr<T> >& vector, const T& value) const {
+		foreach (shared_ptr<T> p, vector)
+				{
+					if (p.get() == &value) {
+						return true;
+					}
+				}
+		return false;
+	}
 
-    map<const Segment*, map<const Module*, size_t > > lastLComputedMap;
+	void moveForward(shared_ptr<Segment> segment) const;
+
+	shared_ptr<Logging> logging;
+	shared_ptr<Dictionary> dictionary;
+	shared_ptr<JobOrder> jobOrder;
+	shared_ptr<ErrorHandler> errorHandler;
+
+	vector<shared_ptr<Module> > moduleList;
+	map<string, shared_ptr<Identifiable> > objectMap;
+	map<string, shared_ptr<Segment> > segmentMap;
+	vector<shared_ptr<Segment> > segmentList;
+
+	map<const Segment*, map<const Module*, size_t> > lastComputedLMap;
 };
 
 #endif	/* CONTEXT_H */

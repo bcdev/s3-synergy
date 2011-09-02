@@ -50,21 +50,21 @@ void ContextTest::testInitialState() {
 void ContextTest::testAddModule() {
 	const shared_ptr<Module> a(new BasicModule("A"));
 	const shared_ptr<Module> b(new BasicModule("B"));
-	context->addModule(*a);
-	context->addModule(*b);
-	const vector<Module*> modules = context->getModules();
+	context->addModule(a);
+	context->addModule(b);
+	const vector<shared_ptr<Module> > modules = context->getModules();
 	CPPUNIT_ASSERT(modules.size() == 2);
-	CPPUNIT_ASSERT(modules[0] == a.get());
-	CPPUNIT_ASSERT(modules[1] == b.get());
+	CPPUNIT_ASSERT(modules[0] == a);
+	CPPUNIT_ASSERT(modules[1] == b);
 }
 
 void ContextTest::testAddObject() {
 	const shared_ptr<Identifiable> o(new TestObject("O"));
 	CPPUNIT_ASSERT(context->hasObject(o->getId()) == false);
-	context->addObject(*o);
+	context->addObject(o);
 	CPPUNIT_ASSERT(context->hasObject(o->getId()));
-	CPPUNIT_ASSERT(context->getObject(o->getId()) == *o);
-	CPPUNIT_ASSERT_THROW(context->addObject(*o), logic_error);
+	CPPUNIT_ASSERT(context->getObject(o->getId()) == o);
+	CPPUNIT_ASSERT_THROW(context->addObject(o), logic_error);
 }
 
 void ContextTest::testAddSegment() {
@@ -99,37 +99,36 @@ void ContextTest::testGetUnknownSegment() {
 }
 
 void ContextTest::testSetGetLastLComputed() {
-	Segment& segment = context->addSegment("S", 100, 1, 1, 0, 200);
-	shared_ptr<Module> module = shared_ptr<Module>(new BasicModule("M"));
-	CPPUNIT_ASSERT_THROW(context->setLastLComputed(segment, *module, 10),
-			logic_error);
+	Segment& s = context->addSegment("S", 100, 1, 1, 0, 200);
+	shared_ptr<Module> m = shared_ptr<Module>(new BasicModule("M"));
+	CPPUNIT_ASSERT_THROW(context->setLastComputedL(s, *m, 10), logic_error);
 
-	context->addModule(*module);
-	context->setLastLComputed(segment, *module, 10);
-	CPPUNIT_ASSERT(context->getLastLComputed(segment, *module) == 10);
+	context->addModule(m);
+	context->setLastComputedL(s, *m, 10);
+	CPPUNIT_ASSERT(context->getLastComputedL(s, *m) == 10);
 }
 
 void ContextTest::testGetLastLWritable() {
 	Segment& segment = context->addSegment("A", 100, 1, 1, 0, 200);
 
-	shared_ptr<Module> module1 = shared_ptr<Module>(new BasicModule("M1"));
-	shared_ptr<Module> module2 = shared_ptr<Module>(new BasicModule("M2"));
-	shared_ptr<Writer> writer = shared_ptr<Writer>(new Writer("W"));
-	context->addModule(*module1);
-	context->setLastLComputed(segment, *module1, 5);
-	CPPUNIT_ASSERT_THROW(context->getLastLWritable(segment, *writer),
+	shared_ptr<Module> a = shared_ptr<Module>(new BasicModule("A"));
+	shared_ptr<Module> b = shared_ptr<Module>(new BasicModule("B"));
+	shared_ptr<Writer> w = shared_ptr<Writer>(new Writer("W"));
+	context->addModule(a);
+	context->setLastComputedL(segment, *a, 5);
+	CPPUNIT_ASSERT_THROW(context->getLastWritableL(segment, *w),
 			logic_error);
 
-	context->addModule(*writer);
-	CPPUNIT_ASSERT(context->getLastLWritable(segment, *writer) == 5);
+	context->addModule(w);
+	CPPUNIT_ASSERT(context->getLastWritableL(segment, *w) == 5);
 
-	context->addModule(*module2);
-	context->setLastLComputed(segment, *module2, 7);
-	CPPUNIT_ASSERT(context->getLastLWritable(segment, *writer) == 5);
+	context->addModule(b);
+	context->setLastComputedL(segment, *b, 7);
+	CPPUNIT_ASSERT(context->getLastWritableL(segment, *w) == 5);
 
-	context->setLastLComputed(segment, *module1, 9);
-	CPPUNIT_ASSERT(context->getLastLWritable(segment, *writer) == 7);
+	context->setLastComputedL(segment, *a, 9);
+	CPPUNIT_ASSERT(context->getLastWritableL(segment, *w) == 7);
 
-	context->setLastLComputed(segment, *writer, 3);
-	CPPUNIT_ASSERT(context->getLastLWritable(segment, *writer) == 7);
+	context->setLastComputedL(segment, *w, 3);
+	CPPUNIT_ASSERT(context->getLastWritableL(segment, *w) == 7);
 }

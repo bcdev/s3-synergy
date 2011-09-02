@@ -7,7 +7,7 @@
 
 #include <cstdlib>
 
-#include "../util/Utils.h"
+#include "../util/IOUtils.h"
 #include "../util/NetCDF.h"
 #include "../core/JobOrder.h"
 
@@ -147,8 +147,8 @@ void L1cReader::start(Context& context) {
 									"adding variable '" + varName
 											+ "' to segment '" + segmentName
 											+ "'", getId());
-							Utils::addVariableToSegment(varName, type,
-									context.getSegment(segmentName));
+							context.getSegment(segmentName).addVariable(varName,
+									type);
 							ncVarIdMap[varName] = varId;
 						}
 			}
@@ -179,13 +179,13 @@ void L1cReader::process(Context& context) {
 						segmentDescriptor->getName());
 				const Grid& grid = segment.getGrid();
 				if (!context.hasLastLComputed(segment, *this)
-						|| context.getLastLComputed(segment, *this)
+						|| context.getLastComputedL(segment, *this)
 								< grid.getFirstL() + grid.getSizeL() - 1) {
 					const vector<VariableDescriptor*> variableDescriptors =
 							segmentDescriptor->getVariableDescriptors();
-					const size_t firstLComputable = context.getFirstLComputable(
+					const size_t firstLComputable = context.getFirstComputableL(
 							segment, *this);
-					const size_t lastLComputable = context.getLastLComputable(
+					const size_t lastLComputable = context.getLastComputableL(
 							segment);
 
 					foreach(VariableDescriptor* variableDescriptor, variableDescriptors)
@@ -208,10 +208,10 @@ void L1cReader::process(Context& context) {
 								const size_t dimCount =
 										variableDescriptor->getDimensions().size();
 								const valarray<size_t> starts =
-										Utils::createStartVector(dimCount,
+										IOUtils::createStartVector(dimCount,
 												firstLComputable);
 								const valarray<size_t> counts =
-										Utils::createCountVector(
+										IOUtils::createCountVector(
 												dimCount,
 												grid.getSizeK(),
 												lastLComputable
@@ -228,7 +228,7 @@ void L1cReader::process(Context& context) {
 								NetCDF::getData(fileId, varId, starts, counts,
 										accessor.getUntypedData());
 							}
-					context.setLastLComputed(segment, *this, lastLComputable);
+					context.setLastComputedL(segment, *this, lastLComputable);
 				}
 			}
 }

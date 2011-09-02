@@ -12,14 +12,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * File:   Utils.h
+ * File:   IOUtils.h
  * Author: thomass
  *
  * Created on January 5, 2011, 10:05 AM
  */
 
-#ifndef UTILS_H
-#define	UTILS_H
+#ifndef IOUTILS_H
+#define	IOUTILS_H
 
 #include <iostream>
 #include <netcdf.h>
@@ -32,29 +32,11 @@
 
 using std::vector;
 
-class Utils {
+class IOUtils {
 public:
 
-	static int* getNcDims(int fileId, vector<Dimension*> dims) {
-		valarray<int> ncDims(dims.size());
-		for (size_t i = 0; i < dims.size(); i++) {
-			int dimId;
-			int status = nc_inq_dimid(fileId, dims[i]->getName().c_str(),
-					&dimId);
-			if (status != NC_NOERR) {
-				int currentDimId;
-				nc_def_dim(fileId, dims[i]->getName().c_str(),
-						dims[i]->getSize(), &currentDimId);
-				ncDims[i] = currentDimId;
-			} else {
-				ncDims[i] = dimId;
-			}
-		}
-		return &ncDims[0];
-	}
-
-	static const valarray<size_t> createCountVector(size_t dimCount,
-			size_t camCount, size_t lineCount, size_t colCount) {
+	static valarray<size_t> createCountVector(size_t dimCount, size_t camCount,
+			size_t lineCount, size_t colCount) {
 		valarray<size_t> count(dimCount);
 		if (dimCount == 3) {
 			count[0] = camCount;
@@ -73,7 +55,7 @@ public:
 				std::invalid_argument("Wrong number of dimensions."));
 	}
 
-	static const valarray<size_t> createStartVector(size_t dimCount,
+	static valarray<size_t> createStartVector(size_t dimCount,
 			size_t startLine) {
 		valarray<size_t> start(dimCount);
 		if (dimCount == 3) {
@@ -93,45 +75,29 @@ public:
 				std::invalid_argument("Wrong number of dimensions."));
 	}
 
-	static void addVariableToSegment(const string symbolicName, nc_type type,
-			Segment& segment) {
-		switch (type) {
-		case NC_BYTE:
-			segment.addVariableByte(symbolicName);
+	static valarray<size_t> getDimensionSizes(VariableDescriptor* varDesc) {
+		vector<Dimension*> dimensions = varDesc->getDimensions();
+		valarray<size_t> dimensionSizes(3);
+		switch (dimensions.size()) {
+		case 3:
+			dimensionSizes[0] = dimensions[0]->getSize(); // sizeK
+			dimensionSizes[1] = dimensions[1]->getSize(); // sizeL
+			dimensionSizes[2] = dimensions[2]->getSize(); // sizeM
 			break;
-		case NC_UBYTE:
-			segment.addVariableUByte(symbolicName);
+		case 2:
+			dimensionSizes[0] = 1;
+			dimensionSizes[1] = dimensions[0]->getSize();
+			dimensionSizes[2] = dimensions[1]->getSize();
 			break;
-		case NC_SHORT:
-			segment.addVariableShort(symbolicName);
-			break;
-		case NC_USHORT:
-			segment.addVariableUShort(symbolicName);
-			break;
-		case NC_INT:
-			segment.addVariableInt(symbolicName);
-			break;
-		case NC_UINT:
-			segment.addVariableUInt(symbolicName);
-			break;
-		case NC_INT64:
-			segment.addVariableLong(symbolicName);
-			break;
-		case NC_UINT64:
-			segment.addVariableULong(symbolicName);
-			break;
-		case NC_FLOAT:
-			segment.addVariableFloat(symbolicName);
-			break;
-		case NC_DOUBLE:
-			segment.addVariableDouble(symbolicName);
-			break;
-		default:
-			BOOST_THROW_EXCEPTION(
-					std::invalid_argument("Variable " + symbolicName + " has invalid type."));
+		case 1:
+			dimensionSizes[0] = 1;
+			dimensionSizes[1] = 1;
+			dimensionSizes[2] = dimensions[0]->getSize();
 			break;
 		}
+		return dimensionSizes;
 	}
+
 };
 
-#endif	/* UTILS_H */
+#endif	/* IOUTILS_H */

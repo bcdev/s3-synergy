@@ -21,8 +21,9 @@
 #include <netcdf.h>
 #include <string>
 
-#include "../../../main/cpp/util/Utils.h"
+#include "../../../main/cpp/util/IOUtils.h"
 #include "../../../main/cpp/core/SegmentImpl.h"
+
 #include "IOUtilsTest.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(IOUtilsTest);
@@ -42,45 +43,35 @@ void IOUtilsTest::tearDown() {
 }
 
 void IOUtilsTest::testCreateCountVector() {
-    CPPUNIT_ASSERT_THROW(Utils::createCountVector(0, 5, 2, 10), std::invalid_argument);
-    CPPUNIT_ASSERT_THROW(Utils::createCountVector(4, 5, 2, 10), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(IOUtils::createCountVector(0, 5, 2, 10), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(IOUtils::createCountVector(4, 5, 2, 10), std::invalid_argument);
 
-    const valarray<size_t> countVector3Dims = Utils::createCountVector(3, 5, 2, 10);
+    const valarray<size_t> countVector3Dims = IOUtils::createCountVector(3, 5, 2, 10);
     CPPUNIT_ASSERT(countVector3Dims[0] == 5);
     CPPUNIT_ASSERT(countVector3Dims[1] == 2);
     CPPUNIT_ASSERT(countVector3Dims[2] == 10);
 
-    const valarray<size_t> countVector2Dims = Utils::createCountVector(2, 5, 2, 10);
+    const valarray<size_t> countVector2Dims = IOUtils::createCountVector(2, 5, 2, 10);
     CPPUNIT_ASSERT(countVector2Dims[0] == 2);
     CPPUNIT_ASSERT(countVector2Dims[1] == 10);
 
-    const valarray<size_t> countVector1Dim = Utils::createCountVector(1, 5, 2, 10);
+    const valarray<size_t> countVector1Dim = IOUtils::createCountVector(1, 5, 2, 10);
     CPPUNIT_ASSERT(countVector1Dim[0] == 10);
 }
 
 void IOUtilsTest::testCreateStartVector() {
-    CPPUNIT_ASSERT_THROW(Utils::createStartVector(0, 5), std::invalid_argument);
-    CPPUNIT_ASSERT_THROW(Utils::createStartVector(4, 5), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(IOUtils::createStartVector(0, 5), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(IOUtils::createStartVector(4, 5), std::invalid_argument);
 
-    const valarray<size_t> startVector3Dims = Utils::createStartVector(3, 60000);
+    const valarray<size_t> startVector3Dims = IOUtils::createStartVector(3, 60000);
     CPPUNIT_ASSERT(startVector3Dims[0] == 0);
     CPPUNIT_ASSERT(startVector3Dims[1] == 60000);
     CPPUNIT_ASSERT(startVector3Dims[2] == 0);
 
-    const valarray<size_t> startVector2Dims = Utils::createStartVector(2, 60000);
+    const valarray<size_t> startVector2Dims = IOUtils::createStartVector(2, 60000);
     CPPUNIT_ASSERT(startVector2Dims[0] == 60000);
     CPPUNIT_ASSERT(startVector2Dims[1] == 00);
 
-    const valarray<size_t> startVector1Dim = Utils::createStartVector(1, 60000);
+    const valarray<size_t> startVector1Dim = IOUtils::createStartVector(1, 60000);
     CPPUNIT_ASSERT(startVector1Dim[0] == 0);
-}
-
-void IOUtilsTest::testAddVariableToSegment() {
-    Segment* segment = new SegmentImpl("Asterix", 10, 10, 5, 0, 9);
-    CPPUNIT_ASSERT(segment->hasVariable("Obelix") == false);
-    CPPUNIT_ASSERT_THROW(segment->getAccessor("Obelix"), std::logic_error);
-    Utils::addVariableToSegment("Obelix", NC_SHORT, *segment);
-    CPPUNIT_ASSERT(segment->hasVariable("Obelix") == true);
-    CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("Obelix"));
-    delete segment;
 }

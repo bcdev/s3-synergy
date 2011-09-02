@@ -27,7 +27,6 @@ class IOUtilsTest: public CPPUNIT_NS::TestFixture {
 CPPUNIT_TEST_SUITE(IOUtilsTest);
 		CPPUNIT_TEST(testCreateCountVector);
 		CPPUNIT_TEST(testCreateStartVector);
-		CPPUNIT_TEST(testAddVariableToSegment);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -38,7 +37,6 @@ public:
 private:
 	void testCreateCountVector();
 	void testCreateStartVector();
-	void testAddVariableToSegment();
 };
 
 #endif	/* IOUTILSTEST_H */

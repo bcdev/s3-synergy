@@ -8,7 +8,7 @@
             </dimension>
             <dimension>
                 <name>N_LINE_OLC</name>
-                <size>60000</size>
+                <size>6000</size>
             </dimension>
             <dimension>
                 <name>N_DET_CAM</name>
@@ -20,7 +20,7 @@
         <dimensions>
             <dimension>
                 <name>N_LINE_OLC</name>
-                <size>60000</size>
+                <size>6000</size>
             </dimension>
         </dimensions>
     </set>
@@ -28,6 +28,7 @@
         <dimensions>
             <dimension>
                 <name>N_OLC_TP</name>
+                <size>7222</size>
             </dimension>
         </dimensions>
     </set>
@@ -35,6 +36,7 @@
         <dimensions>
             <dimension>
                 <name>N_SLN_TP</name>
+                <size>3611</size>
             </dimension>
         </dimensions>
     </set>
@@ -42,6 +44,7 @@
         <dimensions>
             <dimension>
                 <name>N_SLO_TP</name>
+                <size>3611</size>
             </dimension>
         </dimensions>
     </set>

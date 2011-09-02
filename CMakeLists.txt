@@ -82,6 +82,24 @@ target_link_libraries(sy_unt_sre
 	boost_filesystem-mt
 )
 set_property(TARGET sy_unt_sre PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+#
+add_executable(sy_unt_swr
+    src/test/cpp/SyUntSwrRunner.cpp
+	${CORE_MAIN_SOURCES}
+	${UTIL_MAIN_SOURCES}
+	${WRITER_MAIN_SOURCES}
+	${WRITER_TEST_SOURCES}
+)
+target_link_libraries(sy_unt_swr
+	cppunit
+	netcdf
+	Xfdu
+	xerces-c
+	xqilla
+	boost_system-mt
+	boost_filesystem-mt
+)
+set_property(TARGET sy_unt_swr PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 
 
 ##

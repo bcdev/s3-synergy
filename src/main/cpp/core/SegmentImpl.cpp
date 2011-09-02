@@ -33,77 +33,113 @@ SegmentImpl::SegmentImpl(const string& s, size_t l, size_t m, size_t k, size_t m
 }
 
 SegmentImpl::~SegmentImpl() {
-    for (size_t i = accessorList.size(); i-- > 0;) {
-        delete accessorList[i];
-    }
+}
+
+void SegmentImpl::addVariable(const string& name, int type)  throw (logic_error) {
+	switch (type) {
+	case Constants::TYPE_BYTE:
+		addVariableByte(name);
+		break;
+	case Constants::TYPE_UBYTE:
+		addVariableUByte(name);
+		break;
+	case Constants::TYPE_SHORT:
+		addVariableShort(name);
+		break;
+	case Constants::TYPE_USHORT:
+		addVariableUShort(name);
+		break;
+	case Constants::TYPE_INT:
+		addVariableInt(name);
+		break;
+	case Constants::TYPE_UINT:
+		addVariableUInt(name);
+		break;
+	case Constants::TYPE_LONG:
+		addVariableLong(name);
+		break;
+	case Constants::TYPE_ULONG:
+		addVariableULong(name);
+		break;
+	case Constants::TYPE_FLOAT:
+		addVariableFloat(name);
+		break;
+	case Constants::TYPE_DOUBLE:
+		addVariableDouble(name);
+		break;
+	default:
+		BOOST_THROW_EXCEPTION(
+				std::invalid_argument("Cannot add variable '" + name + "' to segment '" + getId() + "' because of invalid type."));
+		break;
+	}
 }
 
 void SegmentImpl::addVariableByte(const string& varName) throw (logic_error) {
     unique(varName);
-    Accessor* accessor = new ByteAccessor(grid.getSize());
+    shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new ByteAccessor(grid.getSize()));
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableDouble(const string& varName) throw (logic_error) {
     unique(varName);
-    Accessor* accessor = new DoubleAccessor(grid.getSize());
+    shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new DoubleAccessor(grid.getSize()));
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableFloat(const string& varName) throw (logic_error) {
     unique(varName);
-    Accessor* accessor = new FloatAccessor(grid.getSize());
+    shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new FloatAccessor(grid.getSize()));
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableInt(const string& varName) throw (logic_error) {
     unique(varName);
-    Accessor* accessor = new IntAccessor(grid.getSize());
+    shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new IntAccessor(grid.getSize()));
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableLong(const string& varName) throw (logic_error) {
     unique(varName);
-    Accessor* accessor = new LongAccessor(grid.getSize());
+    shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new LongAccessor(grid.getSize()));
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableShort(const string& varName) throw (logic_error) {
     unique(varName);
-    Accessor* accessor = new ShortAccessor(grid.getSize());
+    shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new ShortAccessor(grid.getSize()));
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableUByte(const string& varName) throw (logic_error) {
     unique(varName);
-    Accessor* accessor = new UByteAccessor(grid.getSize());
+    shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new UByteAccessor(grid.getSize()));
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableUInt(const string& varName) throw (logic_error) {
     unique(varName);
-    Accessor* accessor = new UIntAccessor(grid.getSize());
+    shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new UIntAccessor(grid.getSize()));
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableULong(const string& varName) throw (logic_error) {
     unique(varName);
-    Accessor* accessor = new ULongAccessor(grid.getSize());
+    shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new ULongAccessor(grid.getSize()));
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }
 
 void SegmentImpl::addVariableUShort(const string& varName) throw (logic_error) {
     unique(varName);
-    Accessor* accessor = new UShortAccessor(grid.getSize());
+    shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new UShortAccessor(grid.getSize()));
     accessorMap[varName] = accessor;
     accessorList.push_back(accessor);
 }

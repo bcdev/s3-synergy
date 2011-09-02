@@ -24,6 +24,7 @@
 #include <map>
 #include <vector>
 
+#include "Boost.h"
 #include "Constants.h"
 #include "GridImpl.h"
 #include "Segment.h"
@@ -31,41 +32,43 @@
 using std::map;
 using std::vector;
 
-class SegmentImpl : public virtual Segment {
+class SegmentImpl: public virtual Segment {
 public:
-    SegmentImpl(const string& id, size_t sizeL, size_t sizeM = Constants::N_DET_CAM, size_t sizeK = Constants::N_CAM, size_t minL = 0, size_t maxL = Constants::N_LINE_OLC - 1);
-    virtual ~SegmentImpl();
+	SegmentImpl(const string& id, size_t sizeL, size_t sizeM =
+			Constants::N_DET_CAM, size_t sizeK = Constants::N_CAM, size_t minL =
+			0, size_t maxL = Constants::N_LINE_OLC - 1);
+	virtual ~SegmentImpl();
 
-    // todo - add type parameter (nf-20110419)
-    void addVariableByte(const string& varName) throw (logic_error);
-    void addVariableDouble(const string& varName) throw (logic_error);
-    void addVariableFloat(const string& varName) throw (logic_error);
-    void addVariableInt(const string& varName) throw (logic_error);
-    void addVariableLong(const string& varName) throw (logic_error);
-    void addVariableShort(const string& varName) throw (logic_error);
-    void addVariableUByte(const string& varName) throw (logic_error);
-    void addVariableUInt(const string& varName) throw (logic_error);
-    void addVariableULong(const string& varName) throw (logic_error);
-    void addVariableUShort(const string& varName) throw (logic_error);
+	void addVariable(const string& varName, int type) throw (logic_error);
+	void addVariableByte(const string& varName) throw (logic_error);
+	void addVariableDouble(const string& varName) throw (logic_error);
+	void addVariableFloat(const string& varName) throw (logic_error);
+	void addVariableInt(const string& varName) throw (logic_error);
+	void addVariableLong(const string& varName) throw (logic_error);
+	void addVariableShort(const string& varName) throw (logic_error);
+	void addVariableUByte(const string& varName) throw (logic_error);
+	void addVariableUInt(const string& varName) throw (logic_error);
+	void addVariableULong(const string& varName) throw (logic_error);
+	void addVariableUShort(const string& varName) throw (logic_error);
 
-    bool hasVariable(const string& varName) const;
+	bool hasVariable(const string& varName) const;
 
-    const string& getId() const;
-    const Grid& getGrid() const;
-    Accessor& getAccessor(const string& varName) const throw (logic_error);
-    void moveForward(size_t l) throw (logic_error);
-    
-    string toString() const;
+	const string& getId() const;
+	const Grid& getGrid() const;
+	Accessor& getAccessor(const string& varName) const throw (logic_error);
+	void moveForward(size_t l) throw (logic_error);
+
+	string toString() const;
 
 private:
-    void unique(const string& varName) const throw (logic_error);
+	void unique(const string& varName) const throw (logic_error);
 
-    static const string className;
+	static const string className;
 
-    const string id;
-    mutable GridImpl grid;
-    map<string, Accessor*> accessorMap;
-    vector<Accessor*> accessorList;
+	const string id;
+	mutable GridImpl grid;
+	map<string, shared_ptr<Accessor> > accessorMap;
+	vector<shared_ptr<Accessor> > accessorList;
 };
 
 #endif	/* SEGMENTIMPL_H */

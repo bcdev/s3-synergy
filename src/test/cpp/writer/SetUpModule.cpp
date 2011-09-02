@@ -20,20 +20,31 @@
 
 #include <algorithm>
 
-#include "../util/Utils.h"
+#include "../../../main/cpp/util/IOUtils.h"
 
-#include "TestModule.h"
+#include "SetUpModule.h"
 
 using std::min;
 
-TestModule::TestModule() :
-		BasicModule("TEST") {
+SetUpModule::SetUpModule() :
+		BasicModule("SETUP") {
 }
 
-TestModule::~TestModule() {
+SetUpModule::~SetUpModule() {
 }
 
-void TestModule::start(Context& context) {
+void SetUpModule::start(Context& context) {
+	size_t segmentLineCount = 400;
+	const string segmentLineCountString =
+			context.getJobOrder()->getIpfConfiguration().getDynamicProcessingParameter(
+					"Segment_Line_Count");
+	if (!segmentLineCountString.empty()) {
+		segmentLineCount = lexical_cast<size_t>(segmentLineCountString);
+	}
+	context.getLogging()->info(
+			"segment line count is " + lexical_cast<string>(segmentLineCount),
+			getId());
+
 	vector<SegmentDescriptor*> segmentDescriptors =
 			context.getDictionary()->getProductDescriptor(
 					Constants::PRODUCT_SYL2).getSegmentDescriptors();
@@ -47,62 +58,39 @@ void TestModule::start(Context& context) {
 						{
 							const string& segmentName = segDesc->getName();
 							if (!context.hasSegment(segmentName)) {
-								valarray<int> gridParams = getGridParams(
-										varDesc);
-								context.addSegment(segmentName,
-										min(1000, gridParams[3]), gridParams[0],
-										gridParams[1], gridParams[2],
-										gridParams[3] - 1);
+								valarray<size_t> dimensionSizes =
+										IOUtils::getDimensionSizes(varDesc);
+								context.addSegment(
+										segmentName,
+										min(segmentLineCount,
+												dimensionSizes[1]),
+										dimensionSizes[2], dimensionSizes[0], 0,
+										dimensionSizes[1] - 1);
 							}
 							Segment& segment = context.getSegment(segmentName);
 							if (!segment.hasVariable(varDesc->getName())) {
-								Utils::addVariableToSegment(varDesc->getName(),
-										varDesc->getType(), segment);
+								segment.addVariable(varDesc->getName(),
+										varDesc->getType());
 							}
 						}
 			}
 }
 
-void TestModule::stop(Context& context) {
+void SetUpModule::stop(Context& context) {
+	reverse_foreach(const string id, context.getSegmentIds())
+			{
+				context.removeSegment(id);
+			}
 }
 
-void TestModule::process(Context& context) {
+void SetUpModule::process(Context& context) {
 	vector<SegmentDescriptor*> segmentDescriptors =
 			context.getDictionary()->getProductDescriptor(
 					Constants::PRODUCT_SYL2).getSegmentDescriptors();
 	foreach(SegmentDescriptor* segDesc, segmentDescriptors)
 			{
 				Segment& segment = context.getSegment(segDesc->getName());
-				context.setLastLComputed(segment, *this,
+				context.setLastComputedL(segment, *this,
 						segment.getGrid().getLastL());
 			}
-}
-
-valarray<int> TestModule::getGridParams(VariableDescriptor* varDesc) {
-	vector<Dimension*> dims = varDesc->getDimensions();
-	valarray<int> result(4);
-	switch (dims.size()) {
-	case 3: {
-		result[0] = dims[2]->getSize(); // sizeM
-		result[1] = dims[0]->getSize(); // sizeK
-		result[2] = 0; // startL
-		result[3] = dims[1]->getSize(); // sizeL
-		break;
-	}
-	case 2: {
-		result[0] = dims[1]->getSize();
-		result[1] = 1;
-		result[2] = 0;
-		result[3] = dims[0]->getSize();
-		break;
-	}
-	case 1: {
-		result[0] = dims[0]->getSize();
-		result[1] = 1;
-		result[2] = 0;
-		result[3] = 1;
-		break;
-	}
-	}
-	return result;
 }

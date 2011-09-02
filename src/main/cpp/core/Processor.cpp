@@ -21,8 +21,8 @@ Processor::~Processor() {
 void Processor::process(Context& context) {
     // todo - extract methods start, process, and stop (nf-20110419)
     try {
-        vector<Module*> modules = context.getModules();
-        foreach(Module* module, modules) {
+        vector<shared_ptr<Module> > modules = context.getModules();
+        foreach(shared_ptr<Module> module, modules) {
             try {
                 module->start(context);
             } catch (ModuleException& e) {
@@ -32,7 +32,7 @@ void Processor::process(Context& context) {
             }
         }
         do {
-            foreach(Module* module, modules) {
+            foreach(shared_ptr<Module> module, modules) {
                 try {
                     module->process(context);
                 } catch (ModuleException& e) {
@@ -43,7 +43,7 @@ void Processor::process(Context& context) {
             }
             context.moveSegmentsForward();
         } while (!context.isCompleted());
-        reverse_foreach(Module* module, modules) {
+        reverse_foreach(shared_ptr<Module> module, modules) {
             try {
                 module->stop(context);
             } catch (ModuleException& e) {

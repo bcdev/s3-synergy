@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
 		L1cReader reader;
 //		L1cReader reader(
 //				jobOrder.getProcessorConfiguration("SYL2").getInputList()[0].getFileNames()[0]);
-		TestModule test;
+		SetUpModule test;
 		SynL2Writer writer(
 				jobOrder->getIpfProcessor("SYL2").getOutputList()[0].getFileName());
 

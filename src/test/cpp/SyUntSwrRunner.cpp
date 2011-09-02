@@ -1,8 +1,8 @@
 /*
- * File:   SyUntSReRunner.cpp
- * Author: ralf
+ * SyUntSwrRunner.cpp
  *
- * Created on August 12, 2011, 3:28 PM
+ *  Created on: Sep 1, 2011
+ *      Author: ralf
  */
 
 // CppUnit site http://sourceforge.net/projects/cppunit/files
@@ -26,7 +26,7 @@ using std::getenv;
 shared_ptr<Context> context = shared_ptr<Context>(new Context());
 
 static void prepareContext() {
-	shared_ptr<Logger> logger = shared_ptr<Logger>(new Logger("LOG.SY_UNT_SRE"));
+	shared_ptr<Logger> logger = shared_ptr<Logger>(new Logger("LOG.SY_UNT_SWR"));
 	logger->setProcessorVersion(Constants::PROCESSOR_VERSION);
 	logger->setOutLogLevel(Logging::LOG_LEVEL_INFO);
 	logger->setErrLogLevel(Logging::LOG_LEVEL_INFO);

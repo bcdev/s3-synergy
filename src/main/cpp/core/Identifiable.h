@@ -32,27 +32,27 @@ using std::string;
 class Identifiable {
 public:
 
-    /**
-     * Destructor.
-     */
-    virtual ~Identifiable() {
-    }
+	/**
+	 * Destructor.
+	 */
+	virtual ~Identifiable() {
+	}
 
-    /**
-     * Returs the ID of this object.
-     * @return the ID of this object.
-     */
-    virtual const string& getId() const = 0;
+	/**
+	 * Returs the ID of this object.
+	 * @return the ID of this object.
+	 */
+	virtual const string& getId() const = 0;
 
-    /**
-     * Equal to operator.
-     * @param that An object.
-     * @return {@code true} if {@code this} and {@code that} object are the
-     *         same, {@code false} otherwise.
-     */
-    virtual bool operator==(const Identifiable& that) const {
-        return this == &that;
-    }
+	/**
+	 * Equal to operator.
+	 * @param that An object.
+	 * @return {@code true} if {@code this} and {@code that} object are the
+	 *         same, {@code false} otherwise.
+	 */
+	virtual bool operator==(const Identifiable& that) const {
+		return this == &that;
+	}
 };
 
 #endif	/* IDENTIFIABLE_H */

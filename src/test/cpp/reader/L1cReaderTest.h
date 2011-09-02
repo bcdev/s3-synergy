@@ -26,10 +26,6 @@ public:
 
 private:
     void testReader();
-
-    shared_ptr<Dictionary> dictionary;
-    shared_ptr<JobOrder> jobOrder;
-    shared_ptr<Module> reader;
 };
 
 #endif	/* L1CREADERTEST_H */

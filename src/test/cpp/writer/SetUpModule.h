@@ -21,19 +21,16 @@
 #ifndef TESTMODULE_H
 #define	TESTMODULE_H
 
-#include "../core/BasicModule.h"
+#include "../../../main/cpp/core/BasicModule.h"
 
-class TestModule : public BasicModule {
+class SetUpModule : public BasicModule {
 public:
-    TestModule();
-    virtual ~TestModule();
+    SetUpModule();
+    virtual ~SetUpModule();
 
     void start(Context& context);
     void stop(Context& context);
     void process(Context& context);
-
-private:
-    valarray<int> getGridParams(VariableDescriptor* varDesc);
 };
 
 #endif	/* TESTMODULE_H */

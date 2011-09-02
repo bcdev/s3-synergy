@@ -1,49 +1,52 @@
-/* 
- * File:   L1cReaderTest.cpp
- * Author: ralf
- * 
- * Created on August 16, 2011, 1:36 PM
+/*
+ * SyL2WriterTest.cpp
+ *
+ *  Created on: Sep 2, 2011
+ *      Author: ralf
  */
 
 #include <cstdlib>
 
 #include "../../../../src/main/cpp/core/Processor.h"
-#include "../../../../src/main/cpp/reader/L1cReader.h"
+#include "../../../../src/main/cpp/writer/SynL2Writer.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
 
-#include "L1cReaderTest.h"
+#include "SetUpModule.h"
+#include "SynL2WriterTest.h"
 
 extern shared_ptr<Context> context;
 
 using std::getenv;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(L1cReaderTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(SynL2WriterTest);
 
 const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
 
-L1cReaderTest::L1cReaderTest() {
+SynL2WriterTest::SynL2WriterTest() {
 }
 
-L1cReaderTest::~L1cReaderTest() {
+SynL2WriterTest::~SynL2WriterTest() {
 }
 
-void L1cReaderTest::setUp() {
+void SynL2WriterTest::setUp() {
 	XPathInitializer init;
 
 	shared_ptr<Dictionary> dictionary = DictionaryParser().parse(
 			S3_SYNERGY_HOME + "/src/main/resources/dictionary");
 	shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(
 			S3_SYNERGY_HOME
-					+ "/src/test/resources/jobs/JobOrder.SY_UNT_SRE.xml");
-	shared_ptr<Module> reader = shared_ptr<Module>(new L1cReader());
+					+ "/src/test/resources/jobs/JobOrder.SY_UNT_SWR.xml");
+	shared_ptr<Module> module = shared_ptr<Module>(new SetUpModule());
+	shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
 
 	context->setDictionary(dictionary);
 	context->setJobOrder(jobOrder);
-	context->addModule(reader);
+	context->addModule(module);
+	context->addModule(writer);
 }
 
-void L1cReaderTest::tearDown() {
+void SynL2WriterTest::tearDown() {
 	foreach (shared_ptr<Module> m, context->getModules())
 			{
 				context->removeModule(m);
@@ -52,7 +55,7 @@ void L1cReaderTest::tearDown() {
 	context->setDictionary(shared_ptr<Dictionary>());
 }
 
-void L1cReaderTest::testReader() {
+void SynL2WriterTest::testWriter() {
 	Processor processor;
 	processor.process(*context);
 }
