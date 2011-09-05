@@ -34,7 +34,7 @@ static void prepareContext() {
 }
 
 int main() {
-	if (getenv("S3_SYNERGY_HOME") == 0) {
+	if (getenv("S3_SYNERGY_HOME") == NULL) {
 		cout << "The test runner cannot be executed because the" << endl;
 		cout << "'S3_SYNERGY_HOME' environment variable has not" << endl;
 		cout << "been set." << endl;

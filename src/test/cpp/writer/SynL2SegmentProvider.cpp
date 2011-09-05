@@ -12,7 +12,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
- * File:   TestModule.cpp
+ * File:   SynL2SegmentProvider.cpp
  * Author: ralf
  *
  * Created on January 19, 2011, 5:07 PM
@@ -22,18 +22,18 @@
 
 #include "../../../main/cpp/util/IOUtils.h"
 
-#include "SetUpModule.h"
+#include "SynL2SegmentProvider.h"
 
 using std::min;
 
-SetUpModule::SetUpModule() :
-		BasicModule("SETUP") {
+SynL2SegmentProvider::SynL2SegmentProvider() :
+		BasicModule("SYN_L2_SEGMENT_PROVIDER") {
 }
 
-SetUpModule::~SetUpModule() {
+SynL2SegmentProvider::~SynL2SegmentProvider() {
 }
 
-void SetUpModule::start(Context& context) {
+void SynL2SegmentProvider::start(Context& context) {
 	size_t segmentLineCount = 400;
 	const string segmentLineCountString =
 			context.getJobOrder()->getIpfConfiguration().getDynamicProcessingParameter(
@@ -76,14 +76,14 @@ void SetUpModule::start(Context& context) {
 			}
 }
 
-void SetUpModule::stop(Context& context) {
+void SynL2SegmentProvider::stop(Context& context) {
 	reverse_foreach(const string id, context.getSegmentIds())
 			{
 				context.removeSegment(id);
 			}
 }
 
-void SetUpModule::process(Context& context) {
+void SynL2SegmentProvider::process(Context& context) {
 	vector<SegmentDescriptor*> segmentDescriptors =
 			context.getDictionary()->getProductDescriptor(
 					Constants::PRODUCT_SYL2).getSegmentDescriptors();

@@ -12,26 +12,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
- * File:   TestModule.h
+ * File:   SynL2SegmentProvider.h
  * Author: ralf
  *
  * Created on January 19, 2011, 5:07 PM
  */
 
-#ifndef TESTMODULE_H
-#define	TESTMODULE_H
+#ifndef SYNL2SEGMENTPROVIDER_H
+#define	SYNL2SEGMENTPROVIDER_H
 
 #include "../../../main/cpp/core/BasicModule.h"
 
-class SetUpModule : public BasicModule {
+class SynL2SegmentProvider : public BasicModule {
 public:
-    SetUpModule();
-    virtual ~SetUpModule();
+    SynL2SegmentProvider();
+    virtual ~SynL2SegmentProvider();
 
     void start(Context& context);
     void stop(Context& context);
     void process(Context& context);
 };
 
-#endif	/* TESTMODULE_H */
+#endif	/* SYNL2SEGMENTPROVIDER_H */
 

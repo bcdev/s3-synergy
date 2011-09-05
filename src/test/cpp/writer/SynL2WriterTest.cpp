@@ -12,7 +12,7 @@
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
 
-#include "SetUpModule.h"
+#include "SynL2SegmentProvider.h"
 #include "SynL2WriterTest.h"
 
 extern shared_ptr<Context> context;
@@ -37,7 +37,7 @@ void SynL2WriterTest::setUp() {
 	shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(
 			S3_SYNERGY_HOME
 					+ "/src/test/resources/jobs/JobOrder.SY_UNT_SWR.xml");
-	shared_ptr<Module> module = shared_ptr<Module>(new SetUpModule());
+	shared_ptr<Module> module = shared_ptr<Module>(new SynL2SegmentProvider());
 	shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
 
 	context->setDictionary(dictionary);
