@@ -21,20 +21,17 @@
 #ifndef IOUTILS_H
 #define	IOUTILS_H
 
+#include <cstdlib>
 #include <iostream>
 #include <netcdf.h>
-#include <vector>
 
 #include "../core/Boost.h"
 #include "../core/Dictionary.h"
 #include "../util/NetCDF.h"
 #include "../core/Segment.h"
 
-using std::vector;
-
 class IOUtils {
 public:
-
 	static valarray<size_t> createCountVector(size_t dimCount, size_t camCount,
 			size_t lineCount, size_t colCount) {
 		valarray<size_t> count(dimCount);
@@ -98,6 +95,21 @@ public:
 		return dimensionSizes;
 	}
 
+	static string getEnvironment(const string& name) {
+		const char* value = std::getenv(name.c_str());
+		if (value != 0) {
+			return string(value);
+		}
+		BOOST_THROW_EXCEPTION(runtime_error("The environment variable '" + name + "' has not been set."));
+	}
+
+	static string getEnvironment(const string& name, const string& defaultValue) {
+		const char* value = std::getenv(name.c_str());
+		if (value != 0) {
+			return string(value);
+		}
+		return defaultValue;
+	}
 };
 
 #endif	/* IOUTILS_H */

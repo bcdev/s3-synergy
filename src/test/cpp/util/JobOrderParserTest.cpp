@@ -18,11 +18,11 @@
  * Created on November 15, 2010, 4:21 PM
  */
 
+#include "../../../main/cpp/util/IOUtils.h"
+
 #include "JobOrderParserTest.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(JobOrderParserTest);
-
-const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
 
 JobOrderParserTest::JobOrderParserTest() {
 }
@@ -41,7 +41,8 @@ void JobOrderParserTest::tearDown() {
 void JobOrderParserTest::testJobOrderParsing() {
 	XPathInitializer init;
 	shared_ptr<JobOrder> jobOrder = parser->parse(
-			S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.0.xml");
+			IOUtils::getEnvironment("S3_SYNERGY_HOME")
+					+ "/src/test/resources/jobs/JobOrder.0.xml");
 
 	checkConfiguration(jobOrder);
 	checkProcessorConfigurations(jobOrder);

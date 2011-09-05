@@ -24,6 +24,7 @@
 #include <cstdlib>
 #include <stdexcept>
 
+#include "Boost.h"
 #include "Context.h"
 #include "Module.h"
 
@@ -73,12 +74,11 @@ public:
 	}
 
 	static string getInstallationPath() {
-		const char* installationPath = getenv("S3_SYNERGY_HOME");
-		if (installationPath == 0) {
-			BOOST_THROW_EXCEPTION(
-					runtime_error("The S3_SYNERGY_HOME environment variable is not set."));
+		const char* value = std::getenv("S3_SYNERGY_HOME");
+		if (value != 0) {
+			return string(value);
 		}
-		return installationPath;
+		throw runtime_error("Unknown software installation path. The environment variable 'S3_SYNERGY_HOME' has not been set.");
 	}
 
 protected:

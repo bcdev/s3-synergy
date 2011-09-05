@@ -21,8 +21,8 @@
 #ifndef DICTIONARY_H
 #define	DICTIONARY_H
 
-#include <stdexcept>
 #include <map>
+#include <stdexcept>
 #include <string>
 #include <valarray>
 #include <vector>

@@ -5,11 +5,11 @@
  *      Author: ralf
  */
 
+#include "../../../main/cpp/util/IOUtils.h"
+
 #include "LookupTableReaderTest.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(LookupTableReaderTest);
-
-const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
 
 LookupTableReaderTest::LookupTableReaderTest() {
 }
@@ -19,7 +19,8 @@ LookupTableReaderTest::~LookupTableReaderTest() {
 
 void LookupTableReaderTest::setUp() {
 	reader = new LookupTableReader(
-			S3_SYNERGY_HOME + "/auxdata/v1/S3__SY_2_SYRTAX.nc");
+			IOUtils::getEnvironment("S3_SYNERGY_HOME")
+					+ "/auxdata/v1/S3__SY_2_SYRTAX.nc");
 }
 
 void LookupTableReaderTest::tearDown() {
