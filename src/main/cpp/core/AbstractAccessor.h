@@ -44,19 +44,21 @@ public:
 	}
 
 	double getDouble(size_t i) const throw (bad_cast, out_of_range) {
-		return boost::numeric_cast<double>(data[at(i)]);
+		return boost::numeric_cast<double>(data[at(i)]) * scaleFactorD
+				+ addOffsetD;
 	}
 
 	void setDouble(size_t i, double value) throw (bad_cast, out_of_range) {
-		data[at(i)] = boost::numeric_cast<T>(value);
+		data[at(i)] = boost::numeric_cast<T>((value - addOffsetD) / scaleFactorD);
 	}
 
 	float getFloat(size_t i) const throw (bad_cast, out_of_range) {
-		return boost::numeric_cast<float>(data[at(i)]);
+		return boost::numeric_cast<float>(data[at(i)]) * scaleFactorF
+				+ addOffsetF;
 	}
 
 	void setFloat(size_t i, float value) throw (bad_cast, out_of_range) {
-		data[at(i)] = boost::numeric_cast<T>(value);
+		data[at(i)] = boost::numeric_cast<T>((value - addOffsetD) /  scaleFactorD);
 	}
 
 	int32_t getInt(size_t i) const throw (bad_cast, out_of_range) {
@@ -182,8 +184,9 @@ public:
 
 protected:
 
-	AbstractAccessor(size_t n) :
-			Accessor(), data(n) {
+	AbstractAccessor(size_t n, double scaleFactor = 1.0, double addOffset = 0.0) :
+			Accessor(), scaleFactorD(scaleFactor), addOffsetD(addOffset), scaleFactorF(
+					scaleFactor), addOffsetF(addOffset), data(n) {
 	}
 
 	virtual ~AbstractAccessor() {
@@ -199,8 +202,13 @@ private:
 		if (i < data.size()) {
 			return i;
 		}
-		BOOST_THROW_EXCEPTION(out_of_range("index i is out of range."));
+		BOOST_THROW_EXCEPTION(out_of_range("Accessor index is out of range."));
 	}
+
+	const double scaleFactorD;
+	const double addOffsetD;
+	const float scaleFactorF;
+	const float addOffsetF;
 
 	valarray<T> data;
 };

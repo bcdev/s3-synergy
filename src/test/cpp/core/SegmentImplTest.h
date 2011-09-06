@@ -23,7 +23,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../main/cpp/core/Segment.h"
+#include "../../../main/cpp/core/SegmentImpl.h"
 
 class SegmentImplTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(SegmentImplTest);
@@ -41,12 +41,13 @@ public:
     void tearDown();
 
 private:
-    Segment* segment;
     void testAddVariable();
     void testGetId();
     void testGetGrid();
     void testGetAccessor();
     void testMoveForward();
+
+    SegmentImpl* segment;
 };
 
 #endif	/* SEGMENTIMPLTEST_H */

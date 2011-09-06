@@ -135,7 +135,7 @@ int DictionaryParser::toType(const string& typeString) const {
         return Constants::TYPE_DOUBLE;
     }
     if (typeString.compare("string") == 0) {
-        return Constants::TYPE_STRING;
+        return Constants::TYPE_CHAR;
     }
     return Constants::TYPE_CHAR;
 }

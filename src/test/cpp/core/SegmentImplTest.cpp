@@ -21,7 +21,6 @@
 #include <stdexcept>
 
 #include "SegmentImplTest.h"
-#include "../../../main/cpp/core/SegmentImpl.h"
 
 using std::invalid_argument;
 using std::logic_error;

@@ -150,6 +150,16 @@ void L1cReader::start(Context& context) {
 							context.getSegment(segmentName).addVariable(varName,
 									type);
 							ncVarIdMap[varName] = varId;
+							const size_t attrCount = NetCDF::getAttributeCount(
+									fileId, varId);
+							for (size_t i = 0; i < attrCount; i++) {
+								const string attrName =
+										NetCDF::getAttributeName(fileId, varId,
+												i);
+								const Attribute attr = NetCDF::getAttribute(fileId, varId,
+										attrName);
+								variableDescriptor->addAttribute(attr);
+							}
 						}
 			}
 }
@@ -225,8 +235,8 @@ void L1cReader::process(Context& context) {
 										getId());
 								const Accessor& accessor = segment.getAccessor(
 										varName);
-								NetCDF::getData(fileId, varId, starts, counts,
-										accessor.getUntypedData());
+								NetCDF::getVariableData(fileId, varId, starts,
+										counts, accessor.getUntypedData());
 							}
 					context.setLastComputedL(segment, *this, lastLComputable);
 				}

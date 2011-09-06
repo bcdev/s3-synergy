@@ -141,10 +141,16 @@ void TiePointInterpolatorTest::setUp() {
 			14813512, 15093098, 15371775, 15649539, 15926385, 16202308,
 			16477305, 16751372, 17024504, 17296700, 17567952, 17838264 };
 
-	const shared_ptr<Array<double> > latArray = Array<double>::newArray(lats, 385, 1.0e-6);
-	const shared_ptr<Array<double> > lonArray = Array<double>::newArray(lons, 385, 1.0e-6);
-	tpi = new TiePointInterpolator<double>(*lonArray, *latArray);
+	valarray<double> latArray(385);
+	valarray<double> lonArray(385);
+	for (size_t i = 0; i < 385; i++) {
+		latArray[i] = lats[i] * 1.0e-6;
+		lonArray[i] = lons[i] * 1.0e-6;
+	}
+
+	tpi = new TiePointInterpolator<double>(lonArray, latArray);
 }
+
 
 void TiePointInterpolatorTest::tearDown() {
 	delete tpi;
@@ -195,8 +201,6 @@ void TiePointInterpolatorTest::testInterpolation() {
 	f[2] = 3.0;
 	f[3] = 4.0;
 
-	shared_ptr<Array<double> > field = Array<double_t>::newArray(f);
-
 	w[0] = 1.0;
 	w[1] = 0.0;
 	w[2] = 0.0;
@@ -207,21 +211,21 @@ void TiePointInterpolatorTest::testInterpolation() {
 	i[2] = 2;
 	i[3] = 3;
 
-	CPPUNIT_ASSERT(tpi->interpolate(*field, w, i) == 1.0);
+	CPPUNIT_ASSERT(tpi->interpolate(f, w, i) == 1.0);
 
 	w[0] = 0.0;
 	w[1] = 1.0;
 
-	CPPUNIT_ASSERT(tpi->interpolate(*field, w, i) == 2.0);
+	CPPUNIT_ASSERT(tpi->interpolate(f, w, i) == 2.0);
 
 	w[1] = 0.0;
 	w[2] = 1.0;
 
-	CPPUNIT_ASSERT(tpi->interpolate(*field, w, i) == 3.0);
+	CPPUNIT_ASSERT(tpi->interpolate(f, w, i) == 3.0);
 
 	w[2] = 0.0;
 	w[3] = 1.0;
 
-	CPPUNIT_ASSERT(tpi->interpolate(*field, w, i) == 4.0);
+	CPPUNIT_ASSERT(tpi->interpolate(f, w, i) == 4.0);
 }
 

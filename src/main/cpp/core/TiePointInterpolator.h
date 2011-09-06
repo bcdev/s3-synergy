@@ -13,7 +13,7 @@
 #include <cmath>
 #include <valarray>
 
-#include "Array.h"
+using std::valarray;
 
 /**
  * Interpolates between a set of (lon, lat) tie points by means of inverse
@@ -27,12 +27,12 @@
 template<class W>
 class TiePointInterpolator {
 public:
-	TiePointInterpolator(const Array<W>& lons, const Array<W>& lats);
+	TiePointInterpolator(const valarray<W>& lons, const valarray<W>& lats);
 	~TiePointInterpolator();
 
 	void prepare(W lon, W lat, valarray<W>& weights,
 			valarray<size_t>& indexes) const;
-	W interpolate(const Array<W>& field, const valarray<W>& weights,
+	W interpolate(const valarray<W>& field, const valarray<W>& weights,
 			const valarray<size_t>& indexes) const;
 
 private:
@@ -65,13 +65,10 @@ private:
 };
 
 template<class W>
-TiePointInterpolator<W>::TiePointInterpolator(const Array<W>& lons,
-		const Array<W>& lats) :
-		lons(lons.size()), lats(lats.size()), ordering(lats.size()) {
+TiePointInterpolator<W>::TiePointInterpolator(const valarray<W>& lons,
+		const valarray<W>& lats) :
+		lons(lons), lats(lats), ordering(lats.size()) {
 	using std::sort;
-
-	lons.getData(this->lons);
-	lats.getData(this->lats);
 
 	for (size_t i = 0; i < ordering.size(); i++) {
 		ordering[i] = i;
@@ -148,7 +145,7 @@ void TiePointInterpolator<W>::prepare(W lon, W lat, valarray<W>& weights,
 }
 
 template<class W>
-W TiePointInterpolator<W>::interpolate(const Array<W>& field,
+W TiePointInterpolator<W>::interpolate(const valarray<W>& field,
 		const valarray<W>& weights, const valarray<size_t>& indexes) const {
 	assert(weights.size() == indexes.size());
 
@@ -156,7 +153,7 @@ W TiePointInterpolator<W>::interpolate(const Array<W>& field,
 
 	W v = W(0);
 	for (size_t i = 0; i < n; i++) {
-		v += weights[indexes[i]] * field.get(indexes[i]);
+		v += weights[indexes[i]] * field[indexes[i]];
 	}
 	return v;
 }

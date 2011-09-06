@@ -65,6 +65,10 @@ public:
 template<class T, class W>
 class ArrayImpl: public Array<W> {
 public:
+	ArrayImpl(const size_t size, W scaleFactor = 1.0, W addOffset = 0.0) :
+			data(size), scaleFactor(scaleFactor), addOffset(addOffset) {
+	}
+
 	ArrayImpl(const valarray<T>& data, W scaleFactor = 1.0, W addOffset = 0.0) :
 			data(data), scaleFactor(scaleFactor), addOffset(addOffset) {
 	}

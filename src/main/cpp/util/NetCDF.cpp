@@ -36,6 +36,83 @@ int NetCDF::openFile(const string& path) {
 	return ncId;
 }
 
+Attribute NetCDF::getAttribute(int fileId, int varId, const string& attrName) {
+	const int attrType = NetCDF::getAttributeType(fileId, varId, attrName);
+
+	switch (attrType) {
+	case Constants::TYPE_BYTE:
+		return Attribute(attrType, attrName,
+				NetCDF::getAttributeData<int8_t>(fileId, varId, attrName));
+	case Constants::TYPE_SHORT:
+		return Attribute(attrType, attrName,
+				NetCDF::getAttributeData<int16_t>(fileId, varId, attrName));
+	case Constants::TYPE_INT:
+		return Attribute(attrType, attrName,
+				NetCDF::getAttributeData<int32_t>(fileId, varId, attrName));
+	case Constants::TYPE_LONG:
+		return Attribute(attrType, attrName,
+				NetCDF::getAttributeData<int64_t>(fileId, varId, attrName));
+	case Constants::TYPE_UBYTE:
+		return Attribute(attrType, attrName,
+				NetCDF::getAttributeData<uint8_t>(fileId, varId, attrName));
+	case Constants::TYPE_USHORT:
+		return Attribute(attrType, attrName,
+				NetCDF::getAttributeData<uint16_t>(fileId, varId, attrName));
+	case Constants::TYPE_UINT:
+		return Attribute(attrType, attrName,
+				NetCDF::getAttributeData<uint32_t>(fileId, varId, attrName));
+	case Constants::TYPE_ULONG:
+		return Attribute(attrType, attrName,
+				NetCDF::getAttributeData<uint64_t>(fileId, varId, attrName));
+	case Constants::TYPE_FLOAT:
+		return Attribute(attrType, attrName,
+				NetCDF::getAttributeData<float>(fileId, varId, attrName));
+	case Constants::TYPE_DOUBLE:
+		return Attribute(attrType, attrName,
+				NetCDF::getAttributeData<double>(fileId, varId, attrName));
+	case Constants::TYPE_CHAR:
+		return Attribute(attrType, attrName,
+				NetCDF::getAttributeString(fileId, varId, attrName));
+	}
+	BOOST_THROW_EXCEPTION(runtime_error("Unsupported attribute type."));
+}
+
+string NetCDF::getAttributeString(int fileId, int varId,
+		const string& attrName) {
+	const size_t attrLength = NetCDF::getAttributeLength(fileId, varId,
+			attrName);
+	valarray<char> attrData(attrLength + 1);
+
+	const int status = nc_get_att_text(fileId, varId, attrName.c_str(),
+			&attrData[0]);
+	checkStatus(status, "getting attribute string");
+	return string(&attrData[0]);
+
+}
+
+size_t NetCDF::getAttributeCount(int fileId, int varId) {
+	int attrCount;
+	const int status = nc_inq_varnatts(fileId, varId, &attrCount);
+	checkStatus(status, "getting attribute count");
+	return attrCount;
+}
+
+size_t NetCDF::getAttributeLength(int fileId, int varId,
+		const string& attrName) {
+	size_t attrLength;
+	const int status = nc_inq_attlen(fileId, varId, attrName.c_str(),
+			&attrLength);
+	checkStatus(status, "getting attribute length");
+	return attrLength;
+}
+
+string NetCDF::getAttributeName(int fileId, int varId, int attrId) {
+	valarray<char> attrName(NC_MAX_NAME);
+	const int status = nc_inq_attname(fileId, varId, attrId, &attrName[0]);
+	checkStatus(status, "getting attribute name");
+	return string(&attrName[0]);
+}
+
 int NetCDF::getAttributeType(int fileId, int varId,
 		const string& attributeName) {
 	int type;
@@ -81,7 +158,7 @@ int NetCDF::getVariableId(int fileId, const string& varName) {
 	return varId;
 }
 
-int NetCDF::getDimensionCount(int fileId, int varId) {
+size_t NetCDF::getDimensionCount(int fileId, int varId) {
 	int dimCount;
 	const int status = nc_inq_varndims(fileId, varId, &dimCount);
 	checkStatus(status, "getting dimension count");
@@ -109,24 +186,27 @@ string NetCDF::getDimensionName(int fileId, int dimId) {
 	return string(dimName);
 }
 
-void NetCDF::getData(int fileId, int varId, const valarray<size_t>& origin,
-		const valarray<size_t>& shape, void* dataArray) {
+void NetCDF::getVariableData(int fileId, int varId,
+		const valarray<size_t>& origin, const valarray<size_t>& shape,
+		void* dataArray) {
 	const valarray<ptrdiff_t> strides(1, origin.size());
 	const int status = nc_get_vars(fileId, varId, &origin[0], &shape[0],
 			&strides[0], dataArray);
 	checkStatus(status, "reading data from file");
 }
 
-void NetCDF::getData(int fileId, int varId, const valarray<size_t>& origin,
-		const valarray<size_t>& shape, float* dataArray) {
+void NetCDF::getVariableData(int fileId, int varId,
+		const valarray<size_t>& origin, const valarray<size_t>& shape,
+		float* dataArray) {
 	const valarray<ptrdiff_t> strides(1, origin.size());
 	const int status = nc_get_vars_float(fileId, varId, &origin[0], &shape[0],
 			&strides[0], dataArray);
 	checkStatus(status, "reading data from file");
 }
 
-void NetCDF::getData(int fileId, int varId, const valarray<size_t>& origin,
-		const valarray<size_t>& shape, double* dataArray) {
+void NetCDF::getVariableData(int fileId, int varId,
+		const valarray<size_t>& origin, const valarray<size_t>& shape,
+		double* dataArray) {
 	const valarray<ptrdiff_t> strides(1, origin.size());
 	const int status = nc_get_vars_double(fileId, varId, &origin[0], &shape[0],
 			&strides[0], dataArray);

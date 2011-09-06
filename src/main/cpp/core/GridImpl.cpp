@@ -33,9 +33,9 @@ GridImpl::GridImpl(size_t sizeK, size_t sizeL, size_t sizeM, size_t minL, size_t
     if (sizeL - 1 > maxL - minL) {
         BOOST_THROW_EXCEPTION(invalid_argument("sizeL - 1 > maxL - minL"));
     }
-    this->startK = 0;
-    this->startL = minL;
-    this->startM = 0;
+    this->firstK = 0;
+    this->firstL = minL;
+    this->firstM = 0;
     this->sizeK = sizeK;
     this->sizeL = sizeL;
     this->sizeM = sizeM;
@@ -47,9 +47,9 @@ GridImpl::GridImpl(size_t sizeK, size_t sizeL, size_t sizeM, size_t minL, size_t
 }
 
 GridImpl::GridImpl(const Grid& b) : Grid() {
-    this->startK = b.getFirstK();
-    this->startL = b.getFirstL();
-    this->startM = b.getFirstM();
+    this->firstK = b.getFirstK();
+    this->firstL = b.getFirstL();
+    this->firstM = b.getFirstM();
     this->sizeK = b.getSizeK();
     this->sizeL = b.getSizeL();
     this->sizeM = b.getSizeM();
@@ -68,18 +68,18 @@ void GridImpl::setFirstL(size_t l) {
     if (l + sizeL - 1 > maxL) { //
         BOOST_THROW_EXCEPTION(std::out_of_range("l + sizeL - 1 > maxL"));
     }
-    this->startL = l;
+    this->firstL = l;
 }
 
 size_t GridImpl::getIndex(size_t k, size_t l, size_t m) const throw (out_of_range) {
-    if (k < startK || k > startK + sizeK - 1) {
+    if (k < firstK || k > firstK + sizeK - 1) {
         BOOST_THROW_EXCEPTION(out_of_range("index k is out of range."));
     }
-    if (l < startL || l > startL + sizeL - 1) {
+    if (l < firstL || l > firstL + sizeL - 1) {
         BOOST_THROW_EXCEPTION(out_of_range("index l is out of range."));
     }
-    if (m < startM || m > startM + sizeM - 1) {
+    if (m < firstM || m > firstM + sizeM - 1) {
         BOOST_THROW_EXCEPTION(out_of_range("index m is out of range."));
     }
-    return (k - startK) * strideK + (l - startL) * strideL + (m - startM) * strideM;
+    return (k - firstK) * strideK + (l - firstL) * strideL + (m - firstM) * strideM;
 }

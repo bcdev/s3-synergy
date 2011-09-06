@@ -248,10 +248,10 @@ size_t Context::getLastComputableL(const Segment& segment) const {
 }
 
 size_t Context::getFirstRequiredL(const Segment& segment, size_t l) const {
-	size_t firstLRequired = l;
+	size_t firstRequiredL = l;
 	for (size_t i = 0; i < moduleList.size(); i++) {
-		firstLRequired = min(firstLRequired,
-				moduleList[i]->getFirstLRequired(segment, l));
+		firstRequiredL = min(firstRequiredL,
+				moduleList[i]->getFirstRequiredL(segment, l));
 	}
-	return firstLRequired;
+	return firstRequiredL;
 }

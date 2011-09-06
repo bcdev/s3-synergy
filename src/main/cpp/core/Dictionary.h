@@ -61,7 +61,11 @@ public:
 				}
 	}
 
-	A& addAttribute(int type, const string& name, const string& value = "") {
+	void addAttribute(const A& a) {
+		addAttribute(a.getType(), a.getName(), a.getValue());
+	}
+
+	A& addAttribute(int type, const string& name, const string& value) {
 		if (hasAttribute(name)) {
 			BOOST_THROW_EXCEPTION(
 					logic_error("Attribute '" + name + "' already exists."));
@@ -146,11 +150,31 @@ public:
 
 	/**
 	 * Constructor.
+	 *
 	 * @param type The attribute's type.
 	 * @param name The attribute's name.
 	 * @param value The attribute's value.
 	 */
 	Attribute(int type, const string& name, const string& value);
+
+	/**
+	 * Constructor.
+	 *
+	 * @param type The attribute's type.
+	 * @param name The attribute's name.
+	 * @param data The attribute's data.
+	 */
+	template<class T>
+	Attribute(int type, const string& name, const valarray<T>& data) : name(name), type(type) {
+		string s;
+		for (size_t i = 0; i < data.size(); i++) {
+			if (i > 0) {
+				s += " ";
+			}
+			s += lexical_cast<string>(data[i]);
+		}
+		value = s;
+	}
 
 	/**
 	 * Destructor

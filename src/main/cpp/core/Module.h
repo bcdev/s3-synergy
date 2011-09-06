@@ -86,7 +86,7 @@ public:
      * @return the index of the first row required for processing a block
      *         of rows the first row of which has the row index {@code l}.
      */
-    virtual size_t getFirstLRequired(const Segment& segment, size_t l) const = 0;
+    virtual size_t getFirstRequiredL(const Segment& segment, size_t l) const = 0;
 };
 
 #endif	/* MODULE_H */

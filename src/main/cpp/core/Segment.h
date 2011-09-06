@@ -25,6 +25,7 @@
 #include <string>
 
 #include "Accessor.h"
+#include "Boost.h"
 #include "Grid.h"
 #include "Identifiable.h"
 
@@ -42,84 +43,30 @@ public:
 	 */
 	virtual ~Segment() {
 	}
-	;
 
 	/**
 	 * Adds a variable to the segment.
-	 * @param varName The name of the variable being added.
+	 * @param name The name of the variable being added.
 	 * @param type The type of the variable being added.
 	 */
-	virtual void addVariable(const string& varName, int type)
+	virtual void addVariable(const string& name, int type) throw (logic_error) = 0;
+
+	/**
+	 * Adds a variable from an other segment.
+	 * @param name The name of the variable being copied.
+	 * @param segment The source segment.
+	 */
+	virtual void addVariable(const string& name, const Segment& segment)
 			throw (logic_error) = 0;
-
-	/**
-	 * Adds a variable of type int8_t to the segment.
-	 * @param varName The name of the variable being added.
-	 */
-	virtual void addVariableByte(const string& varName) throw (logic_error) = 0;
-
-	/**
-	 * Adds a variable of type uint8_t to the segment.
-	 * @param varName The name of the variable being added.
-	 */
-	virtual void addVariableUByte(const string& varName) throw (logic_error) = 0;
-
-	/**
-	 * Adds a variable of type int16_t to the segment.
-	 * @param varName The name of the variable being added.
-	 */
-	virtual void addVariableShort(const string& varName) throw (logic_error) = 0;
-
-	/**
-	 * Adds a variable of type uint16_t to the segment.
-	 * @param varName The name of the variable being added.
-	 */
-	virtual void addVariableUShort(const string& varName) throw (logic_error) = 0;
-
-	/**
-	 * Adds a variable of type int32_t to the segment.
-	 * @param varName The name of the variable being added.
-	 */
-	virtual void addVariableInt(const string& varName) throw (logic_error) = 0;
-
-	/**
-	 * Adds a variable of type uint32_t to the segment.
-	 * @param varName The name of the variable being added.
-	 */
-	virtual void addVariableUInt(const string& varName) throw (logic_error) = 0;
-
-	/**
-	 * Adds a variable of type int64_t to the segment.
-	 * @param varName The name of the variable being added.
-	 */
-	virtual void addVariableLong(const string& varName) throw (logic_error) = 0;
-
-	/**
-	 * Adds a variable of type uint64_t to the segment.
-	 * @param varName The name of the variable being added.
-	 */
-	virtual void addVariableULong(const string& varName) throw (logic_error) = 0;
-
-	/**
-	 * Adds a variable of type float to the segment.
-	 * @param varName The name of the variable being added.
-	 */
-	virtual void addVariableFloat(const string& varName) throw (logic_error) = 0;
-
-	/**
-	 * Adds a variable of type double to the segment.
-	 * @param varName The name of the variable being added.
-	 */
-	virtual void addVariableDouble(const string& varName) throw (logic_error) = 0;
 
 	/**
 	 * Tests whether a variable of interest has been added to the the segment
 	 * or not.
-	 * @param varName The name of the variable of interest.
+	 * @param name The name of the variable of interest.
 	 * @return true if the variable has been added to the segment,
 	 *         false otherwise.
 	 */
-	virtual bool hasVariable(const string&) const = 0;
+	virtual bool hasVariable(const string& name) const = 0;
 
 	/**
 	 * Returns the segment ID.
@@ -135,11 +82,10 @@ public:
 
 	/**
 	 * Returns an accessor to a variable's samples.
-	 * @param varName The name of the variable to be accessed.
+	 * @param name The name of the variable to be accessed.
 	 * @return the accessor.
 	 */
-	virtual Accessor& getAccessor(const string& varName) const
-			throw (logic_error) = 0;
+	virtual Accessor& getAccessor(const string& name) const throw (logic_error) = 0;
 
 	/**
 	 * Moves the start of the segment to the row with the given index. The
@@ -173,6 +119,8 @@ public:
 	bool operator==(const Segment& that) const {
 		return this == &that;
 	}
+
+	virtual shared_ptr<Accessor> getSharedAccessor(const string& name) const = 0;
 };
 
 #endif	/* SEGMENT_H */

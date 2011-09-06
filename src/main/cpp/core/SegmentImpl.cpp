@@ -29,13 +29,15 @@ using std::invalid_argument;
 using std::logic_error;
 using std::ostringstream;
 
-SegmentImpl::SegmentImpl(const string& s, size_t l, size_t m, size_t k, size_t minL, size_t maxL) : id(s), grid(k, l, m, minL, maxL), accessorMap() {
+SegmentImpl::SegmentImpl(const string& s, size_t l, size_t m, size_t k,
+		size_t minL, size_t maxL) :
+		id(s), grid(k, l, m, minL, maxL), accessorMap() {
 }
 
 SegmentImpl::~SegmentImpl() {
 }
 
-void SegmentImpl::addVariable(const string& name, int type)  throw (logic_error) {
+void SegmentImpl::addVariable(const string& name, int type) throw (logic_error) {
 	switch (type) {
 	case Constants::TYPE_BYTE:
 		addVariableByte(name);
@@ -74,125 +76,138 @@ void SegmentImpl::addVariable(const string& name, int type)  throw (logic_error)
 	}
 }
 
-void SegmentImpl::addVariableByte(const string& varName) throw (logic_error) {
-    unique(varName);
-    shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new ByteAccessor(grid.getSize()));
-    accessorMap[varName] = accessor;
-    accessorList.push_back(accessor);
+void SegmentImpl::addVariable(const string& name, const Segment& segment)
+		throw (logic_error) {
+	if (segment.hasVariable(name)) {
+		unique(name);
+		accessorMap[name] = segment.getSharedAccessor(name);
+	}
+	BOOST_THROW_EXCEPTION(
+			logic_error("Variable '" + name + "' has not been added to segment '" + segment.getId() + "' yet."));
 }
 
-void SegmentImpl::addVariableDouble(const string& varName) throw (logic_error) {
-    unique(varName);
-    shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new DoubleAccessor(grid.getSize()));
-    accessorMap[varName] = accessor;
-    accessorList.push_back(accessor);
+void SegmentImpl::addVariableByte(const string& name) throw (logic_error) {
+	unique(name);
+	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(
+			new ByteAccessor(grid.getSize()));
+	accessorMap[name] = accessor;
+	accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableFloat(const string& varName) throw (logic_error) {
-    unique(varName);
-    shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new FloatAccessor(grid.getSize()));
-    accessorMap[varName] = accessor;
-    accessorList.push_back(accessor);
+void SegmentImpl::addVariableDouble(const string& name) throw (logic_error) {
+	unique(name);
+	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(
+			new DoubleAccessor(grid.getSize()));
+	accessorMap[name] = accessor;
+	accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableInt(const string& varName) throw (logic_error) {
-    unique(varName);
-    shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new IntAccessor(grid.getSize()));
-    accessorMap[varName] = accessor;
-    accessorList.push_back(accessor);
+void SegmentImpl::addVariableFloat(const string& name) throw (logic_error) {
+	unique(name);
+	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(
+			new FloatAccessor(grid.getSize()));
+	accessorMap[name] = accessor;
+	accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableLong(const string& varName) throw (logic_error) {
-    unique(varName);
-    shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new LongAccessor(grid.getSize()));
-    accessorMap[varName] = accessor;
-    accessorList.push_back(accessor);
+void SegmentImpl::addVariableInt(const string& name) throw (logic_error) {
+	unique(name);
+	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(
+			new IntAccessor(grid.getSize()));
+	accessorMap[name] = accessor;
+	accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableShort(const string& varName) throw (logic_error) {
-    unique(varName);
-    shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new ShortAccessor(grid.getSize()));
-    accessorMap[varName] = accessor;
-    accessorList.push_back(accessor);
+void SegmentImpl::addVariableLong(const string& name) throw (logic_error) {
+	unique(name);
+	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(
+			new LongAccessor(grid.getSize()));
+	accessorMap[name] = accessor;
+	accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableUByte(const string& varName) throw (logic_error) {
-    unique(varName);
-    shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new UByteAccessor(grid.getSize()));
-    accessorMap[varName] = accessor;
-    accessorList.push_back(accessor);
+void SegmentImpl::addVariableShort(const string& name) throw (logic_error) {
+	unique(name);
+	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(
+			new ShortAccessor(grid.getSize()));
+	accessorMap[name] = accessor;
+	accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableUInt(const string& varName) throw (logic_error) {
-    unique(varName);
-    shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new UIntAccessor(grid.getSize()));
-    accessorMap[varName] = accessor;
-    accessorList.push_back(accessor);
+void SegmentImpl::addVariableUByte(const string& name) throw (logic_error) {
+	unique(name);
+	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(
+			new UByteAccessor(grid.getSize()));
+	accessorMap[name] = accessor;
+	accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableULong(const string& varName) throw (logic_error) {
-    unique(varName);
-    shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new ULongAccessor(grid.getSize()));
-    accessorMap[varName] = accessor;
-    accessorList.push_back(accessor);
+void SegmentImpl::addVariableUInt(const string& name) throw (logic_error) {
+	unique(name);
+	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(
+			new UIntAccessor(grid.getSize()));
+	accessorMap[name] = accessor;
+	accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableUShort(const string& varName) throw (logic_error) {
-    unique(varName);
-    shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new UShortAccessor(grid.getSize()));
-    accessorMap[varName] = accessor;
-    accessorList.push_back(accessor);
+void SegmentImpl::addVariableULong(const string& name) throw (logic_error) {
+	unique(name);
+	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(
+			new ULongAccessor(grid.getSize()));
+	accessorMap[name] = accessor;
+	accessorList.push_back(accessor);
 }
 
-bool SegmentImpl::hasVariable(const string& varName) const {
-    return accessorMap.find(varName) != accessorMap.end();
+void SegmentImpl::addVariableUShort(const string& name) throw (logic_error) {
+	unique(name);
+	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(
+			new UShortAccessor(grid.getSize()));
+	accessorMap[name] = accessor;
+	accessorList.push_back(accessor);
 }
 
-const string& SegmentImpl::getId() const {
-    return id;
-}
-
-const Grid& SegmentImpl::getGrid() const {
-    return grid;
-}
-
-Accessor& SegmentImpl::getAccessor(const string& varName) const throw (logic_error) {
-    if (!hasVariable(varName)) {
-        BOOST_THROW_EXCEPTION(logic_error("No accessor for variable " + varName + "."));
-    }
-    return *accessorMap.at(varName);
+Accessor& SegmentImpl::getAccessor(const string& name) const throw (logic_error) {
+	if (!hasVariable(name)) {
+		BOOST_THROW_EXCEPTION(
+				logic_error("No accessor for variable " + name + "."));
+	}
+	return *accessorMap.at(name);
 }
 
 void SegmentImpl::moveForward(size_t l) throw (logic_error) {
-    if (l < grid.getFirstL()) {
-        BOOST_THROW_EXCEPTION(logic_error("Class: " + className + ": l < grid.getStartL()."));
-    }
-    if (l > grid.getFirstL() + grid.getSizeL()) {
-        BOOST_THROW_EXCEPTION(logic_error("Class: " + className + ": l > grid.getStartL() + grid.getSizeL()."));
-    }
-    if (l + grid.getSizeL() - 1 > grid.getMaxL()) {
-        l = grid.getMaxL() - grid.getSizeL() + 1;
-    }
-    for (size_t i = 0; i < accessorList.size(); i++) {
-        accessorList[i]->shift(l - grid.getFirstL(), grid.getStrideK(), grid.getStrideL());
-    }
-    grid.setFirstL(l);
+	if (l < grid.getFirstL()) {
+		BOOST_THROW_EXCEPTION(
+				logic_error("Class: " + className + ": l < grid.getStartL()."));
+	}
+	if (l > grid.getFirstL() + grid.getSizeL()) {
+		BOOST_THROW_EXCEPTION(
+				logic_error("Class: " + className + ": l > grid.getStartL() + grid.getSizeL()."));
+	}
+	if (l + grid.getSizeL() - 1 > grid.getMaxL()) {
+		l = grid.getMaxL() - grid.getSizeL() + 1;
+	}
+	for (size_t i = 0; i < accessorList.size(); i++) {
+		accessorList[i]->shift(l - grid.getFirstL(), grid.getStrideK(),
+				grid.getStrideL());
+	}
+	grid.setFirstL(l);
 }
 
 string SegmentImpl::toString() const {
-    ostringstream oss;
-    oss << className << "[";
-    oss << "id = " << getId() << ", ";
-    oss << "startL = " << getGrid().getFirstL() << ", ";
-    oss << "sizeL = " << getGrid().getSizeL() << "]";
+	ostringstream oss;
+	oss << className << "[";
+	oss << "id = " << getId() << ", ";
+	oss << "firstL = " << getGrid().getFirstL() << ", ";
+	oss << "sizeL = " << getGrid().getSizeL() << "]";
 
-    return oss.str();
+	return oss.str();
 }
 
-void SegmentImpl::unique(const string& varName) const throw (logic_error) {
-    if (hasVariable(varName)) {
-        BOOST_THROW_EXCEPTION(logic_error("Variable '" + varName + "' has already been added to segment '" + id + "'."));
-    }
+void SegmentImpl::unique(const string& name) const throw (logic_error) {
+	if (hasVariable(name)) {
+		BOOST_THROW_EXCEPTION(
+				logic_error("Variable '" + name + "' has already been added to segment '" + id + "'."));
+	}
 }
 
 const string SegmentImpl::className = "SegmentImpl";

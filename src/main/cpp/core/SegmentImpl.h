@@ -39,23 +39,38 @@ public:
 			0, size_t maxL = Constants::N_LINE_OLC - 1);
 	virtual ~SegmentImpl();
 
-	void addVariable(const string& varName, int type) throw (logic_error);
-	void addVariableByte(const string& varName) throw (logic_error);
-	void addVariableDouble(const string& varName) throw (logic_error);
-	void addVariableFloat(const string& varName) throw (logic_error);
-	void addVariableInt(const string& varName) throw (logic_error);
-	void addVariableLong(const string& varName) throw (logic_error);
-	void addVariableShort(const string& varName) throw (logic_error);
-	void addVariableUByte(const string& varName) throw (logic_error);
-	void addVariableUInt(const string& varName) throw (logic_error);
-	void addVariableULong(const string& varName) throw (logic_error);
-	void addVariableUShort(const string& varName) throw (logic_error);
+	void addVariable(const string& name, int type) throw (logic_error);
+	void addVariable(const string& name, const Segment& segment) throw (logic_error);
 
-	bool hasVariable(const string& varName) const;
+	void addVariableByte(const string& name) throw (logic_error);
+	void addVariableDouble(const string& name) throw (logic_error);
+	void addVariableFloat(const string& name) throw (logic_error);
+	void addVariableInt(const string& name) throw (logic_error);
+	void addVariableLong(const string& name) throw (logic_error);
+	void addVariableShort(const string& name) throw (logic_error);
+	void addVariableUByte(const string& name) throw (logic_error);
+	void addVariableUInt(const string& name) throw (logic_error);
+	void addVariableULong(const string& name) throw (logic_error);
+	void addVariableUShort(const string& name) throw (logic_error);
 
-	const string& getId() const;
-	const Grid& getGrid() const;
-	Accessor& getAccessor(const string& varName) const throw (logic_error);
+	bool hasVariable(const string& name) const {
+	    return accessorMap.find(name) != accessorMap.end();
+	}
+
+	const string& getId() const {
+		return id;
+	}
+
+	const Grid& getGrid() const {
+		return grid;
+	}
+
+	Accessor& getAccessor(const string& name) const throw (logic_error);
+
+	shared_ptr<Accessor> getSharedAccessor(const string& name) const {
+		return accessorMap.at(name);
+	}
+
 	void moveForward(size_t l) throw (logic_error);
 
 	string toString() const;
@@ -63,12 +78,12 @@ public:
 private:
 	void unique(const string& varName) const throw (logic_error);
 
-	static const string className;
-
 	const string id;
 	mutable GridImpl grid;
 	map<string, shared_ptr<Accessor> > accessorMap;
 	vector<shared_ptr<Accessor> > accessorList;
+
+	static const string className;
 };
 
 #endif	/* SEGMENTIMPL_H */

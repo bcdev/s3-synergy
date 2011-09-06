@@ -23,83 +23,84 @@
 
 #include "Grid.h"
 
-class GridImpl : public virtual Grid {
+class GridImpl: public virtual Grid {
 public:
-    GridImpl(size_t sizeK, size_t sizeL, size_t sizeM, size_t minL, size_t maxL);
-    GridImpl(const Grid& bounds);
-    virtual ~GridImpl();
+	GridImpl(size_t sizeK, size_t sizeL, size_t sizeM, size_t minL,
+			size_t maxL);
+	GridImpl(const Grid& bounds);
+	virtual ~GridImpl();
 
-    size_t getFirstK() const {
-        return startK;
-    }
+	size_t getFirstK() const {
+		return firstK;
+	}
 
-    size_t getFirstL() const {
-        return startL;
-    }
+	size_t getFirstL() const {
+		return firstL;
+	}
 
-    size_t getLastL() const {
-        return startL + sizeL - 1;
-    }
+	size_t getLastL() const {
+		return firstL + sizeL - 1;
+	}
 
-    size_t getFirstM() const {
-        return startM;
-    }
+	size_t getFirstM() const {
+		return firstM;
+	}
 
-    size_t getSizeK() const {
-        return sizeK;
-    }
+	size_t getSizeK() const {
+		return sizeK;
+	}
 
-    size_t getSizeL() const {
-        return sizeL;
-    }
+	size_t getSizeL() const {
+		return sizeL;
+	}
 
-    size_t getSizeM() const {
-        return sizeM;
-    }
+	size_t getSizeM() const {
+		return sizeM;
+	}
 
-    size_t getSize() const {
-        return sizeM * sizeL * sizeK;
-    }
+	size_t getSize() const {
+		return sizeM * sizeL * sizeK;
+	}
 
-    size_t getStrideK() const {
-        return strideK;
-    }
+	size_t getStrideK() const {
+		return strideK;
+	}
 
-    size_t getStrideL() const {
-        return strideL;
-    }
+	size_t getStrideL() const {
+		return strideL;
+	}
 
-    size_t getStrideM() const {
-        return strideM;
-    }
+	size_t getStrideM() const {
+		return strideM;
+	}
 
-    size_t getIndex(size_t k, size_t l, size_t m) const throw (out_of_range);
+	size_t getIndex(size_t k, size_t l, size_t m) const throw (out_of_range);
 
-    size_t getMinL() const {
-        return minL;
-    }
+	size_t getMinL() const {
+		return minL;
+	}
 
-    size_t getMaxL() const {
-        return maxL;
-    }
+	size_t getMaxL() const {
+		return maxL;
+	}
 
-    void setFirstL(size_t l);
+	void setFirstL(size_t l);
 
 private:
-    size_t startK;
-    size_t startL;
-    size_t startM;
+	size_t firstK;
+	size_t firstL;
+	size_t firstM;
 
-    size_t sizeK;
-    size_t sizeL;
-    size_t sizeM;
+	size_t sizeK;
+	size_t sizeL;
+	size_t sizeM;
 
-    size_t strideK;
-    size_t strideL;
-    size_t strideM;
+	size_t strideK;
+	size_t strideL;
+	size_t strideM;
 
-    size_t minL;
-    size_t maxL;
+	size_t minL;
+	size_t maxL;
 };
 
 #endif	/* GRIDIMPL_H */

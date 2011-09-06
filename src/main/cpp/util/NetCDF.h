@@ -49,27 +49,52 @@ public:
 	static int defineVariable(int fileId, const string& varName, int type,
 			const valarray<int>& dimIds);
 
-	static int getAttributeType(int fileId, int varId,
-			const string& attributeName);
+	static Attribute getAttribute(int fileId, int varId,
+			const string& attrName);
+
+	static size_t getAttributeCount(int fileId, int varId);
+
+	static size_t getAttributeLength(int fileId, int varId,
+			const string& attrName);
+
+	static string getAttributeName(int fileId, int varId, int attrId);
+
+	static int getAttributeType(int fileId, int varId, const string& attrName);
+
+	static string getAttributeString(int fileId, int varId,
+			const string& attrName);
+
+	template<class T>
+	static valarray<T> getAttributeData(int fileId, int varId,
+			const string& attrName) {
+		const size_t attrLength = getAttributeLength(fileId, varId, attrName);
+		valarray<T> attrData(attrLength);
+
+		const int status = nc_get_att(fileId, varId, attrName.c_str(),
+				&attrData[0]);
+		checkStatus(status, "getting attribute data");
+		return attrData;
+	}
 
 	static double getAttributeDouble(int fileId, int varId,
-			const string& attributeName, double defaultValue);
+			const string& attrName, double defaultValue);
 
 	static float getAttributeFloat(int fileId, int varId,
-			const string& attributeName, float defaultValue);
+			const string& attrName, float defaultValue);
 
-	static void getData(int fileId, int varId, const valarray<size_t>& origin,
-			const valarray<size_t>& shape, void* dataArray);
+	static void getVariableData(int fileId, int varId,
+			const valarray<size_t>& origin, const valarray<size_t>& shape,
+			void* dataArray);
 
-	static void getData(int fileId, int varId,
+	static void getVariableData(int fileId, int varId,
 			const valarray<size_t>& origin, const valarray<size_t>& shape,
 			float* dataArray);
 
-	static void getData(int fileId, int varId,
+	static void getVariableData(int fileId, int varId,
 			const valarray<size_t>& origin, const valarray<size_t>& shape,
 			double* dataArray);
 
-	static int getDimensionCount(int fileId, int varId);
+	static size_t getDimensionCount(int fileId, int varId);
 
 	static valarray<int> getDimensionIds(int fileId, int varId);
 

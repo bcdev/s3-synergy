@@ -68,7 +68,7 @@ public:
 	virtual void process(Context& context) {
 	}
 
-	virtual size_t getFirstLRequired(const Segment& segment,
+	virtual size_t getFirstRequiredL(const Segment& segment,
 			size_t line) const {
 		return line;
 	}
