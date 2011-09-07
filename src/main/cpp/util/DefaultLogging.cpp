@@ -12,51 +12,55 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
- * File:   Logger.cpp
+ * File:   DefaultLogging.cpp
  * Author: thomass
  * 
  * Created on November 24, 2010, 4:08 PM
  */
 
 #include <iostream>
-#include <time.h>
+#include <ctime>
 #include <unistd.h>
+
 #include <boost/lexical_cast.hpp>
 
-#include "Logger.h"
+#include "DefaultLogging.h"
 
 using std::cout;
 using std::cerr;
+using std::localtime;
+using std::strftime;
+using std::time;
 
-Logger::Logger(const string& logFileName) : logFile() {
+DefaultLogging::DefaultLogging(const string& logFileName) : logFile() {
     logFile.open(logFileName.c_str());
 }
 
-Logger::Logger(const Logger& logger) {
+DefaultLogging::DefaultLogging(const DefaultLogging& logger) {
 }
 
-Logger::~Logger() {
+DefaultLogging::~DefaultLogging() {
     if (logFile.is_open()) {
         logFile.close();
     }
 }
 
-void Logger::debug(const string& message, const string& moduleName) {
+void DefaultLogging::debug(const string& message, const string& moduleName) {
     debug(message, moduleName, processorVersion);
 }
 
-void Logger::debug(const string& message, const string& moduleName,
+void DefaultLogging::debug(const string& message, const string& moduleName,
         const string& processorVersion) {
     if (this->outLogLevel.compare("DEBUG") == 0) {
         logToStdout(message, moduleName, processorVersion, "[D]");
     }
 }
 
-void Logger::info(const string& message, const string& moduleName) {
+void DefaultLogging::info(const string& message, const string& moduleName) {
     info(message, moduleName, processorVersion);
 }
 
-void Logger::info(const string& message, const string& moduleName,
+void DefaultLogging::info(const string& message, const string& moduleName,
         const string& processorVersion) {
     if (this->outLogLevel.compare("DEBUG") == 0 ||
             this->outLogLevel.compare("INFO") == 0) {
@@ -64,11 +68,11 @@ void Logger::info(const string& message, const string& moduleName,
     }
 }
 
-void Logger::progress(const string& message, const string& moduleName) {
+void DefaultLogging::progress(const string& message, const string& moduleName) {
     progress(message, moduleName, processorVersion);
 }
 
-void Logger::progress(const string& message, const string& moduleName,
+void DefaultLogging::progress(const string& message, const string& moduleName,
         const string& processorVersion) {
     if (this->outLogLevel.compare("DEBUG") == 0 ||
             this->outLogLevel.compare("INFO") == 0 ||
@@ -77,11 +81,11 @@ void Logger::progress(const string& message, const string& moduleName,
     }
 }
 
-void Logger::warning(const string& message, const string& moduleName) {
+void DefaultLogging::warning(const string& message, const string& moduleName) {
     warning(message, moduleName, processorVersion);
 }
 
-void Logger::warning(const string& message, const string& moduleName,
+void DefaultLogging::warning(const string& message, const string& moduleName,
         const string& processorVersion) {
     if (this->outLogLevel.compare("DEBUG") == 0 ||
             this->outLogLevel.compare("INFO") == 0 ||
@@ -91,28 +95,28 @@ void Logger::warning(const string& message, const string& moduleName,
     }
 }
 
-void Logger::error(const string& message, const string& moduleName) {
+void DefaultLogging::error(const string& message, const string& moduleName) {
     error(message, moduleName, processorVersion);
 }
 
-void Logger::error(const string& message, const string& moduleName,
+void DefaultLogging::error(const string& message, const string& moduleName,
         const string& processorVersion) {
     logToError(message, moduleName, processorVersion);
 }
 
-void Logger::setProcessorVersion(const string& processorVersion) {
+void DefaultLogging::setProcessorVersion(const string& processorVersion) {
 
 }
 
-void Logger::setOutLogLevel(const string& outLogLevel) {
+void DefaultLogging::setOutLogLevel(const string& outLogLevel) {
     this->outLogLevel = outLogLevel;
 }
 
-void Logger::setErrLogLevel(const string& errLogLevel) {
+void DefaultLogging::setErrLogLevel(const string& errLogLevel) {
     this->errLogLevel = errLogLevel;
 }
 
-string Logger::createMessageHeader(const string& moduleName, const string& moduleVersion) {
+string DefaultLogging::createMessageHeader(const string& moduleName, const string& moduleVersion) {
     char nodeNameBuffer [80];
     gethostname(nodeNameBuffer, 80);
     string header = getTimeString();
@@ -128,7 +132,7 @@ string Logger::createMessageHeader(const string& moduleName, const string& modul
     return header;
 }
 
-void Logger::logToError(const string& message, const string& moduleName, const string& moduleVersion) {
+void DefaultLogging::logToError(const string& message, const string& moduleName, const string& moduleVersion) {
     string logMessage;
     logMessage.append(createMessageHeader(moduleName, moduleVersion));
     logMessage.append("[E] ");
@@ -138,7 +142,7 @@ void Logger::logToError(const string& message, const string& moduleName, const s
     cerr << logMessage << "\n";
 }
 
-void Logger::logToStdout(const string& message, const string& moduleName, const string& moduleVersion, const string& logType) {
+void DefaultLogging::logToStdout(const string& message, const string& moduleName, const string& moduleVersion, const string& logType) {
     string logMessage;
     logMessage.append(createMessageHeader(moduleName, moduleVersion));
     logMessage.append(logType);
@@ -149,12 +153,11 @@ void Logger::logToStdout(const string& message, const string& moduleName, const 
     cout << logMessage << "\n";
 }
 
-string Logger::getTimeString() {
+string DefaultLogging::getTimeString() {
     time_t rawtime;
-    tm* timer;
     time(&rawtime);
-    timer = localtime(&rawtime);
-    char timeBuffer [80];
+    tm* timer = localtime(&rawtime);
+    char timeBuffer[80];
     strftime(timeBuffer, 80, "%Y-%m-%dT%H:%M:%S.000000", timer);
-    return timeBuffer;
+    return string(timeBuffer);
 }

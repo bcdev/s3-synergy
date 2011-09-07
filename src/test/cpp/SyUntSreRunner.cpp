@@ -17,7 +17,7 @@
 #include <cppunit/TestRunner.h>
 
 #include "../../../src/main/cpp/core/Context.h"
-#include "../../../src/main/cpp/util/Logger.h"
+#include "../../../src/main/cpp/util/DefaultLogging.h"
 
 using std::cout;
 using std::endl;
@@ -26,11 +26,11 @@ using std::getenv;
 shared_ptr<Context> context = shared_ptr<Context>(new Context());
 
 static void prepareContext() {
-	shared_ptr<Logger> logger = shared_ptr<Logger>(new Logger("LOG.SY_UNT_SRE"));
-	logger->setProcessorVersion(Constants::PROCESSOR_VERSION);
-	logger->setOutLogLevel(Logging::LOG_LEVEL_INFO);
-	logger->setErrLogLevel(Logging::LOG_LEVEL_INFO);
-	context->setLogging(logger);
+	shared_ptr<DefaultLogging> logging = shared_ptr<DefaultLogging>(new DefaultLogging("LOG.SY_UNT_SRE"));
+	logging->setProcessorVersion(Constants::PROCESSOR_VERSION);
+	logging->setOutLogLevel(Logging::LOG_LEVEL_INFO);
+	logging->setErrLogLevel(Logging::LOG_LEVEL_INFO);
+	context->setLogging(logging);
 }
 
 int main() {

@@ -1,3 +1,7 @@
+/*
+ * This code is outdated.
+ */
+
 #include <time.h>
 #include <unistd.h>
 #include <vector>
@@ -11,8 +15,7 @@
 
 #include <iostream>
 
-static string createProcessingTimeMessage(time_t start);
-void logIOParameters(JobOrder& jobOrder, Logger* logger);
+void logIOParameters(JobOrder& jobOrder, DefaultLogging* logger);
 
 int main(int argc, char* argv[]) {
 	if (argc < 2) {
@@ -22,7 +25,6 @@ int main(int argc, char* argv[]) {
 	}
 	ErrorHandler errorHandler;
 	try {
-		clock_t start = clock();
 		XPathInitializer init;
 
 		string jobOrderXml = string(argv[1]);
@@ -34,11 +36,10 @@ int main(int argc, char* argv[]) {
 		// TODO - use argument for log file name/path
 		string logFileName = "LOG.";
 		logFileName.append(jobOrder->getIpfConfiguration().getOrderId());
-		Logger logger(logFileName);
+		DefaultLogging logger(logFileName);
 		logger.setProcessorVersion(jobOrder->getIpfConfiguration().getVersion());
 		logger.setOutLogLevel(jobOrder->getIpfConfiguration().getStandardLogLevel());
 		logger.setErrLogLevel(jobOrder->getIpfConfiguration().getErrorLogLevel());
-		logger.info("Main process started.", "Main");
 
 		Dictionary* dict = new Dictionary();
 
@@ -63,7 +64,6 @@ int main(int argc, char* argv[]) {
 		context.setDictionary(dict);
 		processor.process(context);
 
-		logger.info(createProcessingTimeMessage(start), "Main");
 		logger.info("Processing complete. Exit code: 0.", "Main");
 		return 0;
 	} catch (exception& e) {
@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
 	return 0;
 }
 
-void logIOParameters(JobOrder& jobOrder, Logger* logger) {
+void logIOParameters(JobOrder& jobOrder, DefaultLogging* logger) {
 	const vector<IpfProcessor>& processorConfigurations =
 			jobOrder.getIpfProcessors();
 	for (size_t k = 0; k < processorConfigurations.size(); k++) {
@@ -92,23 +92,4 @@ void logIOParameters(JobOrder& jobOrder, Logger* logger) {
 			logger->info(message, "JobOrder");
 		}
 	}
-}
-
-static string createProcessingTimeMessage(time_t start) {
-	clock_t finish = clock();
-	double seconds = ((double) (finish - start)) / (CLOCKS_PER_SEC);
-	int minutes = 0;
-	int hours = 0;
-	if (seconds > 3600) {
-		hours = seconds / 3600;
-		seconds = ((int) seconds) % 3600;
-	}
-	if (seconds > 60) {
-		minutes = seconds / 60;
-		seconds = ((int) seconds) % 60;
-	}
-	std::stringstream message;
-	message << "Processing took " << hours << ":" << minutes << ":" << seconds
-			<< " (HH:MM:SS.mm).";
-	return message.str();
 }

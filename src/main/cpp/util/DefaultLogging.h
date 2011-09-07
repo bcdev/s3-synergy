@@ -12,14 +12,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
- * File:   Logger.h
+ * File:   DefaultLogger.h
  * Author: thomass
  *
  * Created on November 24, 2010, 4:08 PM
  */
 
-#ifndef LOGGER_H
-#define	LOGGER_H
+#ifndef DEFAULTLOGGING_H
+#define	DEFAULTLOGGING_H
 
 #include <fstream>
 #include <string>
@@ -30,10 +30,10 @@
 using std::vector;
 using std::ofstream;
 
-class Logger : public virtual Logging {
+class DefaultLogging : public virtual Logging {
 public:
-    Logger(const string& logFileName);
-    virtual ~Logger();
+    DefaultLogging(const string& logFileName);
+    virtual ~DefaultLogging();
     
     void debug(const string& message, const string& moduleName,
             const string& processorVersion);
@@ -56,7 +56,7 @@ public:
     void setErrLogLevel(const string& errLogLevel);
 
 private:
-    Logger(const Logger& logger);
+    DefaultLogging(const DefaultLogging& logger);
 
     string createMessageHeader(const string& moduleName, const string& moduleVersion);
     void logToError(const string& message, const string& moduleName, const string& moduleVersion);
@@ -71,5 +71,5 @@ private:
     ofstream logFile;
 };
 
-#endif	/* LOGGER_H */
+#endif	/* DEFAULTLOGGING_H */
 
