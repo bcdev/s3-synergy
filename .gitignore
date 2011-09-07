@@ -8,11 +8,11 @@ nbproject/
 *.iws
 *.cmake
 auxdata/
-modules/
 target/
 /config/
 /jobs/
 /data/
+/modules/
 CMakeCache.txt
 CMakeFiles/
 LOG.*
