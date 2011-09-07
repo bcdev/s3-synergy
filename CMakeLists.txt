@@ -100,6 +100,25 @@ target_link_libraries(sy_unt_swr
 	boost_filesystem-mt
 )
 set_property(TARGET sy_unt_swr PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+#
+add_executable(sy_unt_aco
+    src/test/cpp/SyUntAcoRunner.cpp
+	${CORE_MAIN_SOURCES}
+	${UTIL_MAIN_SOURCES}
+	${READER_MAIN_SOURCES}
+	${MODULES_MAIN_SOURCES}
+	${MODULES_TEST_SOURCES}
+)
+target_link_libraries(sy_unt_aco
+	cppunit
+	netcdf
+	Xfdu
+	xerces-c
+	xqilla
+	boost_system-mt
+	boost_filesystem-mt
+)
+set_property(TARGET sy_unt_aco PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 
 
 ##

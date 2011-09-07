@@ -85,6 +85,7 @@ void SegmentImpl::addVariableAlias(const string& alias, const Segment& segment,
 				&& segment.getGrid().getSizeM() == getGrid().getSizeM()) {
 			unique(alias);
 			accessorMap[alias] = segment.getSharedAccessor(name);
+			return;
 		}
 	}
 	BOOST_THROW_EXCEPTION(

@@ -243,8 +243,7 @@ void L1cReader::process(Context& context) {
 														- firstLComputable + 1,
 												grid.getSizeM());
 								context.getLogging()->progress(
-										"Reading variable '"
-												+ variableDescriptor->getNcVarName()
+										"Reading variable '" + varName
 												+ "' into segment '"
 												+ segment.toString() + "'",
 										getId());
