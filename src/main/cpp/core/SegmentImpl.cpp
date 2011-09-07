@@ -37,25 +37,26 @@ SegmentImpl::SegmentImpl(const string& s, size_t l, size_t m, size_t k,
 SegmentImpl::~SegmentImpl() {
 }
 
-void SegmentImpl::addVariable(const string& name, int type) throw (logic_error) {
+void SegmentImpl::addVariable(const string& name, int type, double scaleFactor,
+		double addOffset) throw (logic_error) {
 	switch (type) {
 	case Constants::TYPE_BYTE:
-		addVariableByte(name);
+		addVariableByte(name, scaleFactor, addOffset);
 		break;
 	case Constants::TYPE_UBYTE:
-		addVariableUByte(name);
+		addVariableUByte(name, scaleFactor, addOffset);
 		break;
 	case Constants::TYPE_SHORT:
-		addVariableShort(name);
+		addVariableShort(name, scaleFactor, addOffset);
 		break;
 	case Constants::TYPE_USHORT:
-		addVariableUShort(name);
+		addVariableUShort(name, scaleFactor, addOffset);
 		break;
 	case Constants::TYPE_INT:
-		addVariableInt(name);
+		addVariableInt(name, scaleFactor, addOffset);
 		break;
 	case Constants::TYPE_UINT:
-		addVariableUInt(name);
+		addVariableUInt(name, scaleFactor, addOffset);
 		break;
 	case Constants::TYPE_LONG:
 		addVariableLong(name);
@@ -71,25 +72,30 @@ void SegmentImpl::addVariable(const string& name, int type) throw (logic_error) 
 		break;
 	default:
 		BOOST_THROW_EXCEPTION(
-				std::invalid_argument("Cannot add variable '" + name + "' to segment '" + getId() + "' because of invalid type."));
+				std::invalid_argument("Cannot add variable '" + name + "' to segment '" + getId() + "'. Unsupported data type."));
 		break;
 	}
 }
 
-void SegmentImpl::addVariable(const string& name, const Segment& segment)
-		throw (logic_error) {
+void SegmentImpl::addVariableAlias(const string& alias, const Segment& segment,
+		const string& name) throw (logic_error) {
 	if (segment.hasVariable(name)) {
-		unique(name);
-		accessorMap[name] = segment.getSharedAccessor(name);
+		if (segment.getGrid().getSizeK() == getGrid().getSizeK()
+				&& segment.getGrid().getSizeL() == getGrid().getSizeL()
+				&& segment.getGrid().getSizeM() == getGrid().getSizeM()) {
+			unique(alias);
+			accessorMap[alias] = segment.getSharedAccessor(name);
+		}
 	}
 	BOOST_THROW_EXCEPTION(
-			logic_error("Variable '" + name + "' has not been added to segment '" + segment.getId() + "' yet."));
+			logic_error("Alias for variable '" + name + "' from segment '" + segment.getId() + "' cannot be added to segment '" + segment.getId() + "'."));
 }
 
-void SegmentImpl::addVariableByte(const string& name) throw (logic_error) {
+void SegmentImpl::addVariableByte(const string& name, double scaleFactor,
+		double addOffset) throw (logic_error) {
 	unique(name);
 	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(
-			new ByteAccessor(grid.getSize()));
+			new ByteAccessor(grid.getSize(), scaleFactor, addOffset));
 	accessorMap[name] = accessor;
 	accessorList.push_back(accessor);
 }
@@ -110,10 +116,11 @@ void SegmentImpl::addVariableFloat(const string& name) throw (logic_error) {
 	accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableInt(const string& name) throw (logic_error) {
+void SegmentImpl::addVariableInt(const string& name, double scaleFactor,
+		double addOffset) throw (logic_error) {
 	unique(name);
 	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(
-			new IntAccessor(grid.getSize()));
+			new IntAccessor(grid.getSize(), scaleFactor, addOffset));
 	accessorMap[name] = accessor;
 	accessorList.push_back(accessor);
 }
@@ -126,26 +133,29 @@ void SegmentImpl::addVariableLong(const string& name) throw (logic_error) {
 	accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableShort(const string& name) throw (logic_error) {
+void SegmentImpl::addVariableShort(const string& name, double scaleFactor,
+		double addOffset) throw (logic_error) {
 	unique(name);
 	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(
-			new ShortAccessor(grid.getSize()));
+			new ShortAccessor(grid.getSize(), scaleFactor, addOffset));
 	accessorMap[name] = accessor;
 	accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableUByte(const string& name) throw (logic_error) {
+void SegmentImpl::addVariableUByte(const string& name, double scaleFactor,
+		double addOffset) throw (logic_error) {
 	unique(name);
 	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(
-			new UByteAccessor(grid.getSize()));
+			new UByteAccessor(grid.getSize(), scaleFactor, addOffset));
 	accessorMap[name] = accessor;
 	accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableUInt(const string& name) throw (logic_error) {
+void SegmentImpl::addVariableUInt(const string& name, double scaleFactor,
+		double addOffset) throw (logic_error) {
 	unique(name);
 	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(
-			new UIntAccessor(grid.getSize()));
+			new UIntAccessor(grid.getSize(), scaleFactor, addOffset));
 	accessorMap[name] = accessor;
 	accessorList.push_back(accessor);
 }
@@ -158,10 +168,11 @@ void SegmentImpl::addVariableULong(const string& name) throw (logic_error) {
 	accessorList.push_back(accessor);
 }
 
-void SegmentImpl::addVariableUShort(const string& name) throw (logic_error) {
+void SegmentImpl::addVariableUShort(const string& name, double scaleFactor,
+		double addOffset) throw (logic_error) {
 	unique(name);
 	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(
-			new UShortAccessor(grid.getSize()));
+			new UShortAccessor(grid.getSize(), scaleFactor, addOffset));
 	accessorMap[name] = accessor;
 	accessorList.push_back(accessor);
 }

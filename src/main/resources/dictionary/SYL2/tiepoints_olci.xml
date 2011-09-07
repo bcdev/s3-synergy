@@ -2,7 +2,7 @@
 <dataset>
     <variables>
         <variable>
-            <name>OLC_TP_LAT</name>
+            <name>OLC_TP_lat</name>
             <type>int</type>
             <segment_name>OLC_TP</segment_name>
             <dimensions>
@@ -37,7 +37,7 @@
             </attributes>
         </variable>
         <variable>
-            <name>OLC_TP_LON</name>
+            <name>OLC_TP_lon</name>
             <type>int</type>
             <segment_name>OLC_TP</segment_name>
             <dimensions>

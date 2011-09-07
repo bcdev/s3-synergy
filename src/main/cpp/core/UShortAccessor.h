@@ -21,18 +21,19 @@
 #ifndef USHORTACCESSOR_H
 #define	USHORTACCESSOR_H
 
-class UShortAccessor : public virtual AbstractAccessor<uint16_t> {
+class UShortAccessor: public virtual AbstractAccessor<uint16_t> {
 public:
 
-    UShortAccessor(size_t n) : AbstractAccessor<uint16_t>(n) {
-    }
+	UShortAccessor(size_t n, double scaleFactor = 1.0, double addOffset = 0.0) :
+			AbstractAccessor<uint16_t>(n, scaleFactor, addOffset) {
+	}
 
-    virtual ~UShortAccessor() {
-    }
+	virtual ~UShortAccessor() {
+	}
 
-    valarray<uint16_t>& getUShortData() const throw (bad_cast) {
-        return getTypedData();
-    }
+	valarray<uint16_t>& getUShortData() const throw (bad_cast) {
+		return getTypedData();
+	}
 };
 
 #endif	/* USHORTACCESSOR_H */

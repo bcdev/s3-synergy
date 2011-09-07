@@ -44,21 +44,23 @@ public:
 	}
 
 	double getDouble(size_t i) const throw (bad_cast, out_of_range) {
-		return boost::numeric_cast<double>(data[at(i)]) * scaleFactorD
-				+ addOffsetD;
+		return boost::numeric_cast<double>(data[at(i)]) * scaleFactor
+				+ addOffset;
 	}
 
 	void setDouble(size_t i, double value) throw (bad_cast, out_of_range) {
-		data[at(i)] = boost::numeric_cast<T>((value - addOffsetD) / scaleFactorD);
+		data[at(i)] = boost::numeric_cast<T>(
+				(value - addOffset) / scaleFactor);
 	}
 
 	float getFloat(size_t i) const throw (bad_cast, out_of_range) {
-		return boost::numeric_cast<float>(data[at(i)]) * scaleFactorF
-				+ addOffsetF;
+		return boost::numeric_cast<float>(data[at(i)]) * float(scaleFactor)
+				+ float(addOffset);
 	}
 
 	void setFloat(size_t i, float value) throw (bad_cast, out_of_range) {
-		data[at(i)] = boost::numeric_cast<T>((value - addOffsetD) /  scaleFactorD);
+		data[at(i)] = boost::numeric_cast<T>(
+				(value - float(addOffset)) / float(scaleFactor));
 	}
 
 	int32_t getInt(size_t i) const throw (bad_cast, out_of_range) {
@@ -165,6 +167,14 @@ public:
 		return (void*) &data[0];
 	}
 
+	double getScaleFactor() const {
+		return scaleFactor;
+	}
+
+	double getAddOffset() const {
+		return addOffset;
+	}
+
 	void shift(size_t n, size_t strideK, size_t strideL) {
 		if (n * strideL > strideK) {
 			BOOST_THROW_EXCEPTION(invalid_argument("n * strideL > strideK"));
@@ -185,8 +195,7 @@ public:
 protected:
 
 	AbstractAccessor(size_t n, double scaleFactor = 1.0, double addOffset = 0.0) :
-			Accessor(), scaleFactorD(scaleFactor), addOffsetD(addOffset), scaleFactorF(
-					scaleFactor), addOffsetF(addOffset), data(n) {
+			Accessor(), scaleFactor(scaleFactor), addOffset(addOffset), data(n) {
 	}
 
 	virtual ~AbstractAccessor() {
@@ -205,10 +214,8 @@ private:
 		BOOST_THROW_EXCEPTION(out_of_range("Accessor index is out of range."));
 	}
 
-	const double scaleFactorD;
-	const double addOffsetD;
-	const float scaleFactorF;
-	const float addOffsetF;
+	const double scaleFactor;
+	const double addOffset;
 
 	valarray<T> data;
 };

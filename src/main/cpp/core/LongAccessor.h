@@ -21,18 +21,21 @@
 #ifndef LONGACCESSOR_H
 #define	LONGACCESSOR_H
 
-class LongAccessor : public virtual AbstractAccessor<int64_t> {
+#include "AbstractAccessor.h"
+
+class LongAccessor: public virtual AbstractAccessor<int64_t> {
 public:
 
-    LongAccessor(size_t n) : AbstractAccessor<int64_t>(n) {
-    }
+	LongAccessor(size_t n) :
+			AbstractAccessor<int64_t>(n) {
+	}
 
-    virtual ~LongAccessor() {
-    }
+	virtual ~LongAccessor() {
+	}
 
-    valarray<int64_t>& getLongData() const throw (bad_cast) {
-        return getTypedData();
-    }
+	valarray<int64_t>& getLongData() const throw (bad_cast) {
+		return getTypedData();
+	}
 };
 
 #endif	/* LONGACCESSOR_H */

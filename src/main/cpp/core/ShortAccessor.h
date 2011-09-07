@@ -21,18 +21,21 @@
 #ifndef SHORTACCESSOR_H
 #define	SHORTACCESSOR_H
 
-class ShortAccessor : public virtual AbstractAccessor<int16_t> {
+#include "AbstractAccessor.h"
+
+class ShortAccessor: public virtual AbstractAccessor<int16_t> {
 public:
 
-    ShortAccessor(size_t n) : AbstractAccessor<int16_t>(n) {
-    }
+	ShortAccessor(size_t n, double scaleFactor = 1.0, double addOffset = 0.0) :
+			AbstractAccessor<int16_t>(n, scaleFactor, addOffset) {
+	}
 
-    virtual ~ShortAccessor() {
-    }
+	virtual ~ShortAccessor() {
+	}
 
-    valarray<int16_t>& getShortData() const throw (bad_cast) {
-        return getTypedData();
-    }
+	valarray<int16_t>& getShortData() const throw (bad_cast) {
+		return getTypedData();
+	}
 };
 
 #endif	/* SHORTACCESSOR_H */

@@ -2,7 +2,7 @@
 <dataset>
     <variables>
         <variable>
-            <name>SLN_TP_LAT</name>
+            <name>SLN_TP_lat</name>
             <type>double</type>
             <segment_name>SLN_TP</segment_name>
             <dimensions>
@@ -32,7 +32,7 @@
             </attributes>
         </variable>
         <variable>
-            <name>SLN_TP_LON</name>
+            <name>SLN_TP_lon</name>
             <type>double</type>
             <segment_name>SLN_TP</segment_name>
             <dimensions>

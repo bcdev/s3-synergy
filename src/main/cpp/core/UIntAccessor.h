@@ -21,18 +21,19 @@
 #ifndef UINTACCESSOR_H
 #define	UINTACCESSOR_H
 
-class UIntAccessor : public virtual AbstractAccessor<uint32_t> {
+class UIntAccessor: public virtual AbstractAccessor<uint32_t> {
 public:
 
-    UIntAccessor(size_t n) : AbstractAccessor<uint32_t>(n) {
-    }
+	UIntAccessor(size_t n, double scaleFactor = 1.0, double addOffset = 0.0) :
+			AbstractAccessor<uint32_t>(n, scaleFactor, addOffset) {
+	}
 
-    virtual ~UIntAccessor() {
-    }
+	virtual ~UIntAccessor() {
+	}
 
-    valarray<uint32_t>& getUIntData() const throw (bad_cast) {
-        return getTypedData();
-    }
+	valarray<uint32_t>& getUIntData() const throw (bad_cast) {
+		return getTypedData();
+	}
 };
 
 #endif	/* UINTACCESSOR_H */

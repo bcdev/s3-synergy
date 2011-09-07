@@ -133,6 +133,7 @@ shared_ptr<LookupTable<W> > LookupTableReader::readLookupTable(
 	}
 	default:
 		BOOST_THROW_EXCEPTION(std::runtime_error("Unsupported data type."));
+		break;
 	}
 }
 

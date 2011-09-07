@@ -21,18 +21,21 @@
 #ifndef INTACCESSOR_H
 #define	INTACCESSOR_H
 
-class IntAccessor : public virtual AbstractAccessor<int32_t> {
+#include "AbstractAccessor.h"
+
+class IntAccessor: public virtual AbstractAccessor<int32_t> {
 public:
 
-    IntAccessor(size_t n) : AbstractAccessor<int32_t>(n) {
-    }
+	IntAccessor(size_t n, double scaleFactor = 1.0, double addOffset = 0.0) :
+			AbstractAccessor<int32_t>(n, scaleFactor, addOffset) {
+	}
 
-    virtual ~IntAccessor() {
-    }
+	virtual ~IntAccessor() {
+	}
 
-    valarray<int32_t>& getIntData() const throw (bad_cast) {
-        return getTypedData();
-    }
+	valarray<int32_t>& getIntData() const throw (bad_cast) {
+		return getTypedData();
+	}
 };
 
 #endif	/* INTACCESSOR_H */

@@ -48,16 +48,20 @@ public:
 	 * Adds a variable to the segment.
 	 * @param name The name of the variable being added.
 	 * @param type The type of the variable being added.
+	 * @param scaleFactor The scale factor of the variable being added.
+	 * @param addOffset The add-offset of the variable being added.
 	 */
-	virtual void addVariable(const string& name, int type) throw (logic_error) = 0;
+	virtual void addVariable(const string& name, int type, double scaleFactor =
+			1.0, double addOffset = 0.0) throw (logic_error) = 0;
 
 	/**
 	 * Adds a variable from an other segment.
-	 * @param name The name of the variable being copied.
+	 * @param alias The alias name of variable being copied.
 	 * @param segment The source segment.
+	 * @param name The name of the variable being copied.
 	 */
-	virtual void addVariable(const string& name, const Segment& segment)
-			throw (logic_error) = 0;
+	virtual void addVariableAlias(const string& alias, const Segment& segment,
+			const string& name) throw (logic_error) = 0;
 
 	/**
 	 * Tests whether a variable of interest has been added to the the segment
@@ -120,7 +124,8 @@ public:
 		return this == &that;
 	}
 
-	virtual shared_ptr<Accessor> getSharedAccessor(const string& name) const = 0;
+	virtual shared_ptr<Accessor> getSharedAccessor(
+			const string& name) const = 0;
 };
 
 #endif	/* SEGMENT_H */

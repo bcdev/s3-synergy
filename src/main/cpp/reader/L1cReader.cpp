@@ -85,6 +85,7 @@ void L1cReader::start(Context& context) {
 							size_t rowCount;
 							size_t colCount;
 
+							// Set grid parameters and write them to dictionary
 							switch (dimCount) {
 							case 3:
 								camCount = NetCDF::getDimensionLength(fileId,
@@ -130,6 +131,7 @@ void L1cReader::start(Context& context) {
 										runtime_error("Invalid number of dimensions for variable '" + ncVarName + "'."));
 								break;
 							}
+							// Create a new segment, if necessary
 							if (!context.hasSegment(segmentName)) {
 								const size_t sizeL = min(segmentLineCount,
 										rowCount);
@@ -139,27 +141,40 @@ void L1cReader::start(Context& context) {
 								context.addSegment(segmentName, sizeL, colCount,
 										camCount, 0, rowCount - 1);
 							}
+							// Copy variable attributes to dictionary
 							const int type = NetCDF::getVariableType(fileId,
 									varId);
 							variableDescriptor->setType(type);
-
-							context.getLogging()->info(
-									"adding variable '" + varName
-											+ "' to segment '" + segmentName
-											+ "'", getId());
-							context.getSegment(segmentName).addVariable(varName,
-									type);
-							ncVarIdMap[varName] = varId;
 							const size_t attrCount = NetCDF::getAttributeCount(
 									fileId, varId);
 							for (size_t i = 0; i < attrCount; i++) {
 								const string attrName =
 										NetCDF::getAttributeName(fileId, varId,
 												i);
-								const Attribute attr = NetCDF::getAttribute(fileId, varId,
-										attrName);
+								const Attribute attr = NetCDF::getAttribute(
+										fileId, varId, attrName);
 								variableDescriptor->addAttribute(attr);
 							}
+							// Add variable to segment
+							const double scaleFactor =
+									variableDescriptor->hasAttribute(
+											"scaleFactor") ?
+											variableDescriptor->getAttribute(
+													"scaleFactor").getDoubles()[0] :
+											1.0;
+							const double addOffset =
+									variableDescriptor->hasAttribute(
+											"addOffset") ?
+											variableDescriptor->getAttribute(
+													"addOffset").getDoubles()[0] :
+											0.0;
+							context.getLogging()->info(
+									"adding variable '" + varName
+											+ "' to segment '" + segmentName
+											+ "'", getId());
+							context.getSegment(segmentName).addVariable(varName,
+									type, scaleFactor, addOffset);
+							ncVarIdMap[varName] = varId;
 						}
 			}
 }

@@ -23,18 +23,19 @@
 
 #include "AbstractAccessor.h"
 
-class ByteAccessor : public virtual AbstractAccessor<int8_t> {
+class ByteAccessor: public virtual AbstractAccessor<int8_t> {
 public:
 
-    ByteAccessor(size_t n) : AbstractAccessor<int8_t>(n) {
-    }
+	ByteAccessor(size_t n, double scaleFactor = 1.0, double addOffset = 0.0) :
+			AbstractAccessor<int8_t>(n, scaleFactor, addOffset) {
+	}
 
-    virtual ~ByteAccessor() {
-    }
+	virtual ~ByteAccessor() {
+	}
 
-    valarray<int8_t>& getByteData() const throw (bad_cast) {
-        return getTypedData();
-    }
+	valarray<int8_t>& getByteData() const throw (bad_cast) {
+		return getTypedData();
+	}
 };
 
 #endif	/* BYTEACCESSOR_H */

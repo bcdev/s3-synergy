@@ -39,22 +39,30 @@ public:
 			0, size_t maxL = Constants::N_LINE_OLC - 1);
 	virtual ~SegmentImpl();
 
-	void addVariable(const string& name, int type) throw (logic_error);
-	void addVariable(const string& name, const Segment& segment) throw (logic_error);
+	void addVariable(const string& name, int type, double scaleFactor = 1.0,
+			double addOffset = 0.0) throw (logic_error);
+	void addVariableAlias(const string& alias, const Segment& segment,
+			const string& name) throw (logic_error);
 
-	void addVariableByte(const string& name) throw (logic_error);
+	void addVariableByte(const string& name, double scaleFactor = 1.0,
+			double addOffset = 0.0) throw (logic_error);
 	void addVariableDouble(const string& name) throw (logic_error);
 	void addVariableFloat(const string& name) throw (logic_error);
-	void addVariableInt(const string& name) throw (logic_error);
+	void addVariableInt(const string& name, double scaleFactor = 1.0,
+			double addOffset = 0.0) throw (logic_error);
 	void addVariableLong(const string& name) throw (logic_error);
-	void addVariableShort(const string& name) throw (logic_error);
-	void addVariableUByte(const string& name) throw (logic_error);
-	void addVariableUInt(const string& name) throw (logic_error);
+	void addVariableShort(const string& name, double scaleFactor = 1.0,
+			double addOffset = 0.0) throw (logic_error);
+	void addVariableUByte(const string& name, double scaleFactor = 1.0,
+			double addOffset = 0.0) throw (logic_error);
+	void addVariableUInt(const string& name, double scaleFactor = 1.0,
+			double addOffset = 0.0) throw (logic_error);
 	void addVariableULong(const string& name) throw (logic_error);
-	void addVariableUShort(const string& name) throw (logic_error);
+	void addVariableUShort(const string& name, double scaleFactor = 1.0,
+			double addOffset = 0.0) throw (logic_error);
 
 	bool hasVariable(const string& name) const {
-	    return accessorMap.find(name) != accessorMap.end();
+		return accessorMap.find(name) != accessorMap.end();
 	}
 
 	const string& getId() const {

@@ -21,18 +21,19 @@
 #ifndef ULONGACCESSOR_H
 #define	ULONGACCESSOR_H
 
-class ULongAccessor : public virtual AbstractAccessor<uint64_t> {
+class ULongAccessor: public virtual AbstractAccessor<uint64_t> {
 public:
 
-    ULongAccessor(size_t n) : AbstractAccessor<uint64_t>(n) {
-    }
+	ULongAccessor(size_t n) :
+			AbstractAccessor<uint64_t>(n) {
+	}
 
-    virtual ~ULongAccessor() {
-    }
+	virtual ~ULongAccessor() {
+	}
 
-    valarray<uint64_t>& getULongData() const throw (bad_cast) {
-        return getTypedData();
-    }
+	valarray<uint64_t>& getULongData() const throw (bad_cast) {
+		return getTypedData();
+	}
 };
 
 #endif	/* ULONGACCESSOR_H */
