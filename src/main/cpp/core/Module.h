@@ -31,62 +31,66 @@ using std::exception;
 /**
  * Interface representing a processing module.
  */
-class Module : public Identifiable {
+class Module: public Identifiable {
 public:
 
-    /**
-     * Destructor.
-     */
-    virtual ~Module() {
-    };
+	/**
+	 * Destructor.
+	 */
+	virtual ~Module() {
+	}
+	;
 
-    /**
-     * Returns the module version.
-     * @return the module version.
-     */
-    virtual const string& getVersion() const = 0;
+	/**
+	 * Returns the module version.
+	 * @return the module version.
+	 */
+	virtual const string& getVersion() const = 0;
 
-    /**
-     * Acquires and initializes resources the module needs for processing.
-     * Resources may be added to the context as objects using the
-     * {@code context.addObject()} method.
-     * @param context The context of the module.
-     */
-    virtual void start(Context& context) = 0;
+	/**
+	 * Acquires and initializes resources the module needs for processing.
+	 * Resources may be added to the context as objects using the
+	 * {@code context.addObject()} method.
+	 * @param context The context of the module.
+	 */
+	virtual void start(Context& context) = 0;
 
-    /**
-     * Removes objects this module has added to the context and releases
-     * resources this module has acquired.
-     * @param context The context of the module.
-     */
-    virtual void stop(Context& context) = 0;
+	/**
+	 * Removes objects this module has added to the context and releases
+	 * resources this module has acquired.
+	 * @param context The context of the module.
+	 */
+	virtual void stop(Context& context) = 0;
 
-    /**
-     * Processes segment data, which are provided by a context. The contract
-     * to be satisfies by implementing modules is:
-     *
-     * 1. The implementing module must use the context to create segment data
-     * 2. The implementing module shall use the context to determine in which
-     *    row the processing of segment data has to be started
-     * 3. The implementing modules shall carry out the processing of segment
-     *    data
-     * 4. The implementing module shall communicate to the context up to which
-     *    row the processing of segment data has been completed
-     *
-     * @param context The context.
-     */
-    virtual void process(Context& context) = 0;
+	/**
+	 * Processes segment data, which are provided by a context. The contract
+	 * to be satisfies by implementing modules is:
+	 *
+	 * 1. The implementing module must use the context to create segment data
+	 * 2. The implementing module shall use the context to determine in which
+	 *    row the processing of segment data has to be started
+	 * 3. The implementing modules shall carry out the processing of segment
+	 *    data
+	 * 4. The implementing module shall communicate to the context up to which
+	 *    row the processing of segment data has been completed
+	 *
+	 * @param context The context.
+	 */
+	virtual void process(Context& context) = 0;
 
-    /**
-     * Returns the index of the first row in a segment, which is required for
-     * processing a certain block of rows in the segment.
-     * @param segment The segment.
-     * @param l The row index of the first row in the block of rows to be
-     *          processed.
-     * @return the index of the first row required for processing a block
-     *         of rows the first row of which has the row index {@code l}.
-     */
-    virtual size_t getFirstRequiredL(const Segment& segment, size_t l) const = 0;
+	/**
+	 * Returns the index of the first row in a source segment, which is required
+	 * for processing a target segment.
+	 *
+	 * @param segment The source segment.
+	 * @param l The row index of the first row in the target segment to be
+	 *          processed.
+	 * @return the index of the first row in the source segment required for
+	 *         processing a block of rows in the target segment. Implementations
+	 *         shall return {@code l} by default.
+	 */
+	virtual size_t getFirstRequiredL(const Segment& segment,
+			size_t l) const = 0;
 };
 
 #endif	/* MODULE_H */
