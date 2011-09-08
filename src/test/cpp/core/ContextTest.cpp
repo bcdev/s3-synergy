@@ -69,10 +69,13 @@ void ContextTest::testAddObject() {
 
 void ContextTest::testAddSegment() {
 	CPPUNIT_ASSERT(context->hasSegment("S") == false);
-	Segment& segment = context->addSegment("S", 2000);
+	Segment& segment = context->addSegment("S", 2000, Constants::N_DET_CAM,
+			Constants::N_CAM, 0, 9999);
 	CPPUNIT_ASSERT(context->hasSegment("S"));
 	CPPUNIT_ASSERT(context->getSegment("S") == segment);
-	CPPUNIT_ASSERT_THROW(context->addSegment("S", 1000), logic_error);
+	CPPUNIT_ASSERT_THROW(
+			context->addSegment("S", 1000, Constants::N_DET_CAM, Constants::N_CAM, 0, 9999),
+			logic_error);
 }
 
 void ContextTest::testSetGetDictionary() {
@@ -99,7 +102,7 @@ void ContextTest::testGetUnknownSegment() {
 }
 
 void ContextTest::testSetGetLastLComputed() {
-	Segment& s = context->addSegment("S", 100, 1, 1, 0, 200);
+	Segment& s = context->addSegment("S", 100, 1, 1, 0, 199);
 	shared_ptr<Module> m = shared_ptr<Module>(new BasicModule("M"));
 	CPPUNIT_ASSERT_THROW(context->setLastComputedL(s, *m, 10), logic_error);
 
@@ -109,15 +112,14 @@ void ContextTest::testSetGetLastLComputed() {
 }
 
 void ContextTest::testGetLastLWritable() {
-	Segment& segment = context->addSegment("A", 100, 1, 1, 0, 200);
+	Segment& segment = context->addSegment("A", 100, 1, 1, 0, 199);
 
 	shared_ptr<Module> a = shared_ptr<Module>(new BasicModule("A"));
 	shared_ptr<Module> b = shared_ptr<Module>(new BasicModule("B"));
 	shared_ptr<Writer> w = shared_ptr<Writer>(new Writer("W"));
 	context->addModule(a);
 	context->setLastComputedL(segment, *a, 5);
-	CPPUNIT_ASSERT_THROW(context->getLastWritableL(segment, *w),
-			logic_error);
+	CPPUNIT_ASSERT_THROW(context->getLastWritableL(segment, *w), logic_error);
 
 	context->addModule(w);
 	CPPUNIT_ASSERT(context->getLastWritableL(segment, *w) == 5);

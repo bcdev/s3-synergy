@@ -25,48 +25,68 @@
 #include <string>
 #include <netcdf.h>
 
+#include "Config.h"
+
 using std::string;
 
 namespace Constants {
-    const size_t N_CAM = 5;
-    const size_t N_DET_CAM = 760;
-    const size_t N_LINE_OLC = 60000;
+/**
+ * Processor version.
+ */
+const string PROCESSOR_VERSION = string(PROCESSOR_VERSION_MAJOR) + "."
+		+ string(PROCESSOR_VERSION_MINOR);
 
-    const string PROCESSOR_VERSION = "1.0-SNAPSHOT";
+/**
+ * Product types.
+ */
+const string PRODUCT_SY1 = "SY1";
+const string PRODUCT_SY2 = "SY2";
+const string PRODUCT_VGTP = "VGTP";
+const string PRODUCT_VGTS = "VGTS";
 
-    const string PRODUCT_SY1 = "SY1";
-    const string PRODUCT_SY2 = "SY2";
-    const string PRODUCT_VGTP = "VGTP";
-    const string PRODUCT_VGTS = "VGTS";
+/**
+ * Segment names.
+ */
+const string SEGMENT_OLC = "OLC";
+const string SEGMENT_OLC_TP = "OLC_TP";
+const string SEGMENT_OLC_INFO = "OLC_INFO";
+const string SEGMENT_OLC_TIME = "OLC_TIME";
+const string SEGMENT_SLN = "SLN";
+const string SEGMENT_SLO = "SLO";
+const string SEGMENT_SLN_TP = "SLN_TP";
+const string SEGMENT_SLO_TP = "SLO_TP";
+const string SEGMENT_SLN_INFO = "SLN_INFO";
+const string SEGMENT_SLO_INFO = "SLO_INFO";
+const string SEGMENT_SYN_COLLOCATED = "SYN_COLLOCATED";
 
-    const string SEGMENT_OLC = "OLC";
-    const string SEGMENT_OLC_TP = "OLC_TP";
-    const string SEGMENT_OLC_INFO = "OLC_INFO";
-    const string SEGMENT_OLC_TIME = "OLC_TIME";
-    const string SEGMENT_SLN = "SLN";
-    const string SEGMENT_SLO = "SLO";
-    const string SEGMENT_SLN_TP = "SLN_TP";
-    const string SEGMENT_SLO_TP = "SLO_TP";
-    const string SEGMENT_SLN_INFO = "SLN_INFO";
-    const string SEGMENT_SLO_INFO = "SLO_INFO";
-    const string SEGMENT_SYN_COLLOCATED = "SYN_COLLOCATED";
+/**
+ * Dimension names.
+ */
+const string DIMENSION_N_CAM = "N_CAM";
+const string DIMENSION_N_DET_CAM = "N_DET_CAM";
+const string DIMENSION_N_LINE_OLC = "N_LINE_OLC";
 
-    const string DIMENSION_N_CAM = "N_CAM";
-    const string DIMENSION_N_DET_CAM = "N_DET_CAM";
-    const string DIMENSION_N_LINE_OLC = "N_LINE_OLC";
+/**
+ * Dimension sizes.
+ */
+const size_t N_CAM = 5;
+const size_t N_DET_CAM = 760;
 
-    const int TYPE_BYTE = NC_BYTE;
-    const int TYPE_INT = NC_INT;
-    const int TYPE_LONG = NC_INT64;
-    const int TYPE_SHORT = NC_SHORT;
-    const int TYPE_FLOAT = NC_FLOAT;
-    const int TYPE_DOUBLE = NC_DOUBLE;
-    const int TYPE_UBYTE = NC_UBYTE;
-    const int TYPE_UINT = NC_UINT;
-    const int TYPE_ULONG = NC_UINT64;
-    const int TYPE_USHORT = NC_USHORT;
-    const int TYPE_CHAR = NC_CHAR;
-    const int TYPE_STRING = NC_STRING;
+/**
+ * Data types.
+ */
+const int TYPE_BYTE = NC_BYTE;
+const int TYPE_INT = NC_INT;
+const int TYPE_LONG = NC_INT64;
+const int TYPE_SHORT = NC_SHORT;
+const int TYPE_FLOAT = NC_FLOAT;
+const int TYPE_DOUBLE = NC_DOUBLE;
+const int TYPE_UBYTE = NC_UBYTE;
+const int TYPE_UINT = NC_UINT;
+const int TYPE_ULONG = NC_UINT64;
+const int TYPE_USHORT = NC_USHORT;
+const int TYPE_CHAR = NC_CHAR;
+const int TYPE_STRING = NC_STRING;
 }
 
 #endif	/* CONSTANTS_H */

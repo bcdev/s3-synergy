@@ -19,19 +19,17 @@ Aco::~Aco() {
 }
 
 void Aco::start(Context& context) {
-	/*
 	const LookupTableReader reader(
 			getInstallationPath() + "/auxdata/v1/S3__SY_2_SYRTAX.nc");
-	olcRatm = reader.readLookupTable<double>("OLC_R_atm");
-	t = reader.readLookupTable<double>("t");
-	rhoAtm = reader.readLookupTable<double>("rho_atm");
-	co3 = reader.readLookupTable<double>("C_O3");
+	lutOlcRatm = reader.readLookupTable<double>("OLC_R_atm");
+	lutT = reader.readLookupTable<double>("lutT");
+	lutRhoAtm = reader.readLookupTable<double>("rho_atm");
+	lutO3 = reader.readLookupTable<double>("C_O3");
 
-	context.addObject(*olcRatm);
-	context.addObject(*t);
-	context.addObject(*rhoAtm);
-	context.addObject(*co3);
-	*/
+	context.addObject(lutOlcRatm);
+	context.addObject(lutT);
+	context.addObject(lutRhoAtm);
+	context.addObject(lutO3);
 }
 
 void Aco::stop(Context& context) {
@@ -39,7 +37,6 @@ void Aco::stop(Context& context) {
 }
 
 void Aco::process(Context& context) {
-	/*
 	const Accessor& vza =
 			context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor(
 					"OLC_VZA");
@@ -55,14 +52,14 @@ void Aco::process(Context& context) {
 	const Accessor& f = olcInfo.getAccessor("solar_irradiance");
 
 	const Segment& olc = context.getSegment(Constants::SEGMENT_OLC);
-	const Accessor& ltoa12 = olc.getAccessor("L_12");
+	const Accessor& l12 = olc.getAccessor("L_12");
 
 	const double tau550 = 0.1;
 	const double no3 = 0.0;
 	const double wv = 2.0;
 	const double p = 1000;
 
-	double coordinates[14];
+	valarray<double> coordinates(20);
 	coordinates[0] = 0.0; // ADA
 	coordinates[1] = 0.0; // SZA
 	coordinates[2] = 0.0; // VZA
@@ -79,11 +76,18 @@ void Aco::process(Context& context) {
 	coordinates[12] = coordinates[6]; // aerosol model index
 	coordinates[13] = coordinates[7]; // SYN channel
 
-	const double ratm = olcRatm->operator()(&coordinates[0]);
-	const double tsza = t->operator()(&coordinates[8]);
-	const double tvza = tsza;
-	const double rho = rhoAtm->operator()(&coordinates[9]);
-	const double coeffo3 = co3->operator()(&coordinates[7]);
+	coordinates[14] = coordinates[2]; // VZA
+	coordinates[15] = coordinates[3]; // air pressure
+	coordinates[16] = coordinates[4]; // water vapour
+	coordinates[17] = coordinates[5]; // aerosol
+	coordinates[18] = coordinates[6]; // aerosol model index
+	coordinates[19] = coordinates[7]; // SYN channel
+
+	const double ratm = lutOlcRatm->operator()(&coordinates[0]);
+	const double ts = lutT->operator()(&coordinates[8]);
+	const double tv = lutT->operator()(&coordinates[14]);
+	const double rho = lutRhoAtm->operator()(&coordinates[9]);
+	const double o3 = lutO3->operator()(&coordinates[7]);
 
 	const Grid& olcInfoGrid = olcInfo.getGrid();
 	const Grid& olcGrid = olc.getGrid();
@@ -94,12 +98,11 @@ void Aco::process(Context& context) {
 				l < olcGrid.getFirstL() + olcGrid.getSizeL(); l++) {
 			for (size_t m = olcGrid.getFirstK();
 					m < olcGrid.getFirstM() + olcGrid.getSizeM(); m++) {
-				const double ltoa = ltoa12.getDouble(olcGrid.getIndex(k, l, m));
+				const double ltoa = l12.getDouble(olcGrid.getIndex(k, l, m));
 				const double f0 = f.getDouble(olcInfoGrid.getIndex(k, 12, m));
 
 				const double rtoa = (3.141592654 * ltoa) / (f0 * std::cos(0.0)); // Eq. 2-1
 			}
 		}
 	}
-	*/
 }

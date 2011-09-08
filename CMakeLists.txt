@@ -1,7 +1,12 @@
 project (s3-synergy)
-set (SYN_VERSION_MAJOR 1)
-set (SYN_VERSION_MINOR 0)
+set (s3-synergy_VERSION_MAJOR 1)
+set (s3-synergy_VERSION_MINOR 0)
 
+configure_file (
+  "src/main/cpp/core/Config.h.in"
+  "src/main/cpp/core/Config.h"
+)
+  
 set(CMAKE_CXX_FLAGS "-O3 -std=c++98 -Wall -Wno-return-type -DBOOST_FILESYSTEM_VERSION=2")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -std=c++98 -Wall -Wextra -DBOOST_FILESYSTEM_VERSION=2")
 

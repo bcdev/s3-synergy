@@ -138,8 +138,8 @@ void SynL1Reader::start(Context& context) {
 								context.getLogging()->info(
 										"adding segment '" + segmentName
 												+ "' to context", getId());
-								context.addSegment(segmentName, sizeL, colCount,
-										camCount, 0, rowCount - 1);
+								context.addSegment(segmentName, sizeL, 0,
+										rowCount - 1, colCount, camCount);
 							}
 							// Copy variable attributes to dictionary
 							const int type = NetCDF::getVariableType(fileId,
@@ -154,8 +154,8 @@ void SynL1Reader::start(Context& context) {
 								const Attribute attr = NetCDF::getAttribute(
 										fileId, varId, attrName);
 								context.getLogging()->info(
-										"adding attribute '" + attr.toString() +
-												+ "' to variable '" + varName
+										"adding attribute '" + attr.toString()
+												+ +"' to variable '" + varName
 												+ "'", getId());
 								variableDescriptor->addAttribute(attr);
 							}

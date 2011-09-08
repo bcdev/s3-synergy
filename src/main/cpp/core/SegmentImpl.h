@@ -34,9 +34,8 @@ using std::vector;
 
 class SegmentImpl: public virtual Segment {
 public:
-	SegmentImpl(const string& id, size_t sizeL, size_t sizeM =
-			Constants::N_DET_CAM, size_t sizeK = Constants::N_CAM, size_t minL =
-			0, size_t maxL = Constants::N_LINE_OLC - 1);
+	SegmentImpl(const string& id, size_t sizeL, size_t sizeM, size_t sizeK,
+			size_t minL, size_t maxL);
 	virtual ~SegmentImpl();
 
 	void addVariable(const string& name, int type, double scaleFactor = 1.0,

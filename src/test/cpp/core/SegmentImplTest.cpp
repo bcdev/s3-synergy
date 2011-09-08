@@ -34,7 +34,7 @@ SegmentImplTest::~SegmentImplTest() {
 }
 
 void SegmentImplTest::setUp() {
-    segment = new SegmentImpl("TEST", 2000);
+    segment = new SegmentImpl("TEST", 2000, Constants::N_DET_CAM, Constants::N_CAM, 0, 9999);
 }
 
 void SegmentImplTest::tearDown() {

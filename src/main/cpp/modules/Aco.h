@@ -19,10 +19,10 @@ public:
     void stop(Context& context);
     void process(Context& context);
 private:
-    shared_ptr<LookupTable<double> > olcRatm;
-    shared_ptr<LookupTable<double> > t;
-    shared_ptr<LookupTable<double> > rhoAtm;
-    shared_ptr<LookupTable<double> > co3;
+    shared_ptr<LookupTable<double> > lutOlcRatm;
+    shared_ptr<LookupTable<double> > lutT;
+    shared_ptr<LookupTable<double> > lutRhoAtm;
+    shared_ptr<LookupTable<double> > lutO3;
 };
 
 #endif /* ACO_H_ */

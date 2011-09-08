@@ -80,11 +80,12 @@ public:
 	 * @param sizeL The size of the segment's row index dimension.
 	 * @param sizeM The size of the segment's column index dimension.
 	 * @param sizeK The size of the segment's camera index dimension.
+	 * @param minL The minimum valid row index.
+	 * @param maxL The maximum valid row index.
 	 * @return a reference to the segment added.
 	 */
-	Segment& addSegment(const string& id, size_t sizeL, size_t sizeM =
-			Constants::N_DET_CAM, size_t sizeK = Constants::N_CAM, size_t minL =
-			0, size_t maxL = Constants::N_LINE_OLC - 1) throw (logic_error);
+	Segment& addSegment(const string& id, size_t sizeL, size_t sizeM,
+			size_t sizeK, size_t minL, size_t maxL) throw (logic_error);
 
 	void removeSegment(const string& id);
 
