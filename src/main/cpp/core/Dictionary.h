@@ -203,35 +203,39 @@ public:
 	}
 
 	valarray<int32_t> getShorts() const {
-		return getNumericValues<int32_t>();
+		return getComponents<int32_t>();
 	}
 
 	valarray<uint32_t> getUShorts() const {
-		return getNumericValues<uint32_t>();
+		return getComponents<uint32_t>();
 	}
 
 	valarray<int32_t> getInts() const {
-		return getNumericValues<int32_t>();
+		return getComponents<int32_t>();
 	}
 
 	valarray<uint32_t> getUInts() const {
-		return getNumericValues<uint32_t>();
+		return getComponents<uint32_t>();
 	}
 
 	valarray<int64_t> getLongs() const {
-		return getNumericValues<int64_t>();
+		return getComponents<int64_t>();
 	}
 
 	valarray<uint64_t> getULongs() const {
-		return getNumericValues<uint64_t>();
+		return getComponents<uint64_t>();
 	}
 
 	valarray<float> getFloats() const {
-		return getNumericValues<float>();
+		return getComponents<float>();
 	}
 
 	valarray<double> getDoubles() const {
-		return getNumericValues<double>();
+		return getComponents<double>();
+	}
+
+	valarray<string> getTokens() const {
+		return getComponents<string>();
 	}
 
 	/**
@@ -273,9 +277,8 @@ public:
 	string toString() const;
 
 private:
-
 	template<class T>
-	valarray<T> getNumericValues() const {
+	valarray<T> getComponents() const {
 		vector<string> tokens;
 		split(tokens, value, boost::is_any_of(" "));
 		valarray<T> result(tokens.size());

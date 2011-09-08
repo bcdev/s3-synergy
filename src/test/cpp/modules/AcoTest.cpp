@@ -8,7 +8,7 @@
 #include <cstdlib>
 
 #include "../../../../src/main/cpp/core/Processor.h"
-#include "../../../../src/main/cpp/reader/L1cReader.h"
+#include "../../../../src/main/cpp/reader/SynL1Reader.h"
 #include "../../../../src/main/cpp/modules/Col.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
@@ -21,8 +21,6 @@ using std::getenv;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(AcoTest);
 
-const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
-
 AcoTest::AcoTest() {
 }
 
@@ -32,12 +30,13 @@ AcoTest::~AcoTest() {
 void AcoTest::setUp() {
 	XPathInitializer init;
 
+	const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
 	shared_ptr<Dictionary> dictionary = DictionaryParser().parse(
 			S3_SYNERGY_HOME + "/src/main/resources/dictionary");
 	shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(
 			S3_SYNERGY_HOME
-					+ "/src/test/resources/jobs/JobOrder.SY_UNT_SRE.xml");
-	shared_ptr<Module> reader = shared_ptr<Module>(new L1cReader());
+					+ "/src/test/resources/jobs/JobOrder.SY_UNT_ACO.xml");
+	shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
 	shared_ptr<Module> col = shared_ptr<Module>(new Col());
 
 	context->setDictionary(dictionary);

@@ -36,6 +36,16 @@ int NetCDF::openFile(const string& path) {
 	return ncId;
 }
 
+void NetCDF::terminateFile(int ncId) {
+	const int status = nc_enddef(ncId);
+	checkStatus(status, "terminating file");
+}
+
+void NetCDF::closeFile(int ncId) {
+	const int status = nc_close(ncId);
+	checkStatus(status, "closing file");
+}
+
 Attribute NetCDF::getAttribute(int fileId, int varId, const string& attrName) {
 	const int attrType = NetCDF::getAttributeType(fileId, varId, attrName);
 
@@ -72,12 +82,17 @@ Attribute NetCDF::getAttribute(int fileId, int varId, const string& attrName) {
 				NetCDF::getAttributeData<double>(fileId, varId, attrName));
 	case Constants::TYPE_CHAR:
 		return Attribute(attrType, attrName,
-				NetCDF::getAttributeString(fileId, varId, attrName));
+				NetCDF::getAttributeValue(fileId, varId, attrName));
+	case Constants::TYPE_STRING:
+		return Attribute(attrType, attrName,
+				NetCDF::getAttributeValues(fileId, varId, attrName));
+	default:
+		BOOST_THROW_EXCEPTION(runtime_error("Unsupported attribute type."));
+		break;
 	}
-	BOOST_THROW_EXCEPTION(runtime_error("Unsupported attribute type."));
 }
 
-string NetCDF::getAttributeString(int fileId, int varId,
+string NetCDF::getAttributeValue(int fileId, int varId,
 		const string& attrName) {
 	const size_t attrLength = NetCDF::getAttributeLength(fileId, varId,
 			attrName);
@@ -87,6 +102,24 @@ string NetCDF::getAttributeString(int fileId, int varId,
 			&attrData[0]);
 	checkStatus(status, "getting attribute string");
 	return string(&attrData[0]);
+
+}
+
+valarray<string> NetCDF::getAttributeValues(int fileId, int varId,
+		const string& attrName) {
+	const size_t attrLength = NetCDF::getAttributeLength(fileId, varId,
+			attrName);
+	valarray<char*> attrData(attrLength);
+
+	const int status = nc_get_att_string(fileId, varId, attrName.c_str(),
+			&attrData[0]);
+	checkStatus(status, "getting attribute strings");
+
+	valarray<string> strings(attrLength);
+	for (size_t i = 0; i < attrLength; i++) {
+		strings[i].assign(attrData[i]);
+	}
+	return strings;
 
 }
 
@@ -122,7 +155,7 @@ int NetCDF::getAttributeType(int fileId, int varId,
 	return type;
 }
 
-double NetCDF::getAttributeDouble(int fileId, int varId,
+double NetCDF::getAttributeValueDouble(int fileId, int varId,
 		const string& attributeName, double defaultValue) {
 	double value = defaultValue;
 	const int status = nc_get_att_double(fileId, varId, attributeName.c_str(),
@@ -133,7 +166,7 @@ double NetCDF::getAttributeDouble(int fileId, int varId,
 	return value;
 }
 
-float NetCDF::getAttributeFloat(int fileId, int varId,
+float NetCDF::getAttributeValueFloat(int fileId, int varId,
 		const string& attributeName, float defaultValue) {
 	float value = defaultValue;
 	const int status = nc_get_att_float(fileId, varId, attributeName.c_str(),
@@ -246,61 +279,46 @@ int NetCDF::defineVariable(int fileId, const string& varName, int type,
 
 void NetCDF::putAttribute(int fileId, int varId, const Attribute& attribute) {
 	switch (attribute.getType()) {
-	case NC_BYTE: {
+	case Constants::TYPE_BYTE:
 		putAttribute(fileId, varId, attribute, attribute.getBytes());
 		break;
-	}
-	case NC_UBYTE: {
+	case Constants::TYPE_UBYTE:
 		putAttribute(fileId, varId, attribute, attribute.getUBytes());
 		break;
-	}
-	case NC_SHORT: {
+	case Constants::TYPE_SHORT:
 		putAttribute(fileId, varId, attribute, attribute.getShorts());
 		break;
-	}
-	case NC_USHORT: {
+	case Constants::TYPE_USHORT:
 		putAttribute(fileId, varId, attribute, attribute.getUShorts());
 		break;
-	}
-	case NC_INT: {
+	case Constants::TYPE_INT:
 		putAttribute(fileId, varId, attribute, attribute.getInts());
 		break;
-	}
-	case NC_UINT: {
+	case Constants::TYPE_UINT:
 		putAttribute(fileId, varId, attribute, attribute.getUInts());
 		break;
-	}
-	case NC_INT64: {
+	case Constants::TYPE_LONG:
 		putAttribute(fileId, varId, attribute, attribute.getLongs());
 		break;
-	}
-	case NC_UINT64: {
+	case Constants::TYPE_ULONG:
 		putAttribute(fileId, varId, attribute, attribute.getULongs());
 		break;
-	}
-	case NC_FLOAT: {
+	case Constants::TYPE_FLOAT:
 		putAttribute(fileId, varId, attribute, attribute.getFloats());
 		break;
-	}
-	case NC_DOUBLE: {
+	case Constants::TYPE_DOUBLE:
 		putAttribute(fileId, varId, attribute, attribute.getDoubles());
 		break;
-	}
-	default: {
+	case Constants::TYPE_CHAR:
 		putAttributeString(fileId, varId, attribute);
 		break;
+	case Constants::TYPE_STRING:
+		putAttributeStrings(fileId, varId, attribute);
+		break;
+	default:
+		BOOST_THROW_EXCEPTION(runtime_error("Unsupported attribute type."));
+		break;
 	}
-	}
-}
-
-void NetCDF::terminateDefinition(int ncId) {
-	const int status = nc_enddef(ncId);
-	checkStatus(status, "terminating definition phase");
-}
-
-void NetCDF::closeFile(int ncId) {
-	const int status = nc_close(ncId);
-	checkStatus(status, "closing netCDF-file");
 }
 
 template<class T>
@@ -314,8 +332,20 @@ void NetCDF::putAttribute(int fileId, int varId, const Attribute& attribute,
 void NetCDF::putAttributeString(int fileId, int varId,
 		const Attribute& attribute) {
 	const string& value = attribute.getValue();
-	int status = nc_put_att(fileId, varId, attribute.getName().c_str(), NC_CHAR,
+	int status = nc_put_att_text(fileId, varId, attribute.getName().c_str(),
 			value.size(), value.c_str());
+	checkStatus(status, "putting attribute '" + attribute.getName() + "'");
+}
+
+void NetCDF::putAttributeStrings(int fileId, int varId,
+		const Attribute& attribute) {
+	const valarray<string> tokens = attribute.getTokens();
+	valarray<const char*> op(tokens.size());
+	for (size_t i = 0; i < tokens.size(); i++) {
+		op[i] = tokens[i].c_str();
+	}
+	int status = nc_put_att_string(fileId, varId, attribute.getName().c_str(),
+			op.size(), &op[0]);
 	checkStatus(status, "putting attribute '" + attribute.getName() + "'");
 }
 

@@ -11,17 +11,17 @@
 #include "../util/NetCDF.h"
 #include "../core/JobOrder.h"
 
-#include "L1cReader.h"
+#include "SynL1Reader.h"
 
 using std::getenv;
 using std::min;
 using std::max;
 
-L1cReader::L1cReader() :
-		BasicModule("L1C_READER") {
+SynL1Reader::SynL1Reader() :
+		BasicModule("SY1_READER") {
 }
 
-L1cReader::~L1cReader() {
+SynL1Reader::~SynL1Reader() {
 	pair<string, int> fileIdPair;
 	foreach(fileIdPair, ncFileIdMap)
 			{
@@ -33,7 +33,7 @@ L1cReader::~L1cReader() {
 			}
 }
 
-void L1cReader::start(Context& context) {
+void SynL1Reader::start(Context& context) {
 	segmentLineCount = 400;
 	const string segmentLineCountString =
 			context.getJobOrder()->getIpfConfiguration().getDynamicProcessingParameter(
@@ -47,7 +47,7 @@ void L1cReader::start(Context& context) {
 
 	const Dictionary& dict = *context.getDictionary();
 	const vector<SegmentDescriptor*> segmentDescriptors =
-			dict.getProductDescriptor(Constants::PRODUCT_L1C).getSegmentDescriptors();
+			dict.getProductDescriptor(Constants::PRODUCT_SY1).getSegmentDescriptors();
 
 	sourceDirPath =
 			path(
@@ -153,6 +153,10 @@ void L1cReader::start(Context& context) {
 												i);
 								const Attribute attr = NetCDF::getAttribute(
 										fileId, varId, attrName);
+								context.getLogging()->info(
+										"adding attribute '" + attr.toString() +
+												+ "' to variable '" + varName
+												+ "'", getId());
 								variableDescriptor->addAttribute(attr);
 							}
 							// Add variable to segment
@@ -179,7 +183,7 @@ void L1cReader::start(Context& context) {
 			}
 }
 
-void L1cReader::stop(Context& context) {
+void SynL1Reader::stop(Context& context) {
 	pair<string, int> fileIdPair;
 
 	foreach(fileIdPair, ncFileIdMap)
@@ -193,10 +197,10 @@ void L1cReader::stop(Context& context) {
 	ncFileIdMap.clear();
 }
 
-void L1cReader::process(Context& context) {
+void SynL1Reader::process(Context& context) {
 	const Dictionary& dict = *context.getDictionary();
 	const vector<SegmentDescriptor*> segmentDescriptors =
-			dict.getProductDescriptor(Constants::PRODUCT_L1C).getSegmentDescriptors();
+			dict.getProductDescriptor(Constants::PRODUCT_SY1).getSegmentDescriptors();
 
 	foreach(SegmentDescriptor* segmentDescriptor, segmentDescriptors)
 			{
@@ -257,7 +261,7 @@ void L1cReader::process(Context& context) {
 			}
 }
 
-int L1cReader::getNcFile(const string& ncFileBasename) {
+int SynL1Reader::getNcFile(const string& ncFileBasename) {
 	if (contains(ncFileIdMap, ncFileBasename)) {
 		return ncFileIdMap[ncFileBasename];
 	}

@@ -21,8 +21,6 @@ using std::getenv;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(SynL2WriterTest);
 
-const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
-
 SynL2WriterTest::SynL2WriterTest() {
 }
 
@@ -32,6 +30,7 @@ SynL2WriterTest::~SynL2WriterTest() {
 void SynL2WriterTest::setUp() {
 	XPathInitializer init;
 
+	const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
 	shared_ptr<Dictionary> dictionary = DictionaryParser().parse(
 			S3_SYNERGY_HOME + "/src/main/resources/dictionary");
 	shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(

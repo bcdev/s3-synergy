@@ -47,7 +47,7 @@ void SynL2SegmentProvider::start(Context& context) {
 
 	vector<SegmentDescriptor*> segmentDescriptors =
 			context.getDictionary()->getProductDescriptor(
-					Constants::PRODUCT_SYL2).getSegmentDescriptors();
+					Constants::PRODUCT_SY2).getSegmentDescriptors();
 
 	foreach(SegmentDescriptor* segDesc, segmentDescriptors)
 			{
@@ -86,7 +86,7 @@ void SynL2SegmentProvider::stop(Context& context) {
 void SynL2SegmentProvider::process(Context& context) {
 	vector<SegmentDescriptor*> segmentDescriptors =
 			context.getDictionary()->getProductDescriptor(
-					Constants::PRODUCT_SYL2).getSegmentDescriptors();
+					Constants::PRODUCT_SY2).getSegmentDescriptors();
 	foreach(SegmentDescriptor* segDesc, segmentDescriptors)
 			{
 				Segment& segment = context.getSegment(segDesc->getName());

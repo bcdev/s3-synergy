@@ -66,7 +66,6 @@ private:
     string processorVersion;
     string outLogLevel;
     string errLogLevel;
-    string orderId;
 
     ofstream logFile;
 };

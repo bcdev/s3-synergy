@@ -27,8 +27,8 @@
 
 class DictionaryParserTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(DictionaryParserTest);
-    CPPUNIT_TEST(testSentinel3L1cProductDescriptor);
-    CPPUNIT_TEST(testSynergyL2ProductDescriptor);
+    CPPUNIT_TEST(testSy1ProductDescriptor);
+    CPPUNIT_TEST(testSy2ProductDescriptor);
     CPPUNIT_TEST_SUITE_END();
     
 public:
@@ -38,8 +38,8 @@ public:
     void tearDown();
 private:
 
-    void testSynergyL2ProductDescriptor();
-    void testSentinel3L1cProductDescriptor();
+    void testSy2ProductDescriptor();
+    void testSy1ProductDescriptor();
     void checkSDRVariable(VariableDescriptor& v);
     void checkT550Variable(VariableDescriptor& v);
     void checkA550Variable(VariableDescriptor& v);

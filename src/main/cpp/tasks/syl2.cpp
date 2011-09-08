@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
 
 		// configure modules
 		// TODO - replace "SYL2" by 'argv[0]'
-		L1cReader reader;
+		SynL1Reader reader;
 //		L1cReader reader(
 //				jobOrder.getProcessorConfiguration("SYL2").getInputList()[0].getFileNames()[0]);
 		SynL2SegmentProvider test;
@@ -67,7 +67,11 @@ int main(int argc, char* argv[]) {
 		logger.info("Processing complete. Exit code: 0.", "Main");
 		return 0;
 	} catch (exception& e) {
-		errorHandler.handleInitializationError(e);
+		std::cerr
+				<< "An error has occurred while initializing the processor. Error Message:\n";
+		std::cerr << e.what() << std::endl;
+		std::cerr << "The system will exit.";
+		exit(ExitCode::FAILURE);
 	}
 	return 0;
 }

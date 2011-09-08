@@ -28,15 +28,9 @@
 
 using std::cout;
 using std::cerr;
-using std::localtime;
-using std::strftime;
-using std::time;
 
 DefaultLogging::DefaultLogging(const string& logFileName) : logFile() {
     logFile.open(logFileName.c_str());
-}
-
-DefaultLogging::DefaultLogging(const DefaultLogging& logger) {
 }
 
 DefaultLogging::~DefaultLogging() {
@@ -105,7 +99,7 @@ void DefaultLogging::error(const string& message, const string& moduleName,
 }
 
 void DefaultLogging::setProcessorVersion(const string& processorVersion) {
-
+	this->processorVersion = processorVersion;
 }
 
 void DefaultLogging::setOutLogLevel(const string& outLogLevel) {
@@ -154,10 +148,14 @@ void DefaultLogging::logToStdout(const string& message, const string& moduleName
 }
 
 string DefaultLogging::getTimeString() {
-    time_t rawtime;
-    time(&rawtime);
-    tm* timer = localtime(&rawtime);
-    char timeBuffer[80];
-    strftime(timeBuffer, 80, "%Y-%m-%dT%H:%M:%S.000000", timer);
-    return string(timeBuffer);
+	using std::gmtime;
+	using std::time;
+	using std::strftime;
+
+    time_t t;
+    time(&t);
+    char utcString[80];
+    strftime(utcString, 80, "%Y-%m-%dT%H:%M:%S.000000", gmtime(&t));
+
+    return string(utcString);
 }

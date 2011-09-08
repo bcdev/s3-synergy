@@ -49,18 +49,18 @@
             <Task_Version>01.00</Task_Version>
             <List_of_Inputs count="1">
                 <Input>
-                    <File_Type>S3L1C</File_Type>
+                    <File_Type>SY1</File_Type>
                     <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
                     <List_of_File_Names count="1">
-                        <File_Name>data/L1C/S3A_SY_1_SYN________2013621T10920_2013621T101412_1_00292_1_DMS_TD04_00</File_Name>
+                        <File_Name>data/SY1/S3A_SY_1_SYN________2013621T10920_2013621T101413_2_00293_2_DMS_TD04_00</File_Name>
                     </List_of_File_Names>
                 </Input>
             </List_of_Inputs>
             <List_of_Outputs count="1">
                 <Output>
-                    <File_Type>SYL2</File_Type>
+                    <File_Type>SY2</File_Type>
                     <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
-                    <File_Name>data/SYN/test</File_Name>
+                    <File_Name>data/SY2/test</File_Name>
                 </Output>
             </List_of_Outputs>
         </Ipf_Proc>
@@ -69,7 +69,7 @@
             <Task_Version>01.00</Task_Version>
             <List_of_Inputs count="1">
                 <Input>
-                    <File_Type>S3L1C</File_Type>
+                    <File_Type>SY1</File_Type>
                     <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
                     <List_of_File_Names count="1">
                         <File_Name>input.safe</File_Name>
@@ -89,7 +89,7 @@
             <Task_Version>01.00</Task_Version>
             <List_of_Inputs count="1">
                 <Input>
-                    <File_Type>S3L1C</File_Type>
+                    <File_Type>SY1</File_Type>
                     <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
                     <List_of_File_Names count="4">
                         <File_Name>input_1.safe</File_Name>

@@ -61,9 +61,6 @@ public:
 
 	static int getAttributeType(int fileId, int varId, const string& attrName);
 
-	static string getAttributeString(int fileId, int varId,
-			const string& attrName);
-
 	template<class T>
 	static valarray<T> getAttributeData(int fileId, int varId,
 			const string& attrName) {
@@ -76,10 +73,16 @@ public:
 		return attrData;
 	}
 
-	static double getAttributeDouble(int fileId, int varId,
+	static string getAttributeValue(int fileId, int varId,
+			const string& attrName);
+
+	static valarray<string> getAttributeValues(int fileId, int varId,
+			const string& attrName);
+
+	static double getAttributeValueDouble(int fileId, int varId,
 			const string& attrName, double defaultValue);
 
-	static float getAttributeFloat(int fileId, int varId,
+	static float getAttributeValueFloat(int fileId, int varId,
 			const string& attrName, float defaultValue);
 
 	static void getVariableData(int fileId, int varId,
@@ -113,7 +116,7 @@ public:
 
 	static void putAttribute(int fileId, int varId, const Attribute& attribute);
 
-	static void terminateDefinition(int ncId);
+	static void terminateFile(int ncId);
 
 private:
 	NetCDF();
@@ -122,6 +125,8 @@ private:
 	static void putAttribute(int fileId, int varId, const Attribute& attribute,
 			const T& t);
 	static void putAttributeString(int fileId, int varId,
+			const Attribute& attribute);
+	static void putAttributeStrings(int fileId, int varId,
 			const Attribute& attribute);
 	static void checkStatus(int status, const string& action);
 

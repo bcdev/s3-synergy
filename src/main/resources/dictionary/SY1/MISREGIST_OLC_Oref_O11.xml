@@ -3,19 +3,19 @@
 <variables>
 	<variable>
 		<ncname>delta_col</ncname>
-		<name>delta_x_7</name>
-		<segment_name>OLC_MISREG</segment_name>
+		<name>delta_x_11</name>
+		<segment_name>OLC</segment_name>
 	</variable>
 	<variable>
 		<ncname>delta_row</ncname>
-		<name>delta_y_7</name>
-		<segment_name>OLC_MISREG</segment_name>
+		<name>delta_y_11</name>
+		<segment_name>OLC</segment_name>
 	</variable>
 </variables>
 <global_attributes>
 	<attribute>
 		<name>dataset_name</name>
-		<value>MISREGIST_OLC_Oref_O7</value>
+		<value>MISREGIST_OLC_Oref_O11</value>
 	</attribute>
 </global_attributes>
 </dataset>

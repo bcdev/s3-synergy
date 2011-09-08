@@ -37,18 +37,18 @@ void DictionaryTest::tearDown() {
 }
 
 void DictionaryTest::testDescriptors() {
-    ProductDescriptor& productDescriptor = dictionary->addProductDescriptor("L1C");
-    CPPUNIT_ASSERT(productDescriptor.getName().compare("L1C") == 0);
+    ProductDescriptor& productDescriptor = dictionary->addProductDescriptor(Constants::PRODUCT_SY1);
+    CPPUNIT_ASSERT(productDescriptor.getName().compare(Constants::PRODUCT_SY1) == 0);
 
     vector<ProductDescriptor*> productDescriptors = dictionary->getProductDescriptors();
     CPPUNIT_ASSERT(productDescriptors.size() == 1);
     CPPUNIT_ASSERT(productDescriptors[0] == &productDescriptor);
 
-    CPPUNIT_ASSERT(&dictionary->getProductDescriptor("L1C") == &productDescriptor);
-    CPPUNIT_ASSERT_THROW(dictionary->getProductDescriptor("SYL2"), std::out_of_range);
+    CPPUNIT_ASSERT(&dictionary->getProductDescriptor(Constants::PRODUCT_SY1) == &productDescriptor);
+    CPPUNIT_ASSERT_THROW(dictionary->getProductDescriptor("SY2"), std::out_of_range);
 
-    CPPUNIT_ASSERT(dictionary->hasProductDescriptor("L1C"));
-    CPPUNIT_ASSERT(!dictionary->hasProductDescriptor("SYL2"));
+    CPPUNIT_ASSERT(dictionary->hasProductDescriptor(Constants::PRODUCT_SY1));
+    CPPUNIT_ASSERT(!dictionary->hasProductDescriptor("SY2"));
 
     SegmentDescriptor& segmentDescriptor = productDescriptor.addSegmentDescriptor("SYN_COLLOCATED");
 
@@ -66,5 +66,5 @@ void DictionaryTest::testDescriptors() {
     CPPUNIT_ASSERT(&segmentDescriptor.getAttribute("Vendor") == &segmentAttribute);
 
     segmentDescriptor.addVariableDescriptor("reflec_1");
-    CPPUNIT_ASSERT(dictionary->getProductDescriptor("L1C").getVariableDescriptors().size() == 1);
+    CPPUNIT_ASSERT(dictionary->getProductDescriptor(Constants::PRODUCT_SY1).getVariableDescriptors().size() == 1);
 }

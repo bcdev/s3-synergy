@@ -17,15 +17,30 @@ using std::vector;
 class Processor {
 public:
 
-    Processor();
-    ~Processor();
+	Processor();
+	~Processor();
 
-    void process(Context& context);
+	void process(Context& context);
 
 private:
-    ModuleException wrapException(exception& e, const string& moduleName, const string& sourceMethod) const;
+	class Timer {
+	public:
+		Timer();
+		~Timer();
 
-    bool completed;
+		void start();
+		void stop();
+		string time() const;
+
+	private:
+		time_t startTime;
+		time_t stopTime;
+	};
+
+	ModuleException wrapException(exception& e, const string& moduleName,
+			const string& sourceMethod) const;
+
+	bool completed;
 };
 
 #endif	/* PROCESSOR_H */

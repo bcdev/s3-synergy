@@ -5,49 +5,14 @@
  * Created on November 17, 2010, 5:14 PM
  */
 
-#include <cmath>
 #include <ctime>
 #include <iomanip>
-#include <iostream>
 #include <sstream>
 #include <vector>
 
 #include "Processor.h"
 
 using std::vector;
-
-class Timer {
-public:
-	Timer() {
-	}
-
-	~Timer() {
-	}
-
-	void start() {
-		std::time(&startTime);
-	}
-
-	void stop() {
-		std::time(&stopTime);
-	}
-
-	string duration() const {
-		const double secs = std::difftime(stopTime, startTime);
-		const int h = secs / 3600.0;
-		const int m = (secs - h * 3600.0) / 60.0;
-		const double s = secs - h * 3600.0 - m * 60.0;
-
-		std::stringstream ss;
-		ss << std::setfill('0') << std::setw(2) << h << ":" << std::setw(2) << m
-				<< ":" << std::fixed << std::setw(5) << std::setprecision(2) << s;
-		return ss.str();
-	}
-
-private:
-	time_t startTime;
-	time_t stopTime;
-};
 
 Processor::Processor() {
 }
@@ -58,7 +23,7 @@ Processor::~Processor() {
 void Processor::process(Context& context) {
 	Timer timer;
 
-	context.getLogging()->info("Main processing started.", "Processor");
+	context.getLogging()->info("Main processing started.", "MAIN");
 	try {
 		timer.start();
 		vector<shared_ptr<Module> > modules = context.getModules();
@@ -103,8 +68,34 @@ void Processor::process(Context& context) {
 		context.handleError(e);
 	}
 	context.getLogging()->info(
-			"Main processing completed in " + timer.duration() + " (HH:MM:SS.mm)",
-			"Processor");
+			"Main processing completed in " + timer.time() + " (HH:MM:SS.mm)",
+			"MAIN");
+}
+
+Processor::Timer::Timer() {
+}
+
+Processor::Timer::~Timer() {
+}
+
+void Processor::Timer::start() {
+	std::time(&startTime);
+}
+
+void Processor::Timer::stop() {
+	std::time(&stopTime);
+}
+
+string Processor::Timer::time() const {
+	const double secs = std::difftime(stopTime, startTime);
+	const int h = secs / 3600.0;
+	const int m = (secs - h * 3600.0) / 60.0;
+	const double s = secs - h * 3600.0 - m * 60.0;
+
+	std::ostringstream oss;
+	oss << std::setfill('0') << std::setw(2) << h << ":" << std::setw(2) << m
+			<< ":" << std::fixed << std::setw(5) << std::setprecision(2) << s;
+	return oss.str();
 }
 
 ModuleException Processor::wrapException(exception& e, const string& moduleName,

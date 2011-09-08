@@ -46,10 +46,10 @@ void DictionaryParserTest::setUp() {
 void DictionaryParserTest::tearDown() {
 }
 
-void DictionaryParserTest::testSentinel3L1cProductDescriptor() {
-	CPPUNIT_ASSERT(dictionary->hasProductDescriptor(Constants::PRODUCT_L1C));
+void DictionaryParserTest::testSy1ProductDescriptor() {
+	CPPUNIT_ASSERT(dictionary->hasProductDescriptor(Constants::PRODUCT_SY1));
 	const ProductDescriptor& p = dictionary->getProductDescriptor(
-			Constants::PRODUCT_L1C);
+			Constants::PRODUCT_SY1);
 
 	CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_OLC));
 	const SegmentDescriptor& olc = p.getSegmentDescriptor(
@@ -117,10 +117,10 @@ void DictionaryParserTest::testSentinel3L1cProductDescriptor() {
 	CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_SLO_INFO));
 }
 
-void DictionaryParserTest::testSynergyL2ProductDescriptor() {
-	CPPUNIT_ASSERT(dictionary->hasProductDescriptor(Constants::PRODUCT_SYL2));
+void DictionaryParserTest::testSy2ProductDescriptor() {
+	CPPUNIT_ASSERT(dictionary->hasProductDescriptor(Constants::PRODUCT_SY2));
 	const ProductDescriptor& p = dictionary->getProductDescriptor(
-			Constants::PRODUCT_SYL2);
+			Constants::PRODUCT_SY2);
 
 	CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED));
 	const SegmentDescriptor& s = p.getSegmentDescriptor(

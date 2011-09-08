@@ -1,12 +1,12 @@
 /*
- * File:   L1cReader.h
+ * File:   SynL1Reader.h
  * Author: thomass
  *
  * Created on November 18, 2010, 2:08 PM
  */
 
-#ifndef L1CREADER_H
-#define	L1CREADER_H
+#ifndef SYNL1READER_H
+#define	SYNL1READER_H
 
 #include <map>
 #include <netcdf.h>
@@ -15,10 +15,10 @@
 
 using std::map;
 
-class L1cReader : public BasicModule {
+class SynL1Reader : public BasicModule {
 public:
-    L1cReader();
-    virtual ~L1cReader();
+    SynL1Reader();
+    virtual ~SynL1Reader();
 
     void start(Context& context);
     void stop(Context& context);
@@ -34,4 +34,4 @@ private:
     map<string, int> ncVarIdMap;
 };
 
-#endif	/* L1CREADER_H */
+#endif	/* SYNL1READER_H */

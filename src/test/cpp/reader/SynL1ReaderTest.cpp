@@ -8,42 +8,41 @@
 #include <cstdlib>
 
 #include "../../../../src/main/cpp/core/Processor.h"
-#include "../../../../src/main/cpp/reader/L1cReader.h"
+#include "../../../../src/main/cpp/reader/SynL1Reader.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
 
-#include "L1cReaderTest.h"
+#include "SynL1ReaderTest.h"
 
 extern shared_ptr<Context> context;
 
 using std::getenv;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(L1cReaderTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(SynL1ReaderTest);
 
-const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
-
-L1cReaderTest::L1cReaderTest() {
+SynL1ReaderTest::SynL1ReaderTest() {
 }
 
-L1cReaderTest::~L1cReaderTest() {
+SynL1ReaderTest::~SynL1ReaderTest() {
 }
 
-void L1cReaderTest::setUp() {
+void SynL1ReaderTest::setUp() {
 	XPathInitializer init;
 
+	const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
 	shared_ptr<Dictionary> dictionary = DictionaryParser().parse(
 			S3_SYNERGY_HOME + "/src/main/resources/dictionary");
 	shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(
 			S3_SYNERGY_HOME
 					+ "/src/test/resources/jobs/JobOrder.SY_UNT_SRE.xml");
-	shared_ptr<Module> reader = shared_ptr<Module>(new L1cReader());
+	shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
 
 	context->setDictionary(dictionary);
 	context->setJobOrder(jobOrder);
 	context->addModule(reader);
 }
 
-void L1cReaderTest::tearDown() {
+void SynL1ReaderTest::tearDown() {
 	foreach (shared_ptr<Module> m, context->getModules())
 			{
 				context->removeModule(m);
@@ -52,7 +51,7 @@ void L1cReaderTest::tearDown() {
 	context->setDictionary(shared_ptr<Dictionary>());
 }
 
-void L1cReaderTest::testReader() {
+void SynL1ReaderTest::testReader() {
 	Processor processor;
 	processor.process(*context);
 }

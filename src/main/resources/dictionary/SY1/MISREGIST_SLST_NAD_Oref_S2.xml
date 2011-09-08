@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+<variables>
+	<variable>
+		<ncname>col_corresp</ncname>
+		<name>x_corr_2</name>
+		<segment_name>OLC</segment_name>
+	</variable>
+	<variable>
+		<ncname>row_corresp</ncname>
+		<name>y_corr_2</name>
+		<segment_name>OLC</segment_name>
+	</variable>
+</variables>
+<global_attributes>
+	<attribute>
+		<name>dataset_name</name>
+		<value>MISREGIST_SLST_NAD_Oref_S2</value>
+	</attribute>
+</global_attributes>
+</dataset>

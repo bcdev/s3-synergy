@@ -15,7 +15,7 @@
 using std::runtime_error;
 
 SynL2Writer::SynL2Writer() :
-		Writer("SYN_L2_WRITER") {
+		Writer("SY2_WRITER") {
 }
 
 SynL2Writer::~SynL2Writer() {
@@ -32,7 +32,7 @@ SynL2Writer::~SynL2Writer() {
 void SynL2Writer::process(Context& context) {
 	const Dictionary& dict = *context.getDictionary();
 	const vector<SegmentDescriptor*> segmentDescriptors =
-			dict.getProductDescriptor(Constants::PRODUCT_SYL2).getSegmentDescriptors();
+			dict.getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptors();
 
 	foreach(const SegmentDescriptor* segmentDescriptor, segmentDescriptors)
 			{
@@ -111,7 +111,7 @@ void SynL2Writer::start(Context& context) {
 
 	const Dictionary& dict = *context.getDictionary();
 	const ProductDescriptor& productDescriptor = dict.getProductDescriptor(
-			Constants::PRODUCT_SYL2);
+			Constants::PRODUCT_SY2);
 	const vector<SegmentDescriptor*> segmentDescriptors =
 			productDescriptor.getSegmentDescriptors();
 
@@ -140,7 +140,7 @@ void SynL2Writer::start(Context& context) {
 
 	foreach(fileIdPair, ncFileIdMap)
 			{
-				NetCDF::terminateDefinition(fileIdPair.second);
+				NetCDF::terminateFile(fileIdPair.second);
 			}
 }
 

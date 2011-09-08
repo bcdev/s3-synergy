@@ -34,8 +34,8 @@ namespace Constants {
 
     const string PROCESSOR_VERSION = "1.0-SNAPSHOT";
 
-    const string PRODUCT_L1C = "L1C";
-    const string PRODUCT_SYL2 = "SYL2";
+    const string PRODUCT_SY1 = "SY1";
+    const string PRODUCT_SY2 = "SY2";
     const string PRODUCT_VGTP = "VGTP";
     const string PRODUCT_VGTS = "VGTS";
 

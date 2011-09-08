@@ -66,8 +66,8 @@ shared_ptr<LookupTable<W> > LookupTableReader::readLookupTable(
 
 	const size_t valueCount = accumulate(&dimensionLengths[0],
 			&dimensionLengths[dimensionCount], size_t(1), multiplies<size_t>());
-	const W scaleFactor = W(NetCDF::getAttributeDouble(fileId, varId, "scale_factor", 1.0));
-	const W addOffset = W(NetCDF::getAttributeDouble(fileId, varId, "add_offset", 0.0));
+	const W scaleFactor = W(NetCDF::getAttributeValueDouble(fileId, varId, "scale_factor", 1.0));
+	const W addOffset = W(NetCDF::getAttributeValueDouble(fileId, varId, "add_offset", 0.0));
 	const int varType = NetCDF::getVariableType(fileId, varId);
 
 	switch (varType) {

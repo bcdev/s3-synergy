@@ -37,7 +37,6 @@ public:
 	~ErrorHandler();
 
 	void handleError(Context& context, exception& e) const;
-	void handleInitializationError(exception& e) const;
 
 private:
 	string extractFunctionName(const string& firstLine) const;

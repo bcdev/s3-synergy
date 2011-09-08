@@ -2,8 +2,8 @@ project (s3-synergy)
 set (SYN_VERSION_MAJOR 1)
 set (SYN_VERSION_MINOR 0)
 
-set(CMAKE_CXX_FLAGS "-O3 -Wall -DBOOST_FILESYSTEM_VERSION=2")
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -Wall -DBOOST_FILESYSTEM_VERSION=2")
+set(CMAKE_CXX_FLAGS "-O3 -std=c++98 -Wall -Wno-return-type -DBOOST_FILESYSTEM_VERSION=2")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -std=c++98 -Wall -Wextra -DBOOST_FILESYSTEM_VERSION=2")
 
 cmake_minimum_required (VERSION 2.8)
 
@@ -20,8 +20,6 @@ file(GLOB_RECURSE WRITER_MAIN_SOURCES src/main/cpp/writer/*.cpp)
 file(GLOB_RECURSE WRITER_TEST_SOURCES src/test/cpp/writer/*.cpp)
 file(GLOB_RECURSE UTIL_MAIN_SOURCES src/main/cpp/util/*.cpp)
 file(GLOB_RECURSE UTIL_TEST_SOURCES src/test/cpp/util/*.cpp)
-
-file(GLOB_RECURSE SYL2_MAIN_SOURCES src/main/cpp/syl2/*.cpp)
 
 ##
 # Sytem include directories
@@ -125,7 +123,7 @@ set_property(TARGET sy_unt_aco PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 # Project main targets
 #
 #add_executable(syl2
-#	${SYL2_MAIN_SOURCES}
+#	src/main/cpp/tasks/*.cpp
 #	${READER_MAIN_SOURCES}
 #	${MODULES_MAIN_SOURCES}
 #	${WRITER_MAIN_SOURCES}
