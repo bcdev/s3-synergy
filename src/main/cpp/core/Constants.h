@@ -21,20 +21,13 @@
 #ifndef CONSTANTS_H
 #define	CONSTANTS_H
 
-#include <cstddef>
 #include <string>
-#include <netcdf.h>
-
-#include "Config.h"
 
 using std::string;
 
 namespace Constants {
-/**
- * Processor version.
- */
-const string PROCESSOR_VERSION = string(PROCESSOR_VERSION_MAJOR) + "."
-		+ string(PROCESSOR_VERSION_MINOR);
+
+#include "Config.h"
 
 /**
  * Product types.
@@ -75,18 +68,18 @@ const size_t N_DET_CAM = 760;
 /**
  * Data types.
  */
-const int TYPE_BYTE = NC_BYTE;
-const int TYPE_INT = NC_INT;
-const int TYPE_LONG = NC_INT64;
-const int TYPE_SHORT = NC_SHORT;
-const int TYPE_FLOAT = NC_FLOAT;
-const int TYPE_DOUBLE = NC_DOUBLE;
-const int TYPE_UBYTE = NC_UBYTE;
-const int TYPE_UINT = NC_UINT;
-const int TYPE_ULONG = NC_UINT64;
-const int TYPE_USHORT = NC_USHORT;
-const int TYPE_CHAR = NC_CHAR;
-const int TYPE_STRING = NC_STRING;
+const int TYPE_BYTE = 1;
+const int TYPE_CHAR = 2;
+const int TYPE_SHORT = 3;
+const int TYPE_INT = 4;
+const int TYPE_FLOAT = 5;
+const int TYPE_DOUBLE = 6;
+const int TYPE_UBYTE = 7;
+const int TYPE_USHORT = 8;
+const int TYPE_UINT = 9;
+const int TYPE_LONG = 10;
+const int TYPE_ULONG = 11;
+const int TYPE_STRING = 12;
 }
 
 #endif	/* CONSTANTS_H */

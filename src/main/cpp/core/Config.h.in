@@ -1,2 +1,4 @@
-#define PROCESSOR_VERSION_MAJOR "@s3-synergy_VERSION_MAJOR@"
-#define PROCESSOR_VERSION_MINOR "@s3-synergy_VERSION_MINOR@"
+/**
+ * Processor version.
+ */
+const string PROCESSOR_VERSION = "@s3-synergy_VERSION_MAJOR@.@s3-synergy_VERSION_MINOR@";

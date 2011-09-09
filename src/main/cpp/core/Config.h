@@ -1,2 +1,4 @@
-#define PROCESSOR_VERSION_MAJOR "1"
-#define PROCESSOR_VERSION_MINOR "0"
+/**
+ * Processor version.
+ */
+const string PROCESSOR_VERSION = "1.0";

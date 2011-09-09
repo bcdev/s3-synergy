@@ -11,6 +11,8 @@
 
 #include "Aco.h"
 
+using std::cos;
+
 Aco::Aco() :
 		BasicModule("ACO") {
 }
@@ -101,7 +103,7 @@ void Aco::process(Context& context) {
 				const double ltoa = l12.getDouble(olcGrid.getIndex(k, l, m));
 				const double f0 = f.getDouble(olcInfoGrid.getIndex(k, 12, m));
 
-				const double rtoa = (3.141592654 * ltoa) / (f0 * std::cos(0.0)); // Eq. 2-1
+				const double rtoa = (3.141592654 * ltoa) / (f0 * cos(0.0)); // Eq. 2-1
 			}
 		}
 	}
