@@ -20,16 +20,13 @@
 
 #include "ModuleException.h"
 
-ModuleException::ModuleException() {
+ModuleException::ModuleException(const string& m) :
+		std::exception(), boost::exception(), message(m) {
 }
 
-ModuleException::~ModuleException() throw() {
-}
-
-void ModuleException::setMessage(string message) {
-    this->message = message.c_str();
+ModuleException::~ModuleException() throw () {
 }
 
 const char* ModuleException::what() const throw () {
-    return message.c_str();
+	return message.c_str();
 }

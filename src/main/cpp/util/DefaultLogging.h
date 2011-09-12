@@ -30,44 +30,33 @@
 using std::vector;
 using std::ofstream;
 
-class DefaultLogging : public virtual Logging {
+class DefaultLogging: public virtual Logging {
 public:
-    DefaultLogging(const string& logFileName);
-    virtual ~DefaultLogging();
-    
-    void debug(const string& message, const string& moduleName,
-            const string& processorVersion);
-    void debug(const string& message, const string& moduleName);
-    void info(const string& message, const string& moduleName,
-            const string& processorVersion);
-    void info(const string& message, const string& moduleName);
-    void progress(const string& message, const string& moduleName,
-            const string& processorVersion);
-    void progress(const string& message, const string& moduleName);
-    void warning(const string& message, const string& moduleName,
-            const string& processorVersion);
-    void warning(const string& message, const string& moduleName);
-    void error(const string& message, const string& moduleName,
-            const string& processorVersion);
-    void error(const string& message, const string& moduleName);
+	DefaultLogging(const string& logFileName);
+	virtual ~DefaultLogging();
 
-    void setProcessorVersion(const string& processorVersion);
-    void setOutLogLevel(const string& outLogLevel);
-    void setErrLogLevel(const string& errLogLevel);
+	void debug(const string& message, const string& moduleName);
+	void info(const string& message, const string& moduleName);
+	void progress(const string& message, const string& moduleName);
+	void warning(const string& message, const string& moduleName);
+	void error(const string& message, const string& moduleName);
+
+	void setOutLogLevel(const string& outLogLevel);
+	void setErrLogLevel(const string& errLogLevel);
 
 private:
-    DefaultLogging(const DefaultLogging& logger);
+	string createMessageHeader(const string& moduleName,
+			const string& moduleVersion) const;
+	void logToError(const string& message, const string& moduleName,
+			const string& moduleVersion);
+	void logToStdout(const string& message, const string& moduleName,
+			const string& moduleVersion, const string& logType);
+	string getTimeString() const;
 
-    string createMessageHeader(const string& moduleName, const string& moduleVersion);
-    void logToError(const string& message, const string& moduleName, const string& moduleVersion);
-    void logToStdout(const string& message, const string& moduleName, const string& moduleVersion, const string& logType);
-    string getTimeString();
+	string outLogLevel;
+	string errLogLevel;
 
-    string processorVersion;
-    string outLogLevel;
-    string errLogLevel;
-
-    ofstream logFile;
+	ofstream logFile;
 };
 
 #endif	/* DEFAULTLOGGING_H */

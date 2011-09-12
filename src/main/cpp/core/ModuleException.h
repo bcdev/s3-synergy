@@ -21,22 +21,20 @@
 #ifndef MODULEEXCEPTION_H
 #define	MODULEEXCEPTION_H
 
-#include <stdexcept>
 #include <string>
+#include <boost/exception/all.hpp>
 
-#include "../core/Boost.h"
-
-using std::exception;
 using std::string;
 
-class ModuleException : public exception, public boost::exception {
+class ModuleException: public virtual std::exception,
+		public virtual boost::exception {
 public:
-    ModuleException();
-    virtual ~ModuleException() throw();
-    void setMessage(string message);
-    const char* what() const throw ();
+	ModuleException(const string& message);
+	virtual ~ModuleException() throw ();
+	const char* what() const throw ();
+
 private:
-    string message;
+	const string message;
 };
 
 #endif	/* MODULEEXCEPTION_H */

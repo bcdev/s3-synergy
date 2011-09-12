@@ -21,7 +21,9 @@
 #ifndef LOGGING_H
 #define	LOGGING_H
 
-#include "Constants.h"
+#include <string>
+
+using std::string;
 
 class Logging {
 public:
@@ -30,21 +32,18 @@ public:
     }
 
     virtual void debug(const string& message, const string& moduleName) = 0;
-    virtual void debug(const string& message, const string& moduleName, const string& processorVersion) = 0;
     virtual void info(const string& message, const string& moduleName) = 0;
-    virtual void info(const string& message, const string& moduleName, const string& processorVersion) = 0;
     virtual void progress(const string& message, const string& moduleName) = 0;
-    virtual void progress(const string& message, const string& moduleName, const string& processorVersion) = 0;
     virtual void warning(const string& message, const string& moduleName) = 0;
-    virtual void warning(const string& message, const string& moduleName, const string& processorVersion) = 0;
     virtual void error(const string& message, const string& moduleName) = 0;
-    virtual void error(const string& message, const string& moduleName, const string& processorVersion) = 0;
 
     const static string LOG_LEVEL_INFO;
     const static string LOG_LEVEL_PROGRESS;
     const static string LOG_LEVEL_DEBUG;
     const static string LOG_LEVEL_WARNING;
     const static string LOG_LEVEL_ERROR;
+
+    const static string PROCESSOR_VERSION;
 };
 
 #endif	/* LOGGING_H */

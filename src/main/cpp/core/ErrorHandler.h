@@ -21,11 +21,9 @@
 #ifndef ERRORHANDLER_H
 #define	ERRORHANDLER_H
 
-#include <stdexcept>
 #include <string>
 #include <vector>
 
-using std::exception;
 using std::string;
 using std::vector;
 
@@ -36,14 +34,15 @@ public:
 	ErrorHandler();
 	~ErrorHandler();
 
-	void handleError(Context& context, exception& e) const;
+	void handleError(Context& context, std::exception& e) const;
 
 private:
-	string extractFunctionName(const string& firstLine) const;
-	string extractModuleName(const string& firstLine) const;
-	string extractLineNumber(const string& firstLine) const;
-	vector<string> splitIntoLines(const string& toSplit) const;
-	string createMessage(const string& module, const string& functionName,
+	string extractFunctionName(const string& info) const;
+	string extractClassName(const string& info) const;
+	string extractLineNumber(const string& info) const;
+	vector<string> splitIntoLines(const string& text) const;
+	string createMessage(const string& moduleName, const string& methodName,
+			const string& module, const string& functionName,
 			const string& lineNumber, const string& exceptionMessage) const;
 };
 

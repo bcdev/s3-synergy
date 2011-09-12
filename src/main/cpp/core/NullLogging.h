@@ -31,36 +31,16 @@ public:
     void debug(const string& message, const string& moduleName) {
     };
 
-    void debug(const string& message, const string& moduleName,
-            const string& processorVersion = Constants::PROCESSOR_VERSION) {
-    };
-
     void info(const string& message, const string& moduleName) {
-    };
-
-    void info(const string& message, const string& moduleName,
-            const string& processorVersion = Constants::PROCESSOR_VERSION) {
     };
 
     void progress(const string& message, const string& moduleName) {
     };
 
-    void progress(const string& message, const string& moduleName,
-            const string& processorVersion = Constants::PROCESSOR_VERSION) {
-    };
-
     void warning(const string& message, const string& moduleName) {
     };
 
-    void warning(const string& message, const string& moduleName,
-            const string& processorVersion = Constants::PROCESSOR_VERSION) {
-    };
-
     void error(const string& message, const string& moduleName) {
-    };
-
-    void error(const string& message, const string& moduleName,
-            const string& processorVersion = Constants::PROCESSOR_VERSION) {
     };
 
     static shared_ptr<Logging> getInstance() {

@@ -10,7 +10,6 @@
 
 #include "Context.h"
 #include "Module.h"
-#include "ModuleException.h"
 
 using std::vector;
 
@@ -23,6 +22,19 @@ public:
 	void process(Context& context);
 
 private:
+	void addErrorInfo(std::exception& e, const string& moduleName,
+			const string& methodName, int exitCode) {
+		boost::enable_error_info(e) << errinfo_module_name(moduleName)
+				<< errinfo_method_name(methodName)
+				<< errinfo_exit_code(exitCode);
+	}
+
+	void addErrorInfo(boost::exception& e, const string& moduleName,
+			const string& methodName, int exitCode) {
+		e << errinfo_module_name(moduleName) << errinfo_method_name(methodName)
+				<< errinfo_exit_code(exitCode);
+	}
+
 	class Timer {
 	public:
 		Timer();
@@ -30,15 +42,12 @@ private:
 
 		void start();
 		void stop();
-		string time() const;
+		string getTime() const;
 
 	private:
 		time_t startTime;
 		time_t stopTime;
 	};
-
-	ModuleException wrapException(exception& e, const string& moduleName,
-			const string& sourceMethod) const;
 
 	bool completed;
 };

@@ -10,6 +10,7 @@
 #include <sstream>
 #include <vector>
 
+#include "ExitCode.h"
 #include "Processor.h"
 
 using std::vector;
@@ -31,11 +32,14 @@ void Processor::process(Context& context) {
 				{
 					try {
 						module->start(context);
-					} catch (ModuleException& e) {
+					} catch (boost::exception& e) {
+						addErrorInfo(e, module->getId(), "start()",
+								ExitCode::FAILURE);
+						throw;
+					} catch (std::exception& e) {
+						addErrorInfo(e, module->getId(), "start()",
+								ExitCode::FAILURE);
 						BOOST_THROW_EXCEPTION(e);
-					} catch (exception& e) {
-						BOOST_THROW_EXCEPTION(
-								wrapException(e, module->getId(), "start"));
 					}
 				}
 		do {
@@ -43,11 +47,14 @@ void Processor::process(Context& context) {
 					{
 						try {
 							module->process(context);
-						} catch (ModuleException& e) {
+						} catch (boost::exception& e) {
+							addErrorInfo(e, module->getId(), "process()",
+									ExitCode::FAILURE);
+							throw;
+						} catch (std::exception& e) {
+							addErrorInfo(e, module->getId(), "process()",
+									ExitCode::FAILURE);
 							BOOST_THROW_EXCEPTION(e);
-						} catch (exception& e) {
-							BOOST_THROW_EXCEPTION(
-									wrapException(e, module->getId(), "process"));
 						}
 					}
 			context.moveSegmentsForward();
@@ -56,20 +63,23 @@ void Processor::process(Context& context) {
 				{
 					try {
 						module->stop(context);
-					} catch (ModuleException& e) {
+					} catch (boost::exception& e) {
+						addErrorInfo(e, module->getId(), "stop()",
+								ExitCode::INCOMPLETE);
+						throw;
+					} catch (std::exception& e) {
+						addErrorInfo(e, module->getId(), "stop()",
+								ExitCode::INCOMPLETE);
 						BOOST_THROW_EXCEPTION(e);
-					} catch (exception& e) {
-						BOOST_THROW_EXCEPTION(
-								wrapException(e, module->getId(), "stop"));
 					}
 				}
 		timer.stop();
-	} catch (exception& e) {
+	} catch (std::exception& e) {
 		context.handleError(e);
 	}
 	context.getLogging()->info(
-			"Main processing completed in " + timer.time() + " (HH:MM:SS.mm)",
-			"MAIN");
+			"Main processing completed in " + timer.getTime()
+					+ " (HH:MM:SS.mm)", "MAIN");
 }
 
 Processor::Timer::Timer() {
@@ -86,7 +96,7 @@ void Processor::Timer::stop() {
 	std::time(&stopTime);
 }
 
-string Processor::Timer::time() const {
+string Processor::Timer::getTime() const {
 	const double secs = std::difftime(stopTime, startTime);
 	const int h = secs / 3600.0;
 	const int m = (secs - h * 3600.0) / 60.0;
@@ -96,16 +106,4 @@ string Processor::Timer::time() const {
 	oss << std::setfill('0') << std::setw(2) << h << ":" << std::setw(2) << m
 			<< ":" << std::fixed << std::setw(5) << std::setprecision(2) << s;
 	return oss.str();
-}
-
-ModuleException Processor::wrapException(exception& e, const string& moduleName,
-		const string& sourceMethod) const {
-	string message = "Module '" + moduleName
-			+ "' has thrown an exception in method '" + sourceMethod + "()':\n";
-	message.append(e.what());
-
-	ModuleException me;
-	me.setMessage(message);
-
-	return me;
 }

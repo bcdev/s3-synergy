@@ -23,7 +23,8 @@ public:
 	~LookupTableReader();
 
 	template<class W>
-	shared_ptr<LookupTable<W> > readLookupTable(const string& variableName) const;
+	shared_ptr<LookupTable<W> > readLookupTable(
+			const string& variableName) const;
 
 private:
 	int fileId;
@@ -66,8 +67,11 @@ shared_ptr<LookupTable<W> > LookupTableReader::readLookupTable(
 
 	const size_t valueCount = accumulate(&dimensionLengths[0],
 			&dimensionLengths[dimensionCount], size_t(1), multiplies<size_t>());
-	const W scaleFactor = W(NetCDF::getAttributeValueDouble(fileId, varId, "scale_factor", 1.0));
-	const W addOffset = W(NetCDF::getAttributeValueDouble(fileId, varId, "add_offset", 0.0));
+	const W scaleFactor = W(
+			NetCDF::getAttributeValueDouble(fileId, varId, "scale_factor",
+					1.0));
+	const W addOffset = W(
+			NetCDF::getAttributeValueDouble(fileId, varId, "add_offset", 0.0));
 	const int varType = NetCDF::getVariableType(fileId, varId);
 
 	switch (varType) {
@@ -75,65 +79,74 @@ shared_ptr<LookupTable<W> > LookupTableReader::readLookupTable(
 		shared_array<int8_t> values(new int8_t[valueCount]);
 		NetCDF::getVariableData(fileId, varId, valarray<size_t>(dimensionCount),
 				dimensionLengths, values.get());
-		return LookupTable<W>::newLookupTable(varName, dimensions, values, scaleFactor, addOffset);
+		return LookupTable<W>::newLookupTable(varName, dimensions, values,
+				scaleFactor, addOffset);
 	}
 	case Constants::TYPE_UBYTE: {
 		shared_array<uint8_t> values(new uint8_t[valueCount]);
 		NetCDF::getVariableData(fileId, varId, valarray<size_t>(dimensionCount),
 				dimensionLengths, values.get());
-		return LookupTable<W>::newLookupTable(varName, dimensions, values, scaleFactor, addOffset);
+		return LookupTable<W>::newLookupTable(varName, dimensions, values,
+				scaleFactor, addOffset);
 	}
 	case Constants::TYPE_SHORT: {
 		shared_array<int16_t> values(new int16_t[valueCount]);
 		NetCDF::getVariableData(fileId, varId, valarray<size_t>(dimensionCount),
 				dimensionLengths, values.get());
-		return LookupTable<W>::newLookupTable(varName, dimensions, values, scaleFactor, addOffset);
+		return LookupTable<W>::newLookupTable(varName, dimensions, values,
+				scaleFactor, addOffset);
 	}
 	case Constants::TYPE_USHORT: {
 		shared_array<uint16_t> values(new uint16_t[valueCount]);
 		NetCDF::getVariableData(fileId, varId, valarray<size_t>(dimensionCount),
 				dimensionLengths, values.get());
-		return LookupTable<W>::newLookupTable(varName, dimensions, values, scaleFactor, addOffset);
+		return LookupTable<W>::newLookupTable(varName, dimensions, values,
+				scaleFactor, addOffset);
 	}
 	case Constants::TYPE_INT: {
 		shared_array<int32_t> values(new int32_t[valueCount]);
 		NetCDF::getVariableData(fileId, varId, valarray<size_t>(dimensionCount),
 				dimensionLengths, values.get());
-		return LookupTable<W>::newLookupTable(varName, dimensions, values, scaleFactor, addOffset);
+		return LookupTable<W>::newLookupTable(varName, dimensions, values,
+				scaleFactor, addOffset);
 	}
 	case Constants::TYPE_UINT: {
 		shared_array<uint32_t> values(new uint32_t[valueCount]);
 		NetCDF::getVariableData(fileId, varId, valarray<size_t>(dimensionCount),
 				dimensionLengths, values.get());
-		return LookupTable<W>::newLookupTable(varName, dimensions, values, scaleFactor, addOffset);
+		return LookupTable<W>::newLookupTable(varName, dimensions, values,
+				scaleFactor, addOffset);
 	}
 	case Constants::TYPE_LONG: {
 		shared_array<int64_t> values(new int64_t[valueCount]);
 		NetCDF::getVariableData(fileId, varId, valarray<size_t>(dimensionCount),
 				dimensionLengths, values.get());
-		return LookupTable<W>::newLookupTable(varName, dimensions, values, scaleFactor, addOffset);
+		return LookupTable<W>::newLookupTable(varName, dimensions, values,
+				scaleFactor, addOffset);
 	}
 	case Constants::TYPE_ULONG: {
 		shared_array<uint64_t> values(new uint64_t[valueCount]);
 		NetCDF::getVariableData(fileId, varId, valarray<size_t>(dimensionCount),
 				dimensionLengths, values.get());
-		return LookupTable<W>::newLookupTable(varName, dimensions, values, scaleFactor, addOffset);
+		return LookupTable<W>::newLookupTable(varName, dimensions, values,
+				scaleFactor, addOffset);
 	}
 	case Constants::TYPE_FLOAT: {
 		shared_array<float> values(new float[valueCount]);
 		NetCDF::getVariableData(fileId, varId, valarray<size_t>(dimensionCount),
 				dimensionLengths, values.get());
-		return LookupTable<W>::newLookupTable(varName, dimensions, values, scaleFactor, addOffset);
+		return LookupTable<W>::newLookupTable(varName, dimensions, values,
+				scaleFactor, addOffset);
 	}
 	case Constants::TYPE_DOUBLE: {
 		shared_array<double> values(new double[valueCount]);
 		NetCDF::getVariableData(fileId, varId, valarray<size_t>(dimensionCount),
 				dimensionLengths, values.get());
-		return LookupTable<W>::newLookupTable(varName, dimensions, values, scaleFactor, addOffset);
+		return LookupTable<W>::newLookupTable(varName, dimensions, values,
+				scaleFactor, addOffset);
 	}
 	default:
 		BOOST_THROW_EXCEPTION(std::runtime_error("Unsupported data type."));
-		break;
 	}
 }
 

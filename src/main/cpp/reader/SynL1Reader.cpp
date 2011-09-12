@@ -138,8 +138,8 @@ void SynL1Reader::start(Context& context) {
 								context.getLogging()->info(
 										"adding segment '" + segmentName
 												+ "' to context", getId());
-								context.addSegment(segmentName, sizeL, 0,
-										rowCount - 1, colCount, camCount);
+								context.addSegment(segmentName, sizeL, colCount,
+										camCount, 0, rowCount - 1);
 							}
 							// Copy variable attributes to dictionary
 							const int type = NetCDF::getVariableType(fileId,

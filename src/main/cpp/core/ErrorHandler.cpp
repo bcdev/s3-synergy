@@ -18,13 +18,13 @@
  * Created on January 13, 2010, 5:17 PM
  */
 
+#include <cstdlib>
 #include <iostream>
 
 #include "Boost.h"
 #include "Context.h"
-#include "ExitCode.h"
-
 #include "ErrorHandler.h"
+#include "ExitCode.h"
 
 ErrorHandler::ErrorHandler() {
 }
@@ -33,71 +33,81 @@ ErrorHandler::~ErrorHandler() {
 }
 
 void ErrorHandler::handleError(Context& context, exception& e) const {
-	const string processorVersion =
-			context.getJobOrder() != 0 ?
-					context.getJobOrder()->getIpfConfiguration().getVersion() :
-					Constants::PROCESSOR_VERSION;
-	const string diagnostics = diagnostic_information(e);
+	using std::exit;
 
-	const string moduleName = extractModuleName(diagnostics);
-	const string functionName = extractFunctionName(diagnostics);
-	const string lineNumber = extractLineNumber(diagnostics);
-	const string exceptionMessage = string(e.what());
+	const string moduleName =
+			boost::get_error_info<errinfo_module_name>(e) == 0 ?
+					"UNKNOWN" : *boost::get_error_info<errinfo_module_name>(e);
+	const string methodName =
+			boost::get_error_info<errinfo_method_name>(e) == 0 ?
+					"UNKNOWN" : *boost::get_error_info<errinfo_method_name>(e);
+	const int exitCode =
+			boost::get_error_info<errinfo_exit_code>(e) == 0 ?
+					ExitCode::FAILURE :
+					*boost::get_error_info<errinfo_exit_code>(e);
+	const string info = diagnostic_information(e);
+	const string className = extractClassName(info);
+	const string functionName = extractFunctionName(info);
+	const string lineNumber = extractLineNumber(info);
+	const string exceptionMessage = e.what();
+	const string errorMessage = createMessage(moduleName, methodName, className,
+			functionName, lineNumber, exceptionMessage);
 
-	const string errorMessage = createMessage(moduleName, functionName,
-			lineNumber, exceptionMessage);
+	context.getLogging()->error(errorMessage, moduleName);
 
-	context.getLogging()->error(errorMessage, moduleName, processorVersion);
-	exit(ExitCode::FAILURE);
+	exit(exitCode);
 }
 
-string ErrorHandler::extractLineNumber(const string& diagnostics) const {
-	string firstLine = splitIntoLines(diagnostics)[0];
+string ErrorHandler::extractLineNumber(const string& info) const {
+	const string firstLine = splitIntoLines(info)[0];
 	vector<string> temp;
 	boost::iter_split(temp, firstLine, boost::first_finder("("));
 	boost::iter_split(temp, temp[1], boost::first_finder("):"));
 	return temp[0];
 }
 
-string ErrorHandler::extractFunctionName(const string& diagnostics) const {
-	string firstLine = splitIntoLines(diagnostics)[0];
-	vector<string> temp;
-	boost::iter_split(temp, firstLine, boost::first_finder("function"));
-	boost::iter_split(temp, temp[1], boost::first_finder(" "));
-	boost::iter_split(temp, firstLine, boost::first_finder("::"));
-	boost::iter_split(temp, temp[1], boost::first_finder("("));
-	return temp[0];
+string ErrorHandler::extractFunctionName(const string& info) const {
+	const string firstLine = splitIntoLines(info)[0];
+	vector<string> result;
+	boost::iter_split(result, firstLine, boost::first_finder("function"));
+	boost::iter_split(result, result[1], boost::first_finder(" "));
+	boost::iter_split(result, firstLine, boost::first_finder("::"));
+	boost::iter_split(result, result[1], boost::first_finder("("));
+	return result[0];
 }
 
-string ErrorHandler::extractModuleName(const string& diagnostics) const {
-	string firstLine = splitIntoLines(diagnostics)[0];
-	vector<string> temp;
-	boost::iter_split(temp, firstLine, boost::first_finder("function"));
-	boost::iter_split(temp, temp[1], boost::first_finder("::"));
-	boost::iter_split(temp, temp[0], boost::first_finder(" "));
-	return temp[temp.size() - 1];
+string ErrorHandler::extractClassName(const string& info) const {
+	const string firstLine = splitIntoLines(info)[0];
+	vector<string> result;
+	boost::iter_split(result, firstLine, boost::first_finder("function"));
+	boost::iter_split(result, result[1], boost::first_finder("::"));
+	boost::iter_split(result, result[0], boost::first_finder(" "));
+
+	return result[result.size() - 1];
 }
 
-vector<string> ErrorHandler::splitIntoLines(const string& toSplit) const {
-	vector<string> lines;
-	boost::iter_split(lines, toSplit, boost::first_finder("\n"));
-	return lines;
+vector<string> ErrorHandler::splitIntoLines(const string& text) const {
+	vector<string> result;
+	boost::iter_split(result, text, boost::first_finder("\n"));
+	return result;
 }
 
 string ErrorHandler::createMessage(const string& moduleName,
+		const string& methodName, const string& className,
 		const string& functionName, const string& lineNumber,
 		const string& exceptionMessage) const {
 
-	string infoString;
-	if (!moduleName.empty() && !functionName.empty() && !lineNumber.empty()) {
-		infoString.append(
-				" at: " + moduleName + "::" + functionName + " (l. "
-						+ lineNumber + ").");
+	string infoText;
+	if (!className.empty() && !functionName.empty() && !lineNumber.empty()) {
+		infoText.append(
+				" at: " + className + "::" + functionName + " (l. " + lineNumber
+						+ ").");
 	}
 
 	string message;
+	message.append("An exception was thrown in method '" + methodName + "' of module '" + moduleName + "':\n");
 	message.append(exceptionMessage);
-	message.append(infoString);
+	message.append(infoText);
 
 	return message;
 }

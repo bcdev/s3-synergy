@@ -21,6 +21,8 @@
 #ifndef BOOST_H
 #define	BOOST_H
 
+#include <string>
+
 #include <boost/algorithm/string.hpp>
 #include <boost/exception/all.hpp>
 #include <boost/filesystem.hpp>
@@ -41,11 +43,14 @@ using boost::filesystem::directory_iterator;
 using boost::filesystem::is_directory;
 using boost::filesystem::path;
 using boost::diagnostic_information;
+using boost::error_info;
 using boost::lexical_cast;
-using boost::numeric_cast;
 using boost::numeric_cast;
 using boost::shared_array;
 using boost::shared_ptr;
 
-#endif	/* BOOST_H */
+typedef error_info<struct errinfo_exit_code_, int> errinfo_exit_code;
+typedef error_info<struct errinfo_module_name_, std::string> errinfo_module_name;
+typedef error_info<struct errinfo_method_name_, std::string> errinfo_method_name;
 
+#endif	/* BOOST_H */

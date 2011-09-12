@@ -29,9 +29,9 @@
 #include "Boost.h"
 #include "Constants.h"
 #include "Dictionary.h"
+#include "ErrorHandler.h"
 #include "Identifiable.h"
 #include "JobOrder.h"
-#include "ErrorHandler.h"
 #include "Logging.h"
 #include "Segment.h"
 

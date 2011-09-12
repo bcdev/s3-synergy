@@ -23,7 +23,6 @@
 #include <limits>
 #include <stdexcept>
 
-#include "Boost.h"
 #include "Context.h"
 #include "NullLogging.h"
 #include "SegmentImpl.h"
@@ -143,8 +142,8 @@ void Context::setErrorHandler(shared_ptr<ErrorHandler> errorHandler) {
 }
 
 void Context::handleError(exception& e) {
-	if (errorHandler.get() == 0) {
-		BOOST_THROW_EXCEPTION(e);
+	if (errorHandler == 0) {
+		throw e;
 	} else {
 		errorHandler->handleError(*this, e);
 	}
