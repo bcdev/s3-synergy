@@ -205,8 +205,10 @@ bool LookupTableImpl<T, W>::isValidCoordinate(size_t dimIndex,
 template<class T, class W>
 inline W LookupTableImpl<T, W>::interpolationFactor(size_t dimIndex,
 		W coordinate, size_t vertex) const {
-	return (coordinate - x[dimIndex][vertex])
+	const W w = (coordinate - x[dimIndex][vertex])
 			/ (x[dimIndex][vertex + 1] - x[dimIndex][vertex]);
+
+	return w < W(0.0) ? W(0.0) : w > W(1.0) ? W(1.0) : w;
 }
 
 template<class T, class W>
@@ -225,22 +227,20 @@ template<class T, class W>
 size_t LookupTableImpl<T, W>::getVertex(size_t dimIndex, W coordinate) const {
 	assert(dimIndex < n);
 	assert(sizes[dimIndex] > 0);
-	assert(coordinate >= x[dimIndex][0]);
-	assert(coordinate <= x[dimIndex][sizes[dimIndex] - 1]);
 
-	size_t i = 0;
-	size_t k = sizes[dimIndex] - 1;
+	size_t lo = 0;
+	size_t hi = sizes[dimIndex] - 1;
 
-	while (k > i + 1) {
-		const size_t j = (i + k) >> 1;
+	while (hi > lo + 1) {
+		const size_t m = (lo + hi) >> 1;
 
-		if (coordinate > x[dimIndex][j])
-			i = j;
+		if (coordinate < x[dimIndex][m])
+			hi = m;
 		else
-			k = j;
+			lo = m;
 	}
 
-	return i;
+	return lo;
 }
 
 template<class T, class W>
