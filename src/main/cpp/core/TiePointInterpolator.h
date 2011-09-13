@@ -153,7 +153,7 @@ W TiePointInterpolator<W>::interpolate(const valarray<W>& field,
 
 	W v = W(0);
 	for (size_t i = 0; i < n; i++) {
-		v += weights[indexes[i]] * field[indexes[i]];
+		v += weights[i] * field[indexes[i]];
 	}
 	return v;
 }
