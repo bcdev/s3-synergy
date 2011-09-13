@@ -69,8 +69,19 @@ void SynL2SegmentProvider::start(Context& context) {
 							}
 							Segment& segment = context.getSegment(segmentName);
 							if (!segment.hasVariable(varDesc->getName())) {
+								const double scaleFactor =
+										varDesc->hasAttribute("scale_factor") ?
+												varDesc->getAttribute(
+														"scale_factor").getDoubles()[0] :
+												1.0;
+								const double addOffset =
+										varDesc->hasAttribute("add_offset") ?
+												varDesc->getAttribute(
+														"add_offset").getDoubles()[0] :
+												0.0;
 								segment.addVariable(varDesc->getName(),
-										varDesc->getType());
+										varDesc->getType(), scaleFactor,
+										addOffset);
 							}
 						}
 			}

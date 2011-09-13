@@ -162,15 +162,15 @@ void SynL1Reader::start(Context& context) {
 							// Add variable to segment
 							const double scaleFactor =
 									variableDescriptor->hasAttribute(
-											"scaleFactor") ?
+											"scale_factor") ?
 											variableDescriptor->getAttribute(
-													"scaleFactor").getDoubles()[0] :
+													"scale_factor").getDoubles()[0] :
 											1.0;
 							const double addOffset =
 									variableDescriptor->hasAttribute(
-											"addOffset") ?
+											"add_offset") ?
 											variableDescriptor->getAttribute(
-													"addOffset").getDoubles()[0] :
+													"add_offset").getDoubles()[0] :
 											0.0;
 							context.getLogging()->info(
 									"adding variable '" + varName

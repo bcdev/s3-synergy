@@ -163,6 +163,24 @@ public:
 		BOOST_THROW_EXCEPTION(bad_cast());
 	}
 
+	virtual valarray<double> getDoubles() const {
+		valarray<double> a(data.size());
+		for (size_t i = 0; i < data.size(); i++) {
+			a[i] = boost::numeric_cast<double>(data[i]) * scaleFactor
+					+ addOffset;
+		}
+		return a;
+	}
+
+	virtual valarray<float> getFloats() const {
+		valarray<float> a(data.size());
+		for (size_t i = 0; i < data.size(); i++) {
+			a[i] = boost::numeric_cast<float>(data[i]) * float(scaleFactor)
+					+ float(addOffset);
+		}
+		return a;
+	}
+
 	void* getUntypedData() const {
 		return (void*) &data[0];
 	}

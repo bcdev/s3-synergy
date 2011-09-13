@@ -50,6 +50,7 @@ using boost::shared_array;
 using boost::shared_ptr;
 
 typedef error_info<struct errinfo_exit_code_, int> errinfo_exit_code;
+typedef error_info<struct errinfo_nc_status_, int> errinfo_nc_status;
 typedef error_info<struct errinfo_module_name_, std::string> errinfo_module_name;
 typedef error_info<struct errinfo_method_name_, std::string> errinfo_method_name;
 

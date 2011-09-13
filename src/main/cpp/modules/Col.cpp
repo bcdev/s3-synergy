@@ -19,7 +19,7 @@ void Col::start(Context& context) {
 	const Grid& g = s.getGrid();
 
 	Segment& t = context.addSegment(Constants::SEGMENT_SYN_COLLOCATED,
-			g.getSizeL(), g.getMinL(), g.getMaxL(), g.getSizeM(), g.getSizeK());
+			g.getSizeL(), g.getSizeM(), g.getSizeK(), g.getMinL(), g.getMaxL());
 
 	// TODO - read mapping from auxiliary data
 	const size_t mapping[18] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 16,

@@ -21,7 +21,6 @@
 #ifndef NETCDF_H
 #define	NETCDF_H
 
-#include <stdexcept>
 #include <string>
 #include <valarray>
 

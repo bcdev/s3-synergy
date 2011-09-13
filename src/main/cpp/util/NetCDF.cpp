@@ -19,9 +19,12 @@
  */
 
 #include <netcdf.h>
+#include <stdexcept>
 #include <sstream>
 
 #include "NetCDF.h"
+
+using std::runtime_error;
 
 NetCDF::NetCDF() {
 }
@@ -350,11 +353,12 @@ void NetCDF::putAttributeStrings(int fileId, int varId,
 }
 
 void NetCDF::checkStatus(int status, const string& action) {
-	if (status != NC_NOERR) {
-		std::stringstream message;
-		message << "NetCDF error ";
-		message << action;
-		message << ". Code '" << status << "'.";
-		BOOST_THROW_EXCEPTION(std::runtime_error(message.str()));
+	using std::ostringstream;
+
+	if (status != 0) {
+		ostringstream oss;
+		oss << "IO error " << status << " while " << action << " ";
+		BOOST_THROW_EXCEPTION(
+				boost::enable_error_info(runtime_error(oss.str())) << errinfo_nc_status(status));
 	}
 }

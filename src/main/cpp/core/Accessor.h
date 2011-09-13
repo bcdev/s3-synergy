@@ -276,6 +276,10 @@ public:
 	 */
 	virtual valarray<double>& getDoubleData() const throw (bad_cast) = 0;
 
+	virtual valarray<double> getDoubles() const = 0;
+
+	virtual valarray<float> getFloats() const = 0;
+
 	/**
 	 * Returns an untyped pointer to the container of sample values.
 	 * @return an untyped pointer to the container of sample values.
