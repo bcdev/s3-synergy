@@ -37,6 +37,7 @@ void Aco::start(Context& context) {
 	context.addObject(lutCO3);
 
 	Segment& t = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+	t.addVariable("SDR_11", Constants::TYPE_SHORT, 0.0001);
 	t.addVariable("SDR_12", Constants::TYPE_SHORT, 0.0001);
 }
 
@@ -85,6 +86,7 @@ void Aco::process(Context& context) {
 	const Grid& olcGrid = olc.getGrid();
 
 	const Segment& syc = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+	Accessor& sdr11 = syc.getAccessor("SDR_11");
 	Accessor& sdr12 = syc.getAccessor("SDR_12");
 
 	// TODO - get from ECMWF tie points
@@ -115,10 +117,10 @@ void Aco::process(Context& context) {
 				coordinates[0] = abs(saa - vaa); // ADA
 				coordinates[1] = sza; // SZA
 				coordinates[2] = vza; // VZA
-				coordinates[3] = 1000.0; // air pressure
-				coordinates[4] = 2.0; // water vapour
-				coordinates[5] = 0.1; // aerosol
-				coordinates[6] = 0.0; // aerosol model index
+				coordinates[3] = p; // air pressure
+				coordinates[4] = wv; // water vapour
+				coordinates[5] = tau550; // aerosol
+				coordinates[6] = 1.0; // aerosol model index
 				coordinates[7] = 12; // SYN channel
 
 				coordinates[8] = coordinates[1]; // SZA
@@ -154,6 +156,7 @@ void Aco::process(Context& context) {
 				const double f = (rtoa - to3 * ratm) / (to3 * ts * tv);
 				const double rsurf = f / (1.0 + rho * f);
 
+				sdr11.setDouble(i, rtoa);
 				sdr12.setDouble(i, rsurf);
 			}
 		}
