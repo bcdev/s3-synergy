@@ -54,8 +54,9 @@ Dependencies
 3.  XQilla 2.2.4 (compile)
 4.  NetCDF 4.1.x (compile)
 5.  SAFE Suite 1.3 (compile)
-6.  Sun JDK 6 (runtime)
-7.  CMake 2.8.2 (build)
+6.  CppUnit 1.x (compile)
+7.  Sun JDK 6 (runtime)
+8.  CMake 2.8.2 (build)
 
 
 Build Instructions
