@@ -71,8 +71,6 @@ void Aco::process(Context& context) {
 	const valarray<double> tpVaas = tpVaa.getDoubles();
 
 	const TiePointInterpolator<double> tpi = TiePointInterpolator<double>(tpLons, tpLats);
-	valarray<double> tpiWeights(4);
-	valarray<size_t> tpiIndexes(4);
 
 	const Segment& olc = context.getSegment(Constants::SEGMENT_OLC);
 	const Segment& olcInfo = context.getSegment(Constants::SEGMENT_OLC_INFO);
@@ -97,10 +95,12 @@ void Aco::process(Context& context) {
 	// TODO - get from segment data
 	const double tau550 = 0.1;
 
-	valarray<double> coordinates(20);
-
+    #pragma omp parallel for
 	for (size_t k = olcGrid.getFirstK();
 			k < olcGrid.getFirstK() + olcGrid.getSizeK(); k++) {
+		valarray<double> coordinates(20);
+		valarray<double> tpiWeights(4);
+		valarray<size_t> tpiIndexes(4);
 		for (size_t l = olcGrid.getFirstL();
 				l < olcGrid.getFirstL() + olcGrid.getSizeL(); l++) {
 			for (size_t m = olcGrid.getFirstK();

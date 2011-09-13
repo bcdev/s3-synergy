@@ -7,8 +7,8 @@ configure_file (
   "src/main/cpp/core/Config.h"
 )
   
-set(CMAKE_CXX_FLAGS "-O3 -std=c++98 -DBOOST_FILESYSTEM_VERSION=2")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -std=c++98 -Wall -DBOOST_FILESYSTEM_VERSION=2")
+set(CMAKE_CXX_FLAGS "-fopenmp -O3 -std=c++98 -DBOOST_FILESYSTEM_VERSION=2")
+set(CMAKE_CXX_FLAGS_DEBUG "-fopenmp -g -O0 -std=c++98 -Wall -DBOOST_FILESYSTEM_VERSION=2")
 
 cmake_minimum_required (VERSION 2.8)
 
