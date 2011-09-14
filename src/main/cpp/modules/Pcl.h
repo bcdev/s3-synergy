@@ -14,6 +14,10 @@ class Pcl: public BasicModule {
 public:
 	Pcl();
 	virtual ~Pcl();
+
+    void start(Context& context);
+    void stop(Context& context);
+    void process(Context& context);
 };
 
 #endif /* PCL_H_ */

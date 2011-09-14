@@ -20,7 +20,8 @@ file(GLOB_RECURSE CORE_TEST_SOURCES src/test/cpp/core/*.cpp)
 file(GLOB_RECURSE READER_MAIN_SOURCES src/main/cpp/reader/*.cpp)
 file(GLOB_RECURSE READER_TEST_SOURCES src/test/cpp/reader/*.cpp)
 file(GLOB_RECURSE MODULES_MAIN_SOURCES src/main/cpp/modules/*.cpp)
-file(GLOB_RECURSE MODULES_TEST_SOURCES src/test/cpp/modules/*.cpp)
+file(GLOB_RECURSE ACO_TEST_SOURCES src/test/cpp/modules/AcoTest.cpp)
+file(GLOB_RECURSE PCL_TEST_SOURCES src/test/cpp/modules/PclTest.cpp)
 file(GLOB_RECURSE WRITER_MAIN_SOURCES src/main/cpp/writer/*.cpp)
 file(GLOB_RECURSE WRITER_TEST_SOURCES src/test/cpp/writer/*.cpp)
 file(GLOB_RECURSE UTIL_MAIN_SOURCES src/main/cpp/util/*.cpp)
@@ -111,7 +112,7 @@ add_executable(sy_unt_aco
 	${READER_MAIN_SOURCES}
 	${WRITER_MAIN_SOURCES}
 	${MODULES_MAIN_SOURCES}
-	${MODULES_TEST_SOURCES}
+	${ACO_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_aco
 	cppunit
@@ -123,7 +124,26 @@ target_link_libraries(sy_unt_aco
 	boost_filesystem-mt
 )
 set_property(TARGET sy_unt_aco PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
-
+#
+add_executable(sy_unt_pcl
+    src/test/cpp/SyUntPclRunner.cpp
+	${CORE_MAIN_SOURCES}
+	${UTIL_MAIN_SOURCES}
+	${READER_MAIN_SOURCES}
+	${WRITER_MAIN_SOURCES}
+	${MODULES_MAIN_SOURCES}
+	${PCL_TEST_SOURCES}
+)
+target_link_libraries(sy_unt_pcl
+	cppunit
+	netcdf
+	Xfdu
+	xerces-c
+	xqilla
+	boost_system-mt
+	boost_filesystem-mt
+)
+set_property(TARGET sy_unt_pcl PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 
 ##
 # Project main targets
