@@ -632,7 +632,7 @@ class LookupTableGenerator {
     }
 
     private static String createTempFile(String prefix, boolean deleteOnExit) throws IOException {
-        final File file = File.createTempFile(prefix, ".cdl", new File("."));
+        final File file = File.createTempFile(prefix, ".cdl");
         if (deleteOnExit) {
             file.deleteOnExit();
         }
@@ -739,7 +739,7 @@ class LookupTableGenerator {
                         for (int l = 0; l < t550.length; l++) {
                             for (int m = 0; m < amin; m++) {
                                 for (int n = 0; n < wav.length; n++) {
-                                    final double value = transmission(wav[n], SYN_T550[l], SYN_SZA[i],
+                                    final double value = 1.2 * transmission(wav[n], SYN_T550[l], SYN_SZA[i],
                                                                       AIR_PRESSURE[j]);
                                     //final double value = lut.getValue(T550[o], wav[q], SYN_SZA[j]);
                                     if (r > 0) {
