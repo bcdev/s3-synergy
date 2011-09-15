@@ -130,13 +130,13 @@ void TiePointInterpolator<W>::prepare(W lon, W lat, valarray<W>& weights,
 	W sum = W(0.0);
 	for (size_t i = 0; i < n; i++) {
 		const W d = abs(acos(weights[i])); // arc distance
-		if (d == W(0)) {
+		if (d == W(0.0)) {
 			for (size_t k = 0; k < n; k++) {
-				weights[k] = k != i ? W(0) : W(1);
+				weights[k] = k != i ? W(0.0) : W(1.0);
 			}
 			return;
 		}
-		weights[i] = W(1) / d;
+		weights[i] = W(1.0) / d;
 		sum += weights[i];
 	}
 	for (size_t i = 0; i < n; i++) {
