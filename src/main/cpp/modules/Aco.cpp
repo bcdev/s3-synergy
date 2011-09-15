@@ -119,7 +119,7 @@ void Aco::process(Context& context) {
 		valarray<size_t> tpiIndexes(2);
 		for (size_t l = olcGrid.getFirstL();
 				l < olcGrid.getFirstL() + olcGrid.getSizeL(); l++) {
-			for (size_t m = olcGrid.getFirstK();
+			for (size_t m = olcGrid.getFirstM();
 					m < olcGrid.getFirstM() + olcGrid.getSizeM(); m++) {
 				const size_t i = olcGrid.getIndex(k, l, m);
 
