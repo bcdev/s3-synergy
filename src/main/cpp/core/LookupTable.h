@@ -51,11 +51,15 @@ public:
 	virtual W operator()(const W coordinates[]) const = 0;
 
 	virtual size_t getDimensionCount() const = 0;
+	virtual size_t getDimensionLength(size_t dimIndex) const = 0;
+	virtual size_t getStride(size_t dimIndex) const = 0;
+
 	virtual W getScaleFactor() const = 0;
 	virtual W getAddOffset() const = 0;
-	virtual W maxCoordinate(size_t dimIndex) const = 0;
-	virtual W minCoordinate(size_t dimIndex) const = 0;
-	virtual bool isValidCoordinate(size_t dimIndex, W coordinate) const = 0;
+	virtual W getMaxCoordinate(size_t dimIndex) const = 0;
+	virtual W getMinCoordinate(size_t dimIndex) const = 0;
+
+	virtual W getValue(size_t i) const = 0;
 
 	template<class T>
 	static shared_ptr<LookupTable<W> > newLookupTable(const string& id,
@@ -82,21 +86,18 @@ public:
 	W operator()(const W coordinates[]) const;
 
 	size_t getDimensionCount() const;
+	size_t getDimensionLength(size_t dimIndex) const;
+	size_t getStride(size_t dimIndex) const;
+
 	W getScaleFactor() const;
 	W getAddOffset() const;
-	W maxCoordinate(size_t dimIndex) const;
-	W minCoordinate(size_t dimIndex) const;
-	bool isValidCoordinate(size_t dimIndex, W coordinate) const;
+	W getMaxCoordinate(size_t dimIndex) const;
+	W getMinCoordinate(size_t dimIndex) const;
+
+	W getValue(size_t i) const;
 
 private:
-	void getVertexes(const W coordinates[], size_t vertexes[]) const;
-	void interpolate(W values[], const W values2[], size_t valueCount,
-			W interpolationFactor) const;
-
-	W interpolationFactor(size_t dimIndex, W coordinate, size_t vertex) const;
-
-	size_t getIndex(const size_t vertexes[]) const;
-	size_t getVertex(size_t dimIndex, W coordinate) const;
+	size_t getIndex(size_t dimIndex, W coordinate, W& fraction) const;
 
 	const string id;
 	const W scaleFactor;
@@ -145,21 +146,25 @@ LookupTableImpl<T, W>::~LookupTableImpl() {
 
 template<class T, class W>
 W LookupTableImpl<T, W>::operator()(const W coordinates[]) const {
-	valarray<size_t> v(n);
-	getVertexes(coordinates, &v[0]);
-	const size_t origin = getIndex(&v[0]);
-	valarray<W> values(offsets.size());
-	// extract the y-values at the vertexes of the smallest n-cube,
-	// which contains the interpolation point
-	for (size_t i = 0; i < offsets.size(); ++i) {
-		values[i] = boost::numeric_cast<W>(y[offsets[i] + origin]);
-	}
-	for (size_t i = 0, j = offsets.size(); j >>= 1 != 0; ++i) {
-		interpolate(&values[0], &values[j], j,
-				interpolationFactor(i, coordinates[i], v[i]));
-	}
+	valarray<W> f(n);
+	valarray<W> v(offsets.size());
 
-	return values[0] * scaleFactor + addOffset;
+	size_t origin = 0;
+	for (size_t i = 0; i < n; ++i) {
+		origin += getIndex(i, coordinates[i], f[i]) * strides[i];
+	}
+	for (size_t i = 0; i < offsets.size(); ++i) {
+		v[i] = boost::numeric_cast<W>(y[origin + offsets[i]]);
+	}
+    for (int i = n; i-- > 0;) {
+        const int m = 1 << i;
+
+        for (int j = 0; j < m; ++j) {
+            v[j] += f[i] * (v[m + j] - v[j]);
+        }
+    }
+
+	return v[0] * scaleFactor + addOffset;
 }
 
 template<class T, class W>
@@ -173,6 +178,23 @@ inline size_t LookupTableImpl<T, W>::getDimensionCount() const {
 }
 
 template<class T, class W>
+inline size_t LookupTableImpl<T, W>::getDimensionLength(size_t dimIndex) const {
+	assert(dimIndex < n);
+	return sizes[dimIndex];
+}
+
+template<class T, class W>
+inline size_t LookupTableImpl<T, W>::getStride(size_t dimIndex) const {
+	assert(dimIndex < n);
+	return strides[dimIndex];
+}
+
+template<class T, class W>
+inline W LookupTableImpl<T, W>::getValue(size_t i) const {
+	return boost::numeric_cast<W>(y[i]) * scaleFactor + addOffset;
+}
+
+template<class T, class W>
 inline W LookupTableImpl<T, W>::getScaleFactor() const {
 	return scaleFactor;
 }
@@ -183,48 +205,20 @@ inline W LookupTableImpl<T, W>::getAddOffset() const {
 }
 
 template<class T, class W>
-inline W LookupTableImpl<T, W>::maxCoordinate(size_t dimIndex) const {
+inline W LookupTableImpl<T, W>::getMaxCoordinate(size_t dimIndex) const {
 	assert(dimIndex < n);
 	assert(sizes[dimIndex] > 0);
 	return x[dimIndex][sizes[dimIndex] - 1];
 }
 
 template<class T, class W>
-inline W LookupTableImpl<T, W>::minCoordinate(size_t dimIndex) const {
+inline W LookupTableImpl<T, W>::getMinCoordinate(size_t dimIndex) const {
 	assert(dimIndex < n and sizes[dimIndex] > 0);
 	return x[dimIndex][0];
 }
 
 template<class T, class W>
-bool LookupTableImpl<T, W>::isValidCoordinate(size_t dimIndex,
-		W coordinate) const {
-	return coordinate >= minCoordinate(dimIndex)
-			&& coordinate <= maxCoordinate(dimIndex);
-}
-
-template<class T, class W>
-inline W LookupTableImpl<T, W>::interpolationFactor(size_t dimIndex,
-		W coordinate, size_t vertex) const {
-	const W w = (coordinate - x[dimIndex][vertex])
-			/ (x[dimIndex][vertex + 1] - x[dimIndex][vertex]);
-
-	return w < W(0.0) ? W(0.0) : w > W(1.0) ? W(1.0) : w;
-}
-
-template<class T, class W>
-size_t LookupTableImpl<T, W>::getIndex(const size_t vertexes[]) const {
-	size_t index = 0;
-
-	for (size_t i = 0; i < n; ++i) {
-		assert(vertexes[i] < sizes[i]);
-		index += vertexes[i] * strides[i];
-	}
-
-	return index;
-}
-
-template<class T, class W>
-size_t LookupTableImpl<T, W>::getVertex(size_t dimIndex, W coordinate) const {
+size_t LookupTableImpl<T, W>::getIndex(size_t dimIndex, W coordinate, W& f) const {
 	assert(dimIndex < n);
 	assert(sizes[dimIndex] > 0);
 
@@ -240,22 +234,14 @@ size_t LookupTableImpl<T, W>::getVertex(size_t dimIndex, W coordinate) const {
 			lo = m;
 	}
 
+    f = (coordinate - x[dimIndex][lo]) / (x[dimIndex][hi] - x[dimIndex][lo]);
+    if (f < W(0.0)) {
+        f = W(0.0);
+    } else if (f > W(1.0)) {
+        f = W(1.0);
+    }
+
 	return lo;
-}
-
-template<class T, class W>
-void LookupTableImpl<T, W>::getVertexes(const W coordinates[],
-		size_t vertexes[]) const {
-	for (size_t i = 0; i < n; ++i)
-		vertexes[i] = getVertex(i, coordinates[i]);
-}
-
-template<class T, class W>
-void LookupTableImpl<T, W>::interpolate(W values[], const W values2[],
-		size_t valueCount, W interpolationFactor) const {
-	for (size_t i = 0; i < valueCount; ++i)
-		values[i] = (W(1) - interpolationFactor) * values[i]
-				+ interpolationFactor * values2[i];
 }
 
 #endif	/* LOOKUPTABLE_H */
