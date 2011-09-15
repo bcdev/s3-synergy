@@ -674,9 +674,9 @@ class LookupTableGenerator {
                                         for (int q = 0; q < wav.length; q++) {
                                             final double value = lut.getValue(SYN_T550[o],
                                                                               wav[q],
-                                                                              SYN_SZA[j],
+                                                                              sza[j],
                                                                               vza[k],
-                                                                              SYN_ADA[i]);
+                                                                              ada[i]);
                                             if (r > 0) {
                                                 writer.print(", ");
                                                 if (r % wav.length == 0) {
