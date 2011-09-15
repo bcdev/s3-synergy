@@ -1,8 +1,8 @@
 /* 
  * File:   PclTest.h
- * Author: thomass
+ * Author: thomasstorm
  *
- * Created on August 16, 2011, 1:36 PM
+ * Created on Sep 14, 2011, 1:36 PM
  */
 
 #ifndef PCLTEST_H
@@ -15,8 +15,11 @@
 
 class PclTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(PclTest);
-    CPPUNIT_TEST(testPcl);
+    CPPUNIT_TEST(testGetValue);
     CPPUNIT_TEST(testStart);
+    CPPUNIT_TEST(testGetIndex);
+    CPPUNIT_TEST(testGetAccessor);
+//    CPPUNIT_TEST(testPcl);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -26,8 +29,11 @@ public:
     void tearDown();
 
 private:
-    void testPcl();
     void testStart();
+    void testGetAccessor();
+    void testPcl();
+    void testGetIndex();
+    void testGetValue();
 };
 
 #endif	/* PCLTEST_H */

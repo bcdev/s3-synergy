@@ -66,7 +66,7 @@ public:
 		moduleList.push_back(module);
 	}
 
-	void removeModule(shared_ptr<Module> module);
+	bool removeModule(shared_ptr<Module> module);
 
 	/**
 	 * Adds an object to the context.
@@ -87,7 +87,7 @@ public:
 	Segment& addSegment(const string& id, size_t sizeL, size_t sizeM,
 			size_t sizeK, size_t minL, size_t maxL) throw (logic_error);
 
-	void removeSegment(const string& id);
+	bool removeSegment(const string& id);
 
 	/**
 	 * Returns a list of modules, which have been added to the context.

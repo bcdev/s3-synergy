@@ -42,7 +42,7 @@ Context::Context() :
 Context::~Context() {
 }
 
-void Context::removeModule(shared_ptr<Module> module) {
+bool Context::removeModule(shared_ptr<Module> module) {
 	vector<shared_ptr<Module> >::iterator position = find(moduleList.begin(),
 			moduleList.end(), module);
 	if (position != moduleList.end()) {
@@ -54,7 +54,9 @@ void Context::removeModule(shared_ptr<Module> module) {
 					p.second.erase(position->get());
 				}
 		moduleList.erase(position);
+		return true;
 	}
+	return false;
 }
 
 void Context::addObject(shared_ptr<Identifiable> object) throw (logic_error) {
@@ -79,13 +81,16 @@ Segment& Context::addSegment(const string& id, size_t sizeL, size_t sizeM,
 	return *segment;
 }
 
-void Context::removeSegment(const string& id) {
+bool Context::removeSegment(const string& id) {
 	const vector<shared_ptr<Segment> >::iterator position = find_if(
 			segmentList.begin(), segmentList.end(), Id<Segment>(id));
 	if (position != segmentList.end()) {
 		lastComputedLMap.erase(position->get());
 		segmentList.erase(position);
+		segmentMap.erase(id);
+		return true;
 	}
+	return false;
 }
 
 shared_ptr<Identifiable> Context::getObject(const string& id) const {
