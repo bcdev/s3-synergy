@@ -1,145 +1,110 @@
 /*
+ * Module responsible for classifying pixels.
+ *
+ * Preconditions:
+ * 	- the segment 'SYN_COLLOCATED' must have been added to the context
+ *  - that segment needs to comprise the variables 'OLC_flags', 'SLN_confidence', and 'SLO_confidence'
+ *
+ * Postconditions:
+ *  - the variable 'SYN_flags' has been added to the segment 'SYN_COLLOCATED'
+ *  - that variable comprises flags for land and cloud for each pixel
+ *
  * Pcl.cpp
  *
- *  Created on: Aug 25, 2011
- *      Author: ralf
+ *  Created on: Sep 14, 2011
+ *      Author: thomasstorm
  */
 
 #include "Pcl.h"
 
-Pcl::Pcl() : BasicModule("PCL") {
+Pcl::Pcl() :
+		BasicModule("PCL") {
 }
 
 Pcl::~Pcl() {
 }
 
+
 void Pcl::start(Context& context) {
-	Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-    ProductDescriptor productDescriptor = context.getDictionary()->getProductDescriptor("SY2");
+    setUpSegment(context);
+    setUpSourceAccessors(context);
+}
+
+
+void Pcl::setUpSegment(Context& context) {
+    collocatedSegment = &(context.getSegment(Constants::SEGMENT_SYN_COLLOCATED));
+    ProductDescriptor & productDescriptor = context.getDictionary()->getProductDescriptor("SY2");
     string variableName = "SYN_flags";
-    VariableDescriptor* synFlags = productDescriptor.getVariableDescriptor(variableName);
-	collocatedSegment.addVariable(variableName, synFlags->getType());
+    VariableDescriptor *synFlags = productDescriptor.getVariableDescriptor(variableName);
+    collocatedSegment->addVariable(variableName, synFlags->getType());
+	context.getLogging()->info("adding variable '" + variableName + "' to segment '" + collocatedSegment->getId() + "'.", getId());
+}
+
+void Pcl::setUpSourceAccessors(Context & context) {
+    olcFlagsAccessor = &getSourceAccessor(context, "OLC_flags");
+    slnFlagsAccessor = &getSourceAccessor(context, "SLN_confidence");
+    sloFlagsAccessor = &getSourceAccessor(context, "SLO_confidence");
 }
 
 void Pcl::stop(Context& context) {
 
 }
 
+const Accessor& Pcl::getSourceAccessor(Context& context, string variableName) {
+	ProductDescriptor& sy1Descriptor = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY1);
+	VariableDescriptor* variableDescriptor = sy1Descriptor.getVariableDescriptor(variableName);
+	string flagVariableName = variableDescriptor->getName();
+	string segmentName = Constants::SEGMENT_SYN_COLLOCATED;
+	return context.getSegment(segmentName).getAccessor(flagVariableName);
+}
+
 void Pcl::process(Context& context) {
-	context.getLogging()->warning("Test for pcl is running", "Pcl");
-//	const Accessor& tpVza =
-//			context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor(
-//					"OLC_VZA");
-//	const Accessor& tpVaa =
-//			context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor(
-//					"OLC_VAA");
-//	const Accessor& tpSza =
-//			context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("SZA");
-//	const Accessor& tpSaa =
-//			context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("SAA");
-//	const Accessor& tpLat =
-//			context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor(
-//					"OLC_TP_lat");
-//	const Accessor& tpLon =
-//			context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor(
-//					"OLC_TP_lon");
-//
-//	const valarray<double> tpLons = tpLon.getDoubles();
-//	const valarray<double> tpLats = tpLat.getDoubles();
-//	const valarray<double> tpSzas = tpSza.getDoubles();
-//	const valarray<double> tpSaas = tpSaa.getDoubles();
-//	const valarray<double> tpVzas = tpVza.getDoubles();
-//	const valarray<double> tpVaas = tpVaa.getDoubles();
-//
-//	const TiePointInterpolator<double> tpi = TiePointInterpolator<double>(tpLons, tpLats);
-//
-//	const Segment& olc = context.getSegment(Constants::SEGMENT_OLC);
-//	const Segment& olcInfo = context.getSegment(Constants::SEGMENT_OLC_INFO);
-//
-//	const Accessor& l12 = olc.getAccessor("L_12");
-//	const Accessor& lat = olc.getAccessor("latitude");
-//	const Accessor& lon = olc.getAccessor("longitude");
-//	const Accessor& solarIrradiance = olcInfo.getAccessor("solar_irradiance");
-//
-//	const Grid& olcInfoGrid = olcInfo.getGrid();
-//	const Grid& olcGrid = olc.getGrid();
-//
-//	const Segment& syc = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-//	Accessor& sdr11 = syc.getAccessor("SDR_11");
-//	Accessor& sdr12 = syc.getAccessor("SDR_12");
-//
-//	// TODO - get from ECMWF tie points
-//	const double no3 = 0.0;
-//	const double wv = 2.0;
-//	const double p = 1000;
-//
-//	// TODO - get from segment data
-//	const double tau550 = 0.1;
-//
-//    #pragma omp parallel for
-//	for (size_t k = olcGrid.getFirstK();
-//			k < olcGrid.getFirstK() + olcGrid.getSizeK(); k++) {
-//		valarray<double> coordinates(20);
-//		valarray<double> tpiWeights(4);
-//		valarray<size_t> tpiIndexes(4);
-//		for (size_t l = olcGrid.getFirstL();
-//				l < olcGrid.getFirstL() + olcGrid.getSizeL(); l++) {
-//			for (size_t m = olcGrid.getFirstK();
-//					m < olcGrid.getFirstM() + olcGrid.getSizeM(); m++) {
-//				const size_t i = olcGrid.getIndex(k, l, m);
-//
-//				tpi.prepare(lon.getDouble(i), lat.getDouble(i), tpiWeights, tpiIndexes);
-//
-//				const double sza = tpi.interpolate(tpSzas, tpiWeights, tpiIndexes);
-//				const double saa = tpi.interpolate(tpSaas, tpiWeights, tpiIndexes);
-//				const double vza = tpi.interpolate(tpVzas, tpiWeights, tpiIndexes);
-//				const double vaa = tpi.interpolate(tpVaas, tpiWeights, tpiIndexes);
-//
-//				coordinates[0] = abs(saa - vaa); // ADA
-//				coordinates[1] = sza; // SZA
-//				coordinates[2] = vza; // VZA
-//				coordinates[3] = p; // air pressure
-//				coordinates[4] = wv; // water vapour
-//				coordinates[5] = tau550; // aerosol
-//				coordinates[6] = 1.0; // aerosol model index
-//				coordinates[7] = 12; // SYN channel
-//
-//				coordinates[8] = coordinates[1]; // SZA
-//				coordinates[9] = coordinates[3]; // air pressure
-//				coordinates[10] = coordinates[4]; // water vapour
-//				coordinates[11] = coordinates[5]; // aerosol
-//				coordinates[12] = coordinates[6]; // aerosol model index
-//				coordinates[13] = coordinates[7]; // SYN channel
-//
-//				coordinates[14] = coordinates[2]; // VZA
-//				coordinates[15] = coordinates[3]; // air pressure
-//				coordinates[16] = coordinates[4]; // water vapour
-//				coordinates[17] = coordinates[5]; // aerosol
-//				coordinates[18] = coordinates[6]; // aerosol model index
-//				coordinates[19] = coordinates[7]; // SYN channel
-//
-//				const double ratm = lutOlcRatm->operator()(&coordinates[0]);
-//				const double ts = lutT->operator()(&coordinates[8]);
-//				const double tv = lutT->operator()(&coordinates[14]);
-//				const double rho = lutRhoAtm->operator()(&coordinates[9]);
-//				const double co3 = lutCO3->operator()(&coordinates[7]);
-//				const double ltoa = l12.getDouble(olcGrid.getIndex(k, l, m));
-//				const double f0 = solarIrradiance.getDouble(olcInfoGrid.getIndex(k, 12, m));
-//
-//				// Eq. 2-1
-//				const double rtoa = (PI * ltoa) / (f0 * cos(sza * D2R));
-//
-//				// Eq. 2-2
-//				const double m = 0.5 * (1.0 / cos(sza * D2R) + 1.0 / cos(vza * D2R));
-//				const double to3 = exp(-m * no3 * co3);
-//
-//				// Eq. 2-3
-//				const double f = (rtoa - to3 * ratm) / (to3 * ts * tv);
-//				const double rsurf = f / (1.0 + rho * f);
-//
-//				sdr11.setDouble(i, rtoa);
-//				sdr12.setDouble(i, rsurf);
-//			}
-//		}
-//	}
+	context.getLogging()->info("Setting flags for segment '" + collocatedSegment->toString() + "'.", getId());
+	boost::shared_ptr<Dictionary> dictionary = context.getDictionary();
+	const ProductDescriptor& l2Descriptor = dictionary->getProductDescriptor(Constants::PRODUCT_SY2);
+	const VariableDescriptor* flagsDescriptor = l2Descriptor.getVariableDescriptor("SYN_flags");
+	const string targetVariableName = flagsDescriptor->getName();
+	collocatedSegment->addVariable(targetVariableName, flagsDescriptor->getType());
+	Accessor& targetAccessor = collocatedSegment->getAccessor(targetVariableName);
+
+	const valarray<long> olcFlags = olcFlagsAccessor->getLongData();
+	const valarray<short> slnFlags = slnFlagsAccessor->getShortData();
+	const valarray<short> sloFlags = sloFlagsAccessor->getShortData();
+
+	const Grid& collocatedGrid = collocatedSegment->getGrid();
+	for (size_t k = collocatedGrid.getFirstK(); k < collocatedGrid.getFirstK() + collocatedGrid.getSizeK(); k++) {
+		for (size_t l = collocatedGrid.getFirstL(); l < collocatedGrid.getFirstL() + collocatedGrid.getSizeL(); l++) {
+			for (size_t m = collocatedGrid.getFirstM(); m < collocatedGrid.getFirstM() + collocatedGrid.getSizeM(); m++) {
+				const size_t index = getIndex(k, l, m);
+				const uint16_t value = getValue(index, olcFlags[index], slnFlags[index], sloFlags[index]);
+				targetAccessor.setUShort(index, value);
+			}
+		}
+	}
+}
+
+size_t Pcl::getIndex(size_t k, size_t l, size_t m) const {
+	return collocatedSegment->getGrid().getIndex(k, l, m);
+}
+
+uint16_t Pcl::getValue(size_t index, long olcFlags, short slnFlags, short sloFlags) const {
+	size_t olciLandFlag = 0b10000000000000000000000000000000;
+    size_t slstrLandFlag = 0b1000;
+    size_t slstrCloudFlag = 0b100000000000000;
+
+    bool isLandPixel = (olcFlags & olciLandFlag) == olciLandFlag;
+    isLandPixel &= (slnFlags & slstrLandFlag) == slstrLandFlag;
+    isLandPixel &= (sloFlags & slstrLandFlag) == slstrLandFlag;
+    bool isCloudPixel = (slnFlags & slstrCloudFlag) == slstrCloudFlag;
+    isCloudPixel &= (sloFlags & slstrCloudFlag) == slstrCloudFlag;
+
+	uint16_t result = 0;
+    if(isLandPixel) {
+		result |= 32;
+	}
+
+    if(isCloudPixel) {
+		result |= 1;
+	}
+	return result;
 }
