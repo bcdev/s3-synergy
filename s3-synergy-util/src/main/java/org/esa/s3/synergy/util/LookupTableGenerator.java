@@ -708,7 +708,7 @@ class LookupTableGenerator {
                     for (int k = 0; k < t550.length; k++) {
                         for (int l = 0; l < amin; l++) {
                             for (int m = 0; m < wav.length; m++) {
-                                final double value = lut.getValue(SYN_T550[k], wav[m]);
+                                final double value = lut.getValue(t550[k], wav[m]);
                                 if (r > 0) {
                                     writer.print(", ");
                                     if (r % wav.length == 0) {
@@ -739,7 +739,7 @@ class LookupTableGenerator {
                         for (int l = 0; l < t550.length; l++) {
                             for (int m = 0; m < amin; m++) {
                                 for (int n = 0; n < wav.length; n++) {
-                                    final double value = 1.2 * transmission(wav[n], SYN_T550[l], SYN_SZA[i],
+                                    final double value = 1.2 * transmission(wav[n], t550[l], sza[i],
                                                                       AIR_PRESSURE[j]);
                                     //final double value = lut.getValue(T550[o], wav[q], SYN_SZA[j]);
                                     if (r > 0) {
