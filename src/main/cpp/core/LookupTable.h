@@ -90,7 +90,7 @@ public:
 
 private:
 	void getVertexes(const W coordinates[], size_t vertexes[]) const;
-	void interpolate(W values[], const W values2[], size_t numValues,
+	void interpolate(W values[], const W values2[], size_t valueCount,
 			W interpolationFactor) const;
 
 	W interpolationFactor(size_t dimIndex, W coordinate, size_t vertex) const;
@@ -252,8 +252,8 @@ void LookupTableImpl<T, W>::getVertexes(const W coordinates[],
 
 template<class T, class W>
 void LookupTableImpl<T, W>::interpolate(W values[], const W values2[],
-		size_t numValues, W interpolationFactor) const {
-	for (size_t i = 0; i < numValues; ++i)
+		size_t valueCount, W interpolationFactor) const {
+	for (size_t i = 0; i < valueCount; ++i)
 		values[i] = (W(1) - interpolationFactor) * values[i]
 				+ interpolationFactor * values2[i];
 }

@@ -42,59 +42,64 @@ void SynL2Writer::process(Context& context) {
 					const Grid& grid = segment.getGrid();
 					const vector<VariableDescriptor*> variableDescriptors =
 							segmentDescriptor->getVariableDescriptors();
-					const size_t firstLWritable = context.getFirstComputableL(
+					const size_t firstWritableL = context.getFirstComputableL(
 							segment, *this);
-					const size_t lastLWritable = context.getLastWritableL(
+					const size_t lastWritableL = context.getLastWritableL(
 							segment, *this);
 
-					foreach(const VariableDescriptor* variableDescriptor, variableDescriptors)
-							{
-								const string varName =
-										variableDescriptor->getName();
-								if (segment.hasVariable(varName)) {
-									const string ncFileBasename =
-											variableDescriptor->getNcFileBasename();
-									if (!contains(ncVarIdMap, varName)) {
-										BOOST_THROW_EXCEPTION(
-												logic_error("Unknown variable '" + varName + "'."));
+					if (firstWritableL <= lastWritableL) {
+						foreach(const VariableDescriptor* variableDescriptor, variableDescriptors)
+								{
+									const string varName =
+											variableDescriptor->getName();
+									if (segment.hasVariable(varName)) {
+										const string ncFileBasename =
+												variableDescriptor->getNcFileBasename();
+										if (!contains(ncVarIdMap, varName)) {
+											BOOST_THROW_EXCEPTION(
+													logic_error("Unknown variable '" + varName + "'."));
+										}
+										if (!contains(ncFileIdMap,
+												ncFileBasename)) {
+											BOOST_THROW_EXCEPTION(
+													logic_error("Unknown netCDF file '" + ncFileBasename + "'."));
+										}
+										if (!contains(ncDimIdMap,
+												ncFileBasename)) {
+											BOOST_THROW_EXCEPTION(
+													logic_error("Unknown netCDF file '" + ncFileBasename + "'."));
+										}
+										const int varId = ncVarIdMap[varName];
+										const int ncId =
+												ncFileIdMap[ncFileBasename];
+										const valarray<int>& dimIds =
+												ncDimIdMap[ncFileBasename];
+										const valarray<size_t> starts =
+												IOUtils::createStartVector(
+														dimIds.size(),
+														firstWritableL);
+										const valarray<size_t> sizes =
+												IOUtils::createCountVector(
+														dimIds.size(),
+														grid.getSizeK(),
+														lastWritableL
+																- firstWritableL
+																+ 1,
+														grid.getSizeM());
+										context.getLogging()->progress(
+												"Writing variable " + varName
+														+ " of segment ["
+														+ segment.toString()
+														+ "]", getId());
+										const Accessor& accessor =
+												segment.getAccessor(varName);
+										NetCDF::putData(ncId, varId, starts,
+												sizes,
+												accessor.getUntypedData());
 									}
-									if (!contains(ncFileIdMap,
-											ncFileBasename)) {
-										BOOST_THROW_EXCEPTION(
-												logic_error("Unknown netCDF file '" + ncFileBasename + "'."));
-									}
-									if (!contains(ncDimIdMap, ncFileBasename)) {
-										BOOST_THROW_EXCEPTION(
-												logic_error("Unknown netCDF file '" + ncFileBasename + "'."));
-									}
-									const int varId = ncVarIdMap[varName];
-									const int ncId = ncFileIdMap[ncFileBasename];
-									const valarray<int>& dimIds =
-											ncDimIdMap[ncFileBasename];
-									const valarray<size_t> starts =
-											IOUtils::createStartVector(
-													dimIds.size(),
-													firstLWritable);
-									const valarray<size_t> sizes =
-											IOUtils::createCountVector(
-													dimIds.size(),
-													grid.getSizeK(),
-													lastLWritable
-															- firstLWritable
-															+ 1,
-													grid.getSizeM());
-									context.getLogging()->progress(
-											"Writing variable " + varName
-													+ " of segment ["
-													+ segment.toString() + "]",
-											getId());
-									const Accessor& accessor =
-											segment.getAccessor(varName);
-									NetCDF::putData(ncId, varId, starts, sizes,
-											accessor.getUntypedData());
 								}
-							}
-					context.setLastComputedL(segment, *this, lastLWritable);
+						context.setLastComputedL(segment, *this, lastWritableL);
+					}
 				}
 			}
 }

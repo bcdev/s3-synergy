@@ -35,7 +35,13 @@ LookupTableReader::LookupTableReader(const string& path) {
 }
 
 LookupTableReader::~LookupTableReader() {
-	NetCDF::closeFile(fileId);
+	if (fileId != 0) {
+		try {
+			NetCDF::closeFile(fileId);
+		} catch (std::exception& ignored) {
+			// ok
+		}
+	}
 }
 
 template<class W>

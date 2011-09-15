@@ -37,8 +37,16 @@ void Aco::start(Context& context) {
 	context.addObject(lutCO3);
 
 	Segment& t = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-	t.addVariable("SDR_11", Constants::TYPE_SHORT, 0.0001);
-	t.addVariable("SDR_12", Constants::TYPE_SHORT, 0.0001);
+	t.addVariable("SDR_1", Constants::TYPE_SHORT, 0.0001);
+	t.addVariable("SDR_2", Constants::TYPE_SHORT, 0.0001);
+	t.addVariable("SDR_3", Constants::TYPE_SHORT, 0.0001);
+	t.addVariable("SDR_4", Constants::TYPE_SHORT, 0.0001);
+	t.addVariable("SDR_5", Constants::TYPE_SHORT, 0.0001);
+	t.addVariable("SDR_6", Constants::TYPE_SHORT, 0.0001);
+	t.addVariable("SDR_7", Constants::TYPE_SHORT, 0.0001);
+	t.addVariable("SDR_8", Constants::TYPE_SHORT, 0.0001);
+	t.addVariable("SDR_9", Constants::TYPE_SHORT, 0.0001);
+	t.addVariable("SDR_10", Constants::TYPE_SHORT, 0.0001);
 }
 
 void Aco::stop(Context& context) {
@@ -75,7 +83,7 @@ void Aco::process(Context& context) {
 	const Segment& olc = context.getSegment(Constants::SEGMENT_OLC);
 	const Segment& olcInfo = context.getSegment(Constants::SEGMENT_OLC_INFO);
 
-	const Accessor& l12 = olc.getAccessor("L_12");
+	const Accessor& l1 = olc.getAccessor("L_1");
 	const Accessor& lat = olc.getAccessor("latitude");
 	const Accessor& lon = olc.getAccessor("longitude");
 	const Accessor& solarIrradiance = olcInfo.getAccessor("solar_irradiance");
@@ -84,8 +92,16 @@ void Aco::process(Context& context) {
 	const Grid& olcGrid = olc.getGrid();
 
 	const Segment& syc = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-	Accessor& sdr11 = syc.getAccessor("SDR_11");
-	Accessor& sdr12 = syc.getAccessor("SDR_12");
+	Accessor& sdr1 = syc.getAccessor("SDR_1");
+	Accessor& sdr2 = syc.getAccessor("SDR_2");
+	Accessor& sdr3 = syc.getAccessor("SDR_3");
+	Accessor& sdr4 = syc.getAccessor("SDR_4");
+	Accessor& sdr5 = syc.getAccessor("SDR_5");
+	Accessor& sdr6 = syc.getAccessor("SDR_6");
+	Accessor& sdr7 = syc.getAccessor("SDR_7");
+	Accessor& sdr8 = syc.getAccessor("SDR_8");
+	Accessor& sdr9 = syc.getAccessor("SDR_9");
+	Accessor& sdr10 = syc.getAccessor("SDR_10");
 
 	// TODO - get from ECMWF tie points
 	const double no3 = 0.0;
@@ -95,12 +111,12 @@ void Aco::process(Context& context) {
 	// TODO - get from segment data
 	const double tau550 = 0.1;
 
-    #pragma omp parallel for
+	// #pragma omp parallel for
 	for (size_t k = olcGrid.getFirstK();
 			k < olcGrid.getFirstK() + olcGrid.getSizeK(); k++) {
 		valarray<double> coordinates(20);
-		valarray<double> tpiWeights(4);
-		valarray<size_t> tpiIndexes(4);
+		valarray<double> tpiWeights(2);
+		valarray<size_t> tpiIndexes(2);
 		for (size_t l = olcGrid.getFirstL();
 				l < olcGrid.getFirstL() + olcGrid.getSizeL(); l++) {
 			for (size_t m = olcGrid.getFirstM();
@@ -115,13 +131,13 @@ void Aco::process(Context& context) {
 				const double vaa = tpi.interpolate(tpVaas, tpiWeights, tpiIndexes);
 
 				coordinates[0] = abs(saa - vaa); // ADA
-				coordinates[1] = sza; // SZA
-				coordinates[2] = vza; // VZA
+				coordinates[1] = 0.0; // SZA
+				coordinates[2] = 0.0; // VZA
 				coordinates[3] = p; // air pressure
 				coordinates[4] = wv; // water vapour
 				coordinates[5] = tau550; // aerosol
-				coordinates[6] = 1.0; // aerosol model index
-				coordinates[7] = 12; // SYN channel
+				coordinates[6] = 1; // aerosol model index
+				coordinates[7] = 1; // SYN channel
 
 				coordinates[8] = coordinates[1]; // SZA
 				coordinates[9] = coordinates[3]; // air pressure
@@ -142,8 +158,8 @@ void Aco::process(Context& context) {
 				const double tv = lutT->operator()(&coordinates[14]);
 				const double rho = lutRhoAtm->operator()(&coordinates[9]);
 				const double co3 = lutCO3->operator()(&coordinates[7]);
-				const double ltoa = l12.getDouble(olcGrid.getIndex(k, l, m));
-				const double f0 = solarIrradiance.getDouble(olcInfoGrid.getIndex(k, 12, m));
+				const double ltoa = l1.getDouble(olcGrid.getIndex(k, l, m));
+				const double f0 = solarIrradiance.getDouble(olcInfoGrid.getIndex(k, 1, m));
 
 				// Eq. 2-1
 				const double rtoa = (PI * ltoa) / (f0 * cos(sza * D2R));
@@ -156,8 +172,16 @@ void Aco::process(Context& context) {
 				const double f = (rtoa - to3 * ratm) / (to3 * ts * tv);
 				const double rsurf = f / (1.0 + rho * f);
 
-				sdr11.setDouble(i, rtoa);
-				sdr12.setDouble(i, rsurf);
+				sdr1.setDouble(i, rtoa);
+				sdr2.setDouble(i, rsurf);
+				sdr3.setDouble(i, sza / 90.0);
+				sdr4.setDouble(i, saa / 180.0);
+				sdr5.setDouble(i, vza / 90.0);
+				sdr6.setDouble(i, vaa / 180.0);
+				sdr7.setDouble(i, ratm);
+				sdr8.setDouble(i, ts);
+				sdr9.setDouble(i, tv);
+				sdr10.setDouble(i, rho);
 			}
 		}
 	}
