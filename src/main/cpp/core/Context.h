@@ -258,7 +258,7 @@ public:
 	 * @return {@code true} if the context has the requested information,
 	 *         {@code false} otherwise.
 	 */
-	bool hasLastLComputed(const Segment& segment, const Module& module) const;
+	bool hasLastComputedL(const Segment& segment, const Module& module) const;
 
 	bool isCompleted() const;
 

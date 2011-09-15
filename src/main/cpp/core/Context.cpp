@@ -173,7 +173,7 @@ void Context::moveSegmentsForward() const {
 
 size_t Context::getLastComputedL(const Segment& segment,
 		const Module& module) const {
-	if (hasLastLComputed(segment, module)) {
+	if (hasLastComputedL(segment, module)) {
 		return lastComputedLMap.at(&segment).at(&module);
 	}
 	BOOST_THROW_EXCEPTION(
@@ -190,21 +190,21 @@ size_t Context::getLastWritableL(const Segment& segment,
 		BOOST_THROW_EXCEPTION(
 				invalid_argument("Unknown module '" + writer.getId() + "'."));
 	}
-	size_t lastLWritable = segment.getGrid().getLastL();
+	size_t lastWritableL = segment.getGrid().getLastL();
 	if (contains(lastComputedLMap, segment)) {
 		typedef pair<const Module*, size_t> Q;
 
 		foreach(Q q, lastComputedLMap.at(&segment))
 				{
 					if (q.first != &writer) {
-						lastLWritable = min(lastLWritable, q.second);
+						lastWritableL = min(lastWritableL, q.second);
 					}
 				}
 	}
-	return lastLWritable;
+	return lastWritableL;
 }
 
-bool Context::hasLastLComputed(const Segment& segment,
+bool Context::hasLastComputedL(const Segment& segment,
 		const Module& module) const {
 	return contains(lastComputedLMap, segment)
 			&& contains(lastComputedLMap.at(&segment), module);
@@ -220,7 +220,7 @@ void Context::setLastComputedL(const Segment& segment, const Module& module,
 		BOOST_THROW_EXCEPTION(
 				invalid_argument("Unknown module '" + module.getId() + "'."));
 	}
-	if ((hasLastLComputed(segment, module)
+	if ((hasLastComputedL(segment, module)
 			&& l < getLastComputedL(segment, module))
 			|| l > segment.getGrid().getMaxL()) {
 		BOOST_THROW_EXCEPTION(
@@ -231,7 +231,7 @@ void Context::setLastComputedL(const Segment& segment, const Module& module,
 
 size_t Context::getFirstComputableL(const Segment& segment,
 		const Module& module) const {
-	if (hasLastLComputed(segment, module)) {
+	if (hasLastComputedL(segment, module)) {
 		return max(segment.getGrid().getFirstL(),
 				getLastComputedL(segment, module) + 1);
 	}

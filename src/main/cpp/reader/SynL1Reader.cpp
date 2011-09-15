@@ -207,7 +207,7 @@ void SynL1Reader::process(Context& context) {
 				const Segment& segment = context.getSegment(
 						segmentDescriptor->getName());
 				const Grid& grid = segment.getGrid();
-				if (!context.hasLastLComputed(segment, *this)
+				if (!context.hasLastComputedL(segment, *this)
 						|| context.getLastComputedL(segment, *this)
 								< grid.getFirstL() + grid.getSizeL() - 1) {
 					const vector<VariableDescriptor*> variableDescriptors =
