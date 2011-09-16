@@ -29,6 +29,7 @@
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <boost/regex.hpp>
 #include <boost/shared_array.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -46,6 +47,8 @@ using boost::diagnostic_information;
 using boost::error_info;
 using boost::lexical_cast;
 using boost::numeric_cast;
+using boost::regex;
+using boost::regex_match;
 using boost::shared_array;
 using boost::shared_ptr;
 

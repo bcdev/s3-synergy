@@ -65,6 +65,7 @@ target_link_libraries(sy_unt_gen
 	Xfdu
 	xerces-c
 	xqilla
+	boost_regex
 	boost_system-mt
 	boost_filesystem-mt
 )
@@ -83,6 +84,7 @@ target_link_libraries(sy_unt_sre
 	Xfdu
 	xerces-c
 	xqilla
+	boost_regex
 	boost_system-mt
 	boost_filesystem-mt
 )
@@ -101,6 +103,7 @@ target_link_libraries(sy_unt_swr
 	Xfdu
 	xerces-c
 	xqilla
+	boost_regex
 	boost_system-mt
 	boost_filesystem-mt
 )
@@ -121,6 +124,7 @@ target_link_libraries(sy_unt_col
 	Xfdu
 	xerces-c
 	xqilla
+	boost_regex
 	boost_system-mt
 	boost_filesystem-mt
 )
@@ -141,6 +145,7 @@ target_link_libraries(sy_unt_pcl
 	Xfdu
 	xerces-c
 	xqilla
+	boost_regex
 	boost_system-mt
 	boost_filesystem-mt
 )
@@ -161,6 +166,7 @@ target_link_libraries(sy_unt_aco
 	Xfdu
 	xerces-c
 	xqilla
+	boost_regex
 	boost_system-mt
 	boost_filesystem-mt
 )

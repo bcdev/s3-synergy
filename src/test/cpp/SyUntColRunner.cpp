@@ -29,7 +29,7 @@ static void prepareContext() {
 	shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
 	context->setErrorHandler(errorHandler);
 
-	shared_ptr<DefaultLogging> logging = shared_ptr<DefaultLogging>(new DefaultLogging("LOG.SY_UNT_ACO"));
+	shared_ptr<DefaultLogging> logging = shared_ptr<DefaultLogging>(new DefaultLogging("LOG.SY_UNT_COL"));
 	logging->setOutLogLevel(Logging::LOG_LEVEL_INFO);
 	logging->setErrLogLevel(Logging::LOG_LEVEL_INFO);
 	context->setLogging(logging);

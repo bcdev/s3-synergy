@@ -23,40 +23,43 @@ using std::getenv;
 CPPUNIT_TEST_SUITE_REGISTRATION(ColTest);
 
 ColTest::ColTest() {
-	XPathInitializer init;
-
-	const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
-	shared_ptr<Dictionary> dictionary = DictionaryParser().parse(
-			S3_SYNERGY_HOME + "/src/main/resources/dictionary");
-	shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(
-			S3_SYNERGY_HOME
-					+ "/src/test/resources/jobs/JobOrder.SY_UNT_ACO.xml");
-	shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
-	shared_ptr<Module> col = shared_ptr<Module>(new Col());
-	shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
-
-	context->setDictionary(dictionary);
-	context->setJobOrder(jobOrder);
-	context->addModule(reader);
-	context->addModule(col);
-	context->addModule(writer);
 }
 
 ColTest::~ColTest() {
 }
 
 void ColTest::setUp() {
-    context->addSegment(Constants::SEGMENT_SYN_COLLOCATED, 10, 10, 5, 0, 9);
+    XPathInitializer init;
+
+
+    const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
+    shared_ptr<Dictionary> dictionary = DictionaryParser().parse(
+            S3_SYNERGY_HOME + "/src/main/resources/dictionary");
+    shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(
+            S3_SYNERGY_HOME
+                    + "/src/test/resources/jobs/JobOrder.SY_UNT_ACO.xml");
+    shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
+    shared_ptr<Module> col = shared_ptr<Module>(new Col());
+    shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
+
+    context->setDictionary(dictionary);
+    context->setJobOrder(jobOrder);
+    context->addModule(reader);
+    context->addModule(col);
+    context->addModule(writer);
 }
 
 void ColTest::tearDown() {
     foreach(string id, context->getSegmentIds()) {
         context->removeSegment(id);
     }
+    foreach(shared_ptr<Module> module, context->getModules()) {
+        context->removeModule(module);
+    }
 }
 
 void ColTest::testAddSlstrVariables() {
-	Segment& segment = context->getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+    Segment& segment = context->addSegment(Constants::SEGMENT_SYN_COLLOCATED, 10, 10, 5, 0, 9);
 
 	// setting dummy type; this is done by reader normally, but not in test
 	foreach(VariableDescriptor* vd, context->getDictionary()->getProductDescriptor("SY1").getVariableDescriptors()) {
@@ -81,7 +84,7 @@ void ColTest::testAddSlstrVariables() {
 }
 
 void ColTest::testAddOlciVariables() {
-    Segment& segment = context->getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+    Segment& segment = context->addSegment(Constants::SEGMENT_SYN_COLLOCATED, 10, 10, 5, 0, 9);
 	Segment& olciSegment = context->addSegment(Constants::SEGMENT_OLC, 10, 10, 5, 0, 9);
 	// setting dummy type; this is done by reader normally, but not in test
 	foreach(VariableDescriptor* vd, context->getDictionary()->getProductDescriptor("SY1").getVariableDescriptors()) {
@@ -107,7 +110,52 @@ void ColTest::testAddOlciVariables() {
 	CPPUNIT_ASSERT(segment.hasVariable("L_18_er"));
 }
 
-//void ColTest::testCol() {
-//	Processor processor;
-//	processor.process(*context);
-//}
+void ColTest::testRetrievePositionVariableName() {
+    Col collocation;
+    string varName = "SLN_confidence";
+    string variableName = collocation.retrievePositionVariableName(varName, Col::AXIS_COL);
+    CPPUNIT_ASSERT(variableName.compare("x_corr_1") == 0);
+
+    varName = "L_19";
+    variableName = collocation.retrievePositionVariableName(varName, Col::AXIS_COL);
+    CPPUNIT_ASSERT(variableName.compare("x_corr_1") == 0);
+
+    varName = "L_20";
+    variableName = collocation.retrievePositionVariableName(varName, Col::AXIS_COL);
+    CPPUNIT_ASSERT(variableName.compare("x_corr_2") == 0);
+
+    varName = "L_19";
+    variableName = collocation.retrievePositionVariableName(varName, Col::AXIS_ROW);
+    CPPUNIT_ASSERT(variableName.compare("y_corr_1") == 0);
+
+    varName = "L_20";
+    variableName = collocation.retrievePositionVariableName(varName, Col::AXIS_ROW);
+    CPPUNIT_ASSERT(variableName.compare("y_corr_2") == 0);
+
+    varName = "L_24";
+    variableName = collocation.retrievePositionVariableName(varName, Col::AXIS_COL);
+    CPPUNIT_ASSERT(variableName.compare("x_corr_6") == 0);
+
+    varName = "L_24";
+    variableName = collocation.retrievePositionVariableName(varName, Col::AXIS_ROW);
+    CPPUNIT_ASSERT(variableName.compare("y_corr_6") == 0);
+
+    varName = "L_19_er";
+    variableName = collocation.retrievePositionVariableName(varName, Col::AXIS_COL);
+    CPPUNIT_ASSERT(variableName.compare("x_corr_1") == 0);
+
+    varName = "L_24_er";
+    variableName = collocation.retrievePositionVariableName(varName, Col::AXIS_ROW);
+    CPPUNIT_ASSERT(variableName.compare("y_corr_6") == 0);
+
+    varName = "L_18";
+    CPPUNIT_ASSERT_THROW(collocation.retrievePositionVariableName(varName, Col::AXIS_COL), logic_error);
+
+    varName = "L_25";
+    CPPUNIT_ASSERT_THROW(collocation.retrievePositionVariableName(varName, Col::AXIS_COL), logic_error);
+}
+
+void ColTest::testCol() {
+	Processor processor;
+	processor.process(*context);
+}
