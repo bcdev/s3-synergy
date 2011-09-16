@@ -30,7 +30,7 @@ private:
 
 	size_t getIndex(size_t k, size_t l, size_t m) const;
 	uint16_t getValue(size_t index, int64_t olcFlags, int16_t slnFlags, int16_t sloFlags) const;
-	const Accessor& getSourceAccessor(Context& context, string variableName);
+	const Accessor& getSourceAccessor(Context& context, string variableName, string sourceSegmentId);
 	void setUpSourceAccessors(Context & context);
     void setUpSegment(Context & context);
 };

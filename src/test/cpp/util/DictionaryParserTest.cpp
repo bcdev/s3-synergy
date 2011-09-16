@@ -165,13 +165,13 @@ void DictionaryParserTest::testSy2ProductDescriptor() {
 	CPPUNIT_ASSERT(s.hasVariableDescriptor("latitude"));
 	CPPUNIT_ASSERT(s.hasVariableDescriptor("altitude"));
 
-	checkSDRVariable(*p.getVariableDescriptor("SDR_1"));
-	checkA550Variable(*p.getVariableDescriptor("A550"));
-	checkT550Variable(*p.getVariableDescriptor("T550"));
-	ckeckAMINVariable(*p.getVariableDescriptor("AMIN"));
-	checkAirPressureVariable(*p.getVariableDescriptor("air_pressure"));
-	checkLatitudeVariable(*p.getVariableDescriptor("latitude"));
-	checkLongitudeVariable(*p.getVariableDescriptor("longitude"));
+	checkSDRVariable(s.getVariableDescriptor("SDR_1"));
+	checkA550Variable(s.getVariableDescriptor("A550"));
+	checkT550Variable(s.getVariableDescriptor("T550"));
+	ckeckAMINVariable(s.getVariableDescriptor("AMIN"));
+	checkAirPressureVariable(s.getVariableDescriptor("air_pressure"));
+	checkLatitudeVariable(s.getVariableDescriptor("latitude"));
+	checkLongitudeVariable(s.getVariableDescriptor("longitude"));
 }
 
 void DictionaryParserTest::checkSDRVariable(VariableDescriptor& v) {

@@ -537,9 +537,8 @@ public:
 		return hasElement(name);
 	}
 
+	// todo - ts16Sep2011 - remove
 	vector<VariableDescriptor*> getVariableDescriptors() const;
-
-	VariableDescriptor* getVariableDescriptor(const string& name) const;
 };
 
 /**
