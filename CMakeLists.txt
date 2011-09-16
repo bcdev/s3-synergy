@@ -21,6 +21,7 @@ file(GLOB_RECURSE READER_MAIN_SOURCES src/main/cpp/reader/*.cpp)
 file(GLOB_RECURSE READER_TEST_SOURCES src/test/cpp/reader/*.cpp)
 file(GLOB_RECURSE MODULES_MAIN_SOURCES src/main/cpp/modules/*.cpp)
 file(GLOB_RECURSE ACO_TEST_SOURCES src/test/cpp/modules/AcoTest.cpp)
+file(GLOB_RECURSE COL_TEST_SOURCES src/test/cpp/modules/ColTest.cpp)
 file(GLOB_RECURSE PCL_TEST_SOURCES src/test/cpp/modules/PclTest.cpp)
 file(GLOB_RECURSE WRITER_MAIN_SOURCES src/main/cpp/writer/*.cpp)
 file(GLOB_RECURSE WRITER_TEST_SOURCES src/test/cpp/writer/*.cpp)
@@ -124,6 +125,26 @@ target_link_libraries(sy_unt_aco
 	boost_filesystem-mt
 )
 set_property(TARGET sy_unt_aco PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+#
+add_executable(sy_unt_col
+    src/test/cpp/SyUntColRunner.cpp
+	${CORE_MAIN_SOURCES}
+	${UTIL_MAIN_SOURCES}
+	${READER_MAIN_SOURCES}
+	${WRITER_MAIN_SOURCES}
+	${MODULES_MAIN_SOURCES}
+	${COL_TEST_SOURCES}
+)
+target_link_libraries(sy_unt_col
+	cppunit
+	netcdf
+	Xfdu
+	xerces-c
+	xqilla
+	boost_system-mt
+	boost_filesystem-mt
+)
+set_property(TARGET sy_unt_col PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
 add_executable(sy_unt_pcl
     src/test/cpp/SyUntPclRunner.cpp

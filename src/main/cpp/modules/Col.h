@@ -26,6 +26,14 @@ public:
 	void process(Context& context);
 
 	virtual ~Col();
+
+
+private:
+    friend class ColTest;
+    void addOlciVariables(Context& context, Segment& collocatedSegment, const Segment& olciSegment);
+    void addVariable(ProductDescriptor& productDescriptor, const string& sourceName, const string& targetName, Context& context, Segment& collocatedSegment);
+    void addSlstrVariables(Context& context, Segment& collocatedSegment);
+    Segment* collocatedSegment;
 };
 
 #endif /* COL_H_ */
