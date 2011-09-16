@@ -68,16 +68,16 @@ void SegmentImplTest::testGetGrid() {
     CPPUNIT_ASSERT(grid.getFirstK() == 0);
     CPPUNIT_ASSERT(grid.getFirstL() == 0);
     CPPUNIT_ASSERT(grid.getFirstM() == 0);
-    CPPUNIT_ASSERT(grid.getSizeK() == 5);
+    CPPUNIT_ASSERT(grid.getSizeK() == Constants::N_CAM);
     CPPUNIT_ASSERT(grid.getSizeL() == 2000);
-    CPPUNIT_ASSERT(grid.getSizeM() == 760);
+    CPPUNIT_ASSERT(grid.getSizeM() == Constants::N_DET_CAM);
 }
 
 void SegmentImplTest::testGetAccessor() {
     CPPUNIT_ASSERT_THROW(segment->getAccessor("B"), logic_error);
     segment->addVariableByte("B");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("B").getByteData());
-    CPPUNIT_ASSERT(segment->getAccessor("B").getByteData().size() == 5 * 2000 * 760);
+    CPPUNIT_ASSERT(segment->getAccessor("B").getByteData().size() == Constants::N_CAM * 2000 * Constants::N_DET_CAM);
 
     CPPUNIT_ASSERT_THROW(segment->getAccessor("D"), logic_error);
     segment->addVariableDouble("D");

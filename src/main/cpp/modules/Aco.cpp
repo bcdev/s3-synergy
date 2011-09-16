@@ -111,12 +111,12 @@ void Aco::process(Context& context) {
 	// TODO - get from segment data
 	const double tau550 = 0.1;
 
-	// #pragma omp parallel for
+	#pragma omp parallel for
 	for (size_t k = olcGrid.getFirstK();
 			k < olcGrid.getFirstK() + olcGrid.getSizeK(); k++) {
 		valarray<double> coordinates(20);
-		valarray<double> tpiWeights(2);
-		valarray<size_t> tpiIndexes(2);
+		valarray<double> tpiWeights(1);
+		valarray<size_t> tpiIndexes(1);
 		for (size_t l = olcGrid.getFirstL();
 				l < olcGrid.getFirstL() + olcGrid.getSizeL(); l++) {
 			for (size_t m = olcGrid.getFirstM();
@@ -131,8 +131,8 @@ void Aco::process(Context& context) {
 				const double vaa = tpi.interpolate(tpVaas, tpiWeights, tpiIndexes);
 
 				coordinates[0] = abs(saa - vaa); // ADA
-				coordinates[1] = 0.0; // SZA
-				coordinates[2] = 0.0; // VZA
+				coordinates[1] = sza; // SZA
+				coordinates[2] = vza; // VZA
 				coordinates[3] = p; // air pressure
 				coordinates[4] = wv; // water vapour
 				coordinates[5] = tau550; // aerosol
