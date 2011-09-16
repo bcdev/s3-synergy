@@ -386,6 +386,22 @@ public:
 		this->type = type;
 	}
 
+	/**
+	 * Getter for the variable's scale factor.
+	 * @return the variable's scale factor.
+	 */
+	double getScaleFactor() const {
+		return hasAttribute("scale_factor") ? getAttribute("scale_factor").getDoubles()[0] : 1.0;
+	}
+
+	/**
+	 * Getter for the variable's add offset.
+	 * @return the variable's add offset.
+	 */
+	double getAddOffset() const {
+		return hasAttribute("add_offset") ? getAttribute("add_offset").getDoubles()[0] : 0.0;
+	}
+
 	Dimension& addDimension(const string& name) {
 
 		return addElement(name);
