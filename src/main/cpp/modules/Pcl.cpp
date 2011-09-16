@@ -67,9 +67,9 @@ void Pcl::process(Context& context) {
 	collocatedSegment->addVariable(targetVariableName, flagsDescriptor->getType());
 	Accessor& targetAccessor = collocatedSegment->getAccessor(targetVariableName);
 
-	const valarray<long> olcFlags = olcFlagsAccessor->getLongData();
-	const valarray<short> slnFlags = slnFlagsAccessor->getShortData();
-	const valarray<short> sloFlags = sloFlagsAccessor->getShortData();
+	const valarray<int64_t> olcFlags = olcFlagsAccessor->getLongData();
+	const valarray<int16_t> slnFlags = slnFlagsAccessor->getShortData();
+	const valarray<int16_t> sloFlags = sloFlagsAccessor->getShortData();
 
 	const Grid& collocatedGrid = collocatedSegment->getGrid();
 	for (size_t k = collocatedGrid.getFirstK(); k < collocatedGrid.getFirstK() + collocatedGrid.getSizeK(); k++) {
@@ -87,10 +87,10 @@ size_t Pcl::getIndex(size_t k, size_t l, size_t m) const {
 	return collocatedSegment->getGrid().getIndex(k, l, m);
 }
 
-uint16_t Pcl::getValue(size_t index, long olcFlags, short slnFlags, short sloFlags) const {
-	size_t olciLandFlag = 0b10000000000000000000000000000000;
-    size_t slstrLandFlag = 0b1000;
-    size_t slstrCloudFlag = 0b100000000000000;
+uint16_t Pcl::getValue(size_t index, int64_t olcFlags, int16_t slnFlags, int16_t sloFlags) const {
+	const int64_t olciLandFlag = 2147483648;
+	const int16_t slstrLandFlag = 8;
+	const int16_t slstrCloudFlag = 16384;
 
     bool isLandPixel = (olcFlags & olciLandFlag) == olciLandFlag;
     isLandPixel &= (slnFlags & slstrLandFlag) == slstrLandFlag;
