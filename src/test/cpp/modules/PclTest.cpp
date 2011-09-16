@@ -23,21 +23,6 @@ using std::getenv;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(PclTest);
 
-class TestPcl : public Pcl {
-public:
-	size_t getIndex(size_t k, size_t l, size_t m) {
-		return Pcl::getIndex(k, l, m);
-	}
-
-	uint16_t getValue(size_t index, long olcFlags, short slnFlags, short sloFlags) const {
-		return Pcl::getValue(index, olcFlags, slnFlags, sloFlags);
-	}
-
-	const Accessor& getSourceAccessor(Context& context, string variableName) {
-		return Pcl::getSourceAccessor(context, variableName);
-	}
-};
-
 PclTest::PclTest() {
 	XPathInitializer init;
 
@@ -88,7 +73,7 @@ void PclTest::testGetAccessor() {
 	segment.addVariable("OLC_flags", Constants::TYPE_LONG);
 	segment.addVariable("SLN_confidence", Constants::TYPE_LONG);
 	segment.addVariable("SLO_confidence", Constants::TYPE_LONG);
-	TestPcl pclToTest;
+	Pcl pclToTest;
     CPPUNIT_ASSERT_NO_THROW(pclToTest.getSourceAccessor(*context, "SLO_confidence"));
     CPPUNIT_ASSERT_NO_THROW(pclToTest.getSourceAccessor(*context, "SLN_confidence"));
     CPPUNIT_ASSERT_NO_THROW(pclToTest.getSourceAccessor(*context, "OLC_flags"));
@@ -99,7 +84,7 @@ void PclTest::testGetIndex() {
 	segment.addVariable("OLC_flags", Constants::TYPE_BYTE);
 	segment.addVariable("SLN_confidence", Constants::TYPE_BYTE);
 	segment.addVariable("SLO_confidence", Constants::TYPE_BYTE);
-	TestPcl pclToTest;
+	Pcl pclToTest;
     pclToTest.start(*context);
 	size_t index = pclToTest.getIndex(0, 0, 0);
 	CPPUNIT_ASSERT(index == 0);
@@ -115,7 +100,7 @@ void PclTest::testGetIndex() {
 }
 
 void PclTest::testGetValue() {
-	TestPcl pclToTest;
+	Pcl pclToTest;
 	long olcFlags = 0b10000000000000000000000000000000;
 	short slnFlags = 0b100000000001000;
 	short sloFlags = 0b100000000001000;
