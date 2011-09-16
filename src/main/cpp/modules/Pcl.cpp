@@ -33,28 +33,28 @@ void Pcl::start(Context& context) {
 
 void Pcl::setUpSegment(Context& context) {
     collocatedSegment = &(context.getSegment(Constants::SEGMENT_SYN_COLLOCATED));
-    ProductDescriptor & productDescriptor = context.getDictionary()->getProductDescriptor("SY2");
-    string variableName = "SYN_flags";
-    VariableDescriptor *synFlags = productDescriptor.getVariableDescriptor(variableName);
-    collocatedSegment->addVariable(variableName, synFlags->getType());
+    const ProductDescriptor& productDescriptor = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2);
+    const string variableName = "SYN_flags";
+    const VariableDescriptor& synFlags = productDescriptor.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED).getVariableDescriptor(variableName);
+    collocatedSegment->addVariable(variableName, synFlags.getType(), synFlags.getScaleFactor(), synFlags.getAddOffset());
 	context.getLogging()->info("adding variable '" + variableName + "' to segment '" + collocatedSegment->getId() + "'.", getId());
 }
 
 void Pcl::setUpSourceAccessors(Context & context) {
-    olcFlagsAccessor = &getSourceAccessor(context, "OLC_flags");
-    slnFlagsAccessor = &getSourceAccessor(context, "SLN_confidence");
-    sloFlagsAccessor = &getSourceAccessor(context, "SLO_confidence");
+    olcFlagsAccessor = &getSourceAccessor(context, "OLC_flags", Constants::SEGMENT_OLC);
+    slnFlagsAccessor = &getSourceAccessor(context, "SLN_confidence", Constants::SEGMENT_SLN);
+    sloFlagsAccessor = &getSourceAccessor(context, "SLO_confidence", Constants::SEGMENT_SLO);
 }
 
 void Pcl::stop(Context& context) {
 
 }
 
-const Accessor& Pcl::getSourceAccessor(Context& context, string variableName) {
-	ProductDescriptor& sy1Descriptor = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY1);
-	VariableDescriptor* variableDescriptor = sy1Descriptor.getVariableDescriptor(variableName);
-	string flagVariableName = variableDescriptor->getName();
-	string segmentName = Constants::SEGMENT_SYN_COLLOCATED;
+const Accessor& Pcl::getSourceAccessor(Context& context, string variableName, string sourceSegmentId) {
+	const ProductDescriptor& sy1Descriptor = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY1);
+	const VariableDescriptor& variableDescriptor = sy1Descriptor.getSegmentDescriptor(sourceSegmentId).getVariableDescriptor(variableName);
+	const string& flagVariableName = variableDescriptor.getName();
+	const string& segmentName = Constants::SEGMENT_SYN_COLLOCATED;
 	return context.getSegment(segmentName).getAccessor(flagVariableName);
 }
 
@@ -62,9 +62,9 @@ void Pcl::process(Context& context) {
 	context.getLogging()->info("Setting flags for segment '" + collocatedSegment->toString() + "'.", getId());
 	boost::shared_ptr<Dictionary> dictionary = context.getDictionary();
 	const ProductDescriptor& l2Descriptor = dictionary->getProductDescriptor(Constants::PRODUCT_SY2);
-	const VariableDescriptor* flagsDescriptor = l2Descriptor.getVariableDescriptor("SYN_flags");
-	const string targetVariableName = flagsDescriptor->getName();
-	collocatedSegment->addVariable(targetVariableName, flagsDescriptor->getType());
+	const VariableDescriptor& flagsDescriptor = l2Descriptor.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED).getVariableDescriptor("SYN_flags");
+	const string targetVariableName = flagsDescriptor.getName();
+	collocatedSegment->addVariable(targetVariableName, flagsDescriptor.getType(), flagsDescriptor.getScaleFactor(), flagsDescriptor.getAddOffset());
 	Accessor& targetAccessor = collocatedSegment->getAccessor(targetVariableName);
 
 	const valarray<int64_t> olcFlags = olcFlagsAccessor->getLongData();

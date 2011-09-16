@@ -74,9 +74,9 @@ void PclTest::testGetAccessor() {
 	segment.addVariable("SLN_confidence", Constants::TYPE_LONG);
 	segment.addVariable("SLO_confidence", Constants::TYPE_LONG);
 	Pcl pclToTest;
-    CPPUNIT_ASSERT_NO_THROW(pclToTest.getSourceAccessor(*context, "SLO_confidence"));
-    CPPUNIT_ASSERT_NO_THROW(pclToTest.getSourceAccessor(*context, "SLN_confidence"));
-    CPPUNIT_ASSERT_NO_THROW(pclToTest.getSourceAccessor(*context, "OLC_flags"));
+    CPPUNIT_ASSERT_NO_THROW(pclToTest.getSourceAccessor(*context, "SLO_confidence", Constants::SEGMENT_SLO));
+    CPPUNIT_ASSERT_NO_THROW(pclToTest.getSourceAccessor(*context, "SLN_confidence", Constants::SEGMENT_SLN));
+    CPPUNIT_ASSERT_NO_THROW(pclToTest.getSourceAccessor(*context, "OLC_flags", Constants::SEGMENT_OLC));
 }
 
 void PclTest::testGetIndex() {
