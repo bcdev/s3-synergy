@@ -90,6 +90,7 @@ void Col::addVariable(ProductDescriptor& productDescriptor, const string& source
 }
 
 void Col::stop(Context& context) {
+    delete collocatedSegment;
 }
 
 void Col::process(Context& context) {
