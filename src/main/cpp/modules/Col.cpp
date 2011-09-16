@@ -18,7 +18,7 @@ void Col::start(Context& context) {
     const Segment& olciSegment = context.getSegment(Constants::SEGMENT_OLC);
     const Grid& olciGrid = olciSegment.getGrid();
 
-    collocatedSegment = &context.addSegment(Constants::SEGMENT_SYN_COLLOCATED, olciGrid.getSizeL(), olciGrid.getSizeM(), olciGrid.getSizeK(), olciGrid.getMinL(), olciGrid.getMaxL());
+    collocatedSegment = shared_ptr<Segment>(&context.addSegment(Constants::SEGMENT_SYN_COLLOCATED, olciGrid.getSizeL(), olciGrid.getSizeM(), olciGrid.getSizeK(), olciGrid.getMinL(), olciGrid.getMaxL()));
 
     addOlciVariables(context, *collocatedSegment, olciSegment);
     addSlstrVariables(context, *collocatedSegment);
@@ -32,8 +32,7 @@ void Col::addOlciVariables(Context& context, Segment& collocatedSegment, const S
         const string sourceName = "L_" + lexical_cast<string>(mapping[i]);
         const string targetName = "L_" + lexical_cast<string>(i + 1);
         if (mapping[i] == 17) {
-            context.getLogging()->info("adding alias '" + targetName + "' to segment '" + collocatedSegment.getId() + "'", getId());
-            collocatedSegment.addVariableAlias(targetName, olciSegment, sourceName);
+            addVariableAlias(context, targetName, collocatedSegment, olciSegment, sourceName);
         } else {
             addVariable(productDescriptor, sourceName, targetName, context, collocatedSegment);
         }
@@ -42,8 +41,7 @@ void Col::addOlciVariables(Context& context, Segment& collocatedSegment, const S
         const string sourceName = "L_" + lexical_cast<string>(mapping[i]) + "_er";
         const string targetName = "L_" + lexical_cast<string>(i + 1) + "_er";
         if (mapping[i] == 17) {
-            context.getLogging()->info("adding alias '" + targetName + "' to segment '" + collocatedSegment.getId() + "'", getId());
-            collocatedSegment.addVariableAlias(targetName, olciSegment, sourceName);
+            addVariableAlias(context, targetName, collocatedSegment, olciSegment, sourceName);
         } else {
             addVariable(productDescriptor, sourceName, targetName, context, collocatedSegment);
         }
@@ -89,10 +87,35 @@ void Col::addVariable(ProductDescriptor& productDescriptor, const string& source
     collocatedSegment.addVariable(targetName, descriptor->getType(), descriptor->getScaleFactor(), descriptor->getAddOffset());
 }
 
+void Col::addVariableAlias(Context & context, const string & targetName, Segment & collocatedSegment, const Segment & olciSegment, const string & sourceName) {
+    context.getLogging()->info("adding alias '" + targetName + "' to segment '" + collocatedSegment.getId() + "'", getId());
+    collocatedSegment.addVariableAlias(targetName, olciSegment, sourceName);
+}
+
 void Col::stop(Context& context) {
-    delete collocatedSegment;
 }
 
 void Col::process(Context& context) {
+
+    const Grid& collocatedGrid = collocatedSegment->getGrid();
+    for (size_t k = collocatedGrid.getFirstK(); k < collocatedGrid.getFirstK() + collocatedGrid.getSizeK(); k++) {
+        for (size_t l = collocatedGrid.getFirstL(); l < collocatedGrid.getFirstL() + collocatedGrid.getSizeL(); l++) {
+            for (size_t m = collocatedGrid.getFirstM(); m < collocatedGrid.getFirstM() + collocatedGrid.getSizeM(); m++) {
+
+                /*
+                 * for each variable v in collocatedSegment:
+                 *
+                 *      get corresponding misregistration accessor m
+                 *      get accessor n for v from non-collocated segment (OLCI, SLN, SLO)
+                 *      get value pos from m for index k, l, m
+                 *      get value val from n for position pos
+                 *
+                 *      get accessor c for v from collocated segment
+                 *      set c at position pos to val
+                 */
+
+            }
+        }
+    }
 }
 
