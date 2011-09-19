@@ -27,56 +27,51 @@ using std::valarray;
 template<class W>
 class TiePointInterpolator {
 public:
-	TiePointInterpolator(const valarray<W>& lons, const valarray<W>& lats);
+	TiePointInterpolator(const valarray<W>& tpLons, const valarray<W>& tpLats);
 	~TiePointInterpolator();
 
-	void prepare(W lon, W lat, valarray<W>& weights,
-			valarray<size_t>& indexes) const;
-	W interpolate(const valarray<W>& field, const valarray<W>& weights,
-			const valarray<size_t>& indexes) const;
+	void prepare(W lon, W lat, valarray<W>& weights, valarray<size_t>& indexes) const;
+	W interpolate(const valarray<W>& field, const valarray<W>& weights, const valarray<size_t>& indexes) const;
 
 private:
 	class TiePointIndexComparator {
 	public:
-		TiePointIndexComparator(const valarray<W>& lons,
-				const valarray<W>& lats) :
-				lons(lons), lats(lats) {
+		TiePointIndexComparator(const valarray<W>& tpLons, const valarray<W>& tpLats) :
+				tpLons(tpLons), tpLats(tpLats) {
 		}
 
 		~TiePointIndexComparator() {
 		}
 
 		bool operator()(const size_t i1, const size_t i2) const {
-			return lats[i1] < lats[i2];
+			return tpLats[i1] < tpLats[i2];
 		}
 	private:
-		const valarray<W>& lons;
-		const valarray<W>& lats;
+		const valarray<W>& tpLons;
+		const valarray<W>& tpLats;
 	};
 
 	void reorder(valarray<W>& array, const valarray<size_t>& reordering) const;
 	W cosineDistance(W lon, W lat, size_t i) const;
 
-	valarray<W> lons;
-	valarray<W> lats;
+	valarray<W> tpLons;
+	valarray<W> tpLats;
 	valarray<size_t> ordering;
 
 	static const W RAD = W(3.14159265358979323846) / W(180.0);
 };
 
 template<class W>
-TiePointInterpolator<W>::TiePointInterpolator(const valarray<W>& lons,
-		const valarray<W>& lats) :
-		lons(lons), lats(lats), ordering(lats.size()) {
+TiePointInterpolator<W>::TiePointInterpolator(const valarray<W>& tpLons, const valarray<W>& tpLats) :
+		tpLons(tpLons), tpLats(tpLats), ordering(tpLats.size()) {
 	using std::sort;
 
 	for (size_t i = 0; i < ordering.size(); i++) {
 		ordering[i] = i;
 	}
-	sort(&ordering[0], &ordering[ordering.size()],
-			TiePointIndexComparator(this->lons, this->lats));
-	reorder(this->lons, ordering);
-	reorder(this->lats, ordering);
+	sort(&ordering[0], &ordering[ordering.size()], TiePointIndexComparator(this->tpLons, this->tpLats));
+	reorder(this->tpLons, ordering);
+	reorder(this->tpLats, ordering);
 }
 
 template<class W>
@@ -84,8 +79,7 @@ TiePointInterpolator<W>::~TiePointInterpolator() {
 }
 
 template<class W>
-void TiePointInterpolator<W>::reorder(valarray<W>& array,
-		const valarray<size_t>& reordering) const {
+void TiePointInterpolator<W>::reorder(valarray<W>& array, const valarray<size_t>& reordering) const {
 	using std::copy;
 
 	const valarray<W> reorderedArray = array[reordering];
@@ -93,23 +87,19 @@ void TiePointInterpolator<W>::reorder(valarray<W>& array,
 }
 
 template<class W>
-void TiePointInterpolator<W>::prepare(W lon, W lat, valarray<W>& weights,
-		valarray<size_t>& indexes) const {
+void TiePointInterpolator<W>::prepare(W lon, W lat, valarray<W>& weights, valarray<size_t>& indexes) const {
 	using std::abs;
 	using std::acos;
 	using std::fill;
 	using std::lower_bound;
-	using std::sqrt;
 
 	assert(weights.size() == indexes.size());
 
 	const size_t n = weights.size();
 	const size_t range = 150;
-	const size_t midIndex = lower_bound(&lats[0], &lats[lats.size()], lat)
-			- &lats[0];
+	const size_t midIndex = lower_bound(&tpLats[0], &tpLats[tpLats.size()], lat) - &tpLats[0];
 	const size_t minIndex = midIndex >= range ? midIndex - range : 0;
-	const size_t maxIndex =
-			midIndex <= lats.size() - range ? midIndex + range : lats.size();
+	const size_t maxIndex = midIndex <= tpLats.size() - range ? midIndex + range : tpLats.size();
 	fill(&weights[0], &weights[n], W(-1));
 
 	for (size_t i = minIndex; i < maxIndex; i++) {
@@ -145,8 +135,7 @@ void TiePointInterpolator<W>::prepare(W lon, W lat, valarray<W>& weights,
 }
 
 template<class W>
-W TiePointInterpolator<W>::interpolate(const valarray<W>& field,
-		const valarray<W>& weights, const valarray<size_t>& indexes) const {
+W TiePointInterpolator<W>::interpolate(const valarray<W>& field, const valarray<W>& weights, const valarray<size_t>& indexes) const {
 	assert(weights.size() == indexes.size());
 
 	const size_t n = weights.size();
@@ -163,8 +152,7 @@ inline W TiePointInterpolator<W>::cosineDistance(W lon, W lat, size_t i) const {
 	using std::cos;
 	using std::sin;
 	// http://www.movable-type.co.uk/scripts/latlong.html
-	return sin(lat * RAD) * sin(lats[i] * RAD)
-			+ cos(lat * RAD) * cos(lats[i] * RAD) * cos((lon - lons[i]) * RAD);
+	return sin(lat * RAD) * sin(tpLats[i] * RAD) + cos(lat * RAD) * cos(tpLats[i] * RAD) * cos((lon - tpLons[i]) * RAD);
 }
 
 #endif /* TIEPOINTINTERPOLATOR_H_ */
