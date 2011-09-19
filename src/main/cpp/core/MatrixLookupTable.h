@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2011 by Brockmann Consult (info@brockmann-consult.de)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -12,14 +12,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
- * File:   LookupTable.h
+ * File:   MatrixLookupTable.h
  * Author: ralf
  *
  * Created on January 25, 2011, 4:50 PM
  */
 
-#ifndef LOOKUPTABLE_H
-#define	LOOKUPTABLE_H
+#ifndef MATRIXLOOKUPTABLE_H
+#define	MATRIXLOOKUPTABLE_H
 
 #include <algorithm>
 #include <cassert>
@@ -33,22 +33,22 @@ using std::valarray;
 using std::vector;
 
 template<class T, class W>
-class LookupTableImpl;
+class MatrixLookupTableImpl;
 
 /**
- * A lookup table.
+ * A vector lookup table.
  *
  * @author Ralf Quast
  */
 template<class W>
-class LookupTable: public Identifiable {
+class MatrixLookupTable: public Identifiable {
 public:
 	typedef valarray<W> Dimension;
 
-	virtual ~LookupTable() {
+	virtual ~MatrixLookupTable() {
 	}
 
-	virtual W getValue(const W coordinates[]) const = 0;
+	virtual matrix<W>& getValues(const W coordinates[], matrix<W>& matrix) const = 0;
 
 	virtual size_t getDimensionCount() const = 0;
 	virtual size_t getDimensionLength(size_t dimIndex) const = 0;
@@ -62,28 +62,23 @@ public:
 	virtual W getValue(size_t i) const = 0;
 
 	template<class T>
-	static shared_ptr<LookupTable<W> > newLookupTable(const string& id,
-			const vector<Dimension>& dims, const shared_array<T>& values,
+	static shared_ptr<MatrixLookupTable<W> > newMatrixLookupTable(const string& id, size_t rowCount, size_t colCount, const vector<Dimension>& dims, const shared_array<T>& values,
 			W scaleFactor = W(1), W addOffset = W(0)) {
-		return shared_ptr<LookupTable<W> >(
-				new LookupTableImpl<T, W>(id, dims, values, scaleFactor,
-						addOffset));
+		return shared_ptr<MatrixLookupTable<W> >(new VectorLookupTableImpl<T, W>(id, rowCount, colCount, dims, values, scaleFactor, addOffset));
 	}
 };
 
 template<class T, class W>
-class LookupTableImpl: public LookupTable<W> {
+class MatrixLookupTableImpl: public MatrixLookupTable<W> {
 public:
 	typedef valarray<W> Dimension;
 
-	LookupTableImpl(const string& id, const vector<Dimension>& dims,
-			const shared_array<T>& values, W scaleFactor = W(1), W addOffset =
-					W(0));
-	virtual ~LookupTableImpl();
+	MatrixLookupTableImpl(const string& id, size_t rowCount, size_t colCount, const vector<Dimension>& dims, const shared_array<T>& values, W scaleFactor = W(1), W addOffset = W(0));
+	virtual ~MatrixLookupTableImpl();
 
 	const string& getId() const;
 
-	W getValue(const W coordinates[]) const;
+	matrix<W>& getValues(const W coordinates[], matrix<W>& values) const;
 
 	size_t getDimensionCount() const;
 	size_t getDimensionLength(size_t dimIndex) const;
@@ -94,12 +89,17 @@ public:
 	W getMaxCoordinate(size_t dimIndex) const;
 	W getMinCoordinate(size_t dimIndex) const;
 
-	W getValue(size_t i) const;
+	W getValue(size_t i) const {
+		return boost::numeric_cast<W>(y[i]) * scaleFactor + addOffset;
+	}
 
 private:
 	size_t getIndex(size_t dimIndex, W coordinate, W& fraction) const;
 
 	const string id;
+	const size_t rowCount;
+	const size_t colCount;
+
 	const W scaleFactor;
 	const W addOffset;
 
@@ -117,17 +117,14 @@ private:
 };
 
 template<class T, class W>
-LookupTableImpl<T, W>::LookupTableImpl(const string& id,
-		const vector<Dimension>& dims, const shared_array<T>& values,
-		W scaleFactor, W addOffset) :
-		id(id), scaleFactor(scaleFactor), addOffset(addOffset), x(dims), y(
-				values), sizes(dims.size()), strides(dims.size()), offsets(
-				1 << dims.size()), n(x.size()) {
+MatrixLookupTableImpl<T, W>::MatrixLookupTableImpl(const string& id, size_t rowCount, size_t colCount, const vector<Dimension>& dims, const shared_array<T>& values, W scaleFactor, W addOffset) :
+		id(id), rowCount(rowCount), colCount(colCount), scaleFactor(scaleFactor), addOffset(addOffset), x(dims), y(values), sizes(dims.size()), strides(dims.size()), offsets(1 << dims.size()), n(
+				x.size()) {
 	for (size_t i = 0; i < n; ++i) {
 		assert(x[i].size() > 0);
 		sizes[i] = x[i].size();
 	}
-	for (size_t i = n, stride = 1; i-- > 0;) {
+	for (size_t i = n, stride = rowCount * colCount; i-- > 0;) {
 		strides[i] = stride;
 		stride *= sizes[i];
 	}
@@ -141,84 +138,93 @@ LookupTableImpl<T, W>::LookupTableImpl(const string& id,
 }
 
 template<class T, class W>
-LookupTableImpl<T, W>::~LookupTableImpl() {
+MatrixLookupTableImpl<T, W>::~MatrixLookupTableImpl() {
 }
 
 template<class T, class W>
-W LookupTableImpl<T, W>::getValue(const W coordinates[]) const {
+matrix<W>& MatrixLookupTableImpl<T, W>::getValues(const W coordinates[], matrix<W>& matrix) const {
+	assert(matrix.size1() >= rowCount);
+	assert(matrix.size2() >= colCount);
+
+	const size_t elementCount = rowCount * colCount;
+
 	valarray<W> f(n);
-	valarray<W> v(offsets.size());
+	valarray<W> v(offsets.size() * elementCount);
 
 	size_t origin = 0;
 	for (size_t i = 0; i < n; ++i) {
 		origin += getIndex(i, coordinates[i], f[i]) * strides[i];
 	}
 	for (size_t i = 0; i < offsets.size(); ++i) {
-		v[i] = boost::numeric_cast<W>(y[origin + offsets[i]]);
+		for (size_t j = 0; j < elementCount; ++j) {
+			v[i * elementCount + j] = boost::numeric_cast<W>(y[origin + offsets[i] + j]);
+		}
 	}
-    for (size_t i = n; i-- > 0;) {
-        const size_t m = 1 << i;
+	for (size_t i = n; i-- > 0;) {
+		const size_t m = 1 << i;
 
-        for (size_t j = 0; j < m; ++j) {
-            v[j] += f[i] * (v[m + j] - v[j]);
-        }
-    }
+		for (size_t j = 0; j < m; ++j) {
+			for (size_t k = 0; k < elementCount; ++k) {
+				v[j * elementCount + k] += f[i] * (v[(m + j) * elementCount + k] - v[j * elementCount + k]);
+			}
+		}
+	}
+	for (size_t i = 0, k = 0; i < rowCount; ++i) {
+		for (size_t j = 0; j < colCount; ++j, ++k) {
+			matrix(i, j) = v[k] * scaleFactor + addOffset;
+		}
+	}
 
-	return v[0] * scaleFactor + addOffset;
+	return matrix;
 }
 
 template<class T, class W>
-inline const string& LookupTableImpl<T, W>::getId() const {
+inline const string& MatrixLookupTableImpl<T, W>::getId() const {
 	return id;
 }
 
 template<class T, class W>
-inline size_t LookupTableImpl<T, W>::getDimensionCount() const {
+inline size_t MatrixLookupTableImpl<T, W>::getDimensionCount() const {
 	return n;
 }
 
 template<class T, class W>
-inline size_t LookupTableImpl<T, W>::getDimensionLength(size_t dimIndex) const {
+inline size_t MatrixLookupTableImpl<T, W>::getDimensionLength(size_t dimIndex) const {
 	assert(dimIndex < n);
 	return sizes[dimIndex];
 }
 
 template<class T, class W>
-inline size_t LookupTableImpl<T, W>::getStride(size_t dimIndex) const {
+inline size_t MatrixLookupTableImpl<T, W>::getStride(size_t dimIndex) const {
 	assert(dimIndex < n);
 	return strides[dimIndex];
 }
 
 template<class T, class W>
-inline W LookupTableImpl<T, W>::getValue(size_t i) const {
-	return boost::numeric_cast<W>(y[i]) * scaleFactor + addOffset;
-}
-
-template<class T, class W>
-inline W LookupTableImpl<T, W>::getScaleFactor() const {
+inline W MatrixLookupTableImpl<T, W>::getScaleFactor() const {
 	return scaleFactor;
 }
 
 template<class T, class W>
-inline W LookupTableImpl<T, W>::getAddOffset() const {
+inline W MatrixLookupTableImpl<T, W>::getAddOffset() const {
 	return addOffset;
 }
 
 template<class T, class W>
-inline W LookupTableImpl<T, W>::getMaxCoordinate(size_t dimIndex) const {
+inline W MatrixLookupTableImpl<T, W>::getMaxCoordinate(size_t dimIndex) const {
 	assert(dimIndex < n);
 	assert(sizes[dimIndex] > 0);
 	return x[dimIndex][sizes[dimIndex] - 1];
 }
 
 template<class T, class W>
-inline W LookupTableImpl<T, W>::getMinCoordinate(size_t dimIndex) const {
+inline W MatrixLookupTableImpl<T, W>::getMinCoordinate(size_t dimIndex) const {
 	assert(dimIndex < n and sizes[dimIndex] > 0);
 	return x[dimIndex][0];
 }
 
 template<class T, class W>
-size_t LookupTableImpl<T, W>::getIndex(size_t dimIndex, W coordinate, W& f) const {
+size_t MatrixLookupTableImpl<T, W>::getIndex(size_t dimIndex, W coordinate, W& f) const {
 	assert(dimIndex < n);
 	assert(sizes[dimIndex] > 0);
 
@@ -234,15 +240,15 @@ size_t LookupTableImpl<T, W>::getIndex(size_t dimIndex, W coordinate, W& f) cons
 			lo = m;
 	}
 
-    f = (coordinate - x[dimIndex][lo]) / (x[dimIndex][hi] - x[dimIndex][lo]);
-    if (f < W(0.0)) {
-        f = W(0.0);
-    } else if (f > W(1.0)) {
-        f = W(1.0);
-    }
+	f = (coordinate - x[dimIndex][lo]) / (x[dimIndex][hi] - x[dimIndex][lo]);
+	if (f < W(0.0)) {
+		f = W(0.0);
+	} else if (f > W(1.0)) {
+		f = W(1.0);
+	}
 
 	return lo;
 }
 
-#endif	/* LOOKUPTABLE_H */
+#endif	/* MATRIXLOOKUPTABLE_H */
 

@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2011 by Brockmann Consult (info@brockmann-consult.de)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -12,14 +12,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
- * File:   LookupTable.h
+ * File:   VectorLookupTable.h
  * Author: ralf
  *
  * Created on January 25, 2011, 4:50 PM
  */
 
-#ifndef LOOKUPTABLE_H
-#define	LOOKUPTABLE_H
+#ifndef VECTORLOOKUPTABLE_H
+#define	VECTORLOOKUPTABLE_H
 
 #include <algorithm>
 #include <cassert>
@@ -33,22 +33,22 @@ using std::valarray;
 using std::vector;
 
 template<class T, class W>
-class LookupTableImpl;
+class VectorLookupTableImpl;
 
 /**
- * A lookup table.
+ * A vector lookup table.
  *
  * @author Ralf Quast
  */
 template<class W>
-class LookupTable: public Identifiable {
+class VectorLookupTable: public Identifiable {
 public:
 	typedef valarray<W> Dimension;
 
-	virtual ~LookupTable() {
+	virtual ~VectorLookupTable() {
 	}
 
-	virtual W getValue(const W coordinates[]) const = 0;
+	virtual valarray<W>& getValues(const W coordinates[], valarray<W>& values) const = 0;
 
 	virtual size_t getDimensionCount() const = 0;
 	virtual size_t getDimensionLength(size_t dimIndex) const = 0;
@@ -62,28 +62,23 @@ public:
 	virtual W getValue(size_t i) const = 0;
 
 	template<class T>
-	static shared_ptr<LookupTable<W> > newLookupTable(const string& id,
-			const vector<Dimension>& dims, const shared_array<T>& values,
-			W scaleFactor = W(1), W addOffset = W(0)) {
-		return shared_ptr<LookupTable<W> >(
-				new LookupTableImpl<T, W>(id, dims, values, scaleFactor,
-						addOffset));
+	static shared_ptr<VectorLookupTable<W> > newVectorLookupTable(const string& id, size_t length, const vector<Dimension>& dims, const shared_array<T>& values, W scaleFactor = W(1),
+			W addOffset = W(0)) {
+		return shared_ptr<VectorLookupTable<W> >(new VectorLookupTableImpl<T, W>(id, length, dims, values, scaleFactor, addOffset));
 	}
 };
 
 template<class T, class W>
-class LookupTableImpl: public LookupTable<W> {
+class VectorLookupTableImpl: public VectorLookupTable<W> {
 public:
 	typedef valarray<W> Dimension;
 
-	LookupTableImpl(const string& id, const vector<Dimension>& dims,
-			const shared_array<T>& values, W scaleFactor = W(1), W addOffset =
-					W(0));
-	virtual ~LookupTableImpl();
+	VectorLookupTableImpl(const string& id, size_t length, const vector<Dimension>& dims, const shared_array<T>& values, W scaleFactor = W(1), W addOffset = W(0));
+	virtual ~VectorLookupTableImpl();
 
 	const string& getId() const;
 
-	W getValue(const W coordinates[]) const;
+	valarray<W>& getValues(const W coordinates[], valarray<W>& values) const;
 
 	size_t getDimensionCount() const;
 	size_t getDimensionLength(size_t dimIndex) const;
@@ -94,12 +89,15 @@ public:
 	W getMaxCoordinate(size_t dimIndex) const;
 	W getMinCoordinate(size_t dimIndex) const;
 
-	W getValue(size_t i) const;
+	W getValue(size_t i) const {
+		return boost::numeric_cast<W>(y[i]) * scaleFactor + addOffset;
+	}
 
 private:
 	size_t getIndex(size_t dimIndex, W coordinate, W& fraction) const;
 
 	const string id;
+	const size_t length;
 	const W scaleFactor;
 	const W addOffset;
 
@@ -117,17 +115,13 @@ private:
 };
 
 template<class T, class W>
-LookupTableImpl<T, W>::LookupTableImpl(const string& id,
-		const vector<Dimension>& dims, const shared_array<T>& values,
-		W scaleFactor, W addOffset) :
-		id(id), scaleFactor(scaleFactor), addOffset(addOffset), x(dims), y(
-				values), sizes(dims.size()), strides(dims.size()), offsets(
-				1 << dims.size()), n(x.size()) {
+VectorLookupTableImpl<T, W>::VectorLookupTableImpl(const string& id, size_t length, const vector<Dimension>& dims, const shared_array<T>& values, W scaleFactor, W addOffset) :
+		id(id), length(length), scaleFactor(scaleFactor), addOffset(addOffset), x(dims), y(values), sizes(dims.size()), strides(dims.size()), offsets(1 << dims.size()), n(x.size()) {
 	for (size_t i = 0; i < n; ++i) {
 		assert(x[i].size() > 0);
 		sizes[i] = x[i].size();
 	}
-	for (size_t i = n, stride = 1; i-- > 0;) {
+	for (size_t i = n, stride = length; i-- > 0;) {
 		strides[i] = stride;
 		stride *= sizes[i];
 	}
@@ -141,84 +135,88 @@ LookupTableImpl<T, W>::LookupTableImpl(const string& id,
 }
 
 template<class T, class W>
-LookupTableImpl<T, W>::~LookupTableImpl() {
+VectorLookupTableImpl<T, W>::~VectorLookupTableImpl() {
 }
 
 template<class T, class W>
-W LookupTableImpl<T, W>::getValue(const W coordinates[]) const {
+valarray<W>& VectorLookupTableImpl<T, W>::getValues(const W coordinates[], valarray<W>& values) const {
+	assert(values.size() >= length);
+
 	valarray<W> f(n);
-	valarray<W> v(offsets.size());
+	valarray<W> v(offsets.size() * length);
 
 	size_t origin = 0;
 	for (size_t i = 0; i < n; ++i) {
 		origin += getIndex(i, coordinates[i], f[i]) * strides[i];
 	}
 	for (size_t i = 0; i < offsets.size(); ++i) {
-		v[i] = boost::numeric_cast<W>(y[origin + offsets[i]]);
+		for (size_t j = 0; j < length; ++j) {
+			v[i * length + j] = boost::numeric_cast<W>(y[origin + offsets[i] + j]);
+		}
 	}
-    for (size_t i = n; i-- > 0;) {
-        const size_t m = 1 << i;
+	for (size_t i = n; i-- > 0;) {
+		const size_t m = 1 << i;
 
-        for (size_t j = 0; j < m; ++j) {
-            v[j] += f[i] * (v[m + j] - v[j]);
-        }
-    }
+		for (size_t j = 0; j < m; ++j) {
+			for (size_t k = 0; k < length; ++k) {
+				v[j * length + k] += f[i] * (v[(m + j) * length + k] - v[j * length + k]);
+			}
+		}
+	}
+	for (size_t k = 0; k < length; ++k) {
+		values[k] = v[k] * scaleFactor + addOffset;
+	}
 
-	return v[0] * scaleFactor + addOffset;
+	return values;
 }
 
 template<class T, class W>
-inline const string& LookupTableImpl<T, W>::getId() const {
+inline const string& VectorLookupTableImpl<T, W>::getId() const {
 	return id;
 }
 
 template<class T, class W>
-inline size_t LookupTableImpl<T, W>::getDimensionCount() const {
+inline size_t VectorLookupTableImpl<T, W>::getDimensionCount() const {
 	return n;
 }
 
 template<class T, class W>
-inline size_t LookupTableImpl<T, W>::getDimensionLength(size_t dimIndex) const {
+inline size_t VectorLookupTableImpl<T, W>::getDimensionLength(size_t dimIndex) const {
 	assert(dimIndex < n);
 	return sizes[dimIndex];
 }
 
 template<class T, class W>
-inline size_t LookupTableImpl<T, W>::getStride(size_t dimIndex) const {
+inline size_t VectorLookupTableImpl<T, W>::getStride(size_t dimIndex) const {
 	assert(dimIndex < n);
 	return strides[dimIndex];
 }
 
 template<class T, class W>
-inline W LookupTableImpl<T, W>::getValue(size_t i) const {
-	return boost::numeric_cast<W>(y[i]) * scaleFactor + addOffset;
-}
-
-template<class T, class W>
-inline W LookupTableImpl<T, W>::getScaleFactor() const {
+inline W VectorLookupTableImpl<T, W>::getScaleFactor() const {
 	return scaleFactor;
 }
 
 template<class T, class W>
-inline W LookupTableImpl<T, W>::getAddOffset() const {
+inline W VectorLookupTableImpl<T, W>::getAddOffset() const {
 	return addOffset;
 }
 
 template<class T, class W>
-inline W LookupTableImpl<T, W>::getMaxCoordinate(size_t dimIndex) const {
+inline W VectorLookupTableImpl<T, W>::getMaxCoordinate(size_t dimIndex) const {
 	assert(dimIndex < n);
 	assert(sizes[dimIndex] > 0);
 	return x[dimIndex][sizes[dimIndex] - 1];
 }
 
 template<class T, class W>
-inline W LookupTableImpl<T, W>::getMinCoordinate(size_t dimIndex) const {
+inline W VectorLookupTableImpl<T, W>::getMinCoordinate(size_t dimIndex) const {
 	assert(dimIndex < n and sizes[dimIndex] > 0);
 	return x[dimIndex][0];
 }
 
 template<class T, class W>
-size_t LookupTableImpl<T, W>::getIndex(size_t dimIndex, W coordinate, W& f) const {
+size_t VectorLookupTableImpl<T, W>::getIndex(size_t dimIndex, W coordinate, W& f) const {
 	assert(dimIndex < n);
 	assert(sizes[dimIndex] > 0);
 
@@ -234,15 +232,15 @@ size_t LookupTableImpl<T, W>::getIndex(size_t dimIndex, W coordinate, W& f) cons
 			lo = m;
 	}
 
-    f = (coordinate - x[dimIndex][lo]) / (x[dimIndex][hi] - x[dimIndex][lo]);
-    if (f < W(0.0)) {
-        f = W(0.0);
-    } else if (f > W(1.0)) {
-        f = W(1.0);
-    }
+	f = (coordinate - x[dimIndex][lo]) / (x[dimIndex][hi] - x[dimIndex][lo]);
+	if (f < W(0.0)) {
+		f = W(0.0);
+	} else if (f > W(1.0)) {
+		f = W(1.0);
+	}
 
 	return lo;
 }
 
-#endif	/* LOOKUPTABLE_H */
+#endif	/* VECTORLOOKUPTABLE_H */
 
