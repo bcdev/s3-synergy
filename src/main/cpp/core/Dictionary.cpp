@@ -73,19 +73,6 @@ vector<VariableDescriptor*> ProductDescriptor::getVariableDescriptors() const {
     return variableDescriptors;
 }
 
-VariableDescriptor* ProductDescriptor::getVariableDescriptor(const string& name) const {
-
-    foreach(SegmentDescriptor* segmentDescriptor, getSegmentDescriptors()) {
-
-        foreach(VariableDescriptor* variableDescriptor, segmentDescriptor->getVariableDescriptors()) {
-            if (variableDescriptor->getName().compare(name) == 0) {
-                return variableDescriptor;
-            }
-        }
-    }
-    BOOST_THROW_EXCEPTION(std::invalid_argument("Dictionary::getVariable: no variable descriptor with name '" + name + "'."));
-}
-
 string VariableDescriptor::toString() const {
     std::ostringstream oss;
     oss << "Variable " << "[";
