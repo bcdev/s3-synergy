@@ -88,7 +88,7 @@ void LookupTableReaderTest::testRead_OLC_R_atm() {
 }
 
 void LookupTableReaderTest::testRead_SLN_R_atm() {
-	const shared_ptr<LookupTable<float> > lut(reader->readLookupTable<float>("SLN_R_atm"));
+	const shared_ptr<ScalarLookupTable<float> > lut(reader->readScalarLookupTable<float>("SLN_R_atm"));
 
 	CPPUNIT_ASSERT(lut != 0);
 	CPPUNIT_ASSERT(lut->getId().compare("SLN_R_atm") == 0);
@@ -122,7 +122,7 @@ void LookupTableReaderTest::testRead_SLN_R_atm() {
 }
 
 void LookupTableReaderTest::testRead_SLO_R_atm() {
-	const shared_ptr<LookupTable<float> > lut(reader->readLookupTable<float>("SLO_R_atm"));
+	const shared_ptr<ScalarLookupTable<float> > lut(reader->readScalarLookupTable<float>("SLO_R_atm"));
 
 	CPPUNIT_ASSERT(lut != 0);
 	CPPUNIT_ASSERT(lut->getId().compare("SLO_R_atm") == 0);

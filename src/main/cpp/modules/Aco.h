@@ -20,10 +20,10 @@ public:
     void stop(Context& context);
     void process(Context& context);
 private:
-    shared_ptr<LookupTable<double> > lutOlcRatm;
-    shared_ptr<LookupTable<double> > lutT;
-    shared_ptr<LookupTable<double> > lutRhoAtm;
-    shared_ptr<LookupTable<double> > lutCO3;
+    shared_ptr<MatrixLookupTable<double> > lutOlcRatm;
+    shared_ptr<MatrixLookupTable<double> > lutT;
+    shared_ptr<MatrixLookupTable<double> > lutRhoAtm;
+    shared_ptr<ScalarLookupTable<double> > lutCO3;
 
 	static const double PI = 3.14159265358979323846;
 	static const double D2R = 3.14159265358979323846 / 180.0;

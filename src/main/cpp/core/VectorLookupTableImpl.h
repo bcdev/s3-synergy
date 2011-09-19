@@ -12,61 +12,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
- * File:   VectorLookupTable.h
+ * File:   VectorLookupTableImpl.h
  * Author: ralf
  *
  * Created on January 25, 2011, 4:50 PM
  */
 
-#ifndef VECTORLOOKUPTABLE_H
-#define	VECTORLOOKUPTABLE_H
+#ifndef VECTORLOOKUPTABLEIMPL_H
+#define	VECTORLOOKUPTABLEIMPL_H
 
 #include <algorithm>
 #include <cassert>
 #include <valarray>
 #include <vector>
 
-#include "Boost.h"
-#include "Identifiable.h"
-
 using std::valarray;
 using std::vector;
 
-template<class T, class W>
-class VectorLookupTableImpl;
-
-/**
- * A vector lookup table.
- *
- * @author Ralf Quast
- */
 template<class W>
-class VectorLookupTable: public Identifiable {
-public:
-	typedef valarray<W> Dimension;
-
-	virtual ~VectorLookupTable() {
-	}
-
-	virtual valarray<W>& getValues(const W coordinates[], valarray<W>& values) const = 0;
-
-	virtual size_t getDimensionCount() const = 0;
-	virtual size_t getDimensionLength(size_t dimIndex) const = 0;
-	virtual size_t getStride(size_t dimIndex) const = 0;
-
-	virtual W getScaleFactor() const = 0;
-	virtual W getAddOffset() const = 0;
-	virtual W getMaxCoordinate(size_t dimIndex) const = 0;
-	virtual W getMinCoordinate(size_t dimIndex) const = 0;
-
-	virtual W getValue(size_t i) const = 0;
-
-	template<class T>
-	static shared_ptr<VectorLookupTable<W> > newVectorLookupTable(const string& id, size_t length, const vector<Dimension>& dims, const shared_array<T>& values, W scaleFactor = W(1),
-			W addOffset = W(0)) {
-		return shared_ptr<VectorLookupTable<W> >(new VectorLookupTableImpl<T, W>(id, length, dims, values, scaleFactor, addOffset));
-	}
-};
+class VectorLookupTable;
 
 template<class T, class W>
 class VectorLookupTableImpl: public VectorLookupTable<W> {
@@ -242,5 +206,5 @@ size_t VectorLookupTableImpl<T, W>::getIndex(size_t dimIndex, W coordinate, W& f
 	return lo;
 }
 
-#endif	/* VECTORLOOKUPTABLE_H */
+#endif	/* VECTORLOOKUPTABLEIMPL_H */
 
