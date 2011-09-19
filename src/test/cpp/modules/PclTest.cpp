@@ -101,28 +101,28 @@ void PclTest::testGetIndex() {
 
 void PclTest::testGetValue() {
 	Pcl pclToTest;
-	long olcFlags = 0b10000000000000000000000000000000;
-	short slnFlags = 0b100000000001000;
-	short sloFlags = 0b100000000001000;
+	long olcFlags = 2147483648;
+	short slnFlags = 16392;
+	short sloFlags = 16392;
 
-	size_t landValue = 0b100000;
-	size_t cloudValue = 0b1;
+	size_t landValue = 32;
+	size_t cloudValue = 1;
 	uint16_t value = pclToTest.getValue(0, olcFlags, slnFlags, sloFlags);
 
 	CPPUNIT_ASSERT((value & landValue) == landValue);
 	CPPUNIT_ASSERT((value & cloudValue) == cloudValue);
 
-	olcFlags = 0b1000;
-	slnFlags = 0b100000000001000;
-	sloFlags = 0b100000000001000;
+	olcFlags = 8;
+	slnFlags = 16392;
+	sloFlags = 16392;
 	value = pclToTest.getValue(0, olcFlags, slnFlags, sloFlags);
 
 	CPPUNIT_ASSERT((value & landValue) != landValue);
 	CPPUNIT_ASSERT((value & cloudValue) == cloudValue);
 
-	olcFlags = 0b10000000000000000000000000000000;
-	slnFlags = 0b100000000001000;
-	sloFlags = 0b1000;
+	olcFlags = 2147483648;
+	slnFlags = 16392;
+	sloFlags = 8;
 	value = pclToTest.getValue(0, olcFlags, slnFlags, sloFlags);
 
 	CPPUNIT_ASSERT((value & landValue) == landValue);
