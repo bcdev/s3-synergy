@@ -73,13 +73,13 @@ void GridImpl::setFirstL(size_t l) {
 
 size_t GridImpl::getIndex(size_t k, size_t l, size_t m) const throw (out_of_range) {
     if (k < firstK || k > firstK + sizeK - 1) {
-        BOOST_THROW_EXCEPTION(out_of_range("index k is out of range."));
+        BOOST_THROW_EXCEPTION(out_of_range("Index k = " + lexical_cast<string>(k) + " is out of range."));
     }
     if (l < firstL || l > firstL + sizeL - 1) {
-        BOOST_THROW_EXCEPTION(out_of_range("index l is out of range."));
+        BOOST_THROW_EXCEPTION(out_of_range("Index l = " + lexical_cast<string>(l) + " is out of range."));
     }
     if (m < firstM || m > firstM + sizeM - 1) {
-        BOOST_THROW_EXCEPTION(out_of_range("index m is out of range."));
+        BOOST_THROW_EXCEPTION(out_of_range("Index m = " + lexical_cast<string>(m) + " is out of range."));
     }
     return (k - firstK) * strideK + (l - firstL) * strideL + (m - firstM) * strideM;
 }

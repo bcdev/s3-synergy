@@ -98,7 +98,7 @@ void SynL1Reader::start(Context& context) {
 							}
 							// Create a new segment, if necessary
 							if (!context.hasSegment(segmentName)) {
-								const size_t sizeL = min(segmentLineCount, rowCount);
+								const size_t sizeL = rowCount > 64 ? min(segmentLineCount, rowCount) : rowCount;
 								context.getLogging()->info("adding segment '" + segmentName + "' to context", getId());
 								context.addSegment(segmentName, sizeL, colCount, camCount, 0, rowCount - 1);
 							}
