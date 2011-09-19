@@ -23,14 +23,13 @@ SynL1Reader::SynL1Reader() :
 
 SynL1Reader::~SynL1Reader() {
 	pair<string, int> fileIdPair;
-	foreach(fileIdPair, ncFileIdMap)
-			{
-				try {
-					NetCDF::closeFile(fileIdPair.second);
-				} catch (exception& ignored) {
-					// ok
-				}
-			}
+	foreach(fileIdPair, ncFileIdMap) {
+	    try {
+	        NetCDF::closeFile(fileIdPair.second);
+	    } catch (exception& ignored) {
+	        // ok
+	    }
+	}
 }
 
 void SynL1Reader::start(Context& context) {
