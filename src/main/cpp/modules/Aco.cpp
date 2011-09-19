@@ -89,6 +89,8 @@ void Aco::process(Context& context) {
 		err.push_back(&col.getAccessor("SDR_" + lexical_cast<string>(i) + "_er"));
 	}
 
+	context.getLogging()->progress("Processing segment '" + col.toString() + "'", getId());
+
 	// TODO - get from ECMWF tie points
 	const double no3 = 0.0;
 	const double wv = 2.0;
@@ -97,20 +99,18 @@ void Aco::process(Context& context) {
 	// TODO - get from segment data
 	const double tau550 = 0.1;
 
-#pragma omp parallel for
 	for (size_t k = olcGrid.getFirstK(); k < olcGrid.getFirstK() + olcGrid.getSizeK(); k++) {
-		valarray<double> coordinates(20);
-		valarray<double> tpiWeights(1);
-		valarray<size_t> tpiIndexes(1);
-
-		matrix<double> matRatm(40, 18);
-		matrix<double> matTs(40, 30);
-		matrix<double> matTv(40, 30);
-		matrix<double> matRho(40, 30);
-
-		context.getLogging()->progress("Processing segment '" + col.toString() + "'", getId());
-
+		#pragma omp parallel for
 		for (size_t l = olcGrid.getFirstL(); l < olcGrid.getFirstL() + olcGrid.getSizeL(); l++) {
+			valarray<double> coordinates(20);
+			valarray<double> tpiWeights(1);
+			valarray<size_t> tpiIndexes(1);
+
+			matrix<double> matRatm(40, 18);
+			matrix<double> matTs(40, 30);
+			matrix<double> matTv(40, 30);
+			matrix<double> matRho(40, 30);
+
 			for (size_t m = olcGrid.getFirstM(); m < olcGrid.getFirstM() + olcGrid.getSizeM(); m++) {
 				const size_t i = olcGrid.getIndex(k, l, m);
 				const size_t j = colGrid.getIndex(k, l, m);
