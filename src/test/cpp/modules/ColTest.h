@@ -34,6 +34,7 @@ private:
     void testCol();
     void prepareContext();
     shared_ptr<Context> context;
+    shared_ptr<Col> col;
 };
 
 #endif	/* COLTEST_H */

@@ -39,12 +39,12 @@ private:
     friend class ColTest;
 
     void setUp(Context& context);
-    void addOlciVariables(Context& context);
-    void addVariable(ProductDescriptor& productDescriptor, const string& sourceName, const string& targetName, Context& context, const string& sourceSegmentId);
-    void addSlstrVariables(Context& context);
-    void addVariableAlias(Context& context, const string& targetName, const string& sourceName);
+    void addOlciVariables();
+    void addVariable(ProductDescriptor& productDescriptor, const string& sourceName, const string& targetName, const string& sourceSegmentId);
+    void addSlstrVariables();
+    void addVariableAlias(const string& targetName, const string& sourceName);
     void collocateOlci(Accessor& sourceAccessor, const Grid& sourceGrid, string& sourceName);
-    void collocateSln(Accessor& sourceAccessor, const Grid& sourceGrid, string& sourceName);
+    void collocateSln(Accessor& sourceAccessor, const int sourceType, const Grid& sourceGrid, string& sourceName);
     void collocateSlo(Accessor& sourceAccessor, const Grid& sourceGrid, string& sourceName);
     string retrievePositionVariableName(const string& targetName, const string& axis);
 
@@ -55,6 +55,7 @@ private:
 
     shared_ptr<Segment> olciSegment;
     shared_ptr<Segment> collocatedSegment;
+    shared_ptr<Context> context;
     vector<string> targetVariables;
     map<string, string> segmentIds;
     map<string, string> variables;

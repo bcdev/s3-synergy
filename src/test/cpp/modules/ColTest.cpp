@@ -32,8 +32,8 @@ ColTest::~ColTest() {
 
 void ColTest::setUp() {
     XPathInitializer init;
-
     prepareContext();
+    col = shared_ptr<Col>(new Col());
 }
 
 
@@ -49,7 +49,7 @@ void ColTest::prepareContext() {
 
     const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
     shared_ptr<Dictionary> dictionary = DictionaryParser().parse(S3_SYNERGY_HOME + "/src/main/resources/dictionary");
-    shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_ACO.xml");
+    shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.0.xml");
 
     context->setDictionary(dictionary);
     context->setJobOrder(jobOrder);
@@ -60,8 +60,7 @@ void ColTest::tearDown() {
 
 void ColTest::testAddSlstrVariables() {
     context->addSegment(Constants::SEGMENT_OLC, 10, 10, 5, 0, 9);
-    Col col;
-    col.setUp(*context);
+    col->setUp(*context);
     Segment& collocatedSegment = context->getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 
 	// setting dummy type; this is done by reader normally, but not in test
@@ -79,7 +78,7 @@ void ColTest::testAddSlstrVariables() {
     CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_25_exception"));
     CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_30_exception"));
 
-	col.addSlstrVariables(*context);
+	col->addSlstrVariables();
 	CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_1"));
 	CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_18"));
 	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_19"));
@@ -91,8 +90,7 @@ void ColTest::testAddSlstrVariables() {
 
 void ColTest::testAddOlciVariables() {
     Segment& olciSegment = context->addSegment(Constants::SEGMENT_OLC, 10, 10, 5, 0, 9);
-    Col col;
-    col.setUp(*context);
+    col->setUp(*context);
     Segment& collocatedSegment = context->getSegment(Constants::SEGMENT_SYN_COLLOCATED);
     // setting dummy type; this is done by reader normally, but not in test
     ProductDescriptor& pd = context->getDictionary()->getProductDescriptor("SY1");
@@ -112,7 +110,7 @@ void ColTest::testAddOlciVariables() {
     CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_1_er"));
     CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_18_er"));
 
-	col.addOlciVariables(*context);
+	col->addOlciVariables();
 	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_1"));
 	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_18"));
 	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_1_er"));
@@ -167,7 +165,6 @@ void ColTest::testRetrievePositionVariableName() {
 void ColTest::testCol() {
 
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
-    shared_ptr<Module> col = shared_ptr<Module>(new Col());
     shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
 
     context->addModule(reader);
