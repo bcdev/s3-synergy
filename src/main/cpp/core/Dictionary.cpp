@@ -61,18 +61,6 @@ VariableDescriptor::VariableDescriptor(const string& name) : Descriptor<Attribut
 VariableDescriptor::~VariableDescriptor() {
 }
 
-vector<VariableDescriptor*> ProductDescriptor::getVariableDescriptors() const {
-    vector<VariableDescriptor*> variableDescriptors;
-
-    foreach(SegmentDescriptor* segmentDescriptor, getSegmentDescriptors()) {
-
-        foreach(VariableDescriptor* variableDescriptor, segmentDescriptor->getVariableDescriptors()) {
-            variableDescriptors.push_back(variableDescriptor);
-        }
-    }
-    return variableDescriptors;
-}
-
 string VariableDescriptor::toString() const {
     std::ostringstream oss;
     oss << "Variable " << "[";

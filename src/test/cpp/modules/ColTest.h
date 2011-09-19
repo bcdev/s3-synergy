@@ -32,6 +32,8 @@ private:
     void testAddOlciVariables();
     void testRetrievePositionVariableName();
     void testCol();
+    void prepareContext();
+    shared_ptr<Context> context;
 };
 
 #endif	/* COLTEST_H */

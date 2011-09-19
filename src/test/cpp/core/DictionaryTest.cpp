@@ -66,5 +66,5 @@ void DictionaryTest::testDescriptors() {
     CPPUNIT_ASSERT(&segmentDescriptor.getAttribute("Vendor") == &segmentAttribute);
 
     segmentDescriptor.addVariableDescriptor("reflec_1");
-    CPPUNIT_ASSERT(dictionary->getProductDescriptor(Constants::PRODUCT_SY1).getVariableDescriptors().size() == 1);
+    CPPUNIT_ASSERT(segmentDescriptor.getVariableDescriptors().size() == 1);
 }
