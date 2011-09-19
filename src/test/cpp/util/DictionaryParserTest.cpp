@@ -169,7 +169,7 @@ void DictionaryParserTest::testSy2ProductDescriptor() {
 	checkA550Variable(s.getVariableDescriptor("A550"));
 	checkT550Variable(s.getVariableDescriptor("T550"));
 	ckeckAMINVariable(s.getVariableDescriptor("AMIN"));
-	checkAirPressureVariable(s.getVariableDescriptor("air_pressure"));
+
 	checkLatitudeVariable(s.getVariableDescriptor("latitude"));
 	checkLongitudeVariable(s.getVariableDescriptor("longitude"));
 }
