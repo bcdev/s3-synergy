@@ -34,32 +34,27 @@ public:
 
 	virtual ~Col();
 
-
 private:
-    friend class ColTest;
+	friend class ColTest;
 
-    void setUp(Context& context);
-    void addOlciVariables();
-    void addVariable(ProductDescriptor& productDescriptor, const string& sourceName, const string& targetName, const string& sourceSegmentId);
-    void addSlstrVariables();
-    void addVariableAlias(const string& targetName, const string& sourceName);
-    void collocateOlci(Accessor& sourceAccessor, const int sourceType, string& sourceName);
-    void collocateSlstr(Accessor& sourceAccessor, const int sourceType, const Grid& sourceGrid, string& sourceName);
-    string retrievePositionVariableName(const string& targetName, const string& axis);
-    string retrieveDeltaVariableName(const string& targetName, const string& axis);
+	void addTargetSegment(Context& context) const;
+	void addOlciVariables(Context& context);
+	void addVariable(Context& context, const ProductDescriptor& productDescriptor, const string& sourceName, const string& targetName, const string& sourceSegmentId);
+	void addSlstrVariables(Context& context);
+	void addVariableAlias(Context& context, const string& targetName, const string& sourceName);
+	void collocateOlci(Context& context, Accessor& sourceAccessor, const int sourceType, string& sourceName);
+	void collocateSlstr(Context& context, Accessor& sourceAccessor, const int sourceType, const Grid& sourceGrid, string& sourceName);
+	string retrievePositionVariableName(const string& targetName, const string& axis);
+	string retrieveDeltaVariableName(const string& targetName, const string& axis);
 
-    static const string SLO_CONFIDENCE_FLAG_VARIABLE;
-    static const string SLN_CONFIDENCE_FLAG_VARIABLE;
-    static const string AXIS_ROW;
-    static const string AXIS_COL;
+	vector<string> targetVariables;
+	map<string, string> segmentIds;
+	map<string, string> variables;
 
-    shared_ptr<Segment> olciSegment;
-    shared_ptr<Segment> collocatedSegment;
-    shared_ptr<Context> context;
-    vector<string> targetVariables;
-    map<string, string> segmentIds;
-    map<string, string> variables;
-
+	static const string SLO_CONFIDENCE_FLAG_VARIABLE;
+	static const string SLN_CONFIDENCE_FLAG_VARIABLE;
+	static const string AXIS_ROW;
+	static const string AXIS_COL;
 };
 
 #endif /* COL_H_ */

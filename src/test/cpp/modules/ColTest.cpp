@@ -60,7 +60,7 @@ void ColTest::tearDown() {
 
 void ColTest::testAddSlstrVariables() {
     context->addSegment(Constants::SEGMENT_OLC, 10, 10, 5, 0, 9);
-    col->setUp(*context);
+    col->addTargetSegment(*context);
     Segment& collocatedSegment = context->getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 
 	// setting dummy type; this is done by reader normally, but not in test
@@ -78,7 +78,7 @@ void ColTest::testAddSlstrVariables() {
     CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_25_exception"));
     CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_30_exception"));
 
-	col->addSlstrVariables();
+	col->addSlstrVariables(*context);
 	CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_1"));
 	CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_18"));
 	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_19"));
@@ -90,7 +90,7 @@ void ColTest::testAddSlstrVariables() {
 
 void ColTest::testAddOlciVariables() {
     Segment& olciSegment = context->addSegment(Constants::SEGMENT_OLC, 10, 10, 5, 0, 9);
-    col->setUp(*context);
+    col->addTargetSegment(*context);
     Segment& collocatedSegment = context->getSegment(Constants::SEGMENT_SYN_COLLOCATED);
     // setting dummy type; this is done by reader normally, but not in test
     ProductDescriptor& pd = context->getDictionary()->getProductDescriptor("SY1");
@@ -110,7 +110,7 @@ void ColTest::testAddOlciVariables() {
     CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_1_er"));
     CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_18_er"));
 
-	col->addOlciVariables();
+	col->addOlciVariables(*context);
 	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_1"));
 	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_18"));
 	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_1_er"));
@@ -235,7 +235,6 @@ void ColTest::testRetrievePositionVariableName() {
 
 
 void ColTest::testCol() {
-
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
     shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
 
