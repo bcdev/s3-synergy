@@ -168,15 +168,14 @@ void Col::collocateSln(Accessor& sourceAccessor, const int sourceType, const Gri
                 const size_t index = collocatedGrid.getIndex(k, l, m);
                 const uint32_t unscaledRowIndex = misregistrationRowAccessor.getUInt(index);
                 const uint32_t unscaledColIndex = misregistrationRowAccessor.getUInt(index);
+                const int64_t sourceRow = floor(unscaledRowIndex * rowScaleFactor + rowAddOffset + 0.5);
+                const int64_t sourceCol = floor(unscaledColIndex * colScaleFactor + colAddOffset + 0.5);
 
                 // todo - ts19sep11 - get fill value from product
-                if(unscaledRowIndex == 1027051 || unscaledColIndex == 1027051) {
-                    context->getLogging()->info("no collocation possible for position (k,l,m): (" + lexical_cast<string>(k) + "," + lexical_cast<string>(l) + "," + lexical_cast<string>(m) + ")", getId());
+                if(sourceRow < 0 || sourceCol < 0) {
+                    context->getLogging()->debug("no collocation possible for position (k,l,m): (" + lexical_cast<string>(k) + "," + lexical_cast<string>(l) + "," + lexical_cast<string>(m) + ")", getId());
                     continue;
                 }
-
-                const uint32_t sourceRow = floor(unscaledRowIndex + 0.5) * rowScaleFactor + rowAddOffset;
-                const uint32_t sourceCol = floor(unscaledColIndex + 0.5) * colScaleFactor + colAddOffset;
 
                 switch (sourceType) {
                 case Constants::TYPE_BYTE: {
