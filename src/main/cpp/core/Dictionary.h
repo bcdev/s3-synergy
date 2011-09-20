@@ -536,9 +536,6 @@ public:
 	bool hasSegmentDescriptor(const string& name) const {
 		return hasElement(name);
 	}
-
-	// todo - ts16Sep2011 - remove
-	vector<VariableDescriptor*> getVariableDescriptors() const;
 };
 
 /**

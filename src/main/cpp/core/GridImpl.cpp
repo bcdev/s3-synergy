@@ -26,60 +26,62 @@
 
 using std::invalid_argument;
 
-GridImpl::GridImpl(size_t sizeK, size_t sizeL, size_t sizeM, size_t minL, size_t maxL) : Grid() {
-    if (minL > maxL) {
-        BOOST_THROW_EXCEPTION(invalid_argument("minL > maxL"));
-    }
-    if (sizeL - 1 > maxL - minL) {
-        BOOST_THROW_EXCEPTION(invalid_argument("sizeL - 1 > maxL - minL"));
-    }
-    this->firstK = 0;
-    this->firstL = minL;
-    this->firstM = 0;
-    this->sizeK = sizeK;
-    this->sizeL = sizeL;
-    this->sizeM = sizeM;
-    this->strideK = sizeM * sizeL;
-    this->strideL = sizeM;
-    this->strideM = 1;
-    this->minL = minL;
-    this->maxL = maxL;
+GridImpl::GridImpl(size_t sizeK, size_t sizeL, size_t sizeM, size_t minL, size_t maxL) :
+		Grid() {
+	if (minL > maxL) {
+		BOOST_THROW_EXCEPTION(invalid_argument("minL > maxL"));
+	}
+	if (sizeL - 1 > maxL - minL) {
+		BOOST_THROW_EXCEPTION(invalid_argument("sizeL - 1 > maxL - minL"));
+	}
+	this->firstK = 0;
+	this->firstL = minL;
+	this->firstM = 0;
+	this->sizeK = sizeK;
+	this->sizeL = sizeL;
+	this->sizeM = sizeM;
+	this->strideK = sizeM * sizeL;
+	this->strideL = sizeM;
+	this->strideM = 1;
+	this->minL = minL;
+	this->maxL = maxL;
 }
 
-GridImpl::GridImpl(const Grid& b) : Grid() {
-    this->firstK = b.getFirstK();
-    this->firstL = b.getFirstL();
-    this->firstM = b.getFirstM();
-    this->sizeK = b.getSizeK();
-    this->sizeL = b.getSizeL();
-    this->sizeM = b.getSizeM();
-    this->strideK = b.getStrideK();
-    this->strideL = b.getStrideL();
-    this->strideM = b.getStrideM();
+GridImpl::GridImpl(const Grid& b) :
+		Grid() {
+	this->firstK = b.getFirstK();
+	this->firstL = b.getFirstL();
+	this->firstM = b.getFirstM();
+	this->sizeK = b.getSizeK();
+	this->sizeL = b.getSizeL();
+	this->sizeM = b.getSizeM();
+	this->strideK = b.getStrideK();
+	this->strideL = b.getStrideL();
+	this->strideM = b.getStrideM();
 }
 
 GridImpl::~GridImpl() {
 }
 
 void GridImpl::setFirstL(size_t l) {
-    if (l < minL) {
-        BOOST_THROW_EXCEPTION(std::out_of_range("l < minL"));
-    }
-    if (l + sizeL - 1 > maxL) { //
-        BOOST_THROW_EXCEPTION(std::out_of_range("l + sizeL - 1 > maxL"));
-    }
-    this->firstL = l;
+	if (l < minL) {
+		BOOST_THROW_EXCEPTION(std::out_of_range("l < minL"));
+	}
+	if (l + sizeL - 1 > maxL) {
+		BOOST_THROW_EXCEPTION(std::out_of_range("l + sizeL - 1 > maxL"));
+	}
+	this->firstL = l;
 }
 
 size_t GridImpl::getIndex(size_t k, size_t l, size_t m) const throw (out_of_range) {
-    if (k < firstK || k > firstK + sizeK - 1) {
-        BOOST_THROW_EXCEPTION(out_of_range("Index k = " + lexical_cast<string>(k) + " is out of range."));
-    }
-    if (l < firstL || l > firstL + sizeL - 1) {
-        BOOST_THROW_EXCEPTION(out_of_range("Index l = " + lexical_cast<string>(l) + " is out of range."));
-    }
-    if (m < firstM || m > firstM + sizeM - 1) {
-        BOOST_THROW_EXCEPTION(out_of_range("Index m = " + lexical_cast<string>(m) + " is out of range."));
-    }
-    return (k - firstK) * strideK + (l - firstL) * strideL + (m - firstM) * strideM;
+	if (k < firstK || k > firstK + sizeK - 1) {
+		BOOST_THROW_EXCEPTION(out_of_range("index k is out of range: k=" + lexical_cast<string>(k) + ", firstK=" + lexical_cast<string>(firstK) + ", sizeK=" + lexical_cast<string>(sizeK)));
+	}
+	if (l < firstL || l > firstL + sizeL - 1) {
+		BOOST_THROW_EXCEPTION(out_of_range("index l is out of range: l=" + lexical_cast<string>(l) + ", firstL=" + lexical_cast<string>(firstL) + ", sizeL=" + lexical_cast<string>(sizeL)));
+	}
+	if (m < firstM || m > firstM + sizeM - 1) {
+		BOOST_THROW_EXCEPTION(out_of_range("index m is out of range: m=" + lexical_cast<string>(m) + ", firstM=" + lexical_cast<string>(firstM) + ", sizeM=" + lexical_cast<string>(sizeM)));
+	}
+	return (k - firstK) * strideK + (l - firstL) * strideL + (m - firstM) * strideM;
 }
