@@ -79,7 +79,6 @@ void Aco::process(Context& context) {
 	const Grid& olcGrid = olc.getGrid();
 
 	const Segment& col = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-	const Grid& colGrid = col.getGrid();
 	vector<Accessor*> sdr;
 	for (size_t i = 1; i <= 18; i++) {
 		sdr.push_back(&col.getAccessor("SDR_" + lexical_cast<string>(i)));
@@ -99,24 +98,26 @@ void Aco::process(Context& context) {
 	// TODO - get from segment data
 	const double tau550 = 0.1;
 
-	for (size_t k = olcGrid.getFirstK(); k < olcGrid.getFirstK() + olcGrid.getSizeK(); k++) {
-		#pragma omp parallel for
-		for (size_t l = olcGrid.getFirstL(); l < olcGrid.getFirstL() + olcGrid.getSizeL(); l++) {
-			valarray<double> coordinates(20);
-			valarray<double> tpiWeights(1);
-			valarray<size_t> tpiIndexes(1);
+#pragma omp parallel for
+	for (size_t l = olcGrid.getFirstL(); l < olcGrid.getFirstL() + olcGrid.getSizeL(); l++) {
+		context.getLogging()->progress("Processing line l = " + lexical_cast<string>(l) + " ...", getId());
 
-			matrix<double> matRatm(40, 18);
-			matrix<double> matTs(40, 30);
-			matrix<double> matTv(40, 30);
-			matrix<double> matRho(40, 30);
+		valarray<double> coordinates(20);
+		valarray<double> tpiWeights(1);
+		valarray<size_t> tpiIndexes(1);
 
+		matrix<double> matRatm(40, 18);
+		matrix<double> matTs(40, 30);
+		matrix<double> matTv(40, 30);
+		matrix<double> matRho(40, 30);
+
+		for (size_t k = olcGrid.getFirstK(); k < olcGrid.getFirstK() + olcGrid.getSizeK(); k++) {
 			for (size_t m = olcGrid.getFirstM(); m < olcGrid.getFirstM() + olcGrid.getSizeM(); m++) {
 				const size_t i = olcGrid.getIndex(k, l, m);
-				const size_t j = colGrid.getIndex(k, l, m);
 
 				tpi.prepare(lon.getDouble(i), lat.getDouble(i), tpiWeights, tpiIndexes);
 
+				context.getLogging()->debug("Interpolating tie points ...", getId());
 				const double sza = tpi.interpolate(tpSzas, tpiWeights, tpiIndexes);
 				const double saa = tpi.interpolate(tpSaas, tpiWeights, tpiIndexes);
 				const double vza = tpi.interpolate(tpVzas, tpiWeights, tpiIndexes);
@@ -145,11 +146,13 @@ void Aco::process(Context& context) {
 //				coordinates[18] = coordinates[6]; // aerosol model index
 //				coordinates[19] = coordinates[7]; // SYN channel
 
+				context.getLogging()->debug("Interpolating look-up tables ...", getId());
 				lutOlcRatm->getValues(&coordinates[0], matRatm);
 				lutT->getValues(&coordinates[8], matTs);
 				lutT->getValues(&coordinates[14], matTv);
 				lutRhoAtm->getValues(&coordinates[9], matRho);
 
+				context.getLogging()->debug("Calculating atmospheric correction ...", getId());
 				for (size_t b = 0; b < 18; b++) {
 					const double channel = b + 1.0;
 					const double ratm = matRatm(0, b);
@@ -172,8 +175,8 @@ void Aco::process(Context& context) {
 					const double f = (rtoa - to3 * ratm) / (to3 * ts * tv);
 					const double rsurf = f / (1.0 + rho * f);
 
-					sdr[b]->setDouble(j, rsurf);
-					err[b]->setDouble(j, rtoa);
+					sdr[b]->setDouble(i, rsurf);
+					err[b]->setDouble(i, rtoa);
 				}
 			}
 		}
