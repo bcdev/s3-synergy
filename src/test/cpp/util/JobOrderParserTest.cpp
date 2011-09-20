@@ -73,7 +73,7 @@ void JobOrderParserTest::checkConfiguration(
 	CPPUNIT_ASSERT(
 			configuration.getDynamicProcessingParameters().at(0).getName().compare("Segment_Line_Count") == 0);
 	CPPUNIT_ASSERT(
-			configuration.getDynamicProcessingParameters().at(0).getValue().compare("400") == 0);
+			configuration.getDynamicProcessingParameters().at(0).getValue().compare("2000") == 0);
 	CPPUNIT_ASSERT(
 			configuration.getDynamicProcessingParameters().at(1).getName().compare("VGT_Northernmost_Latitude") == 0);
 	CPPUNIT_ASSERT(

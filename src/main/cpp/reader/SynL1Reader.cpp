@@ -118,22 +118,6 @@ void SynL1Reader::start(Context& context) {
 							context.getLogging()->info("adding variable '" + varName + "' to segment '" + segmentName + "'", getId());
 							context.getSegment(segmentName).addVariable(varName, type, scaleFactor, addOffset);
 							ncVarIdMap[varName] = varId;
-							// Copy variable attributes to dictionary
-							const int type = NetCDF::getVariableType(fileId, varId);
-							variableDescriptor->setType(type);
-							const size_t attrCount = NetCDF::getAttributeCount(fileId, varId);
-							for (size_t i = 0; i < attrCount; i++) {
-								const string attrName = NetCDF::getAttributeName(fileId, varId, i);
-								const Attribute attr = NetCDF::getAttribute(fileId, varId, attrName);
-								context.getLogging()->info("adding attribute '" + attr.toString() + +"' to variable '" + varName + "'", getId());
-								variableDescriptor->addAttribute(attr);
-							}
-							// Add variable to segment
-							const double scaleFactor = variableDescriptor->getScaleFactor();
-							const double addOffset = variableDescriptor->getAddOffset();
-							context.getLogging()->info("adding variable '" + varName + "' to segment '" + segmentName + "'", getId());
-							context.getSegment(segmentName).addVariable(varName, type, scaleFactor, addOffset);
-							ncVarIdMap[varName] = varId;
 						}
 			}
 }
