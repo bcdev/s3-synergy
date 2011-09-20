@@ -117,9 +117,55 @@ void ColTest::testAddOlciVariables() {
 	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_18_er"));
 }
 
-void ColTest::testRetrievePositionVariableName() {
-    string varName = "SLN_confidence";
+void ColTest::testRetrieveDeltaVariableName() {
     Col col;
+
+    string varName = "OLC_flags";
+    string variableName = col.retrieveDeltaVariableName(varName, Col::AXIS_COL);
+    CPPUNIT_ASSERT(variableName.compare("delta_x_1") == 0);
+
+    variableName = col.retrieveDeltaVariableName(varName, Col::AXIS_ROW);
+    CPPUNIT_ASSERT(variableName.compare("delta_y_1") == 0);
+
+    varName = "L_18";
+    variableName = col.retrieveDeltaVariableName(varName, Col::AXIS_COL);
+    CPPUNIT_ASSERT(variableName.compare("delta_x_18") == 0);
+
+    varName = "L_1";
+    variableName = col.retrieveDeltaVariableName(varName, Col::AXIS_ROW);
+    CPPUNIT_ASSERT(variableName.compare("delta_y_1") == 0);
+
+    varName = "L_18_er";
+    variableName = col.retrieveDeltaVariableName(varName, Col::AXIS_COL);
+    CPPUNIT_ASSERT(variableName.compare("delta_x_18") == 0);
+
+    varName = "longitude";
+    variableName = col.retrieveDeltaVariableName(varName, Col::AXIS_COL);
+    CPPUNIT_ASSERT(variableName.compare("delta_x_1") == 0);
+
+    varName = "latitude";
+    variableName = col.retrieveDeltaVariableName(varName, Col::AXIS_COL);
+    CPPUNIT_ASSERT(variableName.compare("delta_x_1") == 0);
+
+    varName = "altitude";
+    variableName = col.retrieveDeltaVariableName(varName, Col::AXIS_COL);
+    CPPUNIT_ASSERT(variableName.compare("delta_x_1") == 0);
+
+    varName = "L_1_er";
+    variableName = col.retrieveDeltaVariableName(varName, Col::AXIS_ROW);
+    CPPUNIT_ASSERT(variableName.compare("delta_y_1") == 0);
+
+    varName = "L_19";
+    CPPUNIT_ASSERT_THROW(col.retrieveDeltaVariableName(varName, Col::AXIS_COL), logic_error);
+
+    varName = "L_0";
+    CPPUNIT_ASSERT_THROW(col.retrieveDeltaVariableName(varName, Col::AXIS_COL), logic_error);
+}
+
+void ColTest::testRetrievePositionVariableName() {
+    Col col;
+
+    string varName = "SLN_confidence";
     string variableName = col.retrievePositionVariableName(varName, Col::AXIS_COL);
     CPPUNIT_ASSERT(variableName.compare("x_corr_1") == 0);
 
@@ -155,12 +201,38 @@ void ColTest::testRetrievePositionVariableName() {
     variableName = col.retrievePositionVariableName(varName, Col::AXIS_ROW);
     CPPUNIT_ASSERT(variableName.compare("y_corr_6") == 0);
 
+    varName = "L_25";
+    variableName = col.retrievePositionVariableName(varName, Col::AXIS_COL);
+    CPPUNIT_ASSERT(variableName.compare("x_corr_o") == 0);
+
+    varName = "L_25";
+    variableName = col.retrievePositionVariableName(varName, Col::AXIS_ROW);
+    CPPUNIT_ASSERT(variableName.compare("y_corr_o") == 0);
+
+    varName = "L_25_er";
+    variableName = col.retrievePositionVariableName(varName, Col::AXIS_COL);
+    CPPUNIT_ASSERT(variableName.compare("x_corr_o") == 0);
+
+    varName = "L_25_er";
+    variableName = col.retrievePositionVariableName(varName, Col::AXIS_ROW);
+    CPPUNIT_ASSERT(variableName.compare("y_corr_o") == 0);
+
+    varName = "L_30";
+    variableName = col.retrievePositionVariableName(varName, Col::AXIS_COL);
+    CPPUNIT_ASSERT(variableName.compare("x_corr_o") == 0);
+
+    varName = "L_30_er";
+    variableName = col.retrievePositionVariableName(varName, Col::AXIS_ROW);
+    CPPUNIT_ASSERT(variableName.compare("y_corr_o") == 0);
+
     varName = "L_18";
     CPPUNIT_ASSERT_THROW(col.retrievePositionVariableName(varName, Col::AXIS_COL), logic_error);
 
-    varName = "L_25";
+    varName = "L_31";
     CPPUNIT_ASSERT_THROW(col.retrievePositionVariableName(varName, Col::AXIS_COL), logic_error);
 }
+
+
 
 void ColTest::testCol() {
 
