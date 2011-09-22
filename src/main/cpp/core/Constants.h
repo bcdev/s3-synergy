@@ -51,6 +51,7 @@ const string SEGMENT_SLO_TP = "SLO_TP";
 const string SEGMENT_SLN_INFO = "SLN_INFO";
 const string SEGMENT_SLO_INFO = "SLO_INFO";
 const string SEGMENT_SYN_COLLOCATED = "SYN_COLLOCATED";
+const string SEGMENT_SYN_AVERAGED = "SYN_AVERAGED";
 
 /**
  * Dimension names.
