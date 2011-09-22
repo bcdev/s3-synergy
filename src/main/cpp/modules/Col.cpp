@@ -100,7 +100,7 @@ void Col::process(Context& context) {
 
 	// TODO: make segment's firstL etc. and context's lastComputedL etc. be of type int32_t or let the lastXXX
 	// variables point to one line behind
-	long firstRequiredL = lastL;
+	long firstRequiredL = lastL + 1;
 	long lastComputedL = lastL;
 
 	foreach(const string& targetName, targetNames)
