@@ -72,9 +72,9 @@ void Pcl::process(Context& context) {
 	const valarray<int16_t> sloFlags = sloFlagsAccessor->getShortData();
 
 	const Grid& collocatedGrid = collocatedSegment->getGrid();
-	for (size_t k = collocatedGrid.getFirstK(); k < collocatedGrid.getFirstK() + collocatedGrid.getSizeK(); k++) {
-		for (size_t l = collocatedGrid.getFirstL(); l < collocatedGrid.getFirstL() + collocatedGrid.getSizeL(); l++) {
-			for (size_t m = collocatedGrid.getFirstM(); m < collocatedGrid.getFirstM() + collocatedGrid.getSizeM(); m++) {
+	for (long k = collocatedGrid.getFirstK(); k < collocatedGrid.getFirstK() + collocatedGrid.getSizeK(); k++) {
+		for (long l = collocatedGrid.getFirstL(); l < collocatedGrid.getFirstL() + collocatedGrid.getSizeL(); l++) {
+			for (long m = collocatedGrid.getFirstM(); m < collocatedGrid.getFirstM() + collocatedGrid.getSizeM(); m++) {
 				const size_t index = getIndex(k, l, m);
 				const uint16_t value = getValue(index, olcFlags[index], slnFlags[index], sloFlags[index]);
 				targetAccessor.setUShort(index, value);
@@ -83,7 +83,7 @@ void Pcl::process(Context& context) {
 	}
 }
 
-size_t Pcl::getIndex(size_t k, size_t l, size_t m) const {
+size_t Pcl::getIndex(long k, long l, long m) const {
 	return collocatedSegment->getGrid().getIndex(k, l, m);
 }
 

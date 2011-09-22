@@ -43,11 +43,9 @@ Context::~Context() {
 }
 
 bool Context::removeModule(shared_ptr<Module> module) {
-	vector<shared_ptr<Module> >::iterator position = find(moduleList.begin(),
-			moduleList.end(), module);
+	vector<shared_ptr<Module> >::iterator position = find(moduleList.begin(), moduleList.end(), module);
 	if (position != moduleList.end()) {
-		typedef pair<const Segment*, map<const Module*, size_t> > P;
-		typedef pair<const Module*, size_t> Q;
+		typedef pair<const Segment*, map<const Module*, long> > P;
 
 		foreach(P p, lastComputedLMap)
 				{
@@ -61,20 +59,16 @@ bool Context::removeModule(shared_ptr<Module> module) {
 
 void Context::addObject(shared_ptr<Identifiable> object) throw (logic_error) {
 	if (hasObject(object->getId())) {
-		BOOST_THROW_EXCEPTION(
-				invalid_argument("An object with ID '" + object->getId() + "' already exists in the context."));
+		BOOST_THROW_EXCEPTION( invalid_argument("An object with ID '" + object->getId() + "' already exists in the context."));
 	}
 	objectMap[object->getId()] = object;
 }
 
-Segment& Context::addSegment(const string& id, size_t sizeL, size_t sizeM,
-		size_t sizeK, size_t minL, size_t maxL) throw (logic_error) {
+Segment& Context::addSegment(const string& id, long sizeL, long sizeM, long sizeK, long minL, long maxL) throw (logic_error) {
 	if (hasSegment(id)) {
-		BOOST_THROW_EXCEPTION(
-				invalid_argument("A segment with ID '" + id + "' already exists in the context."));
+		BOOST_THROW_EXCEPTION( invalid_argument("A segment with ID '" + id + "' already exists in the context."));
 	}
-	shared_ptr<Segment> segment = shared_ptr<Segment>(
-			new SegmentImpl(id, sizeL, sizeM, sizeK, minL, maxL));
+	shared_ptr<Segment> segment = shared_ptr<Segment>(new SegmentImpl(id, sizeL, sizeM, sizeK, minL, maxL));
 	segmentMap[id] = segment;
 	segmentList.push_back(segment);
 
@@ -82,8 +76,7 @@ Segment& Context::addSegment(const string& id, size_t sizeL, size_t sizeM,
 }
 
 bool Context::removeSegment(const string& id) {
-	const vector<shared_ptr<Segment> >::iterator position = find_if(
-			segmentList.begin(), segmentList.end(), Id<Segment>(id));
+	const vector<shared_ptr<Segment> >::iterator position = find_if(segmentList.begin(), segmentList.end(), Id<Segment>(id));
 	if (position != segmentList.end()) {
 		lastComputedLMap.erase(position->get());
 		segmentList.erase(position);
@@ -97,16 +90,14 @@ shared_ptr<Identifiable> Context::getObject(const string& id) const {
 	if (contains(objectMap, id)) {
 		return objectMap.at(id);
 	}
-	BOOST_THROW_EXCEPTION(
-			invalid_argument("No object with id '" + id + "' exists in the context."));
+	BOOST_THROW_EXCEPTION( invalid_argument("No object with id '" + id + "' exists in the context."));
 }
 
 Segment& Context::getSegment(const string& id) const {
 	if (contains(segmentMap, id)) {
 		return *segmentMap.at(id);
 	}
-	BOOST_THROW_EXCEPTION(
-			invalid_argument("No segment with id '" + id + "' exists in the context."));
+	BOOST_THROW_EXCEPTION( invalid_argument("No segment with id '" + id + "' exists in the context."));
 }
 
 bool Context::hasObject(const string& id) const {
@@ -118,12 +109,12 @@ bool Context::hasSegment(const string& id) const {
 }
 
 bool Context::isCompleted() const {
-	typedef pair<const Segment*, map<const Module*, size_t> > P;
-	typedef pair<const Module*, size_t> Q;
+	typedef pair<const Segment*, map<const Module*, long> > P;
+	typedef pair<const Module*, long> Q;
 
 	foreach(P p, lastComputedLMap)
 			{
-				const size_t maxL = p.first->getGrid().getMaxL();
+				const long maxL = p.first->getGrid().getMaxL();
 
 				foreach(Q q, p.second)
 						{
@@ -155,18 +146,18 @@ void Context::handleError(exception& e) {
 }
 
 void Context::moveForward(shared_ptr<Segment> segment) const {
-	size_t lastComputedL = segment->getGrid().getLastL();
+	long lastComputedL = segment->getGrid().getLastL();
 
 	if (contains(lastComputedLMap, segment.get())) {
-		typedef pair<const Module*, size_t> Q;
+		typedef pair<const Module*, long> Q;
 
 		foreach(Q q, lastComputedLMap.at(segment.get()))
 				{
 					lastComputedL = min(lastComputedL, q.second);
 				}
 	}
-	const size_t minRequiredL = getFirstRequiredL(*segment, lastComputedL + 1);
-	segment->moveForward(minRequiredL);
+	const long firstRequiredL = min(lastComputedL + 1, getFirstRequiredL(*segment));
+	segment->moveForward(firstRequiredL);
 }
 
 void Context::moveSegmentsForward() const {
@@ -176,28 +167,23 @@ void Context::moveSegmentsForward() const {
 			}
 }
 
-size_t Context::getLastComputedL(const Segment& segment,
-		const Module& module) const {
+long Context::getLastComputedL(const Segment& segment, const Module& module) const {
 	if (hasLastComputedL(segment, module)) {
 		return lastComputedLMap.at(&segment).at(&module);
 	}
-	BOOST_THROW_EXCEPTION(
-			invalid_argument("No information on segment '" + segment.getId() + "' and module '" + module.getId() + "'."));
+	return -1;
 }
 
-size_t Context::getLastWritableL(const Segment& segment,
-		const Writer& writer) const {
+long Context::getLastWritableL(const Segment& segment, const Writer& writer) const {
 	if (!contains(segmentList, segment)) {
-		BOOST_THROW_EXCEPTION(
-				invalid_argument("Unknown segment '" + segment.getId() + "'."));
+		BOOST_THROW_EXCEPTION( invalid_argument("Unknown segment '" + segment.getId() + "'."));
 	}
 	if (!contains(moduleList, dynamic_cast<const Module&>(writer))) {
-		BOOST_THROW_EXCEPTION(
-				invalid_argument("Unknown module '" + writer.getId() + "'."));
+		BOOST_THROW_EXCEPTION( invalid_argument("Unknown module '" + writer.getId() + "'."));
 	}
-	size_t lastWritableL = segment.getGrid().getLastL();
+	long lastWritableL = segment.getGrid().getLastL();
 	if (contains(lastComputedLMap, segment)) {
-		typedef pair<const Module*, size_t> Q;
+		typedef pair<const Module*, long> Q;
 
 		foreach(Q q, lastComputedLMap.at(&segment))
 				{
@@ -209,53 +195,62 @@ size_t Context::getLastWritableL(const Segment& segment,
 	return lastWritableL;
 }
 
-bool Context::hasLastComputedL(const Segment& segment,
-		const Module& module) const {
-	return contains(lastComputedLMap, segment)
-			&& contains(lastComputedLMap.at(&segment), module);
+bool Context::hasFirstRequiredL(const Segment& segment, const Module& module) const {
+	return contains(firstRequiredLMap, segment) && contains(firstRequiredLMap.at(&segment), module);
 }
 
-void Context::setLastComputedL(const Segment& segment, const Module& module,
-		size_t l) {
+bool Context::hasLastComputedL(const Segment& segment, const Module& module) const {
+	return contains(lastComputedLMap, segment) && contains(lastComputedLMap.at(&segment), module);
+}
+
+void Context::setFirstRequiredL(const Segment& segment, const Module& module, long l) {
 	if (!contains(segmentList, segment)) {
-		BOOST_THROW_EXCEPTION(
-				invalid_argument("Unknown segment '" + segment.getId() + "'."));
+		BOOST_THROW_EXCEPTION( invalid_argument("Unknown segment '" + segment.getId() + "'."));
 	}
 	if (!contains(moduleList, module)) {
-		BOOST_THROW_EXCEPTION(
-				invalid_argument("Unknown module '" + module.getId() + "'."));
+		BOOST_THROW_EXCEPTION( invalid_argument("Unknown module '" + module.getId() + "'."));
 	}
-	if ((hasLastComputedL(segment, module)
-			&& l < getLastComputedL(segment, module))
-			|| l > segment.getGrid().getMaxL()) {
-		BOOST_THROW_EXCEPTION(
-				invalid_argument("Invalid row index l = " + lexical_cast<string > (l)));
+	if ((hasFirstRequiredL(segment, module) && l < getLastComputedL(segment, module)) || l > segment.getGrid().getMaxL()) {
+		BOOST_THROW_EXCEPTION( invalid_argument("Invalid row index l = " + lexical_cast<string > (l)));
+	}
+	firstRequiredLMap[&segment][&module] = l;
+}
+
+
+void Context::setLastComputedL(const Segment& segment, const Module& module, long l) {
+	if (!contains(segmentList, segment)) {
+		BOOST_THROW_EXCEPTION( invalid_argument("Unknown segment '" + segment.getId() + "'."));
+	}
+	if (!contains(moduleList, module)) {
+		BOOST_THROW_EXCEPTION( invalid_argument("Unknown module '" + module.getId() + "'."));
+	}
+	if ((hasLastComputedL(segment, module) && l < getLastComputedL(segment, module)) || l > segment.getGrid().getMaxL()) {
+		BOOST_THROW_EXCEPTION( invalid_argument("Invalid row index l = " + lexical_cast<string > (l)));
 	}
 	lastComputedLMap[&segment][&module] = l;
 }
 
-size_t Context::getFirstComputableL(const Segment& segment,
-		const Module& module) const {
+long Context::getFirstComputableL(const Segment& segment, const Module& module) const {
 	if (hasLastComputedL(segment, module)) {
-		return max(segment.getGrid().getFirstL(),
-				getLastComputedL(segment, module) + 1);
+		return max(segment.getGrid().getFirstL(), getLastComputedL(segment, module) + 1);
 	}
 	return segment.getGrid().getFirstL();
 }
 
-size_t Context::getLastComputableL(const Segment& segment) const {
+long Context::getLastComputableL(const Segment& segment) const {
 	if (!contains(segmentList, segment)) {
-		BOOST_THROW_EXCEPTION(
-				invalid_argument("Unknown segment '" + segment.getId() + "'."));
+		BOOST_THROW_EXCEPTION( invalid_argument("Unknown segment '" + segment.getId() + "'."));
 	}
 	return min(segment.getGrid().getLastL(), segment.getGrid().getMaxL());
 }
 
-size_t Context::getFirstRequiredL(const Segment& segment, size_t l) const {
-	size_t firstRequiredL = l;
-	for (size_t i = 0; i < moduleList.size(); i++) {
-		firstRequiredL = min(firstRequiredL,
-				moduleList[i]->getFirstRequiredL(segment, l));
-	}
+long Context::getFirstRequiredL(const Segment& segment) const {
+	long firstRequiredL = getLastComputableL(segment) + 1;
+	foreach (shared_ptr<Module> module, moduleList)
+			{
+				if (hasFirstRequiredL(segment, *module)) {
+					firstRequiredL = min(firstRequiredL, firstRequiredLMap.at(&segment).at(module.get()));
+				}
+			}
 	return firstRequiredL;
 }

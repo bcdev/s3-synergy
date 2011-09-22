@@ -289,7 +289,7 @@ public:
 
 	virtual void setFillValue(size_t i) throw (out_of_range) = 0;
 
-	virtual void shift(size_t n, size_t strideK, size_t strideL) = 0;
+	virtual void shift(long n, long strideK, long strideL) = 0;
 };
 
 #endif	/* ACCESSOR_H */

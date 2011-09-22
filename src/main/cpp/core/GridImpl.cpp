@@ -26,7 +26,7 @@
 
 using std::invalid_argument;
 
-GridImpl::GridImpl(size_t sizeK, size_t sizeL, size_t sizeM, size_t minL, size_t maxL) :
+GridImpl::GridImpl(long sizeK, long sizeL, long sizeM, long minL, long maxL) :
 		Grid() {
 	if (minL > maxL) {
 		BOOST_THROW_EXCEPTION(invalid_argument("minL > maxL"));
@@ -63,7 +63,7 @@ GridImpl::GridImpl(const Grid& b) :
 GridImpl::~GridImpl() {
 }
 
-void GridImpl::setFirstL(size_t l) {
+void GridImpl::setFirstL(long l) {
 	if (l < minL) {
 		BOOST_THROW_EXCEPTION(std::out_of_range("l < minL"));
 	}
@@ -73,7 +73,7 @@ void GridImpl::setFirstL(size_t l) {
 	this->firstL = l;
 }
 
-size_t GridImpl::getIndex(size_t k, size_t l, size_t m) const throw (out_of_range) {
+size_t GridImpl::getIndex(long k, long l, long m) const throw (out_of_range) {
 	if (k < firstK || k > firstK + sizeK - 1) {
 		BOOST_THROW_EXCEPTION(out_of_range("index k is out of range: k=" + lexical_cast<string>(k) + ", firstK=" + lexical_cast<string>(firstK) + ", sizeK=" + lexical_cast<string>(sizeK)));
 	}

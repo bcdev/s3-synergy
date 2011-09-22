@@ -67,10 +67,6 @@ public:
 	virtual void process(Context& context) {
 	}
 
-	virtual size_t getFirstRequiredL(const Segment& segment, size_t line) const {
-		return line;
-	}
-
 	static string getInstallationPath() {
 		const char* value = std::getenv("S3_SYNERGY_HOME");
 		if (value != 0) {

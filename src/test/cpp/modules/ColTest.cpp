@@ -48,7 +48,7 @@ void ColTest::prepareContext() {
 
     const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
     shared_ptr<Dictionary> dictionary = DictionaryParser().parse(S3_SYNERGY_HOME + "/src/main/resources/dictionary");
-    shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.0.xml");
+    shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_COL.xml");
 
     context->setDictionary(dictionary);
     context->setJobOrder(jobOrder);

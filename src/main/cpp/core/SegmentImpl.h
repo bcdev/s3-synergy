@@ -33,7 +33,7 @@ using std::vector;
 
 class SegmentImpl: public virtual Segment {
 public:
-	SegmentImpl(const string& id, size_t sizeL, size_t sizeM, size_t sizeK, size_t minL, size_t maxL);
+	SegmentImpl(const string& id, long sizeL, long sizeM, long sizeK, long minL, long maxL);
 	virtual ~SegmentImpl();
 
 	void addVariable(const VariableDescriptor& variableDescriptor) throw (logic_error);
@@ -70,7 +70,7 @@ public:
 		return accessorMap.at(name);
 	}
 
-	void moveForward(size_t l) throw (logic_error);
+	void moveForward(long l) throw (logic_error);
 
 	string toString() const;
 

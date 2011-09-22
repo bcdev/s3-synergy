@@ -29,7 +29,7 @@ using std::invalid_argument;
 using std::logic_error;
 using std::ostringstream;
 
-SegmentImpl::SegmentImpl(const string& s, size_t l, size_t m, size_t k, size_t minL, size_t maxL) :
+SegmentImpl::SegmentImpl(const string& s, long l, long m, long k, long minL, long maxL) :
 		id(s), grid(k, l, m, minL, maxL), accessorMap() {
 }
 
@@ -81,22 +81,22 @@ void SegmentImpl::addVariable(const VariableDescriptor& d, const string& targetN
 void SegmentImpl::addVariable(const string& name, int type, double scaleFactor, double addOffset) throw (logic_error) {
 	switch (type) {
 	case Constants::TYPE_BYTE:
-		addVariableByte(name, scaleFactor, addOffset);
+		addVariableByte(name, 0, scaleFactor, addOffset);
 		break;
 	case Constants::TYPE_UBYTE:
-		addVariableUByte(name, scaleFactor, addOffset);
+		addVariableUByte(name, 0, scaleFactor, addOffset);
 		break;
 	case Constants::TYPE_SHORT:
-		addVariableShort(name, scaleFactor, addOffset);
+		addVariableShort(name, 0, scaleFactor, addOffset);
 		break;
 	case Constants::TYPE_USHORT:
-		addVariableUShort(name, scaleFactor, addOffset);
+		addVariableUShort(name, 0, scaleFactor, addOffset);
 		break;
 	case Constants::TYPE_INT:
-		addVariableInt(name, scaleFactor, addOffset);
+		addVariableInt(name, 0, scaleFactor, addOffset);
 		break;
 	case Constants::TYPE_UINT:
-		addVariableUInt(name, scaleFactor, addOffset);
+		addVariableUInt(name, 0, scaleFactor, addOffset);
 		break;
 	case Constants::TYPE_LONG:
 		addVariableLong(name);
@@ -204,7 +204,7 @@ Accessor& SegmentImpl::getAccessor(const string& name) const throw (logic_error)
 	return *accessorMap.at(name);
 }
 
-void SegmentImpl::moveForward(size_t l) throw (logic_error) {
+void SegmentImpl::moveForward(long l) throw (logic_error) {
 	if (l < grid.getFirstL()) {
 		BOOST_THROW_EXCEPTION( logic_error("Class: " + className + ": l < grid.getStartL()."));
 	}

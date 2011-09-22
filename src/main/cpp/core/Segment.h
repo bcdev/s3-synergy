@@ -120,7 +120,7 @@ public:
 	 *
 	 * @param l The index of the row the segment shall be moved to.
 	 */
-	virtual void moveForward(size_t l) throw (logic_error) = 0;
+	virtual void moveForward(long l) throw (logic_error) = 0;
 
 	/**
 	 * Returns a string representation of the segment.

@@ -45,68 +45,68 @@ public:
 	 * Returns the first value of the camera index dimension.
 	 * @return the first value of the camera index dimension.
 	 */
-	virtual size_t getFirstK() const = 0;
+	virtual long getFirstK() const = 0;
 
 	/**
 	 * Returns the first value of the row index dimension.
 	 * @return the first value of the row index dimension.
 	 */
-	virtual size_t getFirstL() const = 0;
+	virtual long getFirstL() const = 0;
 
 	/**
 	 * Returns the last value of the row index dimension.
 	 * @return the last value of the row index dimension.
 	 */
-	virtual size_t getLastL() const = 0;
+	virtual long getLastL() const = 0;
 
 	/**
 	 * Returns the first value of the column index dimension.
 	 * @return the first value of the column index dimension.
 	 */
-	virtual size_t getFirstM() const = 0;
+	virtual long getFirstM() const = 0;
 
 	/**
 	 * Returns the size of the camera index dimension.
 	 * @return the size of the camera index dimension.
 	 */
-	virtual size_t getSizeK() const = 0;
+	virtual long getSizeK() const = 0;
 
 	/**
 	 * Returns the size of the row index dimension.
 	 * @return the size of the row index dimension.
 	 */
-	virtual size_t getSizeL() const = 0;
+	virtual long getSizeL() const = 0;
 
 	/**
 	 * Returns the size of the column index dimension.
 	 * @return the size of the column index dimension.
 	 */
-	virtual size_t getSizeM() const = 0;
+	virtual long getSizeM() const = 0;
 
 	/**
 	 * Returns the plain size of the grid in terms of the the total number of
 	 * grid points.
 	 * @return the plain size of the grid.
 	 */
-	virtual size_t getSize() const = 0;
+	virtual long getSize() const = 0;
 
 	/**
 	 * Returns the stride for the camera index dimension.
 	 * @return the stride for the camera index dimension.
 	 */
-	virtual size_t getStrideK() const = 0;
+	virtual long getStrideK() const = 0;
 
 	/**
 	 * Returns the stride for the row index dimension.
 	 * @return the stride for the row index dimension.
 	 */
-	virtual size_t getStrideL() const = 0;
+	virtual long getStrideL() const = 0;
 
 	/**
 	 * Returns the stride for the column index dimension.
 	 * @return the stride for the column index dimension.
 	 */
-	virtual size_t getStrideM() const = 0;
+	virtual long getStrideM() const = 0;
 
 	/**
 	 * Returns the plain index for given coordinates ({@code k}, {@code l},
@@ -116,43 +116,43 @@ public:
 	 * @param m The column index.
 	 * @return the plain index.
 	 */
-	virtual size_t getIndex(size_t k, size_t l, size_t m) const throw (out_of_range) = 0;
+	virtual size_t getIndex(long k, long l, long m) const throw (out_of_range) = 0;
 
 	/**
 	 * Returns the minimum valid value of the camera index dimension.
 	 * @return the minimum valid value of the camera index dimension.
 	 */
-	virtual size_t getMinK() const = 0;
+	virtual long getMinK() const = 0;
 
 	/**
 	 * Returns the maximum valid value of the camera index dimension.
 	 * @return the maximum valid value of the camera index dimension.
 	 */
-	virtual size_t getMaxK() const = 0;
+	virtual long getMaxK() const = 0;
 
 	/**
 	 * Returns the minimum valid value of the row index dimension.
 	 * @return the minimum valid value of the row index dimension.
 	 */
-	virtual size_t getMinL() const = 0;
+	virtual long getMinL() const = 0;
 
 	/**
 	 * Returns the maximum valid value of the row index dimension.
 	 * @return the maximum valid value of the row index dimension.
 	 */
-	virtual size_t getMaxL() const = 0;
+	virtual long getMaxL() const = 0;
 
 	/**
 	 * Returns the minimum valid value of the column index dimension.
 	 * @return the minimum valid value of the column index dimension.
 	 */
-	virtual size_t getMinM() const = 0;
+	virtual long getMinM() const = 0;
 
 	/**
 	 * Returns the maximum valid value of the column index dimension.
 	 * @return the maximum valid value of the column index dimension.
 	 */
-	virtual size_t getMaxM() const = 0;
+	virtual long getMaxM() const = 0;
 };
 
 #endif	/* GRID_H */

@@ -62,8 +62,8 @@ const string DIMENSION_N_LINE_OLC = "N_LINE_OLC";
 /**
  * Dimension sizes.
  */
-const size_t N_CAM = 5;
-const size_t N_DET_CAM = 740;
+const long N_CAM = 5;
+const long N_DET_CAM = 740;
 
 /**
  * Data types.

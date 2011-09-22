@@ -37,7 +37,7 @@ void SynL1Reader::start(Context& context) {
 	segmentLineCount = 400;
 	const string segmentLineCountString = context.getJobOrder()->getIpfConfiguration().getDynamicProcessingParameter("Segment_Line_Count");
 	if (!segmentLineCountString.empty()) {
-		segmentLineCount = lexical_cast<size_t>(segmentLineCountString);
+		segmentLineCount = lexical_cast<long>(segmentLineCountString);
 	}
 	context.getLogging()->info("segment line count is " + lexical_cast<string>(segmentLineCount), getId());
 
@@ -65,9 +65,9 @@ void SynL1Reader::start(Context& context) {
 							const int dimCount = NetCDF::getDimensionCount(fileId, varId);
 							const valarray<int> dimIds = NetCDF::getDimensionIds(fileId, varId);
 
-							size_t camCount;
-							size_t rowCount;
-							size_t colCount;
+							long camCount;
+							long rowCount;
+							long colCount;
 
 							// Set grid parameters and write them to dictionary
 							switch (dimCount) {
@@ -98,7 +98,7 @@ void SynL1Reader::start(Context& context) {
 							}
 							// Create a new segment, if necessary
 							if (!context.hasSegment(segmentName)) {
-								const size_t sizeL = rowCount > 64 ? min(segmentLineCount, rowCount) : rowCount;
+								const long sizeL = rowCount > 64 ? min(segmentLineCount, rowCount) : rowCount;
 								context.getLogging()->info("adding segment '" + segmentName + "' to context", getId());
 								context.addSegment(segmentName, sizeL, colCount, camCount, 0, rowCount - 1);
 							}
@@ -142,8 +142,8 @@ void SynL1Reader::process(Context& context) {
 				const Grid& grid = segment.getGrid();
 				if (!context.hasLastComputedL(segment, *this) || context.getLastComputedL(segment, *this) < grid.getFirstL() + grid.getSizeL() - 1) {
 					const vector<VariableDescriptor*> variableDescriptors = segmentDescriptor->getVariableDescriptors();
-					const size_t firstLComputable = context.getFirstComputableL(segment, *this);
-					const size_t lastLComputable = context.getLastComputableL(segment);
+					const long firstLComputable = context.getFirstComputableL(segment, *this);
+					const long lastLComputable = context.getLastComputableL(segment);
 
 					foreach(VariableDescriptor* variableDescriptor, variableDescriptors)
 							{

@@ -95,16 +95,18 @@ void Col::process(Context& context) {
 	const Grid& sourceGrid = s.getGrid();
 	const Grid& targetGrid = t.getGrid();
 
-	const size_t firstL = context.getFirstComputableL(t, *this);
-	const size_t lastL = context.getLastComputableL(t);
+	const long firstL = context.getFirstComputableL(t, *this);
+	const long lastL = context.getLastComputableL(t);
 
 	// TODO: make segment's firstL etc. and context's lastComputedL etc. be of type int32_t or let the lastXXX
 	// variables point to one line behind
-	size_t firstRequiredL = lastL;
-	size_t lastComputedL = lastL;
+	long firstRequiredL = lastL;
+	long lastComputedL = lastL;
 
 	foreach(const string& targetName, targetNames)
 			{
+				context.getLogging()->progress("Collocating variable '" + targetName + "' into segment '" + t.toString() + "'", getId());
+
 				const string& sourceName = sourceNameMap[targetName];
 				const Accessor& sourceAccessor = s.getAccessor(sourceName);
 
@@ -115,9 +117,9 @@ void Col::process(Context& context) {
 				const Accessor& deltaRowAccessor = s.getAccessor(deltaRowName);
 				const Accessor& deltaColAccessor = s.getAccessor(deltaColName);
 
-				for (size_t l = firstL; l <= lastL; l++) {
-					for (size_t k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
-						for (size_t m = targetGrid.getFirstM(); m < targetGrid.getFirstM() + targetGrid.getSizeM(); m++) {
+				for (long l = firstL; l <= lastL; l++) {
+					for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
+						for (long m = targetGrid.getFirstM(); m < targetGrid.getFirstM() + targetGrid.getSizeM(); m++) {
 							const size_t targetIndex = targetGrid.getIndex(k, l, m);
 
 							if (deltaRowAccessor.isFillValue(targetIndex)) {
@@ -127,12 +129,14 @@ void Col::process(Context& context) {
 								continue;
 							}
 
-							const size_t sourceL = l + floor(deltaRowAccessor.getDouble(targetIndex));
-							const size_t sourceM = m + floor(deltaColAccessor.getDouble(targetIndex));
+							const long sourceL = l + floor(deltaRowAccessor.getDouble(targetIndex));
+							const long sourceM = m + floor(deltaColAccessor.getDouble(targetIndex));
 
 							if (sourceL > context.getLastComputableL(s)) {
+								context.getLogging()->debug("sourceL > context.getLastComputableL(s): " + lexical_cast<string>(sourceL) + " > " + lexical_cast<string>(context.getLastComputableL(s)),
+										getId());
 								firstRequiredL = min(sourceL, firstRequiredL);
-								lastComputedL = min(l, lastComputedL);
+								lastComputedL = min(l - 1, lastComputedL);
 								goto nextVariable;
 							}
 							if (sourceL < sourceGrid.getMinL() || sourceL > sourceGrid.getMaxL()) {
@@ -196,7 +200,8 @@ void Col::process(Context& context) {
 				}
 				nextVariable: ;
 			}
-	// TODO: context.setFirstRequiredL(t, *this, firstRequiredL);
+	context.setFirstRequiredL(s, *this, firstRequiredL);
+	// TODO: context.setFirstRequiredL(slstr, *this, firstSlstrRequiredL);
 	context.setLastComputedL(t, *this, lastComputedL);
 }
 

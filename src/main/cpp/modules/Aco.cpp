@@ -99,7 +99,7 @@ void Aco::process(Context& context) {
 	const double tau550 = 0.1;
 
 #pragma omp parallel for
-	for (size_t l = olcGrid.getFirstL(); l < olcGrid.getFirstL() + olcGrid.getSizeL(); l++) {
+	for (long l = olcGrid.getFirstL(); l < olcGrid.getFirstL() + olcGrid.getSizeL(); l++) {
 		context.getLogging()->progress("Processing line l = " + lexical_cast<string>(l) + " ...", getId());
 
 		valarray<double> coordinates(20);
@@ -111,8 +111,8 @@ void Aco::process(Context& context) {
 		matrix<double> matTv(40, 30);
 		matrix<double> matRho(40, 30);
 
-		for (size_t k = olcGrid.getFirstK(); k < olcGrid.getFirstK() + olcGrid.getSizeK(); k++) {
-			for (size_t m = olcGrid.getFirstM(); m < olcGrid.getFirstM() + olcGrid.getSizeM(); m++) {
+		for (long k = olcGrid.getFirstK(); k < olcGrid.getFirstK() + olcGrid.getSizeK(); k++) {
+			for (long m = olcGrid.getFirstM(); m < olcGrid.getFirstM() + olcGrid.getSizeM(); m++) {
 				const size_t i = olcGrid.getIndex(k, l, m);
 
 				tpi.prepare(lon.getDouble(i), lat.getDouble(i), tpiWeights, tpiIndexes);

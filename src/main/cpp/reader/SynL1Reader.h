@@ -28,7 +28,7 @@ private:
     int getNcFile(const string& ncFileBasename);
 
     path sourceDirPath;
-    size_t segmentLineCount;
+    long segmentLineCount;
 
     map<string, int> ncFileIdMap;
     map<string, int> ncVarIdMap;

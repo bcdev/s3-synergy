@@ -84,8 +84,7 @@ public:
 	 * @param maxL The maximum valid row index.
 	 * @return a reference to the segment added.
 	 */
-	Segment& addSegment(const string& id, size_t sizeL, size_t sizeM,
-			size_t sizeK, size_t minL, size_t maxL) throw (logic_error);
+	Segment& addSegment(const string& id, long sizeL, long sizeM, long sizeK, long minL, long maxL) throw (logic_error);
 
 	bool removeSegment(const string& id);
 
@@ -180,7 +179,9 @@ public:
 	 * @return the index of the last row in {@code segment}, which has
 	 *         been computed by {@code module}.
 	 */
-	size_t getLastComputedL(const Segment& segment, const Module& module) const;
+	long getLastComputedL(const Segment& segment, const Module& module) const;
+
+	void setFirstRequiredL(const Segment& segment, const Module& module, long l);
 
 	/**
 	 * Sets the index of the last row in a segment, which has been
@@ -190,8 +191,7 @@ public:
 	 * @param l The index of the last row in {@code segment}, which has
 	 *          been computed by {@code module}.
 	 */
-	void setLastComputedL(const Segment& segment, const Module& module,
-			size_t l);
+	void setLastComputedL(const Segment& segment, const Module& module, long l);
 
 	/**
 	 * Returns the index of the last row in a segment, which has been
@@ -201,7 +201,7 @@ public:
 	 * @return The index of the last row in a segment, which has been
 	 *         computed by all modules but the writer module.
 	 */
-	size_t getLastWritableL(const Segment& segment, const Writer& writer) const;
+	long getLastWritableL(const Segment& segment, const Writer& writer) const;
 
 	/**
 	 * Returns the index of the first row in a given segment, which has not
@@ -211,8 +211,7 @@ public:
 	 * @return The index of the first row, which has not been computed by the
 	 *         given module.
 	 */
-	size_t getFirstComputableL(const Segment& segment,
-			const Module& module) const;
+	long getFirstComputableL(const Segment& segment, const Module& module) const;
 
 	/**
 	 * Returns the index of the last row in a given segment, which can be
@@ -221,18 +220,7 @@ public:
 	 * @return The index of the last row in the given segment, which can be
 	 *         computed.
 	 */
-	size_t getLastComputableL(const Segment& segment) const;
-
-	/**
-	 * Returns the index of the first row in a segment, which is required for
-	 * processing any block of rows starting with a given row index.
-	 * @param segment The segment.
-	 * @param l The row index.
-	 * @return the index of the first row in {@code segment}, which is
-	 *         required for processing a block of rows starting with row
-	 *         index {@code l}.
-	 */
-	size_t getFirstRequiredL(const Segment& segment, size_t l) const;
+	long getLastComputableL(const Segment& segment) const;
 
 	/**
 	 * Inquires the context about an object.
@@ -269,6 +257,25 @@ public:
 	void handleError(exception& e);
 
 private:
+	/**
+	 * Returns the index of the first row in a segment, which is required for
+	 * processing the given segment.
+	 * @param segment The segment.
+	 * @return the index of the first row in {@code segment}, which is
+	 *         required for processing.
+	 */
+	long getFirstRequiredL(const Segment& segment) const;
+
+	/**
+	 * Inquires the context about the index of the first row in a segment,
+	 * which is required by a certain module.
+	 * @param segment The segment.
+	 * @param module The module.
+	 * @return {@code true} if the context has the requested information,
+	 *         {@code false} otherwise.
+	 */
+	bool hasFirstRequiredL(const Segment& segment, const Module& module) const;
+
 	template<class Identifiable>
 	class Id {
 	public:
@@ -328,7 +335,8 @@ private:
 	map<string, shared_ptr<Segment> > segmentMap;
 	vector<shared_ptr<Segment> > segmentList;
 
-	map<const Segment*, map<const Module*, size_t> > lastComputedLMap;
+	map<const Segment*, map<const Module*, long> > firstRequiredLMap;
+	map<const Segment*, map<const Module*, long> > lastComputedLMap;
 };
 
 #endif	/* CONTEXT_H */

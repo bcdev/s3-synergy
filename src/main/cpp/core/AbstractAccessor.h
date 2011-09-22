@@ -200,7 +200,7 @@ public:
 		data[at(i)] = fillValue;
 	}
 
-	void shift(size_t n, size_t strideK, size_t strideL) {
+	void shift(long n, long strideK, long strideL) {
 		if (n * strideL > strideK) {
 			BOOST_THROW_EXCEPTION(invalid_argument("n * strideL > strideK"));
 		}
@@ -238,9 +238,9 @@ private:
 		BOOST_THROW_EXCEPTION(out_of_range("Index i = " + boost::lexical_cast<string>(i) + " is out of range."));
 	}
 
+	const T fillValue;
 	const double scaleFactor;
 	const double addOffset;
-	const T fillValue;
 
 	valarray<T> data;
 };

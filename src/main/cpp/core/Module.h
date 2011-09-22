@@ -77,20 +77,6 @@ public:
 	 * @param context The context.
 	 */
 	virtual void process(Context& context) = 0;
-
-	/**
-	 * Returns the index of the first row in a source segment, which is required
-	 * for processing a target segment.
-	 *
-	 * @param segment The source segment.
-	 * @param l The row index of the first row in the target segment to be
-	 *          processed.
-	 * @return the index of the first row in the source segment required for
-	 *         processing a block of rows in the target segment. Implementations
-	 *         shall return {@code l} by default.
-	 */
-	virtual size_t getFirstRequiredL(const Segment& segment,
-			size_t l) const = 0;
 };
 
 #endif	/* MODULE_H */
