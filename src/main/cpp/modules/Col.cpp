@@ -127,13 +127,12 @@ void Col::process(Context& context) {
 								continue;
 							}
 
-							// TODO: loop over all bands here?
 							const size_t sourceL = l + floor(deltaRowAccessor.getDouble(targetIndex));
 							const size_t sourceM = m + floor(deltaColAccessor.getDouble(targetIndex));
 
 							if (sourceL > context.getLastComputableL(s)) {
 								firstRequiredL = min(sourceL, firstRequiredL);
-								lastComputedL = min(l - 1, lastComputedL);
+								lastComputedL = min(l, lastComputedL);
 								goto nextVariable;
 							}
 							if (sourceL < sourceGrid.getMinL() || sourceL > sourceGrid.getMaxL()) {
