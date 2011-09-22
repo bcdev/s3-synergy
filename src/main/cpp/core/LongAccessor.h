@@ -23,11 +23,11 @@
 
 #include "AbstractAccessor.h"
 
-class LongAccessor: public virtual AbstractAccessor<int64_t> {
+class LongAccessor: public virtual AbstractAccessor<int64_t, Constants::TYPE_LONG> {
 public:
 
-	LongAccessor(size_t n) :
-			AbstractAccessor<int64_t>(n) {
+	LongAccessor(size_t n, int64_t fillValue = 0) :
+			AbstractAccessor<int64_t, Constants::TYPE_LONG>(n, fillValue) {
 	}
 
 	virtual ~LongAccessor() {

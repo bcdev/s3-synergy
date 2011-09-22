@@ -21,11 +21,11 @@
 #ifndef UINTACCESSOR_H
 #define	UINTACCESSOR_H
 
-class UIntAccessor: public virtual AbstractAccessor<uint32_t> {
+class UIntAccessor: public virtual AbstractAccessor<uint32_t, Constants::TYPE_UINT> {
 public:
 
-	UIntAccessor(size_t n, double scaleFactor = 1.0, double addOffset = 0.0) :
-			AbstractAccessor<uint32_t>(n, scaleFactor, addOffset) {
+	UIntAccessor(size_t n, uint32_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) :
+			AbstractAccessor<uint32_t, Constants::TYPE_UINT>(n, fillValue, scaleFactor, addOffset) {
 	}
 
 	virtual ~UIntAccessor() {

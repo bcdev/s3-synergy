@@ -35,53 +35,28 @@ SynL2SegmentProvider::~SynL2SegmentProvider() {
 
 void SynL2SegmentProvider::start(Context& context) {
 	size_t segmentLineCount = 400;
-	const string segmentLineCountString =
-			context.getJobOrder()->getIpfConfiguration().getDynamicProcessingParameter(
-					"Segment_Line_Count");
+	const string segmentLineCountString = context.getJobOrder()->getIpfConfiguration().getDynamicProcessingParameter("Segment_Line_Count");
 	if (!segmentLineCountString.empty()) {
 		segmentLineCount = lexical_cast<size_t>(segmentLineCountString);
 	}
-	context.getLogging()->info(
-			"segment line count is " + lexical_cast<string>(segmentLineCount),
-			getId());
+	context.getLogging()->info("segment line count is " + lexical_cast<string>(segmentLineCount), getId());
 
-	vector<SegmentDescriptor*> segmentDescriptors =
-			context.getDictionary()->getProductDescriptor(
-					Constants::PRODUCT_SY2).getSegmentDescriptors();
+	vector<SegmentDescriptor*> segmentDescriptors = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptors();
 
 	foreach(SegmentDescriptor* segDesc, segmentDescriptors)
 			{
-				vector<VariableDescriptor*> variableDescriptors =
-						segDesc->getVariableDescriptors();
+				vector<VariableDescriptor*> variableDescriptors = segDesc->getVariableDescriptors();
 
 				foreach(VariableDescriptor* varDesc, variableDescriptors)
 						{
 							const string& segmentName = segDesc->getName();
 							if (!context.hasSegment(segmentName)) {
-								valarray<size_t> dimensionSizes =
-										IOUtils::getDimensionSizes(varDesc);
-								context.addSegment(
-										segmentName,
-										min(segmentLineCount,
-												dimensionSizes[1]),
-										dimensionSizes[2], dimensionSizes[0], 0,
-										dimensionSizes[1] - 1);
+								valarray<size_t> dimensionSizes = IOUtils::getDimensionSizes(varDesc);
+								context.addSegment(segmentName, min(segmentLineCount, dimensionSizes[1]), dimensionSizes[2], dimensionSizes[0], 0, dimensionSizes[1] - 1);
 							}
 							Segment& segment = context.getSegment(segmentName);
 							if (!segment.hasVariable(varDesc->getName())) {
-								const double scaleFactor =
-										varDesc->hasAttribute("scale_factor") ?
-												varDesc->getAttribute(
-														"scale_factor").getDoubles()[0] :
-												1.0;
-								const double addOffset =
-										varDesc->hasAttribute("add_offset") ?
-												varDesc->getAttribute(
-														"add_offset").getDoubles()[0] :
-												0.0;
-								segment.addVariable(varDesc->getName(),
-										varDesc->getType(), scaleFactor,
-										addOffset);
+								segment.addVariable(*varDesc);
 							}
 						}
 			}
@@ -95,13 +70,10 @@ void SynL2SegmentProvider::stop(Context& context) {
 }
 
 void SynL2SegmentProvider::process(Context& context) {
-	vector<SegmentDescriptor*> segmentDescriptors =
-			context.getDictionary()->getProductDescriptor(
-					Constants::PRODUCT_SY2).getSegmentDescriptors();
+	vector<SegmentDescriptor*> segmentDescriptors = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptors();
 	foreach(SegmentDescriptor* segDesc, segmentDescriptors)
 			{
 				Segment& segment = context.getSegment(segDesc->getName());
-				context.setLastComputedL(segment, *this,
-						segment.getGrid().getLastL());
+				context.setLastComputedL(segment, *this, segment.getGrid().getLastL());
 			}
 }

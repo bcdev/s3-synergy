@@ -26,6 +26,7 @@
 
 #include "Accessor.h"
 #include "Boost.h"
+#include "Dictionary.h"
 #include "Grid.h"
 #include "Identifiable.h"
 
@@ -43,6 +44,19 @@ public:
 	 */
 	virtual ~Segment() {
 	}
+
+	/**
+	 * Adds a variable to the segment.
+	 * @param variableDescriptor The descriptor of the variable being added.
+	 */
+	virtual void addVariable(const VariableDescriptor& variableDescriptor) throw (logic_error) = 0;
+
+	/**
+	 * Adds a variable to the segment.
+	 * @param variableDescriptor The descriptor of the variable being added.
+	 * @param name The name of the variable being added.
+	 */
+	virtual void addVariable(const VariableDescriptor& variableDescriptor, const string& targetName) throw (logic_error) = 0;
 
 	/**
 	 * Adds a variable to the segment.

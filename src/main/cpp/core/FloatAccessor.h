@@ -23,10 +23,10 @@
 
 #include "AbstractAccessor.h"
 
-class FloatAccessor : public virtual AbstractAccessor<float> {
+class FloatAccessor : public virtual AbstractAccessor<float, Constants::TYPE_FLOAT> {
 public:
 
-    FloatAccessor(size_t n) : AbstractAccessor<float>(n) {
+    FloatAccessor(size_t n, float fillValue = 0.0f) : AbstractAccessor<float, Constants::TYPE_FLOAT>(n, fillValue) {
     }
 
     virtual ~FloatAccessor() {

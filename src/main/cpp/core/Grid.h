@@ -116,8 +116,19 @@ public:
 	 * @param m The column index.
 	 * @return the plain index.
 	 */
-	virtual size_t getIndex(size_t k, size_t l, size_t m) const
-			throw (out_of_range) = 0;
+	virtual size_t getIndex(size_t k, size_t l, size_t m) const throw (out_of_range) = 0;
+
+	/**
+	 * Returns the minimum valid value of the camera index dimension.
+	 * @return the minimum valid value of the camera index dimension.
+	 */
+	virtual size_t getMinK() const = 0;
+
+	/**
+	 * Returns the maximum valid value of the camera index dimension.
+	 * @return the maximum valid value of the camera index dimension.
+	 */
+	virtual size_t getMaxK() const = 0;
 
 	/**
 	 * Returns the minimum valid value of the row index dimension.
@@ -130,6 +141,18 @@ public:
 	 * @return the maximum valid value of the row index dimension.
 	 */
 	virtual size_t getMaxL() const = 0;
+
+	/**
+	 * Returns the minimum valid value of the column index dimension.
+	 * @return the minimum valid value of the column index dimension.
+	 */
+	virtual size_t getMinM() const = 0;
+
+	/**
+	 * Returns the maximum valid value of the column index dimension.
+	 * @return the maximum valid value of the column index dimension.
+	 */
+	virtual size_t getMaxM() const = 0;
 };
 
 #endif	/* GRID_H */

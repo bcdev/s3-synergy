@@ -26,12 +26,13 @@
 
 #include "Accessor.h"
 #include "Boost.h"
+#include "Constants.h"
 
 using std::copy;
 using std::fill;
 using std::invalid_argument;
 
-template<class T>
+template<class T, int N>
 class AbstractAccessor: public virtual Accessor {
 public:
 
@@ -44,23 +45,19 @@ public:
 	}
 
 	double getDouble(size_t i) const throw (bad_cast, out_of_range) {
-		return boost::numeric_cast<double>(data[at(i)]) * scaleFactor
-				+ addOffset;
+		return boost::numeric_cast<double>(data[at(i)]) * scaleFactor + addOffset;
 	}
 
 	void setDouble(size_t i, double value) throw (bad_cast, out_of_range) {
-		data[at(i)] = boost::numeric_cast<T>(
-				(value - addOffset) / scaleFactor);
+		data[at(i)] = boost::numeric_cast<T>((value - addOffset) / scaleFactor);
 	}
 
 	float getFloat(size_t i) const throw (bad_cast, out_of_range) {
-		return boost::numeric_cast<float>(data[at(i)]) * float(scaleFactor)
-				+ float(addOffset);
+		return boost::numeric_cast<float>(data[at(i)]) * float(scaleFactor) + float(addOffset);
 	}
 
 	void setFloat(size_t i, float value) throw (bad_cast, out_of_range) {
-		data[at(i)] = boost::numeric_cast<T>(
-				(value - float(addOffset)) / float(scaleFactor));
+		data[at(i)] = boost::numeric_cast<T>((value - float(addOffset)) / float(scaleFactor));
 	}
 
 	int32_t getInt(size_t i) const throw (bad_cast, out_of_range) {
@@ -166,8 +163,7 @@ public:
 	virtual valarray<double> getDoubles() const {
 		valarray<double> a(data.size());
 		for (size_t i = 0; i < data.size(); i++) {
-			a[i] = boost::numeric_cast<double>(data[i]) * scaleFactor
-					+ addOffset;
+			a[i] = boost::numeric_cast<double>(data[i]) * scaleFactor + addOffset;
 		}
 		return a;
 	}
@@ -175,14 +171,17 @@ public:
 	virtual valarray<float> getFloats() const {
 		valarray<float> a(data.size());
 		for (size_t i = 0; i < data.size(); i++) {
-			a[i] = boost::numeric_cast<float>(data[i]) * float(scaleFactor)
-					+ float(addOffset);
+			a[i] = boost::numeric_cast<float>(data[i]) * float(scaleFactor) + float(addOffset);
 		}
 		return a;
 	}
 
 	void* getUntypedData() const {
 		return (void*) &data[0];
+	}
+
+	int getType() const {
+		return N;
 	}
 
 	double getScaleFactor() const {
@@ -193,6 +192,14 @@ public:
 		return addOffset;
 	}
 
+	bool isFillValue(size_t i) const throw (out_of_range) {
+		return fillValue == data[at(i)];
+	}
+
+	void setFillValue(size_t i) throw (out_of_range) {
+		data[at(i)] = fillValue;
+	}
+
 	void shift(size_t n, size_t strideK, size_t strideL) {
 		if (n * strideL > strideK) {
 			BOOST_THROW_EXCEPTION(invalid_argument("n * strideL > strideK"));
@@ -201,8 +208,7 @@ public:
 			BOOST_THROW_EXCEPTION(invalid_argument("strideK % strideL != 0"));
 		}
 		if (data.size() % strideK != 0) {
-			BOOST_THROW_EXCEPTION(
-					invalid_argument("data.size() % strideK != 0"));
+			BOOST_THROW_EXCEPTION( invalid_argument("data.size() % strideK != 0"));
 		}
 		for (size_t k = 0; k < data.size(); k += strideK) {
 			copy(&data[k + n * strideL], &data[k + strideK], &data[k]);
@@ -212,8 +218,8 @@ public:
 
 protected:
 
-	AbstractAccessor(size_t n, double scaleFactor = 1.0, double addOffset = 0.0) :
-			Accessor(), scaleFactor(scaleFactor), addOffset(addOffset), data(n) {
+	AbstractAccessor(size_t n, T fillValue, double scaleFactor = 1.0, double addOffset = 0.0) :
+			Accessor(), fillValue(fillValue), scaleFactor(scaleFactor), addOffset(addOffset), data(n) {
 	}
 
 	virtual ~AbstractAccessor() {
@@ -229,11 +235,12 @@ private:
 		if (i < data.size()) {
 			return i;
 		}
-		BOOST_THROW_EXCEPTION(out_of_range("Accessor index is out of range."));
+		BOOST_THROW_EXCEPTION(out_of_range("Index i = " + boost::lexical_cast<string>(i) + " is out of range."));
 	}
 
 	const double scaleFactor;
 	const double addOffset;
+	const T fillValue;
 
 	valarray<T> data;
 };

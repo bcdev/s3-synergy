@@ -23,10 +23,10 @@
 
 #include "AbstractAccessor.h"
 
-class DoubleAccessor : public virtual AbstractAccessor<double> {
+class DoubleAccessor : public virtual AbstractAccessor<double, Constants::TYPE_DOUBLE> {
 public:
 
-    DoubleAccessor(size_t n) : AbstractAccessor<double>(n) {
+    DoubleAccessor(size_t n, double fillValue = 0.0) : AbstractAccessor<double, Constants::TYPE_DOUBLE>(n, fillValue) {
     }
 
     virtual ~DoubleAccessor() {

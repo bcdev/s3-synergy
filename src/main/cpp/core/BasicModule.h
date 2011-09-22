@@ -43,8 +43,7 @@ public:
 	 * @param moduleId The module ID.
 	 * @param moduleVersion The module version.
 	 */
-	BasicModule(const string& moduleId, const string& moduleVersion =
-			Constants::PROCESSOR_VERSION) :
+	BasicModule(const string& moduleId, const string& moduleVersion = Constants::PROCESSOR_VERSION) :
 			id(moduleId), version(moduleVersion) {
 	}
 
@@ -68,8 +67,7 @@ public:
 	virtual void process(Context& context) {
 	}
 
-	virtual size_t getFirstRequiredL(const Segment& segment,
-			size_t line) const {
+	virtual size_t getFirstRequiredL(const Segment& segment, size_t line) const {
 		return line;
 	}
 

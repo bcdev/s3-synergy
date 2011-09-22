@@ -21,11 +21,11 @@
 #ifndef ULONGACCESSOR_H
 #define	ULONGACCESSOR_H
 
-class ULongAccessor: public virtual AbstractAccessor<uint64_t> {
+class ULongAccessor: public virtual AbstractAccessor<uint64_t, Constants::TYPE_ULONG> {
 public:
 
-	ULongAccessor(size_t n) :
-			AbstractAccessor<uint64_t>(n) {
+	ULongAccessor(size_t n, uint64_t fillValue = 0) :
+			AbstractAccessor<uint64_t, Constants::TYPE_ULONG>(n, fillValue) {
 	}
 
 	virtual ~ULongAccessor() {

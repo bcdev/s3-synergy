@@ -15,7 +15,6 @@
 
 class ColTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(ColTest);
-    CPPUNIT_TEST(testRetrieveDeltaVariableName);
 //    CPPUNIT_TEST(testCol);
 //    CPPUNIT_TEST(testAddOlciVariables);
 //    CPPUNIT_TEST(testAddSlstrVariables);
@@ -31,8 +30,6 @@ public:
 private:
     void testAddSlstrVariables();
     void testAddOlciVariables();
-    void testRetrievePositionVariableName();
-    void testRetrieveDeltaVariableName();
     void testCol();
     void prepareContext();
     shared_ptr<Context> context;

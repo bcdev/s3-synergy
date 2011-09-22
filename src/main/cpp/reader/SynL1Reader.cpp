@@ -113,10 +113,8 @@ void SynL1Reader::start(Context& context) {
 								variableDescriptor->addAttribute(attr);
 							}
 							// Add variable to segment
-							const double scaleFactor = variableDescriptor->getScaleFactor();
-							const double addOffset = variableDescriptor->getAddOffset();
 							context.getLogging()->info("adding variable '" + varName + "' to segment '" + segmentName + "'", getId());
-							context.getSegment(segmentName).addVariable(varName, type, scaleFactor, addOffset);
+							context.getSegment(segmentName).addVariable(*variableDescriptor);
 							ncVarIdMap[varName] = varId;
 						}
 			}

@@ -76,12 +76,28 @@ public:
 
 	size_t getIndex(size_t k, size_t l, size_t m) const throw (out_of_range);
 
+	size_t getMinK() const {
+		return firstK;
+	}
+
+	size_t getMaxK() const {
+		return firstK + sizeK - 1;
+	}
+
 	size_t getMinL() const {
 		return minL;
 	}
 
 	size_t getMaxL() const {
 		return maxL;
+	}
+
+	size_t getMinM() const {
+		return firstM;
+	}
+
+	size_t getMaxM() const {
+		return firstM + sizeM - 1;
 	}
 
 	void setFirstL(size_t l);

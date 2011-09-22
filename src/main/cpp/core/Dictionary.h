@@ -67,8 +67,7 @@ public:
 
 	A& addAttribute(int type, const string& name, const string& value) {
 		if (hasAttribute(name)) {
-			BOOST_THROW_EXCEPTION(
-					logic_error("Attribute '" + name + "' already exists."));
+			BOOST_THROW_EXCEPTION( logic_error("Attribute '" + name + "' already exists."));
 		}
 		A* a = new A(type, name, value);
 		attributeMap[name] = a;
@@ -77,8 +76,7 @@ public:
 
 	E& addElement(const string& name) {
 		if (hasElement(name)) {
-			BOOST_THROW_EXCEPTION(
-					logic_error("Element '" + name + "' already exists."));
+			BOOST_THROW_EXCEPTION( logic_error("Element '" + name + "' already exists."));
 		}
 		E* e = new E(name);
 		elementMap[name] = e;
@@ -88,8 +86,7 @@ public:
 
 	A& getAttribute(const string& name) const {
 		if (!hasAttribute(name)) {
-			BOOST_THROW_EXCEPTION(
-					out_of_range("Descriptor '" + this->name + "' contains no attribute '" + name + "'."));
+			BOOST_THROW_EXCEPTION( out_of_range("Descriptor '" + this->name + "' contains no attribute '" + name + "'."));
 		}
 		return *attributeMap.at(name);
 	}
@@ -107,8 +104,7 @@ public:
 
 	E& getElement(const string& name) const {
 		if (!hasElement(name)) {
-			BOOST_THROW_EXCEPTION(
-					out_of_range("Descriptor '" + this->name + "' contains no element '" + name + "'."));
+			BOOST_THROW_EXCEPTION( out_of_range("Descriptor '" + this->name + "' contains no element '" + name + "'."));
 		}
 		return *elementMap.at(name);
 	}
@@ -165,7 +161,8 @@ public:
 	 * @param data The attribute's data.
 	 */
 	template<class T>
-	Attribute(int type, const string& name, const valarray<T>& data) : name(name), type(type) {
+	Attribute(int type, const string& name, const valarray<T>& data) :
+			name(name), type(type) {
 		string s;
 		for (size_t i = 0; i < data.size(); i++) {
 			if (i > 0) {
@@ -196,8 +193,7 @@ public:
 		split(tokens, value, boost::is_any_of(" "));
 		valarray<uint8_t> result(tokens.size());
 		for (size_t i = 0; i < tokens.size(); i++) {
-			result[i] = numeric_cast<uint8_t>(
-					lexical_cast<uint16_t>(tokens[i]));
+			result[i] = numeric_cast<uint8_t>(lexical_cast<uint16_t>(tokens[i]));
 		}
 		return result;
 	}
@@ -276,7 +272,6 @@ public:
 	 */
 	string toString() const;
 
-private:
 	template<class T>
 	valarray<T> getComponents() const {
 		vector<string> tokens;
@@ -288,6 +283,7 @@ private:
 		return result;
 	}
 
+private:
 	const string name;
 	const int type;
 	string value;
@@ -371,7 +367,7 @@ public:
 	~VariableDescriptor();
 
 	/**
-	 * Getter for the variable's type.
+	 * Returns the variable's type.
 	 * @return the variable's type.
 	 */
 	int getType() const {
@@ -379,15 +375,20 @@ public:
 	}
 
 	/**
-	 * Setter for the variable's type.
+	 * Sets the variable's type.
 	 * @param type The variable type to be set.
 	 */
 	void setType(int type) {
 		this->type = type;
 	}
 
+	template<class T>
+	T getFillValue() const {
+		return hasAttribute("_FillValue") ? getAttribute("_FillValue").getComponents<T>()[0] : T(0);
+	}
+
 	/**
-	 * Getter for the variable's scale factor.
+	 * Returns the variable's scale factor.
 	 * @return the variable's scale factor.
 	 */
 	double getScaleFactor() const {
@@ -395,7 +396,7 @@ public:
 	}
 
 	/**
-	 * Getter for the variable's add offset.
+	 * Returns the variable's add offset.
 	 * @return the variable's add offset.
 	 */
 	double getAddOffset() const {

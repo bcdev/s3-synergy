@@ -26,35 +26,21 @@ class Col: public BasicModule {
 public:
 	Col();
 
-	void start(Context& context);
-
-	void stop(Context& context);
-
-	void process(Context& context);
-
 	virtual ~Col();
+
+	void start(Context& context);
+	void stop(Context& context);
+	void process(Context& context);
 
 private:
 	friend class ColTest;
 
-	void addTargetSegment(Context& context) const;
-	void addOlciVariables(Context& context);
-	void addVariable(Context& context, const ProductDescriptor& productDescriptor, const string& sourceName, const string& targetName, const string& sourceSegmentId);
-	void addSlstrVariables(Context& context);
-	void addVariableAlias(Context& context, const string& targetName, const string& sourceName);
-	void collocateOlci(Context& context, Accessor& sourceAccessor, const int sourceType, string& sourceName);
-	void collocateSlstr(Context& context, Accessor& sourceAccessor, const int sourceType, const Grid& sourceGrid, string& sourceName);
-	string retrievePositionVariableName(const string& targetName, const string& axis);
-	string retrieveDeltaVariableName(const string& targetName, const string& axis);
+	void addVariable(Context& context, Segment& targetSegment, const string& targetName, const Segment& sourceSegment, const string& sourceName, const ProductDescriptor& sourceProductDescriptor);
+	void addVariableAlias(Context& context, Segment& targetSegment, const string& targetName, const Segment& sourceSegment, const string& sourceName) const;
 
-	vector<string> targetVariables;
-	map<string, string> segmentIds;
-	map<string, string> variables;
-
-	static const string SLO_CONFIDENCE_FLAG_VARIABLE;
-	static const string SLN_CONFIDENCE_FLAG_VARIABLE;
-	static const string AXIS_ROW;
-	static const string AXIS_COL;
+	vector<string> targetNames;
+	map<string, size_t> sourceChannelMap;
+	map<string, string> sourceNameMap;
 };
 
 #endif /* COL_H_ */

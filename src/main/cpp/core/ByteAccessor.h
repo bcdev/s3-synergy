@@ -23,11 +23,11 @@
 
 #include "AbstractAccessor.h"
 
-class ByteAccessor: public virtual AbstractAccessor<int8_t> {
+class ByteAccessor: public virtual AbstractAccessor<int8_t, Constants::TYPE_BYTE> {
 public:
 
-	ByteAccessor(size_t n, double scaleFactor = 1.0, double addOffset = 0.0) :
-			AbstractAccessor<int8_t>(n, scaleFactor, addOffset) {
+	ByteAccessor(size_t n, int8_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) :
+			AbstractAccessor<int8_t, Constants::TYPE_BYTE>(n, fillValue, scaleFactor, addOffset) {
 	}
 
 	virtual ~ByteAccessor() {

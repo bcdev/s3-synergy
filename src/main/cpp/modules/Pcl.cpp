@@ -36,7 +36,7 @@ void Pcl::setUpSegment(Context& context) {
     const ProductDescriptor& productDescriptor = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2);
     const string variableName = "SYN_flags";
     const VariableDescriptor& synFlags = productDescriptor.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED).getVariableDescriptor(variableName);
-    collocatedSegment->addVariable(variableName, synFlags.getType(), synFlags.getScaleFactor(), synFlags.getAddOffset());
+    collocatedSegment->addVariable(synFlags);
 	context.getLogging()->info("adding variable '" + variableName + "' to segment '" + collocatedSegment->getId() + "'.", getId());
 }
 
@@ -64,7 +64,7 @@ void Pcl::process(Context& context) {
 	const ProductDescriptor& l2Descriptor = dictionary->getProductDescriptor(Constants::PRODUCT_SY2);
 	const VariableDescriptor& flagsDescriptor = l2Descriptor.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED).getVariableDescriptor("SYN_flags");
 	const string targetVariableName = flagsDescriptor.getName();
-	collocatedSegment->addVariable(targetVariableName, flagsDescriptor.getType(), flagsDescriptor.getScaleFactor(), flagsDescriptor.getAddOffset());
+	collocatedSegment->addVariable(flagsDescriptor);
 	Accessor& targetAccessor = collocatedSegment->getAccessor(targetVariableName);
 
 	const valarray<int64_t> olcFlags = olcFlagsAccessor->getLongData();

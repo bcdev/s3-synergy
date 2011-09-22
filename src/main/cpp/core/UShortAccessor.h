@@ -21,11 +21,11 @@
 #ifndef USHORTACCESSOR_H
 #define	USHORTACCESSOR_H
 
-class UShortAccessor: public virtual AbstractAccessor<uint16_t> {
+class UShortAccessor: public virtual AbstractAccessor<uint16_t, Constants::TYPE_USHORT> {
 public:
 
-	UShortAccessor(size_t n, double scaleFactor = 1.0, double addOffset = 0.0) :
-			AbstractAccessor<uint16_t>(n, scaleFactor, addOffset) {
+	UShortAccessor(size_t n, uint16_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) :
+			AbstractAccessor<uint16_t, Constants::TYPE_USHORT>(n, fillValue, scaleFactor, addOffset) {
 	}
 
 	virtual ~UShortAccessor() {

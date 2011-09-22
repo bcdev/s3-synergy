@@ -23,11 +23,11 @@
 
 #include "AbstractAccessor.h"
 
-class IntAccessor: public virtual AbstractAccessor<int32_t> {
+class IntAccessor: public virtual AbstractAccessor<int32_t, Constants::TYPE_INT> {
 public:
 
-	IntAccessor(size_t n, double scaleFactor = 1.0, double addOffset = 0.0) :
-			AbstractAccessor<int32_t>(n, scaleFactor, addOffset) {
+	IntAccessor(size_t n, int32_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) :
+			AbstractAccessor<int32_t, Constants::TYPE_INT>(n, fillValue, scaleFactor, addOffset) {
 	}
 
 	virtual ~IntAccessor() {
