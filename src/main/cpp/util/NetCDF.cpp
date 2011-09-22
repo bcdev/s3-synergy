@@ -54,68 +54,50 @@ Attribute NetCDF::getAttribute(int fileId, int varId, const string& attrName) {
 
 	switch (attrType) {
 	case Constants::TYPE_BYTE:
-		return Attribute(attrType, attrName,
-				NetCDF::getAttributeData<int8_t>(fileId, varId, attrName));
+		return Attribute(attrType, attrName, NetCDF::getAttributeData<int8_t>(fileId, varId, attrName));
 	case Constants::TYPE_SHORT:
-		return Attribute(attrType, attrName,
-				NetCDF::getAttributeData<int16_t>(fileId, varId, attrName));
+		return Attribute(attrType, attrName, NetCDF::getAttributeData<int16_t>(fileId, varId, attrName));
 	case Constants::TYPE_INT:
-		return Attribute(attrType, attrName,
-				NetCDF::getAttributeData<int32_t>(fileId, varId, attrName));
+		return Attribute(attrType, attrName, NetCDF::getAttributeData<int32_t>(fileId, varId, attrName));
 	case Constants::TYPE_LONG:
-		return Attribute(attrType, attrName,
-				NetCDF::getAttributeData<int64_t>(fileId, varId, attrName));
+		return Attribute(attrType, attrName, NetCDF::getAttributeData<int64_t>(fileId, varId, attrName));
 	case Constants::TYPE_UBYTE:
-		return Attribute(attrType, attrName,
-				NetCDF::getAttributeData<uint8_t>(fileId, varId, attrName));
+		return Attribute(attrType, attrName, NetCDF::getAttributeData<uint8_t>(fileId, varId, attrName));
 	case Constants::TYPE_USHORT:
-		return Attribute(attrType, attrName,
-				NetCDF::getAttributeData<uint16_t>(fileId, varId, attrName));
+		return Attribute(attrType, attrName, NetCDF::getAttributeData<uint16_t>(fileId, varId, attrName));
 	case Constants::TYPE_UINT:
-		return Attribute(attrType, attrName,
-				NetCDF::getAttributeData<uint32_t>(fileId, varId, attrName));
+		return Attribute(attrType, attrName, NetCDF::getAttributeData<uint32_t>(fileId, varId, attrName));
 	case Constants::TYPE_ULONG:
-		return Attribute(attrType, attrName,
-				NetCDF::getAttributeData<uint64_t>(fileId, varId, attrName));
+		return Attribute(attrType, attrName, NetCDF::getAttributeData<uint64_t>(fileId, varId, attrName));
 	case Constants::TYPE_FLOAT:
-		return Attribute(attrType, attrName,
-				NetCDF::getAttributeData<float>(fileId, varId, attrName));
+		return Attribute(attrType, attrName, NetCDF::getAttributeData<float>(fileId, varId, attrName));
 	case Constants::TYPE_DOUBLE:
-		return Attribute(attrType, attrName,
-				NetCDF::getAttributeData<double>(fileId, varId, attrName));
+		return Attribute(attrType, attrName, NetCDF::getAttributeData<double>(fileId, varId, attrName));
 	case Constants::TYPE_CHAR:
-		return Attribute(attrType, attrName,
-				NetCDF::getAttributeValue(fileId, varId, attrName));
+		return Attribute(attrType, attrName, NetCDF::getAttributeValue(fileId, varId, attrName));
 	case Constants::TYPE_STRING:
-		return Attribute(attrType, attrName,
-				NetCDF::getAttributeValues(fileId, varId, attrName));
+		return Attribute(attrType, attrName, NetCDF::getAttributeValues(fileId, varId, attrName));
 	default:
 		BOOST_THROW_EXCEPTION(runtime_error("Unsupported attribute type."));
 		break;
 	}
 }
 
-string NetCDF::getAttributeValue(int fileId, int varId,
-		const string& attrName) {
-	const size_t attrLength = NetCDF::getAttributeLength(fileId, varId,
-			attrName);
+string NetCDF::getAttributeValue(int fileId, int varId, const string& attrName) {
+	const size_t attrLength = NetCDF::getAttributeLength(fileId, varId, attrName);
 	valarray<char> attrData(attrLength + 1);
 
-	const int status = nc_get_att_text(fileId, varId, attrName.c_str(),
-			&attrData[0]);
+	const int status = nc_get_att_text(fileId, varId, attrName.c_str(), &attrData[0]);
 	checkStatus(status, "getting attribute string");
 	return string(&attrData[0]);
 
 }
 
-valarray<string> NetCDF::getAttributeValues(int fileId, int varId,
-		const string& attrName) {
-	const size_t attrLength = NetCDF::getAttributeLength(fileId, varId,
-			attrName);
+valarray<string> NetCDF::getAttributeValues(int fileId, int varId, const string& attrName) {
+	const size_t attrLength = NetCDF::getAttributeLength(fileId, varId, attrName);
 	valarray<char*> attrData(attrLength);
 
-	const int status = nc_get_att_string(fileId, varId, attrName.c_str(),
-			&attrData[0]);
+	const int status = nc_get_att_string(fileId, varId, attrName.c_str(), &attrData[0]);
 	checkStatus(status, "getting attribute strings");
 
 	valarray<string> strings(attrLength);
@@ -133,11 +115,9 @@ size_t NetCDF::getAttributeCount(int fileId, int varId) {
 	return attrCount;
 }
 
-size_t NetCDF::getAttributeLength(int fileId, int varId,
-		const string& attrName) {
+size_t NetCDF::getAttributeLength(int fileId, int varId, const string& attrName) {
 	size_t attrLength;
-	const int status = nc_inq_attlen(fileId, varId, attrName.c_str(),
-			&attrLength);
+	const int status = nc_inq_attlen(fileId, varId, attrName.c_str(), &attrLength);
 	checkStatus(status, "getting attribute length");
 	return attrLength;
 }
@@ -149,31 +129,25 @@ string NetCDF::getAttributeName(int fileId, int varId, int attrId) {
 	return string(&attrName[0]);
 }
 
-int NetCDF::getAttributeType(int fileId, int varId,
-		const string& attributeName) {
+int NetCDF::getAttributeType(int fileId, int varId, const string& attributeName) {
 	int type;
-	const int status = nc_inq_atttype(fileId, varId, attributeName.c_str(),
-			&type);
+	const int status = nc_inq_atttype(fileId, varId, attributeName.c_str(), &type);
 	checkStatus(status, "getting attribute type");
 	return type;
 }
 
-double NetCDF::getAttributeValueDouble(int fileId, int varId,
-		const string& attributeName, double defaultValue) {
+double NetCDF::getAttributeValueDouble(int fileId, int varId, const string& attributeName, double defaultValue) {
 	double value = defaultValue;
-	const int status = nc_get_att_double(fileId, varId, attributeName.c_str(),
-			&value);
+	const int status = nc_get_att_double(fileId, varId, attributeName.c_str(), &value);
 	if (status != NC_ENOTATT) {
 		checkStatus(status, "getting attribute value");
 	}
 	return value;
 }
 
-float NetCDF::getAttributeValueFloat(int fileId, int varId,
-		const string& attributeName, float defaultValue) {
+float NetCDF::getAttributeValueFloat(int fileId, int varId, const string& attributeName, float defaultValue) {
 	float value = defaultValue;
-	const int status = nc_get_att_float(fileId, varId, attributeName.c_str(),
-			&value);
+	const int status = nc_get_att_float(fileId, varId, attributeName.c_str(), &value);
 	if (status != NC_ENOTATT) {
 		checkStatus(status, "getting attribute value");
 	}
@@ -222,38 +196,27 @@ string NetCDF::getDimensionName(int fileId, int dimId) {
 	return string(dimName);
 }
 
-void NetCDF::getVariableData(int fileId, int varId,
-		const valarray<size_t>& origin, const valarray<size_t>& shape,
-		void* dataArray) {
+void NetCDF::getVariableData(int fileId, int varId, const valarray<size_t>& origin, const valarray<size_t>& shape, void* dataArray) {
 	const valarray<ptrdiff_t> strides(1, origin.size());
-	const int status = nc_get_vars(fileId, varId, &origin[0], &shape[0],
-			&strides[0], dataArray);
+	const int status = nc_get_vars(fileId, varId, &origin[0], &shape[0], &strides[0], dataArray);
 	checkStatus(status, "reading data from file");
 }
 
-void NetCDF::getVariableData(int fileId, int varId,
-		const valarray<size_t>& origin, const valarray<size_t>& shape,
-		float* dataArray) {
+void NetCDF::getVariableData(int fileId, int varId, const valarray<size_t>& origin, const valarray<size_t>& shape, float* dataArray) {
 	const valarray<ptrdiff_t> strides(1, origin.size());
-	const int status = nc_get_vars_float(fileId, varId, &origin[0], &shape[0],
-			&strides[0], dataArray);
+	const int status = nc_get_vars_float(fileId, varId, &origin[0], &shape[0], &strides[0], dataArray);
 	checkStatus(status, "reading data from file");
 }
 
-void NetCDF::getVariableData(int fileId, int varId,
-		const valarray<size_t>& origin, const valarray<size_t>& shape,
-		double* dataArray) {
+void NetCDF::getVariableData(int fileId, int varId, const valarray<size_t>& origin, const valarray<size_t>& shape, double* dataArray) {
 	const valarray<ptrdiff_t> strides(1, origin.size());
-	const int status = nc_get_vars_double(fileId, varId, &origin[0], &shape[0],
-			&strides[0], dataArray);
+	const int status = nc_get_vars_double(fileId, varId, &origin[0], &shape[0], &strides[0], dataArray);
 	checkStatus(status, "reading data from file");
 }
 
-void NetCDF::putData(int fileId, int varId, const valarray<size_t>& origin,
-		const valarray<size_t>& shape, const void* dataArray) {
+void NetCDF::putData(int fileId, int varId, const valarray<size_t>& origin, const valarray<size_t>& shape, const void* dataArray) {
 	const valarray<ptrdiff_t> strides(1, origin.size());
-	const int status = nc_put_vars(fileId, varId, &origin[0], &shape[0],
-			&strides[0], dataArray);
+	const int status = nc_put_vars(fileId, varId, &origin[0], &shape[0], &strides[0], dataArray);
 	checkStatus(status, "putting data into file");
 }
 
@@ -271,11 +234,9 @@ int NetCDF::defineDimension(int fileId, const string& dimName, size_t size) {
 	return dimId;
 }
 
-int NetCDF::defineVariable(int fileId, const string& varName, int type,
-		const valarray<int>& dimIds) {
+int NetCDF::defineVariable(int fileId, const string& varName, int type, const valarray<int>& dimIds) {
 	int varId;
-	const int status = nc_def_var(fileId, varName.c_str(), type, dimIds.size(),
-			&dimIds[0], &varId);
+	const int status = nc_def_var(fileId, varName.c_str(), type, dimIds.size(), &dimIds[0], &varId);
 	checkStatus(status, "defining variable");
 	return varId;
 }
@@ -325,30 +286,24 @@ void NetCDF::putAttribute(int fileId, int varId, const Attribute& attribute) {
 }
 
 template<class T>
-void NetCDF::putAttribute(int fileId, int varId, const Attribute& attribute,
-		const T& t) {
-	const int status = nc_put_att(fileId, varId, attribute.getName().c_str(),
-			attribute.getType(), t.size(), &t[0]);
+void NetCDF::putAttribute(int fileId, int varId, const Attribute& attribute, const T& t) {
+	const int status = nc_put_att(fileId, varId, attribute.getName().c_str(), attribute.getType(), t.size(), &t[0]);
 	checkStatus(status, "putting attribute '" + attribute.getName() + "'");
 }
 
-void NetCDF::putAttributeString(int fileId, int varId,
-		const Attribute& attribute) {
+void NetCDF::putAttributeString(int fileId, int varId, const Attribute& attribute) {
 	const string& value = attribute.getValue();
-	int status = nc_put_att_text(fileId, varId, attribute.getName().c_str(),
-			value.size(), value.c_str());
+	int status = nc_put_att_text(fileId, varId, attribute.getName().c_str(), value.size(), value.c_str());
 	checkStatus(status, "putting attribute '" + attribute.getName() + "'");
 }
 
-void NetCDF::putAttributeStrings(int fileId, int varId,
-		const Attribute& attribute) {
+void NetCDF::putAttributeStrings(int fileId, int varId, const Attribute& attribute) {
 	const valarray<string> tokens = attribute.getTokens();
 	valarray<const char*> op(tokens.size());
 	for (size_t i = 0; i < tokens.size(); i++) {
 		op[i] = tokens[i].c_str();
 	}
-	int status = nc_put_att_string(fileId, varId, attribute.getName().c_str(),
-			op.size(), &op[0]);
+	int status = nc_put_att_string(fileId, varId, attribute.getName().c_str(), op.size(), &op[0]);
 	checkStatus(status, "putting attribute '" + attribute.getName() + "'");
 }
 
@@ -358,7 +313,6 @@ void NetCDF::checkStatus(int status, const string& action) {
 	if (status != 0) {
 		ostringstream oss;
 		oss << "IO error " << status << " while " << action << " ";
-		BOOST_THROW_EXCEPTION(
-				boost::enable_error_info(runtime_error(oss.str())) << errinfo_nc_status(status));
+		BOOST_THROW_EXCEPTION( boost::enable_error_info(runtime_error(oss.str())) << errinfo_nc_status(status));
 	}
 }

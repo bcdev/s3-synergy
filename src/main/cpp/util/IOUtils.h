@@ -32,8 +32,7 @@
 
 class IOUtils {
 public:
-	static valarray<size_t> createCountVector(size_t dimCount, size_t camCount,
-			size_t lineCount, size_t colCount) {
+	static valarray<size_t> createCountVector(size_t dimCount, size_t camCount, size_t lineCount, size_t colCount) {
 		valarray<size_t> count(dimCount);
 		if (dimCount == 3) {
 			count[0] = camCount;
@@ -48,12 +47,10 @@ public:
 			count[0] = colCount;
 			return count;
 		}
-		BOOST_THROW_EXCEPTION(
-				std::invalid_argument("Wrong number of dimensions."));
+		BOOST_THROW_EXCEPTION( std::invalid_argument("Wrong number of dimensions."));
 	}
 
-	static valarray<size_t> createStartVector(size_t dimCount,
-			size_t startLine) {
+	static valarray<size_t> createStartVector(size_t dimCount, size_t startLine) {
 		valarray<size_t> start(dimCount);
 		if (dimCount == 3) {
 			start[0] = 0;
@@ -68,8 +65,7 @@ public:
 			start[0] = 0;
 			return start;
 		}
-		BOOST_THROW_EXCEPTION(
-				std::invalid_argument("Wrong number of dimensions."));
+		BOOST_THROW_EXCEPTION( std::invalid_argument("Wrong number of dimensions."));
 	}
 
 	static valarray<size_t> getDimensionSizes(VariableDescriptor* varDesc) {

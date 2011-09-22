@@ -41,7 +41,7 @@ JobOrder::~JobOrder() {
 void JobOrder::log(Logging& logging) const {
     ipfConfiguration.log(logging);
     for (size_t i = 0; i < ipfProcessors.size(); i++) {
-        logging.debug("parsing IPF processors " + boost::lexical_cast<string > (i + 1) + ":", "JobOrder");
+        logging.debug("Parsing IPF processors " + boost::lexical_cast<string > (i + 1) + ":", "JobOrder");
         ipfProcessors[i].log(logging);
     }
 }
@@ -56,7 +56,7 @@ const IpfProcessor& JobOrder::getIpfProcessor(const string& id) const {
             return ipfProcessors[i];
         }
     }
-    BOOST_THROW_EXCEPTION(invalid_argument("no IPF processor with name " + id + "."));
+    BOOST_THROW_EXCEPTION(invalid_argument("No IPF processor with name " + id + "."));
 }
 
 const IpfConfiguration& JobOrder::getIpfConfiguration() const {

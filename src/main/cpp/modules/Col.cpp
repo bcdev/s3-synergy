@@ -98,7 +98,8 @@ void Col::process(Context& context) {
 	const size_t firstL = context.getFirstComputableL(t, *this);
 	const size_t lastL = context.getLastComputableL(t);
 
-
+	// TODO: make segment's firstL etc. and context's lastComputedL etc. be of type int32_t or let the lastXXX
+	// variables point to one line behind
 	size_t firstRequiredL = lastL;
 	size_t lastComputedL = lastL;
 
@@ -126,12 +127,13 @@ void Col::process(Context& context) {
 								continue;
 							}
 
+							// TODO: loop over all bands here?
 							const size_t sourceL = l + floor(deltaRowAccessor.getDouble(targetIndex));
 							const size_t sourceM = m + floor(deltaColAccessor.getDouble(targetIndex));
 
 							if (sourceL > context.getLastComputableL(s)) {
 								firstRequiredL = min(sourceL, firstRequiredL);
-								lastComputedL = min(l, lastComputedL);
+								lastComputedL = min(l - 1, lastComputedL);
 								goto nextVariable;
 							}
 							if (sourceL < sourceGrid.getMinL() || sourceL > sourceGrid.getMaxL()) {
