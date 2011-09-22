@@ -102,99 +102,98 @@ void Col::process(Context& context) {
 	size_t firstRequiredL = lastL;
 	size_t lastComputedL = lastL;
 
-	foreach(const string& targetName, targetNames)
-			{
-				const string& sourceName = sourceNameMap[targetName];
-				const Accessor& sourceAccessor = s.getAccessor(sourceName);
+	foreach(const string& targetName, targetNames) {
+	    const string& sourceName = sourceNameMap[targetName];
+	    const Accessor& sourceAccessor = s.getAccessor(sourceName);
 
-				Accessor& targetAccessor = t.getAccessor(targetName);
-				const string& deltaRowName = "delta_y_" + lexical_cast<string>(sourceChannelMap[targetName]);
-				const string& deltaColName = "delta_x_" + lexical_cast<string>(sourceChannelMap[targetName]);
+	    Accessor& targetAccessor = t.getAccessor(targetName);
+		const string& deltaRowName = "delta_y_" + lexical_cast<string>(sourceChannelMap[targetName]);
+		const string& deltaColName = "delta_x_" + lexical_cast<string>(sourceChannelMap[targetName]);
 
-				const Accessor& deltaRowAccessor = s.getAccessor(deltaRowName);
-				const Accessor& deltaColAccessor = s.getAccessor(deltaColName);
+		const Accessor& deltaRowAccessor = s.getAccessor(deltaRowName);
+		const Accessor& deltaColAccessor = s.getAccessor(deltaColName);
 
-				for (size_t l = firstL; l <= lastL; l++) {
-					for (size_t k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
-						for (size_t m = targetGrid.getFirstM(); m < targetGrid.getFirstM() + targetGrid.getSizeM(); m++) {
-							const size_t targetIndex = targetGrid.getIndex(k, l, m);
+		for (size_t l = firstL; l <= lastL; l++) {
+		    for (size_t k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
+		        for (size_t m = targetGrid.getFirstM(); m < targetGrid.getFirstM() + targetGrid.getSizeM(); m++) {
+		            const size_t targetIndex = targetGrid.getIndex(k, l, m);
 
-							if (deltaRowAccessor.isFillValue(targetIndex)) {
-								continue;
-							}
-							if (deltaColAccessor.isFillValue(targetIndex)) {
-								continue;
-							}
-
-							const size_t sourceL = l + floor(deltaRowAccessor.getDouble(targetIndex));
-							const size_t sourceM = m + floor(deltaColAccessor.getDouble(targetIndex));
-
-							if (sourceL > context.getLastComputableL(s)) {
-								firstRequiredL = min(sourceL, firstRequiredL);
-								lastComputedL = min(l, lastComputedL);
-								goto nextVariable;
-							}
-							if (sourceL < sourceGrid.getMinL() || sourceL > sourceGrid.getMaxL()) {
-								targetAccessor.setFillValue(targetIndex);
-								continue;
-							}
-							if (sourceM < sourceGrid.getMinM() || sourceL > sourceGrid.getMaxM()) {
-								targetAccessor.setFillValue(targetIndex);
-								continue;
-							}
-
-							const size_t sourceIndex = sourceGrid.getIndex(k, sourceL, sourceM);
-
-							switch (sourceAccessor.getType()) {
-							case Constants::TYPE_BYTE: {
-								targetAccessor.setByte(targetIndex, sourceAccessor.getByte(sourceIndex));
-								break;
-							}
-							case Constants::TYPE_UBYTE: {
-								targetAccessor.setUByte(targetIndex, sourceAccessor.getUByte(sourceIndex));
-								break;
-							}
-							case Constants::TYPE_SHORT: {
-								targetAccessor.setShort(targetIndex, sourceAccessor.getShort(sourceIndex));
-								break;
-							}
-							case Constants::TYPE_USHORT: {
-								targetAccessor.setUShort(targetIndex, sourceAccessor.getUShort(sourceIndex));
-								break;
-							}
-							case Constants::TYPE_INT: {
-								targetAccessor.setInt(targetIndex, sourceAccessor.getInt(sourceIndex));
-								break;
-							}
-							case Constants::TYPE_UINT: {
-								targetAccessor.setUInt(targetIndex, sourceAccessor.getUInt(sourceIndex));
-								break;
-							}
-							case Constants::TYPE_LONG: {
-								targetAccessor.setLong(targetIndex, sourceAccessor.getLong(sourceIndex));
-								break;
-							}
-							case Constants::TYPE_ULONG: {
-								targetAccessor.setULong(targetIndex, sourceAccessor.getULong(sourceIndex));
-								break;
-							}
-							case Constants::TYPE_FLOAT: {
-								targetAccessor.setFloat(targetIndex, sourceAccessor.getFloat(sourceIndex));
-								break;
-							}
-							case Constants::TYPE_DOUBLE: {
-								targetAccessor.setDouble(targetIndex, sourceAccessor.getDouble(sourceIndex));
-								break;
-							}
-							default:
-								BOOST_THROW_EXCEPTION(std::invalid_argument("Cannot collocate variable '" + targetName + "': unsupported data type."));
-								break;
-							}
-						}
+					if (deltaRowAccessor.isFillValue(targetIndex)) {
+					    continue;
 					}
-				}
-				nextVariable: ;
-			}
+					if (deltaColAccessor.isFillValue(targetIndex)) {
+					    continue;
+					}
+
+					const size_t sourceL = l + floor(deltaRowAccessor.getDouble(targetIndex));
+					const size_t sourceM = m + floor(deltaColAccessor.getDouble(targetIndex));
+
+					if (sourceL > context.getLastComputableL(s)) {
+					    firstRequiredL = min(sourceL, firstRequiredL);
+						lastComputedL = min(l, lastComputedL);
+						goto nextVariable;
+					}
+					if (sourceL < sourceGrid.getMinL() || sourceL > sourceGrid.getMaxL()) {
+					    targetAccessor.setFillValue(targetIndex);
+						continue;
+					}
+					if (sourceM < sourceGrid.getMinM() || sourceL > sourceGrid.getMaxM()) {
+					    targetAccessor.setFillValue(targetIndex);
+						continue;
+					}
+
+					const size_t sourceIndex = sourceGrid.getIndex(k, sourceL, sourceM);
+
+					switch (sourceAccessor.getType()) {
+					case Constants::TYPE_BYTE: {
+					    targetAccessor.setByte(targetIndex, sourceAccessor.getByte(sourceIndex));
+					    break;
+					}
+					case Constants::TYPE_UBYTE: {
+					    targetAccessor.setUByte(targetIndex, sourceAccessor.getUByte(sourceIndex));
+						break;
+					}
+					case Constants::TYPE_SHORT: {
+					    targetAccessor.setShort(targetIndex, sourceAccessor.getShort(sourceIndex));
+						break;
+					}
+					case Constants::TYPE_USHORT: {
+					    targetAccessor.setUShort(targetIndex, sourceAccessor.getUShort(sourceIndex));
+					    break;
+					}
+					case Constants::TYPE_INT: {
+					    targetAccessor.setInt(targetIndex, sourceAccessor.getInt(sourceIndex));
+					    break;
+					}
+					case Constants::TYPE_UINT: {
+					    targetAccessor.setUInt(targetIndex, sourceAccessor.getUInt(sourceIndex));
+					    break;
+					}
+					case Constants::TYPE_LONG: {
+					    targetAccessor.setLong(targetIndex, sourceAccessor.getLong(sourceIndex));
+					    break;
+					}
+					case Constants::TYPE_ULONG: {
+					    targetAccessor.setULong(targetIndex, sourceAccessor.getULong(sourceIndex));
+					    break;
+					}
+					case Constants::TYPE_FLOAT: {
+					    targetAccessor.setFloat(targetIndex, sourceAccessor.getFloat(sourceIndex));
+					    break;
+					}
+					case Constants::TYPE_DOUBLE: {
+					    targetAccessor.setDouble(targetIndex, sourceAccessor.getDouble(sourceIndex));
+					    break;
+					}
+					default:
+					    BOOST_THROW_EXCEPTION(std::invalid_argument("Cannot collocate variable '" + targetName + "': unsupported data type."));
+					    break;
+					}
+		        }
+		    }
+		}
+		nextVariable: ;
+	}
 	// TODO: context.setFirstRequiredL(t, *this, firstRequiredL);
 	context.setLastComputedL(t, *this, lastComputedL);
 }
