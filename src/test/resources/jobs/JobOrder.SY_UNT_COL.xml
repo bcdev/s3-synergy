@@ -1,0 +1,47 @@
+<Ipf_Job_Order>
+    <Ipf_Conf>
+        <Processor_Name>S3L2PP-SYN</Processor_Name>
+        <Version>01.00</Version>
+        <Stdout_Log_Level>DEBUG</Stdout_Log_Level> <!-- Default: INFO -->
+        <Stderr_Log_Level>DEBUG</Stderr_Log_Level> <!-- Default: INFO -->
+        <Test>true</Test>
+        <Breakpoint_Enable>false</Breakpoint_Enable>
+        <Acquisition_Station>unknown</Acquisition_Station>
+        <Processing_Station>unknown</Processing_Station>
+        <Config_Files>
+            <Conf_File_Name>not used</Conf_File_Name>
+        </Config_Files>
+        <Sensing_Time>
+            <Start>20101214_000000.0000</Start>
+            <Stop>20101214_235959.9999</Stop>
+        </Sensing_Time>
+        <Dynamic_Processing_Parameters>
+            <Processing_Parameter>
+                <Name>Segment_Line_Count</Name>
+                <Value>1500</Value> <!-- Value range: [8, 2000], Default: 2000 -->
+            </Processing_Parameter>
+        </Dynamic_Processing_Parameters>
+    </Ipf_Conf>
+    <List_of_Ipf_Procs>
+        <Ipf_Proc>
+            <Task_Name>SYL2</Task_Name>
+            <Task_Version>01.00</Task_Version>
+            <List_of_Inputs count="1">
+                <Input>
+                    <File_Type>SY1</File_Type>
+                    <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
+                    <List_of_File_Names count="1">
+                        <File_Name>data/SY1/S3A_SY_1_SYN________2013621T10920_2013621T101413_2_00293_2_DMS_TD04_00</File_Name>
+                    </List_of_File_Names>
+                </Input>
+            </List_of_Inputs>
+            <List_of_Outputs count="0">
+                <Output>
+                    <File_Type>SY2</File_Type>
+                    <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
+                    <File_Name>data/SY2/SY_UNT_COL.SAFE</File_Name>
+                </Output>
+            </List_of_Outputs>
+        </Ipf_Proc>
+    </List_of_Ipf_Procs>
+</Ipf_Job_Order>
