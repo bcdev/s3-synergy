@@ -159,8 +159,8 @@ public:
 	Segment& getSegment(const string& id) const;
 
 	/**
-	 * Returns a vector containing pointers to all segments.
-	 * @return A vector containing pointers to all segments.
+	 * Returns a vector containing all segment ids.
+	 * @return A vector containing all segment ids.
 	 */
 	vector<string> getSegmentIds() const {
 		vector<string> ids(segmentList.size());
