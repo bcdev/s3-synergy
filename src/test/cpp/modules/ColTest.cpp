@@ -42,8 +42,8 @@ void ColTest::prepareContext() {
     context->setErrorHandler(errorHandler);
 
     shared_ptr<DefaultLogging> logging = shared_ptr<DefaultLogging>(new DefaultLogging("LOG.SY_UNT_COL"));
-    logging->setOutLogLevel(Logging::LOG_LEVEL_INFO);
-    logging->setErrLogLevel(Logging::LOG_LEVEL_INFO);
+    logging->setOutLogLevel(Logging::LOG_LEVEL_DEBUG);
+    logging->setErrLogLevel(Logging::LOG_LEVEL_DEBUG);
     context->setLogging(logging);
 
     const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");

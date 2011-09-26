@@ -214,13 +214,14 @@ public:
 	long getFirstComputableL(const Segment& segment, const Module& module) const;
 
 	/**
-	 * Returns the index of the last row in a given segment, which can be
-	 * computed.
+	 * Returns the index of the last row in a given segment, which has been
+	 * computed by all preceding modules, and can therefore be computed.
 	 * @param segment The segment.
+	 * @param module The module.
 	 * @return The index of the last row in the given segment, which can be
 	 *         computed.
 	 */
-	long getLastComputableL(const Segment& segment) const;
+	long getLastComputableL(const Segment& segment, const Module& module) const;
 
 	/**
 	 * Inquires the context about an object.

@@ -143,7 +143,7 @@ void SynL1Reader::process(Context& context) {
 				if (!context.hasLastComputedL(segment, *this) || context.getLastComputedL(segment, *this) < grid.getFirstL() + grid.getSizeL() - 1) {
 					const vector<VariableDescriptor*> variableDescriptors = segmentDescriptor->getVariableDescriptors();
 					const long firstLComputable = context.getFirstComputableL(segment, *this);
-					const long lastLComputable = context.getLastComputableL(segment);
+					const long lastLComputable = context.getLastComputableL(segment, *this);
 
 					foreach(VariableDescriptor* variableDescriptor, variableDescriptors)
 							{
@@ -151,10 +151,10 @@ void SynL1Reader::process(Context& context) {
 								const string ncFileName = variableDescriptor->getNcFileBasename();
 
 								if (!contains(ncVarIdMap, varName)) {
-									BOOST_THROW_EXCEPTION( logic_error("Unknown variable '" + varName + "'."));
+									BOOST_THROW_EXCEPTION(logic_error("Unknown variable '" + varName + "'."));
 								}
 								if (!contains(ncFileIdMap, ncFileName)) {
-									BOOST_THROW_EXCEPTION( logic_error("Unknown netCDF file '" + ncFileName + "'."));
+									BOOST_THROW_EXCEPTION(logic_error("Unknown netCDF file '" + ncFileName + "'."));
 								}
 								const int varId = ncVarIdMap[varName];
 								const int fileId = ncFileIdMap[ncFileName];

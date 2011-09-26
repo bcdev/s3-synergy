@@ -24,6 +24,7 @@ Aco::~Aco() {
 }
 
 void Aco::start(Context& context) {
+	context.getLogging()->progress("Reading LUTs for atmospheric correction module...", getId());
 	const LookupTableReader reader(getInstallationPath() + "/auxdata/v1/S3__SY_2_SYRTAX.nc");
 	lutOlcRatm = reader.readMatrixLookupTable<double>("OLC_R_atm");
 	lutT = reader.readMatrixLookupTable<double>("t");
@@ -64,27 +65,26 @@ void Aco::process(Context& context) {
 
 	const TiePointInterpolator<double> tpi = TiePointInterpolator<double>(tpLons, tpLats);
 
-	const Segment& olc = context.getSegment(Constants::SEGMENT_OLC);
+	const Segment& col = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 	const Segment& olcInfo = context.getSegment(Constants::SEGMENT_OLC_INFO);
 
 	vector<Accessor*> L;
-	for (size_t i = 1; i <= 18; i++) {
-		L.push_back(&olc.getAccessor("L_" + lexical_cast<string>(i)));
+	for (size_t i = 1; i <= 30; i++) {
+		L.push_back(&col.getAccessor("L_" + lexical_cast<string>(i)));
 	}
-	const Accessor& lat = olc.getAccessor("latitude");
-	const Accessor& lon = olc.getAccessor("longitude");
+	const Accessor& lat = col.getAccessor("latitude");
+	const Accessor& lon = col.getAccessor("longitude");
 	const Accessor& solarIrradiance = olcInfo.getAccessor("solar_irradiance");
 
 	const Grid& olcInfoGrid = olcInfo.getGrid();
-	const Grid& olcGrid = olc.getGrid();
+	const Grid& colGrid = col.getGrid();
 
-	const Segment& col = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 	vector<Accessor*> sdr;
-	for (size_t i = 1; i <= 18; i++) {
+	for (size_t i = 1; i <= 30; i++) {
 		sdr.push_back(&col.getAccessor("SDR_" + lexical_cast<string>(i)));
 	}
 	vector<Accessor*> err;
-	for (size_t i = 1; i <= 18; i++) {
+	for (size_t i = 1; i <= 30; i++) {
 		err.push_back(&col.getAccessor("SDR_" + lexical_cast<string>(i) + "_er"));
 	}
 
@@ -98,8 +98,10 @@ void Aco::process(Context& context) {
 	// TODO - get from segment data
 	const double tau550 = 0.1;
 
+	const long firstL = context.getLastComputableL(col, *this);
+
 #pragma omp parallel for
-	for (long l = olcGrid.getFirstL(); l < olcGrid.getFirstL() + olcGrid.getSizeL(); l++) {
+	for (long l = colGrid.getFirstL(); l < colGrid.getFirstL() + colGrid.getSizeL(); l++) {
 		context.getLogging()->progress("Processing line l = " + lexical_cast<string>(l) + " ...", getId());
 
 		valarray<double> coordinates(20);
@@ -111,9 +113,9 @@ void Aco::process(Context& context) {
 		matrix<double> matTv(40, 30);
 		matrix<double> matRho(40, 30);
 
-		for (long k = olcGrid.getFirstK(); k < olcGrid.getFirstK() + olcGrid.getSizeK(); k++) {
-			for (long m = olcGrid.getFirstM(); m < olcGrid.getFirstM() + olcGrid.getSizeM(); m++) {
-				const size_t i = olcGrid.getIndex(k, l, m);
+		for (long k = colGrid.getFirstK(); k < colGrid.getFirstK() + colGrid.getSizeK(); k++) {
+			for (long m = colGrid.getFirstM(); m < colGrid.getFirstM() + colGrid.getSizeM(); m++) {
+				const size_t i = colGrid.getIndex(k, l, m);
 
 				tpi.prepare(lon.getDouble(i), lat.getDouble(i), tpiWeights, tpiIndexes);
 
@@ -154,6 +156,31 @@ void Aco::process(Context& context) {
 
 				context.getLogging()->debug("Calculating atmospheric correction ...", getId());
 				for (size_t b = 0; b < 18; b++) {
+					const double channel = b + 1.0;
+					const double ratm = matRatm(0, b);
+					const double ts = matTs(0, b);
+					const double tv = matTv(0, b);
+					const double rho = matRho(0, b);
+					const double co3 = lutCO3->getValue(&channel);
+
+					const double ltoa = L[b]->getDouble(i);
+					const double f0 = solarIrradiance.getDouble(olcInfoGrid.getIndex(k, b, m));
+
+					// Eq. 2-1
+					const double rtoa = (PI * ltoa) / (f0 * cos(sza * D2R));
+
+					// Eq. 2-2
+					const double m = 0.5 * (1.0 / cos(sza * D2R) + 1.0 / cos(vza * D2R));
+					const double to3 = exp(-m * no3 * co3);
+
+					// Eq. 2-3
+					const double f = (rtoa - to3 * ratm) / (to3 * ts * tv);
+					const double rsurf = f / (1.0 + rho * f);
+
+					sdr[b]->setDouble(i, rsurf);
+					err[b]->setDouble(i, rtoa);
+				}
+				for (size_t b = 18; b < 30; b++) {
 					const double channel = b + 1.0;
 					const double ratm = matRatm(0, b);
 					const double ts = matTs(0, b);

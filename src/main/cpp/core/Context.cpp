@@ -195,6 +195,26 @@ long Context::getLastWritableL(const Segment& segment, const Writer& writer) con
 	return lastWritableL;
 }
 
+long Context::getLastComputableL(const Segment& segment, const Module& module) const {
+	if (!contains(segmentList, segment)) {
+		BOOST_THROW_EXCEPTION( invalid_argument("Unknown segment '" + segment.getId() + "'."));
+	}
+	if (!contains(moduleList, module)) {
+		BOOST_THROW_EXCEPTION( invalid_argument("Unknown module '" + module.getId() + "'."));
+	}
+	long lastComputedL = min(segment.getGrid().getLastL(), segment.getGrid().getMaxL());
+	foreach(shared_ptr<Module> m, moduleList)
+			{
+				if (m.get() == &module) {
+					break;
+				}
+				if (hasLastComputedL(segment, *m)) {
+					lastComputedL = min(lastComputedL, lastComputedLMap.at(&segment).at(m.get()));
+				}
+			}
+	return lastComputedL;
+}
+
 bool Context::hasFirstRequiredL(const Segment& segment, const Module& module) const {
 	return contains(firstRequiredLMap, segment) && contains(firstRequiredLMap.at(&segment), module);
 }
@@ -210,12 +230,9 @@ void Context::setFirstRequiredL(const Segment& segment, const Module& module, lo
 	if (!contains(moduleList, module)) {
 		BOOST_THROW_EXCEPTION( invalid_argument("Unknown module '" + module.getId() + "'."));
 	}
-	if ((hasFirstRequiredL(segment, module) && l < getLastComputedL(segment, module)) || l > segment.getGrid().getMaxL()) {
-		BOOST_THROW_EXCEPTION( invalid_argument("Invalid row index l = " + lexical_cast<string > (l)));
-	}
+	getLogging()->debug("Segment " + segment.toString() + ": first required L = " + lexical_cast<string>(l), module.getId());
 	firstRequiredLMap[&segment][&module] = l;
 }
-
 
 void Context::setLastComputedL(const Segment& segment, const Module& module, long l) {
 	if (!contains(segmentList, segment)) {
@@ -227,6 +244,7 @@ void Context::setLastComputedL(const Segment& segment, const Module& module, lon
 	if ((hasLastComputedL(segment, module) && l < getLastComputedL(segment, module)) || l > segment.getGrid().getMaxL()) {
 		BOOST_THROW_EXCEPTION( invalid_argument("Invalid row index l = " + lexical_cast<string > (l)));
 	}
+	getLogging()->debug("Segment " + segment.toString() + ": last computed L = " + lexical_cast<string>(l), module.getId());
 	lastComputedLMap[&segment][&module] = l;
 }
 
@@ -237,15 +255,9 @@ long Context::getFirstComputableL(const Segment& segment, const Module& module) 
 	return segment.getGrid().getFirstL();
 }
 
-long Context::getLastComputableL(const Segment& segment) const {
-	if (!contains(segmentList, segment)) {
-		BOOST_THROW_EXCEPTION( invalid_argument("Unknown segment '" + segment.getId() + "'."));
-	}
-	return min(segment.getGrid().getLastL(), segment.getGrid().getMaxL());
-}
-
 long Context::getFirstRequiredL(const Segment& segment) const {
-	long firstRequiredL = getLastComputableL(segment) + 1;
+//	long firstRequiredL = getLastComputableL(segment) + 1;
+	long firstRequiredL = min(segment.getGrid().getLastL() + 1, segment.getGrid().getMaxL());
 	foreach (shared_ptr<Module> module, moduleList)
 			{
 				if (hasFirstRequiredL(segment, *module)) {

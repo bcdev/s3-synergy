@@ -18,6 +18,8 @@
 
 #include "../../../src/main/cpp/core/Context.h"
 #include "../../../src/main/cpp/util/DefaultLogging.h"
+#include "../../../src/main/cpp/util/DictionaryParser.h"
+#include "../../../src/main/cpp/util/JobOrderParser.h"
 
 using std::cout;
 using std::endl;
@@ -26,11 +28,21 @@ using std::getenv;
 shared_ptr<Context> context = shared_ptr<Context>(new Context());
 
 static void prepareContext() {
+	XPathInitializer init;
+
 	shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
 	context->setErrorHandler(errorHandler);
 
 	shared_ptr<DefaultLogging> logging = shared_ptr<DefaultLogging>(new DefaultLogging("LOG.SY_UNT_ACO"));
 	context->setLogging(logging);
+
+	const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
+	shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_ACO.xml");
+	context->setJobOrder(jobOrder);
+	logging->setOutLogLevel(jobOrder->getIpfConfiguration().getStandardLogLevel());
+
+	shared_ptr<Dictionary> dictionary = DictionaryParser().parse(S3_SYNERGY_HOME + "/src/main/resources/dictionary");
+	context->setDictionary(dictionary);
 }
 
 int main() {

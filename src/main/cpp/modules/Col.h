@@ -37,10 +37,16 @@ private:
 
 	void addVariable(Context& context, Segment& targetSegment, const string& targetName, const Segment& sourceSegment, const string& sourceName, const ProductDescriptor& sourceProductDescriptor);
 	void addVariableAlias(Context& context, Segment& targetSegment, const string& targetName, const Segment& sourceSegment, const string& sourceName) const;
+	void addSlstrVariables(Context& context);
 
 	vector<string> targetNames;
-	map<string, size_t> sourceChannelMap;
+	map<string, string> collocationXMap;
+	map<string, string> collocationYMap;
 	map<string, string> sourceNameMap;
+	map<string, const Segment*> sourceSegmentMap;
+
+	static const string SLO_CONFIDENCE_FLAG_VARIABLE;
+	static const string SLN_CONFIDENCE_FLAG_VARIABLE;
 };
 
 #endif /* COL_H_ */
