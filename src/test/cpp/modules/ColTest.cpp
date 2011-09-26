@@ -12,7 +12,7 @@
 #include "../../../../src/main/cpp/core/SegmentImpl.h"
 #include "../../../../src/main/cpp/reader/SynL1Reader.h"
 #include "../../../../src/main/cpp/modules/Col.h"
-#include "../../../../src/main/cpp/writer/SynL2Writer.h"
+#include "../../../../src/main/cpp/writer/UniversalWriter.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
 
@@ -56,7 +56,9 @@ void ColTest::tearDown() {
 
 void ColTest::testAddSlstrVariables() {
     context->addSegment(Constants::SEGMENT_OLC, 10, 10, 5, 0, 9);
-    Segment& collocatedSegment = context->getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+    context->addSegment(Constants::SEGMENT_SLN, 10, 10, 5, 0, 9);
+    context->addSegment(Constants::SEGMENT_SLO, 10, 10, 5, 0, 9);
+    Segment& collocatedSegment = context->addSegment(Constants::SEGMENT_SYN_COLLOCATED, 10, 10, 5, 0, 9);
 
 	// setting dummy type; this is done by reader normally, but not in test
     ProductDescriptor& pd = context->getDictionary()->getProductDescriptor("SY1");
@@ -84,7 +86,7 @@ void ColTest::testAddSlstrVariables() {
 
 void ColTest::testAddOlciVariables() {
     Segment& olciSegment = context->addSegment(Constants::SEGMENT_OLC, 10, 10, 5, 0, 9);
-    Segment& collocatedSegment = context->getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+    Segment& collocatedSegment = context->addSegment(Constants::SEGMENT_SYN_COLLOCATED, 10, 10, 5, 0, 9);
     // setting dummy type; this is done by reader normally, but not in test
     ProductDescriptor& pd = context->getDictionary()->getProductDescriptor("SY1");
     foreach(SegmentDescriptor* sd, pd.getSegmentDescriptors()) {
@@ -112,7 +114,7 @@ void ColTest::testAddOlciVariables() {
 
 void ColTest::testCol() {
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
-    shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
+    shared_ptr<Module> writer = shared_ptr<Module>(new UniversalWriter());
 
     context->addModule(reader);
     context->addModule(col);
