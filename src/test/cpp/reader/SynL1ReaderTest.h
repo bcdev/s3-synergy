@@ -26,6 +26,8 @@ public:
 
 private:
     void testReader();
+    void prepareContext();
+    shared_ptr<Context> context;
 };
 
 #endif	/* SYNL1READERTEST_H */

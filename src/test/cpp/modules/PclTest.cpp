@@ -14,41 +14,52 @@
 #include "../../../../src/main/cpp/writer/SynL2Writer.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
+#include "../../../../src/main/cpp/util/DefaultLogging.h"
 
 #include "PclTest.h"
-
-extern shared_ptr<Context> context;
 
 using std::getenv;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(PclTest);
 
 PclTest::PclTest() {
-	XPathInitializer init;
-
-	const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
-	shared_ptr<Dictionary> dictionary = DictionaryParser().parse(
-			S3_SYNERGY_HOME + "/src/main/resources/dictionary");
-	shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(
-			S3_SYNERGY_HOME
-					+ "/src/test/resources/jobs/JobOrder.SY_UNT_ACO.xml");
-	shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
-	shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
-	shared_ptr<Module> col = shared_ptr<Module>(new Col());
-	shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
-
-	context->setDictionary(dictionary);
-	context->setJobOrder(jobOrder);
-	context->addModule(reader);
-	context->addModule(col);
-	context->addModule(pcl);
-	context->addModule(writer);
 }
 
 PclTest::~PclTest() {
 }
 
 void PclTest::setUp() {
+    XPathInitializer init;
+
+    prepareContext();
+
+    const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
+    shared_ptr<Dictionary> dictionary = DictionaryParser().parse(
+            S3_SYNERGY_HOME + "/src/main/resources/dictionary");
+    shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(
+            S3_SYNERGY_HOME
+                    + "/src/test/resources/jobs/JobOrder.SY_UNT_ACO.xml");
+    shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
+    shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
+    shared_ptr<Module> col = shared_ptr<Module>(new Col());
+    shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
+
+    context->setDictionary(dictionary);
+    context->setJobOrder(jobOrder);
+    context->addModule(reader);
+    context->addModule(col);
+    context->addModule(pcl);
+    context->addModule(writer);
+}
+
+
+void PclTest::prepareContext() {
+    context = shared_ptr<Context>(new Context());
+    shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
+    context->setErrorHandler(errorHandler);
+
+    shared_ptr<DefaultLogging> logging = shared_ptr<DefaultLogging>(new DefaultLogging("LOG.SY_UNT_PCL"));
+    context->setLogging(logging);
 }
 
 void PclTest::tearDown() {

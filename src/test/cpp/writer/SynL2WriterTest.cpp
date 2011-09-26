@@ -11,11 +11,10 @@
 #include "../../../../src/main/cpp/writer/SynL2Writer.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
+#include "../../../../src/main/cpp/util/DefaultLogging.h"
 
 #include "SynL2SegmentProvider.h"
 #include "SynL2WriterTest.h"
-
-extern shared_ptr<Context> context;
 
 using std::getenv;
 
@@ -30,6 +29,8 @@ SynL2WriterTest::~SynL2WriterTest() {
 void SynL2WriterTest::setUp() {
 	XPathInitializer init;
 
+	prepareContext();
+
 	const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
 	shared_ptr<Dictionary> dictionary = DictionaryParser().parse(
 			S3_SYNERGY_HOME + "/src/main/resources/dictionary");
@@ -43,6 +44,16 @@ void SynL2WriterTest::setUp() {
 	context->setJobOrder(jobOrder);
 	context->addModule(module);
 	context->addModule(writer);
+}
+
+
+void SynL2WriterTest::prepareContext() {
+    context = shared_ptr<Context>(new Context());
+    shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
+    context->setErrorHandler(errorHandler);
+
+    shared_ptr<DefaultLogging> logging = shared_ptr<DefaultLogging>(new DefaultLogging("LOG.SY_UNT_SWR"));
+    context->setLogging(logging);
 }
 
 void SynL2WriterTest::tearDown() {

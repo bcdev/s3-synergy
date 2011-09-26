@@ -26,6 +26,8 @@ public:
 
 private:
     void testWriter();
+    void prepareContext();
+    shared_ptr<Context> context;
 };
 
 #endif /* SYNL2WRITERTEST_H_ */

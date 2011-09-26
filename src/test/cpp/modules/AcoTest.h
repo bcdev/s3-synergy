@@ -25,7 +25,9 @@ public:
     void tearDown();
 
 private:
+    void prepareContext();
     void testAco();
+    shared_ptr<Context> context;
 };
 
 #endif	/* ACOTEST_H */

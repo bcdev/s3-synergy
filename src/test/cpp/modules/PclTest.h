@@ -34,6 +34,8 @@ private:
     void testPcl();
     void testGetIndex();
     void testGetValue();
+    void prepareContext();
+    shared_ptr<Context> context;
 };
 
 #endif	/* PCLTEST_H */

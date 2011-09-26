@@ -11,10 +11,9 @@
 #include "../../../../src/main/cpp/reader/SynL1Reader.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
+#include "../../../../src/main/cpp/util/DefaultLogging.h"
 
 #include "SynL1ReaderTest.h"
-
-extern shared_ptr<Context> context;
 
 using std::getenv;
 
@@ -29,6 +28,8 @@ SynL1ReaderTest::~SynL1ReaderTest() {
 void SynL1ReaderTest::setUp() {
 	XPathInitializer init;
 
+	prepareContext();
+
 	const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
 	shared_ptr<Dictionary> dictionary = DictionaryParser().parse(
 			S3_SYNERGY_HOME + "/src/main/resources/dictionary");
@@ -42,13 +43,16 @@ void SynL1ReaderTest::setUp() {
 	context->addModule(reader);
 }
 
+void SynL1ReaderTest::prepareContext() {
+    context = shared_ptr<Context>(new Context());
+    shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
+    context->setErrorHandler(errorHandler);
+
+    shared_ptr<DefaultLogging> logging = shared_ptr<DefaultLogging>(new DefaultLogging("LOG.SY_UNT_SRE"));
+    context->setLogging(logging);
+}
+
 void SynL1ReaderTest::tearDown() {
-	foreach (shared_ptr<Module> m, context->getModules())
-			{
-				context->removeModule(m);
-			}
-	context->setJobOrder(shared_ptr<JobOrder>());
-	context->setDictionary(shared_ptr<Dictionary>());
 }
 
 void SynL1ReaderTest::testReader() {
