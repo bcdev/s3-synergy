@@ -38,6 +38,7 @@ private:
 	void addVariable(Context& context, Segment& targetSegment, const string& targetName, const Segment& sourceSegment, const string& sourceName, const ProductDescriptor& sourceProductDescriptor);
 	void addVariableAlias(Context& context, Segment& targetSegment, const string& targetName, const Segment& sourceSegment, const string& sourceName) const;
 	void addSlstrVariables(Context& context);
+	void addOlciVariables(Context& context);
 
 	vector<string> targetNames;
 	map<string, string> collocationXMap;

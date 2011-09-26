@@ -21,15 +21,20 @@
 #ifndef LOGGING_H
 #define	LOGGING_H
 
+#include <fstream>
 #include <string>
 
+#include "../core/Boost.h"
+
+using std::ofstream;
 using std::string;
 
 class Logging {
 public:
 
+    Logging();
     virtual ~Logging() {
-    }
+    };
 
     virtual void debug(const string& message, const string& moduleName) = 0;
     virtual void info(const string& message, const string& moduleName) = 0;
@@ -43,7 +48,21 @@ public:
     const static string LOG_LEVEL_WARNING;
     const static string LOG_LEVEL_ERROR;
 
+    shared_ptr<Logging> getInstance() {
+        return instance;
+    };
+
+protected:
+    void openLogFile(const string& logFileName);
+    string createMessageHeader(const string& moduleName, const string& moduleVersion) const;
+    void logToError(const string& message, const string& moduleName, const string& moduleVersion);
+    void logToStdout(const string& message, const string& moduleName, const string& moduleVersion, const string& logType);
+    string getTimeString() const;
+
     const static string PROCESSOR_VERSION;
+
+    shared_ptr<Logging> instance;
+    ofstream logFile;
 };
 
 #endif	/* LOGGING_H */

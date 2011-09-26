@@ -12,37 +12,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
- * File:   JobOrder.h
+ * File:   DebugLogging.h
  * Author: thomass
  *
- * Created on November 23, 2010, 1:35 PM
+ * Created on September 26, 2011
  */
 
-#ifndef JOBORDER_H
-#define	JOBORDER_H
+#ifndef DEBUGLOGGING_H
+#define	DEBUGLOGGING_H
 
-#include "Boost.h"
-#include "IpfConfiguration.h"
-#include "IpfProcessor.h"
+#include "InfoLogging.h"
 
-class JobOrder {
+class DebugLogging: public InfoLogging {
 public:
-	JobOrder();
-    JobOrder(const IpfConfiguration& configuration, const vector<IpfProcessor>& ipfProcessors);
-    virtual ~JobOrder();
-    
-    const IpfConfiguration& getIpfConfiguration() const;
-    const vector<IpfProcessor>& getIpfProcessors() const;
-    const IpfProcessor& getIpfProcessor(const string& id) const;
+    DebugLogging(const string& logFileName);
 
-    const shared_ptr<Logging> createLogging(const string& logFileName) const;
+	virtual ~DebugLogging();
 
-    void log(Logging& logging) const;
+	void debug(const string& message, const string& moduleName) {
+	    logToStdout(message, moduleName, PROCESSOR_VERSION, "[D]");
+	}
 
-private:
-    IpfConfiguration ipfConfiguration;
-    vector<IpfProcessor> ipfProcessors;
+protected:
+    DebugLogging() {};
 };
 
-#endif	/* JOBORDER_H */
+#endif	/* DEBUGLOGGING_H */
 

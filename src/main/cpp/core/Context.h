@@ -32,7 +32,7 @@
 #include "ErrorHandler.h"
 #include "Identifiable.h"
 #include "JobOrder.h"
-#include "Logging.h"
+#include "../logging/Logging.h"
 #include "Segment.h"
 
 using std::exception;

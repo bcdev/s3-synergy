@@ -24,7 +24,6 @@
 #include <stdexcept>
 
 #include "Context.h"
-#include "NullLogging.h"
 #include "SegmentImpl.h"
 #include "Writer.h"
 
@@ -36,7 +35,7 @@ using std::min;
 using std::numeric_limits;
 
 Context::Context() :
-		logging(NullLogging::getInstance()), dictionary(), jobOrder(), errorHandler() {
+		dictionary(), jobOrder(), errorHandler() {
 }
 
 Context::~Context() {

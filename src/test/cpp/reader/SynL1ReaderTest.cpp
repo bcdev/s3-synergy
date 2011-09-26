@@ -11,7 +11,6 @@
 #include "../../../../src/main/cpp/reader/SynL1Reader.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
-#include "../../../../src/main/cpp/util/DefaultLogging.h"
 
 #include "SynL1ReaderTest.h"
 
@@ -29,18 +28,6 @@ void SynL1ReaderTest::setUp() {
 	XPathInitializer init;
 
 	prepareContext();
-
-	const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
-	shared_ptr<Dictionary> dictionary = DictionaryParser().parse(
-			S3_SYNERGY_HOME + "/src/main/resources/dictionary");
-	shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(
-			S3_SYNERGY_HOME
-					+ "/src/test/resources/jobs/JobOrder.SY_UNT_SRE.xml");
-	shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
-
-	context->setDictionary(dictionary);
-	context->setJobOrder(jobOrder);
-	context->addModule(reader);
 }
 
 void SynL1ReaderTest::prepareContext() {
@@ -48,7 +35,17 @@ void SynL1ReaderTest::prepareContext() {
     shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
     context->setErrorHandler(errorHandler);
 
-    shared_ptr<DefaultLogging> logging = shared_ptr<DefaultLogging>(new DefaultLogging("LOG.SY_UNT_SRE"));
+
+    const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
+    shared_ptr<Dictionary> dictionary = DictionaryParser().parse(S3_SYNERGY_HOME + "/src/main/resources/dictionary");
+    shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_SRE.xml");
+    shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
+
+    context->setDictionary(dictionary);
+    context->setJobOrder(jobOrder);
+    context->addModule(reader);
+
+    shared_ptr<Logging> logging = jobOrder->createLogging("LOG.SY_UNT_SRE");
     context->setLogging(logging);
 }
 

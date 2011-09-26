@@ -9,7 +9,7 @@
 
 #include "Boost.h"
 #include "IpfConfiguration.h"
-#include "Logging.h"
+#include "../logging/Logging.h"
 
 using std::cout;
 using std::endl;

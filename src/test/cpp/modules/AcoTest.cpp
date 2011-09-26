@@ -10,7 +10,6 @@
 #include "../../../../src/main/cpp/modules/Aco.h"
 #include "../../../../src/main/cpp/modules/Col.h"
 #include "../../../../src/main/cpp/reader/SynL1Reader.h"
-#include "../../../../src/main/cpp/util/DefaultLogging.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
 #include "../../../../src/main/cpp/writer/SynL2Writer.h"
@@ -46,14 +45,12 @@ void AcoTest::prepareContext() {
     shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
     context->setErrorHandler(errorHandler);
 
-    shared_ptr<DefaultLogging> logging = shared_ptr<DefaultLogging>(new DefaultLogging("LOG.SY_UNT_ACO"));
-    context->setLogging(logging);
-
     const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
     shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_ACO.xml");
     context->setJobOrder(jobOrder);
-    logging->setOutLogLevel(jobOrder->getIpfConfiguration().getStandardLogLevel());
-    logging->setErrLogLevel(jobOrder->getIpfConfiguration().getErrorLogLevel());
+
+    shared_ptr<Logging> logging = jobOrder->createLogging("LOG.SY_UNT_ACO");
+    context->setLogging(logging);
 
     shared_ptr<Dictionary> dictionary = DictionaryParser().parse(S3_SYNERGY_HOME + "/src/main/resources/dictionary");
     context->setDictionary(dictionary);

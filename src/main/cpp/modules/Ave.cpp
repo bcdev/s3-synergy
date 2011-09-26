@@ -33,8 +33,20 @@ void Ave::stop(Context& context) {
 
 void Ave::process(Context& context) {
 
+    const Grid& collocatedGrid = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED).getGrid();
+
     foreach(VariableDescriptor* vd, variables) {
 
-    }
+        context.getLogging()->progress("Averaging variable '" + vd->getName() + "'.", getId());
 
+        for (long l = collocatedGrid.getFirstL(); l <= collocatedGrid.getLastL(); l++) {
+            for (long k = collocatedGrid.getFirstK(); k < collocatedGrid.getFirstK() + collocatedGrid.getSizeK(); k++) {
+                for (long m = collocatedGrid.getFirstM(); m < collocatedGrid.getFirstM() + collocatedGrid.getSizeM(); m++) {
+
+
+
+                }
+            }
+        }
+    }
 }

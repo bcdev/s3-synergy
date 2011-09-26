@@ -27,8 +27,6 @@ using std::string;
 
 namespace Constants {
 
-#include "Config.h"
-
 /**
  * Product types.
  */
@@ -81,6 +79,16 @@ const int TYPE_UINT = 9;
 const int TYPE_LONG = 10;
 const int TYPE_ULONG = 11;
 const int TYPE_STRING = 12;
+
+/**
+ * Log information
+ */
+const string LOG_LEVEL_INFO = "INFO";
+const string LOG_LEVEL_PROGRESS = "PROGRESS";
+const string LOG_LEVEL_DEBUG = "DEBUG";
+const string LOG_LEVEL_WARNING = "WARNING";
+const string LOG_LEVEL_ERROR = "ERROR";
+const string PROCESSOR_VERSION = "1.0";
 }
 
 #endif	/* CONSTANTS_H */

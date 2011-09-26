@@ -21,6 +21,7 @@
 #include <stdexcept>
 
 #include "../core/Boost.h"
+#include "../core/Constants.h"
 
 #include "JobOrderParser.h"
 
@@ -46,22 +47,22 @@ IpfConfiguration JobOrderParser::parseIpfConfiguration(const string& path) const
 	string value = parser.evaluateToString(path,
 			"/Ipf_Job_Order/Ipf_Conf/Stdout_Log_Level");
 	if (value.empty()
-			|| (value.compare(Logging::LOG_LEVEL_INFO) != 0 && value.compare(Logging::LOG_LEVEL_DEBUG) != 0
-					&& value.compare(Logging::LOG_LEVEL_WARNING) != 0
-					&& value.compare(Logging::LOG_LEVEL_PROGRESS) != 0
-					&& value.compare(Logging::LOG_LEVEL_ERROR) != 0)) {
-		value = Logging::LOG_LEVEL_INFO; // default value
+			|| (value.compare(Constants::LOG_LEVEL_INFO) != 0 && value.compare(Constants::LOG_LEVEL_DEBUG) != 0
+					&& value.compare(Constants::LOG_LEVEL_WARNING) != 0
+					&& value.compare(Constants::LOG_LEVEL_PROGRESS) != 0
+					&& value.compare(Constants::LOG_LEVEL_ERROR) != 0)) {
+		value = Constants::LOG_LEVEL_INFO; // default value
 	}
 	configuration.setStandardLogLevel(value);
 
 	value = parser.evaluateToString(path,
 			"/Ipf_Job_Order/Ipf_Conf/Stderr_Log_Level");
 	if (value.empty()
-			|| (value.compare(Logging::LOG_LEVEL_INFO) != 0 && value.compare(Logging::LOG_LEVEL_DEBUG) != 0
-					&& value.compare(Logging::LOG_LEVEL_WARNING) != 0
-					&& value.compare(Logging::LOG_LEVEL_PROGRESS) != 0
-					&& value.compare(Logging::LOG_LEVEL_ERROR) != 0)) {
-		value = Logging::LOG_LEVEL_INFO; // default value
+			|| (value.compare(Constants::LOG_LEVEL_INFO) != 0 && value.compare(Constants::LOG_LEVEL_DEBUG) != 0
+					&& value.compare(Constants::LOG_LEVEL_WARNING) != 0
+					&& value.compare(Constants::LOG_LEVEL_PROGRESS) != 0
+					&& value.compare(Constants::LOG_LEVEL_ERROR) != 0)) {
+		value = Constants::LOG_LEVEL_INFO; // default value
 	}
 	configuration.setErrorLogLevel(value);
 

@@ -14,7 +14,6 @@
 #include "../../../../src/main/cpp/writer/SynL2Writer.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
-#include "../../../../src/main/cpp/util/DefaultLogging.h"
 
 
 #include "AveTest.h"
@@ -40,14 +39,12 @@ void AveTest::prepareContext() {
     shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
     context->setErrorHandler(errorHandler);
 
-    shared_ptr<DefaultLogging> logging = shared_ptr<DefaultLogging>(new DefaultLogging("LOG.SY_UNT_COL"));
-    logging->setOutLogLevel(Logging::LOG_LEVEL_INFO);
-    logging->setErrLogLevel(Logging::LOG_LEVEL_INFO);
+    const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
+    shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.0.xml");
+    shared_ptr<Logging> logging = jobOrder->createLogging("LOG.SY_UNT_AVE");
     context->setLogging(logging);
 
-    const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
     shared_ptr<Dictionary> dictionary = DictionaryParser().parse(S3_SYNERGY_HOME + "/src/main/resources/dictionary");
-    shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.0.xml");
 
     context->setDictionary(dictionary);
     context->setJobOrder(jobOrder);

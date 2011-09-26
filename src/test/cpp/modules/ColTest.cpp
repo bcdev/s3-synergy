@@ -15,7 +15,6 @@
 #include "../../../../src/main/cpp/writer/SynL2Writer.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
-#include "../../../../src/main/cpp/util/DefaultLogging.h"
 
 
 #include "ColTest.h"
@@ -41,14 +40,12 @@ void ColTest::prepareContext() {
     shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
     context->setErrorHandler(errorHandler);
 
-    shared_ptr<DefaultLogging> logging = shared_ptr<DefaultLogging>(new DefaultLogging("LOG.SY_UNT_COL"));
-    logging->setOutLogLevel(Logging::LOG_LEVEL_DEBUG);
-    logging->setErrLogLevel(Logging::LOG_LEVEL_DEBUG);
-    context->setLogging(logging);
-
     const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
     shared_ptr<Dictionary> dictionary = DictionaryParser().parse(S3_SYNERGY_HOME + "/src/main/resources/dictionary");
     shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_COL.xml");
+
+    shared_ptr<Logging> logging = jobOrder->createLogging("LOG.SY_UNT_COL");
+    context->setLogging(logging);
 
     context->setDictionary(dictionary);
     context->setJobOrder(jobOrder);
@@ -58,9 +55,7 @@ void ColTest::tearDown() {
 }
 
 void ColTest::testAddSlstrVariables() {
-	/*
     context->addSegment(Constants::SEGMENT_OLC, 10, 10, 5, 0, 9);
-    col->addTargetSegment(*context);
     Segment& collocatedSegment = context->getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 
 	// setting dummy type; this is done by reader normally, but not in test
@@ -85,13 +80,10 @@ void ColTest::testAddSlstrVariables() {
 	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_30"));
 	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_25_exception"));
 	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_30_exception"));
-	*/
 }
 
 void ColTest::testAddOlciVariables() {
-	/*
     Segment& olciSegment = context->addSegment(Constants::SEGMENT_OLC, 10, 10, 5, 0, 9);
-    col->addTargetSegment(*context);
     Segment& collocatedSegment = context->getSegment(Constants::SEGMENT_SYN_COLLOCATED);
     // setting dummy type; this is done by reader normally, but not in test
     ProductDescriptor& pd = context->getDictionary()->getProductDescriptor("SY1");
@@ -116,7 +108,6 @@ void ColTest::testAddOlciVariables() {
 	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_18"));
 	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_1_er"));
 	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_18_er"));
-	*/
 }
 
 void ColTest::testCol() {

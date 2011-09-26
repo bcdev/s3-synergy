@@ -15,10 +15,9 @@
 
 class ColTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(ColTest);
+    CPPUNIT_TEST(testAddOlciVariables);
+    CPPUNIT_TEST(testAddSlstrVariables);
     CPPUNIT_TEST(testCol);
-//    CPPUNIT_TEST(testAddOlciVariables);
-//    CPPUNIT_TEST(testAddSlstrVariables);
-//    CPPUNIT_TEST(testRetrievePositionVariableName);
     CPPUNIT_TEST_SUITE_END();
 
 public:

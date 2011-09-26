@@ -11,7 +11,6 @@
 #include "../../../../src/main/cpp/writer/SynL2Writer.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
-#include "../../../../src/main/cpp/util/DefaultLogging.h"
 
 #include "SynL2SegmentProvider.h"
 #include "SynL2WriterTest.h"
@@ -30,20 +29,6 @@ void SynL2WriterTest::setUp() {
 	XPathInitializer init;
 
 	prepareContext();
-
-	const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
-	shared_ptr<Dictionary> dictionary = DictionaryParser().parse(
-			S3_SYNERGY_HOME + "/src/main/resources/dictionary");
-	shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(
-			S3_SYNERGY_HOME
-					+ "/src/test/resources/jobs/JobOrder.SY_UNT_SWR.xml");
-	shared_ptr<Module> module = shared_ptr<Module>(new SynL2SegmentProvider());
-	shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
-
-	context->setDictionary(dictionary);
-	context->setJobOrder(jobOrder);
-	context->addModule(module);
-	context->addModule(writer);
 }
 
 
@@ -52,7 +37,21 @@ void SynL2WriterTest::prepareContext() {
     shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
     context->setErrorHandler(errorHandler);
 
-    shared_ptr<DefaultLogging> logging = shared_ptr<DefaultLogging>(new DefaultLogging("LOG.SY_UNT_SWR"));
+    const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
+    shared_ptr<Dictionary> dictionary = DictionaryParser().parse(
+            S3_SYNERGY_HOME + "/src/main/resources/dictionary");
+    shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(
+            S3_SYNERGY_HOME
+                    + "/src/test/resources/jobs/JobOrder.SY_UNT_SWR.xml");
+    shared_ptr<Module> module = shared_ptr<Module>(new SynL2SegmentProvider());
+    shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
+
+    context->setDictionary(dictionary);
+    context->setJobOrder(jobOrder);
+    context->addModule(module);
+    context->addModule(writer);
+
+    shared_ptr<Logging> logging = jobOrder->createLogging("LOG.SY_UNT_SWR");
     context->setLogging(logging);
 }
 
