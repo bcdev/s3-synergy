@@ -157,6 +157,7 @@ void Context::moveForward(shared_ptr<Segment> segment) const {
 				}
 	}
 	const long firstRequiredL = min(lastComputedL + 1, getFirstRequiredL(*segment));
+	getLogging()->debug("Moving start of segment '" + segment->getId() + "' to line " + lexical_cast<string>(firstRequiredL), "Context");
 	segment->moveForward(firstRequiredL);
 }
 

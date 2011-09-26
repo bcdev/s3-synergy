@@ -94,14 +94,12 @@ void Col::addSlstrVariables(Context& context) {
 		collocationYMap[targetName] = "y_corr_o";
 	}
 
-	/*
 	addVariable(context, t, SLN_CONFIDENCE_FLAG_VARIABLE, nadir, SLN_CONFIDENCE_FLAG_VARIABLE, sourceProductDescriptor);
 	collocationXMap[SLN_CONFIDENCE_FLAG_VARIABLE] = "x_corr_" + lexical_cast<string>(1);
 	collocationYMap[SLN_CONFIDENCE_FLAG_VARIABLE] = "y_corr_" + lexical_cast<string>(1);
 	addVariable(context, t, SLO_CONFIDENCE_FLAG_VARIABLE, oblique, SLO_CONFIDENCE_FLAG_VARIABLE, sourceProductDescriptor);
 	collocationXMap[SLO_CONFIDENCE_FLAG_VARIABLE] = "x_corr_o";
 	collocationYMap[SLO_CONFIDENCE_FLAG_VARIABLE] = "y_corr_o";
-	*/
 }
 
 void Col::stop(Context& context) {
