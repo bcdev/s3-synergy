@@ -77,7 +77,7 @@ const shared_ptr<Logging> JobOrder::createLogging(const string& logFileName) con
     } else if(stdLogLevel.compare("ERROR") == 0) {
         return shared_ptr<Logging>(new ErrorLogging(logFileName));
     } else if(stdLogLevel.compare("NULL") == 0) {
-        return shared_ptr<Logging>(new NullLogging(logFileName));
+        return shared_ptr<Logging>(new NullLogging());
     }
     BOOST_THROW_EXCEPTION(invalid_argument("invalid standard log level '" + stdLogLevel + "'."));
 }

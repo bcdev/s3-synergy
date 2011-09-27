@@ -20,8 +20,7 @@
 
 #include "NullLogging.h"
 
-NullLogging::NullLogging(const string& logFileName) {
-    openLogFile(logFileName);
+NullLogging::NullLogging() {
     instance = shared_ptr<Logging>(this);
 }
 
