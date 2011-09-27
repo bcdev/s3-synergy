@@ -26,7 +26,7 @@
 class ByteAccessor: public virtual AbstractAccessor<int8_t, Constants::TYPE_BYTE> {
 public:
 
-	ByteAccessor(size_t n, int8_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) :
+	ByteAccessor(size_t n, int8_t fillValue = numeric_limits<uint8_t>::min(), double scaleFactor = 1.0, double addOffset = 0.0) :
 			AbstractAccessor<int8_t, Constants::TYPE_BYTE>(n, fillValue, scaleFactor, addOffset) {
 	}
 

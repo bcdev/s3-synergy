@@ -26,7 +26,7 @@
 class FloatAccessor : public virtual AbstractAccessor<float, Constants::TYPE_FLOAT> {
 public:
 
-    FloatAccessor(size_t n, float fillValue = 0.0f) : AbstractAccessor<float, Constants::TYPE_FLOAT>(n, fillValue) {
+    FloatAccessor(size_t n, float fillValue = numeric_limits<float>::min()) : AbstractAccessor<float, Constants::TYPE_FLOAT>(n, fillValue) {
     }
 
     virtual ~FloatAccessor() {
