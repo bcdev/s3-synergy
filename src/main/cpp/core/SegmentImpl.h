@@ -21,6 +21,7 @@
 #ifndef SEGMENTIMPL_H
 #define	SEGMENTIMPL_H
 
+#include <limits>
 #include <map>
 #include <vector>
 
@@ -29,6 +30,7 @@
 #include "Segment.h"
 
 using std::map;
+using std::numeric_limits;
 using std::vector;
 
 class SegmentImpl: public virtual Segment {
@@ -41,12 +43,12 @@ public:
 	void addVariable(const string& name, int type, double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
 	void addVariableAlias(const string& alias, const Segment& segment, const string& name) throw (logic_error);
 
-	void addVariableByte(const string& name, int8_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
-	void addVariableDouble(const string& name, double fillValue = 0.0) throw (logic_error);
-	void addVariableFloat(const string& name, float fillValue = 0.0f) throw (logic_error);
-	void addVariableInt(const string& name, int32_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
-	void addVariableLong(const string& name, int64_t fillValue = 0) throw (logic_error);
-	void addVariableShort(const string& name, int16_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
+	void addVariableByte(const string& name, int8_t fillValue = numeric_limits<int8_t>::min(), double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
+	void addVariableDouble(const string& name, double fillValue = numeric_limits<double>::min()) throw (logic_error);
+	void addVariableFloat(const string& name, float fillValue = numeric_limits<float>::min()) throw (logic_error);
+	void addVariableInt(const string& name, int32_t fillValue = numeric_limits<int32_t>::min(), double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
+	void addVariableLong(const string& name, int64_t fillValue = numeric_limits<int64_t>::min()) throw (logic_error);
+	void addVariableShort(const string& name, int16_t fillValue = numeric_limits<int16_t>::min(), double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
 	void addVariableUByte(const string& name, uint8_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
 	void addVariableUInt(const string& name, uint32_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
 	void addVariableULong(const string& name, uint64_t fillValue = 0) throw (logic_error);

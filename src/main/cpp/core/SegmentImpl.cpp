@@ -81,19 +81,19 @@ void SegmentImpl::addVariable(const VariableDescriptor& d, const string& targetN
 void SegmentImpl::addVariable(const string& name, int type, double scaleFactor, double addOffset) throw (logic_error) {
 	switch (type) {
 	case Constants::TYPE_BYTE:
-		addVariableByte(name, 0, scaleFactor, addOffset);
+		addVariableByte(name, numeric_limits<int8_t>::min(), scaleFactor, addOffset);
 		break;
 	case Constants::TYPE_UBYTE:
 		addVariableUByte(name, 0, scaleFactor, addOffset);
 		break;
 	case Constants::TYPE_SHORT:
-		addVariableShort(name, 0, scaleFactor, addOffset);
+		addVariableShort(name, numeric_limits<int16_t>::min(), scaleFactor, addOffset);
 		break;
 	case Constants::TYPE_USHORT:
 		addVariableUShort(name, 0, scaleFactor, addOffset);
 		break;
 	case Constants::TYPE_INT:
-		addVariableInt(name, 0, scaleFactor, addOffset);
+		addVariableInt(name, numeric_limits<int32_t>::min(), scaleFactor, addOffset);
 		break;
 	case Constants::TYPE_UINT:
 		addVariableUInt(name, 0, scaleFactor, addOffset);
