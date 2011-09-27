@@ -30,15 +30,8 @@ UniversalWriter::~UniversalWriter() {
 }
 
 void UniversalWriter::process(Context& context) {
-	const Dictionary& dict = *context.getDictionary();
-
-	vector<SegmentDescriptor*> segmentDescriptors;
-	const ProductDescriptor& productDescriptor = dict.getProductDescriptor(Constants::PRODUCT_SY2);
-
-	vector<string> segmentIds = context.getSegmentIds();
-	foreach(string& id, segmentIds) {
-	    segmentDescriptors.push_back(&productDescriptor.getSegmentDescriptor(id));
-	}
+    const Dictionary& dict = *context.getDictionary();
+    const vector<SegmentDescriptor*> segmentDescriptors = dict.getProductDescriptor(Constants::PRODUCT_BREAKPOINT).getSegmentDescriptors();
 
 	foreach(const SegmentDescriptor* segmentDescriptor, segmentDescriptors)
 			{

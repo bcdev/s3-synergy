@@ -40,18 +40,18 @@ void SynL2WriterTest::prepareContext() {
     const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
     shared_ptr<Dictionary> dictionary = DictionaryParser().parse(
             S3_SYNERGY_HOME + "/src/main/resources/dictionary");
-    shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(
-            S3_SYNERGY_HOME
-                    + "/src/test/resources/jobs/JobOrder.SY_UNT_SWR.xml");
     shared_ptr<Module> module = shared_ptr<Module>(new SynL2SegmentProvider());
     shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
 
     context->setDictionary(dictionary);
-    context->setJobOrder(jobOrder);
     context->addModule(module);
     context->addModule(writer);
 
-    shared_ptr<Logging> logging = jobOrder->createLogging("LOG.SY_UNT_SWR");
+    shared_ptr<JobOrderParser> jobOrderParser = shared_ptr<JobOrderParser>(new JobOrderParser());
+    shared_ptr<JobOrder> jobOrder = jobOrderParser->parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_SWR.xml");
+    context->setJobOrder(jobOrder);
+
+    shared_ptr<Logging> logging = jobOrderParser->createLogging("LOG.SY_UNT_SWR");
     context->setLogging(logging);
 }
 

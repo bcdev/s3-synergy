@@ -37,9 +37,7 @@ class ScalarLookupTableImpl: public ScalarLookupTable<W> {
 public:
 	typedef valarray<W> Dimension;
 
-	ScalarLookupTableImpl(const string& id, const vector<Dimension>& dims,
-			const shared_array<T>& values, W scaleFactor = W(1), W addOffset =
-					W(0));
+	ScalarLookupTableImpl(const string& id, const vector<Dimension>& dims, const shared_array<T>& values, W scaleFactor = W(1), W addOffset = W(0));
 	virtual ~ScalarLookupTableImpl();
 
 	const string& getId() const;
@@ -78,18 +76,18 @@ private:
 };
 
 template<class T, class W>
-ScalarLookupTableImpl<T, W>::ScalarLookupTableImpl(const string& id,
-		const vector<Dimension>& dims, const shared_array<T>& values,
-		W scaleFactor, W addOffset) :
-		id(id), scaleFactor(scaleFactor), addOffset(addOffset), x(dims), y(
-				values), sizes(dims.size()), strides(dims.size()), offsets(
-				1 << dims.size()), n(x.size()) {
+ScalarLookupTableImpl<T, W>::ScalarLookupTableImpl(const string& id, const vector<Dimension>& dims, const shared_array<T>& values, W scaleFactor, W addOffset) :
+		id(id), scaleFactor(scaleFactor), addOffset(addOffset), x(dims), y(values), sizes(dims.size()), strides(dims.size()), offsets(1 << dims.size()), n(x.size()) {
 	for (size_t i = 0; i < n; ++i) {
 		assert(x[i].size() > 0);
 		sizes[i] = x[i].size();
 	}
 	for (size_t i = n, stride = 1; i-- > 0;) {
-		strides[i] = stride;
+		if (sizes[i] > 1) {
+			strides[i] = stride;
+		} else {
+			strides[i] = 0;
+		}
 		stride *= sizes[i];
 	}
 	for (size_t i = 0; i < n; ++i) {
@@ -117,13 +115,13 @@ W ScalarLookupTableImpl<T, W>::getValue(const W coordinates[]) const {
 	for (size_t i = 0; i < offsets.size(); ++i) {
 		v[i] = boost::numeric_cast<W>(y[origin + offsets[i]]);
 	}
-    for (size_t i = n; i-- > 0;) {
-        const size_t m = 1 << i;
+	for (size_t i = n; i-- > 0;) {
+		const size_t m = 1 << i;
 
-        for (size_t j = 0; j < m; ++j) {
-            v[j] += f[i] * (v[m + j] - v[j]);
-        }
-    }
+		for (size_t j = 0; j < m; ++j) {
+			v[j] += f[i] * (v[m + j] - v[j]);
+		}
+	}
 
 	return v[0] * scaleFactor + addOffset;
 }
@@ -195,12 +193,16 @@ size_t ScalarLookupTableImpl<T, W>::getIndex(size_t dimIndex, W coordinate, W& f
 			lo = m;
 	}
 
-    f = (coordinate - x[dimIndex][lo]) / (x[dimIndex][hi] - x[dimIndex][lo]);
-    if (f < W(0.0)) {
-        f = W(0.0);
-    } else if (f > W(1.0)) {
-        f = W(1.0);
-    }
+	if (sizes[dimIndex] > 1) {
+		f = (coordinate - x[dimIndex][lo]) / (x[dimIndex][hi] - x[dimIndex][lo]);
+		if (f < W(0.0)) {
+			f = W(0.0);
+		} else if (f > W(1.0)) {
+			f = W(1.0);
+		}
+	} else {
+		f = 0.0;
+	}
 
 	return lo;
 }

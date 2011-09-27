@@ -21,6 +21,8 @@ public:
     void process(Context& context);
 private:
     shared_ptr<MatrixLookupTable<double> > lutOlcRatm;
+    shared_ptr<MatrixLookupTable<double> > lutSlnRatm;
+    shared_ptr<MatrixLookupTable<double> > lutSloRatm;
     shared_ptr<MatrixLookupTable<double> > lutT;
     shared_ptr<MatrixLookupTable<double> > lutRhoAtm;
     shared_ptr<ScalarLookupTable<double> > lutCO3;
