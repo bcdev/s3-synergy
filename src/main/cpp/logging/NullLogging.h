@@ -25,7 +25,7 @@
 
 class NullLogging : public Logging {
 public:
-    NullLogging(const string& logFileName);
+    NullLogging();
 
     virtual ~NullLogging();
 
@@ -43,9 +43,6 @@ public:
 
     virtual void error(const string& message, const string& moduleName) {
     };
-
-protected:
-    NullLogging() {};
 };
 #endif	/* NULLLOGGING_H */
 
