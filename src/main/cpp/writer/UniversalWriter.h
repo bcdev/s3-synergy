@@ -2,7 +2,7 @@
  * File:   UniversalWriter.h
  * Author: thomass
  *
- * Created on November 17, 2010, 5:19 PM
+ * Created on September 26, 2011
  */
 
 #ifndef UNIVERSALWRITER_H

@@ -18,7 +18,7 @@
         <Dynamic_Processing_Parameters>
             <Processing_Parameter>
                 <Name>Segment_Line_Count</Name>
-                <Value>1500</Value> <!-- Value range: [8, 2000], Default: 2000 -->
+                <Value>200</Value> <!-- Value range: [8, 2000], Default: 2000 -->
             </Processing_Parameter>
         </Dynamic_Processing_Parameters>
     </Ipf_Conf>
