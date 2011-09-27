@@ -160,6 +160,44 @@ public:
 	 * @param name The attribute's name.
 	 * @param data The attribute's data.
 	 */
+	Attribute(int type, const string& name, const valarray<int8_t>& data) :
+			name(name), type(type) {
+		string s;
+		for (size_t i = 0; i < data.size(); i++) {
+			if (i > 0) {
+				s += " ";
+			}
+			s += lexical_cast<string>(numeric_cast<int16_t>(data[i]));
+		}
+		value = s;
+	}
+
+	/**
+	 * Constructor.
+	 *
+	 * @param type The attribute's type.
+	 * @param name The attribute's name.
+	 * @param data The attribute's data.
+	 */
+	Attribute(int type, const string& name, const valarray<uint8_t>& data) :
+			name(name), type(type) {
+		string s;
+		for (size_t i = 0; i < data.size(); i++) {
+			if (i > 0) {
+				s += " ";
+			}
+			s += lexical_cast<string>(numeric_cast<uint16_t>(data[i]));
+		}
+		value = s;
+	}
+
+	/**
+	 * Constructor.
+	 *
+	 * @param type The attribute's type.
+	 * @param name The attribute's name.
+	 * @param data The attribute's data.
+	 */
 	template<class T>
 	Attribute(int type, const string& name, const valarray<T>& data) :
 			name(name), type(type) {
