@@ -26,7 +26,7 @@
 class ShortAccessor: public virtual AbstractAccessor<int16_t, Constants::TYPE_SHORT> {
 public:
 
-	ShortAccessor(size_t n, int16_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) :
+	ShortAccessor(size_t n, int16_t fillValue = numeric_limits<uint16_t>::min(), double scaleFactor = 1.0, double addOffset = 0.0) :
 			AbstractAccessor<int16_t, Constants::TYPE_SHORT>(n, fillValue, scaleFactor, addOffset) {
 	}
 

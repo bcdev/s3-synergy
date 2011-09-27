@@ -22,6 +22,7 @@
 #define	ABSTRACTACCESSOR_H
 
 #include <algorithm>
+#include <limits>
 #include <typeinfo>
 
 #include "Accessor.h"
@@ -31,6 +32,7 @@
 using std::copy;
 using std::fill;
 using std::invalid_argument;
+using std::numeric_limits;
 
 template<class T, int N>
 class AbstractAccessor: public virtual Accessor {
@@ -218,7 +220,7 @@ public:
 
 protected:
 
-	AbstractAccessor(size_t n, T fillValue, double scaleFactor = 1.0, double addOffset = 0.0) :
+	AbstractAccessor(size_t n, T fillValue = numeric_limits<T>::min(), double scaleFactor = 1.0, double addOffset = 0.0) :
 			Accessor(), fillValue(fillValue), scaleFactor(scaleFactor), addOffset(addOffset), data(n) {
 	}
 

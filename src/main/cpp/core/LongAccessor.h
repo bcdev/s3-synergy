@@ -26,7 +26,7 @@
 class LongAccessor: public virtual AbstractAccessor<int64_t, Constants::TYPE_LONG> {
 public:
 
-	LongAccessor(size_t n, int64_t fillValue = 0) :
+	LongAccessor(size_t n, int64_t fillValue = numeric_limits<uint64_t>::min()) :
 			AbstractAccessor<int64_t, Constants::TYPE_LONG>(n, fillValue) {
 	}
 
