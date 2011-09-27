@@ -27,6 +27,8 @@ using std::string;
 
 namespace Constants {
 
+#include "Config.h"
+
 /**
  * Product types.
  */
@@ -88,7 +90,6 @@ const string LOG_LEVEL_PROGRESS = "PROGRESS";
 const string LOG_LEVEL_DEBUG = "DEBUG";
 const string LOG_LEVEL_WARNING = "WARNING";
 const string LOG_LEVEL_ERROR = "ERROR";
-const string PROCESSOR_VERSION = "1.0";
 }
 
 #endif	/* CONSTANTS_H */
