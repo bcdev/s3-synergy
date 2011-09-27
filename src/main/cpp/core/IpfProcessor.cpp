@@ -22,7 +22,7 @@
 
 #include "Boost.h"
 #include "IpfProcessor.h"
-#include "../logging/Logging.h"
+#include "Logging.h"
 
 using std::cout;
 

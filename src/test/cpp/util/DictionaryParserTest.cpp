@@ -38,140 +38,141 @@ DictionaryParserTest::~DictionaryParserTest() {
 
 void DictionaryParserTest::setUp() {
 	XPathInitializer init;
-	dictionary = DictionaryParser().parse(
-			IOUtils::getEnvironment("S3_SYNERGY_HOME")
-					+ "/src/main/resources/dictionary");
+	dictionary = DictionaryParser().parse(IOUtils::getEnvironment("S3_SYNERGY_HOME") + "/src/main/resources/dictionary");
 }
 
 void DictionaryParserTest::tearDown() {
 }
 
 void DictionaryParserTest::testSy1ProductDescriptor() {
-	CPPUNIT_ASSERT(dictionary->hasProductDescriptor(Constants::PRODUCT_SY1));
-	const ProductDescriptor& p = dictionary->getProductDescriptor(
-			Constants::PRODUCT_SY1);
-
-	CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_OLC));
-	const SegmentDescriptor& olc = p.getSegmentDescriptor(
-			Constants::SEGMENT_OLC);
-
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_1"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_2"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_3"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_4"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_5"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_6"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_7"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_8"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_9"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_10"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_11"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_12"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_13"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_14"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_15"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_16"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_17"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_18"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_19"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_20"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_21"));
-
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("latitude"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("longitude"));
-	CPPUNIT_ASSERT(olc.hasVariableDescriptor("altitude"));
-
-	CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_OLC_TIME));
-	const SegmentDescriptor& olcTime = p.getSegmentDescriptor(
-			Constants::SEGMENT_OLC_TIME);
-
-	CPPUNIT_ASSERT(olcTime.hasVariableDescriptor("time"));
-
-	CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_SLN));
-	const SegmentDescriptor& sln = p.getSegmentDescriptor(
-			Constants::SEGMENT_SLN);
-
-	CPPUNIT_ASSERT(sln.hasVariableDescriptor("L_1"));
-	CPPUNIT_ASSERT(sln.hasVariableDescriptor("L_2"));
-	CPPUNIT_ASSERT(sln.hasVariableDescriptor("L_3"));
-	CPPUNIT_ASSERT(sln.hasVariableDescriptor("L_4"));
-	CPPUNIT_ASSERT(sln.hasVariableDescriptor("L_5"));
-	CPPUNIT_ASSERT(sln.hasVariableDescriptor("L_6"));
-
-	CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_SLO));
-	const SegmentDescriptor& slo = p.getSegmentDescriptor(
-			Constants::SEGMENT_SLO);
-
-	CPPUNIT_ASSERT(slo.hasVariableDescriptor("L_1"));
-	CPPUNIT_ASSERT(slo.hasVariableDescriptor("L_2"));
-	CPPUNIT_ASSERT(slo.hasVariableDescriptor("L_3"));
-	CPPUNIT_ASSERT(slo.hasVariableDescriptor("L_4"));
-	CPPUNIT_ASSERT(slo.hasVariableDescriptor("L_5"));
-	CPPUNIT_ASSERT(slo.hasVariableDescriptor("L_6"));
-
-	CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_OLC_TP));
-	CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_SLN_TP));
-	CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_SLO_TP));
-	CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_OLC_INFO));
-	CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_SLN_INFO));
-	CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_SLO_INFO));
+    testL1Data(Constants::PRODUCT_SY1);
 }
 
 void DictionaryParserTest::testSy2ProductDescriptor() {
-	CPPUNIT_ASSERT(dictionary->hasProductDescriptor(Constants::PRODUCT_SY2));
-	const ProductDescriptor& p = dictionary->getProductDescriptor(
-			Constants::PRODUCT_SY2);
+    testL2Data(Constants::PRODUCT_SY2);
+}
 
-	CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED));
-	const SegmentDescriptor& s = p.getSegmentDescriptor(
-			Constants::SEGMENT_SYN_COLLOCATED);
+void DictionaryParserTest::testBreakpointProductDescriptor() {
+    testL1Data(Constants::PRODUCT_BREAKPOINT);
+    testL2Data(Constants::PRODUCT_BREAKPOINT);
+}
 
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_1"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_2"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_3"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_4"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_5"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_6"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_7"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_8"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_9"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_10"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_11"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_12"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_13"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_14"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_15"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_16"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_17"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_18"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_19"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_20"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_21"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_22"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_23"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_24"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_25"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_26"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_27"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_28"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_29"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_30"));
+void DictionaryParserTest::testL1Data(const string& productDescriptorId) {
+    CPPUNIT_ASSERT(dictionary->hasProductDescriptor(productDescriptorId));
+    const ProductDescriptor& p = dictionary->getProductDescriptor(productDescriptorId);
 
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("A550"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("T550"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("AMIN"));
+    CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_OLC));
+    const SegmentDescriptor& olc = p.getSegmentDescriptor(Constants::SEGMENT_OLC);
 
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("longitude"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("latitude"));
-	CPPUNIT_ASSERT(s.hasVariableDescriptor("altitude"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_1"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_2"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_3"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_4"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_5"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_6"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_7"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_8"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_9"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_10"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_11"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_12"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_13"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_14"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_15"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_16"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_17"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_18"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_19"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_20"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_21"));
 
-	checkSDRVariable(s.getVariableDescriptor("SDR_1"));
-	checkA550Variable(s.getVariableDescriptor("A550"));
-	checkT550Variable(s.getVariableDescriptor("T550"));
-	ckeckAMINVariable(s.getVariableDescriptor("AMIN"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("latitude"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("longitude"));
+    CPPUNIT_ASSERT(olc.hasVariableDescriptor("altitude"));
 
-	checkLatitudeVariable(s.getVariableDescriptor("latitude"));
-	checkLongitudeVariable(s.getVariableDescriptor("longitude"));
+    CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_OLC_TIME));
+    const SegmentDescriptor& olcTime = p.getSegmentDescriptor(
+            Constants::SEGMENT_OLC_TIME);
+
+    CPPUNIT_ASSERT(olcTime.hasVariableDescriptor("time"));
+
+    CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_SLN));
+    const SegmentDescriptor& sln = p.getSegmentDescriptor(
+            Constants::SEGMENT_SLN);
+
+    CPPUNIT_ASSERT(sln.hasVariableDescriptor("L_1"));
+    CPPUNIT_ASSERT(sln.hasVariableDescriptor("L_2"));
+    CPPUNIT_ASSERT(sln.hasVariableDescriptor("L_3"));
+    CPPUNIT_ASSERT(sln.hasVariableDescriptor("L_4"));
+    CPPUNIT_ASSERT(sln.hasVariableDescriptor("L_5"));
+    CPPUNIT_ASSERT(sln.hasVariableDescriptor("L_6"));
+
+    CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_SLO));
+    const SegmentDescriptor& slo = p.getSegmentDescriptor(
+            Constants::SEGMENT_SLO);
+
+    CPPUNIT_ASSERT(slo.hasVariableDescriptor("L_1"));
+    CPPUNIT_ASSERT(slo.hasVariableDescriptor("L_2"));
+    CPPUNIT_ASSERT(slo.hasVariableDescriptor("L_3"));
+    CPPUNIT_ASSERT(slo.hasVariableDescriptor("L_4"));
+    CPPUNIT_ASSERT(slo.hasVariableDescriptor("L_5"));
+    CPPUNIT_ASSERT(slo.hasVariableDescriptor("L_6"));
+
+    CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_OLC_TP));
+    CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_SLN_TP));
+    CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_SLO_TP));
+    CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_OLC_INFO));
+    CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_SLN_INFO));
+    CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_SLO_INFO));
+}
+
+void DictionaryParserTest::testL2Data(const string& productDescriptorId) {
+    CPPUNIT_ASSERT(dictionary->hasProductDescriptor(productDescriptorId));
+    const ProductDescriptor & p = dictionary->getProductDescriptor(productDescriptorId);
+    CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED));
+    const SegmentDescriptor & s = p.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_1"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_2"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_3"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_4"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_5"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_6"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_7"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_8"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_9"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_10"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_11"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_12"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_13"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_14"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_15"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_16"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_17"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_18"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_19"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_20"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_21"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_22"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_23"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_24"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_25"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_26"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_27"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_28"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_29"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_30"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("A550"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("T550"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("AMIN"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("longitude"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("latitude"));
+    CPPUNIT_ASSERT(s.hasVariableDescriptor("altitude"));
+    checkSDRVariable(s.getVariableDescriptor("SDR_1"));
+    checkA550Variable(s.getVariableDescriptor("A550"));
+    checkT550Variable(s.getVariableDescriptor("T550"));
+    ckeckAMINVariable(s.getVariableDescriptor("AMIN"));
+    checkLatitudeVariable(s.getVariableDescriptor("latitude"));
+    checkLongitudeVariable(s.getVariableDescriptor("longitude"));
 }
 
 void DictionaryParserTest::checkSDRVariable(VariableDescriptor& v) {

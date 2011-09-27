@@ -24,7 +24,7 @@
 #include <stdexcept>
 
 #include "Context.h"
-#include "../logging/NullLogging.h"
+#include "NullLogging.h"
 #include "SegmentImpl.h"
 #include "Writer.h"
 

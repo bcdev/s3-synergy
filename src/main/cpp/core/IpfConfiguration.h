@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-#include "../logging/Logging.h"
+#include "Logging.h"
 
 using std::string;
 using std::vector;

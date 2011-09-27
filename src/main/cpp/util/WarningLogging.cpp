@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2010 by Brockmann Consult (info@brockmann-consult.de)
+ * Copyright (C) 2011 by Brockmann Consult (info@brockmann-consult.de)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -10,21 +10,19 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
+ *
+ * File:   WarningLogging.cpp
+ * Author: ralf
  * 
- * File:   DebugLogging.cpp
- * Author: thomass
- * 
- * Created on November 24, 2010, 4:08 PM
+ * Created on January 19, 2011, 3:40 PM
  */
 
-#include "DebugLogging.h"
+#include "WarningLogging.h"
 
-DebugLogging::DebugLogging(const string& logFileName) {
+WarningLogging::WarningLogging(const string& logFileName) {
     openLogFile(logFileName);
-    instance = shared_ptr<Logging>(this);
 }
 
-DebugLogging::~DebugLogging() {
+WarningLogging::~WarningLogging() {
 }
-

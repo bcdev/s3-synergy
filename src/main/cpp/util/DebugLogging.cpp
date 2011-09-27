@@ -12,18 +12,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
- * File:   InfoLogging.cpp
+ * File:   DebugLogging.cpp
  * Author: thomass
  * 
  * Created on November 24, 2010, 4:08 PM
  */
 
-#include "InfoLogging.h"
+#include "DebugLogging.h"
 
-InfoLogging::InfoLogging(const string& logFileName) {
+DebugLogging::DebugLogging(const string& logFileName) {
     openLogFile(logFileName);
-    instance = shared_ptr<Logging>(this);
 }
 
-InfoLogging::~InfoLogging() {
+DebugLogging::~DebugLogging() {
 }
+

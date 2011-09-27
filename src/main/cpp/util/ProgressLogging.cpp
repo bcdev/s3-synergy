@@ -12,18 +12,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
- * File:   NullLogging.cpp
+ * File:   ProgressLogging.cpp
  * Author: ralf
  * 
  * Created on January 19, 2011, 3:40 PM
  */
 
-#include "NullLogging.h"
+#include "ProgressLogging.h"
 
-NullLogging::NullLogging() {
-    instance = shared_ptr<Logging>(this);
+ProgressLogging::ProgressLogging(const string& logFileName) {
+    openLogFile(logFileName);
 }
 
-NullLogging::~NullLogging() {
+ProgressLogging::~ProgressLogging() {
 }
-

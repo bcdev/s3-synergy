@@ -19,7 +19,6 @@
  */
 
 #include "../../../main/cpp/core/BasicModule.h"
-#include "../../../main/cpp/logging/NullLogging.h"
 #include "../../../main/cpp/core/Writer.h"
 
 #include "TestObject.h"

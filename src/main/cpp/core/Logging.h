@@ -48,10 +48,6 @@ public:
     const static string LOG_LEVEL_WARNING;
     const static string LOG_LEVEL_ERROR;
 
-    shared_ptr<Logging> getInstance() {
-        return instance;
-    };
-
 protected:
     void openLogFile(const string& logFileName);
     string createMessageHeader(const string& moduleName, const string& moduleVersion) const;
@@ -61,7 +57,6 @@ protected:
 
     const static string PROCESSOR_VERSION;
 
-    shared_ptr<Logging> instance;
     ofstream logFile;
 };
 

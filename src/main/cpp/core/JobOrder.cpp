@@ -22,7 +22,6 @@
 #include <iostream>
 
 #include "Boost.h"
-#include "../logging/DebugLogging.h"
 #include "JobOrder.h"
 
 using std::cout;
@@ -42,7 +41,7 @@ JobOrder::~JobOrder() {
 void JobOrder::log(Logging& logging) const {
     ipfConfiguration.log(logging);
     for (size_t i = 0; i < ipfProcessors.size(); i++) {
-        logging.debug("Parsing IPF processors " + boost::lexical_cast<string > (i + 1) + ":", "JobOrder");
+        logging.debug("Parsing IPF processors " + lexical_cast<string>(i + 1) + ":", "JobOrder");
         ipfProcessors[i].log(logging);
     }
 }
@@ -62,22 +61,4 @@ const IpfProcessor& JobOrder::getIpfProcessor(const string& id) const {
 
 const IpfConfiguration& JobOrder::getIpfConfiguration() const {
     return ipfConfiguration;
-}
-
-const shared_ptr<Logging> JobOrder::createLogging(const string& logFileName) const {
-    const string& stdLogLevel = ipfConfiguration.getStandardLogLevel();
-    if(stdLogLevel.compare("DEBUG") == 0) {
-        return shared_ptr<Logging>(new DebugLogging(logFileName));
-    } else if(stdLogLevel.compare("INFO") == 0) {
-        return shared_ptr<Logging>(new InfoLogging(logFileName));
-    }  else if(stdLogLevel.compare("PROGRESS") == 0) {
-        return shared_ptr<Logging>(new ProgressLogging(logFileName));
-    } else if(stdLogLevel.compare("WARNING") == 0) {
-        return shared_ptr<Logging>(new WarningLogging(logFileName));
-    } else if(stdLogLevel.compare("ERROR") == 0) {
-        return shared_ptr<Logging>(new ErrorLogging(logFileName));
-    } else if(stdLogLevel.compare("NULL") == 0) {
-        return shared_ptr<Logging>(new NullLogging());
-    }
-    BOOST_THROW_EXCEPTION(invalid_argument("invalid standard log level '" + stdLogLevel + "'."));
 }

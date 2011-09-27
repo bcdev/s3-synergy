@@ -24,35 +24,37 @@
 #include "../core/Constants.h"
 
 #include "JobOrderParser.h"
+#include "DebugLogging.h"
 
 using std::string;
 using std::bad_cast;
+using std::logic_error;
 
 JobOrderParser::JobOrderParser() :
-		parser() {
+        parser() {
 }
 
 JobOrderParser::~JobOrderParser() {
 }
 
-shared_ptr<JobOrder> JobOrderParser::parse(const string& path) const {
+shared_ptr<JobOrder> JobOrderParser::parse(const string& path) {
 	IpfConfiguration config = parseIpfConfiguration(path);
 	vector<IpfProcessor> ipfProcessors =
 			parseIpfProcessors(path);
 	return shared_ptr<JobOrder>(new JobOrder(config, ipfProcessors));
 }
 
-IpfConfiguration JobOrderParser::parseIpfConfiguration(const string& path) const {
+IpfConfiguration JobOrderParser::parseIpfConfiguration(const string& path) {
 	IpfConfiguration configuration;
-	string value = parser.evaluateToString(path,
-			"/Ipf_Job_Order/Ipf_Conf/Stdout_Log_Level");
-	if (value.empty()
-			|| (value.compare(Constants::LOG_LEVEL_INFO) != 0 && value.compare(Constants::LOG_LEVEL_DEBUG) != 0
+	string value = parser.evaluateToString(path, "/Ipf_Job_Order/Ipf_Conf/Stdout_Log_Level");
+	if (value.empty() || (value.compare(Constants::LOG_LEVEL_INFO) != 0
+	                && value.compare(Constants::LOG_LEVEL_DEBUG) != 0
 					&& value.compare(Constants::LOG_LEVEL_WARNING) != 0
 					&& value.compare(Constants::LOG_LEVEL_PROGRESS) != 0
 					&& value.compare(Constants::LOG_LEVEL_ERROR) != 0)) {
 		value = Constants::LOG_LEVEL_INFO; // default value
 	}
+	standardLogLevel = value;
 	configuration.setStandardLogLevel(value);
 
 	value = parser.evaluateToString(path,
@@ -285,3 +287,22 @@ Output JobOrderParser::parseOutput(const string& path,
 	return output;
 }
 
+const shared_ptr<Logging> JobOrderParser::createLogging(const string& logFileName) const {
+    if(standardLogLevel.empty()) {
+        BOOST_THROW_EXCEPTION(logic_error("The ipf configuration needs to be parsed first."));
+    }
+    if(standardLogLevel.compare("DEBUG") == 0) {
+        return shared_ptr<Logging>(new DebugLogging(logFileName));
+    } else if(standardLogLevel.compare("INFO") == 0) {
+        return shared_ptr<Logging>(new InfoLogging(logFileName));
+    }  else if(standardLogLevel.compare("PROGRESS") == 0) {
+        return shared_ptr<Logging>(new ProgressLogging(logFileName));
+    } else if(standardLogLevel.compare("WARNING") == 0) {
+        return shared_ptr<Logging>(new WarningLogging(logFileName));
+    } else if(standardLogLevel.compare("ERROR") == 0) {
+        return shared_ptr<Logging>(new ErrorLogging(logFileName));
+    } else if(standardLogLevel.compare("NULL") == 0) {
+        return shared_ptr<Logging>(new NullLogging());
+    }
+    BOOST_THROW_EXCEPTION(logic_error("invalid standard log level '" + standardLogLevel + "'."));
+}

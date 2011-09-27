@@ -32,10 +32,11 @@ public:
 	JobOrderParser();
 	virtual ~JobOrderParser();
 
-	shared_ptr<JobOrder> parse(const string& path) const;
+	shared_ptr<JobOrder> parse(const string& path);
+    const shared_ptr<Logging> createLogging(const string& logFileName) const;
 
 private:
-	IpfConfiguration parseIpfConfiguration(const string& path) const;
+	IpfConfiguration parseIpfConfiguration(const string& path);
 	vector<IpfProcessor> parseIpfProcessors(const string& path) const;
 	IpfProcessor parseIpfProcessor(const string& path, int index) const;
 	vector<BreakpointFile> parseBreakpointFiles(const string& path, const string& baseQuery) const;
@@ -45,6 +46,7 @@ private:
 	vector<Output> parseOutputs(const string& path, const string& baseQuery) const;
 	Output parseOutput(const string& path, const string& baseQuery) const;
 
+    string standardLogLevel;
 	XmlParser parser;
 };
 

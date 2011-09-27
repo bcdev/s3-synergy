@@ -25,30 +25,34 @@
 
 #include "../../../main/cpp/core/Dictionary.h"
 
-class DictionaryParserTest : public CPPUNIT_NS::TestFixture {
+class DictionaryParserTest: public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(DictionaryParserTest);
     CPPUNIT_TEST(testSy1ProductDescriptor);
     CPPUNIT_TEST(testSy2ProductDescriptor);
     CPPUNIT_TEST_SUITE_END();
-    
+
 public:
     DictionaryParserTest();
     virtual ~DictionaryParserTest();
     void setUp();
     void tearDown();
-private:
 
-    void testSy2ProductDescriptor();
+private:
     void testSy1ProductDescriptor();
-    void checkSDRVariable(VariableDescriptor& v);
-    void checkT550Variable(VariableDescriptor& v);
-    void checkA550Variable(VariableDescriptor& v);
-    void ckeckAMINVariable(VariableDescriptor& v);
-    void checkLatitudeVariable(VariableDescriptor& v);
-    void checkLongitudeVariable(VariableDescriptor& v);
-    void checkAirPressureVariable(VariableDescriptor& v);
+    void testSy2ProductDescriptor();
+    void testBreakpointProductDescriptor();
+    void checkSDRVariable(VariableDescriptor & v);
+    void checkT550Variable(VariableDescriptor & v);
+    void checkA550Variable(VariableDescriptor & v);
+    void ckeckAMINVariable(VariableDescriptor & v);
+    void checkLatitudeVariable(VariableDescriptor & v);
+    void checkLongitudeVariable(VariableDescriptor & v);
+    void checkAirPressureVariable(VariableDescriptor & v);
+    void testL1Data(const string& productDescriptorId);
+    void testL2Data(const string& productDescriptorId);
 
     shared_ptr<Dictionary> dictionary;
-};
+}
+;
 
 #endif	/* DICTIONARYPARSERTEST_H */

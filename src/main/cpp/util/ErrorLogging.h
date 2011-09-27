@@ -12,18 +12,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
- * File:   ErrorLogging.cpp
+ * File:   ErrorLogging.h
  * Author: ralf
- * 
+ *
  * Created on January 19, 2011, 3:40 PM
  */
 
-#include "ErrorLogging.h"
+#ifndef ERRORLOGGING_H
+#define	ERRORLOGGING_H
 
-ErrorLogging::ErrorLogging(const string& logFileName) {
-    openLogFile(logFileName);
-    instance = shared_ptr<Logging>(this);
-}
+#include "../core/NullLogging.h"
 
-ErrorLogging::~ErrorLogging() {
-}
+class ErrorLogging : public NullLogging {
+public:
+    ErrorLogging(const string& logFileName);
+
+    virtual ~ErrorLogging();
+
+    void error(const string& message, const string& moduleName) {
+        logToError(message, moduleName, PROCESSOR_VERSION);
+    };
+
+protected:
+    ErrorLogging() {};
+
+};
+
+#endif	/* ERRORLOGGING_H */
+

@@ -37,13 +37,14 @@ void PclTest::setUp() {
 void PclTest::prepareContext() {
     const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
     shared_ptr<Dictionary> dictionary = DictionaryParser().parse(S3_SYNERGY_HOME + "/src/main/resources/dictionary");
-    shared_ptr<JobOrder> jobOrder = JobOrderParser().parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_PCL.xml");
+    JobOrderParser jobOrderParser = JobOrderParser();
+    shared_ptr<JobOrder> jobOrder = jobOrderParser.parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_PCL.xml");
 
     context = shared_ptr<Context>(new Context());
     shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
     context->setErrorHandler(errorHandler);
 
-    shared_ptr<Logging> logging = jobOrder->createLogging("LOG.SY_UNT_PCL");
+    shared_ptr<Logging> logging = jobOrderParser.createLogging("LOG.SY_UNT_PCL");
     context->setLogging(logging);
 
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
