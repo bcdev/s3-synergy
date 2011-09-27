@@ -86,7 +86,11 @@ VectorLookupTableImpl<T, W>::VectorLookupTableImpl(const string& id, size_t leng
 		sizes[i] = x[i].size();
 	}
 	for (size_t i = n, stride = length; i-- > 0;) {
-		strides[i] = stride;
+		if (sizes[i] > 1) {
+			strides[i] = stride;
+		} else {
+			strides[i] = 0;
+		}
 		stride *= sizes[i];
 	}
 	for (size_t i = 0; i < n; ++i) {
@@ -195,12 +199,15 @@ size_t VectorLookupTableImpl<T, W>::getIndex(size_t dimIndex, W coordinate, W& f
 		else
 			lo = m;
 	}
-
-	f = (coordinate - x[dimIndex][lo]) / (x[dimIndex][hi] - x[dimIndex][lo]);
-	if (f < W(0.0)) {
-		f = W(0.0);
-	} else if (f > W(1.0)) {
-		f = W(1.0);
+	if (sizes[dimIndex] > 1) {
+		f = (coordinate - x[dimIndex][lo]) / (x[dimIndex][hi] - x[dimIndex][lo]);
+		if (f < W(0.0)) {
+			f = W(0.0);
+		} else if (f > W(1.0)) {
+			f = W(1.0);
+		}
+	} else {
+		f = 0.0;
 	}
 
 	return lo;

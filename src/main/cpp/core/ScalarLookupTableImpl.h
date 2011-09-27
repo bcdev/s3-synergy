@@ -192,7 +192,6 @@ size_t ScalarLookupTableImpl<T, W>::getIndex(size_t dimIndex, W coordinate, W& f
 		else
 			lo = m;
 	}
-
 	if (sizes[dimIndex] > 1) {
 		f = (coordinate - x[dimIndex][lo]) / (x[dimIndex][hi] - x[dimIndex][lo]);
 		if (f < W(0.0)) {
