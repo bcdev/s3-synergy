@@ -257,8 +257,9 @@ void Col::process(Context& context) {
 }
 
 void Col::addVariable(Context& context, Segment& t, const string& targetName, const Segment& s, const string& sourceName, const ProductDescriptor& p) {
+
     const VariableDescriptor& v = p.getSegmentDescriptor(s.getId()).getVariableDescriptor(sourceName);
-    context.getLogging()->progress("Adding variable '" + targetName + "' to segment '" + t.getId() + "'", getId());
+    context.getLogging()->progress("Adding variable '" + v.toString() + "' to segment '" + t.getId() + "'", getId());
     t.addVariable(v, targetName);
     sourceNameMap[targetName] = sourceName;
     sourceSegmentMap[targetName] = &s;

@@ -65,7 +65,9 @@ string VariableDescriptor::toString() const {
     std::ostringstream oss;
     oss << "Variable " << "[";
     oss << "name = " << getName() << ", ";
-    oss << "type = " << type << ", ";
+    oss << "type = " << getTypeString(type) << ", ";
+    oss << "scale factor = " << lexical_cast<string>(getScaleFactor()) << ", ";
+    oss << "add offset = " << lexical_cast<string>(getAddOffset()) << ", ";
     oss << "ncFileName = " << ncFileName << ", ";
     oss << "ncVarName = " << ncVarName << "]";
 
