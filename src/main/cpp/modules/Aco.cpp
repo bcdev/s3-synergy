@@ -245,7 +245,7 @@ void Aco::process(Context& context) {
 				lutSlnRatm->getValues(&coordinates[0], matRatmSln);
 				lutT->getValues(&coordinates[14], matTv);
 
-				for (size_t b = 18; b < 25; b++) {
+				for (size_t b = 18; b < 24; b++) {
 					const double channel = b + 1.0;
 					const double ratm = matRatmSln(0, b - 18);
 					const double ts = matTs(0, b);
