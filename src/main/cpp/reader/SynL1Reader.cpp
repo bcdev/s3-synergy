@@ -102,6 +102,7 @@ void SynL1Reader::start(Context& context) {
 								context.getLogging()->info("adding segment '" + segmentName + "' to context", getId());
 								context.addSegment(segmentName, sizeL, colCount, camCount, 0, rowCount - 1);
 							}
+
 							// Copy variable attributes to dictionary
 							const int type = NetCDF::getVariableType(fileId, varId);
 							variableDescriptor->setType(type);
@@ -123,11 +124,10 @@ void SynL1Reader::start(Context& context) {
 void SynL1Reader::stop(Context& context) {
 	pair<string, int> fileIdPair;
 
-	foreach(fileIdPair, ncFileIdMap)
-			{
-				context.getLogging()->info("closing netCDF file '" + fileIdPair.first + "'", getId());
-				NetCDF::closeFile(fileIdPair.second);
-			}
+	foreach(fileIdPair, ncFileIdMap) {
+	    context.getLogging()->info("Closing netCDF file '" + fileIdPair.first + ".nc'", getId());
+	    NetCDF::closeFile(fileIdPair.second);
+	}
 	ncVarIdMap.clear();
 	ncFileIdMap.clear();
 }
