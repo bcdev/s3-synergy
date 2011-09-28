@@ -7,6 +7,8 @@ nbproject/
 *.ipr
 *.iws
 *.cmake
+*.xcodeproj/
+*.build/
 auxdata/
 target/
 /config/
@@ -15,6 +17,7 @@ target/
 /modules/
 CMakeCache.txt
 CMakeFiles/
+CMakeScripts/
 LOG.*
 Makefile
 /nbproject/private/

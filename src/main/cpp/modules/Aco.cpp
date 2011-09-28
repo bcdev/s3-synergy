@@ -153,7 +153,6 @@ void Aco::process(Context& context) {
 
 				tpiOlc.prepare(lon.getDouble(i), lat.getDouble(i), tpiWeights, tpiIndexes);
 
-				context.getLogging()->debug("Interpolating OLC tie points ...", getId());
 				const double szaOlc = tpiOlc.interpolate(tpSzasOlc, tpiWeights, tpiIndexes);
 				const double saaOlc = tpiOlc.interpolate(tpSaasOlc, tpiWeights, tpiIndexes);
 				const double vzaOlc = tpiOlc.interpolate(tpVzasOlc, tpiWeights, tpiIndexes);
@@ -182,13 +181,11 @@ void Aco::process(Context& context) {
 //				coordinates[18] = coordinates[6]; // aerosol model index
 //				coordinates[19] = coordinates[7]; // SYN channel
 
-				context.getLogging()->debug("Interpolating OLC look-up tables ...", getId());
 				lutOlcRatm->getValues(&coordinates[0], matRatmOlc);
 				lutT->getValues(&coordinates[8], matTs);
 				lutT->getValues(&coordinates[14], matTv);
 				lutRhoAtm->getValues(&coordinates[9], matRho);
 
-				context.getLogging()->debug("Calculating OLC atmospheric correction ...", getId());
 				for (size_t b = 0; b < 18; b++) {
 					const double channel = b + 1.0;
 					const double ratm = matRatmOlc(0, b);
@@ -215,9 +212,10 @@ void Aco::process(Context& context) {
 					err[b]->setDouble(i, rtoa);
 				}
 
+				// TODO: a segmentation fault occurs somewhere in the code below ...
+
 				tpiSln.prepare(lon.getDouble(i), lat.getDouble(i), tpiWeights, tpiIndexes);
 
-				context.getLogging()->debug("Interpolating SLN tie points ...", getId());
 				const double vzaSln = tpiSln.interpolate(tpVzasSln, tpiWeights, tpiIndexes);
 				const double vaaSln = tpiSln.interpolate(tpVaasSln, tpiWeights, tpiIndexes);
 
@@ -244,13 +242,10 @@ void Aco::process(Context& context) {
 //				coordinates[18] = coordinates[6]; // aerosol model index
 //				coordinates[19] = coordinates[7]; // SYN channel
 
-				context.getLogging()->debug("Interpolating SLN look-up tables ...", getId());
 				lutSlnRatm->getValues(&coordinates[0], matRatmSln);
 				lutT->getValues(&coordinates[14], matTv);
 
-				context.getLogging()->debug("Calculating SLN atmospheric correction ...", getId());
-
-				for (size_t b = 18; b < 25; b++) {
+				for (size_t b = 18; b < 24; b++) {
 					const double channel = b + 1.0;
 					const double ratm = matRatmSln(0, b - 18);
 					const double ts = matTs(0, b);
@@ -283,6 +278,7 @@ void Aco::process(Context& context) {
 						err[b]->setFillValue(i);
 					}
 				}
+
 			}
 		}
 	}
