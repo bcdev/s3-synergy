@@ -26,7 +26,6 @@ file(GLOB_RECURSE COL_TEST_SOURCES src/test/cpp/modules/ColTest.cpp)
 file(GLOB_RECURSE PCL_TEST_SOURCES src/test/cpp/modules/PclTest.cpp)
 file(GLOB_RECURSE WRITER_MAIN_SOURCES src/main/cpp/writer/*.cpp)
 file(GLOB_RECURSE WRITER_TEST_SOURCES src/test/cpp/writer/*.cpp)
-file(GLOB_RECURSE LOGGING_MAIN_SOURCES src/main/cpp/logging/*.cpp)
 file(GLOB_RECURSE UTIL_MAIN_SOURCES src/main/cpp/util/*.cpp)
 file(GLOB_RECURSE UTIL_TEST_SOURCES src/test/cpp/util/*.cpp)
 
@@ -60,7 +59,6 @@ add_executable(sy_unt_gen
 	${CORE_MAIN_SOURCES}
 	${UTIL_TEST_SOURCES}
 	${UTIL_MAIN_SOURCES}
-	${LOGGING_MAIN_SOURCES}
 )
 target_link_libraries(sy_unt_gen
 	cppunit
@@ -80,7 +78,6 @@ add_executable(sy_unt_sre
 	${UTIL_MAIN_SOURCES}
 	${READER_MAIN_SOURCES}
 	${READER_TEST_SOURCES}
-	${LOGGING_MAIN_SOURCES}
 )
 target_link_libraries(sy_unt_sre
 	cppunit
@@ -100,7 +97,6 @@ add_executable(sy_unt_swr
 	${UTIL_MAIN_SOURCES}
 	${WRITER_MAIN_SOURCES}
 	${WRITER_TEST_SOURCES}
-	${LOGGING_MAIN_SOURCES}
 )
 target_link_libraries(sy_unt_swr
 	cppunit
@@ -121,7 +117,6 @@ add_executable(sy_unt_col
 	${READER_MAIN_SOURCES}
 	${WRITER_MAIN_SOURCES}
 	${MODULES_MAIN_SOURCES}
-	${LOGGING_MAIN_SOURCES}
 	${COL_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_col
@@ -143,7 +138,6 @@ add_executable(sy_unt_pcl
 	${READER_MAIN_SOURCES}
 	${WRITER_MAIN_SOURCES}
 	${MODULES_MAIN_SOURCES}
-	${LOGGING_MAIN_SOURCES}
 	${PCL_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_pcl
@@ -165,7 +159,6 @@ add_executable(sy_unt_aco
 	${READER_MAIN_SOURCES}
 	${WRITER_MAIN_SOURCES}
 	${MODULES_MAIN_SOURCES}
-	${LOGGING_MAIN_SOURCES}
 	${ACO_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_aco
@@ -187,7 +180,6 @@ add_executable(sy_unt_ave
 	${READER_MAIN_SOURCES}
 	${WRITER_MAIN_SOURCES}
 	${MODULES_MAIN_SOURCES}
-	${LOGGING_MAIN_SOURCES}
 	${AVE_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_ave
@@ -211,7 +203,6 @@ set_property(TARGET sy_unt_ave PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #	${MODULES_MAIN_SOURCES}
 #	${WRITER_MAIN_SOURCES}
 #	${CORE_MAIN_SOURCES}
-#	${LOGGING_MAIN_SOURCES}
 #	${UTIL_MAIN_SOURCES}
 #)
 #target_link_libraries(syl2
