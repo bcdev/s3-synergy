@@ -8,7 +8,6 @@
 #include <cstdlib>
 
 #include "../../../../src/main/cpp/core/Processor.h"
-#include "../../../../src/main/cpp/core/Context.h"
 #include "../../../../src/main/cpp/core/SegmentImpl.h"
 #include "../../../../src/main/cpp/reader/SynL1Reader.h"
 #include "../../../../src/main/cpp/modules/Col.h"
@@ -115,6 +114,7 @@ void ColTest::testAddOlciVariables() {
 }
 
 void ColTest::testCol() {
+
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
     shared_ptr<Module> writer = shared_ptr<Module>(new UniversalWriter());
 
