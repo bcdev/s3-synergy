@@ -56,12 +56,6 @@ void SynL2WriterTest::prepareContext() {
 }
 
 void SynL2WriterTest::tearDown() {
-	foreach (shared_ptr<Module> m, context->getModules())
-			{
-				context->removeModule(m);
-			}
-	context->setJobOrder(shared_ptr<JobOrder>());
-	context->setDictionary(shared_ptr<Dictionary>());
 }
 
 void SynL2WriterTest::testWriter() {
