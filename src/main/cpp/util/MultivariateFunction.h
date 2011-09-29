@@ -25,7 +25,7 @@ public:
      *
      * @return The value of the function at {@code x}.
      */
-    virtual double value(valarray<double> x) = 0;
+    virtual double value(shared_ptr<valarray<double> > x) = 0;
 
 };
 

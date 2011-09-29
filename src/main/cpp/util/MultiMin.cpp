@@ -24,8 +24,8 @@ MultiMin::MultiMin() {
 MultiMin::~MultiMin() {
 }
 
-bool MultiMin::powell(shared_ptr<MultivariateFunction> f, valarray<double> pn, valarray<valarray<double> > u, const double accuracyGoal, const size_t maxIter) const {
-    const size_t n = pn.size();
+bool MultiMin::powell(shared_ptr<MultivariateFunction> f, shared_ptr<valarray<double> > pn, valarray<shared_ptr<valarray<double> > > u, const double accuracyGoal, const size_t maxIter) const {
+    const size_t n = pn->size();
 
     valarray<shared_ptr<LineMinimizer> > minimizers = valarray<shared_ptr<LineMinimizer> >(n);
     for (size_t k = 0; k < n; ++k) {
@@ -33,14 +33,14 @@ bool MultiMin::powell(shared_ptr<MultivariateFunction> f, valarray<double> pn, v
     }
 
     valarray<double> p0 = valarray<double>(n);
-    valarray<double> pe = valarray<double>(n);
+    shared_ptr<valarray<double> > pe = shared_ptr<valarray<double> >(new valarray<double>(n));
 
     double zn = f->value(pn);
 
     for (size_t i = 0; i < maxIter; ++i) {
         // 1. Initialize
         for(size_t i = 0; i < n; i++) {
-            p0[i] = pn[i];
+            p0[i] = (*pn)[i];
         }
         double z0 = zn;
         // 2. Successively minimize along all directions
@@ -59,21 +59,22 @@ bool MultiMin::powell(shared_ptr<MultivariateFunction> f, valarray<double> pn, v
         // 4. Stop if ||pn - p0|| < accuracyGoal
         double sum = 0.0;
         for (size_t k = 0; k < n; ++k) {
-            sum += square(pn[k] - p0[k]);
+            sum += square((*pn)[k] - p0[k]);
         }
         if (sum < square(accuracyGoal)) {
             return true;
         }
         // 5. Extrapolate
         for (size_t k = 0; k < n; ++k) {
-            pe[k] = 2.0 * pn[k] - p0[k];
+            (*pe)[k] = 2.0 * (*pn)[k] - p0[k];
         }
         const double ze = f->value(pe);
         // 6. When necessary, discard the direction of maximum decrease
         if (ze < z0) {
             if (2.0 * (z0 - 2.0 * zn + ze) * square(z0 - zn - maxDecrease) < maxDecrease * square(z0 - ze)) {
                 for (size_t k = 0; k < n; ++k) {
-                    u[maxIndex][k] = pn[k] - p0[k];
+                    shared_ptr<valarray<double> > uPtr = u[maxIndex];
+                    (*uPtr)[k] = (*pn)[k] - p0[k];
                 }
                 zn = minimizers[maxIndex]->findMinimum(pn);
             }
