@@ -30,6 +30,7 @@ public:
 
 private:
     const static double ACCURACY_GOAL;
+    shared_ptr<Min> min;
 
     void testBracketCos();
     void testBracketSin();
@@ -51,11 +52,11 @@ class Sin : public UnivariateFunction {
     }
 };
 
-class Cigar : public UnivariateFunction {
-
-    double value(double x) {
-        return sin(x);
-    }
-};
+//class Cigar : public UnivariateFunction {
+//
+//    double value(double x) {
+//        return sin(x);
+//    }
+//};
 
 #endif /* MINTEST_H_ */
