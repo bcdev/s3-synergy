@@ -52,11 +52,4 @@ class Sin : public UnivariateFunction {
     }
 };
 
-//class Cigar : public UnivariateFunction {
-//
-//    double value(double x) {
-//        return sin(x);
-//    }
-//};
-
 #endif /* MINTEST_H_ */

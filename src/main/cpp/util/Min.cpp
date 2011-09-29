@@ -20,12 +20,10 @@ using std::string;
 const double Min::GOLDEN = 0.3819660;
 
 Min::Min() {
-    // TODO Auto-generated constructor stub
 
 }
 
 Min::~Min() {
-    // TODO Auto-generated destructor stub
 }
 
 shared_ptr<Bracket> Min::brack(const shared_ptr<UnivariateFunction> function, double a, double b, shared_ptr<Bracket> bracket) const {
@@ -219,4 +217,3 @@ Bracket::Bracket(double lowerX, double upperX, shared_ptr<UnivariateFunction> fu
     minimumX = this->lowerX + Min::GOLDEN * (this->upperX - this->lowerX);
     minimumF = function->value(this->minimumX);
 }
-;

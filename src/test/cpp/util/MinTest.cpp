@@ -2,7 +2,7 @@
  * MinTest.cpp
  *
  *  Created on: 28.09.2011
- *      Author: s3-syn
+ *      Author: thomasstorm
  */
 
 #include "MinTest.h"
