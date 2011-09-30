@@ -34,9 +34,17 @@ public:
 private:
 	friend class AveTest;
 
-	vector<VariableDescriptor*> variables;
+    const Grid* averagedGrid;
+    const Segment* collocatedSegment;
+    Segment* averagedSegment;
+    vector<VariableDescriptor*> variables;
+    const Accessor* synFlags;
 
-	static const size_t AVERAGING_FACTOR;
+	static const int8_t AVERAGING_FACTOR;
+
+    bool isValidPosition(const Grid* grid, long k, long l, long m) const;
+    bool isFillValue(const string& variableName, const long index) const;
+    double getValue(const string& variableName, const long index) const;
 };
 
 #endif /* AVE_H_ */

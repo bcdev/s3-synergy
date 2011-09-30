@@ -11,6 +11,8 @@
 #include "../../../../src/main/cpp/core/Context.h"
 #include "../../../../src/main/cpp/reader/SynL1Reader.h"
 #include "../../../../src/main/cpp/modules/Ave.h"
+#include "../../../../src/main/cpp/modules/Col.h"
+#include "../../../../src/main/cpp/modules/Pcl.h"
 #include "../../../../src/main/cpp/writer/SynL2Writer.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
@@ -59,9 +61,13 @@ void AveTest::tearDown() {
 
 void AveTest::testAve() {
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
+    shared_ptr<Module> col = shared_ptr<Module>(new Col());
+    shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
     shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
 
     context->addModule(reader);
+    context->addModule(col);
+    context->addModule(pcl);
     context->addModule(ave);
     context->addModule(writer);
 
