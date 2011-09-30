@@ -58,10 +58,6 @@ void AcoTest::prepareContext() {
 }
 
 void AcoTest::tearDown() {
-	foreach (shared_ptr<Module> m, context->getModules())
-			{
-				context->removeModule(m);
-			}
 }
 
 void AcoTest::testAco() {
