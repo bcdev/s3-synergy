@@ -11,7 +11,7 @@
 #include "../../../../src/main/cpp/core/SegmentImpl.h"
 #include "../../../../src/main/cpp/reader/SynL1Reader.h"
 #include "../../../../src/main/cpp/modules/Col.h"
-#include "../../../../src/main/cpp/writer/UniversalWriter.h"
+#include "../../../../src/main/cpp/writer/SynL2Writer.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
 
@@ -40,15 +40,19 @@ void ColTest::prepareContext() {
     context->setErrorHandler(errorHandler);
 
     const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
-    shared_ptr<Dictionary> dictionary = DictionaryParser().parse(S3_SYNERGY_HOME + "/src/main/resources/dictionary");
 
     shared_ptr<JobOrderParser> jobOrderParser = shared_ptr<JobOrderParser>(new JobOrderParser());
     shared_ptr<JobOrder> jobOrder = jobOrderParser->parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_COL.xml");
+    const bool createBreakpoints = jobOrder->getIpfConfiguration().isBreakpointEnable();
+
+    shared_ptr<DictionaryParser> dictionaryParser = shared_ptr<DictionaryParser>(new DictionaryParser(createBreakpoints));
+
+    shared_ptr<Dictionary> dictionary = dictionaryParser->parse(S3_SYNERGY_HOME + "/src/main/resources/dictionary");
+    context->setDictionary(dictionary);
 
     shared_ptr<Logging> logging = jobOrderParser->createLogging("LOG.SY_UNT_COL");
     context->setLogging(logging);
 
-    context->setDictionary(dictionary);
     context->setJobOrder(jobOrder);
 }
 
@@ -116,7 +120,7 @@ void ColTest::testAddOlciVariables() {
 void ColTest::testCol() {
 
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
-    shared_ptr<Module> writer = shared_ptr<Module>(new UniversalWriter());
+    shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
 
     context->addModule(reader);
     context->addModule(col);

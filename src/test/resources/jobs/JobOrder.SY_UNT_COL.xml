@@ -5,7 +5,7 @@
         <Stdout_Log_Level>DEBUG</Stdout_Log_Level> <!-- Default: INFO -->
         <Stderr_Log_Level>DEBUG</Stderr_Log_Level> <!-- Default: INFO -->
         <Test>true</Test>
-        <Breakpoint_Enable>false</Breakpoint_Enable>
+        <Breakpoint_Enable>true</Breakpoint_Enable>
         <Acquisition_Station>unknown</Acquisition_Station>
         <Processing_Station>unknown</Processing_Station>
         <Config_Files>

@@ -24,7 +24,8 @@ public:
     void setUp();
     void tearDown();
 
-private:
+protected:
+    virtual shared_ptr<Module> getSegmentProvider();
     void testWriter();
     void prepareContext();
     shared_ptr<Context> context;

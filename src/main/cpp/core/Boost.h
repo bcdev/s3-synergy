@@ -40,6 +40,7 @@
 using boost::algorithm::ends_with;
 using boost::algorithm::starts_with;
 using boost::algorithm::split;
+using boost::algorithm::to_lower;
 using boost::algorithm::trim_copy;
 using boost::filesystem::create_directories;
 using boost::filesystem::directory_iterator;

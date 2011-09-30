@@ -70,8 +70,7 @@ IpfConfiguration JobOrderParser::parseIpfConfiguration(const string& path) {
 
 	const size_t firstDotIndex = path.find_first_of(".");
 	const string orderIdWithExt = path.substr(firstDotIndex + 1);
-	configuration.setOrderId(
-			orderIdWithExt.substr(0, orderIdWithExt.length() - 4));
+	configuration.setOrderId(orderIdWithExt.substr(0, orderIdWithExt.length() - 4));
 
 	value = parser.evaluateToString(path,
 			"/Ipf_Job_Order/Ipf_Conf/Processor_Name");
@@ -84,9 +83,7 @@ IpfConfiguration JobOrderParser::parseIpfConfiguration(const string& path) {
 	try {
 		configuration.setTest(lexical_cast<bool>(value));
 	} catch (bad_cast& e) {
-		configuration.setTest(
-				value.compare("true") == 0 || value.compare("True") == 0
-						|| value.compare("TRUE") == 0);
+		configuration.setTest(value.compare("true") == 0 || value.compare("True") == 0 || value.compare("TRUE") == 0);
 	}
 
 	value = parser.evaluateToString(path,
@@ -105,24 +102,20 @@ IpfConfiguration JobOrderParser::parseIpfConfiguration(const string& path) {
 			"/Ipf_Job_Order/Ipf_Conf/Sensing_Time/Stop");
 	configuration.setSensingTimeStop(value);
 
-	vector<string> keys =
-			parser.evaluateToStringList(
-					path,
-					"/Ipf_Job_Order/Ipf_Conf/Dynamic_Processing_Parameters/Processing_Parameter/Name/child::text()");
-	vector<string> values =
-			parser.evaluateToStringList(
-					path,
-					"/Ipf_Job_Order/Ipf_Conf/Dynamic_Processing_Parameters/Processing_Parameter/Value/child::text()");
+    value = parser.evaluateToString(path, "/Ipf_Job_Order/Ipf_Conf/Breakpoint_Enable");
+    to_lower(value);
+    bool enableBreakpoint = value.compare("true") == 0 ? true : false;
+	configuration.setBreakpointEnable(enableBreakpoint);
+
+	vector<string> keys = parser.evaluateToStringList(path, "/Ipf_Job_Order/Ipf_Conf/Dynamic_Processing_Parameters/Processing_Parameter/Name/child::text()");
+	vector<string> values = parser.evaluateToStringList(path, "/Ipf_Job_Order/Ipf_Conf/Dynamic_Processing_Parameters/Processing_Parameter/Value/child::text()");
 	vector<ProcessingParameter> parameters;
 	for (size_t i = 0; i < keys.size(); i++) {
 		parameters.push_back(ProcessingParameter(keys.at(i), values.at(i)));
 	}
 	configuration.setDynamicProcessingParameters(parameters);
 
-	vector<string> configFileNames =
-			parser.evaluateToStringList(
-					path,
-					"/Ipf_Job_Order/Ipf_Conf/Config_Files/Conf_File_Name/child::text()");
+	vector<string> configFileNames = parser.evaluateToStringList(path, "/Ipf_Job_Order/Ipf_Conf/Config_Files/Conf_File_Name/child::text()");
 	configuration.setConfigFileNames(configFileNames);
 
 	return configuration;

@@ -52,11 +52,6 @@ void DictionaryParserTest::testSy2ProductDescriptor() {
     testL2Data(Constants::PRODUCT_SY2);
 }
 
-void DictionaryParserTest::testBreakpointProductDescriptor() {
-    testL1Data(Constants::PRODUCT_BREAKPOINT);
-    testL2Data(Constants::PRODUCT_BREAKPOINT);
-}
-
 void DictionaryParserTest::testL1Data(const string& productDescriptorId) {
     CPPUNIT_ASSERT(dictionary->hasProductDescriptor(productDescriptorId));
     const ProductDescriptor& p = dictionary->getProductDescriptor(productDescriptorId);
