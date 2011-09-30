@@ -64,7 +64,9 @@ void Pcl::process(Context& context) {
 	const ProductDescriptor& l2Descriptor = dictionary->getProductDescriptor(Constants::PRODUCT_SY2);
 	const VariableDescriptor& flagsDescriptor = l2Descriptor.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED).getVariableDescriptor("SYN_flags");
 	const string targetVariableName = flagsDescriptor.getName();
-	collocatedSegment->addVariable(flagsDescriptor);
+	if(!collocatedSegment->hasVariable(targetVariableName)) {
+	    collocatedSegment->addVariable(flagsDescriptor);
+	}
 	Accessor& targetAccessor = collocatedSegment->getAccessor(targetVariableName);
 
 	const valarray<int64_t> olcFlags = olcFlagsAccessor->getLongData();
