@@ -209,6 +209,9 @@ void Aco::process(Context& context) {
 					const double rsurf = f / (1.0 + rho * f);
 
 					sdr[b]->setDouble(i, rsurf);
+                    if (m == 0) {
+                        context.getLogging()->debug("source value: " + lexical_cast<string>(rtoa), getId());
+                    }
 					err[b]->setDouble(i, rtoa);
 				}
 

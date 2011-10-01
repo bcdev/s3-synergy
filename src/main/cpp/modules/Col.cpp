@@ -200,13 +200,16 @@ void Col::process(Context& context) {
                     firstRequiredLMap[&s] = min(sourceL, firstRequiredLMap[&s]);
                     const long lastComputableL = context.getLastComputableL(s, *this);
                     if (sourceL > lastComputableL) {
-                        //context.getLogging()->debug("sourceL = " + lexical_cast<string>(sourceL) + ", lastComputableL = " + lexical_cast<string>(lastComputableL), getId());
+                        context.getLogging()->debug("sourceL = " + lexical_cast<string>(sourceL) + ", lastComputableL = " + lexical_cast<string>(lastComputableL), getId());
                         //lastComputedL = min(l - 1, lastComputedL);
                         continue;
                     }
 
                     const size_t sourceIndex = sourceGrid.getIndex(sourceK, sourceL, sourceM);
 
+                    if (m == 0) {
+                        context.getLogging()->debug("source value: " + lexical_cast<string>(sourceAccessor.getDouble(sourceIndex)), getId());
+                    }
                     switch (sourceAccessor.getType()) {
                     case Constants::TYPE_BYTE: {
                         targetAccessor.setByte(targetIndex, sourceAccessor.getByte(sourceIndex));
