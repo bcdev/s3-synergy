@@ -202,13 +202,12 @@ void Col::process(Context& context) {
                     if (sourceL > lastComputableL) {
                         context.getLogging()->debug("sourceL = " + lexical_cast<string>(sourceL) + ", lastComputableL = " + lexical_cast<string>(lastComputableL), getId());
                         //lastComputedL = min(l - 1, lastComputedL);
-                        continue;
+                        //continue;
                     }
 
                     const size_t sourceIndex = sourceGrid.getIndex(sourceK, sourceL, sourceM);
-
                     if (m == 0) {
-                        context.getLogging()->debug("source value: " + lexical_cast<string>(sourceAccessor.getDouble(sourceIndex)), getId());
+                        context.getLogging()->debug("source value (" + targetName + "): " + lexical_cast<string>(sourceAccessor.getDouble(sourceIndex)), getId());
                     }
                     switch (sourceAccessor.getType()) {
                     case Constants::TYPE_BYTE: {

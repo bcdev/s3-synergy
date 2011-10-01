@@ -210,7 +210,7 @@ void Aco::process(Context& context) {
 
 					sdr[b]->setDouble(i, rsurf);
                     if (m == 0) {
-                        context.getLogging()->debug("source value: " + lexical_cast<string>(rtoa), getId());
+                        context.getLogging()->debug("source value (b = " + lexical_cast<string>(b) + "): " + lexical_cast<string>(rtoa), getId());
                     }
 					err[b]->setDouble(i, rtoa);
 				}
