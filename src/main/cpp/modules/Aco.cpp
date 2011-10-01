@@ -209,15 +209,8 @@ void Aco::process(Context& context) {
 					const double rsurf = f / (1.0 + rho * f);
 
 					sdr[b]->setDouble(i, rsurf);
-                    if (m == 0) {
-                        context.getLogging()->debug("source value (b = " + lexical_cast<string>(b) + "): " + lexical_cast<string>(rtoa), getId());
-                    }
 					err[b]->setDouble(i, rtoa);
 				}
-
-                continue;
-                
-				// TODO: a segmentation fault occurs somewhere in the code below ...
 
 				tpiSln.prepare(lon.getDouble(i), lat.getDouble(i), tpiWeights, tpiIndexes);
 
@@ -287,5 +280,5 @@ void Aco::process(Context& context) {
 			}
 		}
 	}
-	//context.setLastComputedL(col, *this, lastL);
+	context.setLastComputedL(col, *this, lastL);
 }

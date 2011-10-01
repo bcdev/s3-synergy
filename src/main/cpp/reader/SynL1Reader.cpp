@@ -142,8 +142,8 @@ void SynL1Reader::process(Context& context) {
 				const Grid& grid = segment.getGrid();
 				if (!context.hasLastComputedL(segment, *this) || context.getLastComputedL(segment, *this) < grid.getFirstL() + grid.getSizeL() - 1) {
 					const vector<VariableDescriptor*> variableDescriptors = segmentDescriptor->getVariableDescriptors();
-					const long firstLComputable = context.getFirstComputableL(segment, *this);
-					const long lastLComputable = context.getLastComputableL(segment, *this);
+					const long firstComputableL = context.getFirstComputableL(segment, *this);
+					const long lastComputableL = context.getLastComputableL(segment, *this);
 
 					foreach(VariableDescriptor* variableDescriptor, variableDescriptors)
 							{
@@ -159,13 +159,13 @@ void SynL1Reader::process(Context& context) {
 								const int varId = ncVarIdMap[varName];
 								const int fileId = ncFileIdMap[ncFileName];
 								const size_t dimCount = variableDescriptor->getDimensions().size();
-								const valarray<size_t> starts = IOUtils::createStartVector(dimCount, firstLComputable);
-								const valarray<size_t> counts = IOUtils::createCountVector(dimCount, grid.getSizeK(), lastLComputable - firstLComputable + 1, grid.getSizeM());
+								const valarray<size_t> starts = IOUtils::createStartVector(dimCount, firstComputableL);
+								const valarray<size_t> counts = IOUtils::createCountVector(dimCount, grid.getSizeK(), lastComputableL - firstComputableL + 1, grid.getSizeM());
 								context.getLogging()->progress("Reading variable '" + varName + "' into segment '" + segment.toString() + "'", getId());
 								const Accessor& accessor = segment.getAccessor(varName);
 								NetCDF::getVariableData(fileId, varId, starts, counts, accessor.getUntypedData());
 							}
-					//context.setLastComputedL(segment, *this, lastLComputable);
+					context.setLastComputedL(segment, *this, lastComputableL);
 				}
 			}
 }

@@ -166,10 +166,10 @@ void Col::process(Context& context) {
                     const size_t targetIndex = targetGrid.getIndex(k, l, m);
 
                     if (collocationYAccessor.isFillValue(targetIndex)) {
-                        //continue;
+                        continue;
                     }
                     if (collocationXAccessor.isFillValue(targetIndex)) {
-                        //continue;
+                        continue;
                     }
 
                     long sourceK;
@@ -178,11 +178,9 @@ void Col::process(Context& context) {
 
                     if (s.getId().compare(Constants::SEGMENT_OLC) == 0) {
                         sourceK = k;
-                        sourceL = l; // + floor(collocationYAccessor.getDouble(targetIndex));
-                        sourceM = m; // + floor(collocationXAccessor.getDouble(targetIndex));
+                        sourceL = l + floor(collocationYAccessor.getDouble(targetIndex));
+                        sourceM = m + floor(collocationXAccessor.getDouble(targetIndex));
                     } else {
-                        targetAccessor.setFillValue(targetIndex);
-                    	continue;
                         sourceK = 0;
                         sourceL = floor(collocationYAccessor.getDouble(targetIndex));
                         sourceM = floor(collocationXAccessor.getDouble(targetIndex));
@@ -200,15 +198,11 @@ void Col::process(Context& context) {
                     firstRequiredLMap[&s] = min(sourceL, firstRequiredLMap[&s]);
                     const long lastComputableL = context.getLastComputableL(s, *this);
                     if (sourceL > lastComputableL) {
-                        context.getLogging()->debug("sourceL = " + lexical_cast<string>(sourceL) + ", lastComputableL = " + lexical_cast<string>(lastComputableL), getId());
-                        //lastComputedL = min(l - 1, lastComputedL);
-                        //continue;
+                        lastComputedL = min(l - 1, lastComputedL);
+                        continue;
                     }
 
                     const size_t sourceIndex = sourceGrid.getIndex(sourceK, sourceL, sourceM);
-                    if (m == 0) {
-                        context.getLogging()->debug("source value (" + targetName + "): " + lexical_cast<string>(sourceAccessor.getDouble(sourceIndex)), getId());
-                    }
                     switch (sourceAccessor.getType()) {
                     case Constants::TYPE_BYTE: {
                         targetAccessor.setByte(targetIndex, sourceAccessor.getByte(sourceIndex));
@@ -258,10 +252,10 @@ void Col::process(Context& context) {
             }
         }
     }
-//  context.setFirstRequiredL(olc, *this, min(firstRequiredLMap[&olc], lastComputedL + 1));
-//  context.setFirstRequiredL(sln, *this, firstRequiredLMap[&sln]);
-//  context.setFirstRequiredL(slo, *this, firstRequiredLMap[&slo]);
-//  context.setLastComputedL(t, *this, lastComputedL);
+    context.setFirstRequiredL(olc, *this, min(firstRequiredLMap[&olc], lastComputedL + 1));
+    context.setFirstRequiredL(sln, *this, firstRequiredLMap[&sln]);
+    context.setFirstRequiredL(slo, *this, firstRequiredLMap[&slo]);
+    context.setLastComputedL(t, *this, lastComputedL);
 }
 
 void Col::addVariable(Context& context, Segment& t, const string& targetName, const Segment& s, const string& sourceName, const ProductDescriptor& p) {
