@@ -192,7 +192,7 @@ void Col::process(Context& context) {
                         targetAccessor.setFillValue(targetIndex);
                         continue;
                     }
-                    if (sourceM < sourceGrid.getMinM() || sourceL > sourceGrid.getMaxM()) {
+                    if (sourceM < sourceGrid.getMinM() || sourceM > sourceGrid.getMaxM()) {
                         targetAccessor.setFillValue(targetIndex);
                         continue;
                     }
