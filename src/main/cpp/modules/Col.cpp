@@ -178,8 +178,8 @@ void Col::process(Context& context) {
 
                     if (s.getId().compare(Constants::SEGMENT_OLC) == 0) {
                         sourceK = k;
-                        sourceL = l + floor(collocationYAccessor.getDouble(targetIndex));
-                        sourceM = m + floor(collocationXAccessor.getDouble(targetIndex));
+                        sourceL = l; // + floor(collocationYAccessor.getDouble(targetIndex));
+                        sourceM = m; // + floor(collocationXAccessor.getDouble(targetIndex));
                     } else {
                         targetAccessor.setFillValue(targetIndex);
                     	continue;
@@ -256,9 +256,9 @@ void Col::process(Context& context) {
             }
         }
     }
-    context.setFirstRequiredL(olc, *this, min(firstRequiredLMap[&olc], lastComputedL + 1));
-    context.setFirstRequiredL(sln, *this, firstRequiredLMap[&sln]);
-    context.setFirstRequiredL(slo, *this, firstRequiredLMap[&slo]);
+//  context.setFirstRequiredL(olc, *this, min(firstRequiredLMap[&olc], lastComputedL + 1));
+//  context.setFirstRequiredL(sln, *this, firstRequiredLMap[&sln]);
+//  context.setFirstRequiredL(slo, *this, firstRequiredLMap[&slo]);
     context.setLastComputedL(t, *this, lastComputedL);
 }
 

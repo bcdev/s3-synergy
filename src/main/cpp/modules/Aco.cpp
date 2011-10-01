@@ -212,6 +212,8 @@ void Aco::process(Context& context) {
 					err[b]->setDouble(i, rtoa);
 				}
 
+                continue;
+                
 				// TODO: a segmentation fault occurs somewhere in the code below ...
 
 				tpiSln.prepare(lon.getDouble(i), lat.getDouble(i), tpiWeights, tpiIndexes);
