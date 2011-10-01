@@ -201,7 +201,7 @@ void Col::process(Context& context) {
                     const long lastComputableL = context.getLastComputableL(s, *this);
                     if (sourceL > lastComputableL) {
                         //context.getLogging()->debug("sourceL = " + lexical_cast<string>(sourceL) + ", lastComputableL = " + lexical_cast<string>(lastComputableL), getId());
-                        lastComputedL = min(l - 1, lastComputedL);
+                        //lastComputedL = min(l - 1, lastComputedL);
                         continue;
                     }
 
@@ -259,7 +259,7 @@ void Col::process(Context& context) {
 //  context.setFirstRequiredL(olc, *this, min(firstRequiredLMap[&olc], lastComputedL + 1));
 //  context.setFirstRequiredL(sln, *this, firstRequiredLMap[&sln]);
 //  context.setFirstRequiredL(slo, *this, firstRequiredLMap[&slo]);
-    context.setLastComputedL(t, *this, lastComputedL);
+//  context.setLastComputedL(t, *this, lastComputedL);
 }
 
 void Col::addVariable(Context& context, Segment& t, const string& targetName, const Segment& s, const string& sourceName, const ProductDescriptor& p) {

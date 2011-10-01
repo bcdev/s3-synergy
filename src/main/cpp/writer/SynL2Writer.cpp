@@ -68,7 +68,7 @@ void SynL2Writer::process(Context& context) {
 										NetCDF::putData(ncId, varId, starts, sizes, accessor.getUntypedData());
 									}
 								}
-						context.setLastComputedL(segment, *this, lastWritableL);
+						//context.setLastComputedL(segment, *this, lastWritableL);
 					}
 				}
 			}

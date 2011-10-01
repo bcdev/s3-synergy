@@ -284,5 +284,5 @@ void Aco::process(Context& context) {
 			}
 		}
 	}
-	context.setLastComputedL(col, *this, lastL);
+	//context.setLastComputedL(col, *this, lastL);
 }

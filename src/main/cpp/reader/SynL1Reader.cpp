@@ -165,7 +165,7 @@ void SynL1Reader::process(Context& context) {
 								const Accessor& accessor = segment.getAccessor(varName);
 								NetCDF::getVariableData(fileId, varId, starts, counts, accessor.getUntypedData());
 							}
-					context.setLastComputedL(segment, *this, lastLComputable);
+					//context.setLastComputedL(segment, *this, lastLComputable);
 				}
 			}
 }
