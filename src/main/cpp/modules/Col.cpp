@@ -166,10 +166,10 @@ void Col::process(Context& context) {
                     const size_t targetIndex = targetGrid.getIndex(k, l, m);
 
                     if (collocationYAccessor.isFillValue(targetIndex)) {
-                        continue;
+                        //continue;
                     }
                     if (collocationXAccessor.isFillValue(targetIndex)) {
-                        continue;
+                        //continue;
                     }
 
                     long sourceK;
