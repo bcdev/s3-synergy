@@ -181,6 +181,8 @@ void Col::process(Context& context) {
                         sourceL = l + floor(collocationYAccessor.getDouble(targetIndex));
                         sourceM = m + floor(collocationXAccessor.getDouble(targetIndex));
                     } else {
+                        targetAccessor.setFillValue(targetIndex);
+                    	continue;
                         sourceK = 0;
                         sourceL = floor(collocationYAccessor.getDouble(targetIndex));
                         sourceM = floor(collocationXAccessor.getDouble(targetIndex));
@@ -198,7 +200,7 @@ void Col::process(Context& context) {
                     firstRequiredLMap[&s] = min(sourceL, firstRequiredLMap[&s]);
                     const long lastComputableL = context.getLastComputableL(s, *this);
                     if (sourceL > lastComputableL) {
-                        context.getLogging()->debug("sourceL = " + lexical_cast<string>(sourceL) + ", lastComputableL = " + lexical_cast<string>(lastComputableL), getId());
+                        //context.getLogging()->debug("sourceL = " + lexical_cast<string>(sourceL) + ", lastComputableL = " + lexical_cast<string>(lastComputableL), getId());
                         lastComputedL = min(l - 1, lastComputedL);
                         continue;
                     }

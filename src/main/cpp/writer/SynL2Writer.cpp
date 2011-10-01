@@ -165,7 +165,7 @@ void SynL2Writer::createNcVar(const ProductDescriptor& productDescriptor, const 
 			dimIds[0] = NetCDF::defineDimension(fileId, dimensions[0]->getName(), sizeM);
 			break;
 		default:
-			BOOST_THROW_EXCEPTION( logic_error("SynL2Writer::createNcVar(): invalid number of dimensions"));
+			BOOST_THROW_EXCEPTION( logic_error("SynL2Writer::createNcVar(): invalid number of dimensions (" + variableDescriptor.getName() + ")"));
 			break;
 		}
 

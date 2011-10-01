@@ -38,7 +38,7 @@
             <type>ushort</type>
             <segment_name>SYN_COLLOCATED</segment_name>
             <dimensions>
-                <id>OLCI</id>
+                <id>OLC</id>
             </dimensions>
             <attributes>
                 <attribute>
@@ -70,7 +70,7 @@
             <type>uint</type>
             <segment_name>SYN_COLLOCATED</segment_name>
             <dimensions>
-                <id>OLCI</id>
+                <id>OLC</id>
             </dimensions>
             <attributes>
                 <attribute>
@@ -102,7 +102,7 @@
             <type>uint</type>
             <segment_name>SYN_COLLOCATED</segment_name>
             <dimensions>
-                <id>OLCI</id>
+                <id>OLC</id>
             </dimensions>
             <attributes>
                 <attribute>
