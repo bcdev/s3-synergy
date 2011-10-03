@@ -126,7 +126,9 @@ void Col::process(Context& context) {
     const Grid& targetGrid = t.getGrid();
 
     const long firstL = context.getFirstComputableL(t, *this);
-    long lastComputedL = context.getLastComputableL(t, *this);
+    context.getLogging()->debug("Segment [" + t.toString() + "]: lastComputableL = " + lexical_cast<string>(firstL), getId());
+    long lastL = context.getLastComputableL(t, *this);
+    context.getLogging()->debug("Segment [" + t.toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
 
     vector<Accessor*> sourceAccessors;
     vector<Accessor*> targetAccessors;
@@ -143,7 +145,7 @@ void Col::process(Context& context) {
                 yAccessors.push_back(&olc.getAccessor(collocationYMap[targetName]));
             }
 
-    for (long l = firstL; l <= lastComputedL; l++) {
+    for (long l = firstL; l <= lastL; l++) {
         context.getLogging()->progress("Collocating line l = " + lexical_cast<string>(l) + " ...", getId());
 
         firstRequiredLMap[&olc] = olc.getGrid().getLastL() + 1;
@@ -198,7 +200,7 @@ void Col::process(Context& context) {
                     firstRequiredLMap[&s] = min(sourceL, firstRequiredLMap[&s]);
                     const long lastComputableL = context.getLastComputableL(s, *this);
                     if (sourceL > lastComputableL) {
-                        lastComputedL = min(l - 1, lastComputedL);
+                        lastL = min(l - 1, lastL);
                         continue;
                     }
 
@@ -252,10 +254,11 @@ void Col::process(Context& context) {
             }
         }
     }
-    context.setFirstRequiredL(olc, *this, min(firstRequiredLMap[&olc], lastComputedL + 1));
+    context.setFirstRequiredL(olc, *this, min(firstRequiredLMap[&olc], lastL));
     context.setFirstRequiredL(sln, *this, firstRequiredLMap[&sln]);
     context.setFirstRequiredL(slo, *this, firstRequiredLMap[&slo]);
-    context.setLastComputedL(t, *this, lastComputedL);
+    context.setFirstRequiredL(t, *this, firstRequiredLMap[&olc]);
+    context.setLastComputedL(t, *this, lastL);
 }
 
 void Col::addVariable(Context& context, Segment& t, const string& targetName, const Segment& s, const string& sourceName, const ProductDescriptor& p) {

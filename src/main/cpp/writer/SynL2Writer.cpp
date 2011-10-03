@@ -41,7 +41,9 @@ void SynL2Writer::process(Context& context) {
 					const Grid& grid = segment.getGrid();
 					const vector<VariableDescriptor*> variableDescriptors = segmentDescriptor->getVariableDescriptors();
 					const long firstWritableL = context.getFirstComputableL(segment, *this);
+                    context.getLogging()->debug("Segment [" + segment.toString() + "]: firstWritableL = " + lexical_cast<string>(firstWritableL), getId());
 					const long lastWritableL = context.getLastComputableL(segment, *this);
+                    context.getLogging()->debug("Segment [" + segment.toString() + "]: lastWritableL = " + lexical_cast<string>(lastWritableL), getId());
 
 					if (firstWritableL <= lastWritableL) {
 						foreach(const VariableDescriptor* variableDescriptor, variableDescriptors)

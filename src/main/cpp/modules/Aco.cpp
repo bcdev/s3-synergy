@@ -128,7 +128,9 @@ void Aco::process(Context& context) {
 	const double tau550 = 0.1;
 
 	const long firstL = context.getFirstComputableL(col, *this);
+    context.getLogging()->debug("Segment [" + col.toString() + "]: firstComputableL = " + lexical_cast<string>(firstL), getId());
 	const long lastL = context.getLastComputableL(col, *this);
+    context.getLogging()->debug("Segment [" + col.toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
 
 #pragma omp parallel for
 	for (long l = firstL; l <= lastL; l++) {
