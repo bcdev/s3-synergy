@@ -37,10 +37,10 @@ void ErrorHandler::handleError(Context& context, exception& e) const {
 
 	const string moduleName =
 			boost::get_error_info<errinfo_module_name>(e) == 0 ?
-					"UNKNOWN" : *boost::get_error_info<errinfo_module_name>(e);
+					"Unknown" : *boost::get_error_info<errinfo_module_name>(e);
 	const string methodName =
 			boost::get_error_info<errinfo_method_name>(e) == 0 ?
-					"UNKNOWN" : *boost::get_error_info<errinfo_method_name>(e);
+					"Unknown" : *boost::get_error_info<errinfo_method_name>(e);
 	const int exitCode =
 			boost::get_error_info<errinfo_exit_code>(e) == 0 ?
 					ExitCode::FAILURE :

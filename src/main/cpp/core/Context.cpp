@@ -156,9 +156,12 @@ void Context::moveForward(shared_ptr<Segment> segment) const {
 					lastComputedL = min(lastComputedL, q.second);
 				}
 	}
-	const long firstRequiredL = min(lastComputedL + 1, getFirstRequiredL(*segment));
-	getLogging()->debug("Moving start of segment '" + segment->getId() + "' to line " + lexical_cast<string>(firstRequiredL), "Context");
-	segment->moveForward(firstRequiredL);
+    long l = min(lastComputedL + 1, getFirstRequiredL(*segment));
+	if (l + segment->getGrid().getSizeL() - 1 > segment->getGrid().getMaxL()) {
+		l = segment->getGrid().getMaxL() - segment->getGrid().getSizeL() + 1;
+	}
+	getLogging()->debug("Moving segment [" + segment->toString() + "] forward to line " + lexical_cast<string>(l), "Context");
+	segment->moveForward(l);
 }
 
 void Context::moveSegmentsForward() const {

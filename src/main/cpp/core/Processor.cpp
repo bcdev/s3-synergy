@@ -24,7 +24,7 @@ Processor::~Processor() {
 void Processor::process(Context& context) {
 	Timer timer;
 
-	context.getLogging()->info("Main processing started.", "MAIN");
+	context.getLogging()->info("Main processing started.", "Processor");
 	try {
 		timer.start();
 		vector<shared_ptr<Module> > modules = context.getModules();
@@ -79,7 +79,7 @@ void Processor::process(Context& context) {
 	}
 	context.getLogging()->info(
 			"Main processing completed in " + timer.getTime()
-					+ " (HH:MM:SS.mm)", "MAIN");
+					+ " (HH:MM:SS.mm)", "Processor");
 }
 
 Processor::Timer::Timer() {
