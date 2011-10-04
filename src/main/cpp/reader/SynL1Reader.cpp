@@ -142,10 +142,10 @@ void SynL1Reader::process(Context& context) {
 				const Grid& grid = segment.getGrid();
 				if (!context.hasLastComputedL(segment, *this) || context.getLastComputedL(segment, *this) < grid.getFirstL() + grid.getSizeL() - 1) {
 					const vector<VariableDescriptor*> variableDescriptors = segmentDescriptor->getVariableDescriptors();
-					const long firstComputableL = context.getFirstComputableL(segment, *this);
-                    context.getLogging()->debug("Segment [" + segment.toString() + "]: firstComputableL = " + lexical_cast<string>(firstComputableL), getId());
-					const long lastComputableL = context.getLastComputableL(segment, *this);
-                    context.getLogging()->debug("Segment [" + segment.toString() + "]: lastComputableL = " + lexical_cast<string>(lastComputableL), getId());
+					const long firstL = segment.getGrid().getFirstL();
+                    context.getLogging()->debug("Segment [" + segment.toString() + "]: firstL = " + lexical_cast<string>(firstL), getId());
+					const long lastL = segment.getGrid().getLastL();
+                    context.getLogging()->debug("Segment [" + segment.toString() + "]: lastL = " + lexical_cast<string>(lastL), getId());
 
 					foreach(VariableDescriptor* variableDescriptor, variableDescriptors)
 							{
@@ -161,13 +161,13 @@ void SynL1Reader::process(Context& context) {
 								const int varId = ncVarIdMap[varName];
 								const int fileId = ncFileIdMap[ncFileName];
 								const size_t dimCount = variableDescriptor->getDimensions().size();
-								const valarray<size_t> starts = IOUtils::createStartVector(dimCount, firstComputableL);
-								const valarray<size_t> counts = IOUtils::createCountVector(dimCount, grid.getSizeK(), lastComputableL - firstComputableL + 1, grid.getSizeM());
+								const valarray<size_t> starts = IOUtils::createStartVector(dimCount, firstL);
+								const valarray<size_t> counts = IOUtils::createCountVector(dimCount, grid.getSizeK(), lastL - firstL + 1, grid.getSizeM());
 								context.getLogging()->progress("Reading variable '" + varName + "' into segment '" + segment.toString() + "'", getId());
 								const Accessor& accessor = segment.getAccessor(varName);
 								NetCDF::getVariableData(fileId, varId, starts, counts, accessor.getUntypedData());
 							}
-					context.setLastComputedL(segment, *this, lastComputableL);
+					context.setLastComputedL(segment, *this, lastL);
 				}
 			}
 }

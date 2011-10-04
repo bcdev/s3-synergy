@@ -40,12 +40,12 @@ void SynL2Writer::process(Context& context) {
 					const Segment& segment = context.getSegment(segmentName);
 					const Grid& grid = segment.getGrid();
 					const vector<VariableDescriptor*> variableDescriptors = segmentDescriptor->getVariableDescriptors();
-					const long firstWritableL = context.getFirstComputableL(segment, *this);
-                    context.getLogging()->debug("Segment [" + segment.toString() + "]: firstWritableL = " + lexical_cast<string>(firstWritableL), getId());
-					const long lastWritableL = context.getLastComputableL(segment, *this);
-                    context.getLogging()->debug("Segment [" + segment.toString() + "]: lastWritableL = " + lexical_cast<string>(lastWritableL), getId());
+					const long firstL = segment.getGrid().getFirstL();
+                    context.getLogging()->debug("Segment [" + segment.toString() + "]: firstL = " + lexical_cast<string>(firstL), getId());
+					const long lastL = segment.getGrid().getLastL();
+                    context.getLogging()->debug("Segment [" + segment.toString() + "]: lastL = " + lexical_cast<string>(lastL), getId());
 
-					if (firstWritableL <= lastWritableL) {
+					if (firstL <= lastL) {
 						foreach(const VariableDescriptor* variableDescriptor, variableDescriptors)
 								{
 									const string varName = variableDescriptor->getName();
@@ -63,14 +63,14 @@ void SynL2Writer::process(Context& context) {
 										const int varId = ncVarIdMap[varName];
 										const int ncId = ncFileIdMap[ncFileBasename];
 										const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
-										const valarray<size_t> starts = IOUtils::createStartVector(dimIds.size(), firstWritableL);
-										const valarray<size_t> sizes = IOUtils::createCountVector(dimIds.size(), grid.getSizeK(), lastWritableL - firstWritableL + 1, grid.getSizeM());
+										const valarray<size_t> starts = IOUtils::createStartVector(dimIds.size(), firstL);
+										const valarray<size_t> sizes = IOUtils::createCountVector(dimIds.size(), grid.getSizeK(), lastL - firstL + 1, grid.getSizeM());
 										context.getLogging()->progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
 										const Accessor& accessor = segment.getAccessor(varName);
 										NetCDF::putData(ncId, varId, starts, sizes, accessor.getUntypedData());
 									}
 								}
-						context.setLastComputedL(segment, *this, lastWritableL);
+						context.setLastComputedL(segment, *this, lastL);
 					}
 				}
 			}
