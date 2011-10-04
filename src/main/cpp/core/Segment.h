@@ -87,6 +87,13 @@ public:
 	virtual bool hasVariable(const string& name) const = 0;
 
 	/**
+	 * Returns the names of all variables which have been added to the segment.
+	 *
+	 * @return the names of all variables which have been added to the segment.
+	 */
+	virtual const vector<string> getVariableNames() const = 0;
+
+	/**
 	 * Returns the segment ID.
 	 * @return the segment ID.
 	 */

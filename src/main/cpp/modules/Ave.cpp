@@ -46,9 +46,8 @@ void Ave::process(Context& context) {
 }
 
 void Ave::ave_g(Context& context) {
-    foreach(VariableDescriptor* vd, variables) {
+    foreach(string& varName, variables) {
 
-        const string& varName = vd->getName();
         context.getLogging()->progress("Averaging variable '" + varName + "'...", getId());
 
         for (long k = averagedGrid->getFirstK(); k < averagedGrid->getFirstK() + averagedGrid->getSizeK(); k++) {
@@ -161,25 +160,23 @@ void Ave::addFlagsVariable(Context& context) {
 }
 
 void Ave::setupVariables(Context& context) {
-    const ProductDescriptor& productDescriptor = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2);
-    const SegmentDescriptor& collocatedDescriptor = productDescriptor.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
-    variables = collocatedDescriptor.getVariableDescriptors();
+    variables = collocatedSegment->getVariableNames();
+    vector<string> result;
 
-    vector<VariableDescriptor*> result;
-    foreach(VariableDescriptor* vd, variables) {
-    const string& varName = vd->getName();
-    if(matches(varName) && collocatedSegment->hasVariable(varName)) {
-            result.push_back(vd);
+    foreach(string varName, variables) {
+        if(matches(varName) && collocatedSegment->hasVariable(varName)) {
+            result.push_back(varName);
         }
     }
     variables = result;
-    foreach(VariableDescriptor* vd, variables) {
-        context.getLogging()->progress("Adding variable '" + vd->toString() + "' to segment '" + averagedSegment->toString() + "'.", getId());
-        averagedSegment->addVariable(*vd);
+    foreach(string varName, variables) {
+        context.getLogging()->progress("Adding variable '" + varName + "' to segment '" + averagedSegment->toString() + "'.", getId());
+        const Accessor& accessor = collocatedSegment->getAccessor(varName);
+        averagedSegment->addVariable(varName, accessor.getType(), accessor.getScaleFactor(), accessor.getAddOffset());
     }
 }
 
 bool Ave::matches(const string& varName) {
-    const regex e("L_[0-9][0-9]?(_er)?");
+    const regex e("L_[0-9][0-9]?(_er)?(_exception)?");
     return regex_match(varName, e);
 }

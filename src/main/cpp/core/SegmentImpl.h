@@ -58,6 +58,15 @@ public:
 		return accessorMap.find(name) != accessorMap.end();
 	}
 
+	const vector<string> getVariableNames() const {
+        vector<string> variableNames = vector<string>(accessorList.size());
+        typedef std::pair<string, shared_ptr<Accessor> > MapEntry;
+        foreach(MapEntry entry, accessorMap) {
+            variableNames.push_back(entry.first);
+        }
+        return variableNames;
+    }
+
 	const string& getId() const {
 		return id;
 	}

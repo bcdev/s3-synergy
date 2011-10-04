@@ -39,7 +39,7 @@ private:
     const Grid* averagedGrid;
     const Segment* collocatedSegment;
     Segment* averagedSegment;
-    vector<VariableDescriptor*> variables;
+    vector<string> variables;
     const Accessor* synFlags;
     Accessor* averagedSynFlags;
 

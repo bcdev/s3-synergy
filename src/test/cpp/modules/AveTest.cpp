@@ -64,9 +64,10 @@ void AveTest::testMatches() {
     CPPUNIT_ASSERT(ave->matches("L_1_er"));
     CPPUNIT_ASSERT(ave->matches("L_10"));
     CPPUNIT_ASSERT(ave->matches("L_10_er"));
+    CPPUNIT_ASSERT(ave->matches("L_18_er"));
+    CPPUNIT_ASSERT(ave->matches("L_19_exception"));
+    CPPUNIT_ASSERT(ave->matches("L_30_exception"));
     CPPUNIT_ASSERT(ave->matches("L_30"));
-    CPPUNIT_ASSERT(ave->matches("L_30_er"));
-    CPPUNIT_ASSERT(ave->matches("L_30_er"));
     CPPUNIT_ASSERT(!ave->matches("SYN_flags"));
 }
 
