@@ -59,6 +59,17 @@ void AveTest::prepareContext() {
 void AveTest::tearDown() {
 }
 
+void AveTest::testMatches() {
+    CPPUNIT_ASSERT(ave->matches("L_1"));
+    CPPUNIT_ASSERT(ave->matches("L_1_er"));
+    CPPUNIT_ASSERT(ave->matches("L_10"));
+    CPPUNIT_ASSERT(ave->matches("L_10_er"));
+    CPPUNIT_ASSERT(ave->matches("L_30"));
+    CPPUNIT_ASSERT(ave->matches("L_30_er"));
+    CPPUNIT_ASSERT(ave->matches("L_30_er"));
+    CPPUNIT_ASSERT(!ave->matches("SYN_flags"));
+}
+
 void AveTest::testAve() {
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
     shared_ptr<Module> col = shared_ptr<Module>(new Col());

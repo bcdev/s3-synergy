@@ -34,17 +34,24 @@ public:
 private:
 	friend class AveTest;
 
+	static const int8_t AVERAGING_FACTOR;
+
     const Grid* averagedGrid;
     const Segment* collocatedSegment;
     Segment* averagedSegment;
     vector<VariableDescriptor*> variables;
     const Accessor* synFlags;
+    Accessor* averagedSynFlags;
 
-	static const int8_t AVERAGING_FACTOR;
-
-    bool isValidPosition(const Grid* grid, long k, long l, long m) const;
+    void ave_g(Context& context);
+    void ave_f(Context& context);
+    bool isValidPosition(const Grid& grid, long k, long l, long m) const;
     bool isFillValue(const string& variableName, const long index) const;
     double getValue(const string& variableName, const long index) const;
+    uint16_t getFlagFillValue(Context& context);
+    void addFlagsVariable(Context& context);
+    void setupVariables(Context& context);
+    bool matches(const string& varName);
 };
 
 #endif /* AVE_H_ */

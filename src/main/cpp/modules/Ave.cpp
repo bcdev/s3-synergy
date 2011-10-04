@@ -5,7 +5,11 @@
  *      Author: thomasstorm
  */
 
+#include <cmath>
+
 #include "Ave.h"
+
+using std::min;
 
 const int8_t Ave::AVERAGING_FACTOR = 8;
 
@@ -24,9 +28,8 @@ void Ave::start(Context& context) {
     averagedSegment = &context.addSegment(Constants::SEGMENT_SYN_AVERAGED, sizeL, sizeM, sizeK, 0, sizeL - 1);
     averagedGrid = &averagedSegment->getGrid();
 
-    const ProductDescriptor& productDescriptor = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2);
-    const SegmentDescriptor& collocatedDescriptor = productDescriptor.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
-    variables = collocatedDescriptor.getVariableDescriptors();
+    setupVariables(context);
+    addFlagsVariable(context);
     synFlags = &collocatedSegment->getAccessor("SYN_flags");
 }
 
@@ -35,35 +38,38 @@ void Ave::stop(Context& context) {
 }
 
 void Ave::process(Context& context) {
+    ave_g(context);
+    ave_f(context);
+    const long lastComputedL = min(averagedGrid->getLastL(), averagedGrid->getMaxL());
+    context.setLastComputedL(*averagedSegment, *this, lastComputedL);
+    context.setFirstRequiredL(*collocatedSegment, *this, (lastComputedL + 1) * AVERAGING_FACTOR);
+}
 
+void Ave::ave_g(Context& context) {
     foreach(VariableDescriptor* vd, variables) {
 
-        string varName = vd->getName();
-        if(varName.compare("SYN_flags") == 0) {
-            continue;
-        }
-
-        context.getLogging()->progress("Averaging variable '" + vd->getName() + "'.", getId());
-
-        double a = 0.0;
-        long I = 0;
-        long K = 0;
+        const string& varName = vd->getName();
+        context.getLogging()->progress("Averaging variable '" + varName + "'...", getId());
 
         for (long k = averagedGrid->getFirstK(); k < averagedGrid->getFirstK() + averagedGrid->getSizeK(); k++) {
-            for (long l_strich = averagedGrid->getFirstL(); l_strich <= averagedGrid->getLastL(); l_strich++) {
-                for (long m_strich = averagedGrid->getFirstM(); m_strich < averagedGrid->getFirstM() + averagedGrid->getSizeM(); m_strich++) {
+            for (long l_prime = averagedGrid->getFirstL(); l_prime <= min(averagedGrid->getLastL(), averagedGrid->getMaxL()); l_prime++) {
+                for (long m_prime = averagedGrid->getFirstM(); m_prime < averagedGrid->getFirstM() + averagedGrid->getSizeM(); m_prime++) {
 
-                    for(long l = l_strich * AVERAGING_FACTOR; l < (l_strich + 1) * AVERAGING_FACTOR; l++) {
-                        for(long m = m_strich * AVERAGING_FACTOR; m < (m_strich + 1) * AVERAGING_FACTOR; m++) {
-                            if(!isValidPosition(averagedGrid, k, l_strich, m_strich)) {
+                    double a = 0.0;
+                    long I = 0;
+                    long K = 0;
+
+                    for(long l = l_prime * AVERAGING_FACTOR; l < (l_prime + 1) * AVERAGING_FACTOR; l++) {
+                        for(long m = m_prime * AVERAGING_FACTOR; m < (m_prime + 1) * AVERAGING_FACTOR; m++) {
+                            if(!isValidPosition(collocatedSegment->getGrid(), k, l, m)) {
                                 continue;
                             }
                             const long collocatedIndex = collocatedSegment->getGrid().getIndex(k, l, m);
 
                             I++;
-                            uint16_t f = synFlags->getUShort(collocatedIndex);
-                            const bool isLand = f & 32 == 32;
-                            const bool isCloud = f & 1 == 1;
+                            const uint16_t flag = synFlags->getUShort(collocatedIndex);
+                            const bool isLand = (flag & 32) == 32;
+                            const bool isCloud = (flag & 1) == 1;
                             if(isLand && !isCloud && !isFillValue(varName, collocatedIndex)) {
                                 a += getValue(varName, collocatedIndex);
                                 K++;
@@ -71,7 +77,7 @@ void Ave::process(Context& context) {
                         }
                     }
 
-                    const long averagedIndex = averagedGrid->getIndex(k, l_strich, m_strich);
+                    const long averagedIndex = averagedGrid->getIndex(k, l_prime, m_prime);
                     if(K == I) {
                         averagedSegment->getAccessor(varName).setDouble(averagedIndex, a / K);
                     } else {
@@ -83,13 +89,49 @@ void Ave::process(Context& context) {
     }
 }
 
-bool Ave::isValidPosition(const Grid* grid, long k, long l, long m) const {
-    return (grid->getFirstK() <= k &&
-            grid->getMaxK() >= k &&
-            grid->getFirstL() <= l &&
-            grid->getMaxL() >= l &&
-            grid->getFirstM() <= m &&
-            grid->getMaxM() >= m);
+void Ave::ave_f(Context& context) {
+    context.getLogging()->progress("Averaging variable 'SYN_flags'...", getId());
+    for (long k = averagedGrid->getFirstK(); k < averagedGrid->getFirstK() + averagedGrid->getSizeK(); k++) {
+        for (long l_prime = averagedGrid->getFirstL(); l_prime <= min(averagedGrid->getLastL(), averagedGrid->getMaxL()); l_prime++) {
+            for (long m_prime = averagedGrid->getFirstM(); m_prime < averagedGrid->getFirstM() + averagedGrid->getSizeM(); m_prime++) {
+
+                uint16_t flags = getFlagFillValue(context);
+                bool isPartlyCloudy = false;
+                bool isPartlyWater = false;
+                bool isBorder = false;
+
+                for(long l = l_prime * AVERAGING_FACTOR; l < (l_prime + 1) * AVERAGING_FACTOR; l++) {
+                    for(long m = m_prime * AVERAGING_FACTOR; m < (m_prime + 1) * AVERAGING_FACTOR; m++) {
+                        if(isValidPosition(collocatedSegment->getGrid(), k, l, m)) {
+                            const long collocatedIndex = collocatedSegment->getGrid().getIndex(k, l, m);
+                            flags = synFlags->getUShort(collocatedIndex);
+                            const bool isLand = (flags & 32) == 32;
+                            const bool isCloud = (flags & 1) == 1;
+                            const bool isCloudFilled = (flags & 8) == 8;
+                            isPartlyCloudy = isPartlyCloudy || isCloud || isCloudFilled;
+                            isPartlyWater = isPartlyWater || !isLand;
+                        } else {
+                            isBorder = true;
+                        }
+                    }
+                }
+                flags |= isPartlyCloudy ? 256 : 0;
+                flags |= isPartlyWater ? 512 : 0;
+                flags |= isBorder ? 1024 : 0;
+                const size_t averagedIndex = averagedGrid->getIndex(k, l_prime, m_prime);
+                averagedSynFlags->setUShort(averagedIndex, flags);
+            }
+        }
+    }
+}
+
+bool Ave::isValidPosition(const Grid& grid, long k, long l, long m) const {
+    return (grid.getFirstK() <= k &&
+            grid.getMaxK() >= k &&
+            grid.getFirstL() <= l &&
+            grid.getMaxL() >= l &&
+            grid.getFirstM() <= m &&
+            grid.getMaxM() >= m);
 }
 
 bool Ave::isFillValue(const string& variableName, const long index) const {
@@ -100,4 +142,44 @@ bool Ave::isFillValue(const string& variableName, const long index) const {
 double Ave::getValue(const string& variableName, const long index) const {
     const Accessor& accessor = collocatedSegment->getAccessor(variableName);
     return accessor.getDouble(index);
+}
+
+uint16_t Ave::getFlagFillValue(Context& context) {
+    const ProductDescriptor& pd = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2);
+    const SegmentDescriptor& sd = pd.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
+    const VariableDescriptor& vd = sd.getVariableDescriptor("SYN_flags");
+    return vd.getFillValue<uint16_t>();
+}
+
+void Ave::addFlagsVariable(Context& context) {
+    const ProductDescriptor& pd = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2);
+    const SegmentDescriptor& sd = pd.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
+    const VariableDescriptor& vd = sd.getVariableDescriptor("SYN_flags");
+    context.getLogging()->progress("Adding variable '" + vd.toString() + "' to segment '" + averagedSegment->toString() + "'.", getId());
+    averagedSegment->addVariable(vd);
+    averagedSynFlags = &averagedSegment->getAccessor("SYN_flags");
+}
+
+void Ave::setupVariables(Context& context) {
+    const ProductDescriptor& productDescriptor = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2);
+    const SegmentDescriptor& collocatedDescriptor = productDescriptor.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
+    variables = collocatedDescriptor.getVariableDescriptors();
+
+    vector<VariableDescriptor*> result;
+    foreach(VariableDescriptor* vd, variables) {
+    const string& varName = vd->getName();
+    if(matches(varName) && collocatedSegment->hasVariable(varName)) {
+            result.push_back(vd);
+        }
+    }
+    variables = result;
+    foreach(VariableDescriptor* vd, variables) {
+        context.getLogging()->progress("Adding variable '" + vd->toString() + "' to segment '" + averagedSegment->toString() + "'.", getId());
+        averagedSegment->addVariable(*vd);
+    }
+}
+
+bool Ave::matches(const string& varName) {
+    const regex e("L_[0-9][0-9]?(_er)?");
+    return regex_match(varName, e);
 }

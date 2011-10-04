@@ -1,8 +1,8 @@
 /*
- * SyUntSwrRunner.cpp
+ * SyUntAveRunner.cpp
  *
- *  Created on: Sep 1, 2011
- *      Author: ralf
+ *  Created on: Sep 29, 2011
+ *      Author: thomasstorm
  */
 
 // CppUnit site http://sourceforge.net/projects/cppunit/files
