@@ -36,24 +36,24 @@ private:
 
 class Cigar : public MultivariateFunction {
 
-    double value(shared_ptr<valarray<double> > x) {
+    double value(valarray<double>& x) {
         double sum = 0.0;
 
-        for (size_t i = 1; i < x->size(); ++i) {
-            sum += MultiMin::square(1000.0 * (*x)[i]);
+        for (size_t i = 1; i < x.size(); ++i) {
+            sum += MultiMin::square(1000.0 * x[i]);
         }
 
-        return MultiMin::square((*x)[0] * (*x)[0]) + sum;
+        return MultiMin::square(x[0] * x[0]) + sum;
     }
 };
 
 class Rosenbrock : public MultivariateFunction {
 
-    double value(shared_ptr<valarray<double> > x) {
+    double value(valarray<double>& x) {
         double sum = 0.0;
 
-        for (size_t i = 0; i < x->size() - 1; ++i) {
-            sum += 100.0 * MultiMin::square(MultiMin::square((*x)[i]) - (*x)[i + 1]) + MultiMin::square((*x)[i] - 1.0);
+        for (size_t i = 0; i < x.size() - 1; ++i) {
+            sum += 100.0 * MultiMin::square(MultiMin::square(x[i]) - x[i + 1]) + MultiMin::square(x[i] - 1.0);
         }
 
         return sum;

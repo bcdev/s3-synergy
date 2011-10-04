@@ -6,6 +6,7 @@
  */
 
 #include <algorithm>
+#include <climits>
 #include <stdexcept>
 #include <string>
 
@@ -14,6 +15,7 @@
 
 using std::invalid_argument;
 using std::min;
+using std::numeric_limits;
 using std::sqrt;
 using std::string;
 
@@ -194,12 +196,7 @@ bool Min::testInterval(double lowerX, double upperX, double absoluteAccuracyGoal
 }
 
 double Min::computeEpsilonSqareRoot() const {
-    double r = 1.0;
-    while (1.0 < (double) (1.0 + r)) {
-        r /= 2.0;
-    }
-    r = 2.0 * r;
-    return sqrt(r);
+    return sqrt(numeric_limits<double>::epsilon());
 }
 
 Bracket::Bracket(double lowerX, double upperX, shared_ptr<UnivariateFunction> function) {

@@ -57,8 +57,8 @@ void MinTest::testBrentCos() {
     const bool success = min->brent(cosine, bracket, ACCURACY_GOAL);
 
     CPPUNIT_ASSERT(success);
-    CPPUNIT_ASSERT(M_PI - bracket->minimumX < ACCURACY_GOAL);
-    CPPUNIT_ASSERT(-1.0 - bracket->minimumF < ACCURACY_GOAL);
+    CPPUNIT_ASSERT(std::abs(M_PI - bracket->minimumX) < ACCURACY_GOAL);
+    CPPUNIT_ASSERT(std::abs(-1.0 - bracket->minimumF) < ACCURACY_GOAL);
 }
 
 void MinTest::testBrentSin() {
@@ -68,6 +68,6 @@ void MinTest::testBrentSin() {
     const bool success = min->brent(sin, bracket, ACCURACY_GOAL);
 
     CPPUNIT_ASSERT(success);
-    CPPUNIT_ASSERT(1.5 * M_PI - bracket->minimumX < ACCURACY_GOAL);
-    CPPUNIT_ASSERT(-1.0 - bracket->minimumF < ACCURACY_GOAL);
+    CPPUNIT_ASSERT(std::abs(1.5 * M_PI - bracket->minimumX) < ACCURACY_GOAL);
+    CPPUNIT_ASSERT(std::abs(-1.0 - bracket->minimumF) < ACCURACY_GOAL);
 }
