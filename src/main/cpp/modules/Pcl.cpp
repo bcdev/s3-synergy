@@ -69,9 +69,9 @@ void Pcl::process(Context& context) {
 	}
 	Accessor& targetAccessor = collocatedSegment->getAccessor(targetVariableName);
 
-	const valarray<int64_t> olcFlags = olcFlagsAccessor->getLongData();
-	const valarray<int16_t> slnFlags = slnFlagsAccessor->getShortData();
-	const valarray<int16_t> sloFlags = sloFlagsAccessor->getShortData();
+	const valarray<uint32_t>& olcFlags = olcFlagsAccessor->getUIntData();
+	const valarray<uint8_t>& slnFlags = slnFlagsAccessor->getUByteData();
+	const valarray<uint8_t>& sloFlags = sloFlagsAccessor->getUByteData();
 
 	const Grid& collocatedGrid = collocatedSegment->getGrid();
 	for (long k = collocatedGrid.getFirstK(); k < collocatedGrid.getFirstK() + collocatedGrid.getSizeK(); k++) {
@@ -89,24 +89,26 @@ size_t Pcl::getIndex(long k, long l, long m) const {
 	return collocatedSegment->getGrid().getIndex(k, l, m);
 }
 
-uint16_t Pcl::getValue(size_t index, int64_t olcFlags, int16_t slnFlags, int16_t sloFlags) const {
-	const int64_t olciLandFlag = 2147483648;
-	const int16_t slstrLandFlag = 8;
-	const int16_t slstrCloudFlag = 16384;
+uint16_t Pcl::getValue(size_t index, uint32_t olcFlags, uint8_t slnFlags, uint8_t sloFlags) const {
+	const uint32_t olciLandFlag = 2147483648;
+	const uint8_t slstrLandFlag = 8;
+//	todo - ts - 04Oct2011 - clarify: slstr cloud flag shall be 16384, but is ubyte in input file
+//	commented out that flag until clarified
+//	const uint8_t slstrCloudFlag = 16384;
 
     bool isLandPixel = (olcFlags & olciLandFlag) == olciLandFlag;
     isLandPixel &= (slnFlags & slstrLandFlag) == slstrLandFlag;
     isLandPixel &= (sloFlags & slstrLandFlag) == slstrLandFlag;
-    bool isCloudPixel = (slnFlags & slstrCloudFlag) == slstrCloudFlag;
-    isCloudPixel &= (sloFlags & slstrCloudFlag) == slstrCloudFlag;
+//    bool isCloudPixel = (slnFlags & slstrCloudFlag) == slstrCloudFlag;
+//    isCloudPixel &= (sloFlags & slstrCloudFlag) == slstrCloudFlag;
 
 	uint16_t result = 0;
     if(isLandPixel) {
 		result |= 32;
 	}
 
-    if(isCloudPixel) {
-		result |= 1;
-	}
+//    if(isCloudPixel) {
+//		result |= 1;
+//	}
 	return result;
 }
