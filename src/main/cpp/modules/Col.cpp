@@ -126,7 +126,7 @@ void Col::process(Context& context) {
     const Grid& targetGrid = t.getGrid();
 
     const long firstL = context.getFirstComputableL(t, *this);
-    context.getLogging()->debug("Segment [" + t.toString() + "]: lastComputableL = " + lexical_cast<string>(firstL), getId());
+    context.getLogging()->debug("Segment [" + t.toString() + "]: firstComputableL = " + lexical_cast<string>(firstL), getId());
     long lastL = context.getLastComputableL(t, *this);
     context.getLogging()->debug("Segment [" + t.toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
 
