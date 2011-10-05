@@ -43,14 +43,16 @@ void Aco::start(Context& context) {
 	context.addObject(lutCO3);
 
 	Segment& t = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-	const SegmentDescriptor d = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
+	const SegmentDescriptor& d = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
 	for (size_t i = 1; i <= 30; i++) {
 		const string sdrBandName = "SDR_" + lexical_cast<string>(i);
-		context.getLogging()->progress("Adding " + sdrBandName, getId());
-		t.addVariable(d.getVariableDescriptor(sdrBandName));
+		const VariableDescriptor& sdrDescriptor = d.getVariableDescriptor(sdrBandName);
+		context.getLogging()->progress("Adding variable '" + sdrDescriptor.toString() + "'", getId());
+		t.addVariable(sdrDescriptor);
 		const string errBandName = sdrBandName + "_er";
-		context.getLogging()->progress("Adding " + errBandName, getId());
-		t.addVariable(d.getVariableDescriptor(errBandName));
+		const VariableDescriptor& errDescriptor = d.getVariableDescriptor(errBandName);
+		context.getLogging()->progress("Adding variable '" + errDescriptor.toString() + "'", getId());
+		t.addVariable(errDescriptor);
 	}
 }
 

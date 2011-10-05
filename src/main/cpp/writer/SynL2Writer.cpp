@@ -41,9 +41,9 @@ void SynL2Writer::process(Context& context) {
 					const Grid& grid = segment.getGrid();
 					const vector<VariableDescriptor*> variableDescriptors = segmentDescriptor->getVariableDescriptors();
 					const long firstL = segment.getGrid().getFirstL();
-                    context.getLogging()->debug("Segment [" + segment.toString() + "]: firstL = " + lexical_cast<string>(firstL), getId());
+					context.getLogging()->debug("Segment [" + segment.toString() + "]: firstL = " + lexical_cast<string>(firstL), getId());
 					const long lastL = segment.getGrid().getLastL();
-                    context.getLogging()->debug("Segment [" + segment.toString() + "]: lastL = " + lexical_cast<string>(lastL), getId());
+					context.getLogging()->debug("Segment [" + segment.toString() + "]: lastL = " + lexical_cast<string>(lastL), getId());
 
 					if (firstL <= lastL) {
 						foreach(const VariableDescriptor* variableDescriptor, variableDescriptors)
@@ -83,8 +83,7 @@ void SynL2Writer::start(Context& context) {
 	}
 	context.getLogging()->info("target product path is '" + targetDirPath.string() + "'", getId());
 
-	const Dictionary& dict = *context.getDictionary();
-	const ProductDescriptor& productDescriptor = dict.getProductDescriptor(Constants::PRODUCT_SY2);
+	const ProductDescriptor& productDescriptor = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2);
 	const vector<SegmentDescriptor*> segmentDescriptors = productDescriptor.getSegmentDescriptors();
 
 	foreach(SegmentDescriptor* segmentDescriptor, segmentDescriptors)
@@ -96,7 +95,9 @@ void SynL2Writer::start(Context& context) {
 
 					foreach(VariableDescriptor* variableDescriptor, variableDescriptors)
 							{
-								if (segment.hasVariable(variableDescriptor->getName())) {
+								string variableName = variableDescriptor->getName();
+								if (segment.hasVariable(variableName)) {
+									context.getLogging()->progress("Creating variable '" + variableName + "'.", getId());
 									createNcVar(productDescriptor, *segmentDescriptor, *variableDescriptor, segment.getGrid());
 								}
 							}

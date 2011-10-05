@@ -18,17 +18,17 @@ using std::valarray;
 class MultivariateFunction {
 public:
 
-    /**
-     * Returns the value of the function at {@code x}.
-     *
-     * @param x The variables.
-     *
-     * @return The value of the function at {@code x}.
-     */
-    virtual double value(valarray<double>& x) = 0;
+	/**
+	 * Returns the value of the function at {@code x}.
+	 *
+	 * @param x The variables.
+	 *
+	 * @return The value of the function at {@code x}.
+	 */
+	virtual double value(valarray<double>& x) = 0;
 
-    virtual ~MultivariateFunction() {
-    }
+	virtual ~MultivariateFunction() {
+	}
 };
 
 #endif /* MULTIVARIATEFUNCTION_H_ */

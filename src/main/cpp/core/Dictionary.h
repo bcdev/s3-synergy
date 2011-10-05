@@ -133,6 +133,10 @@ public:
     }
 
 private:
+
+    Descriptor(const Descriptor& descriptor) {
+    }
+
     const string name;
     map<string, A*> attributeMap;
     map<string, E*> elementMap;
