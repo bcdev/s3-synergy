@@ -133,14 +133,14 @@ void Aer::aer_s(shared_ptr<Pixel> p) {
     p->alpha_550 = alpha550FillValue;
     p->M_a = aminFillValue;
     p->synFlags &= 3887;
-
+/*
     const bool isPartlyCloudy = p->(synFlags & 256) == 256;
     const bool isPartlyWater = p->(synFlags & 512) == 512;
 
     if(!isPartlyCloudy && !isPartlyWater) {
         p->E_2 = numeric_limits<double>::infinity();
     }
-
+*/
 }
 
 void Aer::applyMedianFiltering(map<size_t, shared_ptr<Pixel> >& pixels) {
