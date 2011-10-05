@@ -91,7 +91,7 @@ public:
 	 *
 	 * @return the names of all variables which have been added to the segment.
 	 */
-	virtual const vector<string> getVariableNames() const = 0;
+	virtual vector<string> getVariableNames() const = 0;
 
 	/**
 	 * Returns the segment ID.
