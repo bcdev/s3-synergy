@@ -95,11 +95,8 @@ void SynL2Writer::start(Context& context) {
 
 					foreach(VariableDescriptor* variableDescriptor, variableDescriptors)
 							{
-								string variableName = variableDescriptor->getName();
-								if (segment.hasVariable(variableName)) {
-									context.getLogging()->progress("Creating variable '" + variableName + "'.", getId());
-									createNcVar(productDescriptor, *segmentDescriptor, *variableDescriptor, segment.getGrid());
-								}
+								context.getLogging()->info("Defining variable for " + variableDescriptor->toString(), getId());
+								createNcVar(productDescriptor, *segmentDescriptor, *variableDescriptor, segment.getGrid());
 							}
 				}
 			}

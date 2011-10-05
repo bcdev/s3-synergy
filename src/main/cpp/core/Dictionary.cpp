@@ -63,7 +63,7 @@ VariableDescriptor::~VariableDescriptor() {
 
 string VariableDescriptor::toString() const {
     std::ostringstream oss;
-    oss << "Variable " << "[";
+    oss << "VariableDescriptor " << "[";
     oss << "name = " << getName() << ", ";
     oss << "type = " << getTypeString(type) << ", ";
     oss << "scale factor = " << lexical_cast<string>(getScaleFactor()) << ", ";

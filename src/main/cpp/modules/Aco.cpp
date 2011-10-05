@@ -24,7 +24,7 @@ Aco::~Aco() {
 }
 
 void Aco::start(Context& context) {
-	context.getLogging()->progress("Reading LUTs for atmospheric correction module ...", getId());
+	context.getLogging()->info("Reading LUTs for atmospheric correction module ...", getId());
 
 	// TODO - only read LUTs when there are not already known to the context
 	const LookupTableReader reader(getInstallationPath() + "/auxdata/v" + Constants::PROCESSOR_VERSION + "/S3__SY_2_SYRTAX.nc");
@@ -47,11 +47,11 @@ void Aco::start(Context& context) {
 	for (size_t i = 1; i <= 30; i++) {
 		const string sdrBandName = "SDR_" + lexical_cast<string>(i);
 		const VariableDescriptor& sdrDescriptor = d.getVariableDescriptor(sdrBandName);
-		context.getLogging()->progress("Adding variable '" + sdrDescriptor.toString() + "'", getId());
+		context.getLogging()->info("Adding accessor for " + sdrDescriptor.toString() + "to segment " + t.toString(), getId());
 		t.addVariable(sdrDescriptor);
 		const string errBandName = sdrBandName + "_er";
 		const VariableDescriptor& errDescriptor = d.getVariableDescriptor(errBandName);
-		context.getLogging()->progress("Adding variable '" + errDescriptor.toString() + "'", getId());
+		context.getLogging()->info("Adding accessor for " + errDescriptor.toString() + "to segment " + t.toString(), getId());
 		t.addVariable(errDescriptor);
 	}
 }
@@ -136,11 +136,11 @@ void Aco::process(Context& context) {
 	const double tau550 = 0.1;
 
 	const long firstL = context.getFirstComputableL(col, *this);
-    context.getLogging()->debug("Segment [" + col.toString() + "]: firstComputableL = " + lexical_cast<string>(firstL), getId());
+	context.getLogging()->debug("Segment [" + col.toString() + "]: firstComputableL = " + lexical_cast<string>(firstL), getId());
 	const long lastL = context.getLastComputableL(col, *this);
-    context.getLogging()->debug("Segment [" + col.toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
+	context.getLogging()->debug("Segment [" + col.toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
 
-    #pragma omp parallel for
+#pragma omp parallel for
 	for (long l = firstL; l <= lastL; l++) {
 		valarray<double> coordinates(10);
 		valarray<double> tpiWeights(1);
