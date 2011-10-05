@@ -43,10 +43,14 @@ void Aco::start(Context& context) {
 	context.addObject(lutCO3);
 
 	Segment& t = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+	const SegmentDescriptor d = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
 	for (size_t i = 1; i <= 30; i++) {
-		const SegmentDescriptor d = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
-		t.addVariable(d.getVariableDescriptor("SDR_" + lexical_cast<string>(i)));
-		t.addVariable(d.getVariableDescriptor("SDR_" + lexical_cast<string>(i) + "_er"));
+		const string sdrBandName = "SDR_" + lexical_cast<string>(i);
+		context.getLogging()->progress("Adding " + sdrBandName, getId());
+		t.addVariable(d.getVariableDescriptor(sdrBandName));
+		const string errBandName = sdrBandName + "_er";
+		context.getLogging()->progress("Adding " + errBandName, getId());
+		t.addVariable(d.getVariableDescriptor(errBandName));
 	}
 }
 
@@ -134,21 +138,22 @@ void Aco::process(Context& context) {
 	const long lastL = context.getLastComputableL(col, *this);
     context.getLogging()->debug("Segment [" + col.toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
 
-	valarray<double> coordinates(10);
-	valarray<double> tpiWeights(1);
-	valarray<size_t> tpiIndexes(1);
-
-	matrix<double> matRatmOlc(40, 18);
-	matrix<double> matRatmSln(40, 6);
-	matrix<double> matRatmSlo(40, 6);
-	matrix<double> matTs(40, 30);
-	matrix<double> matTv(40, 30);
-	matrix<double> matRho(40, 30);
-
-	valarray<double> f(lutOlcRatm->getDimensionCount());
-	valarray<double> w(lutOlcRatm->getWorkspaceSize());
-
+    #pragma omp parallel for
 	for (long l = firstL; l <= lastL; l++) {
+		valarray<double> coordinates(10);
+		valarray<double> tpiWeights(1);
+		valarray<size_t> tpiIndexes(1);
+
+		matrix<double> matRatmOlc(40, 18);
+		matrix<double> matRatmSln(40, 6);
+		matrix<double> matRatmSlo(40, 6);
+		matrix<double> matTs(40, 30);
+		matrix<double> matTv(40, 30);
+		matrix<double> matRho(40, 30);
+
+		valarray<double> f(lutOlcRatm->getDimensionCount());
+		valarray<double> w(lutOlcRatm->getWorkspaceSize());
+
 		context.getLogging()->progress("Processing line l = " + lexical_cast<string>(l) + " ...", getId());
 
 		for (long k = colGrid.getFirstK(); k < colGrid.getFirstK() + colGrid.getSizeK(); k++) {
@@ -179,7 +184,6 @@ void Aco::process(Context& context) {
 				lutT->getValues(&coordinates[2], matTv, f, w);
 				lutRhoAtm->getValues(&coordinates[3], matRho, f, w);
 
-				#pragma omp parallel for
 				for (size_t b = 0; b < 18; b++) {
 					const double channel = b + 1.0;
 					const double ratm = matRatmOlc(0, b);
@@ -221,7 +225,6 @@ void Aco::process(Context& context) {
 				lutSlnRatm->getValues(&coordinates[0], matRatmSln, f, w);
 				lutT->getValues(&coordinates[2], matTv, f, w);
 
-				#pragma omp parallel for
 				for (size_t b = 18; b < 24; b++) {
 					const double channel = b + 1.0;
 					const double ratm = matRatmSln(0, b - 18);
