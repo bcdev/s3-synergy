@@ -28,12 +28,12 @@ Min::Min() {
 Min::~Min() {
 }
 
-shared_ptr<Bracket> Min::brack(const shared_ptr<UnivariateFunction> function, double a, double b, shared_ptr<Bracket> bracket) const {
+Bracket& Min::brack(UnivariateFunction& function, double a, double b, Bracket& bracket) {
     double lowerX = a;
-    double lowerF = function->value(a);
+    double lowerF = function.value(a);
 
     double minimumX = b;
-    double minimumF = function->value(b);
+    double minimumF = function.value(b);
 
     if (minimumF > lowerF) {
         const double lx = lowerX;
@@ -47,62 +47,62 @@ shared_ptr<Bracket> Min::brack(const shared_ptr<UnivariateFunction> function, do
     }
 
     double upperX = minimumX + (minimumX - lowerX) * (1.0 / GOLDEN - 1.0);
-    double upperF = function->value(upperX);
+    double upperF = function.value(upperX);
 
     while (minimumF > upperF) {
         upperX = upperX + (upperX - minimumX) * (1.0 / GOLDEN - 1.0);
-        upperF = function->value(upperX);
+        upperF = function.value(upperX);
     }
 
-    bracket->minimumX = minimumX;
-    bracket->minimumF = minimumF;
+    bracket.minimumX = minimumX;
+    bracket.minimumF = minimumF;
 
     if (lowerX > upperX) {
-        bracket->lowerX = upperX;
-        bracket->lowerF = upperF;
-        bracket->upperX = lowerX;
-        bracket->upperF = lowerF;
+        bracket.lowerX = upperX;
+        bracket.lowerF = upperF;
+        bracket.upperX = lowerX;
+        bracket.upperF = lowerF;
     } else {
-        bracket->lowerX = lowerX;
-        bracket->lowerF = lowerF;
-        bracket->upperX = upperX;
-        bracket->upperF = upperF;
+        bracket.lowerX = lowerX;
+        bracket.lowerF = lowerF;
+        bracket.upperX = upperX;
+        bracket.upperF = upperF;
     }
     return bracket;
 }
 
-bool Min::brent(shared_ptr<UnivariateFunction> function, shared_ptr<Bracket> bracket, double relativeAccuracyGoal) const {
+bool Min::brent(UnivariateFunction& function, Bracket& bracket, double relativeAccuracyGoal) {
     return brent(function, bracket, relativeAccuracyGoal, 1.0E-10);
 }
 
-bool Min::brent(shared_ptr<UnivariateFunction> function, shared_ptr<Bracket> bracket, double relativeAccuracyGoal, double absoluteAccuracyGoal) const {
+bool Min::brent(UnivariateFunction& function, Bracket& bracket, double relativeAccuracyGoal, double absoluteAccuracyGoal) {
     return brent(function, bracket, relativeAccuracyGoal, absoluteAccuracyGoal, 100);
 }
 
-bool Min::brent(shared_ptr<UnivariateFunction> f, shared_ptr<Bracket> bracket, double relativeAccuracyGoal, double absoluteAccuracyGoal, int maxIter) const {
-    if (bracket->minimumF >= bracket->lowerF || bracket->minimumF >= bracket->upperF
-            || (bracket->minimumX <= bracket->lowerX && bracket->minimumX <= bracket->upperX)
-            || (bracket->minimumX >= bracket->lowerX && bracket->minimumX >= bracket->upperX)) {
-        BOOST_THROW_EXCEPTION(invalid_argument("The points a = " + lexical_cast<string>(bracket->lowerX) + ", b = " + lexical_cast<string>(bracket->minimumX) + ", c = " + lexical_cast<string>(bracket->upperX) + " do not bracket a minimum."));
+bool Min::brent(UnivariateFunction& f, Bracket& bracket, double relativeAccuracyGoal, double absoluteAccuracyGoal, int maxIter) {
+    if (bracket.minimumF >= bracket.lowerF || bracket.minimumF >= bracket.upperF
+            || (bracket.minimumX <= bracket.lowerX && bracket.minimumX <= bracket.upperX)
+            || (bracket.minimumX >= bracket.lowerX && bracket.minimumX >= bracket.upperX)) {
+        BOOST_THROW_EXCEPTION(invalid_argument("The points a = " + lexical_cast<string>(bracket.lowerX) + ", b = " + lexical_cast<string>(bracket.minimumX) + ", c = " + lexical_cast<string>(bracket.upperX) + " do not bracket a minimum."));
     }
 
     double u;
-    double v = bracket->lowerX + GOLDEN * (bracket->upperX - bracket->lowerX);
+    double v = bracket.lowerX + GOLDEN * (bracket.upperX - bracket.lowerX);
     double w = v;
 
     double d = 0.0;
     double e = 0.0;
 
     double fu;
-    double fv = f->value(v);
+    double fv = f.value(v);
     double fw = fv;
 
     for (int i = 0; i < maxIter; ++i) {
-        const double a = bracket->lowerX;
-        const double b = bracket->upperX;
-        const double z = bracket->minimumX;
+        const double a = bracket.lowerX;
+        const double b = bracket.upperX;
+        const double z = bracket.minimumX;
 
-        const double fz = bracket->minimumF;
+        const double fz = bracket.minimumF;
 
         const double lowerW = (z - a);
         const double upperW = (b - z);
@@ -149,15 +149,15 @@ bool Min::brent(shared_ptr<UnivariateFunction> f, shared_ptr<Bracket> bracket, d
             u = z + ((d > 0.0) ? tolerance : -tolerance);
         }
 
-        fu = f->value(u);
+        fu = f.value(u);
 
         if (fu <= fz) {
             if (u < z) {
-                bracket->upperX = z;
-                bracket->upperF = fz;
+                bracket.upperX = z;
+                bracket.upperF = fz;
             } else {
-                bracket->lowerX = z;
-                bracket->lowerF = fz;
+                bracket.lowerX = z;
+                bracket.lowerF = fz;
             }
 
             v = w;
@@ -165,18 +165,18 @@ bool Min::brent(shared_ptr<UnivariateFunction> f, shared_ptr<Bracket> bracket, d
             fv = fw;
             fw = fz;
 
-            bracket->minimumX = u;
-            bracket->minimumF = fu;
+            bracket.minimumX = u;
+            bracket.minimumF = fu;
         } else {
             if (u < z) {
-                bracket->lowerX = u;
-                bracket->lowerF = fu;
+                bracket.lowerX = u;
+                bracket.lowerF = fu;
             } else {
-                bracket->upperX = u;
-                bracket->upperF = fu;
+                bracket.upperX = u;
+                bracket.upperF = fu;
             }
         }
-        if (testInterval(bracket->lowerX, bracket->upperX, absoluteAccuracyGoal, relativeAccuracyGoal)) {
+        if (testInterval(bracket.lowerX, bracket.upperX, absoluteAccuracyGoal, relativeAccuracyGoal)) {
             return true;
         }
     }
@@ -184,7 +184,7 @@ bool Min::brent(shared_ptr<UnivariateFunction> f, shared_ptr<Bracket> bracket, d
     return false;
 }
 
-bool Min::testInterval(double lowerX, double upperX, double absoluteAccuracyGoal, double relativeAccuracyGoal) const {
+bool Min::testInterval(double lowerX, double upperX, double absoluteAccuracyGoal, double relativeAccuracyGoal) {
     double minAbs;
     if ((lowerX > 0.0 && upperX > 0.0) || (lowerX < 0.0 && upperX < 0.0)) {
         minAbs = min(std::abs(lowerX), std::abs(upperX));
@@ -195,11 +195,11 @@ bool Min::testInterval(double lowerX, double upperX, double absoluteAccuracyGoal
     return std::abs(upperX - lowerX) < absoluteAccuracyGoal + relativeAccuracyGoal * minAbs;
 }
 
-double Min::computeEpsilonSqareRoot() const {
+double Min::computeEpsilonSqareRoot() {
     return sqrt(numeric_limits<double>::epsilon());
 }
 
-Bracket::Bracket(double lowerX, double upperX, shared_ptr<UnivariateFunction> function) {
+Bracket::Bracket(double lowerX, double upperX, UnivariateFunction& function) {
     if (lowerX > upperX) {
         this->lowerX = upperX;
         this->upperX = lowerX;
@@ -208,9 +208,9 @@ Bracket::Bracket(double lowerX, double upperX, shared_ptr<UnivariateFunction> fu
         this->upperX = upperX;
     }
 
-    lowerF = function->value(this->lowerX);
-    upperF = function->value(this->upperX);
+    lowerF = function.value(this->lowerX);
+    upperF = function.value(this->upperX);
 
     minimumX = this->lowerX + Min::GOLDEN * (this->upperX - this->lowerX);
-    minimumF = function->value(this->minimumX);
+    minimumF = function.value(this->minimumX);
 }

@@ -12,6 +12,7 @@
 #include "../core/Boost.h"
 #include "MultiMin.h"
 
+using std::copy;
 using std::invalid_argument;
 using std::min;
 using std::sqrt;
@@ -24,24 +25,22 @@ MultiMin::MultiMin() {
 MultiMin::~MultiMin() {
 }
 
-bool MultiMin::powell(shared_ptr<MultivariateFunction> f, valarray<double>& pn, valarray<valarray<double> >& u, const double accuracyGoal, const size_t maxIter) const {
+bool MultiMin::powell(MultivariateFunction& f, valarray<double>& pn, valarray<valarray<double> >& u, const double accuracyGoal, const size_t maxIter) {
     const size_t n = pn.size();
 
-    valarray<shared_ptr<LineMinimizer> > minimizers = valarray<shared_ptr<LineMinimizer> >(n);
+    valarray<shared_ptr<LineMinimizer> > minimizers(n);
     for (size_t k = 0; k < n; ++k) {
-        minimizers[k] = shared_ptr<LineMinimizer>(new LineMinimizer(f, pn, u[k]));
+    	minimizers[k] = shared_ptr<LineMinimizer>(new LineMinimizer(f, pn, u[k]));
     }
 
-    valarray<double> p0 = valarray<double>(n);
-    valarray<double> pe = valarray<double>(n);
+    valarray<double> p0(n);
+    valarray<double> pe(n);
 
-    double zn = f->value(pn);
+    double zn = f.value(pn);
 
     for (size_t i = 0; i < maxIter; ++i) {
         // 1. Initialize
-        for(size_t i = 0; i < n; i++) {
-            p0[i] = pn[i];
-        }
+    	copy(&pn[0], &pn[n], &p0[0]);
         double z0 = zn;
         // 2. Successively minimize along all directions
         // 3. Remember magnitude and direction of maximum decrease
@@ -68,7 +67,7 @@ bool MultiMin::powell(shared_ptr<MultivariateFunction> f, valarray<double>& pn, 
         for (size_t k = 0; k < n; ++k) {
             pe[k] = 2.0 * pn[k] - p0[k];
         }
-        const double ze = f->value(pe);
+        const double ze = f.value(pe);
         // 6. When necessary, discard the direction of maximum decrease
         if (ze < z0) {
             if (2.0 * (z0 - 2.0 * zn + ze) * square(z0 - zn - maxDecrease) < maxDecrease * square(z0 - ze)) {

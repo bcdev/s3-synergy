@@ -22,6 +22,9 @@ public:
      */
     virtual double value(double x) = 0;
 
+    virtual ~UnivariateFunction() {
+    }
+
 };
 
 #endif /* UNIVARIATEFUNCTION_H_ */

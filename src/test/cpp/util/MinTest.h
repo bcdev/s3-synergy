@@ -30,7 +30,6 @@ public:
 
 private:
     const static double ACCURACY_GOAL;
-    shared_ptr<Min> min;
 
     void testBracketCos();
     void testBracketSin();

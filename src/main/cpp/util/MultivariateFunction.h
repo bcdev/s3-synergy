@@ -27,6 +27,8 @@ public:
      */
     virtual double value(valarray<double>& x) = 0;
 
+    virtual ~MultivariateFunction() {
+    }
 };
 
 #endif /* MULTIVARIATEFUNCTION_H_ */

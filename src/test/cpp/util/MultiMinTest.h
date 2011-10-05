@@ -28,7 +28,6 @@ public:
 
 private:
     const static double ACCURACY_GOAL;
-    shared_ptr<MultiMin> multiMin;
 
     void testPowellCigar();
     void testPowellRosenbrock();
