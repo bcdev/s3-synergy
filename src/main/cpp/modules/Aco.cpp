@@ -24,8 +24,10 @@ Aco::~Aco() {
 }
 
 void Aco::start(Context& context) {
-	context.getLogging()->progress("Reading LUTs for atmospheric correction module...", getId());
-	const LookupTableReader reader(getInstallationPath() + "/auxdata/v1/S3__SY_2_SYRTAX.nc");
+	context.getLogging()->progress("Reading LUTs for atmospheric correction module ...", getId());
+
+	// TODO - only read LUTs when there are not already known to the context
+	const LookupTableReader reader(getInstallationPath() + "/auxdata/v" + Constants::PROCESSOR_VERSION + "/S3__SY_2_SYRTAX.nc");
 	lutOlcRatm = reader.readMatrixLookupTable<double>("OLC_R_atm");
 	lutSlnRatm = reader.readMatrixLookupTable<double>("SLN_R_atm");
 	lutSloRatm = reader.readMatrixLookupTable<double>("SLO_R_atm");
@@ -42,9 +44,9 @@ void Aco::start(Context& context) {
 
 	Segment& t = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 	for (size_t i = 1; i <= 30; i++) {
-		// TODO - get attributes from dictionary
-		t.addVariable("SDR_" + lexical_cast<string>(i), Constants::TYPE_SHORT, 0.0001);
-		t.addVariable("SDR_" + lexical_cast<string>(i) + "_er", Constants::TYPE_SHORT, 0.0001);
+		const SegmentDescriptor d = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
+		t.addVariable(d.getVariableDescriptor("SDR_" + lexical_cast<string>(i)));
+		t.addVariable(d.getVariableDescriptor("SDR_" + lexical_cast<string>(i) + "_er"));
 	}
 }
 
@@ -132,9 +134,7 @@ void Aco::process(Context& context) {
 	const long lastL = context.getLastComputableL(col, *this);
     context.getLogging()->debug("Segment [" + col.toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
 
-	valarray<double> coordinates(20);
-	valarray<double> slnCoordinates(20);
-	valarray<double> sloCoordinates(20);
+	valarray<double> coordinates(10);
 	valarray<double> tpiWeights(1);
 	valarray<size_t> tpiIndexes(1);
 
@@ -168,27 +168,16 @@ void Aco::process(Context& context) {
 				coordinates[3] = p; // air pressure
 				coordinates[4] = wv; // water vapour
 				coordinates[5] = tau550; // aerosol
-//				coordinates[6] = 1; // aerosol model index
-//				coordinates[7] = b + 1; // SYN channel
 
-				coordinates[8] = coordinates[1]; // SZA
-				coordinates[9] = coordinates[3]; // air pressure
-				coordinates[10] = coordinates[4]; // water vapour
-				coordinates[11] = coordinates[5]; // aerosol
-//				coordinates[12] = coordinates[6]; // aerosol model index
-//				coordinates[13] = coordinates[7]; // SYN channel
-
-				coordinates[14] = coordinates[2]; // VZA
-				coordinates[15] = coordinates[3]; // air pressure
-				coordinates[16] = coordinates[4]; // water vapour
-				coordinates[17] = coordinates[5]; // aerosol
-//				coordinates[18] = coordinates[6]; // aerosol model index
-//				coordinates[19] = coordinates[7]; // SYN channel
+				coordinates[6] = coordinates[1]; // SZA
+				coordinates[7] = coordinates[3]; // air pressure
+				coordinates[8] = coordinates[4]; // water vapour
+				coordinates[9] = coordinates[5]; // aerosol
 
 				lutOlcRatm->getValues(&coordinates[0], matRatmOlc, f, w);
-				lutT->getValues(&coordinates[8], matTs, f, w);
-				lutT->getValues(&coordinates[14], matTv, f, w);
-				lutRhoAtm->getValues(&coordinates[9], matRho, f, w);
+				lutT->getValues(&coordinates[6], matTs, f, w);
+				lutT->getValues(&coordinates[2], matTv, f, w);
+				lutRhoAtm->getValues(&coordinates[3], matRho, f, w);
 
 				#pragma omp parallel for
 				for (size_t b = 0; b < 18; b++) {
@@ -228,25 +217,9 @@ void Aco::process(Context& context) {
 				coordinates[3] = p; // air pressure
 				coordinates[4] = wv; // water vapour
 				coordinates[5] = tau550; // aerosol
-//				coordinates[6] = 1; // aerosol model index
-//				coordinates[7] = b + 1; // SYN channel
-
-				coordinates[8] = coordinates[1]; // SZA
-				coordinates[9] = coordinates[3]; // air pressure
-				coordinates[10] = coordinates[4]; // water vapour
-				coordinates[11] = coordinates[5]; // aerosol
-//				coordinates[12] = coordinates[6]; // aerosol model index
-//				coordinates[13] = coordinates[7]; // SYN channel
-
-				coordinates[14] = coordinates[2]; // VZA
-				coordinates[15] = coordinates[3]; // air pressure
-				coordinates[16] = coordinates[4]; // water vapour
-				coordinates[17] = coordinates[5]; // aerosol
-//				coordinates[18] = coordinates[6]; // aerosol model index
-//				coordinates[19] = coordinates[7]; // SYN channel
 
 				lutSlnRatm->getValues(&coordinates[0], matRatmSln, f, w);
-				lutT->getValues(&coordinates[14], matTv, f, w);
+				lutT->getValues(&coordinates[2], matTv, f, w);
 
 				#pragma omp parallel for
 				for (size_t b = 18; b < 24; b++) {
