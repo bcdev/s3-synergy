@@ -149,6 +149,9 @@ void Aco::process(Context& context) {
 		matrix<double> matTv(40, 30);
 		matrix<double> matRho(40, 30);
 
+		valarray<double> f(lutOlcRatm->getDimensionCount());
+		valarray<double> w(lutOlcRatm->getWorkspaceSize());
+
 		for (long k = colGrid.getFirstK(); k < colGrid.getFirstK() + colGrid.getSizeK(); k++) {
 			for (long m = colGrid.getFirstM(); m < colGrid.getFirstM() + colGrid.getSizeM(); m++) {
 				const size_t i = colGrid.getIndex(k, l, m);
@@ -183,10 +186,10 @@ void Aco::process(Context& context) {
 //				coordinates[18] = coordinates[6]; // aerosol model index
 //				coordinates[19] = coordinates[7]; // SYN channel
 
-				lutOlcRatm->getValues(&coordinates[0], matRatmOlc);
-				lutT->getValues(&coordinates[8], matTs);
-				lutT->getValues(&coordinates[14], matTv);
-				lutRhoAtm->getValues(&coordinates[9], matRho);
+				lutOlcRatm->getValues(&coordinates[0], matRatmOlc, f, w);
+				lutT->getValues(&coordinates[8], matTs, f, w);
+				lutT->getValues(&coordinates[14], matTv, f, w);
+				lutRhoAtm->getValues(&coordinates[9], matRho, f, w);
 
 				for (size_t b = 0; b < 18; b++) {
 					const double channel = b + 1.0;
@@ -242,8 +245,8 @@ void Aco::process(Context& context) {
 //				coordinates[18] = coordinates[6]; // aerosol model index
 //				coordinates[19] = coordinates[7]; // SYN channel
 
-				lutSlnRatm->getValues(&coordinates[0], matRatmSln);
-				lutT->getValues(&coordinates[14], matTv);
+				lutSlnRatm->getValues(&coordinates[0], matRatmSln, f, w);
+				lutT->getValues(&coordinates[14], matTv, f, w);
 
 				for (size_t b = 18; b < 24; b++) {
 					const double channel = b + 1.0;

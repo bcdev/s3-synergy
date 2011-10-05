@@ -42,11 +42,13 @@ public:
 
 	const string& getId() const;
 
-	matrix<W>& getValues(const W coordinates[], matrix<W>& values) const;
+	matrix<W>& getValues(const W coordinates[], matrix<W>& matrix) const;
+	matrix<W>& getValues(const W coordinates[], matrix<W>& matrix, valarray<W>& f, valarray<W>& w) const;
 
 	size_t getDimensionCount() const;
 	size_t getDimensionLength(size_t dimIndex) const;
 	size_t getStride(size_t dimIndex) const;
+	size_t getWorkspaceSize() const;
 
 	W getScaleFactor() const;
 	W getAddOffset() const;
@@ -111,13 +113,20 @@ MatrixLookupTableImpl<T, W>::~MatrixLookupTableImpl() {
 
 template<class T, class W>
 matrix<W>& MatrixLookupTableImpl<T, W>::getValues(const W coordinates[], matrix<W>& matrix) const {
+	valarray<W> f(n);
+	valarray<W> w(offsets.size() * rowCount * colCount);
+
+	return getValues(coordinates, matrix, f, w);
+}
+
+template<class T, class W>
+matrix<W>& MatrixLookupTableImpl<T, W>::getValues(const W coordinates[], matrix<W>& matrix, valarray<W>& f, valarray<W>& w) const {
 	assert(matrix.size1() >= rowCount);
 	assert(matrix.size2() >= colCount);
+	assert(f.size() >= n);
 
 	const size_t elementCount = rowCount * colCount;
-
-	valarray<W> f(n);
-	valarray<W> v(offsets.size() * elementCount);
+	assert(w.size() >= offsets.size() * elementCount);
 
 	size_t origin = 0;
 	for (size_t i = 0; i < n; ++i) {
@@ -125,7 +134,7 @@ matrix<W>& MatrixLookupTableImpl<T, W>::getValues(const W coordinates[], matrix<
 	}
 	for (size_t i = 0; i < offsets.size(); ++i) {
 		for (size_t j = 0; j < elementCount; ++j) {
-			v[i * elementCount + j] = boost::numeric_cast<W>(y[origin + offsets[i] + j]);
+			w[i * elementCount + j] = boost::numeric_cast<W>(y[origin + offsets[i] + j]);
 		}
 	}
 	for (size_t i = n; i-- > 0;) {
@@ -133,13 +142,13 @@ matrix<W>& MatrixLookupTableImpl<T, W>::getValues(const W coordinates[], matrix<
 
 		for (size_t j = 0; j < m; ++j) {
 			for (size_t k = 0; k < elementCount; ++k) {
-				v[j * elementCount + k] += f[i] * (v[(m + j) * elementCount + k] - v[j * elementCount + k]);
+				w[j * elementCount + k] += f[i] * (w[(m + j) * elementCount + k] - w[j * elementCount + k]);
 			}
 		}
 	}
 	for (size_t i = 0, k = 0; i < rowCount; ++i) {
 		for (size_t j = 0; j < colCount; ++j, ++k) {
-			matrix(i, j) = v[k] * scaleFactor + addOffset;
+			matrix(i, j) = w[k] * scaleFactor + addOffset;
 		}
 	}
 
@@ -154,6 +163,11 @@ inline const string& MatrixLookupTableImpl<T, W>::getId() const {
 template<class T, class W>
 inline size_t MatrixLookupTableImpl<T, W>::getDimensionCount() const {
 	return n;
+}
+
+template<class T, class W>
+inline size_t MatrixLookupTableImpl<T, W>::getWorkspaceSize() const {
+	return offsets.size() * rowCount * colCount;
 }
 
 template<class T, class W>

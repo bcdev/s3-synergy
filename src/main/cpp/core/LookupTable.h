@@ -116,11 +116,12 @@ public:
 	}
 
 	virtual matrix<W>& getValues(const W coordinates[], matrix<W>& matrix) const = 0;
+	virtual matrix<W>& getValues(const W coordinates[], matrix<W>& matrix, valarray<W>& f, valarray<W>& w) const = 0;
 
 	virtual size_t getDimensionCount() const = 0;
 	virtual size_t getDimensionLength(size_t dimIndex) const = 0;
 	virtual size_t getStride(size_t dimIndex) const = 0;
-
+	virtual size_t getWorkspaceSize() const = 0;
 	virtual W getScaleFactor() const = 0;
 	virtual W getAddOffset() const = 0;
 	virtual W getMaxCoordinate(size_t dimIndex) const = 0;
