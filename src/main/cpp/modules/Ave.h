@@ -45,7 +45,6 @@ private:
 
     void ave_g(Context& context);
     void ave_f(Context& context);
-    bool isValidPosition(const Grid& grid, long k, long l, long m) const;
     bool isFillValue(const string& variableName, const long index) const;
     double getValue(const string& variableName, const long index) const;
     uint16_t getFlagFillValue(Context& context);

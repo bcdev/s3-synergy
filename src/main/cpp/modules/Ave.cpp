@@ -8,6 +8,7 @@
 #include <cmath>
 
 #include "Ave.h"
+#include "../util/IOUtils.h"
 
 using std::min;
 
@@ -25,7 +26,8 @@ void Ave::start(Context& context) {
     const size_t sizeL = collocatedGrid.getSizeL() / AVERAGING_FACTOR;
     const size_t sizeM = collocatedGrid.getSizeM() / AVERAGING_FACTOR;
     const size_t sizeK = collocatedGrid.getSizeK();
-    averagedSegment = &context.addSegment(Constants::SEGMENT_SYN_AVERAGED, sizeL, sizeM, sizeK, 0, sizeL - 1);
+    const size_t maxL = collocatedGrid.getMaxL() / AVERAGING_FACTOR;
+    averagedSegment = &context.addSegment(Constants::SEGMENT_SYN_AVERAGED, sizeL, sizeM, sizeK, 0, maxL - 1);
     averagedGrid = &averagedSegment->getGrid();
 
     setupVariables(context);
@@ -34,24 +36,29 @@ void Ave::start(Context& context) {
 }
 
 void Ave::stop(Context& context) {
-	// TODO: cleanup
 }
 
 void Ave::process(Context& context) {
     ave_g(context);
-    ave_f(context);
-    const long lastComputedL = min(averagedGrid->getLastL(), averagedGrid->getMaxL());
+//    ave_f(context);
+    const long lastComputedL = min(collocatedSegment->getGrid().getLastL() / AVERAGING_FACTOR, min(averagedGrid->getLastL(), averagedGrid->getMaxL())) - 1;
+//    const long lastComputedL = min(averagedGrid->getLastL(), averagedGrid->getMaxL());
     context.setLastComputedL(*averagedSegment, *this, lastComputedL);
     context.setFirstRequiredL(*collocatedSegment, *this, (lastComputedL + 1) * AVERAGING_FACTOR);
 }
 
 void Ave::ave_g(Context& context) {
+    const long maxL_prime = min(collocatedSegment->getGrid().getLastL() / AVERAGING_FACTOR, min(averagedGrid->getLastL(), averagedGrid->getMaxL())) - 1;
+    context.getLogging()->debug("maxL_prime=" + lexical_cast<string>(maxL_prime), getId());
+
     foreach(string& varName, variables) {
 
         context.getLogging()->progress("Averaging variable '" + varName + "'...", getId());
 
+
         for (long k = averagedGrid->getFirstK(); k < averagedGrid->getFirstK() + averagedGrid->getSizeK(); k++) {
-            for (long l_prime = averagedGrid->getFirstL(); l_prime <= min(averagedGrid->getLastL(), averagedGrid->getMaxL()); l_prime++) {
+//            for (long l_prime = averagedGrid->getFirstL(); l_prime <= min(averagedGrid->getLastL(), averagedGrid->getMaxL()); l_prime++) {
+            for (long l_prime = averagedGrid->getFirstL(); l_prime <= maxL_prime; l_prime++) {
                 for (long m_prime = averagedGrid->getFirstM(); m_prime < averagedGrid->getFirstM() + averagedGrid->getSizeM(); m_prime++) {
 
                     double a = 0.0;
@@ -60,7 +67,7 @@ void Ave::ave_g(Context& context) {
 
                     for(long l = l_prime * AVERAGING_FACTOR; l < (l_prime + 1) * AVERAGING_FACTOR; l++) {
                         for(long m = m_prime * AVERAGING_FACTOR; m < (m_prime + 1) * AVERAGING_FACTOR; m++) {
-                            if(!isValidPosition(collocatedSegment->getGrid(), k, l, m)) {
+                            if(!IOUtils::isValidPosition(collocatedSegment->getGrid(), k, l, m)) {
                                 continue;
                             }
                             const long collocatedIndex = collocatedSegment->getGrid().getIndex(k, l, m);
@@ -101,7 +108,7 @@ void Ave::ave_f(Context& context) {
 
                 for(long l = l_prime * AVERAGING_FACTOR; l < (l_prime + 1) * AVERAGING_FACTOR; l++) {
                     for(long m = m_prime * AVERAGING_FACTOR; m < (m_prime + 1) * AVERAGING_FACTOR; m++) {
-                        if(isValidPosition(collocatedSegment->getGrid(), k, l, m)) {
+                        if(IOUtils::isValidPosition(collocatedSegment->getGrid(), k, l, m)) {
                             const long collocatedIndex = collocatedSegment->getGrid().getIndex(k, l, m);
                             flags = synFlags->getUShort(collocatedIndex);
                             const bool isLand = (flags & 32) == 32;
@@ -122,15 +129,6 @@ void Ave::ave_f(Context& context) {
             }
         }
     }
-}
-
-bool Ave::isValidPosition(const Grid& grid, long k, long l, long m) const {
-    return (grid.getFirstK() <= k &&
-            grid.getMaxK() >= k &&
-            grid.getFirstL() <= l &&
-            grid.getMaxL() >= l &&
-            grid.getFirstM() <= m &&
-            grid.getMaxM() >= m);
 }
 
 bool Ave::isFillValue(const string& variableName, const long index) const {
