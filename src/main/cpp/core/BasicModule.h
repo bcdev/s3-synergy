@@ -75,6 +75,11 @@ public:
 		throw runtime_error("Unknown software installation path. The environment variable 'S3_SYNERGY_HOME' has not been set.");
 	}
 
+	static string getAuxdataPath() {
+		return getInstallationPath() + "/auxdata/v" + Constants::PROCESSOR_VERSION + "/";
+	}
+
+
 protected:
 
 	template<class K, class V>

@@ -24,18 +24,20 @@ Aco::~Aco() {
 }
 
 void Aco::start(Context& context) {
+	if (!context.hasObject("OLC_R_atm")) {
+		const LookupTableReader reader(getAuxdataPath() + "S3__SY_2_SYRTAX.nc");
+		shared_ptr<MatrixLookupTable<double> > lutOlcRatm = reader.readMatrixLookupTable<double>("OLC_R_atm");
+		context.addObject(lutOlcRatm);
+	}
 	context.getLogging()->info("Reading LUTs for atmospheric correction module ...", getId());
 
-	// TODO - only read LUTs when there are not already known to the context
-	const LookupTableReader reader(getInstallationPath() + "/auxdata/v" + Constants::PROCESSOR_VERSION + "/S3__SY_2_SYRTAX.nc");
-	lutOlcRatm = reader.readMatrixLookupTable<double>("OLC_R_atm");
+	const LookupTableReader reader(getAuxdataPath() + "S3__SY_2_SYRTAX.nc");
 	lutSlnRatm = reader.readMatrixLookupTable<double>("SLN_R_atm");
 	lutSloRatm = reader.readMatrixLookupTable<double>("SLO_R_atm");
 	lutT = reader.readMatrixLookupTable<double>("t");
 	lutRhoAtm = reader.readMatrixLookupTable<double>("rho_atm");
 	lutCO3 = reader.readScalarLookupTable<double>("C_O3");
 
-	context.addObject(lutOlcRatm);
 	context.addObject(lutSlnRatm);
 	context.addObject(lutSloRatm);
 	context.addObject(lutT);
@@ -125,6 +127,7 @@ void Aco::process(Context& context) {
 		err.push_back(&col.getAccessor("SDR_" + lexical_cast<string>(i) + "_er"));
 	}
 
+    MatrixLookupTable<double>& lutOlcRatm = (MatrixLookupTable<double>&) *context.getObject("OLC_R_atm");
 	context.getLogging()->progress("Processing segment '" + col.toString() + "'", getId());
 
 	// TODO - get from ECMWF tie points
@@ -153,8 +156,8 @@ void Aco::process(Context& context) {
 		matrix<double> matTv(40, 30);
 		matrix<double> matRho(40, 30);
 
-		valarray<double> f(lutOlcRatm->getDimensionCount());
-		valarray<double> w(lutOlcRatm->getWorkspaceSize());
+		valarray<double> f(lutOlcRatm.getDimensionCount());
+		valarray<double> w(lutOlcRatm.getWorkspaceSize());
 
 		context.getLogging()->progress("Processing line l = " + lexical_cast<string>(l) + " ...", getId());
 
@@ -181,7 +184,7 @@ void Aco::process(Context& context) {
 				coordinates[8] = coordinates[4]; // water vapour
 				coordinates[9] = coordinates[5]; // aerosol
 
-				lutOlcRatm->getValues(&coordinates[0], matRatmOlc, f, w);
+				lutOlcRatm.getValues(&coordinates[0], matRatmOlc, f, w);
 				lutT->getValues(&coordinates[6], matTs, f, w);
 				lutT->getValues(&coordinates[2], matTv, f, w);
 				lutRhoAtm->getValues(&coordinates[3], matRho, f, w);

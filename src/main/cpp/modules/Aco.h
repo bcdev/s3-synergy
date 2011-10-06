@@ -20,7 +20,6 @@ public:
     void stop(Context& context);
     void process(Context& context);
 private:
-    shared_ptr<MatrixLookupTable<double> > lutOlcRatm;
     shared_ptr<MatrixLookupTable<double> > lutSlnRatm;
     shared_ptr<MatrixLookupTable<double> > lutSloRatm;
     shared_ptr<MatrixLookupTable<double> > lutT;
