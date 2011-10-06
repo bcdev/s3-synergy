@@ -153,6 +153,12 @@ public:
 	 * @return the maximum valid value of the column index dimension.
 	 */
 	virtual long getMaxM() const = 0;
+
+	/**
+	 * Returns if the position indicated by the given indices is valid for this grid.
+	 * @return true, if the position is valid, false otherwise.
+	 */
+	virtual bool isValidPosition(long k, long l, long m) const = 0;
 };
 
 #endif	/* GRID_H */

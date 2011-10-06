@@ -36,6 +36,8 @@ private:
     bool isMinimal(long a, long b) const;
     void applyMedianFiltering(map<size_t, shared_ptr<Pixel> >& pixels);
     void setPixelsToSegment(map<size_t, shared_ptr<Pixel> >& pixels);
+    vector<size_t> getListOfAerosolModelIndexNumbers();
+    void initializeP(Pixel& p);
 };
 
 class Pixel {
@@ -54,7 +56,14 @@ public:
         E_2 = p.E_2;
         c_1 = p.c_1;
         c_2 = p.c_2;
-        nu_omega = p.nu_omega;
+        nu_1 = p.nu_1;
+        nu_2 = p.nu_2;
+        omega_1 = p.omega_1;
+        omega_2 = p.omega_2;
+        omega_3 = p.omega_3;
+        omega_4 = p.omega_4;
+        omega_5 = p.omega_5;
+        omega_6 = p.omega_6;
 
         k = p.k;
         l = p.l;
@@ -74,8 +83,14 @@ public:
     double E_2;
     double c_1;
     double c_2;
-    double nu_omega;
-    double omega_j;
+    double nu_1;
+    double nu_2;
+    double omega_1;
+    double omega_2;
+    double omega_3;
+    double omega_4;
+    double omega_5;
+    double omega_6;
 
     long k;
     long l;

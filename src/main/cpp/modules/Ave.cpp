@@ -46,14 +46,16 @@ void Ave::process(Context& context) {
     averageVariables(context, firstL, lastL);
     averageFlags(context, firstL, lastL);
     context.setLastComputedL(*averagedSegment, *this, lastL);
-    context.setFirstRequiredL(*collocatedSegment, *this, lastL * AVERAGING_FACTOR + 1);
+    context.setFirstRequiredL(*collocatedSegment, *this, (lastL + 1)* AVERAGING_FACTOR);
 }
 
 void Ave::averageVariables(Context& context, long firstL, long lastL) {
     foreach(string& varName, variables) {
         context.getLogging()->progress("Averaging variable '" + varName + "'...", getId());
         for (long l_prime = firstL; l_prime <= lastL; l_prime++) {
-            context.getLogging()->progress("   ...averaging line " + lexical_cast<string>(l_prime), getId());
+            if(l_prime % 100 == 0) {
+                context.getLogging()->progress("   ...averaging line " + lexical_cast<string>(l_prime), getId());
+            }
             for (long k = averagedGrid->getFirstK(); k < averagedGrid->getFirstK() + averagedGrid->getSizeK(); k++) {
                 for (long m_prime = averagedGrid->getFirstM(); m_prime < averagedGrid->getFirstM() + averagedGrid->getSizeM(); m_prime++) {
 
@@ -63,8 +65,7 @@ void Ave::averageVariables(Context& context, long firstL, long lastL) {
 
                     for(long l = l_prime * AVERAGING_FACTOR + minCollocatedL; l < (l_prime + 1) * AVERAGING_FACTOR + minCollocatedL; l++) {
                         for(long m = m_prime * AVERAGING_FACTOR; m < (m_prime + 1) * AVERAGING_FACTOR; m++) {
-                            // todo - move method to grid
-                            if(!IOUtils::isValidPosition(collocatedSegment->getGrid(), k, l, m)) {
+                            if(!collocatedSegment->getGrid().isValidPosition(k, l, m)) {
                                 continue;
                             }
                             const long collocatedIndex = collocatedSegment->getGrid().getIndex(k, l, m);
@@ -95,7 +96,9 @@ void Ave::averageVariables(Context& context, long firstL, long lastL) {
 void Ave::averageFlags(Context& context, long firstL, long lastL) {
     context.getLogging()->progress("Averaging variable 'SYN_flags'...", getId());
     for (long l_prime = firstL + collocatedSegment->getGrid().getMinL(); l_prime <= lastL; l_prime++) {
-        context.getLogging()->progress("   ...averaging line " + lexical_cast<string>(l_prime), getId());
+        if(l_prime % 100 == 0) {
+            context.getLogging()->progress("   ...averaging line " + lexical_cast<string>(l_prime), getId());
+        }
         for (long k = averagedGrid->getFirstK(); k < averagedGrid->getFirstK() + averagedGrid->getSizeK(); k++) {
             for (long m_prime = averagedGrid->getFirstM(); m_prime < averagedGrid->getFirstM() + averagedGrid->getSizeM(); m_prime++) {
 
@@ -106,7 +109,7 @@ void Ave::averageFlags(Context& context, long firstL, long lastL) {
 
                 for(long l = l_prime * AVERAGING_FACTOR + minCollocatedL; l < (l_prime + 1) * AVERAGING_FACTOR + minCollocatedL; l++) {
                     for(long m = m_prime * AVERAGING_FACTOR; m < (m_prime + 1) * AVERAGING_FACTOR; m++) {
-                        if(IOUtils::isValidPosition(collocatedSegment->getGrid(), k, l, m)) {
+                        if(collocatedSegment->getGrid().isValidPosition(k, l, m)) {
                             const long collocatedIndex = collocatedSegment->getGrid().getIndex(k, l, m);
                             flags = synFlags->getUShort(collocatedIndex);
                             const bool isLand = (flags & 32) == 32;
