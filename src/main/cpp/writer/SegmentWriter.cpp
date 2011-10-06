@@ -43,16 +43,17 @@ void SegmentWriter::process(Context& context) {
 		    const vector<string> variableNames = segment.getVariableNames();
 		    foreach(const string varName, variableNames) {
 		        const string ncFileBasename = segment.getId();
-		        if (!contains(ncVarIdMap, varName)) {
-		            BOOST_THROW_EXCEPTION( logic_error("Unknown variable '" + varName + "'."));
+		        const string variableKey = segmentName + varName;
+		        if(!contains(ncVarIdMap, variableKey)) {
+		            continue;
 		        }
 		        if (!contains(ncFileIdMap, ncFileBasename)) {
-		            BOOST_THROW_EXCEPTION( logic_error("Unknown netCDF file '" + ncFileBasename + "'."));
+		            continue;
 		        }
 		        if (!contains(ncDimIdMap, ncFileBasename)) {
-		            BOOST_THROW_EXCEPTION( logic_error("Unknown netCDF file '" + ncFileBasename + "'."));
+		            continue;
 		        }
-		        const int varId = ncVarIdMap[varName];
+		        const int varId = ncVarIdMap[segmentName + varName];
 		        const int ncId = ncFileIdMap[ncFileBasename];
 		        const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
 		        const valarray<size_t> starts = IOUtils::createStartVector(dimIds.size(), firstL);
@@ -134,7 +135,8 @@ void SegmentWriter::createNcVar(const Segment& segment, const string& varName) {
 	const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
 	const Accessor& accessor = segment.getAccessor(varName);
 	const int varId = NetCDF::defineVariable(fileId, varName, accessor.getType(), dimIds);
-	ncVarIdMap[varName] = varId;
+	const string variableKey = segment.getId() + varName;
+	ncVarIdMap[variableKey] = varId;
 
 	const Attribute fillValue(accessor.getType(), "_FillValue", accessor.getFillValue());
 	NetCDF::putAttribute(fileId, varId, fillValue);
