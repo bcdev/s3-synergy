@@ -102,6 +102,8 @@ public:
 
 	void setFirstL(long l);
 
+	bool isValidPosition(long k, long l, long m) const;
+
 private:
 	long firstK;
 	long firstL;

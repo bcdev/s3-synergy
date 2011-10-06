@@ -107,15 +107,6 @@ public:
 		return defaultValue;
 	}
 
-	static bool isValidPosition(const Grid& grid, long k, long l, long m) {
-	    return (grid.getFirstK() <= k &&
-	            grid.getMaxK() >= k &&
-	            grid.getFirstL() <= l &&
-	            grid.getMaxL() >= l &&
-	            grid.getFirstM() <= m &&
-	            grid.getMaxM() >= m);
-	}
-
 };
 
 #endif	/* IOUTILS_H */

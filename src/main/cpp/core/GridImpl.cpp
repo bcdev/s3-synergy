@@ -85,3 +85,12 @@ size_t GridImpl::getIndex(long k, long l, long m) const throw (out_of_range) {
 	}
 	return (k - firstK) * strideK + (l - firstL) * strideL + (m - firstM) * strideM;
 }
+
+bool GridImpl::isValidPosition(long k, long l, long m) const {
+    return (getFirstK() <= k &&
+            getMaxK() >= k &&
+            getFirstL() <= l &&
+            getMaxL() >= l &&
+            getFirstM() <= m &&
+            getMaxM() >= m);
+}

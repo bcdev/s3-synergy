@@ -146,7 +146,9 @@ void Col::process(Context& context) {
             }
 
     for (long l = firstL; l <= lastL; l++) {
-        context.getLogging()->progress("Collocating line l = " + lexical_cast<string>(l) + " ...", getId());
+        if(l % 100 == 0) {
+            context.getLogging()->progress("Collocating line l = " + lexical_cast<string>(l) + " ...", getId());
+        }
 
         firstRequiredLMap[&olc] = olc.getGrid().getLastL() + 1;
         firstRequiredLMap[&sln] = sln.getGrid().getLastL() + 1;

@@ -55,18 +55,21 @@ const Accessor& Pcl::getSourceAccessor(Context& context, string variableName, st
 	const VariableDescriptor& variableDescriptor = sy1Descriptor.getSegmentDescriptor(sourceSegmentId).getVariableDescriptor(variableName);
 	const string& flagVariableName = variableDescriptor.getName();
 	const string& segmentName = Constants::SEGMENT_SYN_COLLOCATED;
+
+    shared_ptr<Dictionary> dictionary = context.getDictionary();
+    const ProductDescriptor& l2Descriptor = dictionary->getProductDescriptor(Constants::PRODUCT_SY2);
+    const VariableDescriptor& flagsDescriptor = l2Descriptor.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED).getVariableDescriptor("SYN_flags");
+    targetVariableName = flagsDescriptor.getName();
+    if(!collocatedSegment->hasVariable(targetVariableName)) {
+        collocatedSegment->addVariable(flagsDescriptor);
+    }
+
 	return context.getSegment(segmentName).getAccessor(flagVariableName);
 }
 
 void Pcl::process(Context& context) {
 	context.getLogging()->info("Setting flags for segment '" + collocatedSegment->toString() + "'.", getId());
-	boost::shared_ptr<Dictionary> dictionary = context.getDictionary();
-	const ProductDescriptor& l2Descriptor = dictionary->getProductDescriptor(Constants::PRODUCT_SY2);
-	const VariableDescriptor& flagsDescriptor = l2Descriptor.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED).getVariableDescriptor("SYN_flags");
-	const string targetVariableName = flagsDescriptor.getName();
-	if(!collocatedSegment->hasVariable(targetVariableName)) {
-	    collocatedSegment->addVariable(flagsDescriptor);
-	}
+
 	Accessor& targetAccessor = collocatedSegment->getAccessor(targetVariableName);
 
 	const valarray<uint32_t>& olcFlags = olcFlagsAccessor->getUIntData();

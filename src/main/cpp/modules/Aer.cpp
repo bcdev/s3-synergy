@@ -77,7 +77,7 @@ void Aer::process(Context& context) {
             const vector<long> jPrimeIndices = createIndices(p->m, N_b);
             foreach(long i_prime, iPrimeIndices) {
                 foreach(long j_prime, jPrimeIndices) {
-                    if (IOUtils::isValidPosition(*averagedGrid, k, i_prime, j_prime)) {
+                    if (averagedGrid->isValidPosition(k, i_prime, j_prime)) {
                         if (missingPixels.find(p) == missingPixels.end()) {
                             tau_550 += p->tau_550;
                             deltaTau_500 += p->deltaTau_550;
@@ -133,14 +133,22 @@ void Aer::aer_s(shared_ptr<Pixel> p) {
     p->alpha_550 = alpha550FillValue;
     p->M_a = aminFillValue;
     p->synFlags &= 3887;
-/*
-    const bool isPartlyCloudy = p->(synFlags & 256) == 256;
-    const bool isPartlyWater = p->(synFlags & 512) == 512;
 
-    if(!isPartlyCloudy && !isPartlyWater) {
-        p->E_2 = numeric_limits<double>::infinity();
+    const bool isPartlyCloudy = (p->synFlags & 256) == 256;
+    const bool isPartlyWater = (p->synFlags & 512) == 512;
+
+    if(isPartlyCloudy || isPartlyWater) {
+        return;
     }
-*/
+
+    p->E_2 = numeric_limits<double>::infinity();
+
+    vector<size_t> amins = getListOfAerosolModelIndexNumbers();
+    foreach(size_t amin, amins) {
+        Pixel q(*p);
+        initializeP(*p);
+//        q.E_2 = e2(q, amin);
+    }
 }
 
 void Aer::applyMedianFiltering(map<size_t, shared_ptr<Pixel> >& pixels) {
@@ -152,5 +160,14 @@ bool Aer::isMinimal(long a, long b) const {
 }
 
 void Aer::setPixelsToSegment(map<size_t, shared_ptr<Pixel> >& pixels) {
+
+}
+
+vector<size_t> Aer::getListOfAerosolModelIndexNumbers() {
+    vector<size_t> amins;
+    return amins;
+}
+
+void Aer::initializeP(Pixel& p) {
 
 }

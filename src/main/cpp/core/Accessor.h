@@ -21,6 +21,7 @@
 #ifndef ACCESSOR_H
 #define	ACCESSOR_H
 
+#include <string>
 #include <stdexcept>
 #include <typeinfo>
 #include <valarray>
@@ -29,6 +30,7 @@
 
 using std::bad_cast;
 using std::out_of_range;
+using std::string;
 using std::valarray;
 
 using boost::int8_t;
@@ -288,6 +290,8 @@ public:
 	virtual bool isFillValue(size_t i) const throw (out_of_range) = 0;
 
 	virtual void setFillValue(size_t i) throw (out_of_range) = 0;
+
+	virtual string getFillValue() const = 0;
 
 	virtual void shift(long n, long strideK, long strideL) = 0;
 };
