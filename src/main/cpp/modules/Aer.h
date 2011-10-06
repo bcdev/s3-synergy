@@ -58,6 +58,7 @@ public:
         c_2 = p.c_2;
         nu_1 = p.nu_1;
         nu_2 = p.nu_2;
+        // todo - turn into array
         omega_1 = p.omega_1;
         omega_2 = p.omega_2;
         omega_3 = p.omega_3;
@@ -71,6 +72,7 @@ public:
     }
 
     bool operator<(const Pixel& other) const {
+        // todo - use grid
         return l < other.l;
     }
 
