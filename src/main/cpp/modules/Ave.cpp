@@ -41,8 +41,12 @@ void Ave::stop(Context& context) {
 }
 
 void Ave::process(Context& context) {
-    const long firstL = (context.getFirstComputableL(*collocatedSegment, *this) - collocatedSegment->getGrid().getMinL()) / AVERAGING_FACTOR;
+    const long firstL = context.getFirstComputableL(*averagedSegment, *this);
     const long lastL = (context.getLastComputableL(*collocatedSegment, *this) - collocatedSegment->getGrid().getMinL() + 1) / AVERAGING_FACTOR - 1;
+
+    context.getLogging()->debug("Segment [" + averagedSegment->toString() + "]: firstComputableL = " + lexical_cast<string>(firstL), getId());
+    context.getLogging()->debug("Segment [" + averagedSegment->toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
+
     averageVariables(context, firstL, lastL);
     averageFlags(context, firstL, lastL);
     context.setLastComputedL(*averagedSegment, *this, lastL);
