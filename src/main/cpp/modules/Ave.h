@@ -38,13 +38,15 @@ private:
 
     const Grid* averagedGrid;
     const Segment* collocatedSegment;
+    const Accessor* synFlags;
+
     Segment* averagedSegment;
     vector<string> variables;
-    const Accessor* synFlags;
     Accessor* averagedSynFlags;
+    long minCollocatedL;
 
-    void ave_g(Context& context);
-    void ave_f(Context& context);
+    void averageVariables(Context& context, long firstL, long lastL);
+    void averageFlags(Context& context, long firstL, long lastL);
     bool isFillValue(const string& variableName, const long index) const;
     double getValue(const string& variableName, const long index) const;
     uint16_t getFlagFillValue(Context& context);
