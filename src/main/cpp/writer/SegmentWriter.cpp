@@ -77,14 +77,12 @@ void SegmentWriter::start(Context& context) {
 	const vector<string> segmentIds = context.getSegmentIds();
 
 	foreach(string segmentId, segmentIds) {
-	    if (context.hasSegment(segmentId)) {
-	        const Segment& segment = context.getSegment(segmentId);
-			const vector<string> variableNames = segment.getVariableNames();
+	    const Segment& segment = context.getSegment(segmentId);
+	    const vector<string> variableNames = segment.getVariableNames();
 
-			foreach(string variableName, variableNames) {
-			    context.getLogging()->info("Defining variable for " + variableName, getId());
-			    createNcVar(segment, variableName);
-			}
+	    foreach(string variableName, variableNames) {
+	        context.getLogging()->info("Defining variable for " + variableName, getId());
+	        createNcVar(segment, variableName);
 	    }
 	}
 

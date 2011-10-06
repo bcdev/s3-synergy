@@ -163,7 +163,7 @@ public:
 	 * @return A vector containing all segment ids.
 	 */
 	vector<string> getSegmentIds() const {
-		vector<string> ids(segmentList.size());
+		vector<string> ids;
 		foreach (shared_ptr<Segment> s, segmentList)
 				{
 					ids.push_back(s->getId());
