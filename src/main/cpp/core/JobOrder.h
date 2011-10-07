@@ -28,18 +28,18 @@
 class JobOrder {
 public:
 	JobOrder();
-    JobOrder(const IpfConfiguration& configuration, const vector<IpfProcessor>& ipfProcessors);
-    virtual ~JobOrder();
-    
-    const IpfConfiguration& getIpfConfiguration() const;
-    const vector<IpfProcessor>& getIpfProcessors() const;
-    const IpfProcessor& getIpfProcessor(const string& id) const;
+	JobOrder(const IpfConfiguration& configuration, const vector<IpfProcessor>& ipfProcessors);
+	virtual ~JobOrder();
 
-    void log(Logging& logging) const;
+	const IpfConfiguration& getIpfConfiguration() const;
+	const vector<IpfProcessor>& getIpfProcessors() const;
+	const IpfProcessor& getIpfProcessor(const string& id) const;
+
+	void log(Logging& logging) const;
 
 private:
-    IpfConfiguration ipfConfiguration;
-    vector<IpfProcessor> ipfProcessors;
+	IpfConfiguration ipfConfiguration;
+	vector<IpfProcessor> ipfProcessors;
 };
 
 #endif	/* JOBORDER_H */

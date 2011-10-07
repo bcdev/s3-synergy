@@ -151,14 +151,14 @@ double Ave::getValue(const string& variableName, const long index) const {
 }
 
 uint16_t Ave::getFlagFillValue(Context& context) {
-    const ProductDescriptor& pd = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2);
+    const ProductDescriptor& pd = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2);
     const SegmentDescriptor& sd = pd.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
     const VariableDescriptor& vd = sd.getVariableDescriptor("SYN_flags");
     return vd.getFillValue<uint16_t>();
 }
 
 void Ave::addFlagsVariable(Context& context) {
-    const ProductDescriptor& pd = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2);
+    const ProductDescriptor& pd = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2);
     const SegmentDescriptor& sd = pd.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
     const VariableDescriptor& vd = sd.getVariableDescriptor("SYN_flags");
     context.getLogging()->progress("Adding variable '" + vd.toString() + "' to segment '" + averagedSegment->toString() + "'.", getId());

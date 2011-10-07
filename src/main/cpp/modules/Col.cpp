@@ -31,7 +31,7 @@ void Col::start(Context& context) {
 void Col::addOlciVariables(Context& context) {
     const Segment& sourceSegment = context.getSegment(Constants::SEGMENT_OLC);
     Segment& targetSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-    const ProductDescriptor & sourceProductDescriptor = context.getDictionary()->getProductDescriptor("SY1");
+    const ProductDescriptor & sourceProductDescriptor = context.getDictionary().getProductDescriptor("SY1");
     // TODO - read mapping from auxiliary data
     const size_t channelMapping[18] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 21 };
     for (size_t i = 0; i < 18; i++) {
@@ -72,7 +72,7 @@ void Col::addSlstrVariables(Context& context) {
     const Segment& oblique = context.getSegment(Constants::SEGMENT_SLO);
     Segment& t = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 
-    const ProductDescriptor& sourceProductDescriptor = context.getDictionary()->getProductDescriptor("SY1");
+    const ProductDescriptor& sourceProductDescriptor = context.getDictionary().getProductDescriptor("SY1");
     for (size_t i = 1; i < 7; i++) {
         const string sourceName = "L_" + lexical_cast<string>(i);
         const string targetName = "L_" + lexical_cast<string>(i + 18);

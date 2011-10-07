@@ -33,7 +33,7 @@ void Pcl::start(Context& context) {
 
 void Pcl::setUpSegment(Context& context) {
     collocatedSegment = &(context.getSegment(Constants::SEGMENT_SYN_COLLOCATED));
-    const ProductDescriptor& productDescriptor = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2);
+    const ProductDescriptor& productDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2);
     const string variableName = "SYN_flags";
     const VariableDescriptor& synFlags = productDescriptor.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED).getVariableDescriptor(variableName);
     collocatedSegment->addVariable(synFlags);
@@ -51,13 +51,13 @@ void Pcl::stop(Context& context) {
 }
 
 const Accessor& Pcl::getSourceAccessor(Context& context, string variableName, string sourceSegmentId) {
-	const ProductDescriptor& sy1Descriptor = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY1);
+	const ProductDescriptor& sy1Descriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY1);
 	const VariableDescriptor& variableDescriptor = sy1Descriptor.getSegmentDescriptor(sourceSegmentId).getVariableDescriptor(variableName);
 	const string& flagVariableName = variableDescriptor.getName();
 	const string& segmentName = Constants::SEGMENT_SYN_COLLOCATED;
 
-    shared_ptr<Dictionary> dictionary = context.getDictionary();
-    const ProductDescriptor& l2Descriptor = dictionary->getProductDescriptor(Constants::PRODUCT_SY2);
+    Dictionary& dictionary = context.getDictionary();
+    const ProductDescriptor& l2Descriptor = dictionary.getProductDescriptor(Constants::PRODUCT_SY2);
     const VariableDescriptor& flagsDescriptor = l2Descriptor.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED).getVariableDescriptor("SYN_flags");
     targetVariableName = flagsDescriptor.getName();
     if(!collocatedSegment->hasVariable(targetVariableName)) {

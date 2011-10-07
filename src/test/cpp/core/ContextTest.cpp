@@ -39,8 +39,8 @@ void ContextTest::tearDown() {
 }
 
 void ContextTest::testInitialState() {
-	CPPUNIT_ASSERT(context->getDictionary() == 0);
-	CPPUNIT_ASSERT(context->getJobOrder() == 0);
+	CPPUNIT_ASSERT_THROW(context->getDictionary(), logic_error);
+	CPPUNIT_ASSERT_THROW(context->getJobOrder(), logic_error);
 	CPPUNIT_ASSERT(context->getLogging() != 0);
 	CPPUNIT_ASSERT(context->getModules().size() == 0);
 }
@@ -77,18 +77,18 @@ void ContextTest::testAddSegment() {
 }
 
 void ContextTest::testSetGetDictionary() {
-	CPPUNIT_ASSERT(context->getDictionary() == 0);
+	CPPUNIT_ASSERT_THROW(context->getDictionary(), logic_error);
 	shared_ptr<Dictionary> dictionary = shared_ptr<Dictionary>(
 			new Dictionary());
 	context->setDictionary(dictionary);
-	CPPUNIT_ASSERT(context->getDictionary() == dictionary);
+	CPPUNIT_ASSERT(&context->getDictionary() == dictionary.get());
 }
 
 void ContextTest::testSetGetJobOrder() {
-	CPPUNIT_ASSERT(context->getJobOrder() == 0);
+	CPPUNIT_ASSERT_THROW(context->getJobOrder(), logic_error);
 	shared_ptr<JobOrder> jobOrder = shared_ptr<JobOrder>(new JobOrder());
 	context->setJobOrder(jobOrder);
-	CPPUNIT_ASSERT(context->getJobOrder() == jobOrder);
+	CPPUNIT_ASSERT(&context->getJobOrder() == jobOrder.get());
 }
 
 void ContextTest::testGetUnknownObject() {

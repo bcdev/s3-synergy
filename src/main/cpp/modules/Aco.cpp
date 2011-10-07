@@ -32,7 +32,7 @@ void Aco::start(Context& context) {
 	addScalarLookupTable(context, "S3__SY_2_SYRTAX.nc", "C_O3");
 
 	Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-	const SegmentDescriptor& targetSegmentDescriptor = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
+	const SegmentDescriptor& targetSegmentDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
 	for (size_t i = 1; i <= 30; i++) {
 		addAccessor(context, collocatedSegment, targetSegmentDescriptor.getVariableDescriptor("SDR_" + lexical_cast<string>(i)));
 		addAccessor(context, collocatedSegment, targetSegmentDescriptor.getVariableDescriptor("SDR_" + lexical_cast<string>(i) + "_er"));

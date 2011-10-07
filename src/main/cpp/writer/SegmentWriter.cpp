@@ -68,7 +68,7 @@ void SegmentWriter::process(Context& context) {
 }
 
 void SegmentWriter::start(Context& context) {
-	targetDirPath = path(context.getJobOrder()->getIpfProcessors().at(0).getOutputList().at(0).getFileName());
+	targetDirPath = path(context.getJobOrder().getIpfProcessors().at(0).getOutputList().at(0).getFileName());
 	targetDirPath = targetDirPath.parent_path() / (targetDirPath.stem() + ".BREAKPOINT");
 	if (!targetDirPath.has_root_directory()) {
 		targetDirPath = getInstallationPath() / targetDirPath;

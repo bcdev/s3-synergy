@@ -35,16 +35,16 @@ SynL1Reader::~SynL1Reader() {
 
 void SynL1Reader::start(Context& context) {
 	segmentLineCount = 400;
-	const string segmentLineCountString = context.getJobOrder()->getIpfConfiguration().getDynamicProcessingParameter("Segment_Line_Count");
+	const string segmentLineCountString = context.getJobOrder().getIpfConfiguration().getDynamicProcessingParameter("Segment_Line_Count");
 	if (!segmentLineCountString.empty()) {
 		segmentLineCount = lexical_cast<long>(segmentLineCountString);
 	}
 	context.getLogging()->info("segment line count is " + lexical_cast<string>(segmentLineCount), getId());
 
-	const Dictionary& dict = *context.getDictionary();
+	const Dictionary& dict = context.getDictionary();
 	const vector<SegmentDescriptor*> segmentDescriptors = dict.getProductDescriptor(Constants::PRODUCT_SY1).getSegmentDescriptors();
 
-	sourceDirPath = path(context.getJobOrder()->getIpfProcessors().at(0).getInputList().at(0).getFileNames().at(0));
+	sourceDirPath = path(context.getJobOrder().getIpfProcessors().at(0).getInputList().at(0).getFileNames().at(0));
 	if (!sourceDirPath.has_root_directory()) {
 		sourceDirPath = getInstallationPath() / sourceDirPath;
 	}
@@ -135,7 +135,7 @@ void SynL1Reader::stop(Context& context) {
 }
 
 void SynL1Reader::process(Context& context) {
-	const Dictionary& dict = *context.getDictionary();
+	const Dictionary& dict = context.getDictionary();
 	const vector<SegmentDescriptor*> segmentDescriptors = dict.getProductDescriptor(Constants::PRODUCT_SY1).getSegmentDescriptors();
 
 	foreach(SegmentDescriptor* segmentDescriptor, segmentDescriptors)

@@ -647,7 +647,6 @@ public:
     bool hasProductDescriptor(const string& name) const {
         return hasElement(name);
     }
-
 };
 
 #endif	/* DICTIONARY_H */

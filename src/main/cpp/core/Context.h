@@ -99,8 +99,11 @@ public:
 	 * Returns the dictionary.
 	 * @return the dictionary.
 	 */
-	shared_ptr<Dictionary> getDictionary() const {
-		return dictionary;
+	Dictionary& getDictionary() const throw (logic_error) {
+		if (dictionary == 0) {
+			BOOST_THROW_EXCEPTION(logic_error("No dictionary set."));
+		}
+		return *dictionary;
 	}
 
 	/**
@@ -115,8 +118,11 @@ public:
 	 * Returns the job order.
 	 * @return the job order.
 	 */
-	shared_ptr<JobOrder> getJobOrder() const {
-		return jobOrder;
+	JobOrder& getJobOrder() const throw (logic_error) {
+		if (jobOrder == 0) {
+			BOOST_THROW_EXCEPTION(logic_error("No job order set."));
+		}
+		return *jobOrder;
 	}
 
 	/**
