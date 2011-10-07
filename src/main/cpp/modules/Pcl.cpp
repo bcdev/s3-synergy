@@ -37,7 +37,7 @@ void Pcl::setUpSegment(Context& context) {
     const string variableName = "SYN_flags";
     const VariableDescriptor& synFlags = productDescriptor.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED).getVariableDescriptor(variableName);
     collocatedSegment->addVariable(synFlags);
-	context.getLogging()->info("adding variable '" + variableName + "' to segment '" + collocatedSegment->getId() + "'.", getId());
+	context.getLogging().info("adding variable '" + variableName + "' to segment '" + collocatedSegment->getId() + "'.", getId());
 }
 
 void Pcl::setUpSourceAccessors(Context & context) {
@@ -68,7 +68,7 @@ const Accessor& Pcl::getSourceAccessor(Context& context, string variableName, st
 }
 
 void Pcl::process(Context& context) {
-	context.getLogging()->info("Setting flags for segment '" + collocatedSegment->toString() + "'.", getId());
+	context.getLogging().info("Setting flags for segment '" + collocatedSegment->toString() + "'.", getId());
 
 	Accessor& targetAccessor = collocatedSegment->getAccessor(targetVariableName);
 

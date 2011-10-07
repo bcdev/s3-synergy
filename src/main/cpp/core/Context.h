@@ -137,8 +137,11 @@ public:
 	 * Returns the logging.
 	 * @return the logging.
 	 */
-	shared_ptr<Logging> getLogging() const {
-		return logging;
+	Logging& getLogging() const throw (logic_error ){
+		if (logging == 0) {
+			BOOST_THROW_EXCEPTION(logic_error("No logging set."));
+		}
+		return *logging;
 	}
 
 	/**

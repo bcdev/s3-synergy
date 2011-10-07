@@ -41,7 +41,7 @@ void ContextTest::tearDown() {
 void ContextTest::testInitialState() {
 	CPPUNIT_ASSERT_THROW(context->getDictionary(), logic_error);
 	CPPUNIT_ASSERT_THROW(context->getJobOrder(), logic_error);
-	CPPUNIT_ASSERT(context->getLogging() != 0);
+	CPPUNIT_ASSERT_NO_THROW(context->getLogging());
 	CPPUNIT_ASSERT(context->getModules().size() == 0);
 }
 

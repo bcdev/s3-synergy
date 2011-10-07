@@ -39,7 +39,7 @@ void DummyDataSegmentProvider::start(Context& context) {
 	if (!segmentLineCountString.empty()) {
 		segmentLineCount = lexical_cast<size_t>(segmentLineCountString);
 	}
-	context.getLogging()->info("segment line count is " + lexical_cast<string>(segmentLineCount), getId());
+	context.getLogging().info("segment line count is " + lexical_cast<string>(segmentLineCount), getId());
 
 	vector<SegmentDescriptor*> segmentDescriptors = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptors();
 

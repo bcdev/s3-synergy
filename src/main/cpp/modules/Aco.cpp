@@ -115,7 +115,7 @@ void Aco::process(Context& context) {
 	const MatrixLookupTable<double>& lutRhoAtm = (MatrixLookupTable<double>&) context.getObject("rho_atm");
 	const ScalarLookupTable<double>& lutCO3 = (ScalarLookupTable<double>&) context.getObject("C_O3");
 
-	context.getLogging()->progress("Processing segment '" + collocatedSegment.toString() + "'", getId());
+	context.getLogging().progress("Processing segment '" + collocatedSegment.toString() + "'", getId());
 
 	// TODO - get from ECMWF tie points
 	const double no3 = 0.0;
@@ -126,9 +126,9 @@ void Aco::process(Context& context) {
 	const double tau550 = 0.1;
 
 	const long firstL = context.getFirstComputableL(collocatedSegment, *this);
-	context.getLogging()->debug("Segment [" + collocatedSegment.toString() + "]: firstComputableL = " + lexical_cast<string>(firstL), getId());
+	context.getLogging().debug("Segment [" + collocatedSegment.toString() + "]: firstComputableL = " + lexical_cast<string>(firstL), getId());
 	const long lastL = context.getLastComputableL(collocatedSegment, *this);
-	context.getLogging()->debug("Segment [" + collocatedSegment.toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
+	context.getLogging().debug("Segment [" + collocatedSegment.toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
 
 #pragma omp parallel for
 	for (long l = firstL; l <= lastL; l++) {
@@ -146,7 +146,7 @@ void Aco::process(Context& context) {
 		valarray<double> f(lutOlcRatm.getDimensionCount());
 		valarray<double> w(lutOlcRatm.getWorkspaceSize());
 
-		context.getLogging()->progress("Processing line l = " + lexical_cast<string>(l) + " ...", getId());
+		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l) + " ...", getId());
 
 		for (long k = colGrid.getFirstK(); k < colGrid.getFirstK() + colGrid.getSizeK(); k++) {
 			for (long m = colGrid.getFirstM(); m < colGrid.getFirstM() + colGrid.getSizeM(); m++) {
@@ -271,14 +271,14 @@ void Aco::process(Context& context) {
 }
 
 void Aco::addAccessor(Context& context, Segment& s, const VariableDescriptor& varDescriptor) const {
-	context.getLogging()->info("Adding accessor for " + varDescriptor.toString() + "to segment " + s.toString(), getId());
+	context.getLogging().info("Adding accessor for " + varDescriptor.toString() + "to segment " + s.toString(), getId());
 	s.addVariable(varDescriptor);
 }
 
 void Aco::addMatrixLookupTable(Context& context, const string& fileName, const string& varName) const {
 	if (!context.hasObject(varName)) {
 		const LookupTableReader reader(getAuxdataPath() + fileName);
-		context.getLogging()->info("Reading LUT '" + varName + "'", getId());
+		context.getLogging().info("Reading LUT '" + varName + "'", getId());
 		context.addObject(reader.readMatrixLookupTable<double>(varName));
 	}
 }
@@ -286,7 +286,7 @@ void Aco::addMatrixLookupTable(Context& context, const string& fileName, const s
 void Aco::addScalarLookupTable(Context& context, const string& fileName, const string& varName) const {
 	if (!context.hasObject(varName)) {
 		const LookupTableReader reader(getAuxdataPath() + fileName);
-		context.getLogging()->info("Reading LUT '" + varName + "'", getId());
+		context.getLogging().info("Reading LUT '" + varName + "'", getId());
 		context.addObject(reader.readScalarLookupTable<double>(varName));
 	}
 }

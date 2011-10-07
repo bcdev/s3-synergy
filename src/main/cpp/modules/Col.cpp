@@ -126,9 +126,9 @@ void Col::process(Context& context) {
     const Grid& targetGrid = t.getGrid();
 
     const long firstL = context.getFirstComputableL(t, *this);
-    context.getLogging()->debug("Segment [" + t.toString() + "]: firstComputableL = " + lexical_cast<string>(firstL), getId());
+    context.getLogging().debug("Segment [" + t.toString() + "]: firstComputableL = " + lexical_cast<string>(firstL), getId());
     long lastL = context.getLastComputableL(t, *this);
-    context.getLogging()->debug("Segment [" + t.toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
+    context.getLogging().debug("Segment [" + t.toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
 
     vector<Accessor*> sourceAccessors;
     vector<Accessor*> targetAccessors;
@@ -147,7 +147,7 @@ void Col::process(Context& context) {
 
     for (long l = firstL; l <= lastL; l++) {
         if(l % 100 == 0) {
-            context.getLogging()->progress("Collocating line l = " + lexical_cast<string>(l) + " ...", getId());
+            context.getLogging().progress("Collocating line l = " + lexical_cast<string>(l) + " ...", getId());
         }
 
         firstRequiredLMap[&olc] = olc.getGrid().getLastL() + 1;
@@ -266,7 +266,7 @@ void Col::process(Context& context) {
 void Col::addVariable(Context& context, Segment& t, const string& targetName, const Segment& s, const string& sourceName, const ProductDescriptor& p) {
 
     const VariableDescriptor& v = p.getSegmentDescriptor(s.getId()).getVariableDescriptor(sourceName);
-    context.getLogging()->progress("Adding variable '" + v.toString() + "' to segment '" + t.getId() + "'", getId());
+    context.getLogging().progress("Adding variable '" + v.toString() + "' to segment '" + t.getId() + "'", getId());
     t.addVariable(v, targetName);
     sourceNameMap[targetName] = sourceName;
     sourceSegmentMap[targetName] = &s;
@@ -274,6 +274,6 @@ void Col::addVariable(Context& context, Segment& t, const string& targetName, co
 }
 
 void Col::addVariableAlias(Context& context, Segment& t, const string& targetName, const Segment& s, const string& sourceName) const {
-    context.getLogging()->progress("Adding alias '" + targetName + "' to segment '" + t.getId() + "'", getId());
+    context.getLogging().progress("Adding alias '" + targetName + "' to segment '" + t.getId() + "'", getId());
     t.addVariableAlias(targetName, s, sourceName);
 }

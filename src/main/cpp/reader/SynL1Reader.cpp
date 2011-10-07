@@ -39,7 +39,7 @@ void SynL1Reader::start(Context& context) {
 	if (!segmentLineCountString.empty()) {
 		segmentLineCount = lexical_cast<long>(segmentLineCountString);
 	}
-	context.getLogging()->info("segment line count is " + lexical_cast<string>(segmentLineCount), getId());
+	context.getLogging().info("segment line count is " + lexical_cast<string>(segmentLineCount), getId());
 
 	const Dictionary& dict = context.getDictionary();
 	const vector<SegmentDescriptor*> segmentDescriptors = dict.getProductDescriptor(Constants::PRODUCT_SY1).getSegmentDescriptors();
@@ -48,7 +48,7 @@ void SynL1Reader::start(Context& context) {
 	if (!sourceDirPath.has_root_directory()) {
 		sourceDirPath = getInstallationPath() / sourceDirPath;
 	}
-	context.getLogging()->info("source product path is '" + sourceDirPath.string() + "'", getId());
+	context.getLogging().info("source product path is '" + sourceDirPath.string() + "'", getId());
 
 	foreach(SegmentDescriptor* segmentDescriptor, segmentDescriptors)
 			{
@@ -99,7 +99,7 @@ void SynL1Reader::start(Context& context) {
 							// Create a new segment, if necessary
 							if (!context.hasSegment(segmentName)) {
 								const long sizeL = rowCount > 64 ? min(segmentLineCount, rowCount) : rowCount;
-								context.getLogging()->info("Adding segment '" + segmentName + "' to context", getId());
+								context.getLogging().info("Adding segment '" + segmentName + "' to context", getId());
 								context.addSegment(segmentName, sizeL, colCount, camCount, 0, rowCount - 1);
 							}
 
@@ -110,12 +110,12 @@ void SynL1Reader::start(Context& context) {
 							for (size_t i = 0; i < attrCount; i++) {
 								const string attrName = NetCDF::getAttributeName(fileId, varId, i);
 								const Attribute attr = NetCDF::getAttribute(fileId, varId, attrName);
-								context.getLogging()->info("Adding attribute '" + attr.toString() + "' to variable '" + varName + "'", getId());
+								context.getLogging().info("Adding attribute '" + attr.toString() + "' to variable '" + varName + "'", getId());
 								variableDescriptor->addAttribute(attr);
 							}
 							// Add variable to segment
 							Segment& segment = context.getSegment(segmentName);
-							context.getLogging()->info("Adding accessor for " + variableDescriptor->toString() + " to segment " + segment.toString(), getId());
+							context.getLogging().info("Adding accessor for " + variableDescriptor->toString() + " to segment " + segment.toString(), getId());
 							segment.addVariable(*variableDescriptor);
 							ncVarIdMap[varName] = varId;
 						}
@@ -127,7 +127,7 @@ void SynL1Reader::stop(Context& context) {
 
 	foreach(fileIdPair, ncFileIdMap)
 			{
-				context.getLogging()->info("Closing netCDF file '" + fileIdPair.first + ".nc'", getId());
+				context.getLogging().info("Closing netCDF file '" + fileIdPair.first + ".nc'", getId());
 				NetCDF::closeFile(fileIdPair.second);
 			}
 	ncVarIdMap.clear();
@@ -145,9 +145,9 @@ void SynL1Reader::process(Context& context) {
 				if (!context.hasLastComputedL(segment, *this) || context.getLastComputedL(segment, *this) < grid.getFirstL() + grid.getSizeL() - 1) {
 					const vector<VariableDescriptor*> variableDescriptors = segmentDescriptor->getVariableDescriptors();
 					const long firstL = segment.getGrid().getFirstL();
-					context.getLogging()->debug("Segment [" + segment.toString() + "]: firstL = " + lexical_cast<string>(firstL), getId());
+					context.getLogging().debug("Segment [" + segment.toString() + "]: firstL = " + lexical_cast<string>(firstL), getId());
 					const long lastL = segment.getGrid().getLastL();
-					context.getLogging()->debug("Segment [" + segment.toString() + "]: lastL = " + lexical_cast<string>(lastL), getId());
+					context.getLogging().debug("Segment [" + segment.toString() + "]: lastL = " + lexical_cast<string>(lastL), getId());
 
 					foreach(VariableDescriptor* variableDescriptor, variableDescriptors)
 							{
@@ -165,7 +165,7 @@ void SynL1Reader::process(Context& context) {
 								const size_t dimCount = variableDescriptor->getDimensions().size();
 								const valarray<size_t> starts = IOUtils::createStartVector(dimCount, firstL);
 								const valarray<size_t> counts = IOUtils::createCountVector(dimCount, grid.getSizeK(), lastL - firstL + 1, grid.getSizeM());
-								context.getLogging()->progress("Reading variable '" + varName + "' into segment " + segment.toString(), getId());
+								context.getLogging().progress("Reading variable '" + varName + "' into segment " + segment.toString(), getId());
 								const Accessor& accessor = segment.getAccessor(varName);
 								NetCDF::getVariableData(fileId, varId, starts, counts, accessor.getUntypedData());
 							}

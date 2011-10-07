@@ -41,9 +41,9 @@ void SynL2Writer::process(Context& context) {
 					const Grid& grid = segment.getGrid();
 					const vector<VariableDescriptor*> variableDescriptors = segmentDescriptor->getVariableDescriptors();
 					const long firstL = segment.getGrid().getFirstL();
-					context.getLogging()->debug("Segment [" + segment.toString() + "]: firstL = " + lexical_cast<string>(firstL), getId());
+					context.getLogging().debug("Segment [" + segment.toString() + "]: firstL = " + lexical_cast<string>(firstL), getId());
 					const long lastL = segment.getGrid().getLastL();
-					context.getLogging()->debug("Segment [" + segment.toString() + "]: lastL = " + lexical_cast<string>(lastL), getId());
+					context.getLogging().debug("Segment [" + segment.toString() + "]: lastL = " + lexical_cast<string>(lastL), getId());
 
 					if (firstL <= lastL) {
 						foreach(const VariableDescriptor* variableDescriptor, variableDescriptors)
@@ -65,7 +65,7 @@ void SynL2Writer::process(Context& context) {
 										const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
 										const valarray<size_t> starts = IOUtils::createStartVector(dimIds.size(), firstL);
 										const valarray<size_t> sizes = IOUtils::createCountVector(dimIds.size(), grid.getSizeK(), lastL - firstL + 1, grid.getSizeM());
-										context.getLogging()->progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
+										context.getLogging().progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
 										const Accessor& accessor = segment.getAccessor(varName);
 										NetCDF::putData(ncId, varId, starts, sizes, accessor.getUntypedData());
 									}
@@ -81,7 +81,7 @@ void SynL2Writer::start(Context& context) {
 	if (!targetDirPath.has_root_directory()) {
 		targetDirPath = getInstallationPath() / targetDirPath;
 	}
-	context.getLogging()->info("target product path is '" + targetDirPath.string() + "'", getId());
+	context.getLogging().info("target product path is '" + targetDirPath.string() + "'", getId());
 
 	const ProductDescriptor& productDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2);
 	const vector<SegmentDescriptor*> segmentDescriptors = productDescriptor.getSegmentDescriptors();
@@ -95,7 +95,7 @@ void SynL2Writer::start(Context& context) {
 
 					foreach(VariableDescriptor* variableDescriptor, variableDescriptors)
 							{
-								context.getLogging()->info("Defining variable for " + variableDescriptor->toString(), getId());
+								context.getLogging().info("Defining variable for " + variableDescriptor->toString(), getId());
 								createNcVar(productDescriptor, *segmentDescriptor, *variableDescriptor, segment.getGrid());
 							}
 				}
