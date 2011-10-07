@@ -66,7 +66,7 @@ void ColTest::testAddSlstrVariables() {
     Segment& collocatedSegment = context->addSegment(Constants::SEGMENT_SYN_COLLOCATED, 10, 10, 5, 0, 9);
 
 	// setting dummy type; this is done by reader normally, but not in test
-    ProductDescriptor& pd = context->getDictionary()->getProductDescriptor("SY1");
+    ProductDescriptor& pd = context->getDictionary().getProductDescriptor("SY1");
     foreach(SegmentDescriptor* sd, pd.getSegmentDescriptors()) {
         foreach(VariableDescriptor* vd, sd->getVariableDescriptors()) {
             vd->setType(7);
@@ -93,7 +93,7 @@ void ColTest::testAddOlciVariables() {
     Segment& olciSegment = context->addSegment(Constants::SEGMENT_OLC, 10, 10, 5, 0, 9);
     Segment& collocatedSegment = context->addSegment(Constants::SEGMENT_SYN_COLLOCATED, 10, 10, 5, 0, 9);
     // setting dummy type; this is done by reader normally, but not in test
-    ProductDescriptor& pd = context->getDictionary()->getProductDescriptor("SY1");
+    ProductDescriptor& pd = context->getDictionary().getProductDescriptor("SY1");
     foreach(SegmentDescriptor* sd, pd.getSegmentDescriptors()) {
         foreach(VariableDescriptor* vd, sd->getVariableDescriptors()) {
             vd->setType(7);

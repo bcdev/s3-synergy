@@ -48,8 +48,8 @@ void Ave::process(Context& context) {
         lastL--;
     }
 
-    context.getLogging()->debug("Segment [" + averagedSegment->toString() + "]: firstComputableL = " + lexical_cast<string>(firstL), getId());
-    context.getLogging()->debug("Segment [" + averagedSegment->toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
+    context.getLogging().debug("Segment [" + averagedSegment->toString() + "]: firstComputableL = " + lexical_cast<string>(firstL), getId());
+    context.getLogging().debug("Segment [" + averagedSegment->toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
 
     averageVariables(context, firstL, lastL);
     averageFlags(context, firstL, lastL);
@@ -59,10 +59,10 @@ void Ave::process(Context& context) {
 
 void Ave::averageVariables(Context& context, long firstL, long lastL) {
     foreach(string& varName, variables) {
-        context.getLogging()->progress("Averaging variable '" + varName + "'...", getId());
+        context.getLogging().progress("Averaging variable '" + varName + "'...", getId());
         for (long l_prime = firstL; l_prime <= lastL; l_prime++) {
             if(l_prime % 100 == 0) {
-                context.getLogging()->progress("   ...averaging line " + lexical_cast<string>(l_prime), getId());
+                context.getLogging().progress("   ...averaging line " + lexical_cast<string>(l_prime), getId());
             }
             for (long k = averagedGrid->getFirstK(); k < averagedGrid->getFirstK() + averagedGrid->getSizeK(); k++) {
                 for (long m_prime = averagedGrid->getFirstM(); m_prime < averagedGrid->getFirstM() + averagedGrid->getSizeM(); m_prime++) {
@@ -102,10 +102,10 @@ void Ave::averageVariables(Context& context, long firstL, long lastL) {
 }
 
 void Ave::averageFlags(Context& context, long firstL, long lastL) {
-    context.getLogging()->progress("Averaging variable 'SYN_flags'...", getId());
+    context.getLogging().progress("Averaging variable 'SYN_flags'...", getId());
     for (long l_prime = firstL + collocatedSegment->getGrid().getMinL(); l_prime <= lastL; l_prime++) {
         if(l_prime % 100 == 0) {
-            context.getLogging()->progress("   ...averaging line " + lexical_cast<string>(l_prime), getId());
+            context.getLogging().progress("   ...averaging line " + lexical_cast<string>(l_prime), getId());
         }
         for (long k = averagedGrid->getFirstK(); k < averagedGrid->getFirstK() + averagedGrid->getSizeK(); k++) {
             for (long m_prime = averagedGrid->getFirstM(); m_prime < averagedGrid->getFirstM() + averagedGrid->getSizeM(); m_prime++) {
@@ -151,17 +151,17 @@ double Ave::getValue(const string& variableName, const long index) const {
 }
 
 uint16_t Ave::getFlagFillValue(Context& context) {
-    const ProductDescriptor& pd = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2);
+    const ProductDescriptor& pd = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2);
     const SegmentDescriptor& sd = pd.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
     const VariableDescriptor& vd = sd.getVariableDescriptor("SYN_flags");
     return vd.getFillValue<uint16_t>();
 }
 
 void Ave::addFlagsVariable(Context& context) {
-    const ProductDescriptor& pd = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2);
+    const ProductDescriptor& pd = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2);
     const SegmentDescriptor& sd = pd.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
     const VariableDescriptor& vd = sd.getVariableDescriptor("SYN_flags");
-    context.getLogging()->progress("Adding variable '" + vd.toString() + "' to segment '" + averagedSegment->toString() + "'.", getId());
+    context.getLogging().progress("Adding variable '" + vd.toString() + "' to segment '" + averagedSegment->toString() + "'.", getId());
     averagedSegment->addVariable(vd);
     averagedSynFlags = &averagedSegment->getAccessor("SYN_flags");
 }
@@ -177,7 +177,7 @@ void Ave::setupVariables(Context& context) {
     }
     variables = result;
     foreach(string varName, variables) {
-        context.getLogging()->progress("Adding variable '" + varName + "' to segment '" + averagedSegment->toString() + "'.", getId());
+        context.getLogging().progress("Adding variable '" + varName + "' to segment '" + averagedSegment->toString() + "'.", getId());
         const Accessor& accessor = collocatedSegment->getAccessor(varName);
         averagedSegment->addVariable(varName, accessor.getType(), accessor.getScaleFactor(), accessor.getAddOffset());
     }

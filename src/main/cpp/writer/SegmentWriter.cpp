@@ -35,9 +35,9 @@ void SegmentWriter::process(Context& context) {
 	    const Segment& segment = context.getSegment(segmentName);
 		const Grid& grid = segment.getGrid();
 		const long firstL = segment.getGrid().getFirstL();
-		context.getLogging()->debug("Segment [" + segment.toString() + "]: firstL = " + lexical_cast<string>(firstL), getId());
+		context.getLogging().debug("Segment [" + segment.toString() + "]: firstL = " + lexical_cast<string>(firstL), getId());
 		const long lastL = segment.getGrid().getLastL();
-		context.getLogging()->debug("Segment [" + segment.toString() + "]: lastL = " + lexical_cast<string>(lastL), getId());
+		context.getLogging().debug("Segment [" + segment.toString() + "]: lastL = " + lexical_cast<string>(lastL), getId());
 
 		if (firstL <= lastL) {
 		    const vector<string> variableNames = segment.getVariableNames();
@@ -58,7 +58,7 @@ void SegmentWriter::process(Context& context) {
 		        const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
 		        const valarray<size_t> starts = IOUtils::createStartVector(dimIds.size(), firstL);
 		        const valarray<size_t> sizes = IOUtils::createCountVector(dimIds.size(), grid.getSizeK(), lastL - firstL + 1, grid.getSizeM());
-		        context.getLogging()->progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
+		        context.getLogging().progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
 		        const Accessor& accessor = segment.getAccessor(varName);
 		        NetCDF::putData(ncId, varId, starts, sizes, accessor.getUntypedData());
 		    }
@@ -68,12 +68,12 @@ void SegmentWriter::process(Context& context) {
 }
 
 void SegmentWriter::start(Context& context) {
-	targetDirPath = path(context.getJobOrder()->getIpfProcessors().at(0).getOutputList().at(0).getFileName());
+	targetDirPath = path(context.getJobOrder().getIpfProcessors().at(0).getOutputList().at(0).getFileName());
 	targetDirPath = targetDirPath.parent_path() / (targetDirPath.stem() + ".BREAKPOINT");
 	if (!targetDirPath.has_root_directory()) {
 		targetDirPath = getInstallationPath() / targetDirPath;
 	}
-	context.getLogging()->info("target product path is '" + targetDirPath.string() + "'", getId());
+	context.getLogging().info("target product path is '" + targetDirPath.string() + "'", getId());
 
 	const vector<string> segmentIds = context.getSegmentIds();
 
@@ -82,7 +82,7 @@ void SegmentWriter::start(Context& context) {
 	    const vector<string> variableNames = segment.getVariableNames();
 
 	    foreach(string variableName, variableNames) {
-	        context.getLogging()->info("Defining variable for " + variableName, getId());
+	        context.getLogging().info("Defining variable for " + variableName, getId());
 	        createNcVar(segment, variableName);
 	    }
 	}

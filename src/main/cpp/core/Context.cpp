@@ -160,7 +160,7 @@ void Context::moveForward(shared_ptr<Segment> segment) const {
 	if (l + segment->getGrid().getSizeL() - 1 > segment->getGrid().getMaxL()) {
 		l = segment->getGrid().getMaxL() - segment->getGrid().getSizeL() + 1;
 	}
-	getLogging()->debug("Moving segment [" + segment->toString() + "] forward to line " + lexical_cast<string>(l), "Context");
+	getLogging().debug("Moving segment [" + segment->toString() + "] forward to line " + lexical_cast<string>(l), "Context");
 	segment->moveForward(l);
 }
 
@@ -213,7 +213,7 @@ void Context::setFirstRequiredL(const Segment& segment, const Module& module, lo
 	if (!contains(moduleList, module)) {
 		BOOST_THROW_EXCEPTION( invalid_argument("Unknown module '" + module.getId() + "'."));
 	}
-	getLogging()->debug("Segment " + segment.toString() + ": first required L = " + lexical_cast<string>(l), module.getId());
+	getLogging().debug("Segment " + segment.toString() + ": first required L = " + lexical_cast<string>(l), module.getId());
 	firstRequiredLMap[&segment][&module] = l;
 }
 
@@ -227,7 +227,7 @@ void Context::setLastComputedL(const Segment& segment, const Module& module, lon
 	if ((hasLastComputedL(segment, module) && l < getLastComputedL(segment, module)) || l > segment.getGrid().getMaxL()) {
 		BOOST_THROW_EXCEPTION( invalid_argument("Invalid row index l = " + lexical_cast<string > (l)));
 	}
-	getLogging()->debug("Segment " + segment.toString() + ": last computed L = " + lexical_cast<string>(l), module.getId());
+	getLogging().debug("Segment " + segment.toString() + ": last computed L = " + lexical_cast<string>(l), module.getId());
 	lastComputedLMap[&segment][&module] = l;
 }
 

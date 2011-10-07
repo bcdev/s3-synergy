@@ -25,7 +25,7 @@ Aer::~Aer() {
 void Aer::start(Context& context) {
     averagedSegment = &context.getSegment(Constants::SEGMENT_SYN_AVERAGED);
     averagedGrid = &averagedSegment->getGrid();
-    const ProductDescriptor& synL2Descriptor = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2);
+    const ProductDescriptor& synL2Descriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2);
     const SegmentDescriptor& synCollocatedDescriptor = synL2Descriptor.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
     const VariableDescriptor& aminDescriptor = synCollocatedDescriptor.getVariableDescriptor("AMIN");
     aminFillValue = aminDescriptor.getFillValue<uint8_t>();

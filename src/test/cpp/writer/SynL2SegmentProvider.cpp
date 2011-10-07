@@ -35,13 +35,13 @@ SynL2SegmentProvider::~SynL2SegmentProvider() {
 
 void SynL2SegmentProvider::start(Context& context) {
 	size_t segmentLineCount = 400;
-	const string segmentLineCountString = context.getJobOrder()->getIpfConfiguration().getDynamicProcessingParameter("Segment_Line_Count");
+	const string segmentLineCountString = context.getJobOrder().getIpfConfiguration().getDynamicProcessingParameter("Segment_Line_Count");
 	if (!segmentLineCountString.empty()) {
 		segmentLineCount = lexical_cast<size_t>(segmentLineCountString);
 	}
-	context.getLogging()->info("segment line count is " + lexical_cast<string>(segmentLineCount), getId());
+	context.getLogging().info("segment line count is " + lexical_cast<string>(segmentLineCount), getId());
 
-	vector<SegmentDescriptor*> segmentDescriptors = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptors();
+	vector<SegmentDescriptor*> segmentDescriptors = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptors();
 
 	foreach(SegmentDescriptor* segDesc, segmentDescriptors)
 			{
@@ -70,7 +70,7 @@ void SynL2SegmentProvider::stop(Context& context) {
 }
 
 void SynL2SegmentProvider::process(Context& context) {
-	vector<SegmentDescriptor*> segmentDescriptors = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptors();
+	vector<SegmentDescriptor*> segmentDescriptors = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptors();
 	foreach(SegmentDescriptor* segDesc, segmentDescriptors)
 			{
 				Segment& segment = context.getSegment(segDesc->getName());

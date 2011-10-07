@@ -53,7 +53,7 @@ void ErrorHandler::handleError(Context& context, exception& e) const {
 	const string errorMessage = createMessage(moduleName, methodName, className,
 			functionName, lineNumber, exceptionMessage);
 
-	context.getLogging()->error(errorMessage, moduleName);
+	context.getLogging().error(errorMessage, moduleName);
 
 	exit(exitCode);
 }
