@@ -31,11 +31,11 @@ void Aco::start(Context& context) {
 	addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "rho_atm");
 	addScalarLookupTable(context, "S3__SY_2_SYRTAX.nc", "C_O3");
 
-	Segment& targetSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+	Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 	const SegmentDescriptor& targetSegmentDescriptor = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
 	for (size_t i = 1; i <= 30; i++) {
-		addAccessor(context, targetSegment, targetSegmentDescriptor.getVariableDescriptor("SDR_" + lexical_cast<string>(i)));
-		addAccessor(context, targetSegment, targetSegmentDescriptor.getVariableDescriptor("SDR_" + lexical_cast<string>(i) + "_er"));
+		addAccessor(context, collocatedSegment, targetSegmentDescriptor.getVariableDescriptor("SDR_" + lexical_cast<string>(i)));
+		addAccessor(context, collocatedSegment, targetSegmentDescriptor.getVariableDescriptor("SDR_" + lexical_cast<string>(i) + "_er"));
 	}
 }
 
@@ -78,34 +78,34 @@ void Aco::process(Context& context) {
 	const TiePointInterpolator<double> tpiSln = TiePointInterpolator<double>(tpLonsSln, tpLatsSln);
 	const TiePointInterpolator<double> tpiSlo = TiePointInterpolator<double>(tpLonsSlo, tpLatsSlo);
 
-	const Segment& col = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-	const Segment& olcInfo = context.getSegment(Constants::SEGMENT_OLC_INFO);
-	const Segment& slnInfo = context.getSegment(Constants::SEGMENT_SLN_INFO);
+	const Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+	const Segment& olcInfoSegment = context.getSegment(Constants::SEGMENT_OLC_INFO);
+	const Segment& slnInfoSegment = context.getSegment(Constants::SEGMENT_SLN_INFO);
 
 	vector<Accessor*> lToas;
 	for (size_t i = 1; i <= 30; i++) {
-		lToas.push_back(&col.getAccessor("L_" + lexical_cast<string>(i)));
+		lToas.push_back(&collocatedSegment.getAccessor("L_" + lexical_cast<string>(i)));
 	}
-	const Accessor& lat = col.getAccessor("latitude");
-	const Accessor& lon = col.getAccessor("longitude");
-	const Accessor& solarIrradianceOlc = olcInfo.getAccessor("solar_irradiance");
+	const Accessor& lat = collocatedSegment.getAccessor("latitude");
+	const Accessor& lon = collocatedSegment.getAccessor("longitude");
+	const Accessor& solarIrradianceOlc = olcInfoSegment.getAccessor("solar_irradiance");
 
 	vector<Accessor*> solarIrradianceSln;
 	for (size_t i = 1; i <= 6; i++) {
-		solarIrradianceSln.push_back(&slnInfo.getAccessor("solar_irradiance_" + lexical_cast<string>(i)));
+		solarIrradianceSln.push_back(&slnInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(i)));
 	}
 
-	const Grid& olcInfoGrid = olcInfo.getGrid();
-	const Grid& slnInfoGrid = slnInfo.getGrid();
-	const Grid& colGrid = col.getGrid();
+	const Grid& olcInfoGrid = olcInfoSegment.getGrid();
+	const Grid& slnInfoGrid = slnInfoSegment.getGrid();
+	const Grid& colGrid = collocatedSegment.getGrid();
 
 	vector<Accessor*> sdr;
 	for (size_t i = 1; i <= 30; i++) {
-		sdr.push_back(&col.getAccessor("SDR_" + lexical_cast<string>(i)));
+		sdr.push_back(&collocatedSegment.getAccessor("SDR_" + lexical_cast<string>(i)));
 	}
 	vector<Accessor*> err;
 	for (size_t i = 1; i <= 30; i++) {
-		err.push_back(&col.getAccessor("SDR_" + lexical_cast<string>(i) + "_er"));
+		err.push_back(&collocatedSegment.getAccessor("SDR_" + lexical_cast<string>(i) + "_er"));
 	}
 
 	const MatrixLookupTable<double>& lutOlcRatm = (MatrixLookupTable<double>&) context.getObject("OLC_R_atm");
@@ -115,7 +115,7 @@ void Aco::process(Context& context) {
 	const MatrixLookupTable<double>& lutRhoAtm = (MatrixLookupTable<double>&) context.getObject("rho_atm");
 	const ScalarLookupTable<double>& lutCO3 = (ScalarLookupTable<double>&) context.getObject("C_O3");
 
-	context.getLogging()->progress("Processing segment '" + col.toString() + "'", getId());
+	context.getLogging()->progress("Processing segment '" + collocatedSegment.toString() + "'", getId());
 
 	// TODO - get from ECMWF tie points
 	const double no3 = 0.0;
@@ -125,10 +125,10 @@ void Aco::process(Context& context) {
 	// TODO - get from segment data
 	const double tau550 = 0.1;
 
-	const long firstL = context.getFirstComputableL(col, *this);
-	context.getLogging()->debug("Segment [" + col.toString() + "]: firstComputableL = " + lexical_cast<string>(firstL), getId());
-	const long lastL = context.getLastComputableL(col, *this);
-	context.getLogging()->debug("Segment [" + col.toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
+	const long firstL = context.getFirstComputableL(collocatedSegment, *this);
+	context.getLogging()->debug("Segment [" + collocatedSegment.toString() + "]: firstComputableL = " + lexical_cast<string>(firstL), getId());
+	const long lastL = context.getLastComputableL(collocatedSegment, *this);
+	context.getLogging()->debug("Segment [" + collocatedSegment.toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
 
 #pragma omp parallel for
 	for (long l = firstL; l <= lastL; l++) {
@@ -151,6 +151,8 @@ void Aco::process(Context& context) {
 		for (long k = colGrid.getFirstK(); k < colGrid.getFirstK() + colGrid.getSizeK(); k++) {
 			for (long m = colGrid.getFirstM(); m < colGrid.getFirstM() + colGrid.getSizeM(); m++) {
 				const size_t i = colGrid.getIndex(k, l, m);
+
+				// TODO: consider flags
 
 				tpiOlc.prepare(lon.getDouble(i), lat.getDouble(i), tpiWeights, tpiIndexes);
 
@@ -198,8 +200,17 @@ void Aco::process(Context& context) {
 					const double f = (rtoa - to3 * ratm) / (to3 * ts * tv);
 					const double rsurf = f / (1.0 + rho * f);
 
-					sdr[b]->setDouble(i, rsurf);
-					err[b]->setDouble(i, rtoa);
+					if (rsurf >= 0.0 && rsurf <= 1.0) {
+						sdr[b]->setDouble(i, rsurf);
+					} else {
+						sdr[b]->setFillValue(i);
+					}
+					// TODO: compute errors
+					if (rtoa >= 0.0 && rtoa <= 1.0) {
+						err[b]->setDouble(i, rtoa);
+					} else {
+						err[b]->setFillValue(i);
+					}
 				}
 
 				tpiSln.prepare(lon.getDouble(i), lat.getDouble(i), tpiWeights, tpiIndexes);
@@ -244,6 +255,7 @@ void Aco::process(Context& context) {
 					} else {
 						sdr[b]->setFillValue(i);
 					}
+					// TODO: compute errors
 					if (rtoa >= 0.0 && rtoa <= 1.0) {
 						err[b]->setDouble(i, rtoa);
 					} else {
@@ -255,7 +267,7 @@ void Aco::process(Context& context) {
 			// TODO: SLO channels
 		}
 	}
-	context.setLastComputedL(col, *this, lastL);
+	context.setLastComputedL(collocatedSegment, *this, lastL);
 }
 
 void Aco::addAccessor(Context& context, Segment& s, const VariableDescriptor& varDescriptor) const {
