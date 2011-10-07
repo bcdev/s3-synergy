@@ -9,10 +9,11 @@
 #define AER_H_
 
 #include "../core/BasicModule.h"
+#include "../util/Pixel.h"
 
 using std::copy;
 
-class Pixel;
+class AerPixel;
 
 class Aer : public BasicModule {
 public:
@@ -32,49 +33,77 @@ private:
     int16_t deltaTau550FillValue;
     uint8_t alpha550FillValue;
 
-    shared_ptr<Pixel> initPixel(long k, long l, long m) const;
+    shared_ptr<AerPixel> initPixel(long k, long l, long m) const;
     const vector<long> createIndices(long base, long bound) const;
-    void aer_s(shared_ptr<Pixel> p);
+    void aer_s(shared_ptr<AerPixel> p);
     bool isMinimal(long a, long b) const;
-    void applyMedianFiltering(map<size_t, shared_ptr<Pixel> >& pixels);
-    void setPixelsToSegment(map<size_t, shared_ptr<Pixel> >& pixels);
+    void applyMedianFiltering(map<size_t, shared_ptr<AerPixel> >& pixels);
+    void setPixelsToSegment(map<size_t, shared_ptr<AerPixel> >& pixels);
     vector<size_t> getListOfAerosolModelIndexNumbers();
-    void initializeP(Pixel& p);
+    void initializeP(AerPixel& p);
 };
 
-class Pixel {
-
+class AerPixel : public Pixel {
 public:
-    Pixel(const Grid& grid) : grid(grid) {
+
+    AerPixel(Segment& segment, long k, long l, long m) : Pixel(segment, k, l, m) {
+
     }
 
-    Pixel(const Pixel& p) : grid(p.grid) {
-        synFlags = p.synFlags;
-        tau_550 = p.tau_550;
-        deltaTau_550 = p.deltaTau_550;
-        alpha_550 = p.alpha_550;
-        M_a = p.M_a;
+    AerPixel(const AerPixel& p) : Pixel(p) {
+        setSynFlags(p.getSynFlags());
+        setTau550(p.getTau550());
+        setDeltaTau550(p.getDeltaTau550());
+        setAlpha550(p.getAlpha550());
+        setAMIN(p.getAMIN());
         K = p.K;
         E_2 = p.E_2;
         c_1 = p.c_1;
         c_2 = p.c_2;
         copy(&p.nu[0], &p.nu[p.nu.size()-1], &nu[0]);
         copy(&p.omega[0], &p.omega[p.omega.size()-1], &omega[0]);
-
-        k = p.k;
-        l = p.l;
-        m = p.m;
     }
 
-    bool operator<(const Pixel& other) const {
-        return grid.getIndex(k, l, m) < other.grid.getIndex(k, l, m);
+    uint16_t getSynFlags() const {
+        return getUShort("SYN_flags");
     }
 
-    uint16_t synFlags;
-    double tau_550;
-    double deltaTau_550;
-    double alpha_550;
-    uint8_t M_a;
+    void setSynFlags(uint16_t value) {
+        setUShort("SYN_flags", value);
+    }
+
+    double getAlpha550() const {
+        return getDouble("A550");
+    }
+
+    void setAlpha550(double value) {
+        setDouble("A550", value);
+    }
+
+    double getTau550() const {
+        return getDouble("T550");
+    }
+
+    void setTau550(double value) {
+        setDouble("T550", value);
+    }
+
+    double getDeltaTau550() const {
+        return getDouble("T550_er");
+    }
+
+    void setDeltaTau550(double value) {
+        setDouble("T550_er", value);
+    }
+
+    uint8_t getAMIN() const {
+        return getUByte("AMIN");
+    }
+
+    void setAMIN(uint8_t value) {
+        setDouble("AMIN", value);
+    }
+
     uint32_t K;
     double E_2;
     double c_1;
@@ -82,12 +111,6 @@ public:
     valarray<double> nu;
     valarray<double> omega;
 
-    long k;
-    long l;
-    long m;
-
-    const Grid& grid;
 };
-
 
 #endif /* AER_H_ */
