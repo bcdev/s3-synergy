@@ -10,6 +10,8 @@
 
 #include "../core/BasicModule.h"
 
+using std::copy;
+
 class Pixel;
 
 class Aer : public BasicModule {
@@ -31,7 +33,7 @@ private:
     uint8_t alpha550FillValue;
 
     shared_ptr<Pixel> initPixel(long k, long l, long m) const;
-    const vector<long> createIndices(long base, size_t bound) const;
+    const vector<long> createIndices(long base, long bound) const;
     void aer_s(shared_ptr<Pixel> p);
     bool isMinimal(long a, long b) const;
     void applyMedianFiltering(map<size_t, shared_ptr<Pixel> >& pixels);
@@ -43,10 +45,10 @@ private:
 class Pixel {
 
 public:
-    Pixel() {
+    Pixel(const Grid& grid) : grid(grid) {
     }
 
-    Pixel(const Pixel& p) {
+    Pixel(const Pixel& p) : grid(p.grid) {
         synFlags = p.synFlags;
         tau_550 = p.tau_550;
         deltaTau_550 = p.deltaTau_550;
@@ -56,15 +58,8 @@ public:
         E_2 = p.E_2;
         c_1 = p.c_1;
         c_2 = p.c_2;
-        nu_1 = p.nu_1;
-        nu_2 = p.nu_2;
-        // todo - turn into array
-        omega_1 = p.omega_1;
-        omega_2 = p.omega_2;
-        omega_3 = p.omega_3;
-        omega_4 = p.omega_4;
-        omega_5 = p.omega_5;
-        omega_6 = p.omega_6;
+        copy(&p.nu[0], &p.nu[p.nu.size()-1], &nu[0]);
+        copy(&p.omega[0], &p.omega[p.omega.size()-1], &omega[0]);
 
         k = p.k;
         l = p.l;
@@ -72,8 +67,7 @@ public:
     }
 
     bool operator<(const Pixel& other) const {
-        // todo - use grid
-        return l < other.l;
+        return grid.getIndex(k, l, m) < other.grid.getIndex(k, l, m);
     }
 
     uint16_t synFlags;
@@ -85,18 +79,14 @@ public:
     double E_2;
     double c_1;
     double c_2;
-    double nu_1;
-    double nu_2;
-    double omega_1;
-    double omega_2;
-    double omega_3;
-    double omega_4;
-    double omega_5;
-    double omega_6;
+    valarray<double> nu;
+    valarray<double> omega;
 
     long k;
     long l;
     long m;
+
+    const Grid& grid;
 };
 
 
