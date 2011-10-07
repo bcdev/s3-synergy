@@ -40,7 +40,6 @@ using std::map;
 using std::vector;
 
 class Module;
-class Writer;
 
 /**
  * Represents the context of a processing.
@@ -149,7 +148,7 @@ public:
 	 * @param id The object ID.
 	 * @return the object associated with {@code id}.
 	 */
-	shared_ptr<Identifiable> getObject(const string& id) const;
+	Identifiable& getObject(const string& id) const;
 
 	/**
 	 * Returns the segment associated with the supplied segment ID.
@@ -192,16 +191,6 @@ public:
 	 *          been computed by {@code module}.
 	 */
 	void setLastComputedL(const Segment& segment, const Module& module, long l);
-
-	/**
-	 * Returns the index of the last row in a segment, which has been
-	 * computed by all modules but a given writer module.
-	 * @param segment The segment.
-	 * @param writer The writer module.
-	 * @return The index of the last row in a segment, which has been
-	 *         computed by all modules but the writer module.
-	 */
-	long getLastWritableL(const Segment& segment, const Writer& writer) const;
 
 	/**
 	 * Returns the index of the first row in a given segment, which has not
@@ -277,6 +266,8 @@ private:
 	 */
 	bool hasFirstRequiredL(const Segment& segment, const Module& module) const;
 
+	void moveForward(shared_ptr<Segment> segment) const;
+
 	template<class Identifiable>
 	class Id {
 	public:
@@ -294,27 +285,27 @@ private:
 	};
 
 	template<class K, class V>
-	bool contains(const map<K, V>& map, const K& key) const {
+	static bool contains(const map<K, V>& map, const K& key) {
 		return map.find(key) != map.end();
 	}
 
 	template<class K, class V>
-	bool contains(const map<const K*, V>& map, const K* key) const {
+	static bool contains(const map<const K*, V>& map, const K* key) {
 		return map.find(key) != map.end();
 	}
 
 	template<class K, class V>
-	bool contains(const map<const K*, V>& map, const K& key) const {
+	static bool contains(const map<const K*, V>& map, const K& key) {
 		return map.find(&key) != map.end();
 	}
 
 	template<class T>
-	bool contains(const vector<T*>& vector, const T& value) const {
+	static bool contains(const vector<T*>& vector, const T& value) {
 		return std::find(vector.begin(), vector.end(), &value) != vector.end();
 	}
 
 	template<class T>
-	bool contains(const vector<shared_ptr<T> >& vector, const T& value) const {
+	static bool contains(const vector<shared_ptr<T> >& vector, const T& value) {
 		foreach (shared_ptr<T> p, vector)
 				{
 					if (p.get() == &value) {
@@ -323,8 +314,6 @@ private:
 				}
 		return false;
 	}
-
-	void moveForward(shared_ptr<Segment> segment) const;
 
 	shared_ptr<Logging> logging;
 	shared_ptr<Dictionary> dictionary;

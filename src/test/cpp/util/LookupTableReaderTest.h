@@ -10,7 +10,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../main/cpp/util/LookupTableReader.h"
+class LookupTableReader;
 
 class LookupTableReaderTest: public CPPUNIT_NS::TestFixture {
 CPPUNIT_TEST_SUITE(LookupTableReaderTest);

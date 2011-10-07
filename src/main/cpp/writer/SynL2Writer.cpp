@@ -15,7 +15,7 @@
 using std::runtime_error;
 
 SynL2Writer::SynL2Writer() :
-		Writer("SY2_WRITER") {
+		BasicModule("SY2_WRITER") {
 }
 
 SynL2Writer::~SynL2Writer() {

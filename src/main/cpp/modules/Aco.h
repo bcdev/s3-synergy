@@ -9,7 +9,6 @@
 #define ACO_H_
 
 #include "../core/BasicModule.h"
-#include "../core/LookupTable.h"
 
 class Aco : public BasicModule {
 public:
@@ -20,11 +19,9 @@ public:
     void stop(Context& context);
     void process(Context& context);
 private:
-    shared_ptr<MatrixLookupTable<double> > lutSlnRatm;
-    shared_ptr<MatrixLookupTable<double> > lutSloRatm;
-    shared_ptr<MatrixLookupTable<double> > lutT;
-    shared_ptr<MatrixLookupTable<double> > lutRhoAtm;
-    shared_ptr<ScalarLookupTable<double> > lutCO3;
+    void addAccessor(Context& context, Segment& s, const VariableDescriptor& varDescriptor) const;
+    void addMatrixLookupTable(Context& context, const string& fileName, const string& varName) const;
+    void addScalarLookupTable(Context& context, const string& fileName, const string& varName) const;
 
 	static const double PI = 3.14159265358979323846;
 	static const double D2R = 3.14159265358979323846 / 180.0;

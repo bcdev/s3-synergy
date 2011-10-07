@@ -19,7 +19,6 @@
  */
 
 #include "../../../main/cpp/core/BasicModule.h"
-#include "../../../main/cpp/core/Writer.h"
 
 #include "TestObject.h"
 #include "ContextTest.h"
@@ -62,7 +61,7 @@ void ContextTest::testAddObject() {
 	CPPUNIT_ASSERT(context->hasObject(o->getId()) == false);
 	context->addObject(o);
 	CPPUNIT_ASSERT(context->hasObject(o->getId()));
-	CPPUNIT_ASSERT(context->getObject(o->getId()) == o);
+	CPPUNIT_ASSERT(context->getObject(o->getId()) == *o);
 	CPPUNIT_ASSERT_THROW(context->addObject(o), logic_error);
 }
 
@@ -108,28 +107,4 @@ void ContextTest::testSetGetLastLComputed() {
 	context->addModule(m);
 	context->setLastComputedL(s, *m, 10);
 	CPPUNIT_ASSERT(context->getLastComputedL(s, *m) == 10);
-}
-
-void ContextTest::testGetLastLWritable() {
-	Segment& segment = context->addSegment("A", 100, 1, 1, 0, 199);
-
-	shared_ptr<Module> a = shared_ptr<Module>(new BasicModule("A"));
-	shared_ptr<Module> b = shared_ptr<Module>(new BasicModule("B"));
-	shared_ptr<Writer> w = shared_ptr<Writer>(new Writer("W"));
-	context->addModule(a);
-	context->setLastComputedL(segment, *a, 5);
-	CPPUNIT_ASSERT_THROW(context->getLastWritableL(segment, *w), logic_error);
-
-	context->addModule(w);
-	CPPUNIT_ASSERT(context->getLastWritableL(segment, *w) == 5);
-
-	context->addModule(b);
-	context->setLastComputedL(segment, *b, 7);
-	CPPUNIT_ASSERT(context->getLastWritableL(segment, *w) == 5);
-
-	context->setLastComputedL(segment, *a, 9);
-	CPPUNIT_ASSERT(context->getLastWritableL(segment, *w) == 7);
-
-	context->setLastComputedL(segment, *w, 3);
-	CPPUNIT_ASSERT(context->getLastWritableL(segment, *w) == 7);
 }

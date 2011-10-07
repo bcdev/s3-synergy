@@ -10,11 +10,11 @@
 
 #include <valarray>
 
-#include "../core/Writer.h"
+#include "../core/BasicModule.h"
 
 using std::map;
 
-class SynL2Writer: public Writer {
+class SynL2Writer: public BasicModule {
 public:
 	SynL2Writer();
 	virtual ~SynL2Writer();

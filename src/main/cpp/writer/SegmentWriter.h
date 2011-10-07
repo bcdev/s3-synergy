@@ -10,11 +10,11 @@
 
 #include <valarray>
 
-#include "../core/Writer.h"
+#include "../core/BasicModule.h"
 
 using std::map;
 
-class SegmentWriter: public Writer {
+class SegmentWriter: public BasicModule {
 public:
 	SegmentWriter();
 	virtual ~SegmentWriter();

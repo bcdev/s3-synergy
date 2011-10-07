@@ -24,9 +24,9 @@
 #include <cstdlib>
 #include <stdexcept>
 
-#include "Boost.h"
-#include "Context.h"
-#include "Module.h"
+#include "../core/Boost.h"
+#include "../core/Context.h"
+#include "../core/Module.h"
 
 using std::getenv;
 using std::max;
@@ -67,6 +67,7 @@ public:
 	virtual void process(Context& context) {
 	}
 
+protected:
 	static string getInstallationPath() {
 		const char* value = std::getenv("S3_SYNERGY_HOME");
 		if (value != 0) {
@@ -79,11 +80,8 @@ public:
 		return getInstallationPath() + "/auxdata/v" + Constants::PROCESSOR_VERSION + "/";
 	}
 
-
-protected:
-
-	template<class K, class V>
-	bool contains(const map<K, V>& map, const K& key) const {
+    template<class K, class V>
+	static bool contains(const map<K, V>& map, const K& key) {
 		return map.find(key) != map.end();
 	}
 

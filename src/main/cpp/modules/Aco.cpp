@@ -7,8 +7,8 @@
 
 #include <cmath>
 
-#include "../core/TiePointInterpolator.h"
 #include "../util/LookupTableReader.h"
+#include "../core/TiePointInterpolator.h"
 
 #include "Aco.h"
 
@@ -24,37 +24,18 @@ Aco::~Aco() {
 }
 
 void Aco::start(Context& context) {
-	if (!context.hasObject("OLC_R_atm")) {
-		const LookupTableReader reader(getAuxdataPath() + "S3__SY_2_SYRTAX.nc");
-		shared_ptr<MatrixLookupTable<double> > lutOlcRatm = reader.readMatrixLookupTable<double>("OLC_R_atm");
-		context.addObject(lutOlcRatm);
-	}
-	context.getLogging()->info("Reading LUTs for atmospheric correction module ...", getId());
+	addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "OLC_R_atm");
+	addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLN_R_atm");
+	addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLO_R_atm");
+	addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "t");
+	addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "rho_atm");
+	addScalarLookupTable(context, "S3__SY_2_SYRTAX.nc", "C_O3");
 
-	const LookupTableReader reader(getAuxdataPath() + "S3__SY_2_SYRTAX.nc");
-	lutSlnRatm = reader.readMatrixLookupTable<double>("SLN_R_atm");
-	lutSloRatm = reader.readMatrixLookupTable<double>("SLO_R_atm");
-	lutT = reader.readMatrixLookupTable<double>("t");
-	lutRhoAtm = reader.readMatrixLookupTable<double>("rho_atm");
-	lutCO3 = reader.readScalarLookupTable<double>("C_O3");
-
-	context.addObject(lutSlnRatm);
-	context.addObject(lutSloRatm);
-	context.addObject(lutT);
-	context.addObject(lutRhoAtm);
-	context.addObject(lutCO3);
-
-	Segment& t = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-	const SegmentDescriptor& d = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
+	Segment& targetSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+	const SegmentDescriptor& targetSegmentDescriptor = context.getDictionary()->getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
 	for (size_t i = 1; i <= 30; i++) {
-		const string sdrBandName = "SDR_" + lexical_cast<string>(i);
-		const VariableDescriptor& sdrDescriptor = d.getVariableDescriptor(sdrBandName);
-		context.getLogging()->info("Adding accessor for " + sdrDescriptor.toString() + "to segment " + t.toString(), getId());
-		t.addVariable(sdrDescriptor);
-		const string errBandName = sdrBandName + "_er";
-		const VariableDescriptor& errDescriptor = d.getVariableDescriptor(errBandName);
-		context.getLogging()->info("Adding accessor for " + errDescriptor.toString() + "to segment " + t.toString(), getId());
-		t.addVariable(errDescriptor);
+		addAccessor(context, targetSegment, targetSegmentDescriptor.getVariableDescriptor("SDR_" + lexical_cast<string>(i)));
+		addAccessor(context, targetSegment, targetSegmentDescriptor.getVariableDescriptor("SDR_" + lexical_cast<string>(i) + "_er"));
 	}
 }
 
@@ -127,7 +108,13 @@ void Aco::process(Context& context) {
 		err.push_back(&col.getAccessor("SDR_" + lexical_cast<string>(i) + "_er"));
 	}
 
-    MatrixLookupTable<double>& lutOlcRatm = (MatrixLookupTable<double>&) *context.getObject("OLC_R_atm");
+	const MatrixLookupTable<double>& lutOlcRatm = (MatrixLookupTable<double>&) context.getObject("OLC_R_atm");
+	const MatrixLookupTable<double>& lutSlnRatm = (MatrixLookupTable<double>&) context.getObject("SLN_R_atm");
+	const MatrixLookupTable<double>& lutSloRatm = (MatrixLookupTable<double>&) context.getObject("SLO_R_atm");
+	const MatrixLookupTable<double>& lutT = (MatrixLookupTable<double>&) context.getObject("t");
+	const MatrixLookupTable<double>& lutRhoAtm = (MatrixLookupTable<double>&) context.getObject("rho_atm");
+	const ScalarLookupTable<double>& lutCO3 = (ScalarLookupTable<double>&) context.getObject("C_O3");
+
 	context.getLogging()->progress("Processing segment '" + col.toString() + "'", getId());
 
 	// TODO - get from ECMWF tie points
@@ -185,9 +172,9 @@ void Aco::process(Context& context) {
 				coordinates[9] = coordinates[5]; // aerosol
 
 				lutOlcRatm.getValues(&coordinates[0], matRatmOlc, f, w);
-				lutT->getValues(&coordinates[6], matTs, f, w);
-				lutT->getValues(&coordinates[2], matTv, f, w);
-				lutRhoAtm->getValues(&coordinates[3], matRho, f, w);
+				lutT.getValues(&coordinates[6], matTs, f, w);
+				lutT.getValues(&coordinates[2], matTv, f, w);
+				lutRhoAtm.getValues(&coordinates[3], matRho, f, w);
 
 				for (size_t b = 0; b < 18; b++) {
 					const double channel = b + 1.0;
@@ -195,7 +182,7 @@ void Aco::process(Context& context) {
 					const double ts = matTs(0, b);
 					const double tv = matTv(0, b);
 					const double rho = matRho(0, b);
-					const double co3 = lutCO3->getValue(&channel);
+					const double co3 = lutCO3.getValue(&channel);
 
 					const double ltoa = lToas[b]->getDouble(i);
 					const double f0 = solarIrradianceOlc.getDouble(olcInfoGrid.getIndex(k, b, m));
@@ -227,8 +214,8 @@ void Aco::process(Context& context) {
 				coordinates[4] = wv; // water vapour
 				coordinates[5] = tau550; // aerosol
 
-				lutSlnRatm->getValues(&coordinates[0], matRatmSln, f, w);
-				lutT->getValues(&coordinates[2], matTv, f, w);
+				lutSlnRatm.getValues(&coordinates[0], matRatmSln, f, w);
+				lutT.getValues(&coordinates[2], matTv, f, w);
 
 				for (size_t b = 18; b < 24; b++) {
 					const double channel = b + 1.0;
@@ -236,7 +223,7 @@ void Aco::process(Context& context) {
 					const double ts = matTs(0, b);
 					const double tv = matTv(0, b);
 					const double rho = matRho(0, b);
-					const double co3 = lutCO3->getValue(&channel);
+					const double co3 = lutCO3.getValue(&channel);
 
 					const double ltoa = lToas[b]->getDouble(i);
 					const double f0 = solarIrradianceSln[b - 18]->getDouble(slnInfoGrid.getIndex(0, 0, 1));
@@ -263,9 +250,32 @@ void Aco::process(Context& context) {
 						err[b]->setFillValue(i);
 					}
 				}
-
 			}
+
+			// TODO: SLO channels
 		}
 	}
 	context.setLastComputedL(col, *this, lastL);
 }
+
+void Aco::addAccessor(Context& context, Segment& s, const VariableDescriptor& varDescriptor) const {
+	context.getLogging()->info("Adding accessor for " + varDescriptor.toString() + "to segment " + s.toString(), getId());
+	s.addVariable(varDescriptor);
+}
+
+void Aco::addMatrixLookupTable(Context& context, const string& fileName, const string& varName) const {
+	if (!context.hasObject(varName)) {
+		const LookupTableReader reader(getAuxdataPath() + fileName);
+		context.getLogging()->info("Reading LUT '" + varName + "'", getId());
+		context.addObject(reader.readMatrixLookupTable<double>(varName));
+	}
+}
+
+void Aco::addScalarLookupTable(Context& context, const string& fileName, const string& varName) const {
+	if (!context.hasObject(varName)) {
+		const LookupTableReader reader(getAuxdataPath() + fileName);
+		context.getLogging()->info("Reading LUT '" + varName + "'", getId());
+		context.addObject(reader.readScalarLookupTable<double>(varName));
+	}
+}
+

@@ -24,9 +24,9 @@
 #include <stdexcept>
 
 #include "Context.h"
+#include "Module.h"
 #include "NullLogging.h"
 #include "SegmentImpl.h"
-#include "Writer.h"
 
 using std::invalid_argument;
 using std::find;
@@ -86,9 +86,9 @@ bool Context::removeSegment(const string& id) {
 	return false;
 }
 
-shared_ptr<Identifiable> Context::getObject(const string& id) const {
+Identifiable& Context::getObject(const string& id) const {
 	if (contains(objectMap, id)) {
-		return objectMap.at(id);
+		return *objectMap.at(id);
 	}
 	BOOST_THROW_EXCEPTION( invalid_argument("No object with id '" + id + "' exists in the context."));
 }
@@ -176,27 +176,6 @@ long Context::getLastComputedL(const Segment& segment, const Module& module) con
 		return lastComputedLMap.at(&segment).at(&module);
 	}
 	return -1;
-}
-
-long Context::getLastWritableL(const Segment& segment, const Writer& writer) const {
-	if (!contains(segmentList, segment)) {
-		BOOST_THROW_EXCEPTION( invalid_argument("Unknown segment '" + segment.getId() + "'."));
-	}
-	if (!contains(moduleList, dynamic_cast<const Module&>(writer))) {
-		BOOST_THROW_EXCEPTION( invalid_argument("Unknown module '" + writer.getId() + "'."));
-	}
-	long lastWritableL = segment.getGrid().getLastL();
-	if (contains(lastComputedLMap, segment)) {
-		typedef pair<const Module*, long> Q;
-
-		foreach(Q q, lastComputedLMap.at(&segment))
-				{
-					if (q.first != &writer) {
-						lastWritableL = min(lastWritableL, q.second);
-					}
-				}
-	}
-	return lastWritableL;
 }
 
 long Context::getLastComputableL(const Segment& segment, const Module& module) const {
