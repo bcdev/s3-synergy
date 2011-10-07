@@ -59,8 +59,8 @@ void Aer::process(Context& context) {
         }
     }
 
-    size_t N_b = 1;
-    size_t I = 0;
+    long N_b = 1;
+    long I = 0;
 
     while (!missingPixels.empty()) {
         if (I >= 5 && I <= 12) {
@@ -107,7 +107,7 @@ void Aer::process(Context& context) {
 }
 
 shared_ptr<Pixel> Aer::initPixel(long k, long l, long m) const {
-    shared_ptr<Pixel> p = shared_ptr<Pixel>(new Pixel());
+    shared_ptr<Pixel> p = shared_ptr<Pixel>(new Pixel(*averagedGrid));
     const Accessor& synFlags = averagedSegment->getAccessor("SYN_flags");
     const size_t index = averagedGrid->getIndex(k, l, m);
     p->synFlags = synFlags.getUShort(index);
@@ -117,7 +117,7 @@ shared_ptr<Pixel> Aer::initPixel(long k, long l, long m) const {
     return p;
 }
 
-const vector<long> Aer::createIndices(long base, size_t bound) const {
+const vector<long> Aer::createIndices(long base, long bound) const {
     vector<long> result;
     for(long index = base - bound; index <= base + bound; index++) {
         if(index != 0) {
