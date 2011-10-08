@@ -262,6 +262,7 @@ void Aco::process(Context& context) {
 				/*
 				 * Surface reflectance for SLO channels
 				 */
+				/*
 				tpiSlo.prepare(lonAccessor.getDouble(i), latAccessor.getDouble(i), tpiWeights, tpiIndexes);
 
 				const double vzaSlo = tpiSlo.interpolate(tpVzasSlo, tpiWeights, tpiIndexes);
@@ -299,6 +300,7 @@ void Aco::process(Context& context) {
 						sdrAccessors[b]->setFillValue(i);
 					}
 				}
+				*/
 
 				/*
 				 * Errors for OLC channels
@@ -360,6 +362,7 @@ void Aco::process(Context& context) {
 				/*
 				 * Errors for SLO channels
 				 */
+				/*
 				coordinates[0] = abs(saaOlc - vaaSlo); // ADA
 				coordinates[1] = szaOlc; // SZA
 				coordinates[2] = vzaSlo; // VZA
@@ -381,6 +384,7 @@ void Aco::process(Context& context) {
 						}
 					}
 				}
+				*/
 			}
 		}
 	}
