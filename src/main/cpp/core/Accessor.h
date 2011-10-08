@@ -109,7 +109,7 @@ public:
 	 * @param i The index.
 	 * @return the value of the sample at {@code i}.
 	 */
-	virtual uint64_t getULong(size_t i) const throw (bad_cast, bad_cast, out_of_range) = 0;
+	virtual uint64_t getULong(size_t i) const throw (bad_cast, out_of_range) = 0;
 
 	/**
 	 * Returns the value of the sample at a given index {@code i}.

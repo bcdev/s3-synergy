@@ -82,10 +82,10 @@ void Ave::averageVariables(Context& context, long firstL, long lastL) {
                             const uint16_t flag = synFlags->getUShort(collocatedIndex);
                             const bool isLand = (flag & 32) == 32;
                             const bool isCloud = (flag & 1) == 1;
-                            if(isLand && !isCloud && !isFillValue(varName, collocatedIndex)) {
+//                            if(isLand && !isCloud && !isFillValue(varName, collocatedIndex)) {
                                 a += getValue(varName, collocatedIndex);
                                 K++;
-                            }
+//                            }
                         }
                     }
 

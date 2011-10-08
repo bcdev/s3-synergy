@@ -35,7 +35,6 @@ void Aer::start(Context& context) {
     deltaTau550FillValue = deltaTau550Descriptor.getFillValue<int16_t>();
     const VariableDescriptor& alpha550Descriptor = synCollocatedDescriptor.getVariableDescriptor("A550");
     alpha550FillValue = alpha550Descriptor.getFillValue<uint8_t>();
-
 }
 
 void Aer::stop(Context& context) {
@@ -43,15 +42,18 @@ void Aer::stop(Context& context) {
 }
 
 void Aer::process(Context& context) {
-    set<shared_ptr<Pixel> > missingPixels;
-    map<size_t, shared_ptr<Pixel> > pixels;
+    set<shared_ptr<AerPixel> > missingPixels;
+    map<size_t, shared_ptr<AerPixel> > pixels;
 
-    for(long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
-        for(long l_prime = averagedGrid->getFirstL(); l_prime <= min(averagedGrid->getMaxL(), averagedGrid->getLastL()); l_prime++) {
+    long firstL = context.getFirstComputableL(*averagedSegment, *this);
+    long lastL = context.getLastComputableL(*averagedSegment, *this) - 8;
+
+    for(long l_prime = averagedGrid->getFirstL(); l_prime <= min(averagedGrid->getMaxL(), averagedGrid->getLastL()); l_prime++) {
+        for(long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
             for(long m_prime = averagedGrid->getFirstM(); m_prime <= averagedGrid->getMaxM(); m_prime++) {
-                shared_ptr<Pixel> p = initPixel(k, l_prime, m_prime);
+                shared_ptr<AerPixel> p = initPixel(k, l_prime, m_prime);
                 aer_s(p);
-                if(p->M_a == aminFillValue) {
+                if(p->getAMIN() == aminFillValue) {
                     missingPixels.insert(p);
                 }
                 pixels[averagedGrid->getIndex(k, l_prime, m_prime)] = p;
@@ -66,9 +68,9 @@ void Aer::process(Context& context) {
         if (I >= 5 && I <= 12) {
             N_b++;
         }
-        foreach(shared_ptr<Pixel> p, missingPixels) {
+        foreach(shared_ptr<AerPixel> p, missingPixels) {
             double tau_550, deltaTau_500, alpha550 = 0;
-            uint8_t M_a = 0;
+            uint8_t AMIN = 0;
             uint32_t K = 0;
             const long k = p->k;
             const long l_prime = p->l;
@@ -79,11 +81,11 @@ void Aer::process(Context& context) {
                 foreach(long j_prime, jPrimeIndices) {
                     if (averagedGrid->isValidPosition(k, i_prime, j_prime)) {
                         if (missingPixels.find(p) == missingPixels.end()) {
-                            tau_550 += p->tau_550;
-                            deltaTau_500 += p->deltaTau_550;
-                            alpha550 += p->alpha_550;
+                            tau_550 += p->getTau550();
+                            deltaTau_500 += p->getDeltaTau550();
+                            alpha550 += p->getAlpha550();
                             if (isMinimal(i_prime, l_prime) && isMinimal(j_prime, m_prime)) {
-                                M_a = p->M_a;
+                                AMIN = p->getAMIN();
                             }
                             K++;
                         }
@@ -91,12 +93,12 @@ void Aer::process(Context& context) {
                 }
             }
             if (K > 1) {
-                p->tau_550 /= K;
-                p->deltaTau_550 /= K;
-                p->alpha_550 /= K;
-                p->M_a = M_a;
+                p->setTau550(tau_550 / K);
+                p->setDeltaTau550( deltaTau_500 / K);
+                p->setAlpha550(alpha550 / K);
+                p->setAMIN(AMIN);
                 // todo - ts05Oct2011 - clarify if 'SYN_filled' (as it's called in DPM) is really meaning 'SYN_aerosol_filled'
-                p->synFlags |= 2048;
+                p->setSynFlags(p->getSynFlags() | 2048);
                 missingPixels.erase(p);
             }
         }
@@ -104,16 +106,15 @@ void Aer::process(Context& context) {
     }
     applyMedianFiltering(pixels);
     setPixelsToSegment(pixels);
+
+    context.setLastComputedL(*averagedSegment, *this, lastL);
 }
 
-shared_ptr<Pixel> Aer::initPixel(long k, long l, long m) const {
-    shared_ptr<Pixel> p = shared_ptr<Pixel>(new Pixel(*averagedGrid));
+shared_ptr<AerPixel> Aer::initPixel(long k, long l, long m) const {
+    shared_ptr<AerPixel> p = shared_ptr<AerPixel>(new AerPixel(*averagedSegment, k, l, m));
     const Accessor& synFlags = averagedSegment->getAccessor("SYN_flags");
     const size_t index = averagedGrid->getIndex(k, l, m);
-    p->synFlags = synFlags.getUShort(index);
-    p->k = k;
-    p->l = l;
-    p->m = m;
+    p->setSynFlags(synFlags.getUShort(index));
     return p;
 }
 
@@ -127,15 +128,15 @@ const vector<long> Aer::createIndices(long base, long bound) const {
     return result;
 }
 
-void Aer::aer_s(shared_ptr<Pixel> p) {
-    p->tau_550 = tau550FillValue;
-    p->deltaTau_550 = deltaTau550FillValue;
-    p->alpha_550 = alpha550FillValue;
-    p->M_a = aminFillValue;
-    p->synFlags &= 3887;
+void Aer::aer_s(shared_ptr<AerPixel> p) {
+    p->setTau550(tau550FillValue);
+    p->setDeltaTau550(deltaTau550FillValue);
+    p->setAlpha550(alpha550FillValue);
+    p->setAMIN(aminFillValue);
+    p->setSynFlags(p->getSynFlags() & 3887);
 
-    const bool isPartlyCloudy = (p->synFlags & 256) == 256;
-    const bool isPartlyWater = (p->synFlags & 512) == 512;
+    const bool isPartlyCloudy = (p->getSynFlags() & 256) == 256;
+    const bool isPartlyWater = (p->getSynFlags() & 512) == 512;
 
     if(isPartlyCloudy || isPartlyWater) {
         return;
@@ -145,13 +146,13 @@ void Aer::aer_s(shared_ptr<Pixel> p) {
 
     vector<size_t> amins = getListOfAerosolModelIndexNumbers();
     foreach(size_t amin, amins) {
-        Pixel q(*p);
+        AerPixel q(*p);
         initializeP(*p);
 //        q.E_2 = e2(q, amin);
     }
 }
 
-void Aer::applyMedianFiltering(map<size_t, shared_ptr<Pixel> >& pixels) {
+void Aer::applyMedianFiltering(map<size_t, shared_ptr<AerPixel> >& pixels) {
 
 }
 
@@ -159,7 +160,7 @@ bool Aer::isMinimal(long a, long b) const {
     return false;
 }
 
-void Aer::setPixelsToSegment(map<size_t, shared_ptr<Pixel> >& pixels) {
+void Aer::setPixelsToSegment(map<size_t, shared_ptr<AerPixel> >& pixels) {
 
 }
 
@@ -168,6 +169,6 @@ vector<size_t> Aer::getListOfAerosolModelIndexNumbers() {
     return amins;
 }
 
-void Aer::initializeP(Pixel& p) {
+void Aer::initializeP(AerPixel& p) {
 
 }

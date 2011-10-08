@@ -93,7 +93,7 @@ size_t Pcl::getIndex(long k, long l, long m) const {
 }
 
 uint16_t Pcl::getValue(size_t index, uint32_t olcFlags, uint8_t slnFlags, uint8_t sloFlags) const {
-	const uint32_t olciLandFlag = 2147483648;
+	const uint32_t olciLandFlag = 2147483648U;
 	const uint8_t slstrLandFlag = 8;
 //	todo - ts - 04Oct2011 - clarify: slstr cloud flag shall be 16384, but is ubyte in input file
 //	commented out that flag until clarified
