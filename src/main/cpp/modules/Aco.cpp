@@ -262,7 +262,7 @@ void Aco::process(Context& context) {
 				/*
 				 * Surface reflectance for SLO channels
 				 */
-				/*
+				/* TODO: fix segmentation fault occurring below
 				tpiSlo.prepare(lonAccessor.getDouble(i), latAccessor.getDouble(i), tpiWeights, tpiIndexes);
 
 				const double vzaSlo = tpiSlo.interpolate(tpVzasSlo, tpiWeights, tpiIndexes);
@@ -362,7 +362,7 @@ void Aco::process(Context& context) {
 				/*
 				 * Errors for SLO channels
 				 */
-				/*
+				/* TODO: fix segmentation fault occurring below
 				coordinates[0] = abs(saaOlc - vaaSlo); // ADA
 				coordinates[1] = szaOlc; // SZA
 				coordinates[2] = vzaSlo; // VZA
@@ -373,7 +373,7 @@ void Aco::process(Context& context) {
 				lutSloRatm.getValues(&coordinates[0], matRatmSlo, f, w);
 				lutT.getValues(&coordinates[2], matTv, f, w);
 
-				for (size_t b = 18; b < 24; b++) {
+				for (size_t b = 24; b < 30; b++) {
 					if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
 						// TODO: errors for SLO channels
 
