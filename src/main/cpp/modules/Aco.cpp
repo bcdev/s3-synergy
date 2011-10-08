@@ -274,7 +274,7 @@ void Aco::process(Context& context) {
 				coordinates[4] = wv; // water vapour
 				coordinates[5] = tau550; // aerosol
 
-				lutSloRatm.getValues(&coordinates[0], matRatmSln, f, w);
+				lutSloRatm.getValues(&coordinates[0], matRatmSlo, f, w);
 				lutT.getValues(&coordinates[2], matTv, f, w);
 
 				for (size_t b = 24; b < 30; b++) {
@@ -287,7 +287,7 @@ void Aco::process(Context& context) {
 					tO3[b] = ozoneTransmission(lutCO3, szaOlc, vzaSln, nO3, b + 1.0);
 
 					// Eq. 2-3
-					const double ratm = matRatmSln(amin - 1, b - 18);
+					const double ratm = matRatmSlo(amin - 1, b - 24);
 					ts[b] = matTs(amin - 1, b);
 					tv[b] = matTv(amin - 1, b);
 					const double rho = matRho(amin - 1, b);
