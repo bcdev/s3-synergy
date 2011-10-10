@@ -15,11 +15,11 @@
 
 class PclTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(PclTest);
+    CPPUNIT_TEST(testPcl);
     CPPUNIT_TEST(testGetValue);
     CPPUNIT_TEST(testStart);
     CPPUNIT_TEST(testGetIndex);
     CPPUNIT_TEST(testGetAccessor);
-//    CPPUNIT_TEST(testPcl);
     CPPUNIT_TEST_SUITE_END();
 
 public:
