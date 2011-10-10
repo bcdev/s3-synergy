@@ -94,14 +94,15 @@ size_t Pcl::getIndex(long k, long l, long m) const {
 
 uint16_t Pcl::getValue(size_t index, uint32_t olcFlags, uint8_t slnFlags, uint8_t sloFlags) const {
 	const uint32_t olciLandFlag = 2147483648U;
-	const uint8_t slstrLandFlag = 8;
-//	todo - ts - 04Oct2011 - clarify: slstr cloud flag shall be 16384, but is ubyte in input file
-//	commented out that flag until clarified
+//	todo - ts - 04Oct2011 - clarify: slstr flags are ubyte in input file, but shall have values >> 7
+//	commented out usage of that flags until clarified
+
+//	const uint8_t slstrLandFlag = 8;
 //	const uint8_t slstrCloudFlag = 16384;
 
     bool isLandPixel = (olcFlags & olciLandFlag) == olciLandFlag;
-    isLandPixel &= (slnFlags & slstrLandFlag) == slstrLandFlag;
-    isLandPixel &= (sloFlags & slstrLandFlag) == slstrLandFlag;
+//    isLandPixel &= (slnFlags & slstrLandFlag) == slstrLandFlag;
+//    isLandPixel &= (sloFlags & slstrLandFlag) == slstrLandFlag;
 //    bool isCloudPixel = (slnFlags & slstrCloudFlag) == slstrCloudFlag;
 //    isCloudPixel &= (sloFlags & slstrCloudFlag) == slstrCloudFlag;
 
