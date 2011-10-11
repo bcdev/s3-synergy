@@ -15,7 +15,8 @@
 
 class AerTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(AerTest);
-    CPPUNIT_TEST(testAer);
+    CPPUNIT_TEST(testNdv);
+//    CPPUNIT_TEST(testAer);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -27,8 +28,25 @@ public:
 private:
     void prepareContext();
     void testAer();
+    void testNdv();
     shared_ptr<Context> context;
     shared_ptr<Aer> aer;
+};
+
+class AerPixelDerived : public AerPixel {
+public:
+
+    AerPixelDerived(Segment& segment, long k, long l, long m) : AerPixel(segment, k, l, m) {
+
+    }
+
+    double getRadiance(int16_t index) {
+        if(index == 9) {
+            return 5;
+        } else if(index == 17) {
+            return 10;
+        } else return 0.0;
+    }
 };
 
 #endif	/* AERTEST_H */

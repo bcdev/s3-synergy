@@ -99,3 +99,10 @@ void Pixel::setDouble(const string& varName, double value) throw (bad_cast, out_
     return segment.getAccessor(varName).setDouble(index, value);
 }
 
+void Pixel::setFillValue(const string& varName) {
+    segment.getAccessor(varName).setFillValue(index);
+}
+
+bool Pixel::isFillValue(const string& varName) {
+    return segment.getAccessor(varName).isFillValue(index);
+}

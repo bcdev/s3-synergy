@@ -31,6 +31,19 @@ public:
         return segment.getGrid().getIndex(k, l, m) < other.segment.getGrid().getIndex(k, l, m);
     }
 
+    /**
+     * Sets the given variable to its fill value.
+     * @param varName the variable to set to fill.
+     */
+    void setFillValue(const string& varName);
+
+    /**
+     * Returns if the given variable is set to its fill value.
+     * @param varName the variable to inquire.
+     * @return true if the given variable is set to its fill value.
+     */
+    bool isFillValue(const string& varName);
+
     const long k;
     const long l;
     const long m;

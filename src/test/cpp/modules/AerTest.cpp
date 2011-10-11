@@ -11,6 +11,7 @@
 #include "../../../../src/main/cpp/core/Context.h"
 #include "../../../../src/main/cpp/reader/SynL1Reader.h"
 #include "../../../../src/main/cpp/modules/Aer.h"
+#include "../../../../src/main/cpp/modules/Ave.h"
 #include "../../../../src/main/cpp/modules/Col.h"
 #include "../../../../src/main/cpp/modules/Pcl.h"
 #include "../../../../src/main/cpp/writer/SynL2Writer.h"
@@ -59,15 +60,34 @@ void AerTest::prepareContext() {
 void AerTest::tearDown() {
 }
 
+void AerTest::testNdv() {
+    Segment& segment = context->addSegment(Constants::SEGMENT_SYN_AVERAGED, 100, 10, 2, 0, 583);
+    segment.addVariable("L_9", Constants::TYPE_DOUBLE, 1.0, 0.0);
+    segment.addVariable("L_17", Constants::TYPE_DOUBLE, 1.0, 0.0);
+    AerPixelDerived p(segment, 0, 0, 0);
+    p.solarIrradiances[9] = 8;
+    p.solarIrradiances[17] = 12;
+    p.solarIrradianceFillValues[9] = -1;
+    p.solarIrradianceFillValues[17] = -1;
+    double ndv = aer->ndv(p);
+    CPPUNIT_ASSERT(std::abs(ndv - 0.1428571) < 1.e-5);
+
+    p.solarIrradianceFillValues[9] = 8;
+    ndv = aer->ndv(p);
+    CPPUNIT_ASSERT(ndv == 0.5);
+}
+
 void AerTest::testAer() {
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
     shared_ptr<Module> col = shared_ptr<Module>(new Col());
     shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
+    shared_ptr<Module> ave = shared_ptr<Module>(new Ave());
     shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
 
     context->addModule(reader);
     context->addModule(col);
     context->addModule(pcl);
+    context->addModule(ave);
     context->addModule(aer);
     context->addModule(writer);
 

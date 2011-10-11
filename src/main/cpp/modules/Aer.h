@@ -9,6 +9,7 @@
 #define AER_H_
 
 #include "../core/BasicModule.h"
+#include "../util/ConfigurationAuxdataProvider.h"
 #include "../util/Pixel.h"
 
 using std::copy;
@@ -28,25 +29,22 @@ private:
     friend class AerTest;
     Segment* averagedSegment;
     const Grid* averagedGrid;
-    uint8_t aminFillValue;
-    int16_t tau550FillValue;
-    int16_t deltaTau550FillValue;
-    uint8_t alpha550FillValue;
+    // todo - ts - 11Oct2011 - move to Context (and use reference, not pointer)
+    shared_ptr<ConfigurationAuxdataProvider> auxdataProvider;
 
-    shared_ptr<AerPixel> initPixel(long k, long l, long m) const;
+    shared_ptr<AerPixel> initPixel(Context& context, long k, long l, long m) const;
     const vector<long> createIndices(long base, long bound) const;
     void aer_s(shared_ptr<AerPixel> p);
-    bool isMinimal(long a, long b) const;
     void applyMedianFiltering(map<size_t, shared_ptr<AerPixel> >& pixels);
     void setPixelsToSegment(map<size_t, shared_ptr<AerPixel> >& pixels);
-    vector<size_t> getListOfAerosolModelIndexNumbers();
+    double ndv(AerPixel& q);
     void initializeP(AerPixel& p);
 };
 
 class AerPixel : public Pixel {
 public:
 
-    AerPixel(Segment& segment, long k, long l, long m) : Pixel(segment, k, l, m) {
+    AerPixel(Segment& segment, long k, long l, long m) : Pixel(segment, k, l, m), solarIrradiances(30), solarIrradianceFillValues(30) {
 
     }
 
@@ -72,28 +70,28 @@ public:
         setUShort("SYN_flags", value);
     }
 
-    double getAlpha550() const {
-        return getDouble("A550");
+    float getAlpha550() const {
+        return getFloat("A550");
     }
 
-    void setAlpha550(double value) {
-        setDouble("A550", value);
+    void setAlpha550(float value) {
+        setFloat("A550", value);
     }
 
-    double getTau550() const {
-        return getDouble("T550");
+    float getTau550() const {
+        return getFloat("T550");
     }
 
-    void setTau550(double value) {
-        setDouble("T550", value);
+    void setTau550(float value) {
+        setFloat("T550", value);
     }
 
-    double getDeltaTau550() const {
-        return getDouble("T550_er");
+    float getDeltaTau550() const {
+        return getFloat("T550_er");
     }
 
-    void setDeltaTau550(double value) {
-        setDouble("T550_er", value);
+    void setDeltaTau550(float value) {
+        setFloat("T550_er", value);
     }
 
     uint8_t getAMIN() const {
@@ -101,15 +99,21 @@ public:
     }
 
     void setAMIN(uint8_t value) {
-        setDouble("AMIN", value);
+        setUByte("AMIN", value);
+    }
+
+    virtual double getRadiance(int16_t index) {
+        return getDouble("L_" + lexical_cast<string>(index));
     }
 
     uint32_t K;
     double E_2;
     double c_1;
     double c_2;
-    valarray<double> nu;
-    valarray<double> omega;
+    valarray<float> nu;
+    valarray<float> omega;
+    valarray<double> solarIrradiances;
+    valarray<double> solarIrradianceFillValues;
 
 };
 
