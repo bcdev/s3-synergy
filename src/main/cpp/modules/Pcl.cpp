@@ -94,7 +94,7 @@ size_t Pcl::getIndex(long k, long l, long m) const {
 
 uint16_t Pcl::getValue(size_t index, uint32_t olcFlags, uint8_t slnFlags, uint8_t sloFlags) const {
 	const uint32_t olciLandFlag = 2147483648U;
-//	todo - ts - 04Oct2011 - clarify: slstr flags are ubyte in input file, but shall have values >> 7
+//	todo - ts - 04Oct2011 - clarify: slstr flags are ubyte in input file, but shall have values >> 128
 //	commented out usage of that flags until clarified
 
 //	const uint8_t slstrLandFlag = 8;
