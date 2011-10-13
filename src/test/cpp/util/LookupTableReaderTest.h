@@ -14,6 +14,7 @@ class LookupTableReader;
 
 class LookupTableReaderTest: public CPPUNIT_NS::TestFixture {
 CPPUNIT_TEST_SUITE(LookupTableReaderTest);
+		CPPUNIT_TEST(testRead_angular_weights);
 		CPPUNIT_TEST(testRead_OLC_R_atm);
 		CPPUNIT_TEST(testRead_SLN_R_atm);
 		CPPUNIT_TEST(testRead_SLO_R_atm);
@@ -26,6 +27,7 @@ public:
 	void tearDown();
 private:
 
+	void testRead_angular_weights();
 	void testRead_OLC_R_atm();
 	void testRead_SLN_R_atm();
 	void testRead_SLO_R_atm();
