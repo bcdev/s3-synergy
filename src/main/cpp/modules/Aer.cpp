@@ -10,10 +10,8 @@
 #include <set>
 
 #include "Aer.h"
-#include "../util/IOUtils.h"
+#include "../util/ErrorMetric.h"
 #include "../util/LookupTableReader.h"
-#include "../util/Min.h"
-#include "../util/MultiMin.h"
 
 using std::min;
 using std::numeric_limits;
