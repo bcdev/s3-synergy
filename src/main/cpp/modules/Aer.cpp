@@ -27,6 +27,11 @@ Aer::~Aer() {
 void Aer::start(Context& context) {
     readAuxdata();
     averagedSegment = &context.getSegment(Constants::SEGMENT_SYN_AVERAGED);
+    SegmentDescriptor& averagedSegmentDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_AVERAGED);
+    averagedSegment->addVariable(averagedSegmentDescriptor.getVariableDescriptor("T550"));
+    averagedSegment->addVariable(averagedSegmentDescriptor.getVariableDescriptor("T550_er"));
+    averagedSegment->addVariable(averagedSegmentDescriptor.getVariableDescriptor("A550"));
+    averagedSegment->addVariable(averagedSegmentDescriptor.getVariableDescriptor("AMIN"));
     averagedGrid = &averagedSegment->getGrid();
 }
 
@@ -35,6 +40,8 @@ void Aer::stop(Context& context) {
 }
 
 void Aer::process(Context& context) {
+    context.getLogging().progress("Performing aerosol retrieval...", getId());
+
     set<shared_ptr<AerPixel> > missingPixels;
     map<size_t, shared_ptr<AerPixel> > pixels;
 
@@ -112,7 +119,6 @@ void Aer::process(Context& context) {
         foreach(shared_ptr<AerPixel> p, completedPixels) {
             missingPixels.erase(p);
         }
-
         I++;
     }
     applyMedianFiltering(pixels);
@@ -246,11 +252,12 @@ bool Aer::isSolarIrradianceFillValue(double f, const valarray<double> fillValues
 }
 
 double Aer::aotStandardError(float tau550) {
+    // todo - implement
     return 0.0;
 }
 
 void Aer::applyMedianFiltering(map<size_t, shared_ptr<AerPixel> >& pixels) {
-
+    // todo - implement
 }
 
 void Aer::readAuxdata() {
