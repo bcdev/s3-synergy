@@ -27,8 +27,6 @@ public:
 	void tearDown();
 
 private:
-	const static double ACCURACY_GOAL;
-
 	void testPowellCigar();
 	void testPowellRosenbrock();
 };

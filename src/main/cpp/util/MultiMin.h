@@ -17,6 +17,8 @@ class MultiMin {
 public:
     virtual ~MultiMin();
 
+    const static double ACCURACY_GOAL;
+
     /**
      * Finds the minimum of a multivariate function using Powell's method.
      * <p/>
@@ -36,7 +38,7 @@ public:
      * @return {@code true} on success.
      *
      * @throws illegal_argument if the dimensions of {@code pn} and {@code u}
-     *                                   are not consistent.
+     *         are not consistent.
      */
     static bool powell(MultivariateFunction& f, valarray<double>& pn, valarray<valarray<double> >& u, const double accuracyGoal, const size_t maxIter);
 
