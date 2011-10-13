@@ -19,7 +19,7 @@ class AerTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(testErrorMetric);
     CPPUNIT_TEST(testAotStandardError);
     CPPUNIT_TEST(testNdv);
-//    CPPUNIT_TEST(testAer);
+    CPPUNIT_TEST(testAer);
     CPPUNIT_TEST_SUITE_END();
 
 public:

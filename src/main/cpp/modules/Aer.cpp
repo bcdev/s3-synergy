@@ -201,15 +201,27 @@ void Aer::aer_s(shared_ptr<AerPixel> p) {
     if(!p->isFillValue("AMIN")) {
         if(p->getTau550() > 0.0001 ) {
             double a = aotStandardError(p->getTau550());
+            if(a > 0) {
+                p->setDeltaTau550(kappa * sqrt(p->E_2 / a));
+                if(p->getTau550() > 0.1 && p->getDeltaTau550() > 5 * p->getTau550()) {
+                    p->setSynFlags(p->getSynFlags() | 32768);
+                } else {
+                    p->setSynFlags(p->getSynFlags() | 4096);
+                }
+            } else {
+                p->setSynFlags(p->getSynFlags() | 8192);
+            }
         } else {
             p->setSynFlags(p->getSynFlags() | 16384);
         }
     }
 }
 
-bool Aer::e2(AerPixel& q, size_t amin) {
-    q.E_2 = 0.0;
-    return false;
+bool Aer::e2(AerPixel& p, size_t amin) {
+    E2 e1(p, gamma, amin, totalAngularWeights, vegetationSpectrum, soilReflectance, ndviIndices, angularWeights);
+    Bracket bracket;
+    const bool success = Min::brent(e1, bracket, Min::ACCURACY_GOAL);
+    return success;
 }
 
 double Aer::ndv(AerPixel& q, valarray<int16_t> ndviIndices) {
@@ -234,44 +246,11 @@ bool Aer::isSolarIrradianceFillValue(double f, const valarray<double> fillValues
 }
 
 double Aer::aotStandardError(float tau550) {
-
-}
-
-bool Aer::e1(AerPixel& p, int16_t amin) {
-    ErrorMetric em(p, gamma, amin, totalAngularWeights, vegetationSpectrum, soilReflectance, ndviIndices, angularWeights);
-    valarray<double> pn(10);
-    pn[0] = p.c_1;
-    pn[1] = p.c_2;
-    pn[2] = p.nu[0];
-    pn[3] = p.nu[1];
-    for(size_t i = 0; i < 6; i++) {
-        pn[i + 4] = p.omega[i];
-    }
-    valarray<valarray<double> > u(valarray<double>(10), 10);
-    for(size_t i = 0; i < 10; i++) {
-        valarray<double> init(10);
-        for(size_t j = 0; j < 10; j++) {
-            init[j] = j / 10.0;
-        }
-        u[i] = init;
-    }
-
-    const bool success = MultiMin::powell(em, pn, u, MultiMin::ACCURACY_GOAL, 200);
-    p.c_1 = pn[0];
-    p.c_2 = pn[1];
-    p.nu[0] = pn[2];
-    p.nu[1] = pn[3];
-    for(size_t i = 0; i < 6; i++) {
-        p.omega[i] = pn[i + 4];
-    }
-    return success;
+    return 0.0;
 }
 
 void Aer::applyMedianFiltering(map<size_t, shared_ptr<AerPixel> >& pixels) {
 
-}
-
-void Aer::initializeP(AerPixel& p) {
 }
 
 void Aer::readAuxdata() {
