@@ -25,6 +25,8 @@ using std::getenv;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(AerTest);
 
+const double AerTest::EPSILON = 1.0E-6;
+
 AerTest::AerTest() {
 }
 
@@ -35,6 +37,7 @@ void AerTest::setUp() {
     XPathInitializer init;
     prepareContext();
     aer = shared_ptr<Aer>(new Aer());
+    aer->readAuxdata();
 }
 
 void AerTest::prepareContext() {
@@ -64,17 +67,29 @@ void AerTest::testNdv() {
     Segment& segment = context->addSegment(Constants::SEGMENT_SYN_AVERAGED, 100, 10, 2, 0, 583);
     segment.addVariable("L_9", Constants::TYPE_DOUBLE, 1.0, 0.0);
     segment.addVariable("L_17", Constants::TYPE_DOUBLE, 1.0, 0.0);
-    AerPixelDerived p(segment, 0, 0, 0);
+    AerTestPixel p(segment, 0, 0, 0);
     p.solarIrradiances[9] = 8;
     p.solarIrradiances[17] = 12;
     p.solarIrradianceFillValues[9] = -1;
     p.solarIrradianceFillValues[17] = -1;
-    double ndv = aer->ndv(p);
+    double ndv = aer->ndv(p, aer->ndviIndices);
     CPPUNIT_ASSERT(std::abs(ndv - 0.1428571) < 1.e-5);
 
     p.solarIrradianceFillValues[9] = 8;
-    ndv = aer->ndv(p);
+    ndv = aer->ndv(p, aer->ndviIndices);
     CPPUNIT_ASSERT(ndv == 0.5);
+}
+
+void AerTest::testAotStandardError() {
+}
+
+void AerTest::testErrorMetric() {
+//    Segment& segment = context->addSegment(Constants::SEGMENT_SYN_AVERAGED, 100, 10, 2, 0, 583);
+//    segment.addVariable("L_9", Constants::TYPE_DOUBLE, 1.0, 0.0);
+//    segment.addVariable("L_17", Constants::TYPE_DOUBLE, 1.0, 0.0);
+//    AerTestPixel p(segment, 0, 0, 0);
+//    const double errorMetric = aer->errorMetric(p, 0);
+//    CPPUNIT_ASSERT(std::abs(errorMetric - 0.423) < 1.0e-4);
 }
 
 void AerTest::testAer() {
@@ -93,4 +108,41 @@ void AerTest::testAer() {
 
 	Processor processor;
 	processor.process(*context);
+}
+
+void AerTest::testReadAuxdata() {
+    const valarray<int16_t> amins = aer->amins;
+    CPPUNIT_ASSERT(amins[0] == 1);
+    CPPUNIT_ASSERT(amins[20] == 21);
+    CPPUNIT_ASSERT(amins[39] == 40);
+
+    const float initialTau550 = aer->initialTau550;
+    CPPUNIT_ASSERT(initialTau550 == 0.1f);
+
+    const valarray<float> initialNus = aer->initialNu;
+    CPPUNIT_ASSERT(initialNus.size() == 2);
+    CPPUNIT_ASSERT(std::abs(initialNus[0] - 0.5) < EPSILON);
+    CPPUNIT_ASSERT(std::abs(initialNus[1] - 0.3) < EPSILON);
+
+    const valarray<float> initialOmegas = aer->initialOmega;
+    CPPUNIT_ASSERT(initialOmegas.size() == 6);
+    for(size_t i = 0; i < initialOmegas.size(); i++) {
+        CPPUNIT_ASSERT(std::abs(initialOmegas[i] - 0.1) < EPSILON);
+    }
+
+    float alpha550 = aer->aerosolAngstromExponents[0];
+    CPPUNIT_ASSERT(std::abs(alpha550 - 1.25) < EPSILON);
+
+    alpha550 = aer->aerosolAngstromExponents[10];
+    CPPUNIT_ASSERT(std::abs(alpha550 - 1.25) < EPSILON);
+
+    alpha550 = aer->aerosolAngstromExponents[30];
+    CPPUNIT_ASSERT(std::abs(alpha550 - 1.25) < EPSILON);
+
+    matrix<float> weights = aer->angularWeights;
+    CPPUNIT_ASSERT(weights.at_element(0,0) == 1.5);
+    CPPUNIT_ASSERT(weights.at_element(0,1) == 1.0);
+    CPPUNIT_ASSERT(weights.at_element(1,1) == 1.0);
+    CPPUNIT_ASSERT(weights.at_element(0,2) == 0.5);
+    CPPUNIT_ASSERT(weights.at_element(1,5) == 1.0);
 }

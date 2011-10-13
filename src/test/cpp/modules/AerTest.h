@@ -15,6 +15,9 @@
 
 class AerTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(AerTest);
+    CPPUNIT_TEST(testReadAuxdata);
+    CPPUNIT_TEST(testErrorMetric);
+    CPPUNIT_TEST(testAotStandardError);
     CPPUNIT_TEST(testNdv);
 //    CPPUNIT_TEST(testAer);
     CPPUNIT_TEST_SUITE_END();
@@ -26,17 +29,21 @@ public:
     void tearDown();
 
 private:
+    static const double EPSILON;
     void prepareContext();
+    void testReadAuxdata();
     void testAer();
     void testNdv();
+    void testAotStandardError();
+    void testErrorMetric();
     shared_ptr<Context> context;
     shared_ptr<Aer> aer;
 };
 
-class AerPixelDerived : public AerPixel {
+class AerTestPixel : public AerPixel {
 public:
 
-    AerPixelDerived(Segment& segment, long k, long l, long m) : AerPixel(segment, k, l, m) {
+    AerTestPixel(Segment& segment, long k, long l, long m) : AerPixel(segment, k, l, m) {
 
     }
 

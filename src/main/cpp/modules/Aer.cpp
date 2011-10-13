@@ -11,24 +11,25 @@
 
 #include "Aer.h"
 #include "../util/IOUtils.h"
+#include "../util/LookupTableReader.h"
+#include "../util/Min.h"
+#include "../util/MultiMin.h"
 
 using std::min;
 using std::numeric_limits;
 using std::set;
 
-Aer::Aer() : BasicModule("AER") {
-    auxdataProvider = shared_ptr<ConfigurationAuxdataProvider>(new ConfigurationAuxdataProvider(getAuxdataPath()));
+Aer::Aer() : BasicModule("AER"), amins(40), ndviIndices(2), initialNu(2), initialOmega(6), aerosolAngstromExponents(40),
+        spectralWeights(30), totalAngularWeights(4), angularWeights(2, 6), vegetationSpectrum(30), soilReflectance(30) {
 }
 
 Aer::~Aer() {
 }
 
 void Aer::start(Context& context) {
+    readAuxdata();
     averagedSegment = &context.getSegment(Constants::SEGMENT_SYN_AVERAGED);
     averagedGrid = &averagedSegment->getGrid();
-    const ProductDescriptor& synL2Descriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2);
-    const SegmentDescriptor& synCollocatedDescriptor = synL2Descriptor.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
-    const VariableDescriptor& aminDescriptor = synCollocatedDescriptor.getVariableDescriptor("AMIN");
 }
 
 void Aer::stop(Context& context) {
@@ -127,8 +128,28 @@ shared_ptr<AerPixel> Aer::initPixel(Context& context, long k, long l, long m) co
     const Accessor& synFlags = averagedSegment->getAccessor("SYN_flags");
     const size_t index = averagedGrid->getIndex(k, l, m);
     p->setSynFlags(synFlags.getUShort(index));
-    // todo - ts 11Oct2011 - set solar irradiances, and solar irradiance fill values
-    Segment& olcInfo = context.getSegment(Constants::SEGMENT_OLC_INFO);
+    const Segment& olcInfoSegment = context.getSegment(Constants::SEGMENT_OLC_INFO);
+    const Segment& slnInfoSegment = context.getSegment(Constants::SEGMENT_SLN_INFO);
+    const Segment& sloInfoSegment = context.getSegment(Constants::SEGMENT_SLO_INFO);
+    const Grid& olcInfoGrid = olcInfoSegment.getGrid();
+    const Grid& slnInfoGrid = slnInfoSegment.getGrid();
+    const Grid& sloInfoGrid = sloInfoSegment.getGrid();
+    const Accessor& solarIrrOlcAccessor = olcInfoSegment.getAccessor("solar_irradiance");
+    for(size_t channel = 0; channel < 18; channel++) {
+        const size_t index = olcInfoGrid.getIndex(k, channel, m);
+        p->solarIrradiances[channel] = solarIrrOlcAccessor.getFloat(index);
+        p->solarIrradianceFillValues[channel] = lexical_cast<float>(solarIrrOlcAccessor.getFillValue());
+    }
+    for (size_t i = 1; i <= 6; i++) {
+        const Accessor& solarIrrSlnAccessor = slnInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(i));
+        const size_t channel = 17 + i;
+        p->solarIrradiances[channel] = solarIrrSlnAccessor.getDouble(slnInfoGrid.getIndex(0, 0, 1));
+    }
+    for (size_t i = 1; i <= 6; i++) {
+        const Accessor& solarIrrSloAccessor = sloInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(i));
+        const size_t channel = 23 + i;
+        p->solarIrradiances[channel] = solarIrrSloAccessor.getDouble(sloInfoGrid.getIndex(0, 0, 1));
+    }
     return p;
 }
 
@@ -159,32 +180,95 @@ void Aer::aer_s(shared_ptr<AerPixel> p) {
 
     p->E_2 = numeric_limits<double>::infinity();
 
-    valarray<int16_t> amins = auxdataProvider->getAMINs();
     for(size_t i = 0; i < amins.size(); i++) {
         const int16_t amin = amins[i];
         AerPixel q(*p);
-        const valarray<float> nus = auxdataProvider->getInitialNus();
-        const valarray<float> omegas = auxdataProvider->getInitialOmegas();
-        float tau550 = auxdataProvider->getInitialTau550();
+        const valarray<float> nu = initialNu;
+        const valarray<float> omegas = initialOmega;
+        float tau550 = initialTau550;
         q.setTau550(tau550);
-        q.c_1 = ndv(q);
+        q.setTau550(tau550);
+        q.c_1 = ndv(q, ndviIndices);
         q.c_2 = 1 - q.c_1;
+        q.nu[0] = nu[0];
+        q.nu[1] = nu[1];
+        for(size_t j = 0; j < omegas.size(); j++) {
+            q.omega[j] = omegas[j];
+        }
+        bool success = e2(q, amin);
+        if(success && q.E_2 < p->E_2) {
+            p = shared_ptr<AerPixel>(new AerPixel(q));
+            p->setAlpha550(aerosolAngstromExponents[amin]);
+            p->setAMIN(amin);
+        }
+    }
+    if(!p->isFillValue("AMIN")) {
+        if(p->getTau550() > 0.0001 ) {
+            double a = aotStandardError(p->getTau550());
+        } else {
+            p->setSynFlags(p->getSynFlags() | 16384);
+        }
     }
 }
 
-double Aer::ndv(AerPixel& q) {
-    const valarray<int16_t> indices = auxdataProvider->getNdviIndices();
-    double L1 = q.getRadiance(indices[0]);
-    double L2 = q.getRadiance(indices[1]);
-    double F1 = q.solarIrradiances[indices[0]];
-    double F2 = q.solarIrradiances[indices[1]];
-    if(q.isFillValue("L_" + lexical_cast<string>(indices[0])) ||
-            q.isFillValue("L_" + lexical_cast<string>(indices[1])) ||
-            F1 == q.solarIrradianceFillValues[indices[0]] ||
-            F2 == q.solarIrradianceFillValues[indices[1]]) {
+bool Aer::e2(AerPixel& q, size_t amin) {
+    q.E_2 = 0.0;
+    return false;
+}
+
+double Aer::ndv(AerPixel& q, valarray<int16_t> ndviIndices) {
+    double L1 = q.getRadiance(ndviIndices[0]);
+    double L2 = q.getRadiance(ndviIndices[1]);
+    double F1 = q.solarIrradiances[ndviIndices[0]];
+    double F2 = q.solarIrradiances[ndviIndices[1]];
+    if(q.isFillValue("L_" + lexical_cast<string>(ndviIndices[0])) ||
+            q.isFillValue("L_" + lexical_cast<string>(ndviIndices[1])) ||
+            isSolarIrradianceFillValue(F1, q.solarIrradianceFillValues, ndviIndices[0]) ||
+            isSolarIrradianceFillValue(F2, q.solarIrradianceFillValues, ndviIndices[1])) {
         return 0.5;
     }
     return ((L2 / F2) - (L1 / F1)) / ((L2 / F2) + (L1 / F1));
+}
+
+bool Aer::isSolarIrradianceFillValue(double f, const valarray<double> fillValues, int16_t index) {
+    if(index >= 18) {
+        return false;
+    }
+    return f == fillValues[index];
+}
+
+double Aer::aotStandardError(float tau550) {
+
+}
+
+bool Aer::e1(AerPixel& p, int16_t amin) {
+    ErrorMetric em(p, gamma, amin, totalAngularWeights, vegetationSpectrum, soilReflectance, ndviIndices, angularWeights);
+    valarray<double> pn(10);
+    pn[0] = p.c_1;
+    pn[1] = p.c_2;
+    pn[2] = p.nu[0];
+    pn[3] = p.nu[1];
+    for(size_t i = 0; i < 6; i++) {
+        pn[i + 4] = p.omega[i];
+    }
+    valarray<valarray<double> > u(valarray<double>(10), 10);
+    for(size_t i = 0; i < 10; i++) {
+        valarray<double> init(10);
+        for(size_t j = 0; j < 10; j++) {
+            init[j] = j / 10.0;
+        }
+        u[i] = init;
+    }
+
+    const bool success = MultiMin::powell(em, pn, u, MultiMin::ACCURACY_GOAL, 200);
+    p.c_1 = pn[0];
+    p.c_2 = pn[1];
+    p.nu[0] = pn[2];
+    p.nu[1] = pn[3];
+    for(size_t i = 0; i < 6; i++) {
+        p.omega[i] = pn[i + 4];
+    }
+    return success;
 }
 
 void Aer::applyMedianFiltering(map<size_t, shared_ptr<AerPixel> >& pixels) {
@@ -195,4 +279,79 @@ void Aer::setPixelsToSegment(map<size_t, shared_ptr<AerPixel> >& pixels) {
 }
 
 void Aer::initializeP(AerPixel& p) {
+}
+
+void Aer::readAuxdata() {
+    const LookupTableReader configReader(getAuxdataPath() + "S3__SY_2_SYCPAX.nc");
+    const LookupTableReader radiometricReader(getAuxdataPath() + "S3__SY_2_SYRTAX.nc");
+    const size_t zeroIndex = 0;
+    initialTau550 = configReader.readScalarLookupTable<float>("T550_ini")->getValue(zeroIndex);
+
+    valarray<int16_t> aminCoordinates(40);
+    for(size_t coord = 0; coord < 40; coord++){
+        aminCoordinates[coord] = coord;
+    }
+    configReader.readVectorLookupTable<int16_t>("AMIN")->getValues(&aminCoordinates[0], amins);
+
+    valarray<float> nuCoordinates(2);
+    nuCoordinates[0] = 0;
+    nuCoordinates[1] = 1;
+    configReader.readVectorLookupTable<float>("v_ini")->getValues(&nuCoordinates[0], initialNu);
+
+    valarray<float> omegaCoordinates(6);
+    for(size_t coord = 0;coord < 6;coord++){
+        omegaCoordinates[coord] = coord;
+    }
+    configReader.readVectorLookupTable<float>("w_ini")->getValues(&omegaCoordinates[0], initialOmega);
+
+    valarray<float> a550Coordinates(40);
+    for(size_t coord = 0;coord < 40;coord++){
+        a550Coordinates[coord] = coord;
+    }
+    radiometricReader.readVectorLookupTable<float>("A550")->getValues(&a550Coordinates[0], aerosolAngstromExponents);
+
+    kappa = configReader.readScalarLookupTable<float>("kappa")->getValue(zeroIndex);
+
+    valarray<int16_t> ndviCoordinates(2);
+    for(size_t coord = 0;coord < 6;coord++){
+        ndviCoordinates[coord] = coord;
+    }
+    configReader.readVectorLookupTable<int16_t>("NDV_channel")->getValues(&ndviCoordinates[0], ndviIndices);
+
+    valarray<float> synChannelCoordinates(30);
+    for(size_t coord = 0;coord < 30;coord++){
+        synChannelCoordinates[coord] = coord;
+    }
+    configReader.readVectorLookupTable<float>("weight_spec")->getValues(&synChannelCoordinates[0], spectralWeights);
+
+    valarray<float> watCoordinates(4);
+    for(size_t coord = 0;coord < 4;coord++){
+        watCoordinates[coord] = coord;
+    }
+    configReader.readVectorLookupTable<float>("weight_ang_tot")->getValues(&watCoordinates[0], totalAngularWeights);
+
+    shared_ptr<MatrixLookupTable<float> > weightAngLut = configReader.readMatrixLookupTable<float>("weight_ang");
+    valarray<float> f(weightAngLut->getDimensionCount());
+    valarray<float> w(weightAngLut->getWorkspaceSize());
+    matrix<float> values(2, 6);
+    valarray<float> angWeightCoords(12);
+    for(size_t coord = 0;coord < 12;coord++){
+        angWeightCoords[coord] = coord;
+    }
+    configReader.readMatrixLookupTable<float>("weight_ang")->getValues(&angWeightCoords[0], angularWeights, f, w);
+
+    valarray<float> rVegCoordinates(30);
+    for(size_t coord = 0; coord < 30; coord++){
+        rVegCoordinates[coord] = coord;
+    }
+    configReader.readVectorLookupTable<float>("R_veg")->getValues(&rVegCoordinates[0], vegetationSpectrum);
+
+    valarray<float> rSoilCoordinates(30);
+    for(size_t coord = 0; coord < 30; coord++){
+        rSoilCoordinates[coord] = coord;
+    }
+    configReader.readVectorLookupTable<float>("R_soil")->getValues(&rSoilCoordinates[0], soilReflectance);
+
+    gamma = configReader.readScalarLookupTable<float>("gamma")->getValue(zeroIndex);
+
 }
