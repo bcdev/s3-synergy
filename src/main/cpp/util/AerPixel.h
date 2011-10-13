@@ -20,7 +20,7 @@ using std::string;
 class AerPixel : public Pixel {
 public:
 
-    AerPixel(Segment& segment, long k, long l, long m) : Pixel(segment, k, l, m), solarIrradiances(30), solarIrradianceFillValues(18) {
+    AerPixel(Segment& segment, long k, long l, long m) : Pixel(segment, k, l, m), nu(2), omega(6), solarIrradiances(30), solarIrradianceFillValues(18) {
 
     }
 
