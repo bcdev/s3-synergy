@@ -20,6 +20,7 @@ using std::sqrt;
 using std::string;
 
 const double Min::GOLDEN = 0.3819660;
+const double Min::ACCURACY_GOAL = 1.0E-6;
 
 Min::Min() {
 

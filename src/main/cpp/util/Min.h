@@ -15,6 +15,7 @@ class Bracket;
 
 class Min {
 public:
+
 	virtual ~Min();
 
 	/**
@@ -79,6 +80,7 @@ public:
 	static bool brent(UnivariateFunction& f, Bracket& bracket, double relativeAccuracyGoal, double absoluteAccuracyGoal, int maxIter);
 
 	static const double GOLDEN;
+	static const double ACCURACY_GOAL;
 
 private:
 

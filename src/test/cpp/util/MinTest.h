@@ -29,8 +29,6 @@ public:
     void tearDown();
 
 private:
-    const static double ACCURACY_GOAL;
-
     void testBracketCos();
     void testBracketSin();
     void testBrentCos();
