@@ -116,8 +116,6 @@ void Aer::process(Context& context) {
         I++;
     }
     applyMedianFiltering(pixels);
-    setPixelsToSegment(pixels);
-
     context.setLastComputedL(*averagedSegment, *this, lastL);
 }
 
@@ -271,9 +269,6 @@ bool Aer::e1(AerPixel& p, int16_t amin) {
 
 void Aer::applyMedianFiltering(map<size_t, shared_ptr<AerPixel> >& pixels) {
 
-}
-
-void Aer::setPixelsToSegment(map<size_t, shared_ptr<AerPixel> >& pixels) {
 }
 
 void Aer::initializeP(AerPixel& p) {
