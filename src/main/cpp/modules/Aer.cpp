@@ -27,11 +27,11 @@ Aer::~Aer() {
 void Aer::start(Context& context) {
     readAuxdata();
     averagedSegment = &context.getSegment(Constants::SEGMENT_SYN_AVERAGED);
-    SegmentDescriptor& averagedSegmentDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_AVERAGED);
-    averagedSegment->addVariable(averagedSegmentDescriptor.getVariableDescriptor("T550"));
-    averagedSegment->addVariable(averagedSegmentDescriptor.getVariableDescriptor("T550_er"));
-    averagedSegment->addVariable(averagedSegmentDescriptor.getVariableDescriptor("A550"));
-    averagedSegment->addVariable(averagedSegmentDescriptor.getVariableDescriptor("AMIN"));
+    SegmentDescriptor& collocatedSegmentDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
+    averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550"));
+    averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550_er"));
+    averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("A550"));
+    averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("AMIN"));
     averagedGrid = &averagedSegment->getGrid();
 }
 
