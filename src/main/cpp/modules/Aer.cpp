@@ -152,6 +152,12 @@ shared_ptr<AerPixel> Aer::initPixel(Context& context, long k, long l, long m) co
         const size_t channel = 23 + i;
         p->solarIrradiances[channel] = solarIrrSloAccessor.getDouble(sloInfoGrid.getIndex(0, 0, 1));
     }
+    p->setTau550(initialTau550);
+    p->nu[0] = initialNu[0];
+    p->nu[1] = initialNu[2];
+    for(size_t i = 0; i < 6; i++) {
+        p->omega[i] = initialOmega[i];
+    }
     return p;
 }
 
