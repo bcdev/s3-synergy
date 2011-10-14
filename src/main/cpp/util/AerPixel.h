@@ -24,7 +24,7 @@ public:
 
     }
 
-    AerPixel(const AerPixel& p) : Pixel(p) {
+    AerPixel(const AerPixel& p) : Pixel(p), nu(2), omega(6), solarIrradiances(30), solarIrradianceFillValues(18) {
         setSynFlags(p.getSynFlags());
         setTau550(p.getTau550());
         setDeltaTau550(p.getDeltaTau550());
