@@ -283,13 +283,14 @@ void Aco::process(Context& context) {
 				lutT.getValues(&coordinates[2], matTv, f, w);
 
 				for (size_t b = 24; b < 30; b++) {
+					context.getLogging().info("b = " + lexical_cast<string>(b), getId());
 					// Eq. 2-1
 					const double ltoa = ltoaAccessors[b]->getDouble(i);
 					const double f0 = solarIrrSloAccessors[b - 24]->getDouble(sloInfoGrid.getIndex(0, 0, l & 4));
 					rtoa[b] = toaReflectance(ltoa, f0, szaOlc);
 
 					// Eq. 2-2
-					tO3[b] = ozoneTransmission(lutCO3, szaOlc, vzaSln, nO3, b + 1.0);
+					tO3[b] = ozoneTransmission(lutCO3, szaOlc, vzaSlo, nO3, b + 1.0);
 
 					// Eq. 2-3
 					const double ratm = matRatmSlo(amin - 1, b - 24);
