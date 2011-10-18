@@ -287,6 +287,7 @@ void Aco::process(Context& context) {
 					// Eq. 2-1
 					const double ltoa = ltoaAccessors[b]->getDouble(i);
 					context.getLogging().info("ltoa = " + lexical_cast<string>(ltoa), getId());
+					context.getLogging().info("index = " + lexical_cast<string>(sloInfoGrid.getIndex(0, 0, l & 4)), getId());
 					const double f0 = solarIrrSloAccessors[b - 24]->getDouble(sloInfoGrid.getIndex(0, 0, l & 4));
 					context.getLogging().info("f0 = " + lexical_cast<string>(f0), getId());
 					rtoa[b] = toaReflectance(ltoa, f0, szaOlc);
