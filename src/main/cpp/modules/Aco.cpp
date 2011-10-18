@@ -262,6 +262,7 @@ void Aco::process(Context& context) {
 				/*
 				 * Surface reflectance for SLO channels
 				 */
+				/*
 				tpiSlo.prepare(lonAccessor.getDouble(i), latAccessor.getDouble(i), tpiWeights, tpiIndexes);
 
 				const double vzaSlo = tpiSlo.interpolate(tpVzasSlo, tpiWeights, tpiIndexes);
@@ -299,7 +300,7 @@ void Aco::process(Context& context) {
 						sdrAccessors[b]->setFillValue(i);
 					}
 				}
-
+				 */
 				/*
 				 * Errors for OLC channels
 				 */
