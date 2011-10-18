@@ -262,10 +262,12 @@ void Aco::process(Context& context) {
 				/*
 				 * Surface reflectance for SLO channels
 				 */
-				/*
+				context.getLogging().info("preparing tpiSlo", getId());
 				tpiSlo.prepare(lonAccessor.getDouble(i), latAccessor.getDouble(i), tpiWeights, tpiIndexes);
 
+				context.getLogging().info("interpolating tpVzasSlo", getId());
 				const double vzaSlo = tpiSlo.interpolate(tpVzasSlo, tpiWeights, tpiIndexes);
+				context.getLogging().info("interpolating tpVaasSlo", getId());
 				const double vaaSlo = tpiSlo.interpolate(tpVaasSlo, tpiWeights, tpiIndexes);
 
 				coordinates[0] = abs(saaOlc - vaaSlo); // ADA
@@ -275,7 +277,9 @@ void Aco::process(Context& context) {
 				coordinates[4] = wv; // water vapour
 				coordinates[5] = tau550; // aerosol
 
+				context.getLogging().info("interpolating lutSloRatm", getId());
 				lutSloRatm.getValues(&coordinates[0], matRatmSlo, f, w);
+				context.getLogging().info("interpolating lutT", getId());
 				lutT.getValues(&coordinates[2], matTv, f, w);
 
 				for (size_t b = 24; b < 30; b++) {
@@ -300,7 +304,6 @@ void Aco::process(Context& context) {
 						sdrAccessors[b]->setFillValue(i);
 					}
 				}
-				 */
 				/*
 				 * Errors for OLC channels
 				 */
