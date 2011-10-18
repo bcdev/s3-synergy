@@ -262,12 +262,9 @@ void Aco::process(Context& context) {
 				/*
 				 * Surface reflectance for SLO channels
 				 */
-				context.getLogging().info("preparing tpiSlo", getId());
 				tpiSlo.prepare(lonAccessor.getDouble(i), latAccessor.getDouble(i), tpiWeights, tpiIndexes);
 
-				context.getLogging().info("interpolating tpVzasSlo", getId());
 				const double vzaSlo = tpiSlo.interpolate(tpVzasSlo, tpiWeights, tpiIndexes);
-				context.getLogging().info("interpolating tpVaasSlo", getId());
 				const double vaaSlo = tpiSlo.interpolate(tpVaasSlo, tpiWeights, tpiIndexes);
 
 				coordinates[0] = abs(saaOlc - vaaSlo); // ADA
@@ -277,37 +274,24 @@ void Aco::process(Context& context) {
 				coordinates[4] = wv; // water vapour
 				coordinates[5] = tau550; // aerosol
 
-				context.getLogging().info("interpolating lutSloRatm", getId());
 				lutSloRatm.getValues(&coordinates[0], matRatmSlo, f, w);
-				context.getLogging().info("interpolating lutT", getId());
 				lutT.getValues(&coordinates[2], matTv, f, w);
 
 				for (size_t b = 24; b < 30; b++) {
-					context.getLogging().info("b = " + lexical_cast<string>(b), getId());
 					// Eq. 2-1
 					const double ltoa = ltoaAccessors[b]->getDouble(i);
-					context.getLogging().info("ltoa = " + lexical_cast<string>(ltoa), getId());
-					context.getLogging().info("index = " + lexical_cast<string>(sloInfoGrid.getIndex(0, 0, l % 4)), getId());
 					const double f0 = solarIrrSloAccessors[b - 24]->getDouble(sloInfoGrid.getIndex(0, 0, l % 4));
-					context.getLogging().info("f0 = " + lexical_cast<string>(f0), getId());
 					rtoa[b] = toaReflectance(ltoa, f0, szaOlc);
-					context.getLogging().info("rtoa = " + lexical_cast<string>(rtoa[b]), getId());
 
 					// Eq. 2-2
 					tO3[b] = ozoneTransmission(lutCO3, szaOlc, vzaSlo, nO3, b + 1.0);
-					context.getLogging().info("tO3 = " + lexical_cast<string>(tO3[b]), getId());
 
 					// Eq. 2-3
 					const double ratm = matRatmSlo(amin - 1, b - 24);
-					context.getLogging().info("ratm = " + lexical_cast<string>(ratm), getId());
 					ts[b] = matTs(amin - 1, b);
-					context.getLogging().info("ts[b] = " + lexical_cast<string>(ts[b]), getId());
 					tv[b] = matTv(amin - 1, b);
-					context.getLogging().info("tv[b] = " + lexical_cast<string>(tv[b]), getId());
 					const double rho = matRho(amin - 1, b);
-					context.getLogging().info("rho = " + lexical_cast<string>(rho), getId());
 					rboa[b] = surfaceReflectance(rtoa[b], ratm, ts[b], tv[b], rho, tO3[b]);
-					context.getLogging().info("rboa[b] = " + lexical_cast<string>(rboa[b]), getId());
 
 					if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
 						sdrAccessors[b]->setDouble(i, rboa[b]);
@@ -315,6 +299,7 @@ void Aco::process(Context& context) {
 						sdrAccessors[b]->setFillValue(i);
 					}
 				}
+
 				/*
 				 * Errors for OLC channels
 				 */
