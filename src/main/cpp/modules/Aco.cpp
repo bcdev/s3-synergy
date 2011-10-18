@@ -239,7 +239,7 @@ void Aco::process(Context& context) {
 				for (size_t b = 18; b < 24; b++) {
 					// Eq. 2-1
 					const double ltoa = ltoaAccessors[b]->getDouble(i);
-					const double f0 = solarIrrSlnAccessors[b - 18]->getDouble(slnInfoGrid.getIndex(0, 0, 1));
+					const double f0 = solarIrrSlnAccessors[b - 18]->getDouble(slnInfoGrid.getIndex(0, 0, l % 4));
 					rtoa[b] = toaReflectance(ltoa, f0, szaOlc);
 
 					// Eq. 2-2
@@ -262,7 +262,6 @@ void Aco::process(Context& context) {
 				/*
 				 * Surface reflectance for SLO channels
 				 */
-				/* TODO: fix segmentation fault occurring below
 				tpiSlo.prepare(lonAccessor.getDouble(i), latAccessor.getDouble(i), tpiWeights, tpiIndexes);
 
 				const double vzaSlo = tpiSlo.interpolate(tpVzasSlo, tpiWeights, tpiIndexes);
@@ -281,7 +280,7 @@ void Aco::process(Context& context) {
 				for (size_t b = 24; b < 30; b++) {
 					// Eq. 2-1
 					const double ltoa = ltoaAccessors[b]->getDouble(i);
-					const double f0 = solarIrrSloAccessors[b - 18]->getDouble(sloInfoGrid.getIndex(0, 0, 1));
+					const double f0 = solarIrrSloAccessors[b - 24]->getDouble(sloInfoGrid.getIndex(0, 0, l & 4));
 					rtoa[b] = toaReflectance(ltoa, f0, szaOlc);
 
 					// Eq. 2-2
@@ -300,7 +299,6 @@ void Aco::process(Context& context) {
 						sdrAccessors[b]->setFillValue(i);
 					}
 				}
-				*/
 
 				/*
 				 * Errors for OLC channels
