@@ -28,7 +28,7 @@ void AuxdataProviderTest::setUp() {
     const char* value = std::getenv("S3_SYNERGY_HOME");
 
     string auxdataPath = string(value) + "/auxdata/v" + Constants::PROCESSOR_VERSION + "/";
-    auxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider(auxdataPath));
+    auxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider("id", auxdataPath));
 }
 
 void AuxdataProviderTest::tearDown() {
