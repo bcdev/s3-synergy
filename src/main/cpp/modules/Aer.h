@@ -34,19 +34,19 @@ private:
     friend class AerTest;
     Segment* averagedSegment;
     const Grid* averagedGrid;
-    float initialTau550;
-    float kappa;
-    float gamma;
+    double initialTau550;
+    double kappa;
+    double gamma;
     valarray<int16_t> amins;
     valarray<int16_t> ndviIndices;
-    valarray<float> initialNu;
-    valarray<float> initialOmega;
-    valarray<float> aerosolAngstromExponents;
-    valarray<float> spectralWeights;
-    valarray<float> totalAngularWeights;
-    matrix<float> angularWeights;
-    valarray<float> vegetationSpectrum;
-    valarray<float> soilReflectances;
+    valarray<double> initialNu;
+    valarray<double> initialOmega;
+    valarray<double> aerosolAngstromExponents;
+    valarray<double> spectralWeights;
+    valarray<double> totalAngularWeights;
+    matrix<double> angularWeights;
+    valarray<double> vegetationSpectrum;
+    valarray<double> soilReflectances;
 
     static bool isSolarIrradianceFillValue(double f, const valarray<double> fillValues, int16_t index);
     shared_ptr<AerPixel> initPixel(Context& context, long k, long l, long m) const;
@@ -55,14 +55,14 @@ private:
     void aer_s(shared_ptr<AerPixel> p);
     void applyMedianFiltering(map<size_t, shared_ptr<AerPixel> >& pixels);
     bool e2(AerPixel& q, size_t amin);
-    double aotStandardError(float tau550);
+    double aotStandardError(double tau550);
 };
 
 class E2 : public UnivariateFunction {
 
 public:
-    E2(AerPixel& p, float gamma, int16_t amin, valarray<float> totalAngularWeights, valarray<float> vegetationSpectrum,
-            valarray<float> soilReflectance, valarray<int16_t> ndviIndices, matrix<float> angularWeights) :
+    E2(AerPixel& p, double gamma, int16_t amin, valarray<double> totalAngularWeights, valarray<double> vegetationSpectrum,
+            valarray<double> soilReflectance, valarray<int16_t> ndviIndices, matrix<double> angularWeights) :
                 p(p), gamma(gamma), amin(amin), totalAngularWeights(totalAngularWeights), vegetationSpectrum(vegetationSpectrum),
                 soilReflectance(soilReflectance), ndviIndices(ndviIndices), angularWeights(angularWeights) {
     }
@@ -99,14 +99,14 @@ public:
 
 private:
     AerPixel& p;
-    float gamma;
+    double gamma;
     int16_t amin;
-    valarray<float> spectralWeights;
-    valarray<float> totalAngularWeights;
-    valarray<float> vegetationSpectrum;
-    valarray<float> soilReflectance;
+    valarray<double> spectralWeights;
+    valarray<double> totalAngularWeights;
+    valarray<double> vegetationSpectrum;
+    valarray<double> soilReflectance;
     valarray<int16_t> ndviIndices;
-    matrix<float> angularWeights;
+    matrix<double> angularWeights;
 
 };
 

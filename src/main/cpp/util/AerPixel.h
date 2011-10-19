@@ -48,28 +48,28 @@ public:
         setUShort("SYN_flags", value);
     }
 
-    float getAlpha550() const {
-        return getFloat("A550");
+    double getAlpha550() const {
+        return getDouble("A550");
     }
 
-    void setAlpha550(float value) {
-        setFloat("A550", value);
+    void setAlpha550(double value) {
+        setDouble("A550", value);
     }
 
     float getTau550() const {
-        return getFloat("T550");
+        return getDouble("T550");
     }
 
-    void setTau550(float value) {
-        setFloat("T550", value);
+    void setTau550(double value) {
+        setDouble("T550", value);
     }
 
     float getDeltaTau550() const {
-        return getFloat("T550_er");
+        return getDouble("T550_er");
     }
 
-    void setDeltaTau550(float value) {
-        setFloat("T550_er", value);
+    void setDeltaTau550(double value) {
+        setDouble("T550_er", value);
     }
 
     uint8_t getAMIN() const {
@@ -92,8 +92,8 @@ public:
     double E_2;
     double c_1;
     double c_2;
-    valarray<float> nu;
-    valarray<float> omega;
+    valarray<double> nu;
+    valarray<double> omega;
     valarray<double> solarIrradiances;
     valarray<double> solarIrradianceFillValues;
 

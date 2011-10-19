@@ -119,18 +119,18 @@ void AerTest::testReadAuxdata() {
     const float initialTau550 = aer->initialTau550;
     CPPUNIT_ASSERT(initialTau550 == 0.1f);
 
-    const valarray<float> initialNus = aer->initialNu;
+    const valarray<double> initialNus = aer->initialNu;
     CPPUNIT_ASSERT(initialNus.size() == 2);
     CPPUNIT_ASSERT(std::abs(initialNus[0] - 0.5) < EPSILON);
     CPPUNIT_ASSERT(std::abs(initialNus[1] - 0.3) < EPSILON);
 
-    const valarray<float> initialOmegas = aer->initialOmega;
+    const valarray<double> initialOmegas = aer->initialOmega;
     CPPUNIT_ASSERT(initialOmegas.size() == 6);
     for(size_t i = 0; i < initialOmegas.size(); i++) {
         CPPUNIT_ASSERT(std::abs(initialOmegas[i] - 0.1) < EPSILON);
     }
 
-    float alpha550 = aer->aerosolAngstromExponents[0];
+    double alpha550 = aer->aerosolAngstromExponents[0];
     CPPUNIT_ASSERT(std::abs(alpha550 - 1.25) < EPSILON);
 
     alpha550 = aer->aerosolAngstromExponents[10];
@@ -139,7 +139,7 @@ void AerTest::testReadAuxdata() {
     alpha550 = aer->aerosolAngstromExponents[30];
     CPPUNIT_ASSERT(std::abs(alpha550 - 1.25) < EPSILON);
 
-    matrix<float> weights = aer->angularWeights;
+    matrix<double> weights = aer->angularWeights;
     CPPUNIT_ASSERT(weights.at_element(0,0) == 1.5);
     CPPUNIT_ASSERT(weights.at_element(0,1) == 1.0);
     CPPUNIT_ASSERT(weights.at_element(1,1) == 1.0);

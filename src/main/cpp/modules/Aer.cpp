@@ -143,7 +143,7 @@ shared_ptr<AerPixel> Aer::initPixel(Context& context, long k, long l, long m) co
     for(size_t channel = 0; channel < 18; channel++) {
         const size_t index = olcInfoGrid.getIndex(k, channel, m);
         p->solarIrradiances[channel] = solarIrrOlcAccessor.getFloat(index);
-        p->solarIrradianceFillValues[channel] = lexical_cast<float>(solarIrrOlcAccessor.getFillValue());
+        p->solarIrradianceFillValues[channel] = lexical_cast<double>(solarIrrOlcAccessor.getFillValue());
     }
     for (size_t i = 1; i <= 6; i++) {
         const Accessor& solarIrrSlnAccessor = slnInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(i));
@@ -196,9 +196,9 @@ void Aer::aer_s(shared_ptr<AerPixel> p) {
     for(size_t i = 0; i < amins.size(); i++) {
         const int16_t amin = amins[i];
         AerPixel q(*p);
-        const valarray<float> nu = initialNu;
-        const valarray<float> omegas = initialOmega;
-        float tau550 = initialTau550;
+        const valarray<double> nu = initialNu;
+        const valarray<double> omegas = initialOmega;
+        double tau550 = initialTau550;
         q.setTau550(tau550);
         q.c_1 = ndv(q, ndviIndices);
         q.c_2 = 1 - q.c_1;
@@ -266,7 +266,7 @@ bool Aer::isSolarIrradianceFillValue(double f, const valarray<double> fillValues
     return f == fillValues[index];
 }
 
-double Aer::aotStandardError(float tau550) {
+double Aer::aotStandardError(double tau550) {
     // todo - implement
     return 0.0;
 }
@@ -276,22 +276,19 @@ void Aer::applyMedianFiltering(map<size_t, shared_ptr<AerPixel> >& pixels) {
 }
 
 void Aer::readAuxdata() {
-
     const AuxdataProvider configurationAuxdataProvider(getAuxdataPath() + "S3__SY_2_SYCPAX.nc");
     const AuxdataProvider radiometricAuxdataProvider(getAuxdataPath() + "S3__SY_2_SYRTAX.nc");
-    initialTau550 = configurationAuxdataProvider.getFloat("T550_ini");
-    amins = configurationAuxdataProvider.getInt16TArray("AMIN");
-    initialNu = configurationAuxdataProvider.getFloatArray("v_ini");
-    initialOmega = configurationAuxdataProvider.getFloatArray("w_ini");
-    kappa = configurationAuxdataProvider.getFloat("kappa");
-    ndviIndices = configurationAuxdataProvider.getInt16TArray("NDV_channel");
-    spectralWeights = configurationAuxdataProvider.getFloatArray("weight_spec");
-    totalAngularWeights = configurationAuxdataProvider.getFloatArray("weight_ang_tot");
-    vegetationSpectrum = configurationAuxdataProvider.getFloatArray("R_veg");
-    soilReflectances = configurationAuxdataProvider.getFloatArray("R_soil");
-    gamma = configurationAuxdataProvider.getFloat("gamma");
-    angularWeights = configurationAuxdataProvider.getFloatMatrix("weight_ang");
-    aerosolAngstromExponents = radiometricAuxdataProvider.getFloatArray("A550");
-
-
+    initialTau550 = configurationAuxdataProvider.getDouble("T550_ini");
+    amins = configurationAuxdataProvider.getShortArray("AMIN");
+    initialNu = configurationAuxdataProvider.getDoubleArray("v_ini");
+    initialOmega = configurationAuxdataProvider.getDoubleArray("w_ini");
+    kappa = configurationAuxdataProvider.getDouble("kappa");
+    ndviIndices = configurationAuxdataProvider.getShortArray("NDV_channel");
+    spectralWeights = configurationAuxdataProvider.getDoubleArray("weight_spec");
+    totalAngularWeights = configurationAuxdataProvider.getDoubleArray("weight_ang_tot");
+    vegetationSpectrum = configurationAuxdataProvider.getDoubleArray("R_veg");
+    soilReflectances = configurationAuxdataProvider.getDoubleArray("R_soil");
+    gamma = configurationAuxdataProvider.getDouble("gamma");
+    angularWeights = configurationAuxdataProvider.getDoubleMatrix("weight_ang");
+    aerosolAngstromExponents = radiometricAuxdataProvider.getDoubleArray("A550");
 }

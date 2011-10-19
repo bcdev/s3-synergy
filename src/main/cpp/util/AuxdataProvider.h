@@ -21,10 +21,10 @@ public:
     AuxdataProvider(string auxdataPath);
     virtual ~AuxdataProvider();
 
-    float getFloat(const string& varName) const;
-    valarray<float> getFloatArray(const string& varName) const;
-    valarray<int16_t> getInt16TArray(const string& varName) const;
-    matrix<float> getFloatMatrix(const string& varName) const;
+    double getDouble(const string& varName) const;
+    valarray<double> getDoubleArray(const string& varName) const;
+    matrix<double> getDoubleMatrix(const string& varName) const;
+    valarray<int16_t> getShortArray(const string& varName) const;
 
 private:
     int fileId;

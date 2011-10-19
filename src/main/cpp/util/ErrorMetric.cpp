@@ -7,14 +7,13 @@
 
 #include "ErrorMetric.h"
 
-ErrorMetric::ErrorMetric(AerPixel& p, float gamma, int16_t amin, valarray<float> totalAngularWeights, valarray<float> vegetationSpectrum,
-        valarray<float> soilReflectance, valarray<int16_t> ndviIndices, matrix<float> angularWeights) :
+ErrorMetric::ErrorMetric(AerPixel& p, double gamma, int16_t amin, valarray<double> totalAngularWeights, valarray<double> vegetationSpectrum,
+        valarray<double> soilReflectance, valarray<int16_t> ndviIndices, matrix<double> angularWeights) :
         p(p), gamma(gamma), amin(amin), totalAngularWeights(totalAngularWeights), vegetationSpectrum(vegetationSpectrum),
         soilReflectance(soilReflectance), ndviIndices(ndviIndices), angularWeights(angularWeights) {
 }
 
 double ErrorMetric::value(valarray<double>& x) {
-    // todo - ts 12Oct2011 - clarify what is meant by index NDV(p) (see DPM)
     for (size_t i = 1; i <= 30; i++) {
         if (p.isFillValue("L_" + lexical_cast<string>(i))) {
             spectralWeights[i - 1] = 0;
@@ -27,8 +26,8 @@ double ErrorMetric::value(valarray<double>& x) {
     }
     applyAtmosphericCorrection(p, amin);
 
-    valarray<float> rSpec(30);
-    valarray<float> rAng(12);
+    valarray<double> rSpec(30);
+    valarray<double> rAng(12);
     for (size_t i = 0; i < 30; i++) {
         rSpec[i] = specModelSurf(p.c_1, p.c_2, i);
     }
@@ -55,7 +54,7 @@ float ErrorMetric::specModelSurf(double c_1, double c_2, size_t index) {
     return c_1 * vegetationSpectrum[index] + c_2 * soilReflectance[index];
 }
 
-float ErrorMetric::errorMetric(valarray<float> rSpec, valarray<float> rAng) {
+float ErrorMetric::errorMetric(valarray<double> rSpec, valarray<double> rAng) {
     // todo - ts - 13Oct2011 - clarify if ndvi is correctly used as array index here
     double ndvi = ndv(p, ndviIndices);
     double sum1 = 0.0;

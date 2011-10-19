@@ -20,21 +20,21 @@ class ErrorMetric : public MultivariateFunction {
 
 public:
 
-    ErrorMetric(AerPixel& p, float gamma, int16_t amin, valarray<float> totalAngularWeights, valarray<float> vegetationSpectrum,
-            valarray<float> soilReflectance, valarray<int16_t> ndviIndices, matrix<float> angularWeights);
+    ErrorMetric(AerPixel& p, double gamma, int16_t amin, valarray<double> totalAngularWeights, valarray<double> vegetationSpectrum,
+            valarray<double> soilReflectance, valarray<int16_t> ndviIndices, matrix<double> angularWeights);
 
     double value(valarray<double>& x);
 
 private:
     AerPixel& p;
-    float gamma;
+    double gamma;
     int16_t amin;
-    valarray<float> spectralWeights;
-    valarray<float> totalAngularWeights;
-    valarray<float> vegetationSpectrum;
-    valarray<float> soilReflectance;
+    valarray<double> spectralWeights;
+    valarray<double> totalAngularWeights;
+    valarray<double> vegetationSpectrum;
+    valarray<double> soilReflectance;
     valarray<int16_t> ndviIndices;
-    matrix<float> angularWeights;
+    matrix<double> angularWeights;
 
     void applyAtmosphericCorrection(AerPixel& p, int16_t amin);
 
@@ -42,7 +42,7 @@ private:
 
     float specModelSurf(double c_1, double c_2, size_t index);
 
-    float errorMetric(valarray<float> rSpec, valarray<float> rAng);
+    float errorMetric(valarray<double> rSpec, valarray<double> rAng);
 
     double ndv(AerPixel& q, valarray<int16_t> ndviIndices);
 
