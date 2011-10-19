@@ -58,10 +58,10 @@ private:
     double aotStandardError(double tau550);
 };
 
-class E2 : public UnivariateFunction {
+class E1 : public UnivariateFunction {
 
 public:
-    E2(AerPixel& p, double gamma, int16_t amin, valarray<double> totalAngularWeights, valarray<double> vegetationSpectrum,
+    E1(AerPixel& p, double gamma, int16_t amin, valarray<double> totalAngularWeights, valarray<double> vegetationSpectrum,
             valarray<double> soilReflectance, valarray<int16_t> ndviIndices, matrix<double> angularWeights) :
                 p(p), gamma(gamma), amin(amin), totalAngularWeights(totalAngularWeights), vegetationSpectrum(vegetationSpectrum),
                 soilReflectance(soilReflectance), ndviIndices(ndviIndices), angularWeights(angularWeights) {

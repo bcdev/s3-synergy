@@ -236,7 +236,7 @@ void Aer::aer_s(shared_ptr<AerPixel> p) {
 }
 
 bool Aer::e2(AerPixel& p, size_t amin) {
-    E2 e1(p, gamma, amin, totalAngularWeights, vegetationSpectrum, soilReflectances, ndviIndices, angularWeights);
+    E1 e1(p, gamma, amin, totalAngularWeights, vegetationSpectrum, soilReflectances, ndviIndices, angularWeights);
     Bracket bracket;
     Min::brack(e1, 0.0, 3.0, bracket);
     const bool success = Min::brent(e1, bracket, Min::ACCURACY_GOAL);
@@ -276,8 +276,8 @@ void Aer::applyMedianFiltering(map<size_t, shared_ptr<AerPixel> >& pixels) {
 }
 
 void Aer::readAuxdata() {
-    const AuxdataProvider configurationAuxdataProvider(getAuxdataPath() + "S3__SY_2_SYCPAX.nc");
-    const AuxdataProvider radiometricAuxdataProvider(getAuxdataPath() + "S3__SY_2_SYRTAX.nc");
+    AuxdataProvider configurationAuxdataProvider(getAuxdataPath() + "S3__SY_2_SYCPAX.nc");
+    AuxdataProvider radiometricAuxdataProvider(getAuxdataPath() + "S3__SY_2_SYRTAX.nc");
     initialTau550 = configurationAuxdataProvider.getDouble("T550_ini");
     amins = configurationAuxdataProvider.getShortArray("AMIN");
     initialNu = configurationAuxdataProvider.getDoubleArray("v_ini");
