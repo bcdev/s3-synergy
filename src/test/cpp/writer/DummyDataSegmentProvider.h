@@ -21,7 +21,7 @@
 #ifndef DUMMYDATASEGMENTPROVIDER_H
 #define	DUMMYDATASEGMENTPROVIDER_H
 
-#include "../../../main/cpp/core/BasicModule.h"
+#include "../../../main/cpp/core/AbstractModule.h"
 
 class DummyDataSegmentProvider : public AbstractModule {
 public:
