@@ -12,7 +12,7 @@
 #include "Aer.h"
 #include "../util/ErrorMetric.h"
 #include "../util/LookupTableReader.h"
-#include "../util/ConfigurationAuxdataProvider.h"
+#include "../util/AuxdataProvider.h"
 
 using std::min;
 using std::numeric_limits;
@@ -277,9 +277,8 @@ void Aer::applyMedianFiltering(map<size_t, shared_ptr<AerPixel> >& pixels) {
 
 void Aer::readAuxdata() {
 
-    ConfigurationAuxdataProvider configurationAuxdataProvider(getAuxdataPath() + "S3__SY_2_SYCPAX.nc");
-    const LookupTableReader radiometricReader(getAuxdataPath() + "S3__SY_2_SYRTAX.nc");
-    const size_t zeroIndex = 0;
+    const AuxdataProvider configurationAuxdataProvider(getAuxdataPath() + "S3__SY_2_SYCPAX.nc");
+    const AuxdataProvider radiometricAuxdataProvider(getAuxdataPath() + "S3__SY_2_SYRTAX.nc");
     initialTau550 = configurationAuxdataProvider.getFloat("T550_ini");
     amins = configurationAuxdataProvider.getInt16TArray("AMIN");
     initialNu = configurationAuxdataProvider.getFloatArray("v_ini");
@@ -292,12 +291,6 @@ void Aer::readAuxdata() {
     soilReflectances = configurationAuxdataProvider.getFloatArray("R_soil");
     gamma = configurationAuxdataProvider.getFloat("gamma");
 
-    valarray<float> a550Coordinates(40);
-    for(size_t coord = 0; coord < 40;coord++){
-        a550Coordinates[coord] = coord;
-    }
-    radiometricReader.readVectorLookupTable<float>("A550")->getValues(&a550Coordinates[0], aerosolAngstromExponents);
-
 //    shared_ptr<MatrixLookupTable<float> > weightAngLut = configReader.readMatrixLookupTable<float>("weight_ang");
 //    valarray<float> f(weightAngLut->getDimensionCount());
 //    valarray<float> w(weightAngLut->getWorkspaceSize());
@@ -307,5 +300,12 @@ void Aer::readAuxdata() {
 //        angWeightCoords[coord] = coord;
 //    }
 //    configReader.readMatrixLookupTable<float>("weight_ang")->getValues(&angWeightCoords[0], angularWeights, f, w);
+
+//    valarray<float> a550Coordinates(40);
+//    for(size_t coord = 0; coord < 40;coord++){
+//        a550Coordinates[coord] = coord;
+//    }
+//    radiometricReader.readVectorLookupTable<float>("A550")->getValues(&a550Coordinates[0], aerosolAngstromExponents);
+
 
 }

@@ -1,24 +1,24 @@
 /*
- * ConfigurationAuxdataProvider.cpp
+ * AuxdataProvider.cpp
  *
  *  Created on: 11.10.2011
  *      Author: thomasstorm
  */
 
-#include "ConfigurationAuxdataProvider.h"
+#include "AuxdataProvider.h"
 #include "NetCDF.h"
 #include "../core/Boost.h"
 
-ConfigurationAuxdataProvider::ConfigurationAuxdataProvider(string auxdataPath) {
+AuxdataProvider::AuxdataProvider(string auxdataPath) {
     const string auxdataFile = auxdataPath + "S3__SY_2_SYCPAX.nc";
     fileId = NetCDF::openFile(auxdataFile);
 }
 
-ConfigurationAuxdataProvider::~ConfigurationAuxdataProvider() {
+AuxdataProvider::~AuxdataProvider() {
     NetCDF::closeFile(fileId);
 }
 
-float ConfigurationAuxdataProvider::getFloat(const string& varName) const {
+float AuxdataProvider::getFloat(const string& varName) const {
     const int varId = NetCDF::getVariableId(fileId, varName);
     valarray<size_t> origin(1);
     origin[0] = 0;
@@ -29,7 +29,7 @@ float ConfigurationAuxdataProvider::getFloat(const string& varName) const {
     return data[0];
 }
 
-valarray<float> ConfigurationAuxdataProvider::getFloatArray(const string& varName) const {
+valarray<float> AuxdataProvider::getFloatArray(const string& varName) const {
     const int varId = NetCDF::getVariableId(fileId, varName);
     valarray<size_t> origin(1);
     origin[0] = 0;
@@ -45,7 +45,7 @@ valarray<float> ConfigurationAuxdataProvider::getFloatArray(const string& varNam
     return result;
 }
 
-valarray<int16_t> ConfigurationAuxdataProvider::getInt16TArray(const string& varName) const {
+valarray<int16_t> AuxdataProvider::getInt16TArray(const string& varName) const {
     const int varId = NetCDF::getVariableId(fileId, varName);
     valarray<size_t> origin(1);
     origin[0] = 0;

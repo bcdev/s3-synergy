@@ -1,20 +1,20 @@
 /*
- * ConfigurationAuxdataTest.h
+ * AuxdataProviderTest.h
  *
  *  Created on: 28.09.2011
  *      Author: thomasstorm
  */
 
-#ifndef CONFIGURATIONAUXDATATEST_H_
-#define CONFIGURATIONAUXDATATEST_H_
+#ifndef AUXDATAPROVIDERTEST_H_
+#define AUXDATAPROVIDERTEST_H_
 
 #include <cppunit/extensions/HelperMacros.h>
 
 #include "../../../main/cpp/core/Boost.h"
-#include "../../../main/cpp/util/ConfigurationAuxdataProvider.h"
+#include "../../../main/cpp/util/AuxdataProvider.h"
 
-class ConfigurationAuxdataTest : public CPPUNIT_NS::TestFixture {
-    CPPUNIT_TEST_SUITE(ConfigurationAuxdataTest);
+class AuxdataProviderTest : public CPPUNIT_NS::TestFixture {
+    CPPUNIT_TEST_SUITE(AuxdataProviderTest);
     CPPUNIT_TEST(testGetAMINs);
     CPPUNIT_TEST(testGetInitialTau550);
     CPPUNIT_TEST(testGetInitialNus);
@@ -22,8 +22,8 @@ class ConfigurationAuxdataTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE_END();
 
 public:
-    ConfigurationAuxdataTest();
-    virtual ~ConfigurationAuxdataTest();
+    AuxdataProviderTest();
+    virtual ~AuxdataProviderTest();
     void setUp();
     void tearDown();
 
@@ -32,8 +32,8 @@ private:
     void testGetInitialTau550();
     void testGetInitialNus();
     void testGetInitialOmegas();
-    shared_ptr<ConfigurationAuxdataProvider> auxdataProvider;
+    shared_ptr<AuxdataProvider> auxdataProvider;
     static const double EPSILON;
 };
 
-#endif /* CONFIGURATIONAUXDATATEST_H_ */
+#endif /* AUXDATAPROVIDERTEST_H_ */

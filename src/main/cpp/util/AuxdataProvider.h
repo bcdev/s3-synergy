@@ -1,12 +1,12 @@
 /*
- * ConfigurationAuxdataProvider.h
+ * AuxdataProvider.h
  *
  *  Created on: 11.10.2011
  *      Author: thomasstorm
  */
 
-#ifndef CONFIGURATIONAUXDATAPROVIDER_H_
-#define CONFIGURATIONAUXDATAPROVIDER_H_
+#ifndef AUXDATAPROVIDER_H_
+#define AUXDATAPROVIDER_H_
 
 #include <string>
 #include <valarray>
@@ -14,10 +14,10 @@
 using std::string;
 using std::valarray;
 
-class ConfigurationAuxdataProvider {
+class AuxdataProvider {
 public:
-    ConfigurationAuxdataProvider(string auxdataPath);
-    virtual ~ConfigurationAuxdataProvider();
+    AuxdataProvider(string auxdataPath);
+    virtual ~AuxdataProvider();
 
     float getFloat(const string& varName) const;
     valarray<float> getFloatArray(const string& varName) const;
@@ -27,4 +27,4 @@ private:
     int fileId;
 };
 
-#endif /* CONFIGURATIONAUXDATAPROVIDER_H_ */
+#endif /* AUXDATAPROVIDER_H_ */
