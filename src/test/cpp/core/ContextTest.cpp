@@ -18,7 +18,7 @@
  * Created on December 21, 2010, 1:08 PM
  */
 
-#include "../../../main/cpp/core/BasicModule.h"
+#include "../../../main/cpp/core/AbstractModule.h"
 
 #include "TestObject.h"
 #include "ContextTest.h"
