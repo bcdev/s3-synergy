@@ -11,6 +11,8 @@
 #include <string>
 #include <valarray>
 
+#include "../core/Boost.h"
+
 using std::string;
 using std::valarray;
 
@@ -22,6 +24,7 @@ public:
     float getFloat(const string& varName) const;
     valarray<float> getFloatArray(const string& varName) const;
     valarray<int16_t> getInt16TArray(const string& varName) const;
+    matrix<float> getFloatMatrix(const string& varName) const;
 
 private:
     int fileId;

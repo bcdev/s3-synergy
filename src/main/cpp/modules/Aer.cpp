@@ -290,22 +290,8 @@ void Aer::readAuxdata() {
     vegetationSpectrum = configurationAuxdataProvider.getFloatArray("R_veg");
     soilReflectances = configurationAuxdataProvider.getFloatArray("R_soil");
     gamma = configurationAuxdataProvider.getFloat("gamma");
-
-//    shared_ptr<MatrixLookupTable<float> > weightAngLut = configReader.readMatrixLookupTable<float>("weight_ang");
-//    valarray<float> f(weightAngLut->getDimensionCount());
-//    valarray<float> w(weightAngLut->getWorkspaceSize());
-//    matrix<float> values(2, 6);
-//    valarray<float> angWeightCoords(12);
-//    for(size_t coord = 0;coord < 12;coord++){
-//        angWeightCoords[coord] = coord;
-//    }
-//    configReader.readMatrixLookupTable<float>("weight_ang")->getValues(&angWeightCoords[0], angularWeights, f, w);
-
-//    valarray<float> a550Coordinates(40);
-//    for(size_t coord = 0; coord < 40;coord++){
-//        a550Coordinates[coord] = coord;
-//    }
-//    radiometricReader.readVectorLookupTable<float>("A550")->getValues(&a550Coordinates[0], aerosolAngstromExponents);
+    angularWeights = configurationAuxdataProvider.getFloatMatrix("weight_ang");
+    aerosolAngstromExponents = radiometricAuxdataProvider.getFloatArray("A550");
 
 
 }

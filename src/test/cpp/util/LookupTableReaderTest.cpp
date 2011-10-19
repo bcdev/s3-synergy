@@ -26,22 +26,6 @@ void LookupTableReaderTest::tearDown() {
 	delete reader;
 }
 
-void LookupTableReaderTest::testRead_angular_weights() {
-    LookupTableReader reader2(IOUtils::getEnvironment("S3_SYNERGY_HOME") + "/auxdata/v" + Constants::PROCESSOR_VERSION + "/S3__SY_2_SYCPAX.nc");
-    shared_ptr<MatrixLookupTable<float> > lut = reader2.readMatrixLookupTable<float>("weight_ang");
-    valarray<float> f(lut->getDimensionCount());
-    valarray<float> w(lut->getWorkspaceSize());
-    matrix<float> values(2, 6);
-    valarray<float> coords(2);
-    coords[0] = 0.0;
-    coords[1] = 0.0;
-    lut->getValues(&coords[0], values, f, w);
-    CPPUNIT_ASSERT(values.at_element(0,0) == 1.5);
-    CPPUNIT_ASSERT(values.at_element(0,1) == 1.0);
-    CPPUNIT_ASSERT(values.at_element(0,2) == 0.5);
-    CPPUNIT_ASSERT(values.at_element(0,5) == 1.0);
-}
-
 void LookupTableReaderTest::testRead_OLC_R_atm() {
 	shared_ptr<const VectorLookupTable<float> > lut(reader->readVectorLookupTable<float>("OLC_R_atm"));
 

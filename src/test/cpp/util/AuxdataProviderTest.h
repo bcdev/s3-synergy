@@ -19,6 +19,7 @@ class AuxdataProviderTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(testGetInitialTau550);
     CPPUNIT_TEST(testGetInitialNus);
     CPPUNIT_TEST(testGetInitialOmegas);
+    CPPUNIT_TEST(testGetAngularWeights);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -32,6 +33,7 @@ private:
     void testGetInitialTau550();
     void testGetInitialNus();
     void testGetInitialOmegas();
+    void testGetAngularWeights();
     shared_ptr<AuxdataProvider> auxdataProvider;
     static const double EPSILON;
 };

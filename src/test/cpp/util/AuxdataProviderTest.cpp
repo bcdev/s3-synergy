@@ -61,3 +61,14 @@ void AuxdataProviderTest::testGetInitialOmegas() {
         CPPUNIT_ASSERT(std::abs(initialOmegas[i] - 0.1) < EPSILON);
     }
 }
+
+void AuxdataProviderTest::testGetAngularWeights() {
+    matrix<float> angWeights = auxdataProvider->getFloatMatrix("weight_ang");
+    CPPUNIT_ASSERT(angWeights.size1() == 2);
+    CPPUNIT_ASSERT(angWeights.size2() == 6);
+
+    CPPUNIT_ASSERT(angWeights.at_element(0,0) == 1.5);
+    CPPUNIT_ASSERT(angWeights.at_element(0,1) == 1.0);
+    CPPUNIT_ASSERT(angWeights.at_element(0,2) == 0.5);
+    CPPUNIT_ASSERT(angWeights.at_element(0,5) == 1.0);
+}
