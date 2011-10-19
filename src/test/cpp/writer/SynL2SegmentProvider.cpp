@@ -27,7 +27,7 @@
 using std::min;
 
 SynL2SegmentProvider::SynL2SegmentProvider() :
-		BasicModule("SYN_L2_SEGMENT_PROVIDER") {
+		AbstractModule("SYN_L2_SEGMENT_PROVIDER") {
 }
 
 SynL2SegmentProvider::~SynL2SegmentProvider() {

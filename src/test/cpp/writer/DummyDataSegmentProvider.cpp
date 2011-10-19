@@ -27,7 +27,7 @@
 using std::min;
 
 DummyDataSegmentProvider::DummyDataSegmentProvider() :
-		BasicModule("DUMMY_DATA_SEGMENT_PROVIDER") {
+		AbstractModule("DUMMY_DATA_SEGMENT_PROVIDER") {
 }
 
 DummyDataSegmentProvider::~DummyDataSegmentProvider() {

@@ -12,14 +12,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
- * File:   BasicModule.h
+ * File:   AbstractModule.h
  * Author: ralf
  *
  * Created on December 21, 2010, 12:24 PM
  */
 
-#ifndef BASICMODULE_H
-#define	BASICMODULE_H
+#ifndef ABSTRACTMODULE_H
+#define	ABSTRACTMODULE_H
 
 #include <cstdlib>
 #include <stdexcept>
@@ -35,7 +35,7 @@ using std::runtime_error;
 /**
  * A basic module, doing nothing.
  */
-class BasicModule: public Module {
+class AbstractModule: public Module {
 public:
 
 	/**
@@ -43,11 +43,11 @@ public:
 	 * @param moduleId The module ID.
 	 * @param moduleVersion The module version.
 	 */
-	BasicModule(const string& moduleId, const string& moduleVersion = Constants::PROCESSOR_VERSION) :
+	AbstractModule(const string& moduleId, const string& moduleVersion = Constants::PROCESSOR_VERSION) :
 			id(moduleId), version(moduleVersion) {
 	}
 
-	virtual ~BasicModule() {
+	virtual ~AbstractModule() {
 	}
 
 	const string& getId() const {
@@ -67,28 +67,10 @@ public:
 	virtual void process(Context& context) {
 	}
 
-protected:
-	static string getInstallationPath() {
-		const char* value = std::getenv("S3_SYNERGY_HOME");
-		if (value != 0) {
-			return string(value);
-		}
-		throw runtime_error("Unknown software installation path. The environment variable 'S3_SYNERGY_HOME' has not been set.");
-	}
-
-	static string getAuxdataPath() {
-		return getInstallationPath() + "/auxdata/v" + Constants::PROCESSOR_VERSION + "/";
-	}
-
-    template<class K, class V>
-	static bool contains(const map<K, V>& map, const K& key) {
-		return map.find(key) != map.end();
-	}
-
 private:
 	const string id;
 	const string version;
 };
 
-#endif	/* BASICMODULE_H */
+#endif	/* ABSTRACTMODULE_H */
 

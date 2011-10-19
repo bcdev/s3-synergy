@@ -10,7 +10,7 @@
 #include <cmath>
 
 Col::Col() :
-        BasicModule("COL") {
+    BasicModule("COL") {
 }
 
 Col::~Col() {

@@ -23,7 +23,7 @@
 
 #include "../../../main/cpp/core/BasicModule.h"
 
-class DummyDataSegmentProvider : public BasicModule {
+class DummyDataSegmentProvider : public AbstractModule {
 public:
     DummyDataSegmentProvider();
     virtual ~DummyDataSegmentProvider();

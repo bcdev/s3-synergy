@@ -11,8 +11,8 @@
 #include <stdexcept>
 #include <vector>
 
+#include "../modules/BasicModule.h"
 #include "../core/Boost.h"
-#include "../core/BasicModule.h"
 
 using std::logic_error;
 

@@ -18,7 +18,7 @@
 #include "Pcl.h"
 
 Pcl::Pcl() :
-		BasicModule("PCL") {
+    BasicModule("PCL") {
 }
 
 Pcl::~Pcl() {

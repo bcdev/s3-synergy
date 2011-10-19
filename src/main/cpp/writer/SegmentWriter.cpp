@@ -15,7 +15,7 @@
 using std::runtime_error;
 
 SegmentWriter::SegmentWriter() :
-		BasicModule("SEG_WRITER") {
+        BasicModule("SEG_WRITER") {
 }
 
 SegmentWriter::~SegmentWriter() {

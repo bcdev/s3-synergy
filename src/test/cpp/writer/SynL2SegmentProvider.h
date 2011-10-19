@@ -23,7 +23,7 @@
 
 #include "../../../main/cpp/core/BasicModule.h"
 
-class SynL2SegmentProvider : public BasicModule {
+class SynL2SegmentProvider : public AbstractModule {
 public:
     SynL2SegmentProvider();
     virtual ~SynL2SegmentProvider();

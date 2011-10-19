@@ -18,7 +18,7 @@ using std::min;
 using std::max;
 
 SynL1Reader::SynL1Reader() :
-		BasicModule("SY1_READER") {
+        BasicModule("SY1_READER") {
 }
 
 SynL1Reader::~SynL1Reader() {

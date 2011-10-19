@@ -8,7 +8,7 @@
 #ifndef PCL_H_
 #define PCL_H_
 
-#include "../core/BasicModule.h"
+#include "../modules/BasicModule.h"
 
 class Pcl: public BasicModule {
 public:

@@ -10,7 +10,7 @@
 
 #include <valarray>
 
-#include "../core/BasicModule.h"
+#include "../modules/BasicModule.h"
 
 using std::map;
 

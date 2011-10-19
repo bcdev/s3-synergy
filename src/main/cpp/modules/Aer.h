@@ -8,7 +8,7 @@
 #ifndef AER_H_
 #define AER_H_
 
-#include "../core/BasicModule.h"
+#include "../modules/BasicModule.h"
 #include "../util/AerPixel.h"
 #include "../util/Min.h"
 #include "../util/MultiMin.h"

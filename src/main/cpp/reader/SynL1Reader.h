@@ -11,7 +11,7 @@
 #include <map>
 #include <netcdf.h>
 
-#include "../core/BasicModule.h"
+#include "../modules/BasicModule.h"
 
 using std::map;
 

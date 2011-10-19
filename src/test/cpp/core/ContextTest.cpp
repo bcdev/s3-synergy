@@ -46,8 +46,8 @@ void ContextTest::testInitialState() {
 }
 
 void ContextTest::testAddModule() {
-	const shared_ptr<Module> a(new BasicModule("A"));
-	const shared_ptr<Module> b(new BasicModule("B"));
+	const shared_ptr<Module> a(new AbstractModule("A"));
+	const shared_ptr<Module> b(new AbstractModule("B"));
 	context->addModule(a);
 	context->addModule(b);
 	const vector<shared_ptr<Module> > modules = context->getModules();
@@ -101,7 +101,7 @@ void ContextTest::testGetUnknownSegment() {
 
 void ContextTest::testSetGetLastLComputed() {
 	Segment& s = context->addSegment("S", 100, 1, 1, 0, 199);
-	shared_ptr<Module> m = shared_ptr<Module>(new BasicModule("M"));
+	shared_ptr<Module> m = shared_ptr<Module>(new AbstractModule("M"));
 	CPPUNIT_ASSERT_THROW(context->setLastComputedL(s, *m, 10), logic_error);
 
 	context->addModule(m);

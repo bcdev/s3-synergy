@@ -7,7 +7,6 @@
 
 #include <cmath>
 
-#include "../util/LookupTableReader.h"
 #include "../core/TiePointInterpolator.h"
 
 #include "Aco.h"
@@ -422,27 +421,6 @@ void Aco::process(Context& context) {
 		}
 	}
 	context.setLastComputedL(collocatedSegment, *this, lastL);
-}
-
-void Aco::addAccessor(Context& context, Segment& s, const VariableDescriptor& varDescriptor) const {
-	context.getLogging().info("Adding accessor for " + varDescriptor.toString() + "to segment " + s.toString(), getId());
-	s.addVariable(varDescriptor);
-}
-
-void Aco::addMatrixLookupTable(Context& context, const string& fileName, const string& varName) const {
-	if (!context.hasObject(varName)) {
-		const LookupTableReader reader(getAuxdataPath() + fileName);
-		context.getLogging().info("Reading LUT '" + varName + "'", getId());
-		context.addObject(reader.readMatrixLookupTable<double>(varName));
-	}
-}
-
-void Aco::addScalarLookupTable(Context& context, const string& fileName, const string& varName) const {
-	if (!context.hasObject(varName)) {
-		const LookupTableReader reader(getAuxdataPath() + fileName);
-		context.getLogging().info("Reading LUT '" + varName + "'", getId());
-		context.addObject(reader.readScalarLookupTable<double>(varName));
-	}
 }
 
 double Aco::ozoneTransmission(const ScalarLookupTable<double>& lut, double sza, double vza, double nO3, double channel) {
