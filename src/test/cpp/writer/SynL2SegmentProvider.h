@@ -21,7 +21,7 @@
 #ifndef SYNL2SEGMENTPROVIDER_H
 #define	SYNL2SEGMENTPROVIDER_H
 
-#include "../../../main/cpp/core/BasicModule.h"
+#include "../../../main/cpp/core/AbstractModule.h"
 
 class SynL2SegmentProvider : public AbstractModule {
 public:
