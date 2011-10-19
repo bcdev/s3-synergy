@@ -12,13 +12,14 @@
 #include "Aer.h"
 #include "../util/ErrorMetric.h"
 #include "../util/LookupTableReader.h"
+#include "../util/ConfigurationAuxdataProvider.h"
 
 using std::min;
 using std::numeric_limits;
 using std::set;
 
 Aer::Aer() : BasicModule("AER"), amins(40), ndviIndices(2), initialNu(2), initialOmega(6), aerosolAngstromExponents(40),
-        spectralWeights(30), totalAngularWeights(4), angularWeights(2, 6), vegetationSpectrum(30), soilReflectance(30) {
+        spectralWeights(30), totalAngularWeights(4), angularWeights(2, 6), vegetationSpectrum(30), soilReflectances(30) {
 }
 
 Aer::~Aer() {
@@ -48,6 +49,8 @@ void Aer::process(Context& context) {
     // todo - ts11Oct2011 - check
     long firstL = context.getFirstComputableL(*averagedSegment, *this);
     long lastL = context.getLastComputableL(*averagedSegment, *this) - 8;
+
+    // todo - pixel rausziehen
 
     for(long l_prime = firstL; l_prime <= lastL; l_prime++) {
         for(long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
@@ -145,11 +148,13 @@ shared_ptr<AerPixel> Aer::initPixel(Context& context, long k, long l, long m) co
     for (size_t i = 1; i <= 6; i++) {
         const Accessor& solarIrrSlnAccessor = slnInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(i));
         const size_t channel = 17 + i;
+        // todo - replace l-index
         p->solarIrradiances[channel] = solarIrrSlnAccessor.getDouble(slnInfoGrid.getIndex(0, 0, 1));
     }
     for (size_t i = 1; i <= 6; i++) {
         const Accessor& solarIrrSloAccessor = sloInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(i));
         const size_t channel = 23 + i;
+        // todo - replace l-index
         p->solarIrradiances[channel] = solarIrrSloAccessor.getDouble(sloInfoGrid.getIndex(0, 0, 1));
     }
     p->setTau550(initialTau550);
@@ -195,7 +200,6 @@ void Aer::aer_s(shared_ptr<AerPixel> p) {
         const valarray<float> omegas = initialOmega;
         float tau550 = initialTau550;
         q.setTau550(tau550);
-        q.setTau550(tau550);
         q.c_1 = ndv(q, ndviIndices);
         q.c_2 = 1 - q.c_1;
         q.nu[0] = nu[0];
@@ -205,12 +209,14 @@ void Aer::aer_s(shared_ptr<AerPixel> p) {
         }
         bool success = e2(q, amin);
         if(success && q.E_2 < p->E_2) {
+            // todo - p.assign(q) instead of 'new'
             p = shared_ptr<AerPixel>(new AerPixel(q));
             p->setAlpha550(aerosolAngstromExponents[amin]);
             p->setAMIN(amin);
         }
     }
     if(!p->isFillValue("AMIN")) {
+        // todo - extract p->getTau550()
         if(p->getTau550() > 0.0001 ) {
             double a = aotStandardError(p->getTau550());
             if(a > 0) {
@@ -230,13 +236,16 @@ void Aer::aer_s(shared_ptr<AerPixel> p) {
 }
 
 bool Aer::e2(AerPixel& p, size_t amin) {
-    E2 e1(p, gamma, amin, totalAngularWeights, vegetationSpectrum, soilReflectance, ndviIndices, angularWeights);
+    E2 e1(p, gamma, amin, totalAngularWeights, vegetationSpectrum, soilReflectances, ndviIndices, angularWeights);
     Bracket bracket;
+    Min::brack(e1, 0.0, 3.0, bracket);
     const bool success = Min::brent(e1, bracket, Min::ACCURACY_GOAL);
+    p.setTau550(bracket.minimumX);
+    p.E_2 = bracket.minimumF;
     return success;
 }
 
-double Aer::ndv(AerPixel& q, valarray<int16_t> ndviIndices) {
+double Aer::ndv(AerPixel& q, const valarray<int16_t>& ndviIndices) {
     double L1 = q.getRadiance(ndviIndices[0]);
     double L2 = q.getRadiance(ndviIndices[1]);
     double F1 = q.solarIrradiances[ndviIndices[0]];
@@ -267,76 +276,36 @@ void Aer::applyMedianFiltering(map<size_t, shared_ptr<AerPixel> >& pixels) {
 }
 
 void Aer::readAuxdata() {
-    const LookupTableReader configReader(getAuxdataPath() + "S3__SY_2_SYCPAX.nc");
+
+    ConfigurationAuxdataProvider configurationAuxdataProvider(getAuxdataPath() + "S3__SY_2_SYCPAX.nc");
     const LookupTableReader radiometricReader(getAuxdataPath() + "S3__SY_2_SYRTAX.nc");
     const size_t zeroIndex = 0;
-    initialTau550 = configReader.readScalarLookupTable<float>("T550_ini")->getValue(zeroIndex);
-
-    valarray<int16_t> aminCoordinates(40);
-    for(size_t coord = 0; coord < 40; coord++){
-        aminCoordinates[coord] = coord;
-    }
-    configReader.readVectorLookupTable<int16_t>("AMIN")->getValues(&aminCoordinates[0], amins);
-
-    valarray<float> nuCoordinates(2);
-    nuCoordinates[0] = 0;
-    nuCoordinates[1] = 1;
-    configReader.readVectorLookupTable<float>("v_ini")->getValues(&nuCoordinates[0], initialNu);
-
-    valarray<float> omegaCoordinates(6);
-    for(size_t coord = 0;coord < 6;coord++){
-        omegaCoordinates[coord] = coord;
-    }
-    configReader.readVectorLookupTable<float>("w_ini")->getValues(&omegaCoordinates[0], initialOmega);
+    initialTau550 = configurationAuxdataProvider.getFloat("T550_ini");
+    amins = configurationAuxdataProvider.getInt16TArray("AMIN");
+    initialNu = configurationAuxdataProvider.getFloatArray("v_ini");
+    initialOmega = configurationAuxdataProvider.getFloatArray("w_ini");
+    kappa = configurationAuxdataProvider.getFloat("kappa");
+    ndviIndices = configurationAuxdataProvider.getInt16TArray("NDV_channel");
+    spectralWeights = configurationAuxdataProvider.getFloatArray("weight_spec");
+    totalAngularWeights = configurationAuxdataProvider.getFloatArray("weight_ang_tot");
+    vegetationSpectrum = configurationAuxdataProvider.getFloatArray("R_veg");
+    soilReflectances = configurationAuxdataProvider.getFloatArray("R_soil");
+    gamma = configurationAuxdataProvider.getFloat("gamma");
 
     valarray<float> a550Coordinates(40);
-    for(size_t coord = 0;coord < 40;coord++){
+    for(size_t coord = 0; coord < 40;coord++){
         a550Coordinates[coord] = coord;
     }
     radiometricReader.readVectorLookupTable<float>("A550")->getValues(&a550Coordinates[0], aerosolAngstromExponents);
 
-    kappa = configReader.readScalarLookupTable<float>("kappa")->getValue(zeroIndex);
-
-    valarray<int16_t> ndviCoordinates(2);
-    for(size_t coord = 0;coord < 6;coord++){
-        ndviCoordinates[coord] = coord;
-    }
-    configReader.readVectorLookupTable<int16_t>("NDV_channel")->getValues(&ndviCoordinates[0], ndviIndices);
-
-    valarray<float> synChannelCoordinates(30);
-    for(size_t coord = 0;coord < 30;coord++){
-        synChannelCoordinates[coord] = coord;
-    }
-    configReader.readVectorLookupTable<float>("weight_spec")->getValues(&synChannelCoordinates[0], spectralWeights);
-
-    valarray<float> watCoordinates(4);
-    for(size_t coord = 0;coord < 4;coord++){
-        watCoordinates[coord] = coord;
-    }
-    configReader.readVectorLookupTable<float>("weight_ang_tot")->getValues(&watCoordinates[0], totalAngularWeights);
-
-    shared_ptr<MatrixLookupTable<float> > weightAngLut = configReader.readMatrixLookupTable<float>("weight_ang");
-    valarray<float> f(weightAngLut->getDimensionCount());
-    valarray<float> w(weightAngLut->getWorkspaceSize());
-    matrix<float> values(2, 6);
-    valarray<float> angWeightCoords(12);
-    for(size_t coord = 0;coord < 12;coord++){
-        angWeightCoords[coord] = coord;
-    }
-    configReader.readMatrixLookupTable<float>("weight_ang")->getValues(&angWeightCoords[0], angularWeights, f, w);
-
-    valarray<float> rVegCoordinates(30);
-    for(size_t coord = 0; coord < 30; coord++){
-        rVegCoordinates[coord] = coord;
-    }
-    configReader.readVectorLookupTable<float>("R_veg")->getValues(&rVegCoordinates[0], vegetationSpectrum);
-
-    valarray<float> rSoilCoordinates(30);
-    for(size_t coord = 0; coord < 30; coord++){
-        rSoilCoordinates[coord] = coord;
-    }
-    configReader.readVectorLookupTable<float>("R_soil")->getValues(&rSoilCoordinates[0], soilReflectance);
-
-    gamma = configReader.readScalarLookupTable<float>("gamma")->getValue(zeroIndex);
+//    shared_ptr<MatrixLookupTable<float> > weightAngLut = configReader.readMatrixLookupTable<float>("weight_ang");
+//    valarray<float> f(weightAngLut->getDimensionCount());
+//    valarray<float> w(weightAngLut->getWorkspaceSize());
+//    matrix<float> values(2, 6);
+//    valarray<float> angWeightCoords(12);
+//    for(size_t coord = 0;coord < 12;coord++){
+//        angWeightCoords[coord] = coord;
+//    }
+//    configReader.readMatrixLookupTable<float>("weight_ang")->getValues(&angWeightCoords[0], angularWeights, f, w);
 
 }

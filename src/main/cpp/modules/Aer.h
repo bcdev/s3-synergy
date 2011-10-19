@@ -28,7 +28,7 @@ public:
     void stop(Context& context);
     void process(Context& context);
 
-    static double ndv(AerPixel& q, valarray<int16_t> ndviIndices);
+    static double ndv(AerPixel& q, const valarray<int16_t>& ndviIndices);
 
 private:
     friend class AerTest;
@@ -46,7 +46,7 @@ private:
     valarray<float> totalAngularWeights;
     matrix<float> angularWeights;
     valarray<float> vegetationSpectrum;
-    valarray<float> soilReflectance;
+    valarray<float> soilReflectances;
 
     static bool isSolarIrradianceFillValue(double f, const valarray<double> fillValues, int16_t index);
     shared_ptr<AerPixel> initPixel(Context& context, long k, long l, long m) const;
