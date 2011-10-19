@@ -87,6 +87,10 @@ void Aco::process(Context& context) {
 	for (size_t i = 1; i <= 30; i++) {
 		ltoaAccessors.push_back(&collocatedSegment.getAccessor("L_" + lexical_cast<string>(i)));
 	}
+	vector<Accessor*> ltoaErrAccessors;
+	for (size_t i = 1; i <= 18; i++) {
+		ltoaErrAccessors.push_back(&collocatedSegment.getAccessor("L_" + lexical_cast<string>(i) + "_er"));
+	}
 	const Accessor& latAccessor = collocatedSegment.getAccessor("latitude");
 	const Accessor& lonAccessor = collocatedSegment.getAccessor("longitude");
 	const Accessor& solarIrrOlcAccessor = olcInfoSegment.getAccessor("solar_irradiance");
@@ -128,6 +132,9 @@ void Aco::process(Context& context) {
 	const long lastL = context.getLastComputableL(collocatedSegment, *this);
 	context.getLogging().debug("Segment [" + collocatedSegment.toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
 
+	// TODO - get from auxiliary data
+	const double delta3 = 0.005;
+
 #pragma omp parallel for
 	for (long l = firstL; l <= lastL; l++) {
 		valarray<double> coordinates(10);
@@ -166,6 +173,7 @@ void Aco::process(Context& context) {
 
 				// TODO - get from segment data
 				const double tau550 = 0.1;
+				const double tau550Err = 0.05;
 				const uint8_t amin = 1;
 
 				/*
@@ -322,13 +330,24 @@ void Aco::process(Context& context) {
 
 				for (size_t b = 0; b < 18; b++) {
 					if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
-						// TODO: errors for OLCI channels
-
-						if (rtoa[b] >= 0.0 && rtoa[b] <= 1.0) {
-							errAccessors[b]->setDouble(i, rtoa[b]);
+						const double ratm = matRatmOlc(amin - 1, b);
+						const double ts1 = matTs(amin - 1, b);
+						const double tv1 = matTv(amin - 1, b);
+						const double rho = matRho(amin - 1, b);
+						const double deltaR = rboa[b] - surfaceReflectance(rtoa[b], ratm, ts1, tv1, rho, tO3[b]);
+						const double deltaTau = 0.2 * tau550;
+						const double delta1 = (deltaR / deltaTau) * tau550Err;
+						const double ltoaErr = ltoaErrAccessors[b]->getDouble(i);
+						const double f0 = solarIrrOlcAccessor.getDouble(olcInfoGrid.getIndex(k, b, m));
+						const double delta2 = toaReflectance(ltoaErr, f0, szaOlc) / (ts[b] * tv[b] * tO3[b]);
+						const double err = std::sqrt(delta1 * delta1 + delta2 * delta2 + delta3 * delta3);
+						if (err >= 0.0 && err <= 1.0) {
+							errAccessors[b]->setDouble(i, err);
 						} else {
 							errAccessors[b]->setFillValue(i);
 						}
+					} else {
+						errAccessors[b]->setFillValue(i);
 					}
 				}
 
@@ -347,20 +366,27 @@ void Aco::process(Context& context) {
 
 				for (size_t b = 18; b < 24; b++) {
 					if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
-						// TODO: errors for SLN channels
-
-						if (rtoa[b] >= 0.0 && rtoa[b] <= 1.0) {
-							errAccessors[b]->setDouble(i, rtoa[b]);
+						const double ratm = matRatmSln(amin - 1, b - 18);
+						const double ts1 = matTs(amin - 1, b);
+						const double tv1 = matTv(amin - 1, b);
+						const double rho = matRho(amin - 1, b);
+						const double deltaR = rboa[b] - surfaceReflectance(rtoa[b], ratm, ts1, tv1, rho, tO3[b]);
+						const double deltaTau = 0.2 * tau550;
+						const double delta1 = (deltaR / deltaTau) * tau550Err;
+						const double err = std::sqrt(delta1 * delta1 + delta3 * delta3);
+						if (err >= 0.0 && err <= 1.0) {
+							errAccessors[b]->setDouble(i, err);
 						} else {
 							errAccessors[b]->setFillValue(i);
 						}
+					} else {
+						errAccessors[b]->setFillValue(i);
 					}
 				}
 
 				/*
 				 * Errors for SLO channels
 				 */
-				/* TODO: fix segmentation fault occurring below
 				coordinates[0] = abs(saaOlc - vaaSlo); // ADA
 				coordinates[1] = szaOlc; // SZA
 				coordinates[2] = vzaSlo; // VZA
@@ -373,16 +399,25 @@ void Aco::process(Context& context) {
 
 				for (size_t b = 24; b < 30; b++) {
 					if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
-						// TODO: errors for SLO channels
-
-						if (rtoa[b] >= 0.0 && rtoa[b] <= 1.0) {
-							errAccessors[b]->setDouble(i, rtoa[b]);
+						if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
+							const double ratm = matRatmSlo(amin - 1, b - 24);
+							const double ts1 = matTs(amin - 1, b);
+							const double tv1 = matTv(amin - 1, b);
+							const double rho = matRho(amin - 1, b);
+							const double deltaR = rboa[b] - surfaceReflectance(rtoa[b], ratm, ts1, tv1, rho, tO3[b]);
+							const double deltaTau = 0.2 * tau550;
+							const double delta1 = (deltaR / deltaTau) * tau550Err;
+							const double err = std::sqrt(delta1 * delta1 + delta3 * delta3);
+							if (err >= 0.0 && err <= 1.0) {
+								errAccessors[b]->setDouble(i, err);
+							} else {
+								errAccessors[b]->setFillValue(i);
+							}
 						} else {
 							errAccessors[b]->setFillValue(i);
 						}
 					}
 				}
-				*/
 			}
 		}
 	}
