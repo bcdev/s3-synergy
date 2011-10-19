@@ -6,11 +6,21 @@
  */
 
 #include "ErrorMetric.h"
+#include "../core/LookupTable.h"
 
-ErrorMetric::ErrorMetric(AerPixel& p, double gamma, int16_t amin, valarray<double> totalAngularWeights, valarray<double> vegetationSpectrum,
-        valarray<double> soilReflectance, valarray<int16_t> ndviIndices, matrix<double> angularWeights) :
-        p(p), gamma(gamma), amin(amin), totalAngularWeights(totalAngularWeights), vegetationSpectrum(vegetationSpectrum),
-        soilReflectance(soilReflectance), ndviIndices(ndviIndices), angularWeights(angularWeights) {
+ErrorMetric::ErrorMetric(AerPixel& p, int16_t amin, Context& context) :
+        p(p), amin(amin), context(context) {
+
+    const VectorLookupTable<double>& lutD = (VectorLookupTable<double>&)context.getObject("D");
+    valarray<double> coordinates(lutD.getDimensionCount());
+    assert(coordinates.size() == 4);
+    coordinates[0] = p.sza;
+    coordinates[1] = p.airPressure;
+    coordinates[2] = p.getTau550();
+    coordinates[3] = amin;
+
+    valarray<double> D(6);
+    lutD.getValues(&coordinates[0], D);
 }
 
 double ErrorMetric::value(valarray<double>& x) {

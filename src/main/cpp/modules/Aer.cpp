@@ -10,6 +10,7 @@
 #include <set>
 
 #include "Aer.h"
+#include "../core/TiePointInterpolator.h"
 #include "../util/ErrorMetric.h"
 #include "../util/LookupTableReader.h"
 #include "../util/AuxdataProvider.h"
@@ -26,7 +27,7 @@ Aer::~Aer() {
 }
 
 void Aer::start(Context& context) {
-    readAuxdata();
+    readAuxdata(context);
     averagedSegment = &context.getSegment(Constants::SEGMENT_SYN_AVERAGED);
     SegmentDescriptor& collocatedSegmentDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
     averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550"));
@@ -51,12 +52,11 @@ void Aer::process(Context& context) {
     long lastL = context.getLastComputableL(*averagedSegment, *this) - 8;
 
     // todo - pixel rausziehen
-
     for(long l_prime = firstL; l_prime <= lastL; l_prime++) {
         for(long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
             for(long m_prime = averagedGrid->getFirstM(); m_prime <= averagedGrid->getMaxM(); m_prime++) {
                 shared_ptr<AerPixel> p = initPixel(context, k, l_prime, m_prime);
-                aer_s(p);
+                aer_s(p, context);
                 if(p->isFillValue("AMIN")) {
                     missingPixels.insert(p);
                 }
@@ -157,6 +157,22 @@ shared_ptr<AerPixel> Aer::initPixel(Context& context, long k, long l, long m) co
         // todo - replace l-index
         p->solarIrradiances[channel] = solarIrrSloAccessor.getDouble(sloInfoGrid.getIndex(0, 0, 1));
     }
+
+    const Accessor& latAccessor = context.getSegment(Constants::SEGMENT_SYN_AVERAGED).getAccessor("latitude");
+    const Accessor& lonAccessor = context.getSegment(Constants::SEGMENT_SYN_AVERAGED).getAccessor("longitude");
+    const Accessor& tpLatOlc = context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("OLC_TP_lat");
+    const Accessor& tpLonOlc = context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("OLC_TP_lon");
+    const Accessor& tpSzaOlc = context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("SZA");
+    const valarray<double> tpLonsOlc = tpLonOlc.getDoubles();
+    const valarray<double> tpLatsOlc = tpLatOlc.getDoubles();
+    const valarray<double> tpSzasOlc = tpSzaOlc.getDoubles();
+    const TiePointInterpolator<double> tpiOlc = TiePointInterpolator<double>(tpLonsOlc, tpLatsOlc);
+    valarray<double> tpiWeights(1);
+    valarray<size_t> tpiIndexes(1);
+    tpiOlc.prepare(p->getLatitude(), p->getLongitude(), tpiWeights, tpiIndexes);
+
+    const double szaOlc = tpiOlc.interpolate(tpSzasOlc, tpiWeights, tpiIndexes);
+
     p->setTau550(initialTau550);
     p->nu[0] = initialNu[0];
     p->nu[1] = initialNu[2];
@@ -176,7 +192,7 @@ const vector<long> Aer::createIndices(long base, long bound) const {
     return result;
 }
 
-void Aer::aer_s(shared_ptr<AerPixel> p) {
+void Aer::aer_s(shared_ptr<AerPixel> p, Context& context) {
     p->setFillValue("T550");
     p->setFillValue("T550_er");
     p->setFillValue("A550");
@@ -207,7 +223,7 @@ void Aer::aer_s(shared_ptr<AerPixel> p) {
         for(size_t j = 0; j < omegas.size(); j++) {
             q.omega[j] = omegas[j];
         }
-        bool success = e2(q, amin);
+        bool success = e2(q, amin, context);
         if(success && q.E_2 < p->E_2) {
             // todo - p.assign(q) instead of 'new'
             p = shared_ptr<AerPixel>(new AerPixel(q));
@@ -235,8 +251,8 @@ void Aer::aer_s(shared_ptr<AerPixel> p) {
     }
 }
 
-bool Aer::e2(AerPixel& p, size_t amin) {
-    E1 e1(p, gamma, amin, totalAngularWeights, vegetationSpectrum, soilReflectances, ndviIndices, angularWeights);
+bool Aer::e2(AerPixel& p, size_t amin, Context& context) {
+    E1 e1(p, amin, context);
     Bracket bracket;
     Min::brack(e1, 0.0, 3.0, bracket);
     const bool success = Min::brent(e1, bracket, Min::ACCURACY_GOAL);
@@ -275,20 +291,32 @@ void Aer::applyMedianFiltering(map<size_t, shared_ptr<AerPixel> >& pixels) {
     // todo - implement
 }
 
-void Aer::readAuxdata() {
-    AuxdataProvider configurationAuxdataProvider(getAuxdataPath() + "S3__SY_2_SYCPAX.nc");
-    AuxdataProvider radiometricAuxdataProvider(getAuxdataPath() + "S3__SY_2_SYRTAX.nc");
-    initialTau550 = configurationAuxdataProvider.getDouble("T550_ini");
-    amins = configurationAuxdataProvider.getShortArray("AMIN");
-    initialNu = configurationAuxdataProvider.getDoubleArray("v_ini");
-    initialOmega = configurationAuxdataProvider.getDoubleArray("w_ini");
-    kappa = configurationAuxdataProvider.getDouble("kappa");
-    ndviIndices = configurationAuxdataProvider.getShortArray("NDV_channel");
-    spectralWeights = configurationAuxdataProvider.getDoubleArray("weight_spec");
-    totalAngularWeights = configurationAuxdataProvider.getDoubleArray("weight_ang_tot");
-    vegetationSpectrum = configurationAuxdataProvider.getDoubleArray("R_veg");
-    soilReflectances = configurationAuxdataProvider.getDoubleArray("R_soil");
-    gamma = configurationAuxdataProvider.getDouble("gamma");
-    angularWeights = configurationAuxdataProvider.getDoubleMatrix("weight_ang");
-    aerosolAngstromExponents = radiometricAuxdataProvider.getDoubleArray("A550");
+void Aer::readAuxdata(Context& context) {
+    addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "OLC_R_atm");
+    addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLN_R_atm");
+    addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLO_R_atm");
+    addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "t");
+    addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "rho_atm");
+    addVectorLookupTable(context, "S3__SY_2_SYRTAX.nc", "D");
+    addScalarLookupTable(context, "S3__SY_2_SYRTAX.nc", "C_O3");
+
+    // todo - use constants
+    shared_ptr<AuxdataProvider> configurationAuxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider("SYCPAX", getAuxdataPath() + "S3__SY_2_SYCPAX.nc"));
+    shared_ptr<AuxdataProvider> radiometricAuxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider("SYRTAX", getAuxdataPath() + "S3__SY_2_SYRTAX.nc"));
+    initialTau550 = configurationAuxdataProvider->getDouble("T550_ini");
+    amins = configurationAuxdataProvider->getShortArray("AMIN");
+    initialNu = configurationAuxdataProvider->getDoubleArray("v_ini");
+    initialOmega = configurationAuxdataProvider->getDoubleArray("w_ini");
+    kappa = configurationAuxdataProvider->getDouble("kappa");
+    ndviIndices = configurationAuxdataProvider->getShortArray("NDV_channel");
+    spectralWeights = configurationAuxdataProvider->getDoubleArray("weight_spec");
+    totalAngularWeights = configurationAuxdataProvider->getDoubleArray("weight_ang_tot");
+    vegetationSpectrum = configurationAuxdataProvider->getDoubleArray("R_veg");
+    soilReflectances = configurationAuxdataProvider->getDoubleArray("R_soil");
+    gamma = configurationAuxdataProvider->getDouble("gamma");
+    angularWeights = configurationAuxdataProvider->getDoubleMatrix("weight_ang");
+    aerosolAngstromExponents = radiometricAuxdataProvider->getDoubleArray("A550");
+
+    context.addObject(configurationAuxdataProvider);
+    context.addObject(radiometricAuxdataProvider);
 }

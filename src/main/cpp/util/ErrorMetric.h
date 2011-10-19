@@ -11,6 +11,7 @@
 #include <string>
 
 #include "../core/Boost.h"
+#include "../core/Context.h"
 #include "../util/MultivariateFunction.h"
 #include "AerPixel.h"
 
@@ -20,15 +21,15 @@ class ErrorMetric : public MultivariateFunction {
 
 public:
 
-    ErrorMetric(AerPixel& p, double gamma, int16_t amin, valarray<double> totalAngularWeights, valarray<double> vegetationSpectrum,
-            valarray<double> soilReflectance, valarray<int16_t> ndviIndices, matrix<double> angularWeights);
+    ErrorMetric(AerPixel& p,int16_t amin, Context& context);
 
     double value(valarray<double>& x);
 
 private:
     AerPixel& p;
-    double gamma;
     int16_t amin;
+    Context& context;
+    double gamma;
     valarray<double> spectralWeights;
     valarray<double> totalAngularWeights;
     valarray<double> vegetationSpectrum;

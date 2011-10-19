@@ -13,22 +13,25 @@
 #include <valarray>
 
 #include "../core/Boost.h"
+#include "../core/Identifiable.h"
 
 using std::map;
 using std::string;
 using std::valarray;
 
-class AuxdataProvider {
+class AuxdataProvider : public Identifiable {
 public:
-    AuxdataProvider(string auxdataPath);
+    AuxdataProvider(const string& id, string auxdataPath);
     virtual ~AuxdataProvider();
 
     double getDouble(const string& varName);
     valarray<double> getDoubleArray(const string& varName);
     matrix<double> getDoubleMatrix(const string& varName);
     valarray<int16_t> getShortArray(const string& varName);
+    const string& getId() const;
 
 private:
+    const string id;
     int fileId;
     map<string, double> doubles;
     map<string, valarray<double> > doubleArrays;

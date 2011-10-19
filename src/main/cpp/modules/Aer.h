@@ -51,24 +51,22 @@ private:
     static bool isSolarIrradianceFillValue(double f, const valarray<double> fillValues, int16_t index);
     shared_ptr<AerPixel> initPixel(Context& context, long k, long l, long m) const;
     const vector<long> createIndices(long base, long bound) const;
-    void readAuxdata();
-    void aer_s(shared_ptr<AerPixel> p);
+    void readAuxdata(Context& context);
+    void aer_s(shared_ptr<AerPixel> p, Context& context);
     void applyMedianFiltering(map<size_t, shared_ptr<AerPixel> >& pixels);
-    bool e2(AerPixel& q, size_t amin);
+    bool e2(AerPixel& q, size_t amin, Context& context);
     double aotStandardError(double tau550);
 };
 
 class E1 : public UnivariateFunction {
 
 public:
-    E1(AerPixel& p, double gamma, int16_t amin, valarray<double> totalAngularWeights, valarray<double> vegetationSpectrum,
-            valarray<double> soilReflectance, valarray<int16_t> ndviIndices, matrix<double> angularWeights) :
-                p(p), gamma(gamma), amin(amin), totalAngularWeights(totalAngularWeights), vegetationSpectrum(vegetationSpectrum),
-                soilReflectance(soilReflectance), ndviIndices(ndviIndices), angularWeights(angularWeights) {
+    E1(AerPixel& p, int16_t amin, Context& context) : p(p), amin(amin), context(context) {
     }
 
-    double value(double x) {
-        ErrorMetric em(p, gamma, amin, totalAngularWeights, vegetationSpectrum, soilReflectance, ndviIndices, angularWeights);
+    double value(double tau550) {
+        p.setTau550(tau550);
+        ErrorMetric em(p, amin, context);
         valarray<double> pn(10);
         pn[0] = p.c_1;
         pn[1] = p.c_2;
@@ -99,14 +97,8 @@ public:
 
 private:
     AerPixel& p;
-    double gamma;
     int16_t amin;
-    valarray<double> spectralWeights;
-    valarray<double> totalAngularWeights;
-    valarray<double> vegetationSpectrum;
-    valarray<double> soilReflectance;
-    valarray<int16_t> ndviIndices;
-    matrix<double> angularWeights;
+    Context& context;
 
 };
 

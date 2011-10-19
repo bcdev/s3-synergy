@@ -80,6 +80,14 @@ public:
         setUByte("AMIN", value);
     }
 
+    double getLongitude() const {
+        return getDouble("longitude");
+    }
+
+    double getLatitude() const {
+        return getDouble("latitude");
+    }
+
     virtual double getRadiance(int16_t index) {
         return getDouble("L_" + lexical_cast<string>(index));
     }
@@ -92,6 +100,8 @@ public:
     double E_2;
     double c_1;
     double c_2;
+    double sza;
+    double airPressure;
     valarray<double> nu;
     valarray<double> omega;
     valarray<double> solarIrradiances;

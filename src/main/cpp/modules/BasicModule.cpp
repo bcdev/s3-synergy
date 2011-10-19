@@ -21,6 +21,14 @@ void BasicModule::addMatrixLookupTable(Context& context, const string& fileName,
     }
 }
 
+void BasicModule::addVectorLookupTable(Context& context, const string& fileName, const string& varName) const {
+    if (!context.hasObject(varName)) {
+        const LookupTableReader reader(getAuxdataPath() + fileName);
+        context.getLogging().info("Reading LUT '" + varName + "'", getId());
+        context.addObject(reader.readVectorLookupTable<double>(varName));
+    }
+}
+
 void BasicModule::addScalarLookupTable(Context& context, const string& fileName, const string& varName) const {
     if (!context.hasObject(varName)) {
         const LookupTableReader reader(getAuxdataPath() + fileName);

@@ -37,7 +37,7 @@ void AerTest::setUp() {
     XPathInitializer init;
     prepareContext();
     aer = shared_ptr<Aer>(new Aer());
-    aer->readAuxdata();
+    aer->readAuxdata(*context);
 }
 
 void AerTest::prepareContext() {

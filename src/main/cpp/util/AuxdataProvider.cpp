@@ -9,13 +9,16 @@
 #include "NetCDF.h"
 #include "../core/Boost.h"
 
-AuxdataProvider::AuxdataProvider(string auxdataPath) {
-    const string auxdataFile = auxdataPath + "S3__SY_2_SYCPAX.nc";
-    fileId = NetCDF::openFile(auxdataFile);
+AuxdataProvider::AuxdataProvider(const string& id, string auxdataPath) : id(id) {
+    fileId = NetCDF::openFile(auxdataPath);
 }
 
 AuxdataProvider::~AuxdataProvider() {
     NetCDF::closeFile(fileId);
+}
+
+const string& AuxdataProvider::getId() const {
+    return id;
 }
 
 double AuxdataProvider::getDouble(const string& varName) {

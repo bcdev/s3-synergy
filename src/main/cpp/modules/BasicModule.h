@@ -61,6 +61,7 @@ protected:
 
     void addAccessor(Context& context, Segment& s, const VariableDescriptor& varDescriptor) const;
     void addMatrixLookupTable(Context& context, const string& fileName, const string& varName) const;
+    void addVectorLookupTable(Context& context, const string& fileName, const string& varName) const;
     void addScalarLookupTable(Context& context, const string& fileName, const string& varName) const;
 
 };
