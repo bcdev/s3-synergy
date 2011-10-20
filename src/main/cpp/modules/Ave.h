@@ -47,6 +47,7 @@ private:
 
     void averageVariables(Context& context, long firstL, long lastL);
     void averageFlags(Context& context, long firstL, long lastL);
+    void averageLatLon(Context& context, long firstL, long lastL);
     bool isFillValue(const string& variableName, const long index) const;
     double getValue(const string& variableName, const long index) const;
     uint16_t getFlagFillValue(Context& context);
