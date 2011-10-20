@@ -37,7 +37,6 @@ void AerTest::setUp() {
     XPathInitializer init;
     prepareContext();
     aer = shared_ptr<Aer>(new Aer());
-    aer->readAuxdata(*context);
 }
 
 void AerTest::prepareContext() {
@@ -47,10 +46,10 @@ void AerTest::prepareContext() {
 
     const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
     shared_ptr<JobOrderParser> jobOrderParser = shared_ptr<JobOrderParser>(new JobOrderParser());
-    shared_ptr<JobOrder> jobOrder = jobOrderParser->parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_AVE.xml");
+    shared_ptr<JobOrder> jobOrder = jobOrderParser->parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_AER.xml");
     context->setJobOrder(jobOrder);
 
-    shared_ptr<Logging> logging = jobOrderParser->createLogging("LOG.SY_UNT_AVE");
+    shared_ptr<Logging> logging = jobOrderParser->createLogging("LOG.SY_UNT_AER");
     context->setLogging(logging);
 
 
@@ -111,6 +110,7 @@ void AerTest::testAer() {
 }
 
 void AerTest::testReadAuxdata() {
+    aer->readAuxdata(*context);
     const valarray<int16_t> amins = aer->amins;
     CPPUNIT_ASSERT(amins[0] == 1);
     CPPUNIT_ASSERT(amins[20] == 21);

@@ -15,10 +15,10 @@
 
 class AerTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(AerTest);
-    CPPUNIT_TEST(testReadAuxdata);
-    CPPUNIT_TEST(testErrorMetric);
-    CPPUNIT_TEST(testAotStandardError);
-    CPPUNIT_TEST(testNdv);
+//    CPPUNIT_TEST(testReadAuxdata);
+//    CPPUNIT_TEST(testErrorMetric);
+//    CPPUNIT_TEST(testAotStandardError);
+//    CPPUNIT_TEST(testNdv);
     CPPUNIT_TEST(testAer);
     CPPUNIT_TEST_SUITE_END();
 
