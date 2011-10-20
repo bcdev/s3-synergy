@@ -139,10 +139,10 @@ void AerTest::testReadAuxdata() {
     alpha550 = aer->aerosolAngstromExponents[30];
     CPPUNIT_ASSERT(std::abs(alpha550 - 1.25) < EPSILON);
 
-    matrix<double> weights = aer->angularWeights;
-    CPPUNIT_ASSERT(weights.at_element(0,0) == 1.5);
-    CPPUNIT_ASSERT(weights.at_element(0,1) == 1.0);
-    CPPUNIT_ASSERT(weights.at_element(1,1) == 1.0);
-    CPPUNIT_ASSERT(weights.at_element(0,2) == 0.5);
-    CPPUNIT_ASSERT(weights.at_element(1,5) == 1.0);
+//    matrix<double> weights = aer->angularWeights;
+//    CPPUNIT_ASSERT(weights.at_element(0,0) == 1.5);
+//    CPPUNIT_ASSERT(weights.at_element(0,1) == 1.0);
+//    CPPUNIT_ASSERT(weights.at_element(1,1) == 1.0);
+//    CPPUNIT_ASSERT(weights.at_element(0,2) == 0.5);
+//    CPPUNIT_ASSERT(weights.at_element(1,5) == 1.0);
 }

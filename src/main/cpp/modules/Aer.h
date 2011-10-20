@@ -36,17 +36,11 @@ private:
     const Grid* averagedGrid;
     double initialTau550;
     double kappa;
-    double gamma;
     valarray<int16_t> amins;
     valarray<int16_t> ndviIndices;
     valarray<double> initialNu;
     valarray<double> initialOmega;
     valarray<double> aerosolAngstromExponents;
-    valarray<double> spectralWeights;
-    valarray<double> totalAngularWeights;
-    matrix<double> angularWeights;
-    valarray<double> vegetationSpectrum;
-    valarray<double> soilReflectances;
 
     static bool isSolarIrradianceFillValue(double f, const valarray<double> fillValues, int16_t index);
     shared_ptr<AerPixel> initPixel(Context& context, long k, long l, long m) const;
@@ -55,7 +49,7 @@ private:
     void aer_s(shared_ptr<AerPixel> p, Context& context);
     void applyMedianFiltering(map<size_t, shared_ptr<AerPixel> >& pixels);
     bool e2(AerPixel& q, size_t amin, Context& context);
-    double aotStandardError(double tau550);
+    double aotStandardError(shared_ptr<AerPixel> p, Context& context);
 };
 
 class E1 : public UnivariateFunction {
@@ -84,7 +78,7 @@ public:
             u[i] = init;
         }
 
-        const bool success = MultiMin::powell(em, pn, u, MultiMin::ACCURACY_GOAL, 200);
+        MultiMin::powell(em, pn, u, MultiMin::ACCURACY_GOAL, 200);
         p.c_1 = pn[0];
         p.c_2 = pn[1];
         p.nu[0] = pn[2];
@@ -92,7 +86,7 @@ public:
         for(size_t i = 0; i < 6; i++) {
             p.omega[i] = pn[i + 4];
         }
-        return success;
+        return em.value(pn);
     }
 
 private:

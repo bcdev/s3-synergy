@@ -12,6 +12,7 @@
 
 #include "../core/Boost.h"
 #include "../core/Context.h"
+#include "../core/LookupTable.h"
 #include "../util/MultivariateFunction.h"
 #include "AerPixel.h"
 
@@ -29,21 +30,24 @@ private:
     AerPixel& p;
     int16_t amin;
     Context& context;
+
     double gamma;
+    valarray<double> D;
     valarray<double> spectralWeights;
-    valarray<double> totalAngularWeights;
     valarray<double> vegetationSpectrum;
     valarray<double> soilReflectance;
     valarray<int16_t> ndviIndices;
     matrix<double> angularWeights;
 
+    ScalarLookupTable<double>& lutTotalAngularWeights;
+
     void applyAtmosphericCorrection(AerPixel& p, int16_t amin);
 
-    float angModelSurf(size_t index, AerPixel& p);
+    double angModelSurf(size_t index, valarray<double>& x);
 
-    float specModelSurf(double c_1, double c_2, size_t index);
+    double specModelSurf(double c_1, double c_2, size_t index);
 
-    float errorMetric(valarray<double> rSpec, valarray<double> rAng);
+    double errorMetric(valarray<double> rSpec, valarray<double> rAng);
 
     double ndv(AerPixel& q, valarray<int16_t> ndviIndices);
 

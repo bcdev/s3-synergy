@@ -90,6 +90,14 @@ const string LOG_LEVEL_PROGRESS = "PROGRESS";
 const string LOG_LEVEL_DEBUG = "DEBUG";
 const string LOG_LEVEL_WARNING = "WARNING";
 const string LOG_LEVEL_ERROR = "ERROR";
+
+/**
+ * Auxdata information.
+ */
+
+const string AUXDATA_CONFIGURATION_ID = "SYCPAX";
+const string AUXDATA_RADIOMETRIC_ID = "SYRTAX";
+
 }
 
 #endif	/* CONSTANTS_H */

@@ -19,8 +19,7 @@ using std::min;
 using std::numeric_limits;
 using std::set;
 
-Aer::Aer() : BasicModule("AER"), amins(40), ndviIndices(2), initialNu(2), initialOmega(6), aerosolAngstromExponents(40),
-        spectralWeights(30), totalAngularWeights(4), angularWeights(2, 6), vegetationSpectrum(30), soilReflectances(30) {
+Aer::Aer() : BasicModule("AER"), amins(40), ndviIndices(2), initialNu(2), initialOmega(6), aerosolAngstromExponents(40) {
 }
 
 Aer::~Aer() {
@@ -34,6 +33,9 @@ void Aer::start(Context& context) {
     averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550_er"));
     averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("A550"));
     averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("AMIN"));
+    for(size_t i = 1; i <= 30; i++) {
+        averagedSegment->addVariable("SDR_" + lexical_cast<string>(i), Constants::TYPE_DOUBLE, 1.0, 0.0);
+    }
     averagedGrid = &averagedSegment->getGrid();
 }
 
@@ -129,6 +131,9 @@ void Aer::process(Context& context) {
 }
 
 shared_ptr<AerPixel> Aer::initPixel(Context& context, long k, long l, long m) const {
+
+    // todo - create class 'pixel initialiser', which memorizes multiply used data
+
     shared_ptr<AerPixel> p = shared_ptr<AerPixel>(new AerPixel(*averagedSegment, k, l, m));
     const Accessor& synFlags = averagedSegment->getAccessor("SYN_flags");
     const size_t index = averagedGrid->getIndex(k, l, m);
@@ -148,30 +153,58 @@ shared_ptr<AerPixel> Aer::initPixel(Context& context, long k, long l, long m) co
     for (size_t i = 1; i <= 6; i++) {
         const Accessor& solarIrrSlnAccessor = slnInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(i));
         const size_t channel = 17 + i;
-        // todo - replace l-index
+        // todo - replace l-index (see Aco module)
         p->solarIrradiances[channel] = solarIrrSlnAccessor.getDouble(slnInfoGrid.getIndex(0, 0, 1));
     }
     for (size_t i = 1; i <= 6; i++) {
         const Accessor& solarIrrSloAccessor = sloInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(i));
         const size_t channel = 23 + i;
-        // todo - replace l-index
+        // todo - replace l-index (see Aco module)
         p->solarIrradiances[channel] = solarIrrSloAccessor.getDouble(sloInfoGrid.getIndex(0, 0, 1));
     }
 
-    const Accessor& latAccessor = context.getSegment(Constants::SEGMENT_SYN_AVERAGED).getAccessor("latitude");
-    const Accessor& lonAccessor = context.getSegment(Constants::SEGMENT_SYN_AVERAGED).getAccessor("longitude");
-    const Accessor& tpLatOlc = context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("OLC_TP_lat");
-    const Accessor& tpLonOlc = context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("OLC_TP_lon");
-    const Accessor& tpSzaOlc = context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("SZA");
+    const Segment& averagedSegment = context.getSegment(Constants::SEGMENT_SYN_AVERAGED);
+    const Segment& olciTiepointSegment = context.getSegment(Constants::SEGMENT_OLC_TP);
+    const Segment& slnTiepointSegment = context.getSegment(Constants::SEGMENT_SLN_TP);
+    const Segment& sloTiepointSegment = context.getSegment(Constants::SEGMENT_SLO_TP);
+
+    const Accessor& tpLatOlc = olciTiepointSegment.getAccessor("OLC_TP_lat");
+    const Accessor& tpLonOlc = olciTiepointSegment.getAccessor("OLC_TP_lon");
+    const Accessor& tpLatSln = slnTiepointSegment.getAccessor("SLN_TP_lat");
+    const Accessor& tpLonSln = slnTiepointSegment.getAccessor("SLN_TP_lon");
+    const Accessor& tpLatSlo = sloTiepointSegment.getAccessor("SLO_TP_lat");
+    const Accessor& tpLonSlo = sloTiepointSegment.getAccessor("SLO_TP_lon");
+    const Accessor& tpSzaOlc = olciTiepointSegment.getAccessor("SZA");
+    const Accessor& tpSaaOlc = olciTiepointSegment.getAccessor("SAA");
+    const Accessor& tpVzaOlc = olciTiepointSegment.getAccessor("OZA");
+    const Accessor& tpVaaOlc = olciTiepointSegment.getAccessor("OAA");
+    const Accessor& tpVzaSln = slnTiepointSegment.getAccessor("SLN_VZA");
+    const Accessor& tpVaaSln = slnTiepointSegment.getAccessor("SLN_VAA");
+    const Accessor& tpVzaSlo = sloTiepointSegment.getAccessor("SLO_VZA");
+    const Accessor& tpVaaSlo = sloTiepointSegment.getAccessor("SLO_VAA");
+
     const valarray<double> tpLonsOlc = tpLonOlc.getDoubles();
     const valarray<double> tpLatsOlc = tpLatOlc.getDoubles();
+    const valarray<double> tpLonsSln = tpLonSln.getDoubles();
+    const valarray<double> tpLatsSln = tpLatSln.getDoubles();
+    const valarray<double> tpLonsSlo = tpLonSlo.getDoubles();
+    const valarray<double> tpLatsSlo = tpLatSlo.getDoubles();
     const valarray<double> tpSzasOlc = tpSzaOlc.getDoubles();
+    const valarray<double> tpSaasOlc = tpSaaOlc.getDoubles();
+    const valarray<double> tpVzasOlc = tpVzaOlc.getDoubles();
+    const valarray<double> tpVaasOlc = tpVaaOlc.getDoubles();
+    const valarray<double> tpVzasSln = tpVzaSln.getDoubles();
+    const valarray<double> tpVzasSlo = tpVzaSlo.getDoubles();
+    const valarray<double> tpVaasSln = tpVaaSln.getDoubles();
+    const valarray<double> tpVaasSlo = tpVaaSlo.getDoubles();
+
+    const valarray<double> tpOzones = olciTiepointSegment.getAccessor("ozone").getDoubles();
+    const valarray<double> tpAirPressureOlc = olciTiepointSegment.getAccessor("air_pressure").getDoubles();
+
     const TiePointInterpolator<double> tpiOlc = TiePointInterpolator<double>(tpLonsOlc, tpLatsOlc);
     valarray<double> tpiWeights(1);
     valarray<size_t> tpiIndexes(1);
     tpiOlc.prepare(p->getLatitude(), p->getLongitude(), tpiWeights, tpiIndexes);
-
-    const double szaOlc = tpiOlc.interpolate(tpSzasOlc, tpiWeights, tpiIndexes);
 
     p->setTau550(initialTau550);
     p->nu[0] = initialNu[0];
@@ -179,6 +212,36 @@ shared_ptr<AerPixel> Aer::initPixel(Context& context, long k, long l, long m) co
     for(size_t i = 0; i < 6; i++) {
         p->omega[i] = initialOmega[i];
     }
+
+    p->sza = tpiOlc.interpolate(tpSzasOlc, tpiWeights, tpiIndexes);
+    p->saa = tpiOlc.interpolate(tpSaasOlc, tpiWeights, tpiIndexes);
+    p->vzaOlc = tpiOlc.interpolate(tpVzasOlc, tpiWeights, tpiIndexes);
+    p->vaaOlc = tpiOlc.interpolate(tpVaasOlc, tpiWeights, tpiIndexes);
+
+    p->airPressure = tpiOlc.interpolate(tpAirPressureOlc, tpiWeights, tpiIndexes);
+    p->ozone = tpiOlc.interpolate(tpOzones, tpiWeights, tpiIndexes);
+    if(olciTiepointSegment.hasVariable("water_vapour")) {
+        const valarray<double> tpWaterVapourOlc = olciTiepointSegment.getAccessor("water_vapour").getDoubles();
+        p->waterVapour = tpiOlc.interpolate(tpWaterVapourOlc, tpiWeights, tpiIndexes);
+    } else {
+        p->waterVapour = 0.2;
+    }
+
+    const TiePointInterpolator<double> tpiSln = TiePointInterpolator<double>(tpLonsSln, tpLatsSln);
+    tpiSln.prepare(p->getLatitude(), p->getLongitude(), tpiWeights, tpiIndexes);
+
+    p->vaaSln = tpiSln.interpolate(tpVaasSln, tpiWeights, tpiIndexes);
+    p->vzaSln = tpiSln.interpolate(tpVzasSln, tpiWeights, tpiIndexes);
+
+    const TiePointInterpolator<double> tpiSlo = TiePointInterpolator<double>(tpLonsSlo, tpLatsSlo);
+    tpiSlo.prepare(p->getLatitude(), p->getLongitude(), tpiWeights, tpiIndexes);
+
+    p->vaaSlo = tpiSlo.interpolate(tpVaasSlo, tpiWeights, tpiIndexes);
+    p->vzaSlo = tpiSlo.interpolate(tpVzasSlo, tpiWeights, tpiIndexes);
+
+    AuxdataProvider& radiometricAuxdataProvider = (AuxdataProvider&)context.getObject(Constants::AUXDATA_RADIOMETRIC_ID);
+    p->cO3 = radiometricAuxdataProvider.getDoubleArray("C_O3");
+
     return p;
 }
 
@@ -232,12 +295,12 @@ void Aer::aer_s(shared_ptr<AerPixel> p, Context& context) {
         }
     }
     if(!p->isFillValue("AMIN")) {
-        // todo - extract p->getTau550()
-        if(p->getTau550() > 0.0001 ) {
-            double a = aotStandardError(p->getTau550());
+        double tau550 = p->getTau550();
+        if(tau550 > 0.0001 ) {
+            double a = aotStandardError(p, context);
             if(a > 0) {
                 p->setDeltaTau550(kappa * sqrt(p->E_2 / a));
-                if(p->getTau550() > 0.1 && p->getDeltaTau550() > 5 * p->getTau550()) {
+                if(tau550 > 0.1 && p->getDeltaTau550() > 5 * tau550) {
                     p->setSynFlags(p->getSynFlags() | 32768);
                 } else {
                     p->setSynFlags(p->getSynFlags() | 4096);
@@ -282,9 +345,12 @@ bool Aer::isSolarIrradianceFillValue(double f, const valarray<double> fillValues
     return f == fillValues[index];
 }
 
-double Aer::aotStandardError(double tau550) {
-    // todo - implement
-    return 0.0;
+double Aer::aotStandardError(shared_ptr<AerPixel> p, Context& context) {
+    E1 e1_1(*p, p->getAMIN(), context);
+    E1 e1_2(*p, p->getAMIN(), context);
+    double a = e1_1.value(0.8 * p->getTau550());
+    double b = e1_2.value(0.6 * p->getTau550());
+    return 25 * (p->E_2 - 2 * a + b) / (2 * p->E_2 * p->E_2);
 }
 
 void Aer::applyMedianFiltering(map<size_t, shared_ptr<AerPixel> >& pixels) {
@@ -298,23 +364,17 @@ void Aer::readAuxdata(Context& context) {
     addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "t");
     addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "rho_atm");
     addVectorLookupTable(context, "S3__SY_2_SYRTAX.nc", "D");
+    addScalarLookupTable(context, "S3__SY_2_SYCPAX.nc", "weight_ang_tot");
     addScalarLookupTable(context, "S3__SY_2_SYRTAX.nc", "C_O3");
 
-    // todo - use constants
-    shared_ptr<AuxdataProvider> configurationAuxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider("SYCPAX", getAuxdataPath() + "S3__SY_2_SYCPAX.nc"));
-    shared_ptr<AuxdataProvider> radiometricAuxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider("SYRTAX", getAuxdataPath() + "S3__SY_2_SYRTAX.nc"));
+    shared_ptr<AuxdataProvider> configurationAuxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider(Constants::AUXDATA_CONFIGURATION_ID, getAuxdataPath() + "S3__SY_2_SYCPAX.nc"));
+    shared_ptr<AuxdataProvider> radiometricAuxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider(Constants::AUXDATA_RADIOMETRIC_ID, getAuxdataPath() + "S3__SY_2_SYRTAX.nc"));
     initialTau550 = configurationAuxdataProvider->getDouble("T550_ini");
     amins = configurationAuxdataProvider->getShortArray("AMIN");
     initialNu = configurationAuxdataProvider->getDoubleArray("v_ini");
     initialOmega = configurationAuxdataProvider->getDoubleArray("w_ini");
     kappa = configurationAuxdataProvider->getDouble("kappa");
     ndviIndices = configurationAuxdataProvider->getShortArray("NDV_channel");
-    spectralWeights = configurationAuxdataProvider->getDoubleArray("weight_spec");
-    totalAngularWeights = configurationAuxdataProvider->getDoubleArray("weight_ang_tot");
-    vegetationSpectrum = configurationAuxdataProvider->getDoubleArray("R_veg");
-    soilReflectances = configurationAuxdataProvider->getDoubleArray("R_soil");
-    gamma = configurationAuxdataProvider->getDouble("gamma");
-    angularWeights = configurationAuxdataProvider->getDoubleMatrix("weight_ang");
     aerosolAngstromExponents = radiometricAuxdataProvider->getDoubleArray("A550");
 
     context.addObject(configurationAuxdataProvider);

@@ -30,7 +30,6 @@ public:
         setDeltaTau550(p.getDeltaTau550());
         setAlpha550(p.getAlpha550());
         setAMIN(p.getAMIN());
-        K = p.K;
         E_2 = p.E_2;
         c_1 = p.c_1;
         c_2 = p.c_2;
@@ -96,16 +95,30 @@ public:
         return getDouble("SDR_" + lexical_cast<string>(index));
     }
 
-    uint32_t K;
+    virtual void setSDR(int16_t index, double sdr) {
+        setDouble("SDR_" + lexical_cast<string>(index), sdr);
+    }
+
     double E_2;
     double c_1;
     double c_2;
     double sza;
+    double saa;
+    double vzaOlc;
+    double vzaSln;
+    double vzaSlo;
+    double vaaOlc;
+    double vaaSln;
+    double vaaSlo;
+    double ozone;
     double airPressure;
+    double waterVapour;
+
     valarray<double> nu;
     valarray<double> omega;
     valarray<double> solarIrradiances;
     valarray<double> solarIrradianceFillValues;
+    valarray<double> cO3;
 
 };
 
