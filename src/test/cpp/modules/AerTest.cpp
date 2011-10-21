@@ -62,35 +62,6 @@ void AerTest::prepareContext() {
 void AerTest::tearDown() {
 }
 
-void AerTest::testNdv() {
-    Segment& segment = context->addSegment(Constants::SEGMENT_SYN_AVERAGED, 100, 10, 2, 0, 583);
-    segment.addVariable("L_9", Constants::TYPE_DOUBLE, 1.0, 0.0);
-    segment.addVariable("L_17", Constants::TYPE_DOUBLE, 1.0, 0.0);
-    AerTestPixel p(segment, 0, 0, 0);
-    p.solarIrradiances[9] = 8;
-    p.solarIrradiances[17] = 12;
-    p.solarIrradianceFillValues[9] = -1;
-    p.solarIrradianceFillValues[17] = -1;
-    double ndv = aer->ndv(p, aer->ndviIndices);
-    CPPUNIT_ASSERT(std::abs(ndv - 0.1428571) < 1.e-5);
-
-    p.solarIrradianceFillValues[9] = 8;
-    ndv = aer->ndv(p, aer->ndviIndices);
-    CPPUNIT_ASSERT(ndv == 0.5);
-}
-
-void AerTest::testAotStandardError() {
-}
-
-void AerTest::testErrorMetric() {
-//    Segment& segment = context->addSegment(Constants::SEGMENT_SYN_AVERAGED, 100, 10, 2, 0, 583);
-//    segment.addVariable("L_9", Constants::TYPE_DOUBLE, 1.0, 0.0);
-//    segment.addVariable("L_17", Constants::TYPE_DOUBLE, 1.0, 0.0);
-//    AerTestPixel p(segment, 0, 0, 0);
-//    const double errorMetric = aer->errorMetric(p, 0);
-//    CPPUNIT_ASSERT(std::abs(errorMetric - 0.423) < 1.0e-4);
-}
-
 void AerTest::testAer() {
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
     shared_ptr<Module> col = shared_ptr<Module>(new Col());

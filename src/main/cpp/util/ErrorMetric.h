@@ -12,9 +12,9 @@
 
 #include "../core/Boost.h"
 #include "../core/Context.h"
+#include "../core/Pixel.h"
 #include "../core/LookupTable.h"
 #include "../util/MultivariateFunction.h"
-#include "AerPixel.h"
 
 using std::string;
 
@@ -22,12 +22,14 @@ class ErrorMetric : public MultivariateFunction {
 
 public:
 
-    ErrorMetric(AerPixel& p,int16_t amin, Context& context);
+    ErrorMetric(Pixel& p,int16_t amin, Context& context);
 
     double value(valarray<double>& x);
 
+    static double ndv(Pixel& q, const valarray<int16_t>& ndviIndices);
+
 private:
-    AerPixel& p;
+    Pixel& p;
     int16_t amin;
     Context& context;
 
@@ -41,7 +43,7 @@ private:
 
     ScalarLookupTable<double>& lutTotalAngularWeights;
 
-    void applyAtmosphericCorrection(AerPixel& p, int16_t amin);
+    void applyAtmosphericCorrection(Pixel& p, int16_t amin);
 
     double angModelSurf(size_t index, valarray<double>& x);
 
@@ -49,9 +51,6 @@ private:
 
     double errorMetric(valarray<double> rSpec, valarray<double> rAng);
 
-    double ndv(AerPixel& q, valarray<int16_t> ndviIndices);
-
-    bool isSolarIrradianceFillValue(double f, const valarray<double> fillValues, int16_t index);
 };
 
 #endif /* ERRORMETRIC_H_ */

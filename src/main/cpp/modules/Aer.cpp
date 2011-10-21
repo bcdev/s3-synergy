@@ -46,24 +46,15 @@ void Aer::stop(Context& context) {
 void Aer::process(Context& context) {
     context.getLogging().progress("Performing aerosol retrieval...", getId());
 
-    set<shared_ptr<AerPixel> > missingPixels;
-    map<size_t, shared_ptr<AerPixel> > pixels;
-
-    // todo - ts11Oct2011 - check
-    long firstL = context.getFirstComputableL(*averagedSegment, *this);
+    // todo - ts21Oct2011 - check
     long lastL = context.getLastComputableL(*averagedSegment, *this) - 8;
+    map<size_t, shared_ptr<Pixel> > missingPixels;
+    vector<shared_ptr<Pixel> > pixels = getPixels(context, lastL);
 
-    // todo - pixel rausziehen
-    for(long l_prime = firstL; l_prime <= lastL; l_prime++) {
-        for(long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
-            for(long m_prime = averagedGrid->getFirstM(); m_prime <= averagedGrid->getMaxM(); m_prime++) {
-                shared_ptr<AerPixel> p = initPixel(context, k, l_prime, m_prime);
-                aer_s(p, context);
-                if(p->isFillValue("AMIN")) {
-                    missingPixels.insert(p);
-                }
-                pixels[averagedGrid->getIndex(k, l_prime, m_prime)] = p;
-            }
+    foreach(shared_ptr<Pixel> p, pixels) {
+        aer_s(p, context);
+        if(p->amin < 0) {
+            missingPixels[p->index] = p;
         }
     }
 
@@ -74,8 +65,10 @@ void Aer::process(Context& context) {
         if (I >= 5 && I <= 12) {
             N_b++;
         }
-        vector<shared_ptr<AerPixel> > completedPixels;
-        foreach(shared_ptr<AerPixel> p, missingPixels) {
+        set<size_t> completedPixels;
+        typedef pair<size_t, shared_ptr<Pixel> > Entry;
+        foreach(Entry entry, missingPixels) {
+            shared_ptr<Pixel> p = entry.second;
             double tau_550, deltaTau_500, alpha550 = 0;
             uint8_t AMIN = 0;
             uint32_t K = 0;
@@ -89,10 +82,14 @@ void Aer::process(Context& context) {
             foreach(long i_prime, iPrimeIndices) {
                 foreach(long j_prime, jPrimeIndices) {
                     if (averagedGrid->isValidPosition(k, i_prime, j_prime)) {
-                        if (missingPixels.find(p) == missingPixels.end()) {
-                            tau_550 += p->getTau550();
-                            deltaTau_500 += p->getDeltaTau550();
-                            alpha550 += p->getAlpha550();
+
+                        const size_t pixelIndex = averagedGrid->getIndex(k, i_prime, j_prime);
+                        if(!contains(missingPixels, pixelIndex) || contains(completedPixels, pixelIndex)) {
+                            shared_ptr<Pixel> q = pixels[pixelIndex];
+
+                            tau_550 += q->tau550;
+                            deltaTau_500 += q->tau550err;
+                            alpha550 += q->alpha550;
 
                             long iDiff = std::abs(i_prime - l_prime);
                             if(iDiff < minIDiff) {
@@ -104,7 +101,7 @@ void Aer::process(Context& context) {
                             }
 
                             if (minIDiff == iDiff && minJDiff == jDiff) {
-                                AMIN = p->getAMIN();
+                                AMIN = q->amin;
                             }
                             K++;
                         }
@@ -112,32 +109,47 @@ void Aer::process(Context& context) {
                 }
             }
             if (K > 1) {
-                p->setTau550(tau_550 / K);
-                p->setDeltaTau550( deltaTau_500 / K);
-                p->setAlpha550(alpha550 / K);
-                p->setAMIN(AMIN);
-                // todo - ts05Oct2011 - clarify if 'SYN_filled' (as it's called in DPM) is really meaning 'SYN_aerosol_filled'
-                p->setSynFlags(p->getSynFlags() | 2048);
-                completedPixels.push_back(p);
+                p->tau550 = tau_550 / K;
+                p->tau550err = deltaTau_500 / K;
+                p->alpha550 = alpha550 / K;
+                p->amin = AMIN;
+                p->synFlags |= 2048;
+                completedPixels.insert(p->index);
             }
         }
-        foreach(shared_ptr<AerPixel> p, completedPixels) {
-            missingPixels.erase(p);
+        foreach(size_t index, completedPixels) {
+            missingPixels.erase(index);
         }
         I++;
     }
-    applyMedianFiltering(pixels);
+    // todo: putPixels(pixels);
+    // todo: applyMedianFiltering(pixels);
     context.setLastComputedL(*averagedSegment, *this, lastL);
 }
 
-shared_ptr<AerPixel> Aer::initPixel(Context& context, long k, long l, long m) const {
+vector<shared_ptr<Pixel> > Aer::getPixels(Context& context, long lastL) const {
+    vector<shared_ptr<Pixel> > pixels(averagedGrid->getSize());
+    // todo - ts11Oct2011 - check
+    long firstL = context.getFirstComputableL(*averagedSegment, *this);
+    for(long l = firstL; l <= lastL; l++) {
+        for(long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
+            for(long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
+                const size_t index = averagedGrid->getIndex(k, l, m);
+                pixels[index] = getPixel(context, k, l, m);
+            }
+        }
+    }
+    return pixels;
+}
+
+shared_ptr<Pixel> Aer::getPixel(Context& context, long k, long l, long m) const {
 
     // todo - create class 'pixel initialiser', which memorizes multiply used data
 
-    shared_ptr<AerPixel> p = shared_ptr<AerPixel>(new AerPixel(*averagedSegment, k, l, m));
-    const Accessor& synFlags = averagedSegment->getAccessor("SYN_flags");
     const size_t index = averagedGrid->getIndex(k, l, m);
-    p->setSynFlags(synFlags.getUShort(index));
+    shared_ptr<Pixel> p = shared_ptr<Pixel>(new Pixel(k, l, m, index));
+    const Accessor& synFlags = averagedSegment->getAccessor("SYN_flags");
+    p->synFlags = synFlags.getUShort(index);
     const Segment& olcInfoSegment = context.getSegment(Constants::SEGMENT_OLC_INFO);
     const Segment& slnInfoSegment = context.getSegment(Constants::SEGMENT_SLN_INFO);
     const Segment& sloInfoSegment = context.getSegment(Constants::SEGMENT_SLO_INFO);
@@ -148,7 +160,6 @@ shared_ptr<AerPixel> Aer::initPixel(Context& context, long k, long l, long m) co
     for(size_t channel = 0; channel < 18; channel++) {
         const size_t index = olcInfoGrid.getIndex(k, channel, m);
         p->solarIrradiances[channel] = solarIrrOlcAccessor.getFloat(index);
-        p->solarIrradianceFillValues[channel] = lexical_cast<double>(solarIrrOlcAccessor.getFillValue());
     }
     for (size_t i = 1; i <= 6; i++) {
         const Accessor& solarIrrSlnAccessor = slnInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(i));
@@ -163,7 +174,6 @@ shared_ptr<AerPixel> Aer::initPixel(Context& context, long k, long l, long m) co
         p->solarIrradiances[channel] = solarIrrSloAccessor.getDouble(sloInfoGrid.getIndex(0, 0, 1));
     }
 
-    const Segment& averagedSegment = context.getSegment(Constants::SEGMENT_SYN_AVERAGED);
     const Segment& olciTiepointSegment = context.getSegment(Constants::SEGMENT_OLC_TP);
     const Segment& slnTiepointSegment = context.getSegment(Constants::SEGMENT_SLN_TP);
     const Segment& sloTiepointSegment = context.getSegment(Constants::SEGMENT_SLO_TP);
@@ -204,9 +214,9 @@ shared_ptr<AerPixel> Aer::initPixel(Context& context, long k, long l, long m) co
     const TiePointInterpolator<double> tpiOlc = TiePointInterpolator<double>(tpLonsOlc, tpLatsOlc);
     valarray<double> tpiWeights(1);
     valarray<size_t> tpiIndexes(1);
-    tpiOlc.prepare(p->getLatitude(), p->getLongitude(), tpiWeights, tpiIndexes);
+    tpiOlc.prepare(p->lat, p->lon, tpiWeights, tpiIndexes);
 
-    p->setTau550(initialTau550);
+    p->tau550 = initialTau550;
     p->nu[0] = initialNu[0];
     p->nu[1] = initialNu[2];
     for(size_t i = 0; i < 6; i++) {
@@ -228,13 +238,13 @@ shared_ptr<AerPixel> Aer::initPixel(Context& context, long k, long l, long m) co
     }
 
     const TiePointInterpolator<double> tpiSln = TiePointInterpolator<double>(tpLonsSln, tpLatsSln);
-    tpiSln.prepare(p->getLatitude(), p->getLongitude(), tpiWeights, tpiIndexes);
+    tpiSln.prepare(p->lat, p->lon, tpiWeights, tpiIndexes);
 
     p->vaaSln = tpiSln.interpolate(tpVaasSln, tpiWeights, tpiIndexes);
     p->vzaSln = tpiSln.interpolate(tpVzasSln, tpiWeights, tpiIndexes);
 
     const TiePointInterpolator<double> tpiSlo = TiePointInterpolator<double>(tpLonsSlo, tpLatsSlo);
-    tpiSlo.prepare(p->getLatitude(), p->getLongitude(), tpiWeights, tpiIndexes);
+    tpiSlo.prepare(p->lat, p->lon, tpiWeights, tpiIndexes);
 
     p->vaaSlo = tpiSlo.interpolate(tpVaasSlo, tpiWeights, tpiIndexes);
     p->vzaSlo = tpiSlo.interpolate(tpVzasSlo, tpiWeights, tpiIndexes);
@@ -255,105 +265,84 @@ const vector<long> Aer::createIndices(long base, long bound) const {
     return result;
 }
 
-void Aer::aer_s(shared_ptr<AerPixel> p, Context& context) {
-    p->setFillValue("T550");
-    p->setFillValue("T550_er");
-    p->setFillValue("A550");
-    p->setFillValue("AMIN");
+void Aer::aer_s(shared_ptr<Pixel> p, Context& context) {
+    double NaN = numeric_limits<double>::quiet_NaN();
+    p->tau550 = NaN;
+    p->tau550err = NaN;
+    p->alpha550 = NaN;
+    p->amin = numeric_limits<short>::min();
     // set flags SYN_success, SYN_negative_curvature, SYN_too_low, and SY_high_error to false
-    p->setSynFlags(p->getSynFlags() & 3887);
+    p->synFlags &= 3887;
 
-    const bool isPartlyCloudy = (p->getSynFlags() & 256) == 256;
-    const bool isPartlyWater = (p->getSynFlags() & 512) == 512;
+    const bool isPartlyCloudy = (p->synFlags & 256) == 256;
+    const bool isPartlyWater = (p->synFlags & 512) == 512;
 
     if(isPartlyCloudy || isPartlyWater) {
         return;
     }
 
-    p->E_2 = numeric_limits<double>::infinity();
+    p->E2 = (numeric_limits<double>::infinity());
 
     for(size_t i = 0; i < amins.size(); i++) {
         const int16_t amin = amins[i];
-        AerPixel q(*p);
+        Pixel q = Pixel(*p);
         const valarray<double> nu = initialNu;
         const valarray<double> omegas = initialOmega;
         double tau550 = initialTau550;
-        q.setTau550(tau550);
-        q.c_1 = ndv(q, ndviIndices);
-        q.c_2 = 1 - q.c_1;
+        q.tau550 = tau550;
+        q.c1 = ErrorMetric::ndv(q, ndviIndices);
+        q.c2 = 1 - q.c1;
         q.nu[0] = nu[0];
         q.nu[1] = nu[1];
         for(size_t j = 0; j < omegas.size(); j++) {
             q.omega[j] = omegas[j];
         }
         bool success = e2(q, amin, context);
-        if(success && q.E_2 < p->E_2) {
-            // todo - p.assign(q) instead of 'new'
-            p = shared_ptr<AerPixel>(new AerPixel(q));
-            p->setAlpha550(aerosolAngstromExponents[amin]);
-            p->setAMIN(amin);
+        if(success && q.E2 < p->E2) {
+            p->assign(q);
+            p->alpha550 = aerosolAngstromExponents[amin];
+            p->amin = amin;
         }
     }
-    if(!p->isFillValue("AMIN")) {
-        double tau550 = p->getTau550();
+    if(p->amin > 0) {
+        double tau550 = p->tau550;
         if(tau550 > 0.0001 ) {
-            double a = aotStandardError(p, context);
+            double a = errorCurvature(p, context);
             if(a > 0) {
-                p->setDeltaTau550(kappa * sqrt(p->E_2 / a));
-                if(tau550 > 0.1 && p->getDeltaTau550() > 5 * tau550) {
-                    p->setSynFlags(p->getSynFlags() | 32768);
+                p->tau550err = kappa * sqrt(p->E2 / a);
+                if(tau550 > 0.1 && p->tau550err > 5 * tau550) {
+                    p->synFlags |= 32768;
                 } else {
-                    p->setSynFlags(p->getSynFlags() | 4096);
+                    p->synFlags |= 4096;
                 }
             } else {
-                p->setSynFlags(p->getSynFlags() | 8192);
+                p->synFlags |= 8192;
             }
         } else {
-            p->setSynFlags(p->getSynFlags() | 16384);
+            p->synFlags |= 16384;
         }
     }
 }
 
-bool Aer::e2(AerPixel& p, size_t amin, Context& context) {
+bool Aer::e2(Pixel& p, size_t amin, Context& context) {
     E1 e1(p, amin, context);
     Bracket bracket;
     Min::brack(e1, 0.0, 3.0, bracket);
     const bool success = Min::brent(e1, bracket, Min::ACCURACY_GOAL);
-    p.setTau550(bracket.minimumX);
-    p.E_2 = bracket.minimumF;
+    p.tau550 = bracket.minimumX;
+    p.E2 = bracket.minimumF;
     return success;
 }
 
-double Aer::ndv(AerPixel& q, const valarray<int16_t>& ndviIndices) {
-    double L1 = q.getRadiance(ndviIndices[0]);
-    double L2 = q.getRadiance(ndviIndices[1]);
-    double F1 = q.solarIrradiances[ndviIndices[0]];
-    double F2 = q.solarIrradiances[ndviIndices[1]];
-    if(q.isFillValue("L_" + lexical_cast<string>(ndviIndices[0])) ||
-            q.isFillValue("L_" + lexical_cast<string>(ndviIndices[1])) ||
-            isSolarIrradianceFillValue(F1, q.solarIrradianceFillValues, ndviIndices[0]) ||
-            isSolarIrradianceFillValue(F2, q.solarIrradianceFillValues, ndviIndices[1])) {
-        return 0.5;
-    }
-    return ((L2 / F2) - (L1 / F1)) / ((L2 / F2) + (L1 / F1));
+double Aer::errorCurvature(shared_ptr<Pixel> p, Context& context) {
+    E1 e1_1(*p, p->amin, context);
+    E1 e1_2(*p, p->amin, context);
+    double a = e1_1.value(0.8 * p->tau550);
+    double b = e1_2.value(0.6 * p->tau550);
+    return 25 * (p->E2 - 2 * a + b) / (2 * p->E2 * p->E2);
 }
 
-bool Aer::isSolarIrradianceFillValue(double f, const valarray<double> fillValues, int16_t index) {
-    if(index >= 18) {
-        return false;
-    }
-    return f == fillValues[index];
-}
-
-double Aer::aotStandardError(shared_ptr<AerPixel> p, Context& context) {
-    E1 e1_1(*p, p->getAMIN(), context);
-    E1 e1_2(*p, p->getAMIN(), context);
-    double a = e1_1.value(0.8 * p->getTau550());
-    double b = e1_2.value(0.6 * p->getTau550());
-    return 25 * (p->E_2 - 2 * a + b) / (2 * p->E_2 * p->E_2);
-}
-
-void Aer::applyMedianFiltering(map<size_t, shared_ptr<AerPixel> >& pixels) {
+void Aer::applyMedianFiltering(map<size_t, shared_ptr<Pixel> >& pixels) {
     // todo - implement
 }
 

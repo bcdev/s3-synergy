@@ -9,15 +9,13 @@
 #define AER_H_
 
 #include "../modules/BasicModule.h"
-#include "../util/AerPixel.h"
+#include "../core/Pixel.h"
 #include "../util/Min.h"
 #include "../util/MultiMin.h"
 #include "../util/UnivariateFunction.h"
 #include "../util/ErrorMetric.h"
 
 using std::copy;
-
-class AerPixel;
 
 class Aer : public BasicModule {
 public:
@@ -28,7 +26,7 @@ public:
     void stop(Context& context);
     void process(Context& context);
 
-    static double ndv(AerPixel& q, const valarray<int16_t>& ndviIndices);
+    static double ndv(Pixel& q, const valarray<int16_t>& ndviIndices);
 
 private:
     friend class AerTest;
@@ -43,27 +41,28 @@ private:
     valarray<double> aerosolAngstromExponents;
 
     static bool isSolarIrradianceFillValue(double f, const valarray<double> fillValues, int16_t index);
-    shared_ptr<AerPixel> initPixel(Context& context, long k, long l, long m) const;
+    shared_ptr<Pixel> getPixel(Context& context, long k, long l, long m) const;
+    vector<shared_ptr<Pixel> > getPixels(Context& context, long lastL) const;
     const vector<long> createIndices(long base, long bound) const;
     void readAuxdata(Context& context);
-    void aer_s(shared_ptr<AerPixel> p, Context& context);
-    void applyMedianFiltering(map<size_t, shared_ptr<AerPixel> >& pixels);
-    bool e2(AerPixel& q, size_t amin, Context& context);
-    double aotStandardError(shared_ptr<AerPixel> p, Context& context);
+    void aer_s(shared_ptr<Pixel> p, Context& context);
+    void applyMedianFiltering(map<size_t, shared_ptr<Pixel> >& pixels);
+    bool e2(Pixel& q, size_t amin, Context& context);
+    double errorCurvature(shared_ptr<Pixel> p, Context& context);
 };
 
 class E1 : public UnivariateFunction {
 
 public:
-    E1(AerPixel& p, int16_t amin, Context& context) : p(p), amin(amin), context(context) {
+    E1(Pixel& p, int16_t amin, Context& context) : p(p), amin(amin), context(context) {
     }
 
     double value(double tau550) {
-        p.setTau550(tau550);
+        p.tau550 = tau550;
         ErrorMetric em(p, amin, context);
         valarray<double> pn(10);
-        pn[0] = p.c_1;
-        pn[1] = p.c_2;
+        pn[0] = p.c1;
+        pn[1] = p.c2;
         pn[2] = p.nu[0];
         pn[3] = p.nu[1];
         for(size_t i = 0; i < 6; i++) {
@@ -79,8 +78,8 @@ public:
         }
 
         MultiMin::powell(em, pn, u, MultiMin::ACCURACY_GOAL, 200);
-        p.c_1 = pn[0];
-        p.c_2 = pn[1];
+        p.c1 = pn[0];
+        p.c2 = pn[1];
         p.nu[0] = pn[2];
         p.nu[1] = pn[3];
         for(size_t i = 0; i < 6; i++) {
@@ -90,7 +89,7 @@ public:
     }
 
 private:
-    AerPixel& p;
+    Pixel& p;
     int16_t amin;
     Context& context;
 

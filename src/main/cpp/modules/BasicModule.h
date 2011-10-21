@@ -21,7 +21,11 @@
 #ifndef BASICMODULE_H
 #define	BASICMODULE_H
 
+#include <set>
+
 #include "../core/AbstractModule.h"
+
+using std::set;
 
 /**
  * A basic module, doing nothing.
@@ -58,6 +62,11 @@ protected:
 	static bool contains(const map<K, V>& map, const K& key) {
 		return map.find(key) != map.end();
 	}
+
+    template<class K>
+    static bool contains(const set<K>& set, const K& key) {
+        return set.find(key) != set.end();
+    }
 
     void addAccessor(Context& context, Segment& s, const VariableDescriptor& varDescriptor) const;
     void addMatrixLookupTable(Context& context, const string& fileName, const string& varName) const;

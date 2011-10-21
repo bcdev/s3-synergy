@@ -5,11 +5,15 @@
  *      Author: thomasstorm
  */
 
+#include <limits>
+
+#include "AuxdataProvider.h"
 #include "ErrorMetric.h"
 #include "../core/LookupTable.h"
-#include "AuxdataProvider.h"
 
-ErrorMetric::ErrorMetric(AerPixel& p, int16_t amin, Context& context) :
+using std::numeric_limits;
+
+ErrorMetric::ErrorMetric(Pixel& p, int16_t amin, Context& context) :
         p(p), amin(amin), context(context), D(6), lutTotalAngularWeights((ScalarLookupTable<double>&)context.getObject("weight_ang_tot")) {
 
     const VectorLookupTable<double>& lutD = (VectorLookupTable<double>&)context.getObject("D");
@@ -17,7 +21,7 @@ ErrorMetric::ErrorMetric(AerPixel& p, int16_t amin, Context& context) :
     assert(coordinates.size() == 4);
     coordinates[0] = p.sza;
     coordinates[1] = p.airPressure;
-    coordinates[2] = p.getTau550();
+    coordinates[2] = p.tau550;
     coordinates[3] = amin;
 
     lutD.getValues(&coordinates[0], D);
@@ -33,7 +37,7 @@ ErrorMetric::ErrorMetric(AerPixel& p, int16_t amin, Context& context) :
 
 double ErrorMetric::value(valarray<double>& x) {
     for (size_t i = 1; i <= 30; i++) {
-        if (p.isFillValue("L_" + lexical_cast<string>(i))) {
+        if (isnan(p.radiances[i-1])) {
             spectralWeights[i - 1] = 0;
             if (i >= 19 && i <= 24) {
                 angularWeights.insert_element(i - 19, 0, 0.0);
@@ -78,7 +82,7 @@ static double surfaceReflectance(double rtoa, double ratm, double ts, double tv,
     return rboa;
 }
 
-void ErrorMetric::applyAtmosphericCorrection(AerPixel& p, int16_t amin) {
+void ErrorMetric::applyAtmosphericCorrection(Pixel& p, int16_t amin) {
 
     const MatrixLookupTable<double>& lutOlcRatm = (MatrixLookupTable<double>&) context.getObject("OLC_R_atm");
     const MatrixLookupTable<double>& lutSlnRatm = (MatrixLookupTable<double>&) context.getObject("SLN_R_atm");
@@ -93,7 +97,7 @@ void ErrorMetric::applyAtmosphericCorrection(AerPixel& p, int16_t amin) {
     coordinates[2] = p.vzaOlc; // VZA
     coordinates[3] = p.airPressure; // air pressure
     coordinates[4] = p.waterVapour; // water vapour
-    coordinates[5] = p.getTau550(); // aerosol
+    coordinates[5] = p.tau550; // aerosol
 
     coordinates[6] = coordinates[1]; // SZA
     coordinates[7] = coordinates[3]; // air pressure
@@ -115,12 +119,12 @@ void ErrorMetric::applyAtmosphericCorrection(AerPixel& p, int16_t amin) {
     lutT.getValues(&coordinates[2], matTv, f, w);
     lutRhoAtm.getValues(&coordinates[3], matRho, f, w);
 
-    for(size_t b = 0; b < 19; b++) {
+    for(size_t b = 0; b < 18; b++) {
         // Eq. 2-1
-        const double rtoa = toaReflectance(p.getRadiance(b), p.solarIrradiances[b], p.sza);
+        const double rtoa = toaReflectance(p.radiances[b], p.solarIrradiances[b], p.sza);
 
         // Eq. 2-2
-        const double tO3 = ozoneTransmission(p.cO3[b + 1.0], p.sza, p.vzaOlc, p.ozone);
+        const double tO3 = ozoneTransmission(p.cO3[b], p.sza, p.vzaOlc, p.ozone);
 
         // Eq. 2-3
         const double ratm = matRatmOlc(amin - 1, b);
@@ -130,10 +134,9 @@ void ErrorMetric::applyAtmosphericCorrection(AerPixel& p, int16_t amin) {
         const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho, tO3);
 
         if (sdr >= 0.0 && sdr <= 1.0) {
-            p.setSDR(b + 1, sdr);
+            p.sdrs[b] = sdr;
         } else {
-            // todo - replace lexical cast
-            p.setFillValue("SDR_" + lexical_cast<string>(b + 1));
+            p.sdrs[b] = numeric_limits<double>::quiet_NaN();
         }
     }
 }
@@ -159,7 +162,7 @@ double ErrorMetric::errorMetric(valarray<double> rSpec, valarray<double> rAng) {
     double sum3 = 0.0;
     double sum4 = 0.0;
     for (size_t i = 0; i < 30; i++) {
-        sum1 += spectralWeights[i] * (p.getSDR(i) - rSpec[i]) * (p.getSDR(i) - rSpec[i]);
+        sum1 += spectralWeights[i] * (p.sdrs[i] - rSpec[i]) * (p.sdrs[i] - rSpec[i]);
     }
     for (size_t i = 0; i < 30; i++) {
         sum2 += spectralWeights[i];
@@ -167,7 +170,7 @@ double ErrorMetric::errorMetric(valarray<double> rSpec, valarray<double> rAng) {
     for (size_t i = 0; i < 12; i++) {
         size_t xIndex = i < 6 ? 0 : 1;
         size_t yIndex = i % 6;
-        sum3 += angularWeights.at_element(xIndex, yIndex) * (p.getSDR(i) - rAng[i]) * (p.getSDR(i) - rAng[i]);
+        sum3 += angularWeights.at_element(xIndex, yIndex) * (p.sdrs[i] - rAng[i]) * (p.sdrs[i] - rAng[i]);
     }
     for (size_t i = 0; i < 12; i++) {
         size_t xIndex = i < 6 ? 0 : 1;
@@ -178,23 +181,16 @@ double ErrorMetric::errorMetric(valarray<double> rSpec, valarray<double> rAng) {
     return (1 - totalAngularWeight) * sum1 / sum2 + totalAngularWeight * sum3 / sum4;
 }
 
-double ErrorMetric::ndv(AerPixel& q, valarray<int16_t> ndviIndices) {
-    double L1 = q.getRadiance(ndviIndices[0]);
-    double L2 = q.getRadiance(ndviIndices[1]);
-    double F1 = q.solarIrradiances[ndviIndices[0]];
-    double F2 = q.solarIrradiances[ndviIndices[1]];
-    if (q.isFillValue("L_" + lexical_cast<string>(ndviIndices[0])) ||
-            q.isFillValue("L_" + lexical_cast<string>(ndviIndices[1])) ||
-            isSolarIrradianceFillValue(F1, q.solarIrradianceFillValues, ndviIndices[0]) ||
-            isSolarIrradianceFillValue(F2, q.solarIrradianceFillValues, ndviIndices[1])) {
+double ErrorMetric::ndv(Pixel& q, const valarray<int16_t>& ndviIndices) {
+    double L1 = q.radiances[ndviIndices[0] - 1];
+    double L2 = q.radiances[ndviIndices[1] - 1];
+    double F1 = q.solarIrradiances[ndviIndices[0] - 1];
+    double F2 = q.solarIrradiances[ndviIndices[1] - 1];
+    if(isnan(q.radiances[ndviIndices[0] - 1]) ||
+            isnan(q.radiances[ndviIndices[1] - 1]) ||
+            isnan(F1) ||
+            isnan(F2)) {
         return 0.5;
     }
     return ((L2 / F2) - (L1 / F1)) / ((L2 / F2) + (L1 / F1));
-}
-
-bool ErrorMetric::isSolarIrradianceFillValue(double f, const valarray<double> fillValues, int16_t index) {
-    if (index >= 18) {
-        return false;
-    }
-    return f == fillValues[index];
 }
