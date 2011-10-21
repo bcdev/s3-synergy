@@ -36,7 +36,7 @@ double AuxdataProvider::getDouble(const string& varName) {
     return data[0];
 }
 
-valarray<double> AuxdataProvider::getDoubleArray(const string& varName) {
+valarray<double>& AuxdataProvider::getDoubleArray(const string& varName) {
     if(contains(doubleArrays, varName)) {
         return doubleArrays[varName];
     }
@@ -49,10 +49,10 @@ valarray<double> AuxdataProvider::getDoubleArray(const string& varName) {
     valarray<double> values(shape[0]);
     NetCDF::getVariableData(fileId, varId, origin, shape, &values[0]);
     doubleArrays[varName] = values;
-    return values;
+    return doubleArrays[varName];
 }
 
-valarray<int16_t> AuxdataProvider::getShortArray(const string& varName) {
+valarray<int16_t>& AuxdataProvider::getShortArray(const string& varName) {
     if(contains(shortArrays, varName)) {
         return shortArrays[varName];
     }
@@ -65,10 +65,10 @@ valarray<int16_t> AuxdataProvider::getShortArray(const string& varName) {
     valarray<int16_t> values(shape[0]);
     NetCDF::getVariableData(fileId, varId, origin, shape, &values[0]);
     shortArrays[varName] = values;
-    return values;
+    return shortArrays[varName];
 }
 
-matrix<double> AuxdataProvider::getDoubleMatrix(const string& varName) {
+matrix<double>& AuxdataProvider::getDoubleMatrix(const string& varName) {
     if(contains(doubleMatrices, varName)) {
         return doubleMatrices[varName];
     }
@@ -90,5 +90,5 @@ matrix<double> AuxdataProvider::getDoubleMatrix(const string& varName) {
         }
     }
     doubleMatrices[varName] = result;
-    return result;
+    return doubleMatrices[varName];
 }

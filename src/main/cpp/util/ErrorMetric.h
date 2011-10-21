@@ -29,19 +29,25 @@ public:
     static double ndv(Pixel& q, const valarray<int16_t>& ndviIndices);
 
 private:
+    const MatrixLookupTable<double>& lutOlcRatm;
+    const MatrixLookupTable<double>& lutSlnRatm;
+    const MatrixLookupTable<double>& lutSloRatm;
+    const MatrixLookupTable<double>& lutT;
+    const MatrixLookupTable<double>& lutRhoAtm;
+    const ScalarLookupTable<double>& lutTotalAngularWeights;
+
+    double sum2;
+    double sum4;
+    double totalAngularWeight;
+
     Pixel& p;
-    int16_t amin;
-    Context& context;
 
     double gamma;
     valarray<double> D;
     valarray<double> spectralWeights;
     valarray<double> vegetationSpectrum;
     valarray<double> soilReflectance;
-    valarray<int16_t> ndviIndices;
     matrix<double> angularWeights;
-
-    ScalarLookupTable<double>& lutTotalAngularWeights;
 
     void applyAtmosphericCorrection(Pixel& p, int16_t amin);
 

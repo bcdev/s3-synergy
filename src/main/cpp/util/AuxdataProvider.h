@@ -25,9 +25,9 @@ public:
     virtual ~AuxdataProvider();
 
     double getDouble(const string& varName);
-    valarray<double> getDoubleArray(const string& varName);
-    matrix<double> getDoubleMatrix(const string& varName);
-    valarray<int16_t> getShortArray(const string& varName);
+    valarray<double>& getDoubleArray(const string& varName);
+    matrix<double>& getDoubleMatrix(const string& varName);
+    valarray<int16_t>& getShortArray(const string& varName);
     const string& getId() const;
 
 private:

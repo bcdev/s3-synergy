@@ -5,6 +5,7 @@
  *      Author: ralf
  */
 
+#include <algorithm>
 #include <cmath>
 #include <limits>
 #include <set>
@@ -15,11 +16,13 @@
 #include "../util/LookupTableReader.h"
 #include "../util/AuxdataProvider.h"
 
+using std::copy;
 using std::min;
 using std::numeric_limits;
 using std::set;
 
-Aer::Aer() : BasicModule("AER"), amins(40), ndviIndices(2), initialNu(2), initialOmega(6), aerosolAngstromExponents(40) {
+Aer::Aer() :
+        BasicModule("AER"), amins(40), ndviIndices(2), initialNu(2), initialOmega(6), aerosolAngstromExponents(40) {
 }
 
 Aer::~Aer() {
@@ -33,9 +36,6 @@ void Aer::start(Context& context) {
     averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550_er"));
     averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("A550"));
     averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("AMIN"));
-    for(size_t i = 1; i <= 30; i++) {
-        averagedSegment->addVariable("SDR_" + lexical_cast<string>(i), Constants::TYPE_DOUBLE, 1.0, 0.0);
-    }
     averagedGrid = &averagedSegment->getGrid();
 }
 
@@ -53,7 +53,7 @@ void Aer::process(Context& context) {
 
     foreach(shared_ptr<Pixel> p, pixels) {
         aer_s(p, context);
-        if(p->amin < 0) {
+        if (p->amin < 0) {
             missingPixels[p->index] = p;
         }
     }
@@ -70,7 +70,7 @@ void Aer::process(Context& context) {
         foreach(Entry entry, missingPixels) {
             shared_ptr<Pixel> p = entry.second;
             double tau_550, deltaTau_500, alpha550 = 0;
-            uint8_t AMIN = 0;
+            uint8_t amin = 0;
             uint32_t K = 0;
             const long k = p->k;
             const long l_prime = p->l;
@@ -84,7 +84,7 @@ void Aer::process(Context& context) {
                     if (averagedGrid->isValidPosition(k, i_prime, j_prime)) {
 
                         const size_t pixelIndex = averagedGrid->getIndex(k, i_prime, j_prime);
-                        if(!contains(missingPixels, pixelIndex) || contains(completedPixels, pixelIndex)) {
+                        if (!contains(missingPixels, pixelIndex) || contains(completedPixels, pixelIndex)) {
                             shared_ptr<Pixel> q = pixels[pixelIndex];
 
                             tau_550 += q->tau550;
@@ -92,16 +92,16 @@ void Aer::process(Context& context) {
                             alpha550 += q->alpha550;
 
                             long iDiff = std::abs(i_prime - l_prime);
-                            if(iDiff < minIDiff) {
+                            if (iDiff < minIDiff) {
                                 minIDiff = iDiff;
                             }
                             long jDiff = std::abs(j_prime - m_prime);
-                            if(jDiff < minIDiff) {
+                            if (jDiff < minIDiff) {
                                 minIDiff = iDiff;
                             }
 
                             if (minIDiff == iDiff && minJDiff == jDiff) {
-                                AMIN = q->amin;
+                                amin = q->amin;
                             }
                             K++;
                         }
@@ -112,7 +112,7 @@ void Aer::process(Context& context) {
                 p->tau550 = tau_550 / K;
                 p->tau550err = deltaTau_500 / K;
                 p->alpha550 = alpha550 / K;
-                p->amin = AMIN;
+                p->amin = amin;
                 p->synFlags |= 2048;
                 completedPixels.insert(p->index);
             }
@@ -122,7 +122,7 @@ void Aer::process(Context& context) {
         }
         I++;
     }
-    // todo: putPixels(pixels);
+    putPixels(pixels);
     // todo: applyMedianFiltering(pixels);
     context.setLastComputedL(*averagedSegment, *this, lastL);
 }
@@ -131,9 +131,9 @@ vector<shared_ptr<Pixel> > Aer::getPixels(Context& context, long lastL) const {
     vector<shared_ptr<Pixel> > pixels(averagedGrid->getSize());
     // todo - ts11Oct2011 - check
     long firstL = context.getFirstComputableL(*averagedSegment, *this);
-    for(long l = firstL; l <= lastL; l++) {
-        for(long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
-            for(long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
+    for (long l = firstL; l <= lastL; l++) {
+        for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
+            for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
                 const size_t index = averagedGrid->getIndex(k, l, m);
                 pixels[index] = getPixel(context, k, l, m);
             }
@@ -144,35 +144,78 @@ vector<shared_ptr<Pixel> > Aer::getPixels(Context& context, long lastL) const {
 
 shared_ptr<Pixel> Aer::getPixel(Context& context, long k, long l, long m) const {
 
-    // todo - create class 'pixel initialiser', which memorizes multiply used data
+    // todo - create class 'pixel initialiser', which memorizes repeatedly used data
+    const size_t pixelIndex = averagedGrid->getIndex(k, l, m);
+    shared_ptr<Pixel> p = shared_ptr<Pixel>(new Pixel(k, l, m, pixelIndex));
 
-    const size_t index = averagedGrid->getIndex(k, l, m);
-    shared_ptr<Pixel> p = shared_ptr<Pixel>(new Pixel(k, l, m, index));
-    const Accessor& synFlags = averagedSegment->getAccessor("SYN_flags");
-    p->synFlags = synFlags.getUShort(index);
+    // 1. Radiances
+    for (size_t b = 0; b < 30; b++) {
+        const Accessor& radiances = averagedSegment->getAccessor("L_" + lexical_cast<string>(b + 1));
+        if (!radiances.isFillValue(pixelIndex)) {
+            p->radiances[b] = radiances.getDouble(pixelIndex);
+        } else {
+            p->radiances[b] = numeric_limits<double>::quiet_NaN();
+        }
+    }
+
+    // 2. SDRs
+    // not needed
+
+    // 3. Solar irradiances
     const Segment& olcInfoSegment = context.getSegment(Constants::SEGMENT_OLC_INFO);
     const Segment& slnInfoSegment = context.getSegment(Constants::SEGMENT_SLN_INFO);
     const Segment& sloInfoSegment = context.getSegment(Constants::SEGMENT_SLO_INFO);
     const Grid& olcInfoGrid = olcInfoSegment.getGrid();
     const Grid& slnInfoGrid = slnInfoSegment.getGrid();
     const Grid& sloInfoGrid = sloInfoSegment.getGrid();
-    const Accessor& solarIrrOlcAccessor = olcInfoSegment.getAccessor("solar_irradiance");
-    for(size_t channel = 0; channel < 18; channel++) {
+
+    const Accessor& solarIrradiancesOlc = olcInfoSegment.getAccessor("solar_irradiance");
+    for (size_t channel = 0; channel < 18; channel++) {
         const size_t index = olcInfoGrid.getIndex(k, channel, m);
-        p->solarIrradiances[channel] = solarIrrOlcAccessor.getFloat(index);
+        if (!solarIrradiancesOlc.isFillValue(index)) {
+            p->solarIrradiances[channel] = solarIrradiancesOlc.getDouble(index);
+        } else {
+            p->solarIrradiances[channel] = numeric_limits<double>::quiet_NaN();
+        }
     }
     for (size_t i = 1; i <= 6; i++) {
-        const Accessor& solarIrrSlnAccessor = slnInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(i));
+        const Accessor& solarIrradiancesSln = slnInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(i));
         const size_t channel = 17 + i;
-        // todo - replace l-index (see Aco module)
-        p->solarIrradiances[channel] = solarIrrSlnAccessor.getDouble(slnInfoGrid.getIndex(0, 0, 1));
+        // todo - replace m-index with SLN line % 4
+        p->solarIrradiances[channel] = solarIrradiancesSln.getDouble(slnInfoGrid.getIndex(0, 0, 1));
     }
     for (size_t i = 1; i <= 6; i++) {
-        const Accessor& solarIrrSloAccessor = sloInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(i));
+        const Accessor& solarIrradianceSlo = sloInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(i));
         const size_t channel = 23 + i;
-        // todo - replace l-index (see Aco module)
-        p->solarIrradiances[channel] = solarIrrSloAccessor.getDouble(sloInfoGrid.getIndex(0, 0, 1));
+        // todo - replace m-index with SLO line % 4
+        p->solarIrradiances[channel] = solarIrradianceSlo.getDouble(sloInfoGrid.getIndex(0, 0, 1));
     }
+
+    // 4. Ozone coefficients
+    AuxdataProvider& radiometricAuxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUXDATA_RADIOMETRIC_ID);
+    valarray<double>& cO3 = radiometricAuxdataProvider.getDoubleArray("C_O3");
+    copy(&cO3[0], &cO3[30], &(p->cO3[0]));
+
+    // 5. Flags
+
+    const Accessor& synFlags = averagedSegment->getAccessor("SYN_flags");
+    p->synFlags = synFlags.getUShort(pixelIndex);
+    // set flags SYN_success, SYN_negative_curvature, SYN_too_low, and SY_high_error to false
+    p->synFlags &= 3887;
+
+    // 6. Geo position
+
+    const Accessor& lat = averagedSegment->getAccessor("latitude");
+    const Accessor& lon = averagedSegment->getAccessor("longitude");
+    p->lat = lat.getDouble(pixelIndex);
+    p->lon = lon.getDouble(pixelIndex);
+
+    double NaN = numeric_limits<double>::quiet_NaN();
+    p->tau550err = NaN;
+    p->alpha550 = NaN;
+    p->amin = numeric_limits<short>::min();
+
+    // Tie Point data
 
     const Segment& olciTiepointSegment = context.getSegment(Constants::SEGMENT_OLC_TP);
     const Segment& slnTiepointSegment = context.getSegment(Constants::SEGMENT_SLN_TP);
@@ -216,12 +259,7 @@ shared_ptr<Pixel> Aer::getPixel(Context& context, long k, long l, long m) const 
     valarray<size_t> tpiIndexes(1);
     tpiOlc.prepare(p->lat, p->lon, tpiWeights, tpiIndexes);
 
-    p->tau550 = initialTau550;
-    p->nu[0] = initialNu[0];
-    p->nu[1] = initialNu[2];
-    for(size_t i = 0; i < 6; i++) {
-        p->omega[i] = initialOmega[i];
-    }
+    p->E2 = (numeric_limits<double>::infinity());
 
     p->sza = tpiOlc.interpolate(tpSzasOlc, tpiWeights, tpiIndexes);
     p->saa = tpiOlc.interpolate(tpSaasOlc, tpiWeights, tpiIndexes);
@@ -230,7 +268,7 @@ shared_ptr<Pixel> Aer::getPixel(Context& context, long k, long l, long m) const 
 
     p->airPressure = tpiOlc.interpolate(tpAirPressureOlc, tpiWeights, tpiIndexes);
     p->ozone = tpiOlc.interpolate(tpOzones, tpiWeights, tpiIndexes);
-    if(olciTiepointSegment.hasVariable("water_vapour")) {
+    if (olciTiepointSegment.hasVariable("water_vapour")) {
         const valarray<double> tpWaterVapourOlc = olciTiepointSegment.getAccessor("water_vapour").getDoubles();
         p->waterVapour = tpiOlc.interpolate(tpWaterVapourOlc, tpiWeights, tpiIndexes);
     } else {
@@ -249,16 +287,13 @@ shared_ptr<Pixel> Aer::getPixel(Context& context, long k, long l, long m) const 
     p->vaaSlo = tpiSlo.interpolate(tpVaasSlo, tpiWeights, tpiIndexes);
     p->vzaSlo = tpiSlo.interpolate(tpVzasSlo, tpiWeights, tpiIndexes);
 
-    AuxdataProvider& radiometricAuxdataProvider = (AuxdataProvider&)context.getObject(Constants::AUXDATA_RADIOMETRIC_ID);
-    p->cO3 = radiometricAuxdataProvider.getDoubleArray("C_O3");
-
     return p;
 }
 
 const vector<long> Aer::createIndices(long base, long bound) const {
     vector<long> result;
-    for(long index = base - bound; index <= base + bound; index++) {
-        if(index != 0) {
+    for (long index = base - bound; index <= base + bound; index++) {
+        if (index != 0) {
             result.push_back(index);
         }
     }
@@ -266,51 +301,38 @@ const vector<long> Aer::createIndices(long base, long bound) const {
 }
 
 void Aer::aer_s(shared_ptr<Pixel> p, Context& context) {
-    double NaN = numeric_limits<double>::quiet_NaN();
-    p->tau550 = NaN;
-    p->tau550err = NaN;
-    p->alpha550 = NaN;
-    p->amin = numeric_limits<short>::min();
-    // set flags SYN_success, SYN_negative_curvature, SYN_too_low, and SY_high_error to false
-    p->synFlags &= 3887;
-
     const bool isPartlyCloudy = (p->synFlags & 256) == 256;
     const bool isPartlyWater = (p->synFlags & 512) == 512;
 
-    if(isPartlyCloudy || isPartlyWater) {
+    if (isPartlyCloudy || isPartlyWater) {
         return;
     }
 
-    p->E2 = (numeric_limits<double>::infinity());
-
-    for(size_t i = 0; i < amins.size(); i++) {
+    for (size_t i = 0; i < amins.size(); i++) {
         const int16_t amin = amins[i];
         Pixel q = Pixel(*p);
-        const valarray<double> nu = initialNu;
-        const valarray<double> omegas = initialOmega;
-        double tau550 = initialTau550;
-        q.tau550 = tau550;
+        q.nu[0] = initialNu[0];
+        q.nu[1] = initialNu[1];
+        for (size_t j = 0; j < initialOmega.size(); j++) {
+            q.omega[j] = initialOmega[j];
+        }
+        q.tau550 = initialTau550;
         q.c1 = ErrorMetric::ndv(q, ndviIndices);
         q.c2 = 1 - q.c1;
-        q.nu[0] = nu[0];
-        q.nu[1] = nu[1];
-        for(size_t j = 0; j < omegas.size(); j++) {
-            q.omega[j] = omegas[j];
-        }
         bool success = e2(q, amin, context);
-        if(success && q.E2 < p->E2) {
+        if (success && q.E2 < p->E2) {
             p->assign(q);
             p->alpha550 = aerosolAngstromExponents[amin];
             p->amin = amin;
         }
     }
-    if(p->amin > 0) {
+    if (p->amin > 0) {
         double tau550 = p->tau550;
-        if(tau550 > 0.0001 ) {
+        if (tau550 > 0.0001) {
             double a = errorCurvature(p, context);
-            if(a > 0) {
+            if (a > 0) {
                 p->tau550err = kappa * sqrt(p->E2 / a);
-                if(tau550 > 0.1 && p->tau550err > 5 * tau550) {
+                if (tau550 > 0.1 && p->tau550err > 5 * tau550) {
                     p->synFlags |= 32768;
                 } else {
                     p->synFlags |= 4096;
@@ -368,4 +390,20 @@ void Aer::readAuxdata(Context& context) {
 
     context.addObject(configurationAuxdataProvider);
     context.addObject(radiometricAuxdataProvider);
+}
+
+void Aer::putPixels(vector<shared_ptr<Pixel> > pixels) const {
+    Accessor& amin = averagedSegment->getAccessor("AMIN");
+    Accessor& t550 = averagedSegment->getAccessor("T550");
+    Accessor& t550err = averagedSegment->getAccessor("T550_err");
+    Accessor& a550 = averagedSegment->getAccessor("A550");
+    Accessor& synFlags = averagedSegment->getAccessor("SYN_flags");
+
+    foreach(shared_ptr<Pixel> p, pixels) {
+        amin.setUByte(p->index, p->amin);
+        t550.setDouble(p->index, p->tau550);
+        t550err.setDouble(p->index, p->tau550err);
+        a550.setDouble(p->index, p->alpha550);
+        synFlags.setUShort(p->index, p->synFlags);
+    }
 }

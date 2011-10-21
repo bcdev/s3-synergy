@@ -32,6 +32,7 @@ private:
     friend class AerTest;
     Segment* averagedSegment;
     const Grid* averagedGrid;
+
     double initialTau550;
     double kappa;
     valarray<int16_t> amins;
@@ -41,8 +42,9 @@ private:
     valarray<double> aerosolAngstromExponents;
 
     static bool isSolarIrradianceFillValue(double f, const valarray<double> fillValues, int16_t index);
-    shared_ptr<Pixel> getPixel(Context& context, long k, long l, long m) const;
     vector<shared_ptr<Pixel> > getPixels(Context& context, long lastL) const;
+    shared_ptr<Pixel> getPixel(Context& context, long k, long l, long m) const;
+    void putPixels(vector<shared_ptr<Pixel> > pixels) const;
     const vector<long> createIndices(long base, long bound) const;
     void readAuxdata(Context& context);
     void aer_s(shared_ptr<Pixel> p, Context& context);

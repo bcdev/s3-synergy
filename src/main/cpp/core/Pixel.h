@@ -76,12 +76,12 @@ struct Pixel {
 
         E2 = q.E2;
 
-        copy(&q.nu[0], &q.nu[q.nu.size()-1], &nu[0]);
-        copy(&q.omega[0], &q.omega[q.omega.size()-1], &omega[0]);
-        copy(&q.solarIrradiances[0], &q.solarIrradiances[q.solarIrradiances.size()-1], &solarIrradiances[0]);
-        copy(&q.radiances[0], &q.radiances[q.radiances.size()-1], &radiances[0]);
-        copy(&q.sdrs[0], &q.sdrs[q.sdrs.size()-1], &sdrs[0]);
-        copy(&q.cO3[0], &q.cO3[q.cO3.size()-1], &cO3[0]);
+        copy(&q.nu[0], &q.nu[q.nu.size()], &nu[0]);
+        copy(&q.omega[0], &q.omega[q.omega.size()], &omega[0]);
+        copy(&q.solarIrradiances[0], &q.solarIrradiances[q.solarIrradiances.size()], &solarIrradiances[0]);
+        copy(&q.radiances[0], &q.radiances[q.radiances.size()], &radiances[0]);
+        copy(&q.sdrs[0], &q.sdrs[q.sdrs.size()], &sdrs[0]);
+        copy(&q.cO3[0], &q.cO3[q.cO3.size()], &cO3[0]);
     }
 
     const long k;
