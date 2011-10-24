@@ -52,22 +52,6 @@ valarray<double>& AuxdataProvider::getDoubleArray(const string& varName) {
     return doubleArrays[varName];
 }
 
-valarray<int16_t>& AuxdataProvider::getShortArray(const string& varName) {
-    if(contains(shortArrays, varName)) {
-        return shortArrays[varName];
-    }
-    const int varId = NetCDF::getVariableId(fileId, varName);
-    valarray<size_t> origin(1);
-    origin[0] = 0;
-    valarray<size_t> shape(1);
-    valarray<int> dimensionIds = NetCDF::getDimensionIds(fileId, varId);
-    shape[0] = NetCDF::getDimensionLength(fileId, dimensionIds[0]);
-    valarray<int16_t> values(shape[0]);
-    NetCDF::getVariableData(fileId, varId, origin, shape, &values[0]);
-    shortArrays[varName] = values;
-    return shortArrays[varName];
-}
-
 matrix<double>& AuxdataProvider::getDoubleMatrix(const string& varName) {
     if(contains(doubleMatrices, varName)) {
         return doubleMatrices[varName];
@@ -91,4 +75,35 @@ matrix<double>& AuxdataProvider::getDoubleMatrix(const string& varName) {
     }
     doubleMatrices[varName] = result;
     return doubleMatrices[varName];
+}
+
+int16_t AuxdataProvider::getShort(const string& varName) {
+    if(contains(shorts, varName)) {
+        return shorts[varName];
+    }
+    const int varId = NetCDF::getVariableId(fileId, varName);
+    valarray<size_t> origin(1);
+    origin[0] = 0;
+    valarray<size_t> shape(1);
+    shape[0] = 1;
+    valarray<int16_t> data(shape[0]);
+    NetCDF::getVariableData(fileId, varId, origin, shape, &data[0]);
+    shorts[varName] = data[0];
+    return shorts[varName];
+}
+
+valarray<int16_t>& AuxdataProvider::getShortArray(const string& varName) {
+    if(contains(shortArrays, varName)) {
+        return shortArrays[varName];
+    }
+    const int varId = NetCDF::getVariableId(fileId, varName);
+    valarray<size_t> origin(1);
+    origin[0] = 0;
+    valarray<size_t> shape(1);
+    valarray<int> dimensionIds = NetCDF::getDimensionIds(fileId, varId);
+    shape[0] = NetCDF::getDimensionLength(fileId, dimensionIds[0]);
+    valarray<int16_t> values(shape[0]);
+    NetCDF::getVariableData(fileId, varId, origin, shape, &values[0]);
+    shortArrays[varName] = values;
+    return shortArrays[varName];
 }

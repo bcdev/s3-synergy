@@ -27,13 +27,17 @@ public:
     double getDouble(const string& varName);
     valarray<double>& getDoubleArray(const string& varName);
     matrix<double>& getDoubleMatrix(const string& varName);
+
+    int16_t getShort(const string& varName);
     valarray<int16_t>& getShortArray(const string& varName);
+
     const string& getId() const;
 
 private:
     const string id;
     int fileId;
     map<string, double> doubles;
+    map<string, int16_t> shorts;
     map<string, valarray<double> > doubleArrays;
     map<string, matrix<double> > doubleMatrices;
     map<string, valarray<int16_t> > shortArrays;
