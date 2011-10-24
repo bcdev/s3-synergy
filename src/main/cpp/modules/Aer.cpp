@@ -21,6 +21,8 @@ using std::min;
 using std::numeric_limits;
 using std::set;
 
+class PixelInitializer;
+
 Aer::Aer() :
         BasicModule("AER"), amins(40), ndviIndices(2), initialNu(2), initialOmega(6), aerosolAngstromExponents(40) {
 }
@@ -133,164 +135,17 @@ void Aer::process(Context& context) {
 }
 
 vector<shared_ptr<Pixel> > Aer::getPixels(Context& context, long firstL, long lastL) const {
+    const PixelInitializer pixelInitializer(context);
     vector<shared_ptr<Pixel> > pixels(averagedGrid->getSize());
     for (long l = firstL; l <= lastL; l++) {
         for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
             for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
                 const size_t index = averagedGrid->getIndex(k, l, m);
-                pixels[index] = getPixel(context, k, l, m);
+                pixels[index] = pixelInitializer.getPixel(context, k, l, m);
             }
         }
     }
     return pixels;
-}
-
-shared_ptr<Pixel> Aer::getPixel(Context& context, long k, long l, long m) const {
-
-    // todo - create class 'pixel initialiser', which memorizes repeatedly used data
-    const size_t pixelIndex = averagedGrid->getIndex(k, l, m);
-    shared_ptr<Pixel> p = shared_ptr<Pixel>(new Pixel(k, l, m, pixelIndex));
-
-    // 1. Radiances
-    for (size_t b = 0; b < 30; b++) {
-        const Accessor& radiances = averagedSegment->getAccessor("L_" + lexical_cast<string>(b + 1));
-        if (!radiances.isFillValue(pixelIndex)) {
-            p->radiances[b] = radiances.getDouble(pixelIndex);
-        } else {
-            p->radiances[b] = numeric_limits<double>::quiet_NaN();
-        }
-    }
-
-    // 2. SDRs
-    // not needed
-
-    // 3. Solar irradiances
-    const Segment& olcInfoSegment = context.getSegment(Constants::SEGMENT_OLC_INFO);
-    const Segment& slnInfoSegment = context.getSegment(Constants::SEGMENT_SLN_INFO);
-    const Segment& sloInfoSegment = context.getSegment(Constants::SEGMENT_SLO_INFO);
-    const Grid& olcInfoGrid = olcInfoSegment.getGrid();
-    const Grid& slnInfoGrid = slnInfoSegment.getGrid();
-    const Grid& sloInfoGrid = sloInfoSegment.getGrid();
-
-    const Accessor& solarIrradiancesOlc = olcInfoSegment.getAccessor("solar_irradiance");
-    for (size_t channel = 0; channel < 18; channel++) {
-        const size_t index = olcInfoGrid.getIndex(k, channel, m);
-        if (!solarIrradiancesOlc.isFillValue(index)) {
-            p->solarIrradiances[channel] = solarIrradiancesOlc.getDouble(index);
-        } else {
-            p->solarIrradiances[channel] = numeric_limits<double>::quiet_NaN();
-        }
-    }
-    for (size_t i = 1; i <= 6; i++) {
-        const Accessor& solarIrradiancesSln = slnInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(i));
-        const size_t channel = 17 + i;
-        // todo - replace m-index with SLN line % 4
-        p->solarIrradiances[channel] = solarIrradiancesSln.getDouble(slnInfoGrid.getIndex(0, 0, 1));
-    }
-    for (size_t i = 1; i <= 6; i++) {
-        const Accessor& solarIrradianceSlo = sloInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(i));
-        const size_t channel = 23 + i;
-        // todo - replace m-index with SLO line % 4
-        p->solarIrradiances[channel] = solarIrradianceSlo.getDouble(sloInfoGrid.getIndex(0, 0, 1));
-    }
-
-    // 4. Ozone coefficients
-    AuxdataProvider& radiometricAuxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUXDATA_RADIOMETRIC_ID);
-    valarray<double>& cO3 = radiometricAuxdataProvider.getDoubleArray("C_O3");
-    copy(&cO3[0], &cO3[30], &(p->cO3[0]));
-
-    // 5. Flags
-
-    const Accessor& synFlags = averagedSegment->getAccessor("SYN_flags");
-    p->synFlags = synFlags.getUShort(pixelIndex);
-    // set flags SYN_success, SYN_negative_curvature, SYN_too_low, and SY_high_error to false
-    p->synFlags &= 3887;
-
-    // 6. Geo position
-
-    const Accessor& lat = averagedSegment->getAccessor("latitude");
-    const Accessor& lon = averagedSegment->getAccessor("longitude");
-    p->lat = lat.getDouble(pixelIndex);
-    p->lon = lon.getDouble(pixelIndex);
-
-    double NaN = numeric_limits<double>::quiet_NaN();
-    p->tau550err = NaN;
-    p->alpha550 = NaN;
-    p->amin = numeric_limits<short>::min();
-
-    // Tie Point data
-
-    const Segment& olciTiepointSegment = context.getSegment(Constants::SEGMENT_OLC_TP);
-    const Segment& slnTiepointSegment = context.getSegment(Constants::SEGMENT_SLN_TP);
-    const Segment& sloTiepointSegment = context.getSegment(Constants::SEGMENT_SLO_TP);
-
-    const Accessor& tpLatOlc = olciTiepointSegment.getAccessor("OLC_TP_lat");
-    const Accessor& tpLonOlc = olciTiepointSegment.getAccessor("OLC_TP_lon");
-    const Accessor& tpLatSln = slnTiepointSegment.getAccessor("SLN_TP_lat");
-    const Accessor& tpLonSln = slnTiepointSegment.getAccessor("SLN_TP_lon");
-    const Accessor& tpLatSlo = sloTiepointSegment.getAccessor("SLO_TP_lat");
-    const Accessor& tpLonSlo = sloTiepointSegment.getAccessor("SLO_TP_lon");
-    const Accessor& tpSzaOlc = olciTiepointSegment.getAccessor("SZA");
-    const Accessor& tpSaaOlc = olciTiepointSegment.getAccessor("SAA");
-    const Accessor& tpVzaOlc = olciTiepointSegment.getAccessor("OZA");
-    const Accessor& tpVaaOlc = olciTiepointSegment.getAccessor("OAA");
-    const Accessor& tpVzaSln = slnTiepointSegment.getAccessor("SLN_VZA");
-    const Accessor& tpVaaSln = slnTiepointSegment.getAccessor("SLN_VAA");
-    const Accessor& tpVzaSlo = sloTiepointSegment.getAccessor("SLO_VZA");
-    const Accessor& tpVaaSlo = sloTiepointSegment.getAccessor("SLO_VAA");
-
-    const valarray<double> tpLonsOlc = tpLonOlc.getDoubles();
-    const valarray<double> tpLatsOlc = tpLatOlc.getDoubles();
-    const valarray<double> tpLonsSln = tpLonSln.getDoubles();
-    const valarray<double> tpLatsSln = tpLatSln.getDoubles();
-    const valarray<double> tpLonsSlo = tpLonSlo.getDoubles();
-    const valarray<double> tpLatsSlo = tpLatSlo.getDoubles();
-    const valarray<double> tpSzasOlc = tpSzaOlc.getDoubles();
-    const valarray<double> tpSaasOlc = tpSaaOlc.getDoubles();
-    const valarray<double> tpVzasOlc = tpVzaOlc.getDoubles();
-    const valarray<double> tpVaasOlc = tpVaaOlc.getDoubles();
-    const valarray<double> tpVzasSln = tpVzaSln.getDoubles();
-    const valarray<double> tpVzasSlo = tpVzaSlo.getDoubles();
-    const valarray<double> tpVaasSln = tpVaaSln.getDoubles();
-    const valarray<double> tpVaasSlo = tpVaaSlo.getDoubles();
-
-    const valarray<double> tpOzones = olciTiepointSegment.getAccessor("ozone").getDoubles();
-    const valarray<double> tpAirPressureOlc = olciTiepointSegment.getAccessor("air_pressure").getDoubles();
-
-    const TiePointInterpolator<double> tpiOlc = TiePointInterpolator<double>(tpLonsOlc, tpLatsOlc);
-    valarray<double> tpiWeights(1);
-    valarray<size_t> tpiIndexes(1);
-    tpiOlc.prepare(p->lat, p->lon, tpiWeights, tpiIndexes);
-
-    p->E2 = (numeric_limits<double>::infinity());
-
-    p->sza = tpiOlc.interpolate(tpSzasOlc, tpiWeights, tpiIndexes);
-    p->saa = tpiOlc.interpolate(tpSaasOlc, tpiWeights, tpiIndexes);
-    p->vzaOlc = tpiOlc.interpolate(tpVzasOlc, tpiWeights, tpiIndexes);
-    p->vaaOlc = tpiOlc.interpolate(tpVaasOlc, tpiWeights, tpiIndexes);
-
-    p->airPressure = tpiOlc.interpolate(tpAirPressureOlc, tpiWeights, tpiIndexes);
-    p->ozone = tpiOlc.interpolate(tpOzones, tpiWeights, tpiIndexes);
-    if (olciTiepointSegment.hasVariable("water_vapour")) {
-        const valarray<double> tpWaterVapourOlc = olciTiepointSegment.getAccessor("water_vapour").getDoubles();
-        p->waterVapour = tpiOlc.interpolate(tpWaterVapourOlc, tpiWeights, tpiIndexes);
-    } else {
-        p->waterVapour = 0.2;
-    }
-
-    const TiePointInterpolator<double> tpiSln = TiePointInterpolator<double>(tpLonsSln, tpLatsSln);
-    tpiSln.prepare(p->lat, p->lon, tpiWeights, tpiIndexes);
-
-    p->vaaSln = tpiSln.interpolate(tpVaasSln, tpiWeights, tpiIndexes);
-    p->vzaSln = tpiSln.interpolate(tpVzasSln, tpiWeights, tpiIndexes);
-
-    const TiePointInterpolator<double> tpiSlo = TiePointInterpolator<double>(tpLonsSlo, tpLatsSlo);
-    tpiSlo.prepare(p->lat, p->lon, tpiWeights, tpiIndexes);
-
-    p->vaaSlo = tpiSlo.interpolate(tpVaasSlo, tpiWeights, tpiIndexes);
-    p->vzaSlo = tpiSlo.interpolate(tpVzasSlo, tpiWeights, tpiIndexes);
-
-    return p;
 }
 
 const vector<long> Aer::createIndices(long base, long bound) const {
@@ -433,4 +288,187 @@ void Aer::putPixels(vector<shared_ptr<Pixel> > pixels) const {
         a550.setDouble(p->index, p->alpha550);
         synFlags.setUShort(p->index, p->synFlags);
     }
+}
+
+class PixelInitializer {
+
+public:
+    PixelInitializer(const Context& context);
+    ~PixelInitializer();
+    shared_ptr<Pixel> getPixel(long k, long l, long m) const;
+
+private:
+    const Context& context;
+
+    const Segment& averagedSegment;
+    const Segment& olcInfoSegment;
+    const Segment& slnInfoSegment;
+    const Segment& sloInfoSegment;
+
+    const Grid& averagedGrid;
+    const Grid& olcInfoGrid;
+    const Grid& slnInfoGrid;
+    const Grid& sloInfoGrid;
+
+    vector<Accessor*> radiances;
+
+    const Accessor& solarIrradiancesOlc;
+};
+
+PixelInitializer::PixelInitializer(const Context& context) :
+        context(context),
+        averagedSegment(context.getSegment(Constants::SEGMENT_SYN_AVERAGED)),
+        olcInfoSegment(context.getSegment(Constants::SEGMENT_OLC_INFO)),
+        slnInfoSegment(context.getSegment(Constants::SEGMENT_SLN_INFO)),
+        sloInfoSegment(context.getSegment(Constants::SEGMENT_SLO_INFO)),
+        olcInfoGrid(olcInfoSegment.getGrid()),
+        slnInfoGrid(slnInfoSegment.getGrid()),
+        sloInfoGrid(sloInfoSegment.getGrid()),
+        solarIrradiancesOlc(olcInfoSegment.getAccessor("solar_irradiance")),
+        averagedGrid(averagedSegment.getGrid()) {
+    for (size_t b = 0; b < 30; b++) {
+        radiances.push_back(&averagedSegment.getAccessor("L_" + lexical_cast<string>(b + 1)));
+    }
+}
+
+PixelInitializer::~PixelInitializer() {
+}
+
+shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
+    const size_t pixelIndex = averagedGrid.getIndex(k, l, m);
+    shared_ptr<Pixel> p = shared_ptr<Pixel>(new Pixel(k, l, m, pixelIndex));
+
+    // 1. Radiances
+    for (size_t b = 0; b < 30; b++) {
+        Accessor& radiance = *radiances[b];
+        if (!radiance.isFillValue(pixelIndex)) {
+            p->radiances[b] = radiance.getDouble(pixelIndex);
+        } else {
+            p->radiances[b] = numeric_limits<double>::quiet_NaN();
+        }
+    }
+
+    // 2. SDRs
+    // not needed
+
+    // 3. Solar irradiances
+
+    for (size_t channel = 0; channel < 18; channel++) {
+        const size_t index = olcInfoGrid.getIndex(k, channel, m);
+        if (!solarIrradiancesOlc.isFillValue(index)) {
+            p->solarIrradiances[channel] = solarIrradiancesOlc.getDouble(index);
+        } else {
+            p->solarIrradiances[channel] = numeric_limits<double>::quiet_NaN();
+        }
+    }
+    for (size_t i = 1; i <= 6; i++) {
+        const Accessor& solarIrradiancesSln = slnInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(i));
+        const size_t channel = 17 + i;
+        // todo - replace m-index with SLN line % 4
+        p->solarIrradiances[channel] = solarIrradiancesSln.getDouble(slnInfoGrid.getIndex(0, 0, 1));
+    }
+    for (size_t i = 1; i <= 6; i++) {
+        const Accessor& solarIrradianceSlo = sloInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(i));
+        const size_t channel = 23 + i;
+        // todo - replace m-index with SLO line % 4
+        p->solarIrradiances[channel] = solarIrradianceSlo.getDouble(sloInfoGrid.getIndex(0, 0, 1));
+    }
+
+    // 4. Ozone coefficients
+    AuxdataProvider& radiometricAuxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUXDATA_RADIOMETRIC_ID);
+    valarray<double>& cO3 = radiometricAuxdataProvider.getDoubleArray("C_O3");
+    copy(&cO3[0], &cO3[30], &(p->cO3[0]));
+
+    // 5. Flags
+
+    const Accessor& synFlags = averagedSegment.getAccessor("SYN_flags");
+    p->synFlags = synFlags.getUShort(pixelIndex);
+    // set flags SYN_success, SYN_negative_curvature, SYN_too_low, and SY_high_error to false
+    p->synFlags &= 3887;
+
+    // 6. Geo position
+
+    const Accessor& lat = averagedSegment.getAccessor("latitude");
+    const Accessor& lon = averagedSegment.getAccessor("longitude");
+    p->lat = lat.getDouble(pixelIndex);
+    p->lon = lon.getDouble(pixelIndex);
+
+    double NaN = numeric_limits<double>::quiet_NaN();
+    p->tau550err = NaN;
+    p->alpha550 = NaN;
+    p->amin = numeric_limits<short>::min();
+
+    // Tie Point data
+
+    const Segment& olciTiepointSegment = context.getSegment(Constants::SEGMENT_OLC_TP);
+    const Segment& slnTiepointSegment = context.getSegment(Constants::SEGMENT_SLN_TP);
+    const Segment& sloTiepointSegment = context.getSegment(Constants::SEGMENT_SLO_TP);
+
+    const Accessor& tpLatOlc = olciTiepointSegment.getAccessor("OLC_TP_lat");
+    const Accessor& tpLonOlc = olciTiepointSegment.getAccessor("OLC_TP_lon");
+    const Accessor& tpLatSln = slnTiepointSegment.getAccessor("SLN_TP_lat");
+    const Accessor& tpLonSln = slnTiepointSegment.getAccessor("SLN_TP_lon");
+    const Accessor& tpLatSlo = sloTiepointSegment.getAccessor("SLO_TP_lat");
+    const Accessor& tpLonSlo = sloTiepointSegment.getAccessor("SLO_TP_lon");
+    const Accessor& tpSzaOlc = olciTiepointSegment.getAccessor("SZA");
+    const Accessor& tpSaaOlc = olciTiepointSegment.getAccessor("SAA");
+    const Accessor& tpVzaOlc = olciTiepointSegment.getAccessor("OZA");
+    const Accessor& tpVaaOlc = olciTiepointSegment.getAccessor("OAA");
+    const Accessor& tpVzaSln = slnTiepointSegment.getAccessor("SLN_VZA");
+    const Accessor& tpVaaSln = slnTiepointSegment.getAccessor("SLN_VAA");
+    const Accessor& tpVzaSlo = sloTiepointSegment.getAccessor("SLO_VZA");
+    const Accessor& tpVaaSlo = sloTiepointSegment.getAccessor("SLO_VAA");
+
+    const valarray<double> tpLonsOlc = tpLonOlc.getDoubles();
+    const valarray<double> tpLatsOlc = tpLatOlc.getDoubles();
+    const valarray<double> tpLonsSln = tpLonSln.getDoubles();
+    const valarray<double> tpLatsSln = tpLatSln.getDoubles();
+    const valarray<double> tpLonsSlo = tpLonSlo.getDoubles();
+    const valarray<double> tpLatsSlo = tpLatSlo.getDoubles();
+    const valarray<double> tpSzasOlc = tpSzaOlc.getDoubles();
+    const valarray<double> tpSaasOlc = tpSaaOlc.getDoubles();
+    const valarray<double> tpVzasOlc = tpVzaOlc.getDoubles();
+    const valarray<double> tpVaasOlc = tpVaaOlc.getDoubles();
+    const valarray<double> tpVzasSln = tpVzaSln.getDoubles();
+    const valarray<double> tpVzasSlo = tpVzaSlo.getDoubles();
+    const valarray<double> tpVaasSln = tpVaaSln.getDoubles();
+    const valarray<double> tpVaasSlo = tpVaaSlo.getDoubles();
+
+    const valarray<double> tpOzones = olciTiepointSegment.getAccessor("ozone").getDoubles();
+    const valarray<double> tpAirPressureOlc = olciTiepointSegment.getAccessor("air_pressure").getDoubles();
+
+    const TiePointInterpolator<double> tpiOlc = TiePointInterpolator<double>(tpLonsOlc, tpLatsOlc);
+    valarray<double> tpiWeights(1);
+    valarray<size_t> tpiIndexes(1);
+    tpiOlc.prepare(p->lat, p->lon, tpiWeights, tpiIndexes);
+
+    p->E2 = (numeric_limits<double>::infinity());
+
+    p->sza = tpiOlc.interpolate(tpSzasOlc, tpiWeights, tpiIndexes);
+    p->saa = tpiOlc.interpolate(tpSaasOlc, tpiWeights, tpiIndexes);
+    p->vzaOlc = tpiOlc.interpolate(tpVzasOlc, tpiWeights, tpiIndexes);
+    p->vaaOlc = tpiOlc.interpolate(tpVaasOlc, tpiWeights, tpiIndexes);
+
+    p->airPressure = tpiOlc.interpolate(tpAirPressureOlc, tpiWeights, tpiIndexes);
+    p->ozone = tpiOlc.interpolate(tpOzones, tpiWeights, tpiIndexes);
+    if (olciTiepointSegment.hasVariable("water_vapour")) {
+        const valarray<double> tpWaterVapourOlc = olciTiepointSegment.getAccessor("water_vapour").getDoubles();
+        p->waterVapour = tpiOlc.interpolate(tpWaterVapourOlc, tpiWeights, tpiIndexes);
+    } else {
+        p->waterVapour = 0.2;
+    }
+
+    const TiePointInterpolator<double> tpiSln = TiePointInterpolator<double>(tpLonsSln, tpLatsSln);
+    tpiSln.prepare(p->lat, p->lon, tpiWeights, tpiIndexes);
+
+    p->vaaSln = tpiSln.interpolate(tpVaasSln, tpiWeights, tpiIndexes);
+    p->vzaSln = tpiSln.interpolate(tpVzasSln, tpiWeights, tpiIndexes);
+
+    const TiePointInterpolator<double> tpiSlo = TiePointInterpolator<double>(tpLonsSlo, tpLatsSlo);
+    tpiSlo.prepare(p->lat, p->lon, tpiWeights, tpiIndexes);
+
+    p->vaaSlo = tpiSlo.interpolate(tpVaasSlo, tpiWeights, tpiIndexes);
+    p->vzaSlo = tpiSlo.interpolate(tpVzasSlo, tpiWeights, tpiIndexes);
+
+    return p;
 }

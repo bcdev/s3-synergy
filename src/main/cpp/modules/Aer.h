@@ -43,7 +43,6 @@ private:
 
     static bool isSolarIrradianceFillValue(double f, const valarray<double> fillValues, int16_t index);
     vector<shared_ptr<Pixel> > getPixels(Context& context, long firstL, long lastL) const;
-    shared_ptr<Pixel> getPixel(Context& context, long k, long l, long m) const;
     void putPixels(vector<shared_ptr<Pixel> > pixels) const;
     const vector<long> createIndices(long base, long bound) const;
     void readAuxdata(Context& context);
