@@ -120,8 +120,8 @@ PixelInitializer::PixelInitializer(const Context& context) :
 
     const Accessor& szaOlc = olciTiepointSegment.getAccessor("SZA");
     const Accessor& saaOlc = olciTiepointSegment.getAccessor("SAA");
-    const Accessor& vzaOlc = olciTiepointSegment.getAccessor("OZA");
-    const Accessor& vaaOlc = olciTiepointSegment.getAccessor("OAA");
+    const Accessor& vzaOlc = olciTiepointSegment.getAccessor("OLC_VZA");
+    const Accessor& vaaOlc = olciTiepointSegment.getAccessor("OLC_VAA");
     const Accessor& vzaSln = slnTiepointSegment.getAccessor("SLN_VZA");
     const Accessor& vaaSln = slnTiepointSegment.getAccessor("SLN_VAA");
     const Accessor& vzaSlo = sloTiepointSegment.getAccessor("SLO_VZA");
