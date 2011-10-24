@@ -23,7 +23,6 @@ public:
 	virtual ~Aer();
 
     void start(Context& context);
-    void stop(Context& context);
     void process(Context& context);
 
     static double ndv(Pixel& q, const valarray<int16_t>& ndviIndices);

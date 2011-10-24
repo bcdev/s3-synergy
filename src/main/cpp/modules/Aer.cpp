@@ -252,6 +252,7 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
     return p;
 }
 
+
 Aer::Aer() :
         BasicModule("AER"), amins(40), ndviIndices(2), initialNu(2), initialOmega(6), aerosolAngstromExponents(40) {
 }
@@ -270,10 +271,6 @@ void Aer::start(Context& context) {
     averagedGrid = &averagedSegment->getGrid();
 }
 
-void Aer::stop(Context& context) {
-    // todo cleanup
-}
-
 void Aer::process(Context& context) {
     context.getLogging().progress("Performing aerosol retrieval...", getId());
 
@@ -287,6 +284,7 @@ void Aer::process(Context& context) {
     vector<shared_ptr<Pixel> > pixels = getPixels(context, firstL, lastL < averagedGrid->getMaxL() ? lastL + 1: lastL);
 
     foreach(shared_ptr<Pixel> p, pixels) {
+        context.getLogging().debug("...for pixel with index " + lexical_cast<string>(p->index), getId());
         aer_s(p, context);
         if (p->amin == 0) {
             missingPixels[p->index] = p;
@@ -518,3 +516,4 @@ void Aer::putPixels(vector<shared_ptr<Pixel> > pixels) const {
         synFlags.setUShort(p->index, p->synFlags);
     }
 }
+
