@@ -97,6 +97,8 @@ struct Pixel {
     double alpha550;
     double tau550;
     double tau550err;
+    double tau550_filtered;
+    double tau550err_filtered;
     uint16_t synFlags;
     uint8_t amin;
 

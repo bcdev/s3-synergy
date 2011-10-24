@@ -44,8 +44,8 @@ public:
 	void addVariableAlias(const string& alias, const Segment& segment, const string& name) throw (logic_error);
 
 	void addVariableByte(const string& name, int8_t fillValue = numeric_limits<int8_t>::min(), double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
-	void addVariableDouble(const string& name, double fillValue = numeric_limits<double>::min()) throw (logic_error);
-	void addVariableFloat(const string& name, float fillValue = numeric_limits<float>::min()) throw (logic_error);
+	void addVariableDouble(const string& name, double fillValue = numeric_limits<double>::quiet_NaN()) throw (logic_error);
+	void addVariableFloat(const string& name, float fillValue = numeric_limits<float>::quiet_NaN()) throw (logic_error);
 	void addVariableInt(const string& name, int32_t fillValue = numeric_limits<int32_t>::min(), double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
 	void addVariableLong(const string& name, int64_t fillValue = numeric_limits<int64_t>::min()) throw (logic_error);
 	void addVariableShort(const string& name, int16_t fillValue = numeric_limits<int16_t>::min(), double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);

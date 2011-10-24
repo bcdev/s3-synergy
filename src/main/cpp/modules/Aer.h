@@ -42,13 +42,13 @@ private:
     valarray<double> aerosolAngstromExponents;
 
     static bool isSolarIrradianceFillValue(double f, const valarray<double> fillValues, int16_t index);
-    vector<shared_ptr<Pixel> > getPixels(Context& context, long lastL) const;
+    vector<shared_ptr<Pixel> > getPixels(Context& context, long firstL, long lastL) const;
     shared_ptr<Pixel> getPixel(Context& context, long k, long l, long m) const;
     void putPixels(vector<shared_ptr<Pixel> > pixels) const;
     const vector<long> createIndices(long base, long bound) const;
     void readAuxdata(Context& context);
     void aer_s(shared_ptr<Pixel> p, Context& context);
-    void applyMedianFiltering(map<size_t, shared_ptr<Pixel> >& pixels);
+    void applyMedianFiltering(vector<shared_ptr<Pixel> >& pixels, long firstL, long lastL);
     bool e2(Pixel& q, size_t amin, Context& context);
     double errorCurvature(shared_ptr<Pixel> p, Context& context);
 };

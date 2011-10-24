@@ -46,10 +46,14 @@ void Aer::stop(Context& context) {
 void Aer::process(Context& context) {
     context.getLogging().progress("Performing aerosol retrieval...", getId());
 
-    // todo - ts21Oct2011 - check
-    long lastL = context.getLastComputableL(*averagedSegment, *this) - 8;
+    long firstL = context.getFirstComputableL(*averagedSegment, *this);
+    long lastL = context.getLastComputableL(*averagedSegment, *this);
+    if (lastL < averagedGrid->getMaxL()) {
+        lastL -= 10;
+    }
+
     map<size_t, shared_ptr<Pixel> > missingPixels;
-    vector<shared_ptr<Pixel> > pixels = getPixels(context, lastL);
+    vector<shared_ptr<Pixel> > pixels = getPixels(context, firstL, lastL < averagedGrid->getMaxL() ? lastL + 1: lastL);
 
     foreach(shared_ptr<Pixel> p, pixels) {
         aer_s(p, context);
@@ -122,15 +126,14 @@ void Aer::process(Context& context) {
         }
         I++;
     }
+    applyMedianFiltering(pixels, firstL, lastL);
     putPixels(pixels);
-    // todo: applyMedianFiltering(pixels);
     context.setLastComputedL(*averagedSegment, *this, lastL);
+    context.setFirstRequiredL(*averagedSegment, *this, lastL + 1);
 }
 
-vector<shared_ptr<Pixel> > Aer::getPixels(Context& context, long lastL) const {
+vector<shared_ptr<Pixel> > Aer::getPixels(Context& context, long firstL, long lastL) const {
     vector<shared_ptr<Pixel> > pixels(averagedGrid->getSize());
-    // todo - ts11Oct2011 - check
-    long firstL = context.getFirstComputableL(*averagedSegment, *this);
     for (long l = firstL; l <= lastL; l++) {
         for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
             for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
@@ -293,7 +296,7 @@ shared_ptr<Pixel> Aer::getPixel(Context& context, long k, long l, long m) const 
 const vector<long> Aer::createIndices(long base, long bound) const {
     vector<long> result;
     for (long index = base - bound; index <= base + bound; index++) {
-        if (index != 0) {
+        if (index != base) {
             result.push_back(index);
         }
     }
@@ -364,8 +367,32 @@ double Aer::errorCurvature(shared_ptr<Pixel> p, Context& context) {
     return 25 * (p->E2 - 2 * a + b) / (2 * p->E2 * p->E2);
 }
 
-void Aer::applyMedianFiltering(map<size_t, shared_ptr<Pixel> >& pixels) {
-    // todo - implement
+void Aer::applyMedianFiltering(vector<shared_ptr<Pixel> >& pixels, long firstL, long lastL) {
+    valarray<double> tau550Values(9);
+    valarray<double> tau550ErrValues(9);
+    for (long l = firstL; l <= lastL; l++) {
+        for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
+            for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
+                const size_t index = averagedGrid->getIndex(k, l, m);
+                shared_ptr<Pixel> p = pixels[index];
+                size_t i = 0;
+                for (long l = p->l - 1; l <= p->l + 1; l++) {
+                    for (long m = p->m - 1; m <= p->m + 1; m++) {
+                        if (averagedGrid->isValidPosition(p->k, l, m)) {
+                            const size_t index = averagedGrid->getIndex(p->k, l, m);
+                            tau550Values[i] = pixels.at(index)->tau550;
+                            tau550ErrValues[i] = pixels.at(index)->tau550err;
+                            i++;
+                        }
+                    }
+                }
+                std::nth_element(&tau550Values[0], &tau550Values[i / 2], &tau550Values[i + 1]);
+                std::nth_element(&tau550ErrValues[0], &tau550ErrValues[i / 2], &tau550ErrValues[i + 1]);
+                p->tau550_filtered = tau550Values[i / 2];
+                p->tau550err_filtered = tau550ErrValues[i / 2];
+            }
+        }
+    }
 }
 
 void Aer::readAuxdata(Context& context) {
@@ -401,8 +428,8 @@ void Aer::putPixels(vector<shared_ptr<Pixel> > pixels) const {
 
     foreach(shared_ptr<Pixel> p, pixels) {
         amin.setUByte(p->index, p->amin);
-        t550.setDouble(p->index, p->tau550);
-        t550err.setDouble(p->index, p->tau550err);
+        t550.setDouble(p->index, p->tau550_filtered);
+        t550err.setDouble(p->index, p->tau550err_filtered);
         a550.setDouble(p->index, p->alpha550);
         synFlags.setUShort(p->index, p->synFlags);
     }
