@@ -50,6 +50,7 @@ using boost::filesystem::path;
 using boost::diagnostic_information;
 using boost::error_info;
 using boost::lexical_cast;
+using boost::math;
 using boost::numeric_cast;
 using boost::numeric::ublas::matrix;
 using boost::regex;
