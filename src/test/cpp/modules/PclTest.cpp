@@ -90,20 +90,20 @@ void PclTest::testGetValue() {
 
 	uint16_t landValue = Pcl::SY2_LAND_FLAG;
 	uint16_t cloudValue = Pcl::SY2_CLOUD_FLAG;
-	uint16_t value = Pcl::getValue(olcFlags, slnFlags, sloFlags);
+	uint16_t value = Pcl::computeFlagValue(olcFlags, slnFlags, sloFlags);
 
 	CPPUNIT_ASSERT((value & landValue) == landValue);
 	CPPUNIT_ASSERT((value & cloudValue) == cloudValue);
 
 	olcFlags = 8;
-	value = Pcl::getValue(olcFlags, slnFlags, sloFlags);
+	value = Pcl::computeFlagValue(olcFlags, slnFlags, sloFlags);
 
 	CPPUNIT_ASSERT((value & landValue) != landValue);
 	CPPUNIT_ASSERT((value & cloudValue) == cloudValue);
 
 	olcFlags = Pcl::SY1_OLCI_LAND_FLAG;
 	sloFlags = 8;
-	value = Pcl::getValue(olcFlags, slnFlags, sloFlags);
+	value = Pcl::computeFlagValue(olcFlags, slnFlags, sloFlags);
 
 	CPPUNIT_ASSERT((value & landValue) == landValue);
 	CPPUNIT_ASSERT((value & cloudValue) == cloudValue);

@@ -26,12 +26,11 @@ private:
     const Accessor* slnFlagsAccessor;
     const Accessor* sloFlagsAccessor;
 	vector<Accessor*> radianceAccessors;
-    string targetVariableName;
 
 	void setUpSourceAccessors(Context & context);
     void setUpSegment(Context & context);
 
-	static uint16_t getValue(uint32_t olcFlags, uint8_t slnFlags, uint8_t sloFlags);
+	static uint16_t computeFlagValue(uint32_t olcFlags, uint8_t slnFlags, uint8_t sloFlags);
 
 	static const uint32_t SY1_OLCI_LAND_FLAG = 2147483648U;
 	static const uint8_t SY1_SLSTR_CLOUD_FLAG = 64U;

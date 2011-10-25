@@ -32,10 +32,9 @@ void Pcl::start(Context& context) {
 void Pcl::setUpSegment(Context& context) {
 	collocatedSegment = &(context.getSegment(Constants::SEGMENT_SYN_COLLOCATED));
 	const ProductDescriptor& productDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2);
-	const string variableName = "SYN_flags";
-	const VariableDescriptor& synFlags = productDescriptor.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED).getVariableDescriptor(variableName);
+	const VariableDescriptor& synFlags = productDescriptor.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED).getVariableDescriptor("SYN_flags");
 	collocatedSegment->addVariable(synFlags);
-	context.getLogging().info("Adding variable '" + variableName + "' to segment '" + collocatedSegment->getId() + "'.", getId());
+	context.getLogging().info("Adding variable 'SYN_flags' to segment '" + collocatedSegment->getId() + "'.", getId());
 }
 
 void Pcl::setUpSourceAccessors(Context & context) {
@@ -50,8 +49,7 @@ void Pcl::setUpSourceAccessors(Context & context) {
 
 void Pcl::process(Context& context) {
 	context.getLogging().info("Setting flags for segment '" + collocatedSegment->toString() + "'.", getId());
-
-	Accessor& targetAccessor = collocatedSegment->getAccessor(targetVariableName);
+	Accessor& targetAccessor = collocatedSegment->getAccessor("SYN_flags");
 
 	const valarray<uint32_t>& olcFlags = olcFlagsAccessor->getUIntData();
 	const valarray<uint8_t>& slnFlags = slnFlagsAccessor->getUByteData();
@@ -70,7 +68,7 @@ void Pcl::process(Context& context) {
 		for (long k = collocatedGrid.getFirstK(); k < collocatedGrid.getFirstK() + collocatedGrid.getSizeK(); k++) {
 			for (long m = collocatedGrid.getFirstM(); m < collocatedGrid.getFirstM() + collocatedGrid.getSizeM(); m++) {
 				const size_t index = collocatedGrid.getIndex(k, l, m);
-				uint16_t value = getValue(olcFlags[index], slnFlags[index], sloFlags[index]);
+				uint16_t value = computeFlagValue(olcFlags[index], slnFlags[index], sloFlags[index]);
 
 				bool noSLN = true;
 				bool noSLO = true;
@@ -94,7 +92,7 @@ void Pcl::process(Context& context) {
 	context.setLastComputedL(*collocatedSegment, *this, lastL);
 }
 
-uint16_t Pcl::getValue(uint32_t olcFlags, uint8_t slnFlags, uint8_t sloFlags) {
+uint16_t Pcl::computeFlagValue(uint32_t olcFlags, uint8_t slnFlags, uint8_t sloFlags) {
 	const bool isLandPixel = (olcFlags & SY1_OLCI_LAND_FLAG) == SY1_OLCI_LAND_FLAG;
 	const bool isCloudPixel = (slnFlags & SY1_SLSTR_CLOUD_FLAG) == SY1_SLSTR_CLOUD_FLAG || (sloFlags & SY1_SLSTR_CLOUD_FLAG) == SY1_SLSTR_CLOUD_FLAG;
 
