@@ -29,7 +29,7 @@ public:
 	virtual ~Col();
 
 	void start(Context& context);
-	void stop(Context& context);
+	void process(Context& context);
 
 private:
 	friend class ColTest;
