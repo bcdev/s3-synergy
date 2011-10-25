@@ -81,10 +81,7 @@ void Col::process(Context& context) {
                 for (long m = targetGrid.getFirstM(); m < targetGrid.getFirstM() + targetGrid.getSizeM(); m++) {
                     const size_t targetIndex = targetGrid.getIndex(k, l, m);
 
-                    if (collocationYAccessor.isFillValue(targetIndex)) {
-                        continue;
-                    }
-                    if (collocationXAccessor.isFillValue(targetIndex)) {
+                    if (collocationXAccessor.isFillValue(targetIndex) || collocationYAccessor.isFillValue(targetIndex)) {
                         continue;
                     }
 

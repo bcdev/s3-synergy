@@ -11,7 +11,7 @@
 #include "../../../../src/main/cpp/reader/SynL1Reader.h"
 #include "../../../../src/main/cpp/modules/Col.h"
 #include "../../../../src/main/cpp/modules/Pcl.h"
-#include "../../../../src/main/cpp/writer/SegmentWriter.h"
+#include "../../../../src/main/cpp/writer/SynL2Writer.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
 
@@ -53,7 +53,7 @@ void PclTest::prepareContext() {
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
     shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
     shared_ptr<Module> col = shared_ptr<Module>(new Col());
-    shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
+    shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
 
     context->setDictionary(dictionary);
     context->setJobOrder(jobOrder);
@@ -113,32 +113,29 @@ void PclTest::testGetIndex() {
 
 void PclTest::testGetValue() {
 	Pcl pclToTest;
-	long olcFlags = 2147483648;
-	short slnFlags = 16392;
-	short sloFlags = 16392;
+	long olcFlags = Pcl::SY1_OLCI_LAND_FLAG;
+	short slnFlags = Pcl::SY1_SLSTR_CLOUD_FLAG;
+	short sloFlags = Pcl::SY1_SLSTR_CLOUD_FLAG;
 
-	size_t landValue = 32;
-	size_t cloudValue = 1;
-	uint16_t value = pclToTest.getValue(0, olcFlags, slnFlags, sloFlags);
+	uint16_t landValue = Pcl::SY2_LAND_FLAG;
+	uint16_t cloudValue = Pcl::SY2_CLOUD_FLAG;
+	uint16_t value = pclToTest.getValue(olcFlags, slnFlags, sloFlags);
 
 	CPPUNIT_ASSERT((value & landValue) == landValue);
 	CPPUNIT_ASSERT((value & cloudValue) == cloudValue);
 
 	olcFlags = 8;
-	slnFlags = 16392;
-	sloFlags = 16392;
-	value = pclToTest.getValue(0, olcFlags, slnFlags, sloFlags);
+	value = pclToTest.getValue(olcFlags, slnFlags, sloFlags);
 
 	CPPUNIT_ASSERT((value & landValue) != landValue);
 	CPPUNIT_ASSERT((value & cloudValue) == cloudValue);
 
-	olcFlags = 2147483648;
-	slnFlags = 16392;
+	olcFlags = Pcl::SY1_OLCI_LAND_FLAG;
 	sloFlags = 8;
-	value = pclToTest.getValue(0, olcFlags, slnFlags, sloFlags);
+	value = pclToTest.getValue(olcFlags, slnFlags, sloFlags);
 
 	CPPUNIT_ASSERT((value & landValue) == landValue);
-	CPPUNIT_ASSERT((value & cloudValue) != cloudValue);
+	CPPUNIT_ASSERT((value & cloudValue) == cloudValue);
 }
 
 void PclTest::testPcl() {
