@@ -90,13 +90,14 @@ void Ave::averageVariables(Context& context, long firstL, long lastL) {
 									const uint16_t flag = synFlags->getUShort(collocatedIndex);
 									const bool isLand = (flag & 32) == 32;
 									const bool isCloud = (flag & 1) == 1;
-									// TODO: comment in the following lines after investigating why if expression is always false
-//                            if(isLand && !isCloud && !isFillValue(varName, collocatedIndex)) {
-									a += getValue(varName, collocatedIndex);
-									K++;
-//                            }
-								}
-							}
+                                    // TODO: comment in the following lines after investigating why if expression is always false
+//                                  if(isLand && !isCloud && !isFillValue(varName, collocatedIndex)) {
+                                    if (!isFillValue(varName, collocatedIndex)) {
+                                        a += getValue(varName, collocatedIndex);
+                                        K++;
+                                    }
+                                }
+                            }
 
 							const long averagedIndex = averagedGrid->getIndex(k, l_prime, m_prime);
 							if (K == I) {

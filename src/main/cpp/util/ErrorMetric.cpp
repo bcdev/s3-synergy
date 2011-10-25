@@ -230,12 +230,18 @@ double ErrorMetric::errorMetric(valarray<double> rSpec, valarray<double> rAng) {
     double sum1 = 0.0;
     double sum3 = 0.0;
     for (size_t i = 0; i < 30; i++) {
-        sum1 += spectralWeights[i] * (p.sdrs[i] - rSpec[i]) * (p.sdrs[i] - rSpec[i]);
+        const double w = spectralWeights[i];
+        if (w > 0.0) {
+            sum1 += w * (p.sdrs[i] - rSpec[i]) * (p.sdrs[i] - rSpec[i]);
+        }
     }
     for (size_t i = 0; i < 12; i++) {
         size_t xIndex = i < 6 ? 0 : 1;
         size_t yIndex = i % 6;
-        sum3 += angularWeights.at_element(xIndex, yIndex) * (p.sdrs[i] - rAng[i]) * (p.sdrs[i] - rAng[i]);
+        const double w = angularWeights.at_element(xIndex, yIndex);
+        if (w > 0.0) {
+            sum3 += w * (p.sdrs[i] - rAng[i]) * (p.sdrs[i] - rAng[i]);
+        }
     }
     return (1 - totalAngularWeight) * sum1 / sum2 + totalAngularWeight * sum3 / sum4;
 }
@@ -245,7 +251,7 @@ double ErrorMetric::ndv(Pixel& q, const valarray<int16_t>& ndviIndices) {
     double L2 = q.radiances[ndviIndices[1] - 1];
     double F1 = q.solarIrradiances[ndviIndices[0] - 1];
     double F2 = q.solarIrradiances[ndviIndices[1] - 1];
-    if (isnan(q.radiances[ndviIndices[0] - 1]) || isnan(q.radiances[ndviIndices[1] - 1]) || isnan(F1) || isnan(F2)) {
+    if (isnan(L1) || isnan(L2) || isnan(F1) || isnan(F2)) {
         return 0.5;
     }
     return ((L2 / F2) - (L1 / F1)) / ((L2 / F2) + (L1 / F1));
