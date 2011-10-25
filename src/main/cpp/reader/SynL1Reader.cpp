@@ -39,7 +39,7 @@ void SynL1Reader::start(Context& context) {
 	if (!segmentLineCountString.empty()) {
 		segmentLineCount = lexical_cast<long>(segmentLineCountString);
 	}
-	context.getLogging().info("segment line count is " + lexical_cast<string>(segmentLineCount), getId());
+	context.getLogging().info("Segment line count is " + lexical_cast<string>(segmentLineCount), getId());
 
 	const Dictionary& dict = context.getDictionary();
 	const vector<SegmentDescriptor*> segmentDescriptors = dict.getProductDescriptor(Constants::PRODUCT_SY1).getSegmentDescriptors();
@@ -48,7 +48,7 @@ void SynL1Reader::start(Context& context) {
 	if (!sourceDirPath.has_root_directory()) {
 		sourceDirPath = getInstallationPath() / sourceDirPath;
 	}
-	context.getLogging().info("source product path is '" + sourceDirPath.string() + "'", getId());
+	context.getLogging().info("Source product path is '" + sourceDirPath.string() + "'", getId());
 
 	foreach(SegmentDescriptor* segmentDescriptor, segmentDescriptors)
 			{
