@@ -18,6 +18,7 @@ class SegmentWriter: public BasicModule {
 public:
 	SegmentWriter();
 	virtual ~SegmentWriter();
+
 	void process(Context& context);
 	void start(Context& context);
 	void stop(Context& context);

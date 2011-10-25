@@ -20,9 +20,9 @@ public:
     SynL1Reader();
     virtual ~SynL1Reader();
 
+    void process(Context& context);
     void start(Context& context);
     void stop(Context& context);
-    void process(Context& context);
 
 private:
     int getNcFile(const string& ncFileBasename);
