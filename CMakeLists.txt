@@ -26,7 +26,7 @@ file(GLOB_RECURSE AVE_TEST_SOURCES src/test/cpp/modules/AveTest.cpp)
 file(GLOB_RECURSE COL_TEST_SOURCES src/test/cpp/modules/ColTest.cpp)
 file(GLOB_RECURSE PCL_TEST_SOURCES src/test/cpp/modules/PclTest.cpp)
 file(GLOB_RECURSE WRITER_MAIN_SOURCES src/main/cpp/writer/*.cpp)
-file(GLOB_RECURSE WRITER_TEST_SOURCES src/test/cpp/writer/*.cpp)
+file(GLOB_RECURSE WRITER_TEST_SOURCES src/test/cpp/writer/SynL2*.cpp)
 file(GLOB_RECURSE UTIL_MAIN_SOURCES src/main/cpp/util/*.cpp)
 file(GLOB_RECURSE UTIL_TEST_SOURCES src/test/cpp/util/*.cpp)
 
