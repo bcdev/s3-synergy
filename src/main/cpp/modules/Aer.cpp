@@ -21,6 +21,8 @@ using std::min;
 using std::numeric_limits;
 using std::set;
 
+static const double FILL_VALUE_DOUBLE = -numeric_limits<double>::max();
+
 class PixelInitializer {
 
 public:
@@ -159,7 +161,7 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
         if (!radiance.isFillValue(pixelIndex)) {
             p->radiances[b] = radiance.getDouble(pixelIndex);
         } else {
-            p->radiances[b] = numeric_limits<double>::quiet_NaN();
+            p->radiances[b] = FILL_VALUE_DOUBLE;
         }
     }
 
@@ -176,7 +178,7 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
         if (!solarIrradiancesOlc.isFillValue(index)) {
             p->solarIrradiances[channel] = solarIrradiancesOlc.getDouble(index);
         } else {
-            p->solarIrradiances[channel] = numeric_limits<double>::quiet_NaN();
+            p->solarIrradiances[channel] = FILL_VALUE_DOUBLE;
         }
     }
     for (size_t i = 0; i < 6; i++) {
@@ -242,15 +244,13 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
     /*
      * Anything else
      */
-    double NaN = numeric_limits<double>::quiet_NaN();
-    p->tau550 = NaN;
-    p->tau550err = NaN;
-    p->tau550_filtered = NaN;
-    p->tau550err_filtered = NaN;
-    p->alpha550 = NaN;
+    p->tau550 = FILL_VALUE_DOUBLE;
+    p->tau550err = FILL_VALUE_DOUBLE;
+    p->tau550_filtered = FILL_VALUE_DOUBLE;
+    p->tau550err_filtered = FILL_VALUE_DOUBLE;
+    p->alpha550 = FILL_VALUE_DOUBLE;
     p->amin = numeric_limits<short>::min();
-    p->E2 = (numeric_limits<double>::infinity());
-
+    p->E2 = numeric_limits<double>::max();
 
     return p;
 }

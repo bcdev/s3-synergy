@@ -7,11 +7,14 @@
 
 #include <limits>
 
-#include "AuxdataProvider.h"
-#include "ErrorMetric.h"
 #include "../core/LookupTable.h"
 
+#include "AuxdataProvider.h"
+#include "ErrorMetric.h"
+
 using std::numeric_limits;
+
+static const double FILL_VALUE_DOUBLE = -numeric_limits<double>::max();
 
 ErrorMetric::ErrorMetric(Pixel& p, int16_t amin, Context& context) :
        lutOlcRatm((MatrixLookupTable<double>&) context.getObject("OLC_R_atm")), lutSlnRatm((MatrixLookupTable<double>&) context.getObject("SLN_R_atm")), lutSloRatm(
@@ -35,8 +38,10 @@ ErrorMetric::ErrorMetric(Pixel& p, int16_t amin, Context& context) :
     angularWeights = configurationAuxdata.getDoubleMatrix("weight_ang");
     gamma = configurationAuxdata.getDouble("gamma");
 
+    const double fillValue = -numeric_limits<double_t>::max();
+
     for (size_t i = 1; i <= 30; i++) {
-        if (isnan(p.radiances[i - 1])) {
+        if (p.radiances[i - 1] == fillValue) {
             spectralWeights[i - 1] = 0;
             if (i >= 19 && i <= 24) {
                 angularWeights.insert_element(i - 19, 0, 0.0);
@@ -145,7 +150,7 @@ void ErrorMetric::applyAtmosphericCorrection(Pixel& p, int16_t amin) {
         if (sdr >= 0.0 && sdr <= 1.0) {
             p.sdrs[b] = sdr;
         } else {
-            p.sdrs[b] = numeric_limits<double>::quiet_NaN();
+            p.sdrs[b] = FILL_VALUE_DOUBLE;
         }
     }
 
@@ -176,7 +181,7 @@ void ErrorMetric::applyAtmosphericCorrection(Pixel& p, int16_t amin) {
         if (sdr >= 0.0 && sdr <= 1.0) {
             p.sdrs[b] = sdr;
         } else {
-            p.sdrs[b] = numeric_limits<double>::quiet_NaN();
+            p.sdrs[b] = FILL_VALUE_DOUBLE;
         }
     }
 
@@ -207,7 +212,7 @@ void ErrorMetric::applyAtmosphericCorrection(Pixel& p, int16_t amin) {
         if (sdr >= 0.0 && sdr <= 1.0) {
             p.sdrs[b] = sdr;
         } else {
-            p.sdrs[b] = numeric_limits<double>::quiet_NaN();
+            p.sdrs[b] = FILL_VALUE_DOUBLE;
         }
     }
 }
@@ -247,12 +252,16 @@ double ErrorMetric::errorMetric(valarray<double> rSpec, valarray<double> rAng) {
 }
 
 double ErrorMetric::ndv(Pixel& q, const valarray<int16_t>& ndviIndices) {
+    const double fillValue = -numeric_limits<double_t>::max();
+
     double L1 = q.radiances[ndviIndices[0] - 1];
     double L2 = q.radiances[ndviIndices[1] - 1];
     double F1 = q.solarIrradiances[ndviIndices[0] - 1];
     double F2 = q.solarIrradiances[ndviIndices[1] - 1];
-    if (isnan(L1) || isnan(L2) || isnan(F1) || isnan(F2)) {
+
+    if (L1 == fillValue || L2 == fillValue || F1 == fillValue || F2 == fillValue) {
         return 0.5;
     }
+
     return ((L2 / F2) - (L1 / F1)) / ((L2 / F2) + (L1 / F1));
 }

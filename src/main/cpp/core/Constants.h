@@ -94,10 +94,8 @@ const string LOG_LEVEL_ERROR = "ERROR";
 /**
  * Auxdata information.
  */
-
 const string AUXDATA_CONFIGURATION_ID = "SYCPAX";
 const string AUXDATA_RADIOMETRIC_ID = "SYRTAX";
-
 }
 
 #endif	/* CONSTANTS_H */

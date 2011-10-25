@@ -56,7 +56,6 @@ private:
     double specModelSurf(double c_1, double c_2, size_t index);
 
     double errorMetric(valarray<double> rSpec, valarray<double> rAng);
-
 };
 
 #endif /* ERRORMETRIC_H_ */
