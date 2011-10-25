@@ -243,7 +243,10 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
      * Anything else
      */
     double NaN = numeric_limits<double>::quiet_NaN();
+    p->tau550 = NaN;
     p->tau550err = NaN;
+    p->tau550_filtered = NaN;
+    p->tau550err_filtered = NaN;
     p->alpha550 = NaN;
     p->amin = numeric_limits<short>::min();
     p->E2 = (numeric_limits<double>::infinity());

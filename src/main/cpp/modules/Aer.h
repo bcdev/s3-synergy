@@ -70,11 +70,7 @@ public:
         }
         valarray<valarray<double> > u(valarray<double>(10), 10);
         for(size_t i = 0; i < 10; i++) {
-            valarray<double> init(10);
-            for(size_t j = 0; j < 10; j++) {
-                init[j] = j / 10.0;
-            }
-            u[i] = init;
+            u[i][i] = 1.0;
         }
 
         MultiMin::powell(em, pn, u, MultiMin::ACCURACY_GOAL, 200);
