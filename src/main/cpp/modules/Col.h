@@ -30,24 +30,23 @@ public:
 
 	void start(Context& context);
 	void stop(Context& context);
-	void process(Context& context);
 
 private:
 	friend class ColTest;
 
+	void addOlciVariables(Context& context);
+	void addSlstrVariables(Context& context);
 	void addVariable(Context& context, Segment& targetSegment, const string& targetName, const Segment& sourceSegment, const string& sourceName, const ProductDescriptor& sourceProductDescriptor);
 	void addVariableAlias(Context& context, Segment& targetSegment, const string& targetName, const Segment& sourceSegment, const string& sourceName) const;
-	void addSlstrVariables(Context& context);
-	void addOlciVariables(Context& context);
 
 	vector<string> targetNames;
-	map<string, string> collocationXMap;
-	map<string, string> collocationYMap;
+	map<string, string> collocationNameMapX;
+	map<string, string> collocationNameMapY;
 	map<string, string> sourceNameMap;
 	map<string, const Segment*> sourceSegmentMap;
 
-	static const string SLO_CONFIDENCE_FLAG_VARIABLE;
-	static const string SLN_CONFIDENCE_FLAG_VARIABLE;
+	static const string SLO_CONFIDENCE_FLAG_VARIABLE_NAME;
+	static const string SLN_CONFIDENCE_FLAG_VARIABLE_NAME;
 };
 
 #endif /* COL_H_ */

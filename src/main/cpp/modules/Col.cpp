@@ -16,8 +16,8 @@ Col::Col() :
 Col::~Col() {
 }
 
-const string Col::SLO_CONFIDENCE_FLAG_VARIABLE = "SLO_confidence";
-const string Col::SLN_CONFIDENCE_FLAG_VARIABLE = "SLN_confidence";
+const string Col::SLO_CONFIDENCE_FLAG_VARIABLE_NAME = "SLO_confidence";
+const string Col::SLN_CONFIDENCE_FLAG_VARIABLE_NAME = "SLN_confidence";
 
 void Col::start(Context& context) {
     const Grid& sourceGrid = context.getSegment(Constants::SEGMENT_OLC).getGrid();
@@ -41,8 +41,8 @@ void Col::addOlciVariables(Context& context) {
             addVariableAlias(context, targetSegment, targetName, sourceSegment, sourceName);
         } else {
             addVariable(context, targetSegment, targetName, sourceSegment, sourceName, sourceProductDescriptor);
-            collocationXMap[targetName] = "delta_x_" + lexical_cast<string>(channelMapping[i]);
-            collocationYMap[targetName] = "delta_y_" + lexical_cast<string>(channelMapping[i]);
+            collocationNameMapX[targetName] = "delta_x_" + lexical_cast<string>(channelMapping[i]);
+            collocationNameMapY[targetName] = "delta_y_" + lexical_cast<string>(channelMapping[i]);
         }
     }
 
@@ -53,14 +53,14 @@ void Col::addOlciVariables(Context& context) {
             addVariableAlias(context, targetSegment, targetName, sourceSegment, sourceName);
         } else {
             addVariable(context, targetSegment, targetName, sourceSegment, sourceName, sourceProductDescriptor);
-            collocationXMap[targetName] = "delta_x_" + lexical_cast<string>(channelMapping[i]);
-            collocationYMap[targetName] = "delta_y_" + lexical_cast<string>(channelMapping[i]);
+            collocationNameMapX[targetName] = "delta_x_" + lexical_cast<string>(channelMapping[i]);
+            collocationNameMapY[targetName] = "delta_y_" + lexical_cast<string>(channelMapping[i]);
         }
     }
 
     addVariable(context, targetSegment, "OLC_flags", sourceSegment, "OLC_flags", sourceProductDescriptor);
-    collocationXMap["OLC_flags"] = "delta_x_" + lexical_cast<string>(1);
-    collocationYMap["OLC_flags"] = "delta_y_" + lexical_cast<string>(1);
+    collocationNameMapX["OLC_flags"] = "delta_x_" + lexical_cast<string>(1);
+    collocationNameMapY["OLC_flags"] = "delta_y_" + lexical_cast<string>(1);
 
     addVariableAlias(context, targetSegment, "longitude", sourceSegment, "longitude");
     addVariableAlias(context, targetSegment, "latitude", sourceSegment, "latitude");
@@ -77,41 +77,37 @@ void Col::addSlstrVariables(Context& context) {
         const string sourceName = "L_" + lexical_cast<string>(i);
         const string targetName = "L_" + lexical_cast<string>(i + 18);
         addVariable(context, t, targetName, nadir, sourceName, sourceProductDescriptor);
-        collocationXMap[targetName] = "x_corr_" + lexical_cast<string>(i);
-        collocationYMap[targetName] = "y_corr_" + lexical_cast<string>(i);
+        collocationNameMapX[targetName] = "x_corr_" + lexical_cast<string>(i);
+        collocationNameMapY[targetName] = "y_corr_" + lexical_cast<string>(i);
     }
     for (size_t i = 1; i < 7; i++) {
         const string sourceName = "L_" + lexical_cast<string>(i) + "_exception";
         const string targetName = "L_" + lexical_cast<string>(i + 18) + "_exception";
         addVariable(context, t, targetName, nadir, sourceName, sourceProductDescriptor);
-        collocationXMap[targetName] = "x_corr_" + lexical_cast<string>(i);
-        collocationYMap[targetName] = "y_corr_" + lexical_cast<string>(i);
+        collocationNameMapX[targetName] = "x_corr_" + lexical_cast<string>(i);
+        collocationNameMapY[targetName] = "y_corr_" + lexical_cast<string>(i);
     }
     for (size_t i = 1; i < 7; i++) {
         const string sourceName = "L_" + lexical_cast<string>(i);
         const string targetName = "L_" + lexical_cast<string>(i + 24);
         addVariable(context, t, targetName, oblique, sourceName, sourceProductDescriptor);
-        collocationXMap[targetName] = "x_corr_o";
-        collocationYMap[targetName] = "y_corr_o";
+        collocationNameMapX[targetName] = "x_corr_o";
+        collocationNameMapY[targetName] = "y_corr_o";
     }
     for (size_t i = 1; i < 7; i++) {
         const string sourceName = "L_" + lexical_cast<string>(i) + "_exception";
         const string targetName = "L_" + lexical_cast<string>(i + 24) + "_exception";
         addVariable(context, t, targetName, oblique, sourceName, sourceProductDescriptor);
-        collocationXMap[targetName] = "x_corr_o";
-        collocationYMap[targetName] = "y_corr_o";
+        collocationNameMapX[targetName] = "x_corr_o";
+        collocationNameMapY[targetName] = "y_corr_o";
     }
 
-    addVariable(context, t, SLN_CONFIDENCE_FLAG_VARIABLE, nadir, SLN_CONFIDENCE_FLAG_VARIABLE, sourceProductDescriptor);
-    collocationXMap[SLN_CONFIDENCE_FLAG_VARIABLE] = "x_corr_" + lexical_cast<string>(1);
-    collocationYMap[SLN_CONFIDENCE_FLAG_VARIABLE] = "y_corr_" + lexical_cast<string>(1);
-    addVariable(context, t, SLO_CONFIDENCE_FLAG_VARIABLE, oblique, SLO_CONFIDENCE_FLAG_VARIABLE, sourceProductDescriptor);
-    collocationXMap[SLO_CONFIDENCE_FLAG_VARIABLE] = "x_corr_o";
-    collocationYMap[SLO_CONFIDENCE_FLAG_VARIABLE] = "y_corr_o";
-}
-
-void Col::stop(Context& context) {
-    // TODO: cleanup
+    addVariable(context, t, SLN_CONFIDENCE_FLAG_VARIABLE_NAME, nadir, SLN_CONFIDENCE_FLAG_VARIABLE_NAME, sourceProductDescriptor);
+    collocationNameMapX[SLN_CONFIDENCE_FLAG_VARIABLE_NAME] = "x_corr_" + lexical_cast<string>(1);
+    collocationNameMapY[SLN_CONFIDENCE_FLAG_VARIABLE_NAME] = "y_corr_" + lexical_cast<string>(1);
+    addVariable(context, t, SLO_CONFIDENCE_FLAG_VARIABLE_NAME, oblique, SLO_CONFIDENCE_FLAG_VARIABLE_NAME, sourceProductDescriptor);
+    collocationNameMapX[SLO_CONFIDENCE_FLAG_VARIABLE_NAME] = "x_corr_o";
+    collocationNameMapY[SLO_CONFIDENCE_FLAG_VARIABLE_NAME] = "y_corr_o";
 }
 
 void Col::process(Context& context) {
@@ -141,14 +137,12 @@ void Col::process(Context& context) {
                 const Segment& s = *sourceSegmentMap[targetName];
                 sourceAccessors.push_back(&s.getAccessor(sourceNameMap[targetName]));
                 targetAccessors.push_back(&t.getAccessor(targetName));
-                xAccessors.push_back(&olc.getAccessor(collocationXMap[targetName]));
-                yAccessors.push_back(&olc.getAccessor(collocationYMap[targetName]));
+                xAccessors.push_back(&olc.getAccessor(collocationNameMapX[targetName]));
+                yAccessors.push_back(&olc.getAccessor(collocationNameMapY[targetName]));
             }
 
     for (long l = firstL; l <= lastL; l++) {
-        if(l % 100 == 0) {
-            context.getLogging().progress("Collocating line l = " + lexical_cast<string>(l) + " ...", getId());
-        }
+        context.getLogging().progress("Collocating line l = " + lexical_cast<string>(l) + " ...", getId());
 
         firstRequiredLMap[&olc] = olc.getGrid().getLastL() + 1;
         firstRequiredLMap[&sln] = sln.getGrid().getLastL() + 1;
@@ -264,7 +258,6 @@ void Col::process(Context& context) {
 }
 
 void Col::addVariable(Context& context, Segment& t, const string& targetName, const Segment& s, const string& sourceName, const ProductDescriptor& p) {
-
     const VariableDescriptor& v = p.getSegmentDescriptor(s.getId()).getVariableDescriptor(sourceName);
     context.getLogging().progress("Adding variable '" + v.toString() + "' to segment '" + t.getId() + "'", getId());
     t.addVariable(v, targetName);
