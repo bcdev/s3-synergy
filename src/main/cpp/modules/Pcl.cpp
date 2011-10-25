@@ -39,30 +39,13 @@ void Pcl::setUpSegment(Context& context) {
 }
 
 void Pcl::setUpSourceAccessors(Context & context) {
-	olcFlagsAccessor = &getSourceAccessor(context, "OLC_flags", Constants::SEGMENT_OLC);
-	slnFlagsAccessor = &getSourceAccessor(context, "SLN_confidence", Constants::SEGMENT_SLN);
-	sloFlagsAccessor = &getSourceAccessor(context, "SLO_confidence", Constants::SEGMENT_SLO);
+	olcFlagsAccessor = &collocatedSegment->getAccessor("OLC_flags");
+	slnFlagsAccessor = &collocatedSegment->getAccessor("SLN_confidence");
+	sloFlagsAccessor = &collocatedSegment->getAccessor("SLO_confidence");
 
 	for (size_t b = 19; b <= 30; b++) {
 		radianceAccessors.push_back(&collocatedSegment->getAccessor("L_" + lexical_cast<string>(b)));
 	}
-}
-
-const Accessor& Pcl::getSourceAccessor(Context& context, string variableName, string sourceSegmentId) {
-	const ProductDescriptor& sy1Descriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY1);
-	const VariableDescriptor& variableDescriptor = sy1Descriptor.getSegmentDescriptor(sourceSegmentId).getVariableDescriptor(variableName);
-	const string& flagVariableName = variableDescriptor.getName();
-	const string& segmentName = Constants::SEGMENT_SYN_COLLOCATED;
-
-	Dictionary& dictionary = context.getDictionary();
-	const ProductDescriptor& l2Descriptor = dictionary.getProductDescriptor(Constants::PRODUCT_SY2);
-	const VariableDescriptor& flagsDescriptor = l2Descriptor.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED).getVariableDescriptor("SYN_flags");
-	targetVariableName = flagsDescriptor.getName();
-	if (!collocatedSegment->hasVariable(targetVariableName)) {
-		collocatedSegment->addVariable(flagsDescriptor);
-	}
-
-	return context.getSegment(segmentName).getAccessor(flagVariableName);
 }
 
 void Pcl::process(Context& context) {
@@ -86,7 +69,7 @@ void Pcl::process(Context& context) {
 		context.getLogging().progress("Setting flags for line l = " + lexical_cast<string>(l), getId());
 		for (long k = collocatedGrid.getFirstK(); k < collocatedGrid.getFirstK() + collocatedGrid.getSizeK(); k++) {
 			for (long m = collocatedGrid.getFirstM(); m < collocatedGrid.getFirstM() + collocatedGrid.getSizeM(); m++) {
-				const size_t index = getIndex(k, l, m);
+				const size_t index = collocatedGrid.getIndex(k, l, m);
 				uint16_t value = getValue(olcFlags[index], slnFlags[index], sloFlags[index]);
 
 				bool noSLN = true;
@@ -111,11 +94,7 @@ void Pcl::process(Context& context) {
 	context.setLastComputedL(*collocatedSegment, *this, lastL);
 }
 
-size_t Pcl::getIndex(long k, long l, long m) const {
-	return collocatedSegment->getGrid().getIndex(k, l, m);
-}
-
-uint16_t Pcl::getValue(uint32_t olcFlags, uint8_t slnFlags, uint8_t sloFlags) const {
+uint16_t Pcl::getValue(uint32_t olcFlags, uint8_t slnFlags, uint8_t sloFlags) {
 	const bool isLandPixel = (olcFlags & SY1_OLCI_LAND_FLAG) == SY1_OLCI_LAND_FLAG;
 	const bool isCloudPixel = (slnFlags & SY1_SLSTR_CLOUD_FLAG) == SY1_SLSTR_CLOUD_FLAG || (sloFlags & SY1_SLSTR_CLOUD_FLAG) == SY1_SLSTR_CLOUD_FLAG;
 

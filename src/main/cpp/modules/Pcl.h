@@ -28,11 +28,10 @@ private:
 	vector<Accessor*> radianceAccessors;
     string targetVariableName;
 
-	size_t getIndex(long k, long l, long m) const;
-	uint16_t getValue(uint32_t olcFlags, uint8_t slnFlags, uint8_t sloFlags) const;
-	const Accessor& getSourceAccessor(Context& context, string variableName, string sourceSegmentId);
 	void setUpSourceAccessors(Context & context);
     void setUpSegment(Context & context);
+
+	static uint16_t getValue(uint32_t olcFlags, uint8_t slnFlags, uint8_t sloFlags);
 
 	static const uint32_t SY1_OLCI_LAND_FLAG = 2147483648U;
 	static const uint8_t SY1_SLSTR_CLOUD_FLAG = 64U;

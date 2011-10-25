@@ -18,8 +18,6 @@ class PclTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(testPcl);
     CPPUNIT_TEST(testGetValue);
     CPPUNIT_TEST(testStart);
-    CPPUNIT_TEST(testGetIndex);
-    CPPUNIT_TEST(testGetAccessor);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -30,9 +28,7 @@ public:
 
 private:
     void testStart();
-    void testGetAccessor();
     void testPcl();
-    void testGetIndex();
     void testGetValue();
     void prepareContext();
     shared_ptr<Context> context;
