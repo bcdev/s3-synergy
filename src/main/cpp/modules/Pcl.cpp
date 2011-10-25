@@ -80,6 +80,8 @@ void Pcl::process(Context& context) {
 	context.getLogging().debug("Segment [" + collocatedSegment->toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
 
 	const Grid& collocatedGrid = collocatedSegment->getGrid();
+
+	#pragma omp parallel for
 	for (long l = firstL; l <= lastL; l++) {
 		context.getLogging().progress("Setting flags for line l = " + lexical_cast<string>(l), getId());
 		for (long k = collocatedGrid.getFirstK(); k < collocatedGrid.getFirstK() + collocatedGrid.getSizeK(); k++) {

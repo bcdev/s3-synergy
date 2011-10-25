@@ -134,7 +134,7 @@ void Aco::process(Context& context) {
 	// TODO - get from auxiliary data
 	const double delta3 = 0.005;
 
-#pragma omp parallel for
+    #pragma omp parallel for
 	for (long l = firstL; l <= lastL; l++) {
 		valarray<double> coordinates(10);
 		valarray<double> tpiWeights(1);
