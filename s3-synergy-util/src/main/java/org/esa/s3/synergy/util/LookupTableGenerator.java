@@ -385,11 +385,11 @@ class LookupTableGenerator {
     }
 
     void writeSynL2ConfigurationParametersDataset() throws Exception {
-        final double[][] vegSpectrum = readSpectrum("dat/veg.dat");
-        final double[][] soilSpectrum = readSpectrum("dat/soil.dat");
+        final double[][] vegSpectrum = readSpectrum("dat/veg.dat", 1000.0);
+        final double[][] soilSpectrum = readSpectrum("dat/soil.dat", 1000.0);
 
         final LookupTable vegLut = new LookupTable(vegSpectrum[1], vegSpectrum[0]);
-        final LookupTable soilLut = new LookupTable(soilSpectrum[1], vegSpectrum[0]);
+        final LookupTable soilLut = new LookupTable(soilSpectrum[1], soilSpectrum[0]);
 
         final String vegPath = createTempFile("veg", true);
         final String soilPath = createTempFile("soil", true);
@@ -813,6 +813,10 @@ class LookupTableGenerator {
     }
 
     private static double[][] readSpectrum(String name) {
+        return readSpectrum(name, 1.0);
+    }
+
+    private static double[][] readSpectrum(String name, double toNanometer) {
         final InputStream is = LookupTableGenerator.class.getResourceAsStream(name);
         final Scanner scanner = new Scanner(is, "US-ASCII");
         final List<double[]> pointList = new ArrayList<double[]>();
@@ -831,7 +835,7 @@ class LookupTableGenerator {
         final double[][] spectrum = new double[2][pointList.size()];
         for (int i = 0, pointListSize = pointList.size(); i < pointListSize; i++) {
             final double[] point = pointList.get(i);
-            spectrum[0][i] = point[0];
+            spectrum[0][i] = point[0] * toNanometer;
             spectrum[1][i] = point[1];
         }
         return spectrum;
