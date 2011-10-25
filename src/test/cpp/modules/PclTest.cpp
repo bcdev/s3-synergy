@@ -11,7 +11,7 @@
 #include "../../../../src/main/cpp/reader/SynL1Reader.h"
 #include "../../../../src/main/cpp/modules/Col.h"
 #include "../../../../src/main/cpp/modules/Pcl.h"
-#include "../../../../src/main/cpp/writer/SynL2Writer.h"
+#include "../../../../src/main/cpp/writer/SegmentWriter.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
 
@@ -53,7 +53,7 @@ void PclTest::prepareContext() {
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
     shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
     shared_ptr<Module> col = shared_ptr<Module>(new Col());
-    shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
+    shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
 
     context->setDictionary(dictionary);
     context->setJobOrder(jobOrder);

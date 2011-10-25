@@ -98,10 +98,10 @@ uint16_t Pcl::computeFlagValue(uint32_t olcFlags, uint8_t slnFlags, uint8_t sloF
 
 	uint16_t synFlags = 0;
 	if (isLandPixel) {
-		synFlags |= 32;
+		synFlags |= SY2_LAND_FLAG;
 	}
 	if (isCloudPixel) {
-		synFlags |= 1;
+		synFlags |= SY2_CLOUD_FLAG;
 	}
 	return synFlags;
 }
