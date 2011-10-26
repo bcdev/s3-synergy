@@ -78,7 +78,7 @@ void Col::process(Context& context) {
             const Accessor& collocationYAccessor = *yAccessors[i];
 
             valarray<long> lastLines(lastL, targetGrid.getSizeK());
-            valarray<long> firstRequiredLines(firstRequiredLMap[sourceSegment], targetGrid.getSizeK());
+            valarray<long> firstRequiredLines(firstRequiredLMap[&sourceSegment], targetGrid.getSizeK());
 
 #pragma omp parallel for
             for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
