@@ -490,18 +490,16 @@ void Aer::readAuxdata(Context& context) {
     getScalarLookupTable(context, "S3__SY_2_SYCPAX.nc", "weight_ang_tot");
     getScalarLookupTable(context, "S3__SY_2_SYRTAX.nc", "C_O3");
 
-    shared_ptr<AuxdataProvider> configurationAuxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider(Constants::AUXDATA_CONFIGURATION_ID, getAuxdataPath() + "S3__SY_2_SYCPAX.nc"));
-    shared_ptr<AuxdataProvider> radiometricAuxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider(Constants::AUXDATA_RADIOMETRIC_ID, getAuxdataPath() + "S3__SY_2_SYRTAX.nc"));
-    initialTau550 = configurationAuxdataProvider->getDouble("T550_ini");
-    amins = configurationAuxdataProvider->getShortArray("AMIN");
-    initialNu = configurationAuxdataProvider->getDoubleArray("v_ini");
-    initialOmega = configurationAuxdataProvider->getDoubleArray("w_ini");
-    kappa = configurationAuxdataProvider->getDouble("kappa");
-    ndviIndices = configurationAuxdataProvider->getShortArray("NDV_channel");
-    aerosolAngstromExponents = radiometricAuxdataProvider->getDoubleArray("A550");
+    AuxdataProvider& configurationAuxdataProvider = getAuxdataProvider(context, Constants::AUXDATA_CONFIGURATION_ID);
+    AuxdataProvider& radiometricAuxdataProvider = getAuxdataProvider(context, Constants::AUXDATA_RADIOMETRIC_ID);
 
-    context.addObject(configurationAuxdataProvider);
-    context.addObject(radiometricAuxdataProvider);
+    initialTau550 = configurationAuxdataProvider.getDouble("T550_ini");
+    amins = configurationAuxdataProvider.getShortArray("AMIN");
+    initialNu = configurationAuxdataProvider.getDoubleArray("v_ini");
+    initialOmega = configurationAuxdataProvider.getDoubleArray("w_ini");
+    kappa = configurationAuxdataProvider.getDouble("kappa");
+    ndviIndices = configurationAuxdataProvider.getShortArray("NDV_channel");
+    aerosolAngstromExponents = radiometricAuxdataProvider.getDoubleArray("A550");
 }
 
 void Aer::putPixels(vector<shared_ptr<Pixel> > pixels) const {
