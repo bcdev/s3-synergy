@@ -9,10 +9,6 @@
 
 #include "Ave.h"
 
-#include "../util/IOUtils.h"
-
-using std::min;
-
 Ave::Ave() :
 		BasicModule("AVE") {
 }
@@ -25,9 +21,9 @@ void Ave::start(Context& context) {
 	sourceSegment = &context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 	const Grid& sourceGrid = sourceSegment->getGrid();
 	const size_t sizeL = sourceGrid.getSizeL() / averagingFactor;
-	const size_t sizeM = ceil(sourceGrid.getSizeM() / averagingFactor);
+	const size_t sizeM = std::ceil(sourceGrid.getSizeM() / double(averagingFactor));
 	const size_t sizeK = sourceGrid.getSizeK();
-	const size_t maxL = ceil((sourceGrid.getMaxL() - sourceGrid.getMinL() + 1) / averagingFactor);
+	const size_t maxL = std::ceil((sourceGrid.getMaxL() - sourceGrid.getMinL() + 1) / double(averagingFactor)) - 1;
 	targetSegment = &context.addSegment(Constants::SEGMENT_SYN_AVERAGED, sizeL, sizeM, sizeK, 0, maxL);
 
 	addVariables(context);
@@ -233,6 +229,6 @@ void Ave::addVariables(Context& context) {
 }
 
 bool Ave::isRadianceName(const string& variableName) {
-	static const regex regularExpression("L_[0-9][0-9]?(_er)?(_exception)?");
+	static const regex regularExpression("L_[0-9][0-9]?(_er)?");
 	return regex_match(variableName, regularExpression);
 }
