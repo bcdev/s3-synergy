@@ -389,8 +389,8 @@ const vector<long> Aer::createIndices(long base, long bound) const {
 }
 
 void Aer::aer_s(shared_ptr<Pixel> p, Context& context) {
-    const bool isPartlyCloudy = (p->synFlags & 256) == 256;
-    const bool isPartlyWater = (p->synFlags & 512) == 512;
+    const bool isPartlyCloudy = (p->synFlags & Constants::SY2_PARTLY_CLOUDY_FLAG) == Constants::SY2_PARTLY_CLOUDY_FLAG;
+    const bool isPartlyWater = (p->synFlags & Constants::SY2_PARTLY_WATER_FLAG) == Constants::SY2_PARTLY_WATER_FLAG;
 
     if (isPartlyCloudy || isPartlyWater) {
         return;
