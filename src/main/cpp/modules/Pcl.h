@@ -31,14 +31,6 @@ private:
     void setUpSegment(Context & context);
 
 	static uint16_t computeFlagValue(uint32_t olcFlags, uint8_t slnFlags, uint8_t sloFlags);
-
-	static const uint32_t SY1_OLCI_LAND_FLAG = 2147483648U;
-	static const uint8_t SY1_SLSTR_CLOUD_FLAG = 64U;
-
-	static const uint16_t SY2_CLOUD_FLAG = 1U;
-	static const uint16_t SY2_LAND_FLAG = 32U;
-	static const uint16_t SY2_NO_SLN_FLAG = 64U;
-	static const uint16_t SY2_NO_SLO_FLAG = 128U;
 };
 
 #endif /* PCL_H_ */

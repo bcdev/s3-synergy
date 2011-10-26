@@ -96,6 +96,22 @@ const string LOG_LEVEL_ERROR = "ERROR";
  */
 const string AUXDATA_CONFIGURATION_ID = "SYCPAX";
 const string AUXDATA_RADIOMETRIC_ID = "SYRTAX";
+
+/**
+ * Flags.
+ */
+const uint32_t SY1_OLCI_LAND_FLAG = 2147483648U;
+
+const uint8_t SY1_SLSTR_CLOUD_FLAG = 64U;
+
+const uint16_t SY2_CLOUD_FLAG = 1U;
+const uint16_t SY2_CLOUD_FILLED_FLAG = 8U;
+const uint16_t SY2_LAND_FLAG = 32U;
+const uint16_t SY2_NO_SLN_FLAG = 64U;
+const uint16_t SY2_NO_SLO_FLAG = 128U;
+const uint16_t SY2_PARTLY_CLOUDY_FLAG = 256U;
+const uint16_t SY2_PARTLY_WATER_FLAG = 512U;
+const uint16_t SY2_BORDER_FLAG = 1024U;
 }
 
 #endif	/* CONSTANTS_H */

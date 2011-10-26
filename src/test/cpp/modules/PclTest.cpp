@@ -84,12 +84,12 @@ void PclTest::testStart() {
 }
 
 void PclTest::testGetValue() {
-	long olcFlags = Pcl::SY1_OLCI_LAND_FLAG;
-	short slnFlags = Pcl::SY1_SLSTR_CLOUD_FLAG;
-	short sloFlags = Pcl::SY1_SLSTR_CLOUD_FLAG;
+	long olcFlags = Constants::SY1_OLCI_LAND_FLAG;
+	short slnFlags = Constants::SY1_SLSTR_CLOUD_FLAG;
+	short sloFlags = Constants::SY1_SLSTR_CLOUD_FLAG;
 
-	uint16_t landValue = Pcl::SY2_LAND_FLAG;
-	uint16_t cloudValue = Pcl::SY2_CLOUD_FLAG;
+	uint16_t landValue = Constants::SY2_LAND_FLAG;
+	uint16_t cloudValue = Constants::SY2_CLOUD_FLAG;
 	uint16_t value = Pcl::computeFlagValue(olcFlags, slnFlags, sloFlags);
 
 	CPPUNIT_ASSERT((value & landValue) == landValue);
@@ -101,7 +101,7 @@ void PclTest::testGetValue() {
 	CPPUNIT_ASSERT((value & landValue) != landValue);
 	CPPUNIT_ASSERT((value & cloudValue) == cloudValue);
 
-	olcFlags = Pcl::SY1_OLCI_LAND_FLAG;
+	olcFlags = Constants::SY1_OLCI_LAND_FLAG;
 	sloFlags = 8;
 	value = Pcl::computeFlagValue(olcFlags, slnFlags, sloFlags);
 

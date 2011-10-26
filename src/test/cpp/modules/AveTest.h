@@ -15,7 +15,7 @@
 
 class AveTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(AveTest);
-    CPPUNIT_TEST(testMatches);
+    CPPUNIT_TEST(testIsRadianceName);
     CPPUNIT_TEST(testAve);
     CPPUNIT_TEST_SUITE_END();
 
@@ -28,7 +28,7 @@ public:
 private:
     void prepareContext();
     void testAve();
-    void testMatches();
+    void testIsRadianceName();
     shared_ptr<Context> context;
     shared_ptr<Ave> ave;
 };

@@ -62,7 +62,7 @@ void Pcl::process(Context& context) {
 
 	const Grid& collocatedGrid = collocatedSegment->getGrid();
 
-	#pragma omp parallel for
+#pragma omp parallel for
 	for (long l = firstL; l <= lastL; l++) {
 		context.getLogging().progress("Setting flags for line l = " + lexical_cast<string>(l), getId());
 		for (long k = collocatedGrid.getFirstK(); k < collocatedGrid.getFirstK() + collocatedGrid.getSizeK(); k++) {
@@ -79,10 +79,10 @@ void Pcl::process(Context& context) {
 					noSLO &= radianceAccessors[b]->isFillValue(index);
 				}
 				if (noSLN) {
-					value |= SY2_NO_SLN_FLAG;
+					value |= Constants::SY2_NO_SLN_FLAG;
 				}
 				if (noSLO) {
-					value |= SY2_NO_SLO_FLAG;
+					value |= Constants::SY2_NO_SLO_FLAG;
 				}
 
 				targetAccessor.setUShort(index, value);
@@ -93,15 +93,15 @@ void Pcl::process(Context& context) {
 }
 
 uint16_t Pcl::computeFlagValue(uint32_t olcFlags, uint8_t slnFlags, uint8_t sloFlags) {
-	const bool isLandPixel = (olcFlags & SY1_OLCI_LAND_FLAG) == SY1_OLCI_LAND_FLAG;
-	const bool isCloudPixel = (slnFlags & SY1_SLSTR_CLOUD_FLAG) == SY1_SLSTR_CLOUD_FLAG || (sloFlags & SY1_SLSTR_CLOUD_FLAG) == SY1_SLSTR_CLOUD_FLAG;
+	const bool land = (olcFlags & Constants::SY1_OLCI_LAND_FLAG) == Constants::SY1_OLCI_LAND_FLAG;
+	const bool cloud = (slnFlags & Constants::SY1_SLSTR_CLOUD_FLAG) == Constants::SY1_SLSTR_CLOUD_FLAG || (sloFlags & Constants::SY1_SLSTR_CLOUD_FLAG) == Constants::SY1_SLSTR_CLOUD_FLAG;
 
 	uint16_t synFlags = 0;
-	if (isLandPixel) {
-		synFlags |= SY2_LAND_FLAG;
+	if (land) {
+		synFlags |= Constants::SY2_LAND_FLAG;
 	}
-	if (isCloudPixel) {
-		synFlags |= SY2_CLOUD_FLAG;
+	if (cloud) {
+		synFlags |= Constants::SY2_CLOUD_FLAG;
 	}
 	return synFlags;
 }

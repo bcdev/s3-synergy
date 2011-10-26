@@ -24,6 +24,8 @@
 #include <set>
 
 #include "../core/AbstractModule.h"
+#include "../util/AuxdataProvider.h"
+#include "../util/LookupTableReader.h"
 
 using std::set;
 
@@ -69,10 +71,12 @@ protected:
     }
 
     void addAccessor(Context& context, Segment& s, const VariableDescriptor& varDescriptor) const;
-    void addMatrixLookupTable(Context& context, const string& fileName, const string& varName) const;
-    void addVectorLookupTable(Context& context, const string& fileName, const string& varName) const;
-    void addScalarLookupTable(Context& context, const string& fileName, const string& varName) const;
 
+    AuxdataProvider& getAuxdataProvider(Context& context, const string& id) const;
+
+    MatrixLookupTable<double>& getMatrixLookupTable(Context& context, const string& fileName, const string& varName) const;
+    VectorLookupTable<double>& getVectorLookupTable(Context& context, const string& fileName, const string& varName) const;
+    ScalarLookupTable<double>& getScalarLookupTable(Context& context, const string& fileName, const string& varName) const;
 };
 
 #endif	/* BASICMODULE_H */

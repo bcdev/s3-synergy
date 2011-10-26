@@ -21,6 +21,22 @@ const string& AuxdataProvider::getId() const {
     return id;
 }
 
+uint8_t AuxdataProvider::getUByte(const string& varName) {
+    if(contains(ubytes, varName)) {
+        return ubytes[varName];
+    }
+    const int varId = NetCDF::getVariableId(fileId, varName);
+    valarray<size_t> origin(1);
+    origin[0] = 0;
+    valarray<size_t> shape(1);
+    shape[0] = 1;
+    valarray<uint8_t> data(shape[0]);
+    NetCDF::getVariableData(fileId, varId, origin, shape, &data[0]);
+    ubytes[varName] = data[0];
+    return ubytes[varName];
+}
+
+
 double AuxdataProvider::getDouble(const string& varName) {
     if(contains(doubles, varName)) {
         return doubles[varName];

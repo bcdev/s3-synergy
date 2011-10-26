@@ -28,32 +28,22 @@ public:
 	virtual ~Ave();
 
 	void start(Context& context);
-	void stop(Context& context);
 	void process(Context& context);
 
 private:
 	friend class AveTest;
 
-	static const int8_t AVERAGING_FACTOR;
+    void addVariables(Context& context);
+    void averageVariables(Logging& logging, long firstTargetL, long lastTargetL);
+    void averageLatLon(long targetL);
+    void averageFlags(long targetL);
 
-    const Grid* averagedGrid;
-    const Segment* collocatedSegment;
-    const Accessor* synFlags;
+    const Segment* sourceSegment;
+    Segment* targetSegment;
+    vector<string> variableNames;
+    uint8_t averagingFactor;
 
-    Segment* averagedSegment;
-    vector<string> variables;
-    Accessor* averagedSynFlags;
-    long minCollocatedL;
-
-    void averageVariables(Context& context, long firstL, long lastL);
-    void averageFlags(Context& context, long firstL, long lastL);
-    void averageLatLon(Context& context, long firstL, long lastL);
-    bool isFillValue(const string& variableName, const long index) const;
-    double getValue(const string& variableName, const long index) const;
-    uint16_t getFlagFillValue(Context& context);
-    void addFlagsVariable(Context& context);
-    void setupVariables(Context& context);
-    bool matches(const string& varName);
+    static bool isRadianceName(const string& variableName);
 };
 
 #endif /* AVE_H_ */

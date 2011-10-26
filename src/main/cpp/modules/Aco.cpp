@@ -23,12 +23,12 @@ Aco::~Aco() {
 }
 
 void Aco::start(Context& context) {
-	addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "OLC_R_atm");
-	addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLN_R_atm");
-	addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLO_R_atm");
-	addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "t");
-	addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "rho_atm");
-	addScalarLookupTable(context, "S3__SY_2_SYRTAX.nc", "C_O3");
+	getMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "OLC_R_atm");
+	getMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLN_R_atm");
+	getMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLO_R_atm");
+	getMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "t");
+	getMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "rho_atm");
+	getScalarLookupTable(context, "S3__SY_2_SYRTAX.nc", "C_O3");
 
 	Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 	const SegmentDescriptor& targetSegmentDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);

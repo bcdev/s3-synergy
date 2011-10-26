@@ -481,14 +481,14 @@ void Aer::applyMedianFiltering(vector<shared_ptr<Pixel> >& pixels, long firstL, 
 }
 
 void Aer::readAuxdata(Context& context) {
-    addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "OLC_R_atm");
-    addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLN_R_atm");
-    addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLO_R_atm");
-    addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "t");
-    addMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "rho_atm");
-    addVectorLookupTable(context, "S3__SY_2_SYRTAX.nc", "D");
-    addScalarLookupTable(context, "S3__SY_2_SYCPAX.nc", "weight_ang_tot");
-    addScalarLookupTable(context, "S3__SY_2_SYRTAX.nc", "C_O3");
+    getMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "OLC_R_atm");
+    getMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLN_R_atm");
+    getMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLO_R_atm");
+    getMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "t");
+    getMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "rho_atm");
+    getVectorLookupTable(context, "S3__SY_2_SYRTAX.nc", "D");
+    getScalarLookupTable(context, "S3__SY_2_SYCPAX.nc", "weight_ang_tot");
+    getScalarLookupTable(context, "S3__SY_2_SYRTAX.nc", "C_O3");
 
     shared_ptr<AuxdataProvider> configurationAuxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider(Constants::AUXDATA_CONFIGURATION_ID, getAuxdataPath() + "S3__SY_2_SYCPAX.nc"));
     shared_ptr<AuxdataProvider> radiometricAuxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider(Constants::AUXDATA_RADIOMETRIC_ID, getAuxdataPath() + "S3__SY_2_SYRTAX.nc"));

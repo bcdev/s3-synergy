@@ -24,6 +24,7 @@ public:
     AuxdataProvider(const string& id, string auxdataPath);
     virtual ~AuxdataProvider();
 
+    uint8_t getUByte(const string& varName);
     double getDouble(const string& varName);
     valarray<double>& getDoubleArray(const string& varName);
     matrix<double>& getDoubleMatrix(const string& varName);
@@ -36,6 +37,7 @@ public:
 private:
     const string id;
     int fileId;
+    map<string, uint8_t> ubytes;
     map<string, double> doubles;
     map<string, int16_t> shorts;
     map<string, valarray<double> > doubleArrays;

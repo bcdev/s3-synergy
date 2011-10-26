@@ -13,9 +13,6 @@
 
 using std::min;
 
-// todo - read from auxdata
-const int8_t Ave::AVERAGING_FACTOR = 8;
-
 Ave::Ave() :
 		BasicModule("AVE") {
 }
@@ -24,130 +21,33 @@ Ave::~Ave() {
 }
 
 void Ave::start(Context& context) {
-	collocatedSegment = &context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-	const Grid& collocatedGrid = collocatedSegment->getGrid();
-	minCollocatedL = collocatedGrid.getMinL();
-	const size_t sizeL = collocatedGrid.getSizeL() / AVERAGING_FACTOR;
-	const size_t sizeM = ceil(collocatedGrid.getSizeM() / AVERAGING_FACTOR);
-	const size_t sizeK = collocatedGrid.getSizeK();
-	const size_t maxL = ceil((collocatedGrid.getMaxL() - minCollocatedL + 1) / AVERAGING_FACTOR);
-	averagedSegment = &context.addSegment(Constants::SEGMENT_SYN_AVERAGED, sizeL, sizeM, sizeK, 0, maxL);
-	averagedGrid = &averagedSegment->getGrid();
+	averagingFactor = getAuxdataProvider(context, Constants::AUXDATA_CONFIGURATION_ID).getUByte("ave_square");
+	sourceSegment = &context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+	const Grid& sourceGrid = sourceSegment->getGrid();
+	const size_t sizeL = sourceGrid.getSizeL() / averagingFactor;
+	const size_t sizeM = ceil(sourceGrid.getSizeM() / averagingFactor);
+	const size_t sizeK = sourceGrid.getSizeK();
+	const size_t maxL = ceil((sourceGrid.getMaxL() - sourceGrid.getMinL() + 1) / averagingFactor);
+	targetSegment = &context.addSegment(Constants::SEGMENT_SYN_AVERAGED, sizeL, sizeM, sizeK, 0, maxL);
 
-	setupVariables(context);
-	addFlagsVariable(context);
-	synFlags = &collocatedSegment->getAccessor("SYN_flags");
-	averagedSynFlags = &averagedSegment->getAccessor("SYN_flags");
-
-	averagedSegment->addVariable("longitude", Constants::TYPE_DOUBLE);
-	averagedSegment->addVariable("latitude", Constants::TYPE_DOUBLE);
-}
-
-void Ave::stop(Context& context) {
+	addVariables(context);
 }
 
 void Ave::process(Context& context) {
-	const long firstL = context.getFirstComputableL(*averagedSegment, *this);
-	const long lastComputableL = context.getLastComputableL(*collocatedSegment, *this);
-	long lastL = (context.getLastComputableL(*collocatedSegment, *this) - collocatedSegment->getGrid().getMinL() + 1) / AVERAGING_FACTOR;
-	if (lastComputableL < collocatedSegment->getGrid().getMaxL()) {
-		lastL--;
+	const long lastSourceL = context.getLastComputableL(*sourceSegment, *this);
+	const long firstTargetL = context.getFirstComputableL(*targetSegment, *this);
+	long lastTargetL = (lastSourceL - sourceSegment->getGrid().getMinL() + 1) / averagingFactor;
+	if (lastSourceL < sourceSegment->getGrid().getMaxL()) {
+		lastTargetL--;
 	}
 
-	context.getLogging().debug("Segment [" + averagedSegment->toString() + "]: firstComputableL = " + lexical_cast<string>(firstL), getId());
-	context.getLogging().debug("Segment [" + averagedSegment->toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
+	context.getLogging().debug("Segment [" + targetSegment->toString() + "]: firstComputableL = " + lexical_cast<string>(firstTargetL), getId());
+	context.getLogging().debug("Segment [" + targetSegment->toString() + "]: lastComputableL = " + lexical_cast<string>(lastTargetL), getId());
 
-	averageVariables(context, firstL, lastL);
-	averageFlags(context, firstL, lastL);
-	averageLatLon(context, firstL, lastL);
-	context.setLastComputedL(*averagedSegment, *this, lastL);
-	context.setFirstRequiredL(*collocatedSegment, *this, (lastL + 1) * AVERAGING_FACTOR);
-}
+	averageVariables(context.getLogging(), firstTargetL, lastTargetL);
 
-void Ave::averageVariables(Context& context, long firstL, long lastL) {
-	foreach(string& varName, variables)
-			{
-				context.getLogging().progress("Averaging variable '" + varName + "'...", getId());
-				for (long l_prime = firstL; l_prime <= lastL; l_prime++) {
-					if (l_prime % 100 == 0) {
-						context.getLogging().progress("   ...averaging line " + lexical_cast<string>(l_prime), getId());
-					}
-					for (long k = averagedGrid->getFirstK(); k < averagedGrid->getFirstK() + averagedGrid->getSizeK(); k++) {
-						for (long m_prime = averagedGrid->getFirstM(); m_prime < averagedGrid->getFirstM() + averagedGrid->getSizeM(); m_prime++) {
-
-							double a = 0.0;
-							long I = 0;
-							long K = 0;
-
-							for (long l = l_prime * AVERAGING_FACTOR + minCollocatedL; l < (l_prime + 1) * AVERAGING_FACTOR + minCollocatedL; l++) {
-								for (long m = m_prime * AVERAGING_FACTOR; m < (m_prime + 1) * AVERAGING_FACTOR; m++) {
-									if (!collocatedSegment->getGrid().isValidPosition(k, l, m)) {
-										continue;
-									}
-									const long collocatedIndex = collocatedSegment->getGrid().getIndex(k, l, m);
-
-									I++;
-									const uint16_t flag = synFlags->getUShort(collocatedIndex);
-									const bool isLand = (flag & 32) == 32;
-									const bool isCloud = (flag & 1) == 1;
-                                    // TODO: comment in the following lines after investigating why if expression is always false
-//                                  if(isLand && !isCloud && !isFillValue(varName, collocatedIndex)) {
-                                    if (!isFillValue(varName, collocatedIndex)) {
-                                        a += getValue(varName, collocatedIndex);
-                                        K++;
-                                    }
-                                }
-                            }
-
-							const long averagedIndex = averagedGrid->getIndex(k, l_prime, m_prime);
-							if (K == I) {
-								averagedSegment->getAccessor(varName).setDouble(averagedIndex, a / K);
-							} else {
-								averagedSegment->getAccessor(varName).setFillValue(averagedIndex);
-							}
-						}
-					}
-				}
-			}
-}
-
-void Ave::averageFlags(Context& context, long firstL, long lastL) {
-	context.getLogging().progress("Averaging variable 'SYN_flags'...", getId());
-	for (long l_prime = firstL + collocatedSegment->getGrid().getMinL(); l_prime <= lastL; l_prime++) {
-		if (l_prime % 100 == 0) {
-			context.getLogging().progress("   ...averaging line " + lexical_cast<string>(l_prime), getId());
-		}
-		for (long k = averagedGrid->getFirstK(); k < averagedGrid->getFirstK() + averagedGrid->getSizeK(); k++) {
-			for (long m_prime = averagedGrid->getFirstM(); m_prime < averagedGrid->getFirstM() + averagedGrid->getSizeM(); m_prime++) {
-
-				uint16_t flags = getFlagFillValue(context);
-				bool isPartlyCloudy = false;
-				bool isPartlyWater = false;
-				bool isBorder = false;
-
-				for (long l = l_prime * AVERAGING_FACTOR + minCollocatedL; l < (l_prime + 1) * AVERAGING_FACTOR + minCollocatedL; l++) {
-					for (long m = m_prime * AVERAGING_FACTOR; m < (m_prime + 1) * AVERAGING_FACTOR; m++) {
-						if (collocatedSegment->getGrid().isValidPosition(k, l, m)) {
-							const long collocatedIndex = collocatedSegment->getGrid().getIndex(k, l, m);
-							flags = synFlags->getUShort(collocatedIndex);
-							const bool isLand = (flags & 32) == 32;
-							const bool isCloud = (flags & 1) == 1;
-							const bool isCloudFilled = (flags & 8) == 8;
-							isPartlyCloudy = isPartlyCloudy || isCloud || isCloudFilled;
-							isPartlyWater = isPartlyWater || !isLand;
-						} else {
-							isBorder = true;
-						}
-					}
-				}
-				flags |= isPartlyCloudy ? 256 : 0;
-				flags |= isPartlyWater ? 512 : 0;
-				flags |= isBorder ? 1024 : 0;
-				const size_t averagedIndex = averagedGrid->getIndex(k, l_prime, m_prime);
-				averagedSynFlags->setUShort(averagedIndex, flags);
-			}
-		}
-	}
+	context.setLastComputedL(*targetSegment, *this, lastTargetL);
+	context.setFirstRequiredL(*sourceSegment, *this, (lastTargetL + 1) * averagingFactor);
 }
 
 static void toLatLon(double x, double y, double z, double& lat, double& lon) {
@@ -173,102 +73,166 @@ static void accumulateLatLon(double lat, double lon, double& x, double& y, doubl
 	z += std::sin(v);
 }
 
-void Ave::averageLatLon(Context& context, long firstL, long lastL) {
-	const Accessor& latAccessor = collocatedSegment->getAccessor("latitude");
-	const Accessor& lonAccessor = collocatedSegment->getAccessor("longitude");
+void Ave::averageVariables(Logging& logging, long firstL, long lastL) {
+	const Grid& sourceGrid = sourceSegment->getGrid();
+	const Grid& targetGrid = targetSegment->getGrid();
 
-	Accessor& averagedLatAccessor = averagedSegment->getAccessor("latitude");
-	Accessor& averagedLonAccessor = averagedSegment->getAccessor("longitude");
+	const Accessor& sourceFlagsAccessor = sourceSegment->getAccessor("SYN_flags");
 
-	context.getLogging().progress("Averaging view and illumination geometries ...", getId());
-	for (long l_prime = firstL + collocatedSegment->getGrid().getMinL(); l_prime <= lastL; l_prime++) {
-		if (l_prime % 100 == 0) {
-			context.getLogging().progress("   ...averaging line " + lexical_cast<string>(l_prime), getId());
-		}
-		for (long k = averagedGrid->getFirstK(); k < averagedGrid->getFirstK() + averagedGrid->getSizeK(); k++) {
-			for (long m_prime = averagedGrid->getFirstM(); m_prime < averagedGrid->getFirstM() + averagedGrid->getSizeM(); m_prime++) {
-				double x = 0.0;
-				double y = 0.0;
-				double z = 0.0;
-				long n = 0;
+#pragma omp parallel for
+	for (long targetL = firstL; targetL <= lastL; targetL++) {
+		logging.progress("Averaging line l = " + lexical_cast<string>(targetL), getId());
 
-				for (long l = l_prime * AVERAGING_FACTOR + minCollocatedL; l < (l_prime + 1) * AVERAGING_FACTOR + minCollocatedL; l++) {
-					for (long m = m_prime * AVERAGING_FACTOR; m < (m_prime + 1) * AVERAGING_FACTOR; m++) {
-						if (!collocatedSegment->getGrid().isValidPosition(k, l, m)) {
-							continue;
-						}
-						const long collocatedIndex = collocatedSegment->getGrid().getIndex(k, l, m);
-						if (!latAccessor.isFillValue(collocatedIndex) && !lonAccessor.isFillValue(collocatedIndex)) {
-							const double lat = latAccessor.getDouble(collocatedIndex);
-							const double lon = lonAccessor.getDouble(collocatedIndex);
+		foreach(string& variableName, variableNames)
+				{
+					const Accessor& sourceAccessor = sourceSegment->getAccessor(variableName);
+					Accessor& targetAccessor = targetSegment->getAccessor(variableName);
 
-							accumulateLatLon(lat, lon, x, y, z);
-							n++;
+					for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
+						for (long targetM = targetGrid.getFirstM(); targetM < targetGrid.getFirstM() + targetGrid.getSizeM(); targetM++) {
+							const size_t targetIndex = targetGrid.getIndex(k, targetL, targetM);
+
+							double sum = 0.0;
+							long pixelCount = 0;
+							long validCount = 0;
+
+							for (long sourceL = targetL * averagingFactor + sourceGrid.getMinL(); sourceL < (targetL + 1) * averagingFactor + sourceGrid.getMinL(); sourceL++) {
+								for (long sourceM = targetM * averagingFactor; sourceM < (targetM + 1) * averagingFactor; sourceM++) {
+									if (!sourceGrid.isValidPosition(k, sourceL, sourceM)) {
+										continue;
+									}
+									const size_t sourceIndex = sourceGrid.getIndex(k, sourceL, sourceM);
+
+									pixelCount++;
+									const uint16_t synFlags = sourceFlagsAccessor.getUShort(sourceIndex);
+									const bool land = (synFlags & Constants::SY2_LAND_FLAG) == Constants::SY2_LAND_FLAG;
+									const bool cloud = (synFlags & Constants::SY2_CLOUD_FLAG) == Constants::SY2_CLOUD_FLAG;
+									if (land && !cloud && !sourceAccessor.isFillValue(sourceIndex)) {
+										sum += sourceAccessor.getDouble(sourceIndex);
+										validCount++;
+									}
+								}
+							}
+							if (validCount == pixelCount) {
+								targetAccessor.setDouble(targetIndex, sum / validCount);
+							} else {
+								targetAccessor.setFillValue(targetIndex);
+							}
 						}
 					}
 				}
-				const size_t averagedIndex = averagedGrid->getIndex(k, l_prime, m_prime);
-				if (n > 0) {
-					double lat;
-					double lon;
-					toLatLon(x, y, z, lat, lon);
-					averagedLatAccessor.setDouble(averagedIndex, lat);
-					averagedLonAccessor.setDouble(averagedIndex, lon);
-				} else {
-					averagedLatAccessor.setFillValue(averagedIndex);
-					averagedLonAccessor.setFillValue(averagedIndex);
+		averageFlags(targetL);
+		averageLatLon(targetL);
+	}
+}
+
+void Ave::averageFlags(long targetL) {
+	const Grid& sourceGrid = sourceSegment->getGrid();
+	const Grid& targetGrid = targetSegment->getGrid();
+
+	const Accessor& sourceAccessor = sourceSegment->getAccessor("SYN_flags");
+	Accessor& targetAccessor = targetSegment->getAccessor("SYN_flags");
+
+	for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
+		for (long targetM = targetGrid.getFirstM(); targetM < targetGrid.getFirstM() + targetGrid.getSizeM(); targetM++) {
+			uint16_t averagedFlags = 0;
+			bool partlyCloudy = false;
+			bool partlyWater = false;
+			bool border = false;
+
+			for (long sourceL = targetL * averagingFactor + sourceGrid.getMinL(); sourceL < (targetL + 1) * averagingFactor + sourceGrid.getMinL(); sourceL++) {
+				for (long sourceM = targetM * averagingFactor; sourceM < (targetM + 1) * averagingFactor; sourceM++) {
+					if (sourceGrid.isValidPosition(k, sourceL, sourceM)) {
+						const long sourceIndex = sourceSegment->getGrid().getIndex(k, sourceL, sourceM);
+						const uint16_t synFlags = sourceAccessor.getUShort(sourceIndex);
+						const bool land = (synFlags & Constants::SY2_LAND_FLAG) == Constants::SY2_LAND_FLAG;
+						const bool cloud = (synFlags & Constants::SY2_CLOUD_FLAG) == Constants::SY2_CLOUD_FLAG;
+						const bool cloudFilled = (synFlags & Constants::SY2_CLOUD_FILLED_FLAG) == Constants::SY2_CLOUD_FILLED_FLAG;
+						partlyCloudy = partlyCloudy || cloud || cloudFilled;
+						partlyWater = partlyWater || !land;
+					} else {
+						border = true;
+					}
 				}
+
+			}
+
+			averagedFlags |= partlyCloudy ? Constants::SY2_PARTLY_CLOUDY_FLAG : 0;
+			averagedFlags |= partlyWater ? Constants::SY2_PARTLY_WATER_FLAG : 0;
+			averagedFlags |= border ? Constants::SY2_BORDER_FLAG : 0;
+			const size_t targetIndex = targetGrid.getIndex(k, targetL, targetM);
+			targetAccessor.setUShort(targetIndex, averagedFlags);
+		}
+	}
+}
+
+void Ave::averageLatLon(long targetL) {
+	const Grid& sourceGrid = sourceSegment->getGrid();
+	const Grid& targetGrid = targetSegment->getGrid();
+
+	const Accessor& sourceLatAccessor = sourceSegment->getAccessor("latitude");
+	const Accessor& sourceLonAccessor = sourceSegment->getAccessor("longitude");
+
+	Accessor& targetLatAccessor = targetSegment->getAccessor("latitude");
+	Accessor& targetLonAccessor = targetSegment->getAccessor("longitude");
+
+	for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
+		for (long targetM = targetGrid.getFirstM(); targetM < targetGrid.getFirstM() + targetGrid.getSizeM(); targetM++) {
+			double x = 0.0;
+			double y = 0.0;
+			double z = 0.0;
+			long n = 0;
+
+			for (long sourceL = targetL * averagingFactor + sourceGrid.getMinL(); sourceL < (targetL + 1) * averagingFactor + sourceGrid.getMinL(); sourceL++) {
+				for (long sourceM = targetM * averagingFactor; sourceM < (targetM + 1) * averagingFactor; sourceM++) {
+					if (!sourceGrid.isValidPosition(k, sourceL, sourceM)) {
+						continue;
+					}
+					const long sourceIndex = sourceGrid.getIndex(k, sourceL, sourceM);
+					if (!sourceLatAccessor.isFillValue(sourceIndex) && !sourceLonAccessor.isFillValue(sourceIndex)) {
+						const double lat = sourceLatAccessor.getDouble(sourceIndex);
+						const double lon = sourceLonAccessor.getDouble(sourceIndex);
+
+						accumulateLatLon(lat, lon, x, y, z);
+						n++;
+					}
+				}
+			}
+			const size_t targetIndex = targetGrid.getIndex(k, targetL, targetM);
+			if (n > 0) {
+				double lat;
+				double lon;
+				toLatLon(x, y, z, lat, lon);
+				targetLatAccessor.setDouble(targetIndex, lat);
+				targetLonAccessor.setDouble(targetIndex, lon);
+			} else {
+				targetLatAccessor.setFillValue(targetIndex);
+				targetLonAccessor.setFillValue(targetIndex);
 			}
 		}
 	}
 }
 
-bool Ave::isFillValue(const string& variableName, const long index) const {
-	const Accessor& accessor = collocatedSegment->getAccessor(variableName);
-	return accessor.isFillValue(index);
-}
+void Ave::addVariables(Context& context) {
+	vector<string> allVariableNames = sourceSegment->getVariableNames();
 
-double Ave::getValue(const string& variableName, const long index) const {
-	const Accessor& accessor = collocatedSegment->getAccessor(variableName);
-	return accessor.getDouble(index);
-}
-
-uint16_t Ave::getFlagFillValue(Context& context) {
-	const ProductDescriptor& pd = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2);
-	const SegmentDescriptor& sd = pd.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
-	const VariableDescriptor& vd = sd.getVariableDescriptor("SYN_flags");
-	return vd.getFillValue<uint16_t>();
-}
-
-void Ave::addFlagsVariable(Context& context) {
-	const ProductDescriptor& pd = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2);
-	const SegmentDescriptor& sd = pd.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
-	const VariableDescriptor& vd = sd.getVariableDescriptor("SYN_flags");
-	context.getLogging().progress("Adding variable '" + vd.toString() + "' to segment '" + averagedSegment->toString() + "'.", getId());
-	averagedSegment->addVariable(vd);
-	averagedSynFlags = &averagedSegment->getAccessor("SYN_flags");
-}
-
-void Ave::setupVariables(Context& context) {
-	variables = collocatedSegment->getVariableNames();
-	vector<string> result;
-
-	foreach(string varName, variables)
+	foreach(string variableName, allVariableNames)
 			{
-				if (matches(varName)) {
-					result.push_back(varName);
+				if (isRadianceName(variableName) || variableName.compare("SYN_flags") == 0) {
+					const Accessor& sourceAccessor = sourceSegment->getAccessor(variableName);
+					context.getLogging().info("Adding variable '" + variableName + "' to segment '" + targetSegment->toString() + "'.", getId());
+					targetSegment->addVariable(variableName, sourceAccessor.getType(), sourceAccessor.getScaleFactor(), sourceAccessor.getAddOffset());
+
+					variableNames.push_back(variableName);
 				}
 			}
-	variables = result;
-	foreach(string varName, variables)
-			{
-				context.getLogging().progress("Adding variable '" + varName + "' to segment '" + averagedSegment->toString() + "'.", getId());
-				const Accessor& accessor = collocatedSegment->getAccessor(varName);
-				averagedSegment->addVariable(varName, accessor.getType(), accessor.getScaleFactor(), accessor.getAddOffset());
-			}
+	context.getLogging().info("Adding variable 'longitude' to segment '" + targetSegment->toString() + "'.", getId());
+	targetSegment->addVariable("longitude", Constants::TYPE_DOUBLE);
+	context.getLogging().info("Adding variable 'latitude' to segment '" + targetSegment->toString() + "'.", getId());
+	targetSegment->addVariable("latitude", Constants::TYPE_DOUBLE);
 }
 
-bool Ave::matches(const string& varName) {
-	const regex e("L_[0-9][0-9]?(_er)?(_exception)?");
-	return regex_match(varName, e);
+bool Ave::isRadianceName(const string& variableName) {
+	static const regex regularExpression("L_[0-9][0-9]?(_er)?(_exception)?");
+	return regex_match(variableName, regularExpression);
 }

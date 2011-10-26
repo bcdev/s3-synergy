@@ -6,33 +6,44 @@
  */
 
 #include "BasicModule.h"
-#include "../util/LookupTableReader.h"
 
 void BasicModule::addAccessor(Context& context, Segment& s, const VariableDescriptor& varDescriptor) const {
     context.getLogging().info("Adding accessor for " + varDescriptor.toString() + "to segment " + s.toString(), getId());
     s.addVariable(varDescriptor);
 }
 
-void BasicModule::addMatrixLookupTable(Context& context, const string& fileName, const string& varName) const {
+AuxdataProvider& BasicModule::getAuxdataProvider(Context& context, const string& id) const {
+    if (!context.hasObject(id)) {
+        shared_ptr<AuxdataProvider> auxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider(id, getAuxdataPath() + "S3__SY_2_" + id + ".nc"));
+        context.getLogging().info("Preparing auxiliary data '" + id + "'", getId());
+        context.addObject(auxdataProvider);
+    }
+    return (AuxdataProvider&) context.getObject(id);
+}
+
+MatrixLookupTable<double>& BasicModule::getMatrixLookupTable(Context& context, const string& fileName, const string& varName) const {
     if (!context.hasObject(varName)) {
         const LookupTableReader reader(getAuxdataPath() + fileName);
         context.getLogging().info("Reading LUT '" + varName + "'", getId());
         context.addObject(reader.readMatrixLookupTable<double>(varName));
     }
+    return (MatrixLookupTable<double>&) context.getObject(varName);
 }
 
-void BasicModule::addVectorLookupTable(Context& context, const string& fileName, const string& varName) const {
+VectorLookupTable<double>& BasicModule::getVectorLookupTable(Context& context, const string& fileName, const string& varName) const {
     if (!context.hasObject(varName)) {
         const LookupTableReader reader(getAuxdataPath() + fileName);
         context.getLogging().info("Reading LUT '" + varName + "'", getId());
         context.addObject(reader.readVectorLookupTable<double>(varName));
     }
+    return (VectorLookupTable<double>&) context.getObject(varName);
 }
 
-void BasicModule::addScalarLookupTable(Context& context, const string& fileName, const string& varName) const {
+ScalarLookupTable<double>& BasicModule::getScalarLookupTable(Context& context, const string& fileName, const string& varName) const {
     if (!context.hasObject(varName)) {
         const LookupTableReader reader(getAuxdataPath() + fileName);
         context.getLogging().info("Reading LUT '" + varName + "'", getId());
         context.addObject(reader.readScalarLookupTable<double>(varName));
     }
+    return (ScalarLookupTable<double>&) context.getObject(varName);
 }
