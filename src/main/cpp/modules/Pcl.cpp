@@ -42,7 +42,7 @@ void Pcl::setUpSourceAccessors(Context & context) {
 	slnFlagsAccessor = &collocatedSegment->getAccessor("SLN_confidence");
 	sloFlagsAccessor = &collocatedSegment->getAccessor("SLO_confidence");
 
-	for (size_t b = 19; b <= 30; b++) {
+	for (size_t b = 1; b <= 30; b++) {
 		radianceAccessors.push_back(&collocatedSegment->getAccessor("L_" + lexical_cast<string>(b)));
 	}
 }
@@ -70,13 +70,20 @@ void Pcl::process(Context& context) {
 				const size_t index = collocatedGrid.getIndex(k, l, m);
 				uint16_t value = computeFlagValue(olcFlags[index], slnFlags[index], sloFlags[index]);
 
+				bool noOLC = true;
 				bool noSLN = true;
 				bool noSLO = true;
-				for (size_t b = 0; b < 6; b++) {
+				for (size_t b = 0; b < 18; b++) {
+					noOLC &= radianceAccessors[b]->isFillValue(index);
+				}
+				for (size_t b = 18; b < 24; b++) {
 					noSLN &= radianceAccessors[b]->isFillValue(index);
 				}
-				for (size_t b = 6; b < 12; b++) {
+				for (size_t b = 24; b < 30; b++) {
 					noSLO &= radianceAccessors[b]->isFillValue(index);
+				}
+				if (noOLC) {
+					value |= Constants::SY2_NO_OLC_FLAG;
 				}
 				if (noSLN) {
 					value |= Constants::SY2_NO_SLN_FLAG;

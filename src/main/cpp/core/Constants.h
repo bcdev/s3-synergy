@@ -117,7 +117,8 @@ const uint8_t SY1_SLSTR_CLOUD_FLAG = 64U;
 
 const uint16_t SY2_CLOUD_FLAG = 1U;
 const uint16_t SY2_CLOUD_FILLED_FLAG = 8U;
-const uint16_t SY2_LAND_FLAG = 32U;
+const uint16_t SY2_LAND_FLAG = 16U;
+const uint16_t SY2_NO_OLC_FLAG = 32U;
 const uint16_t SY2_NO_SLN_FLAG = 64U;
 const uint16_t SY2_NO_SLO_FLAG = 128U;
 const uint16_t SY2_PARTLY_CLOUDY_FLAG = 256U;
