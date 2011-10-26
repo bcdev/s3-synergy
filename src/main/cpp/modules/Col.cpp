@@ -68,8 +68,8 @@ void Col::process(Context& context) {
 
         for (size_t i = 0; i < targetNames.size(); i++) {
             const string& targetName = targetNames[i];
-            const Segment& s = *sourceSegmentMap[targetName];
-            const Grid& sourceGrid = s.getGrid();
+            const Segment& sourceSegment = *sourceSegmentMap[targetName];
+            const Grid& sourceGrid = sourceSegment.getGrid();
 
             const Accessor& sourceAccessor = *sourceAccessors[i];
             Accessor& targetAccessor = *targetAccessors[i];
@@ -77,6 +77,10 @@ void Col::process(Context& context) {
             const Accessor& collocationXAccessor = *xAccessors[i];
             const Accessor& collocationYAccessor = *yAccessors[i];
 
+            valarray<long> lastLines(lastL, targetGrid.getSizeK());
+            valarray<long> firstRequiredLines(firstRequiredLMap[sourceSegment], targetGrid.getSizeK());
+
+#pragma omp parallel for
             for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
                 for (long m = targetGrid.getFirstM(); m < targetGrid.getFirstM() + targetGrid.getSizeM(); m++) {
                     const size_t targetIndex = targetGrid.getIndex(k, l, m);
@@ -89,7 +93,7 @@ void Col::process(Context& context) {
                     long sourceL;
                     long sourceM;
 
-                    if (s.getId().compare(Constants::SEGMENT_OLC) == 0) {
+                    if (sourceSegment.getId().compare(Constants::SEGMENT_OLC) == 0) {
                         sourceK = k;
                         sourceL = l + floor(collocationYAccessor.getDouble(targetIndex));
                         sourceM = m + floor(collocationXAccessor.getDouble(targetIndex));
@@ -108,14 +112,15 @@ void Col::process(Context& context) {
                         continue;
                     }
 
-                    firstRequiredLMap[&s] = min(sourceL, firstRequiredLMap[&s]);
-                    const long lastComputableL = context.getLastComputableL(s, *this);
+                    firstRequiredLines[k] = min(sourceL, firstRequiredLines[k]);
+                    const long lastComputableL = context.getLastComputableL(sourceSegment, *this);
                     if (sourceL > lastComputableL) {
-                        lastL = min(l - 1, lastL);
+                        lastLines[k] = min(l - 1, lastLines[k]);
                         continue;
                     }
 
                     const size_t sourceIndex = sourceGrid.getIndex(sourceK, sourceL, sourceM);
+
                     switch (sourceAccessor.getType()) {
                     case Constants::TYPE_BYTE: {
                         targetAccessor.setByte(targetIndex, sourceAccessor.getByte(sourceIndex));
@@ -163,6 +168,15 @@ void Col::process(Context& context) {
                     }
                 }
             }
+
+            long minLastL = lastLines[0];
+            long minFirstRequiredL = firstRequiredLines[0];
+            for (long k = targetGrid.getFirstK() + 1; k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
+                minLastL = min(minLastL, lastLines[k]);
+                minFirstRequiredL = min(minFirstRequiredL, firstRequiredLines[k]);
+            }
+            lastL = minLastL;
+            firstRequiredLMap[&sourceSegment] = minFirstRequiredL;
         }
     }
     context.setFirstRequiredL(olc, *this, min(firstRequiredLMap[&olc], lastL));
