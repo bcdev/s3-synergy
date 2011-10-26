@@ -23,13 +23,13 @@
                     <name>flag_masks</name>
                     <type>ushort</type>
                     <!-- attention: no carriage return must be used in the following line -->
-                    <value>1 2 4 8 32 256 512 1024 2048 4096 8192 16384 32768</value>
+                    <value>1 2 4 8 16 32 64 128 256 512 1024 2048 4096 8192 16384 32768</value>
                 </attribute>
                 <attribute>
                     <name>flag_meanings</name>
                     <type>string</type>
                     <!-- attention: no carriage return must be used in the following line -->
-                    <value>SYN_cloud SYN_snow_risk SYN_shadow_risk SYN_cloud_filled SYN_land SYN_partly_cloudy SYN_partly_water SYN_border SYN_aerosol_filled SYN_success SYN_negative_curvature SYN_too_low SYN_high_error</value>
+                    <value>SYN_cloud SYN_snow_risk SYN_shadow_risk SYN_cloud_filled SYN_land SYN_no_olc SYN_no_sln SYN_no_slo SYN_partly_cloudy SYN_partly_water SYN_border SYN_aerosol_filled SYN_success SYN_negative_curvature SYN_too_low SYN_high_error</value>
                 </attribute>
             </attributes>
         </variable>
