@@ -14,8 +14,6 @@
 
 using std::numeric_limits;
 
-static const double FILL_VALUE_DOUBLE = -numeric_limits<double>::max();
-
 ErrorMetric::ErrorMetric(Pixel& p, int16_t amin, Context& context) :
        lutOlcRatm((MatrixLookupTable<double>&) context.getObject("OLC_R_atm")), lutSlnRatm((MatrixLookupTable<double>&) context.getObject("SLN_R_atm")), lutSloRatm(
                 (MatrixLookupTable<double>&) context.getObject("SLO_R_atm")), lutT((MatrixLookupTable<double>&) context.getObject("t")), lutRhoAtm(
@@ -150,7 +148,7 @@ void ErrorMetric::applyAtmosphericCorrection(Pixel& p, int16_t amin) {
         if (sdr >= 0.0 && sdr <= 1.0) {
             p.sdrs[b] = sdr;
         } else {
-            p.sdrs[b] = FILL_VALUE_DOUBLE;
+            p.sdrs[b] = Constants::FILL_VALUE_DOUBLE;
         }
     }
 
@@ -181,7 +179,7 @@ void ErrorMetric::applyAtmosphericCorrection(Pixel& p, int16_t amin) {
         if (sdr >= 0.0 && sdr <= 1.0) {
             p.sdrs[b] = sdr;
         } else {
-            p.sdrs[b] = FILL_VALUE_DOUBLE;
+            p.sdrs[b] = Constants::FILL_VALUE_DOUBLE;
         }
     }
 
@@ -212,7 +210,7 @@ void ErrorMetric::applyAtmosphericCorrection(Pixel& p, int16_t amin) {
         if (sdr >= 0.0 && sdr <= 1.0) {
             p.sdrs[b] = sdr;
         } else {
-            p.sdrs[b] = FILL_VALUE_DOUBLE;
+            p.sdrs[b] = Constants::FILL_VALUE_DOUBLE;
         }
     }
 }
