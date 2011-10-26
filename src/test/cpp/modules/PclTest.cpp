@@ -75,7 +75,7 @@ void PclTest::testStart() {
 	segment.addVariable("OLC_flags", Constants::TYPE_BYTE);
 	segment.addVariable("SLN_confidence", Constants::TYPE_BYTE);
 	segment.addVariable("SLO_confidence", Constants::TYPE_BYTE);
-	for (size_t b = 19; b <= 30; b++) {
+	for (size_t b = 1; b <= 30; b++) {
 		segment.addVariable("L_" + lexical_cast<string>(b), Constants::TYPE_DOUBLE);
 	}
 	CPPUNIT_ASSERT(!segment.hasVariable("SYN_flags"));
