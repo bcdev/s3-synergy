@@ -101,6 +101,7 @@ void ColTest::testAddOlciVariables() {
     }
 	olciSegment.addVariable("L_17", Constants::TYPE_BYTE);
 	olciSegment.addVariable("L_17_er", Constants::TYPE_BYTE);
+	olciSegment.addVariable("OLC_confidence", Constants::TYPE_BYTE);
 	olciSegment.addVariable("longitude", Constants::TYPE_BYTE);
 	olciSegment.addVariable("latitude", Constants::TYPE_BYTE);
 	olciSegment.addVariable("altitude", Constants::TYPE_BYTE);

@@ -49,14 +49,14 @@ public:
 	 * Adds a variable to the segment.
 	 * @param variableDescriptor The descriptor of the variable being added.
 	 */
-	virtual void addVariable(const VariableDescriptor& variableDescriptor) throw (logic_error) = 0;
+	virtual Accessor& addVariable(const VariableDescriptor& variableDescriptor) throw (logic_error) = 0;
 
 	/**
 	 * Adds a variable to the segment.
 	 * @param variableDescriptor The descriptor of the variable being added.
 	 * @param name The name of the variable being added.
 	 */
-	virtual void addVariable(const VariableDescriptor& variableDescriptor, const string& targetName) throw (logic_error) = 0;
+	virtual Accessor& addVariable(const VariableDescriptor& variableDescriptor, const string& targetName) throw (logic_error) = 0;
 
 	/**
 	 * Adds a variable to the segment.
@@ -65,7 +65,7 @@ public:
 	 * @param scaleFactor The scale factor of the variable being added.
 	 * @param addOffset The add-offset of the variable being added.
 	 */
-	virtual void addVariable(const string& name, int type, double scaleFactor =
+	virtual Accessor& addVariable(const string& name, int type, double scaleFactor =
 			1.0, double addOffset = 0.0) throw (logic_error) = 0;
 
 	/**
@@ -74,7 +74,7 @@ public:
 	 * @param segment The source segment.
 	 * @param name The name of the variable being copied.
 	 */
-	virtual void addVariableAlias(const string& alias, const Segment& segment,
+	virtual Accessor& addVariableAlias(const string& alias, const Segment& segment,
 			const string& name) throw (logic_error) = 0;
 
 	/**

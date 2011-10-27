@@ -93,6 +93,10 @@ void Pcl::process(Context& context) {
 				}
 
 				targetAccessor.setUShort(index, value);
+
+				// TODO - compute OLC_flags
+				// TODO - compute SLN_flags
+				// TODO - compute SLO_flags
 			}
 		}
 	}

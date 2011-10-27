@@ -3,7 +3,7 @@
 <variables>
 	<variable>
 		<ncname>OLCI_QC_flags</ncname>
-		<name>OLC_flags</name>
+		<name>OLC_confidence</name>
 		<segment_name>OLC</segment_name>
 	</variable>
 </variables>
