@@ -436,8 +436,23 @@ void Aer::aer_s(shared_ptr<Pixel> p, Context& context) {
 bool Aer::e2(Pixel& p, size_t amin, Context& context) {
     E1 e1(p, amin, context);
     Bracket bracket;
-    Min::brack(e1, 0.0, 3.0, bracket);
+//    Min::brack(e1, 0.0, 3.0, bracket);
+    bracket.lowerX = 0.0;
+    bracket.minimumX = p.tau550;
+    bracket.upperX = 2.0;
+    bracket.lowerF = e1.value(0.0);
+    bracket.minimumF = e1.value(0.1);
+    bracket.upperF = e1.value(2.0);
     const bool success = Min::brent(e1, bracket, Min::ACCURACY_GOAL);
+
+    const valarray<double>& pn = e1.getPn();
+    p.c1 = pn[0];
+    p.c2 = pn[1];
+    p.nu[0] = pn[2];
+    p.nu[1] = pn[3];
+    for (size_t i = 0; i < 6; i++) {
+        p.omega[i] = pn[i + 4];
+    }
     p.tau550 = bracket.minimumX;
     p.E2 = bracket.minimumF;
     return success;

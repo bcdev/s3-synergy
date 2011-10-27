@@ -22,11 +22,11 @@ class ErrorMetric : public MultivariateFunction {
 
 public:
 
-    ErrorMetric(Pixel& p,int16_t amin, Context& context);
+    ErrorMetric(const Pixel& p,int16_t amin, double tau550, Context& context);
 
     double value(valarray<double>& x);
 
-    static double ndv(Pixel& q, const valarray<int16_t>& ndviIndices);
+    static double ndv(const Pixel& q, const valarray<int16_t>& ndviIndices);
 
 private:
     const MatrixLookupTable<double>& lutOlcRatm;
@@ -40,22 +40,23 @@ private:
     double sum4;
     double totalAngularWeight;
 
-    Pixel& p;
-
     double gamma;
     valarray<double> D;
     valarray<double> spectralWeights;
     valarray<double> vegetationSpectrum;
     valarray<double> soilReflectance;
+    valarray<double> sdrs;
+    valarray<double> rSpec;
+    valarray<double> rAng;
     matrix<double> angularWeights;
 
-    void applyAtmosphericCorrection(Pixel& p, int16_t amin);
+    void applyAtmosphericCorrection(const Pixel& p, int16_t amin);
 
     double angModelSurf(size_t index, valarray<double>& x);
 
     double specModelSurf(double c_1, double c_2, size_t index);
 
-    double errorMetric(valarray<double> rSpec, valarray<double> rAng);
+    double errorMetric();
 };
 
 #endif /* ERRORMETRIC_H_ */

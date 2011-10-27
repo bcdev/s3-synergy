@@ -54,12 +54,11 @@ private:
 class E1 : public UnivariateFunction {
 
 public:
-    E1(Pixel& p, int16_t amin, Context& context) : p(p), amin(amin), context(context) {
+    E1(const Pixel& p, int16_t amin, Context& context) : p(p), amin(amin), context(context), optimisedPn(10) {
     }
 
     double value(double tau550) {
-        p.tau550 = tau550;
-        ErrorMetric em(p, amin, context);
+        ErrorMetric em(p, amin, tau550, context);
         valarray<double> pn(10);
         pn[0] = p.c1;
         pn[1] = p.c2;
@@ -74,20 +73,20 @@ public:
         }
 
         MultiMin::powell(em, pn, u, MultiMin::ACCURACY_GOAL, 200);
-        p.c1 = pn[0];
-        p.c2 = pn[1];
-        p.nu[0] = pn[2];
-        p.nu[1] = pn[3];
-        for(size_t i = 0; i < 6; i++) {
-            p.omega[i] = pn[i + 4];
-        }
+        copy(&pn[0], &pn[pn.size()], &optimisedPn[0]);
         return em.value(pn);
     }
 
+    const valarray<double>& getPn() {
+        return optimisedPn;
+    }
+
 private:
-    Pixel& p;
+    const Pixel& p;
     int16_t amin;
     Context& context;
+
+    valarray<double> optimisedPn;
 
 };
 

@@ -14,10 +14,11 @@
 
 using std::numeric_limits;
 
-ErrorMetric::ErrorMetric(Pixel& p, int16_t amin, Context& context) :
+ErrorMetric::ErrorMetric(const Pixel& p, int16_t amin, double tau550, Context& context) :
        lutOlcRatm((MatrixLookupTable<double>&) context.getObject("OLC_R_atm")), lutSlnRatm((MatrixLookupTable<double>&) context.getObject("SLN_R_atm")), lutSloRatm(
                 (MatrixLookupTable<double>&) context.getObject("SLO_R_atm")), lutT((MatrixLookupTable<double>&) context.getObject("t")), lutRhoAtm(
-                (MatrixLookupTable<double>&) context.getObject("rho_atm")), lutTotalAngularWeights((ScalarLookupTable<double>&) context.getObject("weight_ang_tot")),  p(p), D(6) {
+                (MatrixLookupTable<double>&) context.getObject("rho_atm")), lutTotalAngularWeights((ScalarLookupTable<double>&) context.getObject("weight_ang_tot")),
+                D(6), sdrs(30), rSpec(30), rAng(12) {
     const VectorLookupTable<double>& lutD = (VectorLookupTable<double>&) context.getObject("D");
     valarray<double> coordinates(lutD.getDimensionCount());
     assert(coordinates.size() == 4);
@@ -65,15 +66,13 @@ ErrorMetric::ErrorMetric(Pixel& p, int16_t amin, Context& context) :
 }
 
 double ErrorMetric::value(valarray<double>& x) {
-    valarray<double> rSpec(30);
-    valarray<double> rAng(12);
     for (size_t i = 0; i < 30; i++) {
         rSpec[i] = specModelSurf(x[0], x[1], i);
     }
     for (size_t i = 0; i < 12; i++) {
         rAng[i] = angModelSurf(i, x);
     }
-    return errorMetric(rSpec, rAng);
+    return errorMetric();
 }
 
 static double ozoneTransmission(double cO3, double sza, double vza, double nO3) {
@@ -99,7 +98,7 @@ static double surfaceReflectance(double rtoa, double ratm, double ts, double tv,
     return rboa;
 }
 
-void ErrorMetric::applyAtmosphericCorrection(Pixel& p, int16_t amin) {
+void ErrorMetric::applyAtmosphericCorrection(const Pixel& p, int16_t amin) {
     using std::abs;
 
     valarray<double> coordinates(10);
@@ -146,9 +145,9 @@ void ErrorMetric::applyAtmosphericCorrection(Pixel& p, int16_t amin) {
         const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho, tO3);
 
         if (sdr >= 0.0 && sdr <= 1.0) {
-            p.sdrs[b] = sdr;
+            sdrs[b] = sdr;
         } else {
-            p.sdrs[b] = Constants::FILL_VALUE_DOUBLE;
+            sdrs[b] = Constants::FILL_VALUE_DOUBLE;
         }
     }
 
@@ -177,9 +176,9 @@ void ErrorMetric::applyAtmosphericCorrection(Pixel& p, int16_t amin) {
         const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho, tO3);
 
         if (sdr >= 0.0 && sdr <= 1.0) {
-            p.sdrs[b] = sdr;
+            sdrs[b] = sdr;
         } else {
-            p.sdrs[b] = Constants::FILL_VALUE_DOUBLE;
+            sdrs[b] = Constants::FILL_VALUE_DOUBLE;
         }
     }
 
@@ -208,9 +207,9 @@ void ErrorMetric::applyAtmosphericCorrection(Pixel& p, int16_t amin) {
         const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho, tO3);
 
         if (sdr >= 0.0 && sdr <= 1.0) {
-            p.sdrs[b] = sdr;
+            sdrs[b] = sdr;
         } else {
-            p.sdrs[b] = Constants::FILL_VALUE_DOUBLE;
+            sdrs[b] = Constants::FILL_VALUE_DOUBLE;
         }
     }
 }
@@ -229,13 +228,13 @@ double ErrorMetric::specModelSurf(double c_1, double c_2, size_t index) {
     return c_1 * vegetationSpectrum[index] + c_2 * soilReflectance[index];
 }
 
-double ErrorMetric::errorMetric(valarray<double> rSpec, valarray<double> rAng) {
+double ErrorMetric::errorMetric() {
     double sum1 = 0.0;
     double sum3 = 0.0;
     for (size_t i = 0; i < 30; i++) {
         const double w = spectralWeights[i];
         if (w > 0.0) {
-            sum1 += w * (p.sdrs[i] - rSpec[i]) * (p.sdrs[i] - rSpec[i]);
+            sum1 += w * (sdrs[i] - rSpec[i]) * (sdrs[i] - rSpec[i]);
         }
     }
     for (size_t i = 0; i < 12; i++) {
@@ -243,13 +242,13 @@ double ErrorMetric::errorMetric(valarray<double> rSpec, valarray<double> rAng) {
         size_t yIndex = i % 6;
         const double w = angularWeights.at_element(xIndex, yIndex);
         if (w > 0.0) {
-            sum3 += w * (p.sdrs[i] - rAng[i]) * (p.sdrs[i] - rAng[i]);
+            sum3 += w * (sdrs[i] - rAng[i]) * (sdrs[i] - rAng[i]);
         }
     }
     return (1 - totalAngularWeight) * sum1 / sum2 + totalAngularWeight * sum3 / sum4;
 }
 
-double ErrorMetric::ndv(Pixel& q, const valarray<int16_t>& ndviIndices) {
+double ErrorMetric::ndv(const Pixel& q, const valarray<int16_t>& ndviIndices) {
     const double fillValue = -numeric_limits<double_t>::max();
 
     double L1 = q.radiances[ndviIndices[0] - 1];
