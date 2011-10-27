@@ -41,7 +41,6 @@ private:
     const Grid& slnInfoGrid;
     const Grid& sloInfoGrid;
 
-    const Accessor& solarIrradiancesOlc;
     const Accessor& synFlags;
     const Accessor& lat;
     const Accessor& lon;
@@ -51,6 +50,7 @@ private:
     const TiePointInterpolator<double> tiePointInterpolatorSlo;
 
     vector<Accessor*> radiances;
+    vector<Accessor*> solarIrradiancesOlc;
     vector<Accessor*> solarIrradiancesSln;
     vector<Accessor*> solarIrradiancesSlo;
 
@@ -80,7 +80,6 @@ PixelInitializer::PixelInitializer(const Context& context) :
         olcInfoGrid(olcInfoSegment.getGrid()),
         slnInfoGrid(slnInfoSegment.getGrid()),
         sloInfoGrid(sloInfoSegment.getGrid()),
-        solarIrradiancesOlc(averagedSegment.getAccessor("solar_irradiance")),
         synFlags(averagedSegment.getAccessor("SYN_flags")),
         lat(averagedSegment.getAccessor("latitude")),
         lon(averagedSegment.getAccessor("longitude")),
@@ -89,6 +88,9 @@ PixelInitializer::PixelInitializer(const Context& context) :
         tiePointInterpolatorSlo(context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lat").getDoubles()) {
     for (size_t b = 0; b < 30; b++) {
         radiances.push_back(&averagedSegment.getAccessor("L_" + lexical_cast<string>(b + 1)));
+    }
+    for (size_t b = 0; b < 18; b++) {
+        solarIrradiancesOlc.push_back(&averagedSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(b + 1)));
     }
     for (size_t b = 18; b < 24; b++) {
         solarIrradiancesSln.push_back(&averagedSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(b + 1)));
@@ -171,26 +173,32 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
     /*
      * Solar irradiances
      */
-    for (size_t channel = 0; channel < 18; channel++) {
-        const size_t index = averagedGrid.getIndex(k, channel, m);
-
-        if (!solarIrradiancesOlc.isFillValue(index)) {
-            p->solarIrradiances[channel] = solarIrradiancesOlc.getDouble(index);
+    for (size_t i = 0; i < 18; i++) {
+        const Accessor& accessor = *solarIrradiancesOlc[i];
+        const size_t index = averagedGrid.getIndex(k, l, m);
+        if (!accessor.isFillValue(index)) {
+            p->solarIrradiances[i] = accessor.getDouble(index);
         } else {
-            p->solarIrradiances[channel] = Constants::FILL_VALUE_DOUBLE;
+            p->solarIrradiances[i] = Constants::FILL_VALUE_DOUBLE;
         }
     }
     for (size_t i = 0; i < 6; i++) {
         const Accessor& accessor = *solarIrradiancesSln[i];
-        const size_t channel = 18 + i;
-        // TODO: replace m-index with SLN line % 4
-        p->solarIrradiances[channel] = accessor.getDouble(slnInfoGrid.getIndex(0, 0, 1));
+        const size_t index = averagedGrid.getIndex(k, l, m);
+        if (!accessor.isFillValue(index)) {
+            p->solarIrradiances[i + 18] = accessor.getDouble(index);
+        } else {
+            p->solarIrradiances[i + 18] = Constants::FILL_VALUE_DOUBLE;
+        }
     }
     for (size_t i = 0; i < 6; i++) {
         const Accessor& accessor = *solarIrradiancesSlo[i];
-        const size_t channel = 24 + i;
-        // TODO: replace m-index with SLN line % 4
-        p->solarIrradiances[channel] = accessor.getDouble(sloInfoGrid.getIndex(0, 0, 1));
+        const size_t index = averagedGrid.getIndex(k, l, m);
+        if (!accessor.isFillValue(index)) {
+            p->solarIrradiances[i + 24] = accessor.getDouble(index);
+        } else {
+            p->solarIrradiances[i + 24] = Constants::FILL_VALUE_DOUBLE;
+        }
     }
 
     /*
