@@ -59,6 +59,7 @@ void Col::process(Context& context) {
                 yAccessors.push_back(&olc.getAccessor(collocationNameMapY[targetName]));
             }
 
+#pragma omp parallel for default(shared)
     for (long l = firstL; l <= lastL; l++) {
         context.getLogging().progress("Collocating line l = " + lexical_cast<string>(l), getId());
 
