@@ -100,7 +100,7 @@ PixelInitializer::PixelInitializer(const Context& context) :
     }
 
     AuxdataProvider& radiometricAuxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUXDATA_RADIOMETRIC_ID);
-    cO3 = radiometricAuxdataProvider.getDoubleArray("C_O3");
+    cO3 = radiometricAuxdataProvider.getVectorDouble("C_O3");
 
     const Segment& olciTiepointSegment = context.getSegment(Constants::SEGMENT_OLC_TP);
     const Segment& slnTiepointSegment = context.getSegment(Constants::SEGMENT_SLN_TP);
@@ -449,12 +449,12 @@ bool Aer::e2(Pixel& p, size_t amin, Context& context) {
     bracket.lowerX = 0.0;
     bracket.minimumX = p.tau550;
     bracket.upperX = 2.0;
-    bracket.lowerF = e1.value(0.0);
-    bracket.minimumF = e1.value(0.1);
-    bracket.upperF = e1.value(2.0);
+    bracket.lowerF = e1.getValue(0.0);
+    bracket.minimumF = e1.getValue(0.1);
+    bracket.upperF = e1.getValue(2.0);
     const bool success = Min::brent(e1, bracket);
 
-    const valarray<double>& pn = e1.getPn();
+    const valarray<double>& pn = e1.getParameters();
     p.c1 = pn[0];
     p.c2 = pn[1];
     p.nu[0] = pn[2];
@@ -470,8 +470,8 @@ bool Aer::e2(Pixel& p, size_t amin, Context& context) {
 double Aer::errorCurvature(shared_ptr<Pixel> p, Context& context) {
     E1 e1_1(*p, p->amin, context);
     E1 e1_2(*p, p->amin, context);
-    double a = e1_1.value(0.8 * p->tau550);
-    double b = e1_2.value(0.6 * p->tau550);
+    double a = e1_1.getValue(0.8 * p->tau550);
+    double b = e1_2.getValue(0.6 * p->tau550);
     return 25 * (p->E2 - 2 * a + b) / (2 * p->E2 * p->E2);
 }
 
@@ -517,12 +517,12 @@ void Aer::readAuxdata(Context& context) {
     AuxdataProvider& radiometricAuxdataProvider = getAuxdataProvider(context, Constants::AUXDATA_RADIOMETRIC_ID);
 
     initialTau550 = configurationAuxdataProvider.getDouble("T550_ini");
-    amins = configurationAuxdataProvider.getShortArray("AMIN");
-    initialNu = configurationAuxdataProvider.getDoubleArray("v_ini");
-    initialOmega = configurationAuxdataProvider.getDoubleArray("w_ini");
+    amins = configurationAuxdataProvider.getVectorShort("AMIN");
+    initialNu = configurationAuxdataProvider.getVectorDouble("v_ini");
+    initialOmega = configurationAuxdataProvider.getVectorDouble("w_ini");
     kappa = configurationAuxdataProvider.getDouble("kappa");
-    ndviIndices = configurationAuxdataProvider.getShortArray("NDV_channel");
-    aerosolAngstromExponents = radiometricAuxdataProvider.getDoubleArray("A550");
+    ndviIndices = configurationAuxdataProvider.getVectorShort("NDV_channel");
+    aerosolAngstromExponents = radiometricAuxdataProvider.getVectorDouble("A550");
 }
 
 void Aer::putPixels(vector<shared_ptr<Pixel> > pixels) const {

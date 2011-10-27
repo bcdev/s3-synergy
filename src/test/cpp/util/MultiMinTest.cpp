@@ -11,7 +11,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(MultiMinTest);
 
 class Cigar: public MultivariateFunction {
 public:
-	double value(valarray<double>& x) {
+	double getValue(valarray<double>& x) {
 		double sum = 0.0;
 
 		for (size_t i = 1; i < x.size(); ++i) {
@@ -24,7 +24,7 @@ public:
 
 class Rosenbrock: public MultivariateFunction {
 public:
-	double value(valarray<double>& x) {
+	double getValue(valarray<double>& x) {
 		double sum = 0.0;
 
 		for (size_t i = 0; i < x.size() - 1; ++i) {

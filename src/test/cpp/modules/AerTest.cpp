@@ -114,7 +114,7 @@ void AerTest::testAer_s() {
     }
 
     AuxdataProvider& rap = (AuxdataProvider&)context->getObject(Constants::AUXDATA_RADIOMETRIC_ID);
-    valarray<double> cO3 = rap.getDoubleArray("C_O3");
+    valarray<double> cO3 = rap.getVectorDouble("C_O3");
     copy(&cO3[0], &cO3[30], &(p->cO3[0]));
 
     p->sza = 44.426440;

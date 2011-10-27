@@ -30,11 +30,11 @@ ErrorMetric::ErrorMetric(const Pixel& p, int16_t amin, double tau550, Context& c
     lutD.getValues(&coordinates[0], D);
 
     AuxdataProvider& configurationAuxdata = (AuxdataProvider&) context.getObject(Constants::AUXDATA_CONFIGURATION_ID);
-    spectralWeights = configurationAuxdata.getDoubleArray("weight_spec");
-    vegetationSpectrum = configurationAuxdata.getDoubleArray("R_veg");
-    soilReflectance = configurationAuxdata.getDoubleArray("R_soil");
-    valarray<int16_t> ndviIndices = configurationAuxdata.getShortArray("NDV_channel");
-    angularWeights = configurationAuxdata.getDoubleMatrix("weight_ang");
+    spectralWeights = configurationAuxdata.getVectorDouble("weight_spec");
+    vegetationSpectrum = configurationAuxdata.getVectorDouble("R_veg");
+    soilReflectance = configurationAuxdata.getVectorDouble("R_soil");
+    valarray<int16_t> ndviIndices = configurationAuxdata.getVectorShort("NDV_channel");
+    angularWeights = configurationAuxdata.getMatrixDouble("weight_ang");
     gamma = configurationAuxdata.getDouble("gamma");
 
     for (size_t i = 1; i <= 30; i++) {
@@ -63,7 +63,7 @@ ErrorMetric::ErrorMetric(const Pixel& p, int16_t amin, double tau550, Context& c
     totalAngularWeight = lutTotalAngularWeights.getValue(&ndvi);
 }
 
-double ErrorMetric::value(valarray<double>& x) {
+double ErrorMetric::getValue(valarray<double>& x) {
     for (size_t i = 0; i < 30; i++) {
         rSpec[i] = specModelSurf(x[0], x[1], i);
     }

@@ -7,20 +7,21 @@
 
 #include <algorithm>
 #include <climits>
+#include <cmath>
 #include <stdexcept>
 #include <string>
 
-#include "../core/Boost.h"
 #include "Min.h"
 
+using std::abs;
 using std::invalid_argument;
 using std::min;
 using std::numeric_limits;
 using std::sqrt;
 using std::string;
 
-const double Min::GOLDEN = 0.3819660;
-const double Min::DEFAULT_RELATIVE_ACCURACY_GOAL = 1.0E-4;
+static const double EPS = sqrt(numeric_limits<double>::epsilon());
+static const double GOLDEN = 0.3819660;
 
 Min::Min() {
 
@@ -31,10 +32,10 @@ Min::~Min() {
 
 Bracket& Min::brack(UnivariateFunction& function, double a, double b, Bracket& bracket) {
     double lowerX = a;
-    double lowerF = function.value(a);
+    double lowerF = function.getValue(a);
 
     double minimumX = b;
-    double minimumF = function.value(b);
+    double minimumF = function.getValue(b);
 
     if (minimumF > lowerF) {
         const double lx = lowerX;
@@ -48,11 +49,11 @@ Bracket& Min::brack(UnivariateFunction& function, double a, double b, Bracket& b
     }
 
     double upperX = minimumX + (minimumX - lowerX) * (1.0 / GOLDEN - 1.0);
-    double upperF = function.value(upperX);
+    double upperF = function.getValue(upperX);
 
     while (minimumF > upperF) {
         upperX = upperX + (upperX - minimumX) * (1.0 / GOLDEN - 1.0);
-        upperF = function.value(upperX);
+        upperF = function.getValue(upperX);
     }
 
     bracket.minimumX = minimumX;
@@ -84,7 +85,7 @@ bool Min::brent(UnivariateFunction& f, Bracket& bracket, double relativeAccuracy
 //    if (bracket.minimumF >= bracket.lowerF || bracket.minimumF >= bracket.upperF
 //            || (bracket.minimumX <= bracket.lowerX && bracket.minimumX <= bracket.upperX)
 //            || (bracket.minimumX >= bracket.lowerX && bracket.minimumX >= bracket.upperX)) {
-//        BOOST_THROW_EXCEPTION(invalid_argument("The points a = " + lexical_cast<string>(bracket.lowerX) + ", b = " + lexical_cast<string>(bracket.minimumX) + ", c = " + lexical_cast<string>(bracket.upperX) + " do not bracket a minimum."));
+//        return false;
 //    }
 
     double u;
@@ -95,7 +96,7 @@ bool Min::brent(UnivariateFunction& f, Bracket& bracket, double relativeAccuracy
     double e = 0.0;
 
     double fu;
-    double fv = f.value(v);
+    double fv = f.getValue(v);
     double fw = fv;
 
     for (int i = 0; i < maxIter; ++i) {
@@ -107,7 +108,7 @@ bool Min::brent(UnivariateFunction& f, Bracket& bracket, double relativeAccuracy
 
         const double lowerW = (z - a);
         const double upperW = (b - z);
-        const double tolerance = computeEpsilonSqareRoot() * std::abs(z);
+        const double tolerance = EPS * abs(z);
 
         const double midpoint = 0.5 * (a + b);
 
@@ -115,7 +116,7 @@ bool Min::brent(UnivariateFunction& f, Bracket& bracket, double relativeAccuracy
         double q = 0.0;
         double r = 0.0;
 
-        if (std::abs(e) > tolerance) {
+        if (abs(e) > tolerance) {
             // fit parabola
             r = (z - w) * (fz - fv);
             q = (z - v) * (fz - fw);
@@ -131,7 +132,7 @@ bool Min::brent(UnivariateFunction& f, Bracket& bracket, double relativeAccuracy
             r = e;
             e = d;
         }
-        if (std::abs(p) < std::abs(0.5 * q * r) && p < q * lowerW && p < q * upperW) {
+        if (std::abs(p) < abs(0.5 * q * r) && p < q * lowerW && p < q * upperW) {
             const double t2 = 2.0 * tolerance;
 
             d = p / q;
@@ -144,13 +145,13 @@ bool Min::brent(UnivariateFunction& f, Bracket& bracket, double relativeAccuracy
             e = (z < midpoint) ? b - z : -(z - a);
             d = GOLDEN * e;
         }
-        if (std::abs(d) >= tolerance) {
+        if (abs(d) >= tolerance) {
             u = z + d;
         } else {
             u = z + ((d > 0.0) ? tolerance : -tolerance);
         }
 
-        fu = f.value(u);
+        fu = f.getValue(u);
 
         if (fu <= fz) {
             if (u < z) {
@@ -188,16 +189,12 @@ bool Min::brent(UnivariateFunction& f, Bracket& bracket, double relativeAccuracy
 bool Min::testInterval(double lowerX, double upperX, double absoluteAccuracyGoal, double relativeAccuracyGoal) {
     double minAbs;
     if ((lowerX > 0.0 && upperX > 0.0) || (lowerX < 0.0 && upperX < 0.0)) {
-        minAbs = min(std::abs(lowerX), std::abs(upperX));
+        minAbs = min(abs(lowerX), abs(upperX));
     } else {
         minAbs = 0.0;
     }
 
-    return std::abs(upperX - lowerX) < absoluteAccuracyGoal + relativeAccuracyGoal * minAbs;
-}
-
-double Min::computeEpsilonSqareRoot() {
-    return sqrt(numeric_limits<double>::epsilon());
+    return abs(upperX - lowerX) < absoluteAccuracyGoal + relativeAccuracyGoal * minAbs;
 }
 
 Bracket::Bracket(double lowerX, double upperX, UnivariateFunction& function) {
@@ -209,9 +206,9 @@ Bracket::Bracket(double lowerX, double upperX, UnivariateFunction& function) {
         this->upperX = upperX;
     }
 
-    lowerF = function.value(this->lowerX);
-    upperF = function.value(this->upperX);
+    lowerF = function.getValue(this->lowerX);
+    upperF = function.getValue(this->upperX);
 
-    minimumX = this->lowerX + Min::GOLDEN * (this->upperX - this->lowerX);
-    minimumF = function.value(this->minimumX);
+    minimumX = this->lowerX + GOLDEN * (this->upperX - this->lowerX);
+    minimumF = function.getValue(this->minimumX);
 }

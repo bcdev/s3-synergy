@@ -37,14 +37,14 @@ private:
 
 class Cos : public UnivariateFunction {
 
-    double value(double x) {
+    double getValue(double x) {
         return cos(x);
     }
 };
 
 class Sin : public UnivariateFunction {
 
-    double value(double x) {
+    double getValue(double x) {
         return sin(x);
     }
 };

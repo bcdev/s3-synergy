@@ -8,7 +8,6 @@
 #ifndef MIN_H_
 #define MIN_H_
 
-#include "../core/Boost.h"
 #include "UnivariateFunction.h"
 
 class Bracket;
@@ -79,15 +78,12 @@ public:
 	 */
 	static bool brent(UnivariateFunction& f, Bracket& bracket, double relativeAccuracyGoal, double absoluteAccuracyGoal, int maxIter);
 
-	static const double GOLDEN;
-	static const double DEFAULT_RELATIVE_ACCURACY_GOAL;
+	static const double DEFAULT_RELATIVE_ACCURACY_GOAL = 1.0E-4;
 
 private:
-
 	Min();
 
 	static bool testInterval(double lowerX, double upperX, double absoluteAccuracyGoal, double relativeAccuracyGoal);
-	static double computeEpsilonSqareRoot();
 };
 
 class Bracket {

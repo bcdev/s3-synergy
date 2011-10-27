@@ -31,7 +31,6 @@ ColTest::~ColTest() {
 void ColTest::setUp() {
     XPathInitializer init;
     prepareContext();
-    col = shared_ptr<Col>(new Col());
 }
 
 void ColTest::prepareContext() {
@@ -44,84 +43,22 @@ void ColTest::prepareContext() {
     shared_ptr<JobOrderParser> jobOrderParser = shared_ptr<JobOrderParser>(new JobOrderParser());
     shared_ptr<JobOrder> jobOrder = jobOrderParser->parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_COL.xml");
     const bool createBreakpoints = jobOrder->getIpfConfiguration().isBreakpointEnable();
+    context->setJobOrder(jobOrder);
 
     shared_ptr<DictionaryParser> dictionaryParser = shared_ptr<DictionaryParser>(new DictionaryParser(createBreakpoints));
-
     shared_ptr<Dictionary> dictionary = dictionaryParser->parse(S3_SYNERGY_HOME + "/src/main/resources/dictionary");
     context->setDictionary(dictionary);
-
     shared_ptr<Logging> logging = jobOrderParser->createLogging("LOG.SY_UNT_COL");
     context->setLogging(logging);
-
-    context->setJobOrder(jobOrder);
 }
 
 void ColTest::tearDown() {
 }
 
-void ColTest::testAddSlstrVariables() {
-    context->addSegment(Constants::SEGMENT_OLC, 10, 10, 5, 0, 9);
-    context->addSegment(Constants::SEGMENT_SLN, 10, 10, 5, 0, 9);
-    context->addSegment(Constants::SEGMENT_SLO, 10, 10, 5, 0, 9);
-    Segment& collocatedSegment = context->addSegment(Constants::SEGMENT_SYN_COLLOCATED, 10, 10, 5, 0, 9);
-
-	// setting dummy type; this is done by reader normally, but not in test
-    ProductDescriptor& pd = context->getDictionary().getProductDescriptor("SY1");
-    foreach(SegmentDescriptor* sd, pd.getSegmentDescriptors()) {
-        foreach(VariableDescriptor* vd, sd->getVariableDescriptors()) {
-            vd->setType(7);
-        }
-    }
-
-    CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_1"));
-    CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_18"));
-    CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_19"));
-    CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_30"));
-    CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_25_exception"));
-    CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_30_exception"));
-
-	col->addSlstrVariables(*context);
-	CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_1"));
-	CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_18"));
-	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_19"));
-	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_30"));
-	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_25_exception"));
-	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_30_exception"));
-}
-
-void ColTest::testAddOlciVariables() {
-    Segment& olciSegment = context->addSegment(Constants::SEGMENT_OLC, 10, 10, 5, 0, 9);
-    Segment& collocatedSegment = context->addSegment(Constants::SEGMENT_SYN_COLLOCATED, 10, 10, 5, 0, 9);
-    // setting dummy type; this is done by reader normally, but not in test
-    ProductDescriptor& pd = context->getDictionary().getProductDescriptor("SY1");
-    foreach(SegmentDescriptor* sd, pd.getSegmentDescriptors()) {
-        foreach(VariableDescriptor* vd, sd->getVariableDescriptors()) {
-            vd->setType(7);
-        }
-    }
-	olciSegment.addVariable("L_17", Constants::TYPE_BYTE);
-	olciSegment.addVariable("L_17_er", Constants::TYPE_BYTE);
-	olciSegment.addVariable("OLC_confidence", Constants::TYPE_BYTE);
-	olciSegment.addVariable("longitude", Constants::TYPE_BYTE);
-	olciSegment.addVariable("latitude", Constants::TYPE_BYTE);
-	olciSegment.addVariable("altitude", Constants::TYPE_BYTE);
-
-    CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_1"));
-    CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_18"));
-    CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_1_er"));
-    CPPUNIT_ASSERT(!collocatedSegment.hasVariable("L_18_er"));
-
-	col->addOlciVariables(*context);
-	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_1"));
-	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_18"));
-	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_1_er"));
-	CPPUNIT_ASSERT(collocatedSegment.hasVariable("L_18_er"));
-}
-
 void ColTest::testCol() {
-
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
     shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
+    shared_ptr<Module> col = shared_ptr<Col>(new Col());
 
     context->addModule(reader);
     context->addModule(col);

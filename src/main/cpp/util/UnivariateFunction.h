@@ -20,7 +20,7 @@ public:
      *
      * @return The value of the function at {@code x}.
      */
-    virtual double value(double x) = 0;
+    virtual double getValue(double x) = 0;
 
     virtual ~UnivariateFunction() {
     }

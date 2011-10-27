@@ -15,8 +15,6 @@
 
 class ColTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(ColTest);
-    CPPUNIT_TEST(testAddOlciVariables);
-    CPPUNIT_TEST(testAddSlstrVariables);
     CPPUNIT_TEST(testCol);
     CPPUNIT_TEST_SUITE_END();
 
@@ -27,12 +25,9 @@ public:
     void tearDown();
 
 private:
-    void testAddSlstrVariables();
-    void testAddOlciVariables();
     void testCol();
     void prepareContext();
     shared_ptr<Context> context;
-    shared_ptr<Col> col;
 };
 
 #endif	/* COLTEST_H */

@@ -19,35 +19,37 @@ using std::map;
 using std::string;
 using std::valarray;
 
-class AuxdataProvider : public Identifiable {
+class AuxdataProvider: public Identifiable {
 public:
-    AuxdataProvider(const string& id, string auxdataPath);
-    virtual ~AuxdataProvider();
+	AuxdataProvider(const string& id, string auxdataPath);
+	virtual ~AuxdataProvider();
 
-    uint8_t getUByte(const string& varName);
-    double getDouble(const string& varName);
-    valarray<double>& getDoubleArray(const string& varName);
-    matrix<double>& getDoubleMatrix(const string& varName);
+	const string& getId() const;
 
-    int16_t getShort(const string& varName);
-    valarray<int16_t>& getShortArray(const string& varName);
+	uint8_t getUByte(const string& varName);
+	double getDouble(const string& varName);
+	int16_t getShort(const string& varName);
 
-    const string& getId() const;
+	const valarray<double>& getVectorDouble(const string& varName);
+	const valarray<int16_t>& getVectorShort(const string& varName);
+
+	const matrix<double>& getMatrixDouble(const string& varName);
 
 private:
-    const string id;
-    int fileId;
-    map<string, uint8_t> ubytes;
-    map<string, double> doubles;
-    map<string, int16_t> shorts;
-    map<string, valarray<double> > doubleArrays;
-    map<string, matrix<double> > doubleMatrices;
-    map<string, valarray<int16_t> > shortArrays;
+	const string id;
+	const int fileId;
 
-    template<class K, class V>
-    static bool contains(const map<K, V>& map, const K& key) {
-        return map.find(key) != map.end();
-    }
+	map<string, uint8_t> ubytes;
+	map<string, double> doubles;
+	map<string, int16_t> shorts;
+	map<string, shared_ptr<valarray<double> > > doubleArrays;
+	map<string, shared_ptr<valarray<int16_t> > > shortArrays;
+	map<string, shared_ptr<matrix<double> > > doubleMatrices;
+
+	template<class K, class V>
+	static bool contains(const map<K, V>& map, const K& key) {
+		return map.find(key) != map.end();
+	}
 };
 
 #endif /* AUXDATAPROVIDER_H_ */

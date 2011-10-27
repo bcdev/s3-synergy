@@ -24,7 +24,7 @@ public:
 
     ErrorMetric(const Pixel& p,int16_t amin, double tau550, Context& context);
 
-    double value(valarray<double>& x);
+    double getValue(valarray<double>& x);
 
     static double ndv(const Pixel& q, const valarray<int16_t>& ndviIndices);
 
