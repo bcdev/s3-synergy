@@ -220,21 +220,25 @@ void Col::process(Context& context) {
 				for (long m = targetGrid.getFirstM(); m < targetGrid.getFirstM() + targetGrid.getSizeM(); m++) {
 					const size_t targetIndex = targetGrid.getIndex(k, l, m);
 
-					double deltaY = 0.0;
+					double y = 0.0;
 					if (yCollocationAccessor != 0) {
 						if (yCollocationAccessor->isFillValue(targetIndex)) {
 							targetAccessor->setFillValue(targetIndex);
 							continue;
 						}
-						deltaY = yCollocationAccessor->getDouble(targetIndex);
+						y = yCollocationAccessor->getDouble(targetIndex);
 					}
 
-					const long sourceL = (long) floor(deltaY);
-					const size_t sourceIndex = i < 24 ? slnInfoGrid.getIndex(0, 0, sourceL % 4) : sloInfoGrid.getIndex(0, 0, sourceL % 4);
-					if (sourceAccessor->isFillValue(sourceIndex)) {
+					const long detectorIndex = ((long) floor(y)) % 4;
+					if (detectorIndex < 0) {
 						targetAccessor->setFillValue(targetIndex);
 					} else {
-						targetAccessor->setDouble(targetIndex, sourceAccessor->getDouble(sourceIndex));
+						const size_t sourceIndex = i < 24 ? slnInfoGrid.getIndex(0, 0, detectorIndex) : sloInfoGrid.getIndex(0, 0, detectorIndex);
+						if (sourceAccessor->isFillValue(sourceIndex)) {
+							targetAccessor->setFillValue(targetIndex);
+						} else {
+							targetAccessor->setDouble(targetIndex, sourceAccessor->getDouble(sourceIndex));
+						}
 					}
 				}
 			}
