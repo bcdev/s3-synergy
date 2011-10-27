@@ -98,6 +98,7 @@ void Ave::averageVariables(Logging& logging, long firstL, long lastL) {
 										continue;
 									}
 									const size_t sourceIndex = sourceGrid.getIndex(k, sourceL, sourceM);
+//                                    const size_t infoIndex = olcInfoGrid.getIndex(k, channel, m);
 
 									pixelCount++;
 									const uint16_t synFlags = sourceFlagsAccessor.getUShort(sourceIndex);

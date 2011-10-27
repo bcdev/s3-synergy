@@ -21,10 +21,11 @@
 #ifndef CONSTANTS_H
 #define	CONSTANTS_H
 
+#include <boost/cstdint.hpp>
+#include <limits>
 #include <string>
 
-#include <boost/cstdint.hpp>
-
+using std::numeric_limits;
 using std::string;
 
 using boost::int8_t;
@@ -124,6 +125,8 @@ const uint16_t SY2_NO_SLO_FLAG = 128U;
 const uint16_t SY2_PARTLY_CLOUDY_FLAG = 256U;
 const uint16_t SY2_PARTLY_WATER_FLAG = 512U;
 const uint16_t SY2_BORDER_FLAG = 1024U;
+
+const double FILL_VALUE_DOUBLE = -numeric_limits<double>::max();
 }
 
 #endif	/* CONSTANTS_H */

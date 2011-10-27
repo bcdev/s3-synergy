@@ -15,6 +15,7 @@
 
 class AerTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(AerTest);
+    CPPUNIT_TEST(testAer_s);
     CPPUNIT_TEST(testReadAuxdata);
     CPPUNIT_TEST(testAer);
     CPPUNIT_TEST_SUITE_END();
@@ -29,6 +30,7 @@ private:
     static const double EPSILON;
     void prepareContext();
     void testReadAuxdata();
+    void testAer_s();
     void testAer();
     void testNdv();
     void testAotStandardError();

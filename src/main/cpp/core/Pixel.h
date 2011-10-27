@@ -24,6 +24,8 @@ struct Pixel {
         alpha550 = q.alpha550;
         tau550 = q.tau550;
         tau550err = q.tau550err;
+        tau550Filtered = q.tau550Filtered;
+        tau550errFiltered = q.tau550errFiltered;
         synFlags = q.synFlags;
         amin = q.amin;
 
@@ -54,6 +56,8 @@ struct Pixel {
         alpha550 = q.alpha550;
         tau550 = q.tau550;
         tau550err = q.tau550err;
+        tau550Filtered = q.tau550Filtered;
+        tau550errFiltered = q.tau550errFiltered;
         synFlags = q.synFlags;
         amin = q.amin;
 
@@ -97,8 +101,8 @@ struct Pixel {
     double alpha550;
     double tau550;
     double tau550err;
-    double tau550_filtered;
-    double tau550err_filtered;
+    double tau550Filtered;
+    double tau550errFiltered;
     uint16_t synFlags;
     uint8_t amin;
 
