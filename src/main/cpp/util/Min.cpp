@@ -81,11 +81,11 @@ bool Min::brent(UnivariateFunction& function, Bracket& bracket, double relativeA
 }
 
 bool Min::brent(UnivariateFunction& f, Bracket& bracket, double relativeAccuracyGoal, double absoluteAccuracyGoal, int maxIter) {
-    if (bracket.minimumF >= bracket.lowerF || bracket.minimumF >= bracket.upperF
-            || (bracket.minimumX <= bracket.lowerX && bracket.minimumX <= bracket.upperX)
-            || (bracket.minimumX >= bracket.lowerX && bracket.minimumX >= bracket.upperX)) {
-        BOOST_THROW_EXCEPTION(invalid_argument("The points a = " + lexical_cast<string>(bracket.lowerX) + ", b = " + lexical_cast<string>(bracket.minimumX) + ", c = " + lexical_cast<string>(bracket.upperX) + " do not bracket a minimum."));
-    }
+//    if (bracket.minimumF >= bracket.lowerF || bracket.minimumF >= bracket.upperF
+//            || (bracket.minimumX <= bracket.lowerX && bracket.minimumX <= bracket.upperX)
+//            || (bracket.minimumX >= bracket.lowerX && bracket.minimumX >= bracket.upperX)) {
+//        BOOST_THROW_EXCEPTION(invalid_argument("The points a = " + lexical_cast<string>(bracket.lowerX) + ", b = " + lexical_cast<string>(bracket.minimumX) + ", c = " + lexical_cast<string>(bracket.upperX) + " do not bracket a minimum."));
+//    }
 
     double u;
     double v = bracket.lowerX + GOLDEN * (bracket.upperX - bracket.lowerX);
