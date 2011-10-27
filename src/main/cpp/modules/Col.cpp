@@ -355,7 +355,7 @@ void Col::addSlstrVariables(Context& context) {
 		Accessor* targetAccessor = &t.addVariable(targetName, Constants::TYPE_DOUBLE);
 
 		solarIrradianceAccessors.push_back(targetAccessor);
-		sourceAccessorMap[targetAccessor] = &slnInfoSegment.getAccessor("solar_irradiance");
+		sourceAccessorMap[targetAccessor] = &slnInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(i));
 		xCollocationAccessorMap[targetAccessor] = &olcSegment.getAccessor("x_corr_" + lexical_cast<string>(i));
 		yCollocationAccessorMap[targetAccessor] = &olcSegment.getAccessor("y_corr_" + lexical_cast<string>(i));
 	}
@@ -366,7 +366,7 @@ void Col::addSlstrVariables(Context& context) {
 		Accessor* targetAccessor = &t.addVariable(targetName, Constants::TYPE_DOUBLE);
 
 		solarIrradianceAccessors.push_back(targetAccessor);
-		sourceAccessorMap[targetAccessor] = &sloInfoSegment.getAccessor("solar_irradiance");
+		sourceAccessorMap[targetAccessor] = &sloInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(i));
 		xCollocationAccessorMap[targetAccessor] = &olcSegment.getAccessor("x_corr_o" + lexical_cast<string>(i));
 		yCollocationAccessorMap[targetAccessor] = &olcSegment.getAccessor("y_corr_o" + lexical_cast<string>(i));
 	}
