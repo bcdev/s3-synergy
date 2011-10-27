@@ -40,13 +40,22 @@ private:
 	void addVariableAlias(Context& context, Segment& targetSegment, const string& targetName, const Segment& sourceSegment, const string& sourceName) const;
 
 	vector<string> targetNames;
+	// TODO - use accessor maps instead of name maps
 	map<string, string> collocationNameMapX;
 	map<string, string> collocationNameMapY;
 	map<string, string> sourceNameMap;
 	map<string, const Segment*> sourceSegmentMap;
 
+	// new: fields used for collocating solar irradiances
+	vector<Accessor*> solarIrradianceAccessors;
+	map<Accessor*, const Accessor*> sourceAccessorMap;
+	map<Accessor*, const Accessor*> xCollocationAccessorMap;
+	map<Accessor*, const Accessor*> yCollocationAccessorMap;
+
 	static const string SLO_CONFIDENCE_FLAG_VARIABLE_NAME;
 	static const string SLN_CONFIDENCE_FLAG_VARIABLE_NAME;
+	static const size_t OLC_TO_SYN_CHANNEL_MAPPING[18];
+	static const size_t OLC_REFERENCE_CHANNEL = 17;
 };
 
 #endif /* COL_H_ */

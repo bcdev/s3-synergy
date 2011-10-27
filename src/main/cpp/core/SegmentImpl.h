@@ -38,21 +38,21 @@ public:
 	SegmentImpl(const string& id, long sizeL, long sizeM, long sizeK, long minL, long maxL);
 	virtual ~SegmentImpl();
 
-	void addVariable(const VariableDescriptor& variableDescriptor) throw (logic_error);
-	void addVariable(const VariableDescriptor& variableDescriptor, const string& targetName) throw (logic_error);
-	void addVariable(const string& name, int type, double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
-	void addVariableAlias(const string& alias, const Segment& segment, const string& name) throw (logic_error);
+	Accessor& addVariable(const VariableDescriptor& variableDescriptor) throw (logic_error);
+	Accessor& addVariable(const VariableDescriptor& variableDescriptor, const string& targetName) throw (logic_error);
+	Accessor& addVariable(const string& name, int type, double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
+	Accessor& addVariableAlias(const string& alias, const Segment& segment, const string& name) throw (logic_error);
 
-	void addVariableByte(const string& name, int8_t fillValue = numeric_limits<int8_t>::min(), double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
-	void addVariableDouble(const string& name, double fillValue = -numeric_limits<double>::max()) throw (logic_error);
-	void addVariableFloat(const string& name, float fillValue = -numeric_limits<float>::max()) throw (logic_error);
-	void addVariableInt(const string& name, int32_t fillValue = numeric_limits<int32_t>::min(), double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
-	void addVariableLong(const string& name, int64_t fillValue = numeric_limits<int64_t>::min()) throw (logic_error);
-	void addVariableShort(const string& name, int16_t fillValue = numeric_limits<int16_t>::min(), double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
-	void addVariableUByte(const string& name, uint8_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
-	void addVariableUInt(const string& name, uint32_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
-	void addVariableULong(const string& name, uint64_t fillValue = 0) throw (logic_error);
-	void addVariableUShort(const string& name, uint16_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
+	Accessor& addVariableByte(const string& name, int8_t fillValue = numeric_limits<int8_t>::min(), double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
+	Accessor& addVariableDouble(const string& name, double fillValue = -numeric_limits<double>::max()) throw (logic_error);
+	Accessor& addVariableFloat(const string& name, float fillValue = -numeric_limits<float>::max()) throw (logic_error);
+	Accessor& addVariableInt(const string& name, int32_t fillValue = numeric_limits<int32_t>::min(), double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
+	Accessor& addVariableLong(const string& name, int64_t fillValue = numeric_limits<int64_t>::min()) throw (logic_error);
+	Accessor& addVariableShort(const string& name, int16_t fillValue = numeric_limits<int16_t>::min(), double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
+	Accessor& addVariableUByte(const string& name, uint8_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
+	Accessor& addVariableUInt(const string& name, uint32_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
+	Accessor& addVariableULong(const string& name, uint64_t fillValue = 0) throw (logic_error);
+	Accessor& addVariableUShort(const string& name, uint16_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
 
 	bool hasVariable(const string& name) const {
 		return accessorMap.find(name) != accessorMap.end();
