@@ -293,7 +293,6 @@ void Aer::process(Context& context) {
     map<size_t, shared_ptr<Pixel> > missingPixels;
     vector<shared_ptr<Pixel> > pixels = getPixels(context, firstL, lastL < averagedGrid->getMaxL() ? lastL + 1: lastL);
 
-#pragma omp parallel for
     for(long i = 0; i < pixels.size(); i++) {
     	shared_ptr<Pixel> p = pixels[i];
         context.getLogging().debug("...for pixel with index " + lexical_cast<string>(p->index), getId());
