@@ -202,9 +202,7 @@ void Col::addOlciVariables(Context& context) {
         }
     }
 
-    addVariable(context, targetSegment, "OLC_flags", sourceSegment, "OLC_flags", sourceProductDescriptor);
-    collocationNameMapX["OLC_flags"] = "delta_x_" + lexical_cast<string>(1);
-    collocationNameMapY["OLC_flags"] = "delta_y_" + lexical_cast<string>(1);
+    addVariableAlias(context, targetSegment, "OLC_confidence", sourceSegment, "OLC_confidence");
 
     addVariableAlias(context, targetSegment, "longitude", sourceSegment, "longitude");
     addVariableAlias(context, targetSegment, "latitude", sourceSegment, "latitude");
