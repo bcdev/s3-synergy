@@ -42,9 +42,9 @@ ErrorMetric::ErrorMetric(Pixel& p, int16_t amin, Context& context) :
         if (p.radiances[i - 1] == fillValue) {
             spectralWeights[i - 1] = 0;
             if (i >= 19 && i <= 24) {
-                angularWeights.insert_element(i - 19, 0, 0.0);
+                angularWeights.insert_element(0, i - 19, 0.0);
             } else if (i >= 25 && i <= 30) {
-                angularWeights.insert_element(i - 25, 1, 0.0);
+                angularWeights.insert_element(1, i - 25, 0.0);
             }
         }
     }
