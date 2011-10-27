@@ -15,7 +15,7 @@
 #include "../../../main/cpp/modules/Ave.h"
 #include "../../../main/cpp/modules/Col.h"
 #include "../../../main/cpp/modules/Pcl.h"
-#include "../../../main/cpp/writer/SynL2Writer.h"
+#include "../../../main/cpp/writer/SegmentWriter.h"
 #include "../../../main/cpp/util/DictionaryParser.h"
 #include "../../../main/cpp/util/JobOrderParser.h"
 #include "../../../main/cpp/core/Pixel.h"
@@ -146,7 +146,7 @@ void AerTest::testAer() {
     shared_ptr<Module> col = shared_ptr<Module>(new Col());
     shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
     shared_ptr<Module> ave = shared_ptr<Module>(new Ave());
-    shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
+    shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
 
     context->addModule(reader);
     context->addModule(col);
