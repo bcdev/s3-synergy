@@ -65,12 +65,12 @@ void MultiMinTest::testPowellCigar() {
 	e[2] = thirdE;
 
 	Cigar cigar;
-	const bool success = MultiMin::powell(cigar, x, e, MultiMin::ACCURACY_GOAL, 200);
+	const bool success = MultiMin::powell(cigar, x, e, 1.0e-8, 200);
 	CPPUNIT_ASSERT(success);
 
-	CPPUNIT_ASSERT(std::abs(0.0 - x[0]) <= MultiMin::ACCURACY_GOAL);
-	CPPUNIT_ASSERT(std::abs(0.0 - x[1]) <= MultiMin::ACCURACY_GOAL);
-	CPPUNIT_ASSERT(std::abs(0.0 - x[2]) <= MultiMin::ACCURACY_GOAL);
+	CPPUNIT_ASSERT(std::abs(0.0 - x[0]) <= 1.0e-8);
+	CPPUNIT_ASSERT(std::abs(0.0 - x[1]) <= 1.0e-8);
+	CPPUNIT_ASSERT(std::abs(0.0 - x[2]) <= 1.0e-8);
 }
 
 void MultiMinTest::testPowellRosenbrock() {
@@ -90,9 +90,9 @@ void MultiMinTest::testPowellRosenbrock() {
 	e[2] = thirdE;
 
 	Rosenbrock rosenbrock;
-	const bool success = MultiMin::powell(rosenbrock, x, e, MultiMin::ACCURACY_GOAL, 200);
+	const bool success = MultiMin::powell(rosenbrock, x, e, 1.0e-8, 200);
 	CPPUNIT_ASSERT(success);
-	CPPUNIT_ASSERT(std::abs(1.0 - x[0]) <= MultiMin::ACCURACY_GOAL);
-	CPPUNIT_ASSERT(std::abs(1.0 - x[1]) <= MultiMin::ACCURACY_GOAL);
-	CPPUNIT_ASSERT(std::abs(1.0 - x[2]) <= MultiMin::ACCURACY_GOAL);
+	CPPUNIT_ASSERT(std::abs(1.0 - x[0]) <= 1.0e-8);
+	CPPUNIT_ASSERT(std::abs(1.0 - x[1]) <= 1.0e-8);
+	CPPUNIT_ASSERT(std::abs(1.0 - x[2]) <= 1.0e-8);
 }
