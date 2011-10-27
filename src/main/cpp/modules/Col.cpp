@@ -88,6 +88,7 @@ void Col::process(Context& context) {
 					const size_t targetIndex = targetGrid.getIndex(k, l, m);
 
 					if (collocationXAccessor.isFillValue(targetIndex) || collocationYAccessor.isFillValue(targetIndex)) {
+						targetAccessor.setFillValue(targetIndex);
 						continue;
 					}
 
@@ -170,15 +171,18 @@ void Col::process(Context& context) {
 			}
 		}
 
-		// new: collocate OLC solar irradiances
+		// new: collocate solar irradiances
 		const Segment& olcInfo = context.getSegment(Constants::SEGMENT_OLC_INFO);
+		const Segment& slnInfo = context.getSegment(Constants::SEGMENT_SLN_INFO);
+		const Segment& sloInfo = context.getSegment(Constants::SEGMENT_SLO_INFO);
 		const Grid& olcInfoGrid = olcInfo.getGrid();
+		const Grid& slnInfoGrid = slnInfo.getGrid();
+		const Grid& sloInfoGrid = sloInfo.getGrid();
 
 		for (size_t i = 0; i < 18; i++) {
 			Accessor* targetAccessor = solarIrradianceAccessors[i];
 			const Accessor* sourceAccessor = sourceAccessorMap[targetAccessor];
 			const Accessor* xCollocationAccessor = xCollocationAccessorMap[targetAccessor];
-			const size_t channelIndex = OLC_TO_SYN_CHANNEL_MAPPING[i] - 1;
 
 			for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
 				for (long m = targetGrid.getFirstM(); m < targetGrid.getFirstM() + targetGrid.getSizeM(); m++) {
@@ -187,6 +191,7 @@ void Col::process(Context& context) {
 					double deltaX = 0.0;
 					if (xCollocationAccessor != 0) {
 						if (xCollocationAccessor->isFillValue(targetIndex)) {
+							targetAccessor->setFillValue(targetIndex);
 							continue;
 						}
 						deltaX = xCollocationAccessor->getDouble(targetIndex);
@@ -196,12 +201,40 @@ void Col::process(Context& context) {
 					if (sourceM < olcInfoGrid.getMinM() || sourceM > olcInfoGrid.getMaxM()) {
 						targetAccessor->setFillValue(targetIndex);
 					} else {
-						const size_t sourceIndex = olcInfoGrid.getIndex(k, channelIndex, sourceM);
+						const size_t sourceIndex = olcInfoGrid.getIndex(k, OLC_TO_SYN_CHANNEL_MAPPING[i] - 1, sourceM);
 						if (sourceAccessor->isFillValue(sourceIndex)) {
 							targetAccessor->setFillValue(targetIndex);
 						} else {
 							targetAccessor->setDouble(targetIndex, sourceAccessor->getDouble(sourceIndex));
 						}
+					}
+				}
+			}
+		}
+		for (size_t i = 18; i < 30; i++) {
+			Accessor* targetAccessor = solarIrradianceAccessors[i];
+			const Accessor* sourceAccessor = sourceAccessorMap[targetAccessor];
+			const Accessor* yCollocationAccessor = xCollocationAccessorMap[targetAccessor];
+
+			for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
+				for (long m = targetGrid.getFirstM(); m < targetGrid.getFirstM() + targetGrid.getSizeM(); m++) {
+					const size_t targetIndex = targetGrid.getIndex(k, l, m);
+
+					double deltaY = 0.0;
+					if (yCollocationAccessor != 0) {
+						if (yCollocationAccessor->isFillValue(targetIndex)) {
+							targetAccessor->setFillValue(targetIndex);
+							continue;
+						}
+						deltaY = yCollocationAccessor->getDouble(targetIndex);
+					}
+
+					const long sourceL = (long) floor(deltaY);
+					const size_t sourceIndex = i < 24 ? slnInfoGrid.getIndex(0, 0, sourceL % 4) : sloInfoGrid.getIndex(0, 0, sourceL % 4);
+					if (sourceAccessor->isFillValue(sourceIndex)) {
+						targetAccessor->setFillValue(targetIndex);
+					} else {
+						targetAccessor->setDouble(targetIndex, sourceAccessor->getDouble(sourceIndex));
 					}
 				}
 			}
@@ -310,6 +343,33 @@ void Col::addSlstrVariables(Context& context) {
 	addVariable(context, t, SLO_CONFIDENCE_FLAG_VARIABLE_NAME, oblique, SLO_CONFIDENCE_FLAG_VARIABLE_NAME, sourceProductDescriptor);
 	collocationNameMapX[SLO_CONFIDENCE_FLAG_VARIABLE_NAME] = "x_corr_o";
 	collocationNameMapY[SLO_CONFIDENCE_FLAG_VARIABLE_NAME] = "y_corr_o";
+
+	// new: add SLN & SLO solar irradiances
+	const Segment& olcSegment = context.getSegment(Constants::SEGMENT_OLC);
+	const Segment& slnInfoSegment = context.getSegment(Constants::SEGMENT_SLN_INFO);
+	const Segment& sloInfoSegment = context.getSegment(Constants::SEGMENT_SLN_INFO);
+	for (size_t i = 1; i < 7; i++) {
+		const string targetName = "solar_irradiance_" + lexical_cast<string>(i + 18);
+
+		context.getLogging().info("Adding variable '" + targetName + "' to segment '" + t.getId() + "'", getId());
+		Accessor* targetAccessor = &t.addVariable(targetName, Constants::TYPE_DOUBLE);
+
+		solarIrradianceAccessors.push_back(targetAccessor);
+		sourceAccessorMap[targetAccessor] = &slnInfoSegment.getAccessor("solar_irradiance");
+		xCollocationAccessorMap[targetAccessor] = &olcSegment.getAccessor("x_corr_" + lexical_cast<string>(i));
+		yCollocationAccessorMap[targetAccessor] = &olcSegment.getAccessor("y_corr_" + lexical_cast<string>(i));
+	}
+	for (size_t i = 1; i < 7; i++) {
+		const string targetName = "solar_irradiance_" + lexical_cast<string>(i + 24);
+
+		context.getLogging().info("Adding variable '" + targetName + "' to segment '" + t.getId() + "'", getId());
+		Accessor* targetAccessor = &t.addVariable(targetName, Constants::TYPE_DOUBLE);
+
+		solarIrradianceAccessors.push_back(targetAccessor);
+		sourceAccessorMap[targetAccessor] = &sloInfoSegment.getAccessor("solar_irradiance");
+		xCollocationAccessorMap[targetAccessor] = &olcSegment.getAccessor("x_corr_o" + lexical_cast<string>(i));
+		yCollocationAccessorMap[targetAccessor] = &olcSegment.getAccessor("y_corr_o" + lexical_cast<string>(i));
+	}
 }
 
 void Col::addVariable(Context& context, Segment& t, const string& targetName, const Segment& s, const string& sourceName, const ProductDescriptor& p) {
