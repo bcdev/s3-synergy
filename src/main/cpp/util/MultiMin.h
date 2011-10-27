@@ -17,8 +17,6 @@ class MultiMin {
 public:
     virtual ~MultiMin();
 
-    const static double ACCURACY_GOAL;
-
     /**
      * Finds the minimum of a multivariate function using Powell's method.
      * <p/>
@@ -101,7 +99,7 @@ public:
     double findMinimum(valarray<double>& x) {
         Bracket bracket;
         Min::brack(f, 0.0, 1.0, bracket);
-        Min::brent(f, bracket, 1.0E-6);
+        Min::brent(f, bracket);
 
         for (size_t i = 0; i < p.size(); ++i) {
             x[i] = p[i] + u[i] * bracket.minimumX;

@@ -44,7 +44,7 @@ public:
 	 *
 	 * @throws invalid_argument if the {@code bracket} is invalid.
 	 */
-	static bool brent(UnivariateFunction& f, Bracket& bracket, double relativeAccuracyGoal);
+	static bool brent(UnivariateFunction& f, Bracket& bracket, double relativeAccuracyGoal = DEFAULT_RELATIVE_ACCURACY_GOAL);
 
 	/**
 	 * Finds the minimum of an univariate function using Brent's algorithm.
@@ -80,7 +80,7 @@ public:
 	static bool brent(UnivariateFunction& f, Bracket& bracket, double relativeAccuracyGoal, double absoluteAccuracyGoal, int maxIter);
 
 	static const double GOLDEN;
-	static const double ACCURACY_GOAL;
+	static const double DEFAULT_RELATIVE_ACCURACY_GOAL;
 
 private:
 

@@ -72,7 +72,7 @@ public:
             u[i][i] = 1.0;
         }
 
-        MultiMin::powell(em, pn, u, MultiMin::ACCURACY_GOAL, 200);
+        MultiMin::powell(em, pn, u, 1.0e-4, 100);
         copy(&pn[0], &pn[pn.size()], &optimisedPn[0]);
         return em.value(pn);
     }

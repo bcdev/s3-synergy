@@ -443,7 +443,7 @@ bool Aer::e2(Pixel& p, size_t amin, Context& context) {
     bracket.lowerF = e1.value(0.0);
     bracket.minimumF = e1.value(0.1);
     bracket.upperF = e1.value(2.0);
-    const bool success = Min::brent(e1, bracket, Min::ACCURACY_GOAL);
+    const bool success = Min::brent(e1, bracket);
 
     const valarray<double>& pn = e1.getPn();
     p.c1 = pn[0];

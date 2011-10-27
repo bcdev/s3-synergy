@@ -25,8 +25,6 @@ MultiMin::MultiMin() {
 MultiMin::~MultiMin() {
 }
 
-const double MultiMin::ACCURACY_GOAL = 1.0E-8;
-
 bool MultiMin::powell(MultivariateFunction& f, valarray<double>& pn, valarray<valarray<double> >& u, const double accuracyGoal, const size_t maxIter) {
     const size_t n = pn.size();
 
