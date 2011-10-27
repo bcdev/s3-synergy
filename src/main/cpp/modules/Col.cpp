@@ -367,8 +367,8 @@ void Col::addSlstrVariables(Context& context) {
 
 		solarIrradianceAccessors.push_back(targetAccessor);
 		sourceAccessorMap[targetAccessor] = &sloInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(i));
-		xCollocationAccessorMap[targetAccessor] = &olcSegment.getAccessor("x_corr_o" + lexical_cast<string>(i));
-		yCollocationAccessorMap[targetAccessor] = &olcSegment.getAccessor("y_corr_o" + lexical_cast<string>(i));
+		xCollocationAccessorMap[targetAccessor] = &olcSegment.getAccessor("x_corr_o");
+		yCollocationAccessorMap[targetAccessor] = &olcSegment.getAccessor("y_corr_o");
 	}
 }
 
