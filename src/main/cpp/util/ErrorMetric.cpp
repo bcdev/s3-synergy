@@ -37,8 +37,6 @@ ErrorMetric::ErrorMetric(const Pixel& p, int16_t amin, double tau550, Context& c
     angularWeights = configurationAuxdata.getDoubleMatrix("weight_ang");
     gamma = configurationAuxdata.getDouble("gamma");
 
-    const double Constants::FILL_VALUE_DOUBLE = -numeric_limits<double_t>::max();
-
     for (size_t i = 1; i <= 30; i++) {
         if (p.radiances[i - 1] == Constants::FILL_VALUE_DOUBLE) {
             spectralWeights[i - 1] = 0;
