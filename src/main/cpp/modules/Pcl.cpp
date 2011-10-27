@@ -38,7 +38,7 @@ void Pcl::setUpSegment(Context& context) {
 }
 
 void Pcl::setUpSourceAccessors(Context & context) {
-	olcFlagsAccessor = &collocatedSegment->getAccessor("OLC_flags");
+	olcFlagsAccessor = &collocatedSegment->getAccessor("OLC_confidence");
 	slnFlagsAccessor = &collocatedSegment->getAccessor("SLN_confidence");
 	sloFlagsAccessor = &collocatedSegment->getAccessor("SLO_confidence");
 
