@@ -24,7 +24,7 @@ using std::set;
 class PixelInitializer {
 
 public:
-    PixelInitializer(const Context& context, uint8_t averagingFactor);
+    PixelInitializer(const Context& context);
     ~PixelInitializer();
     shared_ptr<Pixel> getPixel(long k, long l, long m) const;
 
@@ -50,8 +50,6 @@ private:
     const TiePointInterpolator<double> tiePointInterpolatorSln;
     const TiePointInterpolator<double> tiePointInterpolatorSlo;
 
-    const uint8_t averagingFactor;
-
     vector<Accessor*> radiances;
     vector<Accessor*> solarIrradiancesSln;
     vector<Accessor*> solarIrradiancesSlo;
@@ -72,7 +70,7 @@ private:
     valarray<double> waterVapourTiePoints;
 };
 
-PixelInitializer::PixelInitializer(const Context& context, uint8_t averagingFactor) :
+PixelInitializer::PixelInitializer(const Context& context) :
         context(context),
         averagedSegment(context.getSegment(Constants::SEGMENT_SYN_AVERAGED)),
         olcInfoSegment(context.getSegment(Constants::SEGMENT_OLC_INFO)),
@@ -82,22 +80,21 @@ PixelInitializer::PixelInitializer(const Context& context, uint8_t averagingFact
         olcInfoGrid(olcInfoSegment.getGrid()),
         slnInfoGrid(slnInfoSegment.getGrid()),
         sloInfoGrid(sloInfoSegment.getGrid()),
-        solarIrradiancesOlc(olcInfoSegment.getAccessor("solar_irradiance")),
+        solarIrradiancesOlc(averagedSegment.getAccessor("solar_irradiance")),
         synFlags(averagedSegment.getAccessor("SYN_flags")),
         lat(averagedSegment.getAccessor("latitude")),
         lon(averagedSegment.getAccessor("longitude")),
         tiePointInterpolatorOlc(context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("OLC_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("OLC_TP_lat").getDoubles()),
         tiePointInterpolatorSln(context.getSegment(Constants::SEGMENT_SLN_TP).getAccessor("SLN_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_SLN_TP).getAccessor("SLN_TP_lat").getDoubles()),
-        tiePointInterpolatorSlo(context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lat").getDoubles()),
-        averagingFactor(averagingFactor) {
+        tiePointInterpolatorSlo(context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lat").getDoubles()) {
     for (size_t b = 0; b < 30; b++) {
         radiances.push_back(&averagedSegment.getAccessor("L_" + lexical_cast<string>(b + 1)));
     }
-    for (size_t b = 0; b < 6; b++) {
-        solarIrradiancesSln.push_back(&slnInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(b + 1)));
+    for (size_t b = 18; b < 24; b++) {
+        solarIrradiancesSln.push_back(&averagedSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(b + 1)));
     }
-    for (size_t b = 0; b < 6; b++) {
-        solarIrradiancesSlo.push_back(&sloInfoSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(b + 1)));
+    for (size_t b = 24; b < 30; b++) {
+        solarIrradiancesSlo.push_back(&averagedSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(b + 1)));
     }
 
     AuxdataProvider& radiometricAuxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUXDATA_RADIOMETRIC_ID);
@@ -175,7 +172,7 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
      * Solar irradiances
      */
     for (size_t channel = 0; channel < 18; channel++) {
-        const size_t index = olcInfoGrid.getIndex(k, channel, m * averagingFactor + averagingFactor / 2);
+        const size_t index = averagedGrid.getIndex(k, channel, m);
 
         if (!solarIrradiancesOlc.isFillValue(index)) {
             p->solarIrradiances[channel] = solarIrradiancesOlc.getDouble(index);
@@ -367,9 +364,7 @@ void Aer::process(Context& context) {
 }
 
 vector<shared_ptr<Pixel> > Aer::getPixels(Context& context, long firstL, long lastL) const {
-    // todo - check
-    uint8_t averagingFactor = getAuxdataProvider(context, Constants::AUXDATA_CONFIGURATION_ID).getUByte("ave_square");
-    const PixelInitializer pixelInitializer(context, averagingFactor);
+    const PixelInitializer pixelInitializer(context);
     vector<shared_ptr<Pixel> > pixels(averagedGrid->getSize());
     for (long l = firstL; l <= lastL; l++) {
         for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {

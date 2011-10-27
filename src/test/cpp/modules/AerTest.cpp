@@ -5,6 +5,7 @@
  * Created on Oct 04, 2011
  */
 
+#include <algorithm>
 #include <cstdlib>
 
 #include "../../../main/cpp/core/Processor.h"
@@ -22,6 +23,7 @@
 
 #include "AerTest.h"
 
+using std::copy;
 using std::getenv;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(AerTest);
@@ -100,6 +102,41 @@ void AerTest::testAer_s() {
     p->radiances[27] = Constants::FILL_VALUE_DOUBLE;
     p->radiances[28] = Constants::FILL_VALUE_DOUBLE;
     p->radiances[29] = Constants::FILL_VALUE_DOUBLE;
+
+    for(size_t i = 0; i < 18; i++) {
+        p->solarIrradiances[i] = 1530.923;
+    }
+    for(size_t i = 18; i < 24; i++) {
+        p->solarIrradiances[i] = 1802.648;
+    }
+    for(size_t i = 24; i < 30; i++) {
+        p->solarIrradiances[i] = 1490.223;
+    }
+
+    AuxdataProvider& rap = (AuxdataProvider&)context->getObject(Constants::AUXDATA_RADIOMETRIC_ID);
+    valarray<double> cO3 = rap.getDoubleArray("C_O3");
+    copy(&cO3[0], &cO3[30], &(p->cO3[0]));
+
+    p->sza = 44.426440;
+    p->saa = 134.502528;
+    p->vzaOlc = 56.402192;
+    p->vaaOlc = 93.820264;
+    p->vzaSln = 0;
+    p->vaaSln = Constants::FILL_VALUE_DOUBLE;
+    p->vzaSln = 0;
+    p->vaaSlo = Constants::FILL_VALUE_DOUBLE;
+
+    p->ozone = 0.006393726;
+    p->airPressure = 1018.949;
+    p->waterVapour = 0.2;
+
+    p->tau550 = Constants::FILL_VALUE_DOUBLE;
+    p->tau550err = Constants::FILL_VALUE_DOUBLE;
+    p->tau550_filtered = Constants::FILL_VALUE_DOUBLE;
+    p->tau550err_filtered = Constants::FILL_VALUE_DOUBLE;
+    p->alpha550 = Constants::FILL_VALUE_DOUBLE;
+    p->amin = numeric_limits<short>::min();
+    p->E2 = numeric_limits<double>::max();
 
     aer->aer_s(p, *context);
 }
