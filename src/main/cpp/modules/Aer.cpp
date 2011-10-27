@@ -245,8 +245,8 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
      */
     p->tau550 = Constants::FILL_VALUE_DOUBLE;
     p->tau550err = Constants::FILL_VALUE_DOUBLE;
-    p->tau550_filtered = Constants::FILL_VALUE_DOUBLE;
-    p->tau550err_filtered = Constants::FILL_VALUE_DOUBLE;
+    p->tau550Filtered = Constants::FILL_VALUE_DOUBLE;
+    p->tau550errFiltered = Constants::FILL_VALUE_DOUBLE;
     p->alpha550 = Constants::FILL_VALUE_DOUBLE;
     p->amin = numeric_limits<short>::min();
     p->E2 = numeric_limits<double>::max();
@@ -472,8 +472,8 @@ void Aer::applyMedianFiltering(vector<shared_ptr<Pixel> >& pixels, long firstL, 
                 }
                 std::nth_element(&tau550Values[0], &tau550Values[i / 2], &tau550Values[i + 1]);
                 std::nth_element(&tau550ErrValues[0], &tau550ErrValues[i / 2], &tau550ErrValues[i + 1]);
-                p->tau550_filtered = tau550Values[i / 2];
-                p->tau550err_filtered = tau550ErrValues[i / 2];
+                p->tau550Filtered = tau550Values[i / 2];
+                p->tau550errFiltered = tau550ErrValues[i / 2];
             }
         }
     }
@@ -510,8 +510,8 @@ void Aer::putPixels(vector<shared_ptr<Pixel> > pixels) const {
 
     foreach(shared_ptr<Pixel> p, pixels) {
         amin.setUByte(p->index, p->amin);
-        t550.setDouble(p->index, p->tau550_filtered);
-        t550err.setDouble(p->index, p->tau550err_filtered);
+        t550.setDouble(p->index, p->tau550Filtered);
+        t550err.setDouble(p->index, p->tau550errFiltered);
         a550.setDouble(p->index, p->alpha550);
         synFlags.setUShort(p->index, p->synFlags);
     }
