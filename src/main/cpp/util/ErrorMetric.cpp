@@ -37,10 +37,10 @@ ErrorMetric::ErrorMetric(const Pixel& p, int16_t amin, double tau550, Context& c
     angularWeights = configurationAuxdata.getDoubleMatrix("weight_ang");
     gamma = configurationAuxdata.getDouble("gamma");
 
-    const double fillValue = -numeric_limits<double_t>::max();
+    const double Constants::FILL_VALUE_DOUBLE = -numeric_limits<double_t>::max();
 
     for (size_t i = 1; i <= 30; i++) {
-        if (p.radiances[i - 1] == fillValue) {
+        if (p.radiances[i - 1] == Constants::FILL_VALUE_DOUBLE) {
             spectralWeights[i - 1] = 0;
             if (i >= 19 && i <= 24) {
                 angularWeights.insert_element(0, i - 19, 0.0);
@@ -131,23 +131,21 @@ void ErrorMetric::applyAtmosphericCorrection(const Pixel& p, int16_t amin) {
     lutRhoAtm.getValues(&coordinates[3], matRho, f, w);
 
     for (size_t b = 0; b < 18; b++) {
-        // Eq. 2-1
-        const double rtoa = toaReflectance(p.radiances[b], p.solarIrradiances[b], p.sza);
+        if (spectralWeights[b] > 0.0) {
+            // Eq. 2-1
+            const double rtoa = toaReflectance(p.radiances[b], p.solarIrradiances[b], p.sza);
 
-        // Eq. 2-2
-        const double tO3 = ozoneTransmission(p.cO3[b], p.sza, p.vzaOlc, p.ozone);
+            // Eq. 2-2
+            const double tO3 = ozoneTransmission(p.cO3[b], p.sza, p.vzaOlc, p.ozone);
 
-        // Eq. 2-3
-        const double ratm = matRatmOlc(amin - 1, b);
-        const double ts = matTs(amin - 1, b);
-        const double tv = matTv(amin - 1, b);
-        const double rho = matRho(amin - 1, b);
-        const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho, tO3);
+            // Eq. 2-3
+            const double ratm = matRatmOlc(amin - 1, b);
+            const double ts = matTs(amin - 1, b);
+            const double tv = matTv(amin - 1, b);
+            const double rho = matRho(amin - 1, b);
+            const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho, tO3);
 
-        if (sdr >= 0.0 && sdr <= 1.0) {
             sdrs[b] = sdr;
-        } else {
-            sdrs[b] = Constants::FILL_VALUE_DOUBLE;
         }
     }
 
@@ -162,23 +160,21 @@ void ErrorMetric::applyAtmosphericCorrection(const Pixel& p, int16_t amin) {
     lutT.getValues(&coordinates[2], matTv, f, w);
 
     for (size_t b = 18; b < 24; b++) {
-        // Eq. 2-1
-        const double rtoa = toaReflectance(p.radiances[b], p.solarIrradiances[b], p.sza);
+        if (spectralWeights[b] > 0.0) {
+            // Eq. 2-1
+            const double rtoa = toaReflectance(p.radiances[b], p.solarIrradiances[b], p.sza);
 
-        // Eq. 2-2
-        const double tO3 = ozoneTransmission(p.cO3[b], p.sza, p.vzaOlc, p.ozone);
+            // Eq. 2-2
+            const double tO3 = ozoneTransmission(p.cO3[b], p.sza, p.vzaOlc, p.ozone);
 
-        // Eq. 2-3
-        const double ratm = matRatmSln(amin - 1, b - 18);
-        const double ts = matTs(amin - 1, b);
-        const double tv = matTv(amin - 1, b);
-        const double rho = matRho(amin - 1, b);
-        const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho, tO3);
+            // Eq. 2-3
+            const double ratm = matRatmSln(amin - 1, b - 18);
+            const double ts = matTs(amin - 1, b);
+            const double tv = matTv(amin - 1, b);
+            const double rho = matRho(amin - 1, b);
+            const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho, tO3);
 
-        if (sdr >= 0.0 && sdr <= 1.0) {
             sdrs[b] = sdr;
-        } else {
-            sdrs[b] = Constants::FILL_VALUE_DOUBLE;
         }
     }
 
@@ -193,23 +189,21 @@ void ErrorMetric::applyAtmosphericCorrection(const Pixel& p, int16_t amin) {
     lutT.getValues(&coordinates[2], matTv, f, w);
 
     for (size_t b = 24; b < 30; b++) {
-        // Eq. 2-1
-        const double rtoa = toaReflectance(p.radiances[b], p.solarIrradiances[b], p.sza);
+        if (spectralWeights[b] > 0.0) {
+            // Eq. 2-1
+            const double rtoa = toaReflectance(p.radiances[b], p.solarIrradiances[b], p.sza);
 
-        // Eq. 2-2
-        const double tO3 = ozoneTransmission(p.cO3[b], p.sza, p.vzaOlc, p.ozone);
+            // Eq. 2-2
+            const double tO3 = ozoneTransmission(p.cO3[b], p.sza, p.vzaOlc, p.ozone);
 
-        // Eq. 2-3
-        const double ratm = matRatmSlo(amin - 1, b - 24);
-        const double ts = matTs(amin - 1, b);
-        const double tv = matTv(amin - 1, b);
-        const double rho = matRho(amin - 1, b);
-        const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho, tO3);
+            // Eq. 2-3
+            const double ratm = matRatmSlo(amin - 1, b - 24);
+            const double ts = matTs(amin - 1, b);
+            const double tv = matTv(amin - 1, b);
+            const double rho = matRho(amin - 1, b);
+            const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho, tO3);
 
-        if (sdr >= 0.0 && sdr <= 1.0) {
             sdrs[b] = sdr;
-        } else {
-            sdrs[b] = Constants::FILL_VALUE_DOUBLE;
         }
     }
 }
@@ -249,14 +243,12 @@ double ErrorMetric::errorMetric() {
 }
 
 double ErrorMetric::ndv(const Pixel& q, const valarray<int16_t>& ndviIndices) {
-    const double fillValue = -numeric_limits<double_t>::max();
-
     double L1 = q.radiances[ndviIndices[0] - 1];
     double L2 = q.radiances[ndviIndices[1] - 1];
     double F1 = q.solarIrradiances[ndviIndices[0] - 1];
     double F2 = q.solarIrradiances[ndviIndices[1] - 1];
 
-    if (L1 == fillValue || L2 == fillValue || F1 == fillValue || F2 == fillValue) {
+    if (L1 == Constants::FILL_VALUE_DOUBLE || L2 == Constants::FILL_VALUE_DOUBLE || F1 == Constants::FILL_VALUE_DOUBLE || F2 == Constants::FILL_VALUE_DOUBLE) {
         return 0.5;
     }
 
