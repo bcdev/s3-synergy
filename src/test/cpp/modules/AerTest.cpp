@@ -64,7 +64,7 @@ void AerTest::prepareContext() {
 }
 
 void AerTest::tearDown() {
-	context = 0;
+	context.reset();
 }
 
 void AerTest::testAer_s() {
