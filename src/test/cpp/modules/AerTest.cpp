@@ -19,6 +19,7 @@
 #include "../../../main/cpp/util/DictionaryParser.h"
 #include "../../../main/cpp/util/JobOrderParser.h"
 #include "../../../main/cpp/core/Pixel.h"
+#include "../../../main/cpp/util/ErrorMetric.h"
 
 
 #include "AerTest.h"
@@ -138,7 +139,8 @@ void AerTest::testAer_s() {
     p->amin = numeric_limits<short>::min();
     p->E2 = numeric_limits<double>::max();
 
-    aer->aer_s(p, *context);
+	aer->em = shared_ptr<ErrorMetric>(new ErrorMetric(*context));
+    aer->aer_s(p);
 }
 
 void AerTest::testAer() {
@@ -162,37 +164,31 @@ void AerTest::testAer() {
 void AerTest::testReadAuxdata() {
     aer->readAuxdata(*context);
     const valarray<int16_t> amins = aer->amins;
+    CPPUNIT_ASSERT(amins.size() == 3);
     CPPUNIT_ASSERT(amins[0] == 1);
-    CPPUNIT_ASSERT(amins[20] == 21);
-    CPPUNIT_ASSERT(amins[39] == 40);
+    CPPUNIT_ASSERT(amins[1] == 2);
+    CPPUNIT_ASSERT(amins[2] == 3);
 
     const float initialTau550 = aer->initialTau550;
     CPPUNIT_ASSERT(initialTau550 == 0.1f);
 
     const valarray<double> initialNus = aer->initialNu;
     CPPUNIT_ASSERT(initialNus.size() == 2);
-    CPPUNIT_ASSERT(std::abs(initialNus[0] - 0.5) < EPSILON);
-    CPPUNIT_ASSERT(std::abs(initialNus[1] - 0.3) < EPSILON);
+    CPPUNIT_ASSERT(initialNus[0] == 0.5f);
+    CPPUNIT_ASSERT(initialNus[1] == 0.3f);
 
     const valarray<double> initialOmegas = aer->initialOmega;
     CPPUNIT_ASSERT(initialOmegas.size() == 6);
     for(size_t i = 0; i < initialOmegas.size(); i++) {
-        CPPUNIT_ASSERT(std::abs(initialOmegas[i] - 0.1) < EPSILON);
+        CPPUNIT_ASSERT(initialOmegas[i] == 0.1f);
     }
 
     double alpha550 = aer->aerosolAngstromExponents[0];
-    CPPUNIT_ASSERT(std::abs(alpha550 - 1.25) < EPSILON);
+    CPPUNIT_ASSERT(alpha550 == 1.25f);
 
     alpha550 = aer->aerosolAngstromExponents[10];
-    CPPUNIT_ASSERT(std::abs(alpha550 - 1.25) < EPSILON);
+    CPPUNIT_ASSERT(alpha550 == 1.25f);
 
     alpha550 = aer->aerosolAngstromExponents[30];
-    CPPUNIT_ASSERT(std::abs(alpha550 - 1.25) < EPSILON);
-
-//    matrix<double> weights = aer->angularWeights;
-//    CPPUNIT_ASSERT(weights.at_element(0,0) == 1.5);
-//    CPPUNIT_ASSERT(weights.at_element(0,1) == 1.0);
-//    CPPUNIT_ASSERT(weights.at_element(1,1) == 1.0);
-//    CPPUNIT_ASSERT(weights.at_element(0,2) == 0.5);
-//    CPPUNIT_ASSERT(weights.at_element(1,5) == 1.0);
+    CPPUNIT_ASSERT(alpha550 == 1.25f);
 }
