@@ -22,7 +22,7 @@ const string& AuxdataProvider::getId() const {
 	return id;
 }
 
-uint8_t AuxdataProvider::getUByte(const string& varName) {
+uint8_t AuxdataProvider::getUByte(const string& varName) const {
 	if (contains(ubytes, varName)) {
 		return ubytes[varName];
 	}
@@ -34,7 +34,7 @@ uint8_t AuxdataProvider::getUByte(const string& varName) {
 	return ubytes[varName] = data;
 }
 
-double AuxdataProvider::getDouble(const string& varName) {
+double AuxdataProvider::getDouble(const string& varName) const {
 	if (contains(doubles, varName)) {
 		return doubles[varName];
 	}
@@ -46,7 +46,7 @@ double AuxdataProvider::getDouble(const string& varName) {
 	return doubles[varName] = data;
 }
 
-int16_t AuxdataProvider::getShort(const string& varName) {
+int16_t AuxdataProvider::getShort(const string& varName) const {
 	if (contains(shorts, varName)) {
 		return shorts[varName];
 	}
@@ -58,7 +58,7 @@ int16_t AuxdataProvider::getShort(const string& varName) {
 	return shorts[varName] = data;
 }
 
-const valarray<double>& AuxdataProvider::getVectorDouble(const string& varName) {
+const valarray<double>& AuxdataProvider::getVectorDouble(const string& varName) const {
 	if (contains(doubleArrays, varName)) {
 		return *doubleArrays[varName];
 	}
@@ -73,7 +73,7 @@ const valarray<double>& AuxdataProvider::getVectorDouble(const string& varName) 
 	return *v;
 }
 
-const valarray<int16_t>& AuxdataProvider::getVectorShort(const string& varName) {
+const valarray<int16_t>& AuxdataProvider::getVectorShort(const string& varName) const {
 	if (contains(shortArrays, varName)) {
 		return *shortArrays[varName];
 	}
@@ -88,7 +88,7 @@ const valarray<int16_t>& AuxdataProvider::getVectorShort(const string& varName) 
 	return *v;
 }
 
-const matrix<double>& AuxdataProvider::getMatrixDouble(const string& varName) {
+const matrix<double>& AuxdataProvider::getMatrixDouble(const string& varName) const {
 	if (contains(doubleMatrices, varName)) {
 		return *doubleMatrices[varName];
 	}

@@ -26,25 +26,25 @@ public:
 
 	const string& getId() const;
 
-	uint8_t getUByte(const string& varName);
-	double getDouble(const string& varName);
-	int16_t getShort(const string& varName);
+	uint8_t getUByte(const string& varName) const;
+	double getDouble(const string& varName) const;
+	int16_t getShort(const string& varName) const;
 
-	const valarray<double>& getVectorDouble(const string& varName);
-	const valarray<int16_t>& getVectorShort(const string& varName);
+	const valarray<double>& getVectorDouble(const string& varName) const;
+	const valarray<int16_t>& getVectorShort(const string& varName) const;
 
-	const matrix<double>& getMatrixDouble(const string& varName);
+	const matrix<double>& getMatrixDouble(const string& varName) const;
 
 private:
 	const string id;
 	const int fileId;
 
-	map<string, uint8_t> ubytes;
-	map<string, double> doubles;
-	map<string, int16_t> shorts;
-	map<string, shared_ptr<valarray<double> > > doubleArrays;
-	map<string, shared_ptr<valarray<int16_t> > > shortArrays;
-	map<string, shared_ptr<matrix<double> > > doubleMatrices;
+	mutable map<string, uint8_t> ubytes;
+	mutable map<string, double> doubles;
+	mutable map<string, int16_t> shorts;
+	mutable map<string, shared_ptr<valarray<double> > > doubleArrays;
+	mutable map<string, shared_ptr<valarray<int16_t> > > shortArrays;
+	mutable map<string, shared_ptr<matrix<double> > > doubleMatrices;
 
 	template<class K, class V>
 	static bool contains(const map<K, V>& map, const K& key) {

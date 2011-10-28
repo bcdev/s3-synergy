@@ -114,9 +114,11 @@ valarray<W>& VectorLookupTableImpl<T, W>::getValues(const W coordinates[], valar
 	valarray<W> v(offsets.size() * length);
 
 	size_t origin = 0;
+#pragma omp parallel for reduction(+ : origin)
 	for (size_t i = 0; i < n; ++i) {
 		origin += getIndex(i, coordinates[i], f[i]) * strides[i];
 	}
+#pragma omp parallel for
 	for (size_t i = 0; i < offsets.size(); ++i) {
 		for (size_t j = 0; j < length; ++j) {
 			v[i * length + j] = boost::numeric_cast<W>(y[origin + offsets[i] + j]);
@@ -124,13 +126,14 @@ valarray<W>& VectorLookupTableImpl<T, W>::getValues(const W coordinates[], valar
 	}
 	for (size_t i = n; i-- > 0;) {
 		const size_t m = 1 << i;
-
+#pragma omp parallel for
 		for (size_t j = 0; j < m; ++j) {
 			for (size_t k = 0; k < length; ++k) {
 				v[j * length + k] += f[i] * (v[(m + j) * length + k] - v[j * length + k]);
 			}
 		}
 	}
+#pragma omp parallel for
 	for (size_t k = 0; k < length; ++k) {
 		values[k] = v[k] * scaleFactor + addOffset;
 	}

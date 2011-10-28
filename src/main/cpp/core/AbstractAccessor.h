@@ -222,6 +222,7 @@ public:
 		if (data.size() % strideK != 0) {
 			BOOST_THROW_EXCEPTION( invalid_argument("data.size() % strideK != 0"));
 		}
+#pragma omp parallel for
 		for (size_t k = 0; k < data.size(); k += strideK) {
 			copy(&data[k + n * strideL], &data[k + strideK], &data[k]);
 			fill(&data[k + strideK - n * strideL], &data[k + strideK], T(0));

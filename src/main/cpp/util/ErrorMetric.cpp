@@ -5,13 +5,13 @@
  *      Author: thomasstorm
  */
 
-#include <limits>
-
-#include "../core/LookupTable.h"
+#include <cmath>
 
 #include "ErrorMetric.h"
 
-using std::numeric_limits;
+
+static const double PI = 3.14159265358979323846;
+static const double RADIAN = PI / 180.0;
 
 ErrorMetric::ErrorMetric(const Context& context) :
 		context(context),
@@ -30,8 +30,6 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		soilReflectance(configurationAuxdata.getVectorDouble("R_soil")),
 		angularWeights(configurationAuxdata.getMatrixDouble("weight_ang")),
 		sdrs(30),
-		rSpec(30),
-		rAng(12),
 		coordinates(10),
 		matRatmOlc(40, 18),
 		matRatmSln(40, 6),
@@ -46,91 +44,135 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		p0(10),
 		pe(10),
 		u(valarray<double>(10), 10),
-		lineMinimizer(this, &ErrorMetric::computeSpectralRss, pn, u)
+		lineMinimizer2(this, &ErrorMetric::computeRss2, pn, u),
+		lineMinimizer8(this, &ErrorMetric::computeRss8, pn, u)
 {
+}
+
+double ErrorMetric::getValue(double x) {
+	applyAtmosphericCorrection(x);
+	for (size_t i = 0; i < 10; i++) {
+        u[i][i] = 1.0;
+        for (size_t j = 0; j < i; j++) {
+            u[i][j] = u[j][i] = 0.0;
+        }
+	}
+    if (doOLC) {
+        pn[0] = pixel->c1;
+        pn[1] = pixel->c2;
+        MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer2, 0, 2, pn, p0, pe, u, 1.0e-4, 100);
+    }
+    if (doSLS) {
+        pn[2] = pixel->nu[0];
+        pn[3] = pixel->nu[1];
+        for (size_t i = 0; i < 6; i++) {
+            pn[i + 4] = pixel->omega[i];
+        }
+        MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer8, 2, 10, pn, p0, pe, u, 1.0e-4, 100);
+    }
+    
+    return computeRss10(pn);
+}
+
+double ErrorMetric::computeNdvi(const Pixel& p) const {
+	double l1 = p.radiances[ndviIndices[0] - 1];
+	double l2 = p.radiances[ndviIndices[1] - 1];
+	double f1 = p.solarIrradiances[ndviIndices[0] - 1];
+	double f2 = p.solarIrradiances[ndviIndices[1] - 1];
+    
+	if (l1 == Constants::FILL_VALUE_DOUBLE || 
+        l2 == Constants::FILL_VALUE_DOUBLE || 
+        f1 == Constants::FILL_VALUE_DOUBLE || 
+        f2 == Constants::FILL_VALUE_DOUBLE) {
+		return 0.5;
+	}
+    
+	return ((l2 / f2) - (l1 / f1)) / ((l2 / f2) + (l1 / f1));
 }
 
 void ErrorMetric::setPixel(const Pixel& p) {
 	sum2 = 0.0;
-	sum4 = 0.0;
+	sum8 = 0.0;
+
+    unsigned olcCount = 0;
+    unsigned slsCount = 0;
 	for (size_t i = 0; i < 30; i++) {
 		if (p.radiances[i] != Constants::FILL_VALUE_DOUBLE) {
 			sum2 += spectralWeights[i];
+            if (i < 18) {
+                olcCount++;
+            } else {
+                slsCount++;
+            }
 		}
 	}
-	for (size_t i = 0; i < 12; i++) {
-		if (p.radiances[i + 18] != Constants::FILL_VALUE_DOUBLE) {
-			const size_t xIndex = i < 6 ? 0 : 1;
-			const size_t yIndex = i % 6;
-			sum4 += angularWeights(xIndex, yIndex);
-		}
-	}
+	for (size_t o = 0, i = 18; o < 2; o++) {
+        for (size_t j = 0; j < 6; j++, i++) {
+            if (p.radiances[i] != Constants::FILL_VALUE_DOUBLE) {
+                sum8 += angularWeights(o, j);
+            }
+        }
+    }
+    doOLC = olcCount >= 12;
+    doSLS = slsCount >= 8;
+    
 	const double ndvi = computeNdvi(p);
 	totalAngularWeight = lutTotalAngularWeights.getValue(&ndvi);
 
-	this->pixel = &p;
+    pixel = &p;
 }
 
-double ErrorMetric::getValue(double x) {
-	computeAtmosphericCorrection(x);
-	pn[0] = pixel->c1;
-	pn[1] = pixel->c2;
-	pn[2] = pixel->nu[0];
-	pn[3] = pixel->nu[1];
-	for (size_t i = 0; i < 6; i++) {
-		pn[i + 4] = pixel->omega[i];
-	}
-	for (size_t i = 0; i < 10; i++) {
-		u[i][i] = 1.0;
-	}
-	MultiMin::powell(this, &ErrorMetric::computeSpectralRss, lineMinimizer, 0, 2, pn, p0, pe, u, 1.0e-4, 100);
-	MultiMin::powell(this, &ErrorMetric::computeAngularRss, lineMinimizer, 2, 10, pn, p0, pe, u, 1.0e-4, 100);
 
-	const double spectralPart = computeSpectralRss(pn);
-	const double angularPart = computeAngularRss(pn);
-
-	return (1.0 - totalAngularWeight) * spectralPart / sum2 + totalAngularWeight * angularPart / sum4;
-}
-
-double ErrorMetric::computeSpectralRss(valarray<double>& x) {
+double ErrorMetric::computeRss2(valarray<double>& x) {
 	double sum = 0.0;
-	for (size_t i = 0; i < 30; i++) {
-		if (pixel->radiances[i] != Constants::FILL_VALUE_DOUBLE) {
-			// TODO - remove field
-			rSpec[i] = x[0] * vegetationSpectrum[i] + x[1] * soilReflectance[i];
-			sum += spectralWeights[i] * (sdrs[i] - rSpec[i]) * (sdrs[i] - rSpec[i]);
-		}
-	}
+    if (doOLC) {
+#pragma omp parallel for reduction(+ : sum)
+        for (size_t i = 0; i < 30; i++) {
+            if (pixel->radiances[i] != Constants::FILL_VALUE_DOUBLE) {
+                const double rSpec = x[0] * vegetationSpectrum[i] + x[1] * soilReflectance[i];
+                sum += spectralWeights[i] * (sdrs[i] - rSpec) * (sdrs[i] - rSpec);
+            }
+        }
+    }
 	return sum;
 }
 
-double ErrorMetric::computeAngularRss(valarray<double>& x) {
+double ErrorMetric::computeRss8(valarray<double>& x) {
 	double sum = 0.0;
-	for (size_t i = 0; i < 12; i++) {
-		if (pixel->radiances[i + 18] != Constants::FILL_VALUE_DOUBLE) {
-			// TODO - remove field
-			rAng[i] = angModelSurf(i, x);
-			size_t xIndex = i < 6 ? 0 : 1;
-			size_t yIndex = i % 6;
-			sum += angularWeights(xIndex, yIndex) * (sdrs[i] - rAng[i]) * (sdrs[i] - rAng[i]);
-		}
-	}
+    if (doSLS) {
+        for (size_t o = 0, i = 18; i < 2; o++) {
+            for (size_t j = 0; j < 6; j++, i++) {
+                if (pixel->radiances[i] != Constants::FILL_VALUE_DOUBLE) {            
+                    const double d = diffuseFraction[j];
+                    const double nu = x[o + 2];
+                    const double omega = x[j + 4];
+                    const double g = (1 - gamma) * omega;
+                    const double rAng = (1 - d) * nu * omega + (gamma * omega) / (1 - g) * (d + g * (1 - d));
+                    
+                    sum += angularWeights(o, j) * (sdrs[i] - rAng) * (sdrs[i] - rAng);
+                }
+            }
+        }
+    }
 	return sum;
 }
 
 static double ozoneTransmission(double cO3, double sza, double vza, double nO3) {
-	static const double D2R = 3.14159265358979323846 / 180.0;
+    using std::cos;
+    using std::exp;
+    
 	// Eq. 2-2
-	const double m = 0.5 * (1.0 / std::cos(sza * D2R) + 1.0 / std::cos(vza * D2R));
-	const double tO3 = std::exp(-m * nO3 * cO3);
+	const double m = 0.5 * (1.0 / cos(sza * RADIAN) + 1.0 / cos(vza * RADIAN));
+	const double tO3 = exp(-m * nO3 * cO3);
 
 	return tO3;
 }
 
 static double toaReflectance(double ltoa, double f0, double sza) {
-	static const double D2R = 3.14159265358979323846 / 180.0;
-	static const double PI = 3.14159265358979323846;
-	return (PI * ltoa) / (f0 * std::cos(sza * D2R));
+    using std::cos;
+    
+    // Eq. 2-1 
+	return (PI * ltoa) / (f0 * cos(sza * RADIAN));
 }
 
 static double surfaceReflectance(double rtoa, double ratm, double ts, double tv, double rho, double tO3) {
@@ -141,10 +183,10 @@ static double surfaceReflectance(double rtoa, double ratm, double ts, double tv,
 	return rboa;
 }
 
-void ErrorMetric::computeAtmosphericCorrection(double tau550) {
+void ErrorMetric::applyAtmosphericCorrection(double tau550) {
 	using std::abs;
 
-	const uint8_t amin = pixel->amin;
+	const size_t amin = pixel->amin;
 
 	coordinates[0] = pixel->sza;
 	coordinates[1] = pixel->airPressure;
@@ -169,6 +211,7 @@ void ErrorMetric::computeAtmosphericCorrection(double tau550) {
 	lutT.getValues(&coordinates[2], matTv, f, w);
 	lutRhoAtm.getValues(&coordinates[3], matRho, f, w);
 
+#pragma omp parallel for
 	for (size_t b = 0; b < 18; b++) {
 		if (pixel->radiances[b] != Constants::FILL_VALUE_DOUBLE) {
 			// Eq. 2-1
@@ -198,6 +241,7 @@ void ErrorMetric::computeAtmosphericCorrection(double tau550) {
 	lutSlnRatm.getValues(&coordinates[0], matRatmSln, f, w);
 	lutT.getValues(&coordinates[2], matTv, f, w);
 
+#pragma omp parallel for
 	for (size_t b = 18; b < 24; b++) {
 		if (pixel->radiances[b] != Constants::FILL_VALUE_DOUBLE) {
 			// Eq. 2-1
@@ -227,6 +271,7 @@ void ErrorMetric::computeAtmosphericCorrection(double tau550) {
 	lutSloRatm.getValues(&coordinates[0], matRatmSlo, f, w);
 	lutT.getValues(&coordinates[2], matTv, f, w);
 
+#pragma omp parallel for
 	for (size_t b = 24; b < 30; b++) {
 		if (pixel->radiances[b] != Constants::FILL_VALUE_DOUBLE) {
 			// Eq. 2-1
@@ -245,29 +290,4 @@ void ErrorMetric::computeAtmosphericCorrection(double tau550) {
 			sdrs[b] = sdr;
 		}
 	}
-}
-
-double ErrorMetric::angModelSurf(size_t index, valarray<double>& x) {
-	// TODO - check this!!!
-	const size_t j = index % 6;
-	const size_t o = index / 6;
-
-	const double d = diffuseFraction[j];
-	const double omega = x[j + 4];
-	const double nu = x[o + 2];
-	const double g = (1 - gamma) * omega;
-	return (1 - d) * nu * omega + (gamma * omega) / (1 - g) * (d + g * (1 - d));
-}
-
-double ErrorMetric::computeNdvi(const Pixel& p) {
-	double l1 = p.radiances[ndviIndices[0] - 1];
-	double l2 = p.radiances[ndviIndices[1] - 1];
-	double f1 = p.solarIrradiances[ndviIndices[0] - 1];
-	double f2 = p.solarIrradiances[ndviIndices[1] - 1];
-
-	if (l1 == Constants::FILL_VALUE_DOUBLE || l2 == Constants::FILL_VALUE_DOUBLE || f1 == Constants::FILL_VALUE_DOUBLE || f2 == Constants::FILL_VALUE_DOUBLE) {
-		return 0.5;
-	}
-
-	return ((l2 / f2) - (l1 / f1)) / ((l2 / f2) + (l1 / f1));
 }

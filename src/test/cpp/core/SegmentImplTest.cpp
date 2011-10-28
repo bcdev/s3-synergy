@@ -121,8 +121,9 @@ void SegmentImplTest::testMoveForward() {
     valarray<uint32_t>& data = segment->getAccessor("U").getUIntData();
 
     const Grid& grid = segment->getGrid();
-    for (long k = 0; k < grid.getSizeK(); k++) {
-        for (long l = 0; l < grid.getSizeL(); l++) {
+#pragma omp parallel for
+    for (long l = 0; l < grid.getSizeL(); l++) {
+        for (long k = 0; k < grid.getSizeK(); k++) {
             for (long m = 0; m < grid.getSizeM(); m++) {
                 const size_t i = grid.getIndex(k, l, m);
                 data[i] = l;
@@ -133,8 +134,9 @@ void SegmentImplTest::testMoveForward() {
     segment->moveForward(200);
     CPPUNIT_ASSERT(grid.getFirstL() == 200);
 
-    for (long k = 0; k < grid.getSizeK(); k++) {
-        for (long l = grid.getFirstL(); l < grid.getFirstL() + grid.getSizeL(); l++) {
+#pragma omp parallel for
+    for (long l = grid.getFirstL(); l < grid.getFirstL() + grid.getSizeL(); l++) {
+        for (long k = 0; k < grid.getSizeK(); k++) {
             for (long m = 0; m < grid.getSizeM(); m++) {
                 const size_t i = grid.getIndex(k, l, m);
                 if (l < grid.getFirstL() + grid.getSizeL() - 200) {
@@ -155,8 +157,9 @@ void SegmentImplTest::testMoveForward() {
     segment->moveForward(2200);
     CPPUNIT_ASSERT(grid.getFirstL() == 2200);
 
-    for (long k = 0; k < grid.getSizeK(); k++) {
-        for (long l = grid.getFirstL(); l < grid.getFirstL() + grid.getSizeL(); l++) {
+#pragma omp parallel for
+    for (long l = grid.getFirstL(); l < grid.getFirstL() + grid.getSizeL(); l++) {
+        for (long k = 0; k < grid.getSizeK(); k++) {
             for (long m = 0; m < grid.getSizeM(); m++) {
                 const size_t i = grid.getIndex(k, l, m);
                 CPPUNIT_ASSERT(data[i] == 0);

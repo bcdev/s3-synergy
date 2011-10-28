@@ -73,21 +73,7 @@ Bracket& Min::brack(UnivariateFunction& function, double a, double b, Bracket& b
     return bracket;
 }
 
-bool Min::brent(UnivariateFunction& function, Bracket& bracket, double relativeAccuracyGoal) {
-    return brent(function, bracket, relativeAccuracyGoal, 1.0E-10);
-}
-
-bool Min::brent(UnivariateFunction& function, Bracket& bracket, double relativeAccuracyGoal, double absoluteAccuracyGoal) {
-    return brent(function, bracket, relativeAccuracyGoal, absoluteAccuracyGoal, 100);
-}
-
 bool Min::brent(UnivariateFunction& f, Bracket& bracket, double relativeAccuracyGoal, double absoluteAccuracyGoal, int maxIter) {
-//    if (bracket.minimumF >= bracket.lowerF || bracket.minimumF >= bracket.upperF
-//            || (bracket.minimumX <= bracket.lowerX && bracket.minimumX <= bracket.upperX)
-//            || (bracket.minimumX >= bracket.lowerX && bracket.minimumX >= bracket.upperX)) {
-//        return false;
-//    }
-
     double u;
     double v = bracket.lowerX + GOLDEN * (bracket.upperX - bracket.lowerX);
     double w = v;

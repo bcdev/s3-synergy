@@ -129,9 +129,11 @@ matrix<W>& MatrixLookupTableImpl<T, W>::getValues(const W coordinates[], matrix<
 	assert(w.size() >= offsets.size() * elementCount);
 
 	size_t origin = 0;
+#pragma omp parallel for reduction(+ : origin)
 	for (size_t i = 0; i < n; ++i) {
 		origin += getIndex(i, coordinates[i], f[i]) * strides[i];
 	}
+#pragma omp parallel for
 	for (size_t i = 0; i < offsets.size(); ++i) {
 		for (size_t j = 0; j < elementCount; ++j) {
 			w[i * elementCount + j] = boost::numeric_cast<W>(y[origin + offsets[i] + j]);
@@ -139,16 +141,18 @@ matrix<W>& MatrixLookupTableImpl<T, W>::getValues(const W coordinates[], matrix<
 	}
 	for (size_t i = n; i-- > 0;) {
 		const size_t m = 1 << i;
-
+#pragma omp parallel for
 		for (size_t j = 0; j < m; ++j) {
 			for (size_t k = 0; k < elementCount; ++k) {
 				w[j * elementCount + k] += f[i] * (w[(m + j) * elementCount + k] - w[j * elementCount + k]);
 			}
 		}
 	}
-	for (size_t i = 0, k = 0; i < rowCount; ++i) {
-		for (size_t j = 0; j < colCount; ++j, ++k) {
-			matrix(i, j) = w[k] * scaleFactor + addOffset;
+#pragma omp parallel for
+	for (size_t i = 0; i < rowCount; ++i) {
+		for (size_t j = 0; j < colCount; ++j) {
+			const size_t ij = i * colCount + j;
+			matrix(i, j) = w[ij] * scaleFactor + addOffset;
 		}
 	}
 

@@ -29,14 +29,16 @@ public:
     }
 
     double getValue(double x);
-    double computeSpectralRss(valarray<double>& x);
-    double computeAngularRss(valarray<double>& x);
-
+    double computeNdvi(const Pixel& q) const;
     void setPixel(const Pixel& p);
 
-    double computeNdvi(const Pixel& q);
 
 private:
+    double computeRss2(valarray<double>& x);
+    double computeRss8(valarray<double>& x);
+    double computeRss10(valarray<double>& x);
+    void applyAtmosphericCorrection(double tau550);
+
 	const Context& context;
 
 	const MatrixLookupTable<double>& lutOlcRatm;
@@ -46,8 +48,7 @@ private:
     const MatrixLookupTable<double>& lutRhoAtm;
     const ScalarLookupTable<double>& lutTotalAngularWeights;
     const VectorLookupTable<double>& lutD;
-
-    AuxdataProvider& configurationAuxdata;
+    const AuxdataProvider& configurationAuxdata;
     const double gamma;
     const valarray<int16_t>& ndviIndices;
     const valarray<double>& spectralWeights;
@@ -57,14 +58,14 @@ private:
 
 	const Pixel* pixel;
 
+    bool doOLC;
+    bool doSLS;
 	double sum2;
-    double sum4;
-    double totalAngularWeight;
-
+    double sum8;
+    double totalAngularWeight;    
+    
     valarray<double> sdrs;
-    valarray<double> rSpec;
-    valarray<double> rAng;
-
+    
     // for atmospheric correction
 	valarray<double> coordinates;
 	matrix<double> matRatmOlc;
@@ -82,13 +83,13 @@ private:
 	valarray<double> p0;
 	valarray<double> pe;
 	valarray<valarray<double> > u;
-	LineMinimizer<ErrorMetric> lineMinimizer;
-
-    void computeAtmosphericCorrection(double tau550);
-
-    double angModelSurf(size_t index, valarray<double>& x);
-
-    double computeErrorMetric();
+	LineMinimizer<ErrorMetric> lineMinimizer2;
+	LineMinimizer<ErrorMetric> lineMinimizer8;
 };
+
+inline double ErrorMetric::computeRss10(valarray<double>& x) {
+    return (1.0 - totalAngularWeight) * computeRss2(x) / sum2 + totalAngularWeight * computeRss8(x) / sum8;    
+}
+
 
 #endif /* ERRORMETRIC_H_ */

@@ -37,6 +37,7 @@ private:
     void averageVariables(Logging& logging, long firstTargetL, long lastTargetL);
     void averageLatLon(long targetL);
     void averageFlags(long targetL);
+    void averageSolarIrradiances(long targetL);
 
     const Segment* sourceSegment;
     Segment* targetSegment;
