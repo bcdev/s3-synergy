@@ -46,7 +46,7 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		p0(10),
 		pe(10),
 		u(valarray<double>(10), 10),
-		lineMinimizer(*this, pn, u)
+		lineMinimizer(this, &ErrorMetric::computeSpectralRss, pn, u)
 {
 }
 
@@ -83,19 +83,39 @@ double ErrorMetric::getValue(double x) {
 	for (size_t i = 0; i < 10; i++) {
 		u[i][i] = 1.0;
 	}
-	MultiMin::powell(*this, lineMinimizer, pn, p0, pe, u, 1.0e-4, 100);
+	MultiMin::powell(this, &ErrorMetric::computeSpectralRss, lineMinimizer, 0, 2, pn, p0, pe, u, 1.0e-4, 100);
+	MultiMin::powell(this, &ErrorMetric::computeAngularRss, lineMinimizer, 2, 10, pn, p0, pe, u, 1.0e-4, 100);
 
-	return getValue(pn);
+	const double spectralPart = computeSpectralRss(pn);
+	const double angularPart = computeAngularRss(pn);
+
+	return (1.0 - totalAngularWeight) * spectralPart / sum2 + totalAngularWeight * angularPart / sum4;
 }
 
-double ErrorMetric::getValue(valarray<double>& x) {
+double ErrorMetric::computeSpectralRss(valarray<double>& x) {
+	double sum = 0.0;
 	for (size_t i = 0; i < 30; i++) {
-		rSpec[i] = specModelSurf(x[0], x[1], i);
+		if (pixel->radiances[i] != Constants::FILL_VALUE_DOUBLE) {
+			// TODO - remove field
+			rSpec[i] = x[0] * vegetationSpectrum[i] + x[1] * soilReflectance[i];
+			sum += spectralWeights[i] * (sdrs[i] - rSpec[i]) * (sdrs[i] - rSpec[i]);
+		}
 	}
+	return sum;
+}
+
+double ErrorMetric::computeAngularRss(valarray<double>& x) {
+	double sum = 0.0;
 	for (size_t i = 0; i < 12; i++) {
-		rAng[i] = angModelSurf(i, x);
+		if (pixel->radiances[i + 18] != Constants::FILL_VALUE_DOUBLE) {
+			// TODO - remove field
+			rAng[i] = angModelSurf(i, x);
+			size_t xIndex = i < 6 ? 0 : 1;
+			size_t yIndex = i % 6;
+			sum += angularWeights(xIndex, yIndex) * (sdrs[i] - rAng[i]) * (sdrs[i] - rAng[i]);
+		}
 	}
-	return errorMetric();
+	return sum;
 }
 
 static double ozoneTransmission(double cO3, double sza, double vza, double nO3) {
@@ -228,35 +248,15 @@ void ErrorMetric::computeAtmosphericCorrection(double tau550) {
 }
 
 double ErrorMetric::angModelSurf(size_t index, valarray<double>& x) {
+	// TODO - check this!!!
 	const size_t j = index % 6;
 	const size_t o = index / 6;
+
 	const double d = diffuseFraction[j];
 	const double omega = x[j + 4];
 	const double nu = x[o + 2];
 	const double g = (1 - gamma) * omega;
 	return (1 - d) * nu * omega + (gamma * omega) / (1 - g) * (d + g * (1 - d));
-}
-
-double ErrorMetric::specModelSurf(double c_1, double c_2, size_t index) {
-	return c_1 * vegetationSpectrum[index] + c_2 * soilReflectance[index];
-}
-
-double ErrorMetric::errorMetric() {
-	double sum1 = 0.0;
-	double sum3 = 0.0;
-	for (size_t i = 0; i < 30; i++) {
-		if (pixel->radiances[i] != Constants::FILL_VALUE_DOUBLE) {
-			sum1 += spectralWeights[i] * (sdrs[i] - rSpec[i]) * (sdrs[i] - rSpec[i]);
-		}
-	}
-	for (size_t i = 0; i < 12; i++) {
-		if (pixel->radiances[i + 18] != Constants::FILL_VALUE_DOUBLE) {
-			size_t xIndex = i < 6 ? 0 : 1;
-			size_t yIndex = i % 6;
-			sum3 += angularWeights(xIndex, yIndex) * (sdrs[i] - rAng[i]) * (sdrs[i] - rAng[i]);
-		}
-	}
-	return (1 - totalAngularWeight) * sum1 / sum2 + totalAngularWeight * sum3 / sum4;
 }
 
 double ErrorMetric::computeNdvi(const Pixel& p) {

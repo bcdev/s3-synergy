@@ -18,7 +18,7 @@
 #include "UnivariateFunction.h"
 #include "MultiMin.h"
 
-class ErrorMetric : public UnivariateFunction, public MultivariateFunction {
+class ErrorMetric : public UnivariateFunction {
 
 public:
 
@@ -29,8 +29,8 @@ public:
     }
 
     double getValue(double x);
-
-    double getValue(valarray<double>& x);
+    double computeSpectralRss(valarray<double>& x);
+    double computeAngularRss(valarray<double>& x);
 
     void setPixel(const Pixel& p);
 
@@ -82,15 +82,13 @@ private:
 	valarray<double> p0;
 	valarray<double> pe;
 	valarray<valarray<double> > u;
-	LineMinimizer lineMinimizer;
+	LineMinimizer<ErrorMetric> lineMinimizer;
 
     void computeAtmosphericCorrection(double tau550);
 
     double angModelSurf(size_t index, valarray<double>& x);
 
-    double specModelSurf(double c_1, double c_2, size_t index);
-
-    double errorMetric();
+    double computeErrorMetric();
 };
 
 #endif /* ERRORMETRIC_H_ */
