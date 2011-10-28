@@ -6,8 +6,8 @@
  */
 
 #include <algorithm>
-#include <climits>
 #include <cmath>
+#include <limits>
 #include <stdexcept>
 #include <string>
 
