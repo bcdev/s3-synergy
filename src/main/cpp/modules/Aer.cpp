@@ -91,7 +91,7 @@ PixelInitializer::PixelInitializer(const Context& context) :
 		solarIrradiancesSlo.push_back(&averagedSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(b + 1)));
 	}
 
-	AuxdataProvider& radiometricAuxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUXDATA_RADIOMETRIC_ID);
+	AuxdataProvider& radiometricAuxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUX_ID_SYRTAX);
 	cO3 = radiometricAuxdataProvider.getVectorDouble("C_O3");
 
 	const Segment& olciTiepointSegment = context.getSegment(Constants::SEGMENT_OLC_TP);
@@ -411,7 +411,7 @@ void Aer::aer_s(shared_ptr<Pixel> p) {
 		q.c1 = em->computeNdvi(q);
 		q.c2 = 1 - q.c1;
 		q.amin = amin;
-		bool success = e2(q);
+		bool success = em->findMinimum(q);
 		if (success && q.E2 < p->E2) {
 			p->assign(q);
 			p->alpha550 = aerosolAngstromExponents[amin];
@@ -421,7 +421,7 @@ void Aer::aer_s(shared_ptr<Pixel> p) {
 	if (p->amin > 0) {
 		double tau550 = p->tau550;
 		if (tau550 > 0.0001) {
-			double a = errorCurvature(*p);
+			double a = em->computeErrorSurfaceCurvature(*p);
 			if (a > 0) {
 				p->tau550err = kappa * sqrt(p->E2 / a);
 				if (tau550 > 0.1 && p->tau550err > 5 * tau550) {
@@ -436,38 +436,6 @@ void Aer::aer_s(shared_ptr<Pixel> p) {
 			p->synFlags |= 16384;
 		}
 	}
-}
-
-bool Aer::e2(Pixel& p) {
-	em->setPixel(p);
-	Bracket bracket;
-//    Min::brack(e1, 0.0, 3.0, bracket);
-	bracket.lowerX = 0.0;
-	bracket.minimumX = p.tau550;
-	bracket.upperX = 2.0;
-	bracket.lowerF = em->getValue(0.0);
-	bracket.minimumF = em->getValue(0.1);
-	bracket.upperF = em->getValue(2.0);
-	const bool success = Min::brent(*em, bracket);
-
-	const valarray<double>& pn = em->getOptimizedParameters();
-	p.c1 = pn[0];
-	p.c2 = pn[1];
-	p.nu[0] = pn[2];
-	p.nu[1] = pn[3];
-	for (size_t i = 0; i < 6; i++) {
-		p.omega[i] = pn[i + 4];
-	}
-	p.tau550 = bracket.minimumX;
-	p.E2 = bracket.minimumF;
-	return success;
-}
-
-double Aer::errorCurvature(Pixel& p) {
-	em->setPixel(p);
-	double a = em->getValue(0.8 * p.tau550);
-	double b = em->getValue(0.6 * p.tau550);
-	return 25 * (p.E2 - 2 * a + b) / (2 * p.E2 * p.E2);
 }
 
 void Aer::applyMedianFiltering(vector<shared_ptr<Pixel> >& pixels, long firstL, long lastL) {
@@ -508,8 +476,8 @@ void Aer::readAuxdata(Context& context) {
 	getScalarLookupTable(context, "S3__SY_2_SYCPAX.nc", "weight_ang_tot");
 	getScalarLookupTable(context, "S3__SY_2_SYRTAX.nc", "C_O3");
 
-	AuxdataProvider& configurationAuxdataProvider = getAuxdataProvider(context, Constants::AUXDATA_CONFIGURATION_ID);
-	AuxdataProvider& radiometricAuxdataProvider = getAuxdataProvider(context, Constants::AUXDATA_RADIOMETRIC_ID);
+	AuxdataProvider& configurationAuxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYCPAX);
+	AuxdataProvider& radiometricAuxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYRTAX);
 
 	initialTau550 = configurationAuxdataProvider.getDouble("T550_ini");
 	const valarray<int16_t>& amins = configurationAuxdataProvider.getVectorShort("AMIN");

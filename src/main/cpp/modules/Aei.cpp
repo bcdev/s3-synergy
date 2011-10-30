@@ -27,7 +27,7 @@ void Aei::start(Context& context) {
     averagedGrid = &averagedSegment->getGrid();
     collocatedSegment = &context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
     collocatedGrid = &collocatedSegment->getGrid();
-    AuxdataProvider& configurationAuxdataProvider = (AuxdataProvider&)context.getObject(Constants::AUXDATA_CONFIGURATION_ID);
+    AuxdataProvider& configurationAuxdataProvider = (AuxdataProvider&)context.getObject(Constants::AUX_ID_SYCPAX);
     averagingFactor = configurationAuxdataProvider.getShort("ave_square");
 }
 

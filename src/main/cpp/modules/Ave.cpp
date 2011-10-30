@@ -17,7 +17,7 @@ Ave::~Ave() {
 }
 
 void Ave::start(Context& context) {
-	averagingFactor = getAuxdataProvider(context, Constants::AUXDATA_CONFIGURATION_ID).getUByte("ave_square");
+	averagingFactor = getAuxdataProvider(context, Constants::AUX_ID_SYCPAX).getUByte("ave_square");
 	sourceSegment = &context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 	const Grid& sourceGrid = sourceSegment->getGrid();
 	const size_t sizeL = sourceGrid.getSizeL() / averagingFactor;

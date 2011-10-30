@@ -115,7 +115,7 @@ void AerTest::testAer_s() {
         p->solarIrradiances[i] = 1490.223;
     }
 
-    AuxdataProvider& rap = (AuxdataProvider&)context->getObject(Constants::AUXDATA_RADIOMETRIC_ID);
+    AuxdataProvider& rap = (AuxdataProvider&)context->getObject(Constants::AUX_ID_SYRTAX);
     valarray<double> cO3 = rap.getVectorDouble("C_O3");
     copy(&cO3[0], &cO3[30], &(p->cO3[0]));
 

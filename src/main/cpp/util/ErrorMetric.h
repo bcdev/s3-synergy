@@ -18,26 +18,28 @@
 #include "UnivariateFunction.h"
 #include "MultiMin.h"
 
-class ErrorMetric : public UnivariateFunction {
+class ErrorMetric : private UnivariateFunction {
 
 public:
-
     ErrorMetric(const Context& context);
 
-    const valarray<double>& getOptimizedParameters() {
-    	return pn;
-    }
+    ~ErrorMetric();
 
-    double getValue(double x);
+    double computeErrorSurfaceCurvature(const Pixel& p);
     double computeNdvi(const Pixel& q) const;
-    void setPixel(const Pixel& p);
-
+    bool findMinimum(Pixel& p);
 
 private:
+    void setAerosolOpticalThickness(double tau550);
     double computeRss2(valarray<double>& x);
     double computeRss8(valarray<double>& x);
     double computeRss10(valarray<double>& x);
-    void applyAtmosphericCorrection(double tau550);
+    double getValue(double x);
+    void setPixel(const Pixel& p);
+
+    static double square(double x) {
+    	return x * x;
+    }
 
 	const Context& context;
 
@@ -51,9 +53,9 @@ private:
     const AuxdataProvider& configurationAuxdata;
     const double gamma;
     const valarray<int16_t>& ndviIndices;
-    const valarray<double>& spectralWeights;
     const valarray<double>& vegetationSpectrum;
-    const valarray<double>& soilReflectance;
+    const valarray<double>& soilSpectrum;
+    const valarray<double>& spectralWeights;
     const matrix<double>& angularWeights;
 
 	const Pixel* pixel;
@@ -74,7 +76,7 @@ private:
 	matrix<double> matTs;
 	matrix<double> matTv;
 	matrix<double> matRho;
-    valarray<double> diffuseFraction;
+    valarray<double> diffuseFractions;
 	valarray<double> f;
 	valarray<double> w;
 

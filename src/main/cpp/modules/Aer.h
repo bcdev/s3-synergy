@@ -46,8 +46,6 @@ private:
 	void readAuxdata(Context& context);
 	void aer_s(shared_ptr<Pixel> p);
 	void applyMedianFiltering(vector<shared_ptr<Pixel> >& pixels, long firstL, long lastL);
-	bool e2(Pixel& q);
-	double errorCurvature(Pixel& p);
 };
 
 #endif /* AER_H_ */
