@@ -286,7 +286,9 @@ void Aer::process(Context& context) {
 
 	for (size_t i = 0; i < pixels.size(); i++) {
 		shared_ptr<Pixel> p = pixels[i];
-		context.getLogging().debug("...for pixel with index " + lexical_cast<string>(p->index), getId());
+		if (i % 100 == 0) {
+			context.getLogging().debug("...for pixel with index " + lexical_cast<string>(p->index), getId());
+		}
 		aer_s(p);
 		if (p->amin == 0) {
 			missingPixels[p->index] = p;
