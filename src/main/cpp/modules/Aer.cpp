@@ -285,6 +285,9 @@ void Aer::process(Context& context) {
 	vector<shared_ptr<Pixel> > pixels = getPixels(context, firstL, lastL < averagedGrid->getMaxL() ? lastL + 1 : lastL);
 
 	for (size_t i = 0; i < pixels.size(); i++) {
+		if (i != 22412) {
+			continue;
+		}
 		shared_ptr<Pixel> p = pixels[i];
 		if (i % 100 == 0) {
 			context.getLogging().debug("...for pixel with index " + lexical_cast<string>(p->index), getId());
