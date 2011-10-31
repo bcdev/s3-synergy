@@ -44,7 +44,7 @@ private:
 	void putPixels(vector<shared_ptr<Pixel> > pixels) const;
 	const vector<long> createIndices(long base, long bound) const;
 	void readAuxdata(Context& context);
-	void aer_s(shared_ptr<Pixel> p);
+	void aer_s(shared_ptr<Pixel> p, shared_ptr<Pixel> previous);
 	void applyMedianFiltering(vector<shared_ptr<Pixel> >& pixels, long firstL, long lastL);
 };
 

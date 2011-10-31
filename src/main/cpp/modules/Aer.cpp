@@ -278,24 +278,28 @@ void Aer::process(Context& context) {
 	long firstL = context.getFirstComputableL(*averagedSegment, *this);
 	long lastL = context.getLastComputableL(*averagedSegment, *this);
 	if (lastL < averagedGrid->getMaxL()) {
-		lastL -= 10;
+//		lastL -= 10;
 	}
 
 	map<size_t, shared_ptr<Pixel> > missingPixels;
-	vector<shared_ptr<Pixel> > pixels = getPixels(context, firstL, lastL < averagedGrid->getMaxL() ? lastL + 1 : lastL);
+//	vector<shared_ptr<Pixel> > pixels = getPixels(context, firstL, lastL < averagedGrid->getMaxL() ? lastL + 1 : lastL);
+	vector<shared_ptr<Pixel> > pixels = getPixels(context, firstL, lastL);
+
+	shared_ptr<Pixel> previous;
 
 	for (size_t i = 0; i < pixels.size(); i++) {
 		shared_ptr<Pixel> p = pixels[i];
 		if (p->l < 300 || p->l > 400) {
 			continue;
 		}
-		context.getLogging().debug(" ...for pixel with line(index) " + lexical_cast<string>(p->l) + "(" + lexical_cast<string>(p->index) + ")", getId());
-		aer_s(p);
-		/*
-		 if (p->amin == 0) {
-		 missingPixels[p->index] = p;
-		 }
-		 */
+		context.getLogging().debug("... for pixel with line(index) " + lexical_cast<string>(p->l) + "(" + lexical_cast<string>(p->index) + ")", getId());
+		aer_s(p, previous);
+		if (p->amin == 0) {
+			//	missingPixels[p->index] = p;
+			previous = shared_ptr<Pixel>();
+		} else {
+			previous = p;
+		}
 	}
 
 	/*
@@ -397,7 +401,7 @@ const vector<long> Aer::createIndices(long base, long bound) const {
 	return result;
 }
 
-void Aer::aer_s(shared_ptr<Pixel> p) {
+void Aer::aer_s(shared_ptr<Pixel> p, shared_ptr<Pixel> previous) {
 	const bool isPartlyCloudy = (p->synFlags & Constants::SY2_PARTLY_CLOUDY_FLAG) == Constants::SY2_PARTLY_CLOUDY_FLAG;
 	const bool isPartlyWater = (p->synFlags & Constants::SY2_PARTLY_WATER_FLAG) == Constants::SY2_PARTLY_WATER_FLAG;
 
@@ -408,14 +412,26 @@ void Aer::aer_s(shared_ptr<Pixel> p) {
 	for (size_t i = 0; i < amins.size(); i++) {
 		const int16_t amin = amins[i];
 		Pixel q = Pixel(*p);
-		q.nu[0] = initialNu[0];
-		q.nu[1] = initialNu[1];
-		for (size_t j = 0; j < initialOmega.size(); j++) {
-			q.omega[j] = initialOmega[j];
+		if (previous.get() == 0) {
+			q.nu[0] = initialNu[0];
+			q.nu[1] = initialNu[1];
+			for (size_t j = 0; j < initialOmega.size(); j++) {
+				q.omega[j] = initialOmega[j];
+			}
+			q.tau550 = initialTau550;
+			q.c1 = em->computeNdvi(q);
+			q.c2 = 1 - q.c1;
+		} else {
+			// TODO - ensure that previous pixel is a neighbour
+			q.nu[0] = previous->nu[0];
+			q.nu[1] = previous->nu[1];
+			for (size_t j = 0; j < initialOmega.size(); j++) {
+				q.omega[j] = previous->omega[j];
+			}
+			q.tau550 = previous->tau550;
+			q.c1 = previous->c1;
+			q.c2 = previous->c2;
 		}
-		q.tau550 = initialTau550;
-		q.c1 = em->computeNdvi(q);
-		q.c2 = 1 - q.c1;
 		q.amin = amin;
 		bool success = em->findMinimum(q);
 		if (success && q.E2 < p->E2) {

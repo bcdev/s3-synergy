@@ -141,7 +141,7 @@ void AerTest::testAer_s() {
     p->E2 = numeric_limits<double>::max();
 
 	aer->em = shared_ptr<ErrorMetric>(new ErrorMetric(*context));
-    aer->aer_s(p);
+    aer->aer_s(p, shared_ptr<Pixel>());
 }
 
 void AerTest::testAer() {
