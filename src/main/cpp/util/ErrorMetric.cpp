@@ -142,7 +142,7 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	unsigned slsCount = 0;
 
 #pragma omp parallel for reduction(+ : sum2, olcCount, slsCount)
-	for (size_t i = 0; i < 30; i++) {
+	for (size_t i = 0; i < 18; i++) {
 		if (p.radiances[i] != Constants::FILL_VALUE_DOUBLE) {
 			sum2 += spectralWeights[i];
 			if (i < 18) {
@@ -177,7 +177,7 @@ double ErrorMetric::computeRss2(valarray<double>& x) {
 	double sum = 0.0;
 	if (doOLC) {
 #pragma omp parallel for reduction(+ : sum)
-		for (size_t i = 0; i < 30; i++) {
+		for (size_t i = 0; i < 18; i++) {
 			if (pixel->radiances[i] != Constants::FILL_VALUE_DOUBLE) {
 				const double rSpec = x[0] * vegetationSpectrum[i]
 						+ x[1] * soilSpectrum[i];
@@ -250,8 +250,6 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 	coordinates[3] = pixel->airPressure;
 	coordinates[4] = pixel->waterVapour;
 	coordinates[5] = tau550;
-	lutOlcRatm.getValues(&coordinates[0], matRatmOlc, f, w);
-	lutT.getValues(&coordinates[2], matTv, f, w);
 	lutRhoAtm.getValues(&coordinates[3], matRho, f, w);
 
 	coordinates[6] = coordinates[1]; // SZA
@@ -260,85 +258,93 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 	coordinates[9] = coordinates[5]; // aerosol
 	lutT.getValues(&coordinates[6], matTs, f, w);
 
-#pragma omp parallel for
-	for (size_t b = 0; b < 18; b++) {
-		if (pixel->radiances[b] != Constants::FILL_VALUE_DOUBLE) {
-			// Eq. 2-1
-			const double rtoa = toaReflectance(pixel->radiances[b],
-					pixel->solarIrradiances[b], pixel->sza);
-
-			// Eq. 2-2
-			const double tO3 = ozoneTransmission(pixel->cO3[b], pixel->sza,
-					pixel->vzaOlc, pixel->ozone);
-
-			// Eq. 2-3
-			const double ratm = matRatmOlc(amin - 1, b);
-			const double ts = matTs(amin - 1, b);
-			const double tv = matTv(amin - 1, b);
-			const double rho = matRho(amin - 1, b);
-			const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho, tO3);
-
-			sdrs[b] = sdr;
-		}
-	}
-
-	coordinates[0] = abs(pixel->saa - pixel->vaaSln);
-	coordinates[2] = pixel->vzaSln;
-	lutSlnRatm.getValues(&coordinates[0], matRatmSln, f, w);
-	lutT.getValues(&coordinates[2], matTv, f, w);
+	if (doOLC) {
+		lutOlcRatm.getValues(&coordinates[0], matRatmOlc, f, w);
+		lutT.getValues(&coordinates[2], matTv, f, w);
 
 #pragma omp parallel for
-	for (size_t b = 18; b < 24; b++) {
-		if (pixel->radiances[b] != Constants::FILL_VALUE_DOUBLE) {
-			// Eq. 2-1
-			const double rtoa = toaReflectance(pixel->radiances[b],
-					pixel->solarIrradiances[b], pixel->sza);
+		for (size_t b = 0; b < 18; b++) {
+			if (pixel->radiances[b] != Constants::FILL_VALUE_DOUBLE) {
+				// Eq. 2-1
+				const double rtoa = toaReflectance(pixel->radiances[b],
+						pixel->solarIrradiances[b], pixel->sza);
 
-			// Eq. 2-2
-			const double tO3 = ozoneTransmission(pixel->cO3[b], pixel->sza,
-					pixel->vzaOlc, pixel->ozone);
+				// Eq. 2-2
+				const double tO3 = ozoneTransmission(pixel->cO3[b], pixel->sza,
+						pixel->vzaOlc, pixel->ozone);
 
-			// Eq. 2-3
-			const double ratm = matRatmSln(amin - 1, b - 18);
-			const double ts = matTs(amin - 1, b);
-			const double tv = matTv(amin - 1, b);
-			const double rho = matRho(amin - 1, b);
-			const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho, tO3);
+				// Eq. 2-3
+				const double ratm = matRatmOlc(amin - 1, b);
+				const double ts = matTs(amin - 1, b);
+				const double tv = matTv(amin - 1, b);
+				const double rho = matRho(amin - 1, b);
+				const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho, tO3);
 
-			sdrs[b] = sdr;
+				sdrs[b] = sdr;
+			}
 		}
 	}
-
-	coordinates[0] = abs(pixel->saa - pixel->vaaSlo);
-	coordinates[2] = pixel->vzaSlo;
-	lutSloRatm.getValues(&coordinates[0], matRatmSlo, f, w);
-	lutT.getValues(&coordinates[2], matTv, f, w);
+	if (doSLS) {
+		coordinates[0] = abs(pixel->saa - pixel->vaaSln);
+		coordinates[2] = pixel->vzaSln;
+		lutSlnRatm.getValues(&coordinates[0], matRatmSln, f, w);
+		lutT.getValues(&coordinates[2], matTv, f, w);
 
 #pragma omp parallel for
-	for (size_t b = 24; b < 30; b++) {
-		if (pixel->radiances[b] != Constants::FILL_VALUE_DOUBLE) {
-			// Eq. 2-1
-			const double rtoa = toaReflectance(pixel->radiances[b],
-					pixel->solarIrradiances[b], pixel->sza);
+		for (size_t b = 18; b < 24; b++) {
+			if (pixel->radiances[b] != Constants::FILL_VALUE_DOUBLE) {
+				// Eq. 2-1
+				const double rtoa = toaReflectance(pixel->radiances[b],
+						pixel->solarIrradiances[b], pixel->sza);
 
-			// Eq. 2-2
-			const double tO3 = ozoneTransmission(pixel->cO3[b], pixel->sza,
-					pixel->vzaOlc, pixel->ozone);
+				// Eq. 2-2
+				const double tO3 = ozoneTransmission(pixel->cO3[b], pixel->sza,
+						pixel->vzaOlc, pixel->ozone);
 
-			// Eq. 2-3
-			const double ratm = matRatmSlo(amin - 1, b - 24);
-			const double ts = matTs(amin - 1, b);
-			const double tv = matTv(amin - 1, b);
-			const double rho = matRho(amin - 1, b);
-			const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho, tO3);
+				// Eq. 2-3
+				const double ratm = matRatmSln(amin - 1, b - 18);
+				const double ts = matTs(amin - 1, b);
+				const double tv = matTv(amin - 1, b);
+				const double rho = matRho(amin - 1, b);
+				const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho,
+						tO3);
 
-			sdrs[b] = sdr;
+				sdrs[b] = sdr;
+			}
 		}
-	}
 
-	coordinates[0] = pixel->sza;
-	coordinates[1] = pixel->airPressure;
-	coordinates[2] = tau550;
-	coordinates[3] = amin;
-	lutD.getValues(&coordinates[0], diffuseFractions);
+		coordinates[0] = abs(pixel->saa - pixel->vaaSlo);
+		coordinates[2] = pixel->vzaSlo;
+		lutSloRatm.getValues(&coordinates[0], matRatmSlo, f, w);
+		lutT.getValues(&coordinates[2], matTv, f, w);
+
+#pragma omp parallel for
+		for (size_t b = 24; b < 30; b++) {
+			if (pixel->radiances[b] != Constants::FILL_VALUE_DOUBLE) {
+				// Eq. 2-1
+				const double rtoa = toaReflectance(pixel->radiances[b],
+						pixel->solarIrradiances[b], pixel->sza);
+
+				// Eq. 2-2
+				const double tO3 = ozoneTransmission(pixel->cO3[b], pixel->sza,
+						pixel->vzaOlc, pixel->ozone);
+
+				// Eq. 2-3
+				const double ratm = matRatmSlo(amin - 1, b - 24);
+				const double ts = matTs(amin - 1, b);
+				const double tv = matTv(amin - 1, b);
+				const double rho = matRho(amin - 1, b);
+				const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho,
+						tO3);
+
+				sdrs[b] = sdr;
+			}
+		}
+
+		coordinates[0] = pixel->sza;
+		coordinates[1] = pixel->airPressure;
+		coordinates[2] = tau550;
+		coordinates[3] = amin;
+		lutD.getValues(&coordinates[0], diffuseFractions);
+	}
 }
