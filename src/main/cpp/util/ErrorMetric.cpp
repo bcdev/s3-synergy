@@ -101,26 +101,30 @@ double ErrorMetric::getValue(double x) {
 	pn[1] = pixel->c2;
 	pn[2] = pixel->nu[0];
 	pn[3] = pixel->nu[1];
-#pragma omp parallel for
 	for (size_t i = 0; i < 6; i++) {
 		pn[i + 4] = pixel->omega[i];
-	}
-#pragma omp parallel for
-	for (size_t i = 0; i < 10; i++) {
-		u[i][i] = 1.0;
-		for (size_t j = 0; j < i; j++) {
-			u[i][j] = u[j][i] = 0.0;
-		}
 	}
 
 	if (doOLC) {
 		if (true) {
 			MultiMin::linearSolve2D(pn, p0, u, pixel->radiances, 0, 18, Constants::FILL_VALUE_DOUBLE, spectralWeights, vegetationModel, soilModel);
 		} else {
+			for (size_t i = 0; i < 2; i++) {
+				u[i][i] = 1.0;
+				for (size_t j = 0; j < i; j++) {
+					u[i][j] = u[j][i] = 0.0;
+				}
+			}
 			MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer2, 0, 2, pn, p0, pe, u, 1.0e-4, 100);
 		}
 	}
 	if (doSLS) {
+		for (size_t i = 2; i < 10; i++) {
+			u[i][i] = 1.0;
+			for (size_t j = 2; j < i; j++) {
+				u[i][j] = u[j][i] = 0.0;
+			}
+		}
 		MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer8, 2, 10, pn, p0, pe, u, 1.0e-4, 100);
 	}
 
