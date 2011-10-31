@@ -213,23 +213,20 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	unsigned olcCount = 0;
 	unsigned slsCount = 0;
 
-#pragma omp parallel for reduction(+ : sum2, olcCount, slsCount)
+#pragma omp parallel for reduction(+ : sum2, olcCount)
 	for (size_t i = 0; i < 18; i++) {
 		if (p.radiances[i] != Constants::FILL_VALUE_DOUBLE) {
 			sum2 += spectralWeights[i];
-			if (i < 18) {
-				olcCount++;
-			} else {
-				slsCount++;
-			}
+			olcCount++;
 		}
 	}
-#pragma omp parallel for reduction(+ : sum8)
+#pragma omp parallel for reduction(+ : sum8, slsCount)
 	for (size_t o = 0; o < 2; o++) {
 		for (size_t j = 0; j < 6; j++) {
 			const int i = 18 + 6 * o + j;
 			if (p.radiances[i] != Constants::FILL_VALUE_DOUBLE) {
 				sum8 += angularWeights(o, j);
+				slsCount++;
 			}
 		}
 	}
