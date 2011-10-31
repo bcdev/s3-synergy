@@ -78,14 +78,14 @@ private:
 	matrix<double> matTv;
 	matrix<double> matRho;
     valarray<double> diffuseFractions;
-	valarray<double> f;
-	valarray<double> w;
+	valarray<double> lutWeights;
+	valarray<double> lutWorkspace;
 
 	// for minimization
 	valarray<double> pn;
 	valarray<double> p0;
 	valarray<double> pe;
-	valarray<valarray<double> > u;
+	valarray<valarray<double> > directionSet;
 	LineMinimizer<ErrorMetric> lineMinimizer2;
 	LineMinimizer<ErrorMetric> lineMinimizer8;
 };

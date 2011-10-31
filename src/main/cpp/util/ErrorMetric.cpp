@@ -37,14 +37,14 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		matTv(40, 30),
 		matRho(40, 30),
 		diffuseFractions(6),
-		f(lutOlcRatm.getDimensionCount()),
-		w(lutOlcRatm.getWorkspaceSize()),
+		lutWeights(lutOlcRatm.getDimensionCount()),
+		lutWorkspace(lutOlcRatm.getWorkspaceSize()),
 		pn(10),
 		p0(10),
 		pe(10),
-		u(valarray<double>(10), 10),
-		lineMinimizer2(this, &ErrorMetric::computeRss2, pn, u),
-		lineMinimizer8(this, &ErrorMetric::computeRss8, pn, u) {
+		directionSet(valarray<double>(10), 10),
+		lineMinimizer2(this, &ErrorMetric::computeRss2, pn, directionSet),
+		lineMinimizer8(this, &ErrorMetric::computeRss8, pn, directionSet) {
 }
 
 ErrorMetric::~ErrorMetric() {
@@ -96,30 +96,33 @@ double ErrorMetric::computeErrorSurfaceCurvature(const Pixel& p) {
 double ErrorMetric::getValue(double x) {
 	setAerosolOpticalThickness(x);
 
+	pn[0] = pixel->c1;
+	pn[1] = pixel->c2;
+	pn[2] = pixel->nu[0];
+	pn[3] = pixel->nu[1];
+#pragma omp parallel for
+	for (size_t i = 0; i < 6; i++) {
+		pn[i + 4] = pixel->omega[i];
+	}
+#pragma omp parallel for
 	for (size_t i = 0; i < 10; i++) {
-		u[i][i] = 1.0;
+		directionSet[i][i] = 1.0;
 		for (size_t j = 0; j < i; j++) {
-			u[i][j] = u[j][i] = 0.0;
+			directionSet[i][j] = directionSet[j][i] = 0.0;
 		}
 	}
+
 	if (doOLC) {
-		pn[0] = pixel->c1;
-		pn[1] = pixel->c2;
 		if (true) {
 			linearSolve();
 		} else {
 			MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer2, 0,
-					2, pn, p0, pe, u, 1.0e-4, 100);
+					2, pn, p0, pe, directionSet, 1.0e-4, 100);
 		}
 	}
 	if (doSLS) {
-		pn[2] = pixel->nu[0];
-		pn[3] = pixel->nu[1];
-		for (size_t i = 0; i < 6; i++) {
-			pn[i + 4] = pixel->omega[i];
-		}
 		MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer8, 2, 10,
-				pn, p0, pe, u, 1.0e-4, 100);
+				pn, p0, pe, directionSet, 1.0e-4, 100);
 	}
 
 	return computeRss10(pn);
@@ -268,8 +271,8 @@ double ErrorMetric::computeRss8(valarray<double>& x) {
 					const double nu = x[o + 2];
 					const double omega = x[j + 4];
 					const double g = (1.0 - gamma) * omega;
-					const double rAng = (1.0 - d) * nu * omega
-							+ (gamma * omega) / (1.0 - g) * (d + g * (1.0 - d));
+					// TODO - check
+					const double rAng = (1.0 - d) * nu * omega + (gamma * omega) / (1.0 - g) * (d + g * (1.0 - d));
 
 					sum += angularWeights(o, j) * square(sdrs[i] - rAng);
 				}
@@ -319,18 +322,18 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 	coordinates[4] = pixel->waterVapour;
 	coordinates[5] = tau550;
 
-	lutRhoAtm.getValues(&coordinates[3], matRho, f, w);
+	lutRhoAtm.getValues(&coordinates[3], matRho, lutWeights, lutWorkspace);
 
 	coordinates[6] = coordinates[1]; // SZA
 	coordinates[7] = coordinates[3]; // air pressure
 	coordinates[8] = coordinates[4]; // water vapour
 	coordinates[9] = coordinates[5]; // aerosol
 
-	lutT.getValues(&coordinates[6], matTs, f, w);
+	lutT.getValues(&coordinates[6], matTs, lutWeights, lutWorkspace);
 
 	if (doOLC) {
-		lutOlcRatm.getValues(&coordinates[0], matRatmOlc, f, w);
-		lutT.getValues(&coordinates[2], matTv, f, w);
+		lutOlcRatm.getValues(&coordinates[0], matRatmOlc, lutWeights, lutWorkspace);
+		lutT.getValues(&coordinates[2], matTv, lutWeights, lutWorkspace);
 
 #pragma omp parallel for
 		for (size_t b = 0; b < 18; b++) {
@@ -358,8 +361,8 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		coordinates[0] = abs(pixel->saa - pixel->vaaSln);
 		coordinates[2] = pixel->vzaSln;
 
-		lutSlnRatm.getValues(&coordinates[0], matRatmSln, f, w);
-		lutT.getValues(&coordinates[2], matTv, f, w);
+		lutSlnRatm.getValues(&coordinates[0], matRatmSln, lutWeights, lutWorkspace);
+		lutT.getValues(&coordinates[2], matTv, lutWeights, lutWorkspace);
 
 #pragma omp parallel for
 		for (size_t b = 18; b < 24; b++) {
@@ -387,8 +390,8 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		coordinates[0] = abs(pixel->saa - pixel->vaaSlo);
 		coordinates[2] = pixel->vzaSlo;
 
-		lutSloRatm.getValues(&coordinates[0], matRatmSlo, f, w);
-		lutT.getValues(&coordinates[2], matTv, f, w);
+		lutSloRatm.getValues(&coordinates[0], matRatmSlo, lutWeights, lutWorkspace);
+		lutT.getValues(&coordinates[2], matTv, lutWeights, lutWorkspace);
 
 #pragma omp parallel for
 		for (size_t b = 24; b < 30; b++) {
