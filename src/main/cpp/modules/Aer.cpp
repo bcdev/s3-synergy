@@ -507,12 +507,20 @@ void Aer::putPixels(vector<shared_ptr<Pixel> > pixels) const {
 	foreach(shared_ptr<Pixel> p, pixels)
 			{
 				amin.setUByte(p->index, p->amin);
-				// TODO - revert
+				// TODO - revert to commented lines
 //				t550.setDouble(p->index, p->tau550Filtered);
-				t550.setDouble(p->index, p->tau550);
+				if (p->tau550 == Constants::FILL_VALUE_DOUBLE) {
+					t550.setFillValue(p->index);
+				} else {
+					t550.setDouble(p->index, p->tau550);
+				}
 //				t550err.setDouble(p->index, p->tau550errFiltered);
-				t550err.setDouble(p->index, p->tau550err);
-				a550.setDouble(p->index, p->alpha550);
+				if (p->tau550err == Constants::FILL_VALUE_DOUBLE) {
+					t550err.setFillValue(p->index);
+				} else {
+					t550err.setDouble(p->index, p->tau550err);
+				}
+				// a550.setDouble(p->index, p->alpha550);
 				synFlags.setUShort(p->index, p->synFlags);
 			}
 }
