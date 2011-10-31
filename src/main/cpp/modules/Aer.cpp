@@ -286,9 +286,7 @@ void Aer::process(Context& context) {
 
 	for (size_t i = 0; i < pixels.size(); i++) {
 		shared_ptr<Pixel> p = pixels[i];
-		if (i % 100 == 0) {
-			context.getLogging().debug("...for pixel with index " + lexical_cast<string>(p->index), getId());
-		}
+		context.getLogging().debug(" ...for pixel with line(index) " + lexical_cast<string>(p->l) + "(" + lexical_cast<string>(p->index) + ")", getId());
 		if (p->l < 300 || p->l > 400) {
 			continue;
 		}
@@ -379,8 +377,8 @@ void Aer::process(Context& context) {
 vector<shared_ptr<Pixel> > Aer::getPixels(Context& context, long firstL, long lastL) const {
 	const PixelInitializer pixelInitializer(context);
 	vector<shared_ptr<Pixel> > pixels;
-	for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
-		for (long l = firstL; l <= lastL; l++) {
+	for (long l = firstL; l <= lastL; l++) {
+		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
 				pixels.push_back(pixelInitializer.getPixel(k, l, m));
 			}
