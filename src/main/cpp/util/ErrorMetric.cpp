@@ -5,6 +5,7 @@
  *      Author: Thomas Storm, Ralf Quast
  */
 
+#include <algorithm>
 #include <cmath>
 
 #include "ErrorMetric.h"
@@ -24,8 +25,8 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		configurationAuxdata((AuxdataProvider&) context.getObject(Constants::AUX_ID_SYCPAX)),
 		gamma(configurationAuxdata.getDouble("gamma")),
 		ndviIndices(configurationAuxdata.getVectorShort("NDV_channel")),
-		vegetationSpectrum(configurationAuxdata.getVectorDouble("R_veg")),
-		soilSpectrum(configurationAuxdata.getVectorDouble("R_soil")),
+		vegetationModel(configurationAuxdata.getVectorDouble("R_veg")),
+		soilModel(configurationAuxdata.getVectorDouble("R_soil")),
 		spectralWeights(configurationAuxdata.getVectorDouble("weight_spec")),
 		angularWeights(configurationAuxdata.getMatrixDouble("weight_ang")),
 		sdrs(30),
@@ -42,9 +43,9 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		pn(10),
 		p0(10),
 		pe(10),
-		directionSet(valarray<double>(10), 10),
-		lineMinimizer2(this, &ErrorMetric::computeRss2, pn, directionSet),
-		lineMinimizer8(this, &ErrorMetric::computeRss8, pn, directionSet) {
+		u(valarray<double>(10), 10),
+		lineMinimizer2(this, &ErrorMetric::computeRss2, pn, u),
+		lineMinimizer8(this, &ErrorMetric::computeRss8, pn, u) {
 }
 
 ErrorMetric::~ErrorMetric() {
@@ -106,88 +107,24 @@ double ErrorMetric::getValue(double x) {
 	}
 #pragma omp parallel for
 	for (size_t i = 0; i < 10; i++) {
-		directionSet[i][i] = 1.0;
+		u[i][i] = 1.0;
 		for (size_t j = 0; j < i; j++) {
-			directionSet[i][j] = directionSet[j][i] = 0.0;
+			u[i][j] = u[j][i] = 0.0;
 		}
 	}
 
 	if (doOLC) {
 		if (true) {
-			linearSolve();
+			MultiMin::linearSolve2D(pn, p0, u, pixel->radiances, 0, 18, Constants::FILL_VALUE_DOUBLE, spectralWeights, vegetationModel, soilModel);
 		} else {
-			MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer2, 0, 2, pn, p0, pe, directionSet, 1.0e-4, 100);
+			MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer2, 0, 2, pn, p0, pe, u, 1.0e-4, 100);
 		}
 	}
 	if (doSLS) {
-		MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer8, 2, 10, pn, p0, pe, directionSet, 1.0e-4, 100);
+		MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer8, 2, 10, pn, p0, pe, u, 1.0e-4, 100);
 	}
 
 	return computeRss10(pn);
-}
-
-void ErrorMetric::linearSolve() {
-	using std::sqrt;
-
-	double a[2][2] = {{0.0, 0.0}, {0.0, 0.0}};
-	double b[2] = {0.0, 0.0};
-	double c[2] = {0.0, 0.0};
-	double l[2] = {0.0, 0.0};
-
-	// establish the normal equations
-	for (size_t i = 0; i < 18; ++i) {
-		if (pixel->radiances[i] != Constants::FILL_VALUE_DOUBLE) {
-			const double w = spectralWeights[i];
-
-			l[0] = vegetationSpectrum[i];
-			l[1] = soilSpectrum[i];
-
-			for (size_t j = 0; j < 2; ++j) {
-				for (size_t k = j; k < 2; ++k) {
-					a[j][k] += (l[j] * l[k]) * w;
-				}
-				b[j] += (pixel->radiances[i] * l[j]) * w;
-			}
-		}
-	}
-	// solve using Cholesky decomposition
-	for (size_t i = 0; i < 2; ++i) {
-		for (size_t j = i; j < 2; ++j) {
-			double s = a[i][j];
-
-			for (size_t k = 0; k < i; ++k) {
-				s -= a[i][k] * a[j][k];
-			}
-			if (i < j) {
-				a[j][i] = s / a[i][i];
-			} else {
-				if (s > 0.0) {
-					a[i][i] = sqrt(s);
-				} else { // normal equations are effectively singular
-					return;
-				}
-			}
-		}
-	}
-	for (size_t i = 0; i < 2; ++i) {
-		double s = b[i];
-
-		for (size_t k = 0; k < i; ++k) {
-			s -= a[i][k] * c[k];
-		}
-		c[i] = s / a[i][i];
-	}
-	for (size_t i = 2; i-- > 0;) {
-		double s = c[i];
-
-		for (size_t k = i + 1; k < 2; ++k) {
-			s -= a[k][i] * c[k];
-		}
-		c[i] = s / a[i][i];
-	}
-
-	pn[0] = c[0];
-	pn[1] = c[1];
 }
 
 double ErrorMetric::computeNdvi(const Pixel& p) const {
@@ -246,7 +183,7 @@ double ErrorMetric::computeRss2(valarray<double>& x) {
 #pragma omp parallel for reduction(+ : sum)
 		for (size_t i = 0; i < 18; i++) {
 			if (pixel->radiances[i] != Constants::FILL_VALUE_DOUBLE) {
-				const double rSpec = x[0] * vegetationSpectrum[i] + x[1] * soilSpectrum[i];
+				const double rSpec = x[0] * vegetationModel[i] + x[1] * soilModel[i];
 				sum += spectralWeights[i] * square(sdrs[i] - rSpec);
 			}
 		}

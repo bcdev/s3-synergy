@@ -9,6 +9,7 @@
 #define MULTIMIN_H_
 
 #include <algorithm>
+#include <cmath>
 
 #include "Min.h"
 #include "MultivariateFunction.h"
@@ -44,6 +45,12 @@ private:
 class MultiMin {
 public:
 	virtual ~MultiMin();
+
+	static bool linearSolve2D(valarray<double>& c, valarray<double>& b, valarray<valarray<double> >& a,
+			const valarray<double>& data, size_t begin, size_t end, double fillValue,
+			const valarray<double>& w,
+			const valarray<double>& model1,
+			const valarray<double>& model2);
 
 	/**
 	 * Finds the minimum of a multivariate function using Powell's method.

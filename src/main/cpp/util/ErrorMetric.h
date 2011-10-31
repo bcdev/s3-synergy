@@ -35,7 +35,6 @@ private:
     double computeRss8(valarray<double>& x);
     double computeRss10(valarray<double>& x);
     double getValue(double x);
-    void linearSolve();
     void setPixel(const Pixel& p);
 
     static double square(double x) {
@@ -54,8 +53,8 @@ private:
     const AuxdataProvider& configurationAuxdata;
     const double gamma;
     const valarray<int16_t>& ndviIndices;
-    const valarray<double>& vegetationSpectrum;
-    const valarray<double>& soilSpectrum;
+    const valarray<double>& vegetationModel;
+    const valarray<double>& soilModel;
     const valarray<double>& spectralWeights;
     const matrix<double>& angularWeights;
 
@@ -85,7 +84,7 @@ private:
 	valarray<double> pn;
 	valarray<double> p0;
 	valarray<double> pe;
-	valarray<valarray<double> > directionSet;
+	valarray<valarray<double> > u;
 	LineMinimizer<ErrorMetric> lineMinimizer2;
 	LineMinimizer<ErrorMetric> lineMinimizer8;
 };
