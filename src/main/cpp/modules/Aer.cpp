@@ -378,7 +378,7 @@ void Aer::process(Context& context) {
 
 vector<shared_ptr<Pixel> > Aer::getPixels(Context& context, long firstL, long lastL) const {
 	const PixelInitializer pixelInitializer(context);
-	vector<shared_ptr<Pixel> > pixels(averagedGrid->getSize());
+	vector<shared_ptr<Pixel> > pixels(averagedGrid->getSizeK() * averagedGrid->getSizeM() * (lastL - firstL + 1));
 	for (long l = firstL; l <= lastL; l++) {
 		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
