@@ -293,11 +293,14 @@ void Aer::process(Context& context) {
 			context.getLogging().debug("...for pixel with index " + lexical_cast<string>(p->index), getId());
 		}
 		aer_s(p);
+		/*
 		if (p->amin == 0) {
 			missingPixels[p->index] = p;
 		}
+		*/
 	}
 
+	/*
 	long N_b = 1;
 	long I = 0;
 
@@ -366,6 +369,7 @@ void Aer::process(Context& context) {
 				}
 		I++;
 	}
+	*/
 	applyMedianFiltering(pixels, firstL, lastL);
 	putPixels(pixels);
 	context.setLastComputedL(*averagedSegment, *this, lastL);
