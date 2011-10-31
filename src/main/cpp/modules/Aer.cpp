@@ -286,10 +286,10 @@ void Aer::process(Context& context) {
 
 	for (size_t i = 0; i < pixels.size(); i++) {
 		shared_ptr<Pixel> p = pixels[i];
-		context.getLogging().debug(" ...for pixel with line(index) " + lexical_cast<string>(p->l) + "(" + lexical_cast<string>(p->index) + ")", getId());
 		if (p->l < 300 || p->l > 400) {
 			continue;
 		}
+		context.getLogging().debug(" ...for pixel with line(index) " + lexical_cast<string>(p->l) + "(" + lexical_cast<string>(p->index) + ")", getId());
 		aer_s(p);
 		/*
 		 if (p->amin == 0) {
