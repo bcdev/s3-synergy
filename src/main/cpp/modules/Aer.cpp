@@ -285,9 +285,9 @@ void Aer::process(Context& context) {
 	vector<shared_ptr<Pixel> > pixels = getPixels(context, firstL, lastL < averagedGrid->getMaxL() ? lastL + 1 : lastL);
 
 	for (size_t i = 0; i < pixels.size(); i++) {
-		if (i != 22412) {
-			continue;
-		}
+//		if (i != 22412) {
+//			continue;
+//		}
 		shared_ptr<Pixel> p = pixels[i];
 		if (i % 100 == 0) {
 			context.getLogging().debug("...for pixel with index " + lexical_cast<string>(p->index), getId());
@@ -370,7 +370,7 @@ void Aer::process(Context& context) {
 		I++;
 	}
 	*/
-	applyMedianFiltering(pixels, firstL, lastL);
+	//applyMedianFiltering(pixels, firstL, lastL);
 	putPixels(pixels);
 	context.setLastComputedL(*averagedSegment, *this, lastL);
 	context.setFirstRequiredL(*averagedSegment, *this, lastL + 1);
@@ -501,7 +501,7 @@ void Aer::readAuxdata(Context& context) {
 void Aer::putPixels(vector<shared_ptr<Pixel> > pixels) const {
 	Accessor& amin = averagedSegment->getAccessor("AMIN");
 	Accessor& t550 = averagedSegment->getAccessor("T550");
-	Accessor& t550err = averagedSegment->getAccessor("T550_err");
+	Accessor& t550err = averagedSegment->getAccessor("T550_er");
 	Accessor& a550 = averagedSegment->getAccessor("A550");
 	Accessor& synFlags = averagedSegment->getAccessor("SYN_flags");
 
