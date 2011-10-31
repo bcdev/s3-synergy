@@ -289,6 +289,9 @@ void Aer::process(Context& context) {
 		if (i % 100 == 0) {
 			context.getLogging().debug("...for pixel with index " + lexical_cast<string>(p->index), getId());
 		}
+		if (p->l < 2000 && p->l > 2100) {
+			continue;
+		}
 		aer_s(p);
 		/*
 		 if (p->amin == 0) {
@@ -504,8 +507,11 @@ void Aer::putPixels(vector<shared_ptr<Pixel> > pixels) const {
 	foreach(shared_ptr<Pixel> p, pixels)
 			{
 				amin.setUByte(p->index, p->amin);
-				t550.setDouble(p->index, p->tau550Filtered);
-				t550err.setDouble(p->index, p->tau550errFiltered);
+				// TODO - revert
+//				t550.setDouble(p->index, p->tau550Filtered);
+				t550.setDouble(p->index, p->tau550);
+//				t550err.setDouble(p->index, p->tau550errFiltered);
+				t550err.setDouble(p->index, p->tau550err);
 				a550.setDouble(p->index, p->alpha550);
 				synFlags.setUShort(p->index, p->synFlags);
 			}
