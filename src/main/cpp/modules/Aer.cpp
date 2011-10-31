@@ -289,87 +289,84 @@ void Aer::process(Context& context) {
 		if (i % 100 == 0) {
 			context.getLogging().debug("...for pixel with index " + lexical_cast<string>(p->index), getId());
 		}
-		if (i == 22412) {
-			context.getLogging().debug("...for pixel with index " + lexical_cast<string>(p->index), getId());
-		}
 		aer_s(p);
 		/*
-		if (p->amin == 0) {
-			missingPixels[p->index] = p;
-		}
-		*/
+		 if (p->amin == 0) {
+		 missingPixels[p->index] = p;
+		 }
+		 */
 	}
 
 	/*
-	long N_b = 1;
-	long I = 0;
+	 long N_b = 1;
+	 long I = 0;
 
-	while (!missingPixels.empty()) {
-		if (I >= 5 && I <= 12) {
-			N_b++;
-		}
-		set<size_t> completedPixels;
-		typedef pair<size_t, shared_ptr<Pixel> > Entry;
-		foreach(Entry entry, missingPixels)
-				{
-					shared_ptr<Pixel> p = entry.second;
-					double tau_550, deltaTau_500, alpha550 = 0;
-					uint8_t amin = 0;
-					uint32_t K = 0;
-					const long k = p->k;
-					const long l_prime = p->l;
-					const long m_prime = p->m;
-					const vector<long> iPrimeIndices = createIndices(p->l, N_b);
-					const vector<long> jPrimeIndices = createIndices(p->m, N_b);
-					long minIDiff = numeric_limits<long>::max();
-					long minJDiff = numeric_limits<long>::max();
-					foreach(long i_prime, iPrimeIndices)
-							{
-								foreach(long j_prime, jPrimeIndices)
-										{
-											if (averagedGrid->isValidPosition(k, i_prime, j_prime)) {
+	 while (!missingPixels.empty()) {
+	 if (I >= 5 && I <= 12) {
+	 N_b++;
+	 }
+	 set<size_t> completedPixels;
+	 typedef pair<size_t, shared_ptr<Pixel> > Entry;
+	 foreach(Entry entry, missingPixels)
+	 {
+	 shared_ptr<Pixel> p = entry.second;
+	 double tau_550, deltaTau_500, alpha550 = 0;
+	 uint8_t amin = 0;
+	 uint32_t K = 0;
+	 const long k = p->k;
+	 const long l_prime = p->l;
+	 const long m_prime = p->m;
+	 const vector<long> iPrimeIndices = createIndices(p->l, N_b);
+	 const vector<long> jPrimeIndices = createIndices(p->m, N_b);
+	 long minIDiff = numeric_limits<long>::max();
+	 long minJDiff = numeric_limits<long>::max();
+	 foreach(long i_prime, iPrimeIndices)
+	 {
+	 foreach(long j_prime, jPrimeIndices)
+	 {
+	 if (averagedGrid->isValidPosition(k, i_prime, j_prime)) {
 
-												const size_t pixelIndex = averagedGrid->getIndex(k, i_prime, j_prime);
-												if (!contains(missingPixels, pixelIndex) || contains(completedPixels, pixelIndex)) {
-													shared_ptr<Pixel> q = pixels[pixelIndex];
+	 const size_t pixelIndex = averagedGrid->getIndex(k, i_prime, j_prime);
+	 if (!contains(missingPixels, pixelIndex) || contains(completedPixels, pixelIndex)) {
+	 shared_ptr<Pixel> q = pixels[pixelIndex];
 
-													tau_550 += q->tau550;
-													deltaTau_500 += q->tau550err;
-													alpha550 += q->alpha550;
+	 tau_550 += q->tau550;
+	 deltaTau_500 += q->tau550err;
+	 alpha550 += q->alpha550;
 
-													long iDiff = std::abs(i_prime - l_prime);
-													if (iDiff < minIDiff) {
-														minIDiff = iDiff;
-													}
-													long jDiff = std::abs(j_prime - m_prime);
-													if (jDiff < minIDiff) {
-														minIDiff = iDiff;
-													}
+	 long iDiff = std::abs(i_prime - l_prime);
+	 if (iDiff < minIDiff) {
+	 minIDiff = iDiff;
+	 }
+	 long jDiff = std::abs(j_prime - m_prime);
+	 if (jDiff < minIDiff) {
+	 minIDiff = iDiff;
+	 }
 
-													if (minIDiff == iDiff && minJDiff == jDiff) {
-														amin = q->amin;
-													}
-													K++;
-												}
-											}
-										}
-							}
-					if (K > 1) {
-						p->tau550 = tau_550 / K;
-						p->tau550err = deltaTau_500 / K;
-						p->alpha550 = alpha550 / K;
-						p->amin = amin;
-						p->synFlags |= 2048;
-						completedPixels.insert(p->index);
-					}
-				}
-		foreach(size_t index, completedPixels)
-				{
-					missingPixels.erase(index);
-				}
-		I++;
-	}
-	*/
+	 if (minIDiff == iDiff && minJDiff == jDiff) {
+	 amin = q->amin;
+	 }
+	 K++;
+	 }
+	 }
+	 }
+	 }
+	 if (K > 1) {
+	 p->tau550 = tau_550 / K;
+	 p->tau550err = deltaTau_500 / K;
+	 p->alpha550 = alpha550 / K;
+	 p->amin = amin;
+	 p->synFlags |= 2048;
+	 completedPixels.insert(p->index);
+	 }
+	 }
+	 foreach(size_t index, completedPixels)
+	 {
+	 missingPixels.erase(index);
+	 }
+	 I++;
+	 }
+	 */
 	//applyMedianFiltering(pixels, firstL, lastL);
 	putPixels(pixels);
 	context.setLastComputedL(*averagedSegment, *this, lastL);
@@ -379,8 +376,8 @@ void Aer::process(Context& context) {
 vector<shared_ptr<Pixel> > Aer::getPixels(Context& context, long firstL, long lastL) const {
 	const PixelInitializer pixelInitializer(context);
 	vector<shared_ptr<Pixel> > pixels;
-	for (long l = firstL; l <= lastL; l++) {
-		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
+	for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
+		for (long l = firstL; l <= lastL; l++) {
 			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
 				pixels.push_back(pixelInitializer.getPixel(k, l, m));
 			}
