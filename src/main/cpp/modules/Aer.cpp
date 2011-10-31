@@ -289,7 +289,7 @@ void Aer::process(Context& context) {
 		if (i % 100 == 0) {
 			context.getLogging().debug("...for pixel with index " + lexical_cast<string>(p->index), getId());
 		}
-		if (p->l < 2000 && p->l > 2100) {
+		if (p->l < 300 || p->l > 400) {
 			continue;
 		}
 		aer_s(p);
