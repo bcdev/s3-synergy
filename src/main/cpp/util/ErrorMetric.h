@@ -35,6 +35,7 @@ private:
     double computeRss8(valarray<double>& x);
     double computeRss10(valarray<double>& x);
     double getValue(double x);
+    void linearSolve();
     void setPixel(const Pixel& p);
 
     static double square(double x) {

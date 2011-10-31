@@ -86,8 +86,10 @@ bool ErrorMetric::findMinimum(Pixel& p) {
 
 double ErrorMetric::computeErrorSurfaceCurvature(const Pixel& p) {
 	setPixel(p);
+
 	const double a = getValue(0.8 * p.tau550);
 	const double b = getValue(0.6 * p.tau550);
+
 	return 25.0 * (p.E2 - 2.0 * a + b) / (2.0 * p.E2 * p.E2);
 }
 
@@ -103,9 +105,12 @@ double ErrorMetric::getValue(double x) {
 	if (doOLC) {
 		pn[0] = pixel->c1;
 		pn[1] = pixel->c2;
-		// TODO - linear optimization
-		MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer2, 0, 2,
-				pn, p0, pe, u, 1.0e-4, 100);
+		if (true) {
+			linearSolve();
+		} else {
+			MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer2, 0,
+					2, pn, p0, pe, u, 1.0e-4, 100);
+		}
 	}
 	if (doSLS) {
 		pn[2] = pixel->nu[0];
@@ -118,6 +123,70 @@ double ErrorMetric::getValue(double x) {
 	}
 
 	return computeRss10(pn);
+}
+
+void ErrorMetric::linearSolve() {
+	using std::sqrt;
+
+	double a[2][2] = {{0.0, 0.0}, {0.0, 0.0}};
+	double b[2] = {0.0, 0.0};
+	double c[2] = {0.0, 0.0};
+	double l[2] = {0.0, 0.0};
+
+	// establish the normal equations
+	for (size_t i = 0; i < 18; ++i) {
+		if (pixel->radiances[i] != Constants::FILL_VALUE_DOUBLE) {
+			const double w = spectralWeights[i];
+
+			l[0] = vegetationSpectrum[i];
+			l[1] = soilSpectrum[i];
+
+			for (size_t j = 0; j < 2; ++j) {
+				for (size_t k = j; k < 2; ++k) {
+					a[j][k] += (l[j] * l[k]) * w;
+				}
+				b[j] += (pixel->radiances[i] * l[j]) * w;
+			}
+		}
+	}
+	// solve using Cholesky decomposition
+	for (size_t i = 0; i < 2; ++i) {
+		for (size_t j = i; j < 2; ++j) {
+			double s = a[i][j];
+
+			for (size_t k = 0; k < i; ++k) {
+				s -= a[i][k] * a[j][k];
+			}
+			if (i < j) {
+				a[j][i] = s / a[i][i];
+			} else {
+				if (s > 0.0) {
+					a[i][i] = sqrt(s);
+				} else { // normal equations are effectively singular
+					return;
+				}
+			}
+		}
+	}
+	for (size_t i = 0; i < 2; ++i) {
+		double s = b[i];
+
+		for (size_t k = 0; k < i; ++k) {
+			s -= a[i][k] * c[k];
+		}
+		c[i] = s / a[i][i];
+	}
+	for (size_t i = 2; i-- > 0;) {
+		double s = c[i];
+
+		for (size_t k = i + 1; k < 2; ++k) {
+			s -= a[k][i] * c[k];
+		}
+		c[i] = s / a[i][i];
+	}
+
+	pn[0] = c[0];
+	pn[1] = c[1];
 }
 
 double ErrorMetric::computeNdvi(const Pixel& p) const {
@@ -179,8 +248,7 @@ double ErrorMetric::computeRss2(valarray<double>& x) {
 #pragma omp parallel for reduction(+ : sum)
 		for (size_t i = 0; i < 18; i++) {
 			if (pixel->radiances[i] != Constants::FILL_VALUE_DOUBLE) {
-				const double rSpec = x[0] * vegetationSpectrum[i]
-						+ x[1] * soilSpectrum[i];
+				const double rSpec = x[0] * vegetationSpectrum[i] + x[1] * soilSpectrum[i];
 				sum += spectralWeights[i] * square(sdrs[i] - rSpec);
 			}
 		}
@@ -250,12 +318,14 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 	coordinates[3] = pixel->airPressure;
 	coordinates[4] = pixel->waterVapour;
 	coordinates[5] = tau550;
+
 	lutRhoAtm.getValues(&coordinates[3], matRho, f, w);
 
 	coordinates[6] = coordinates[1]; // SZA
 	coordinates[7] = coordinates[3]; // air pressure
 	coordinates[8] = coordinates[4]; // water vapour
 	coordinates[9] = coordinates[5]; // aerosol
+
 	lutT.getValues(&coordinates[6], matTs, f, w);
 
 	if (doOLC) {
@@ -287,6 +357,7 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 	if (doSLS) {
 		coordinates[0] = abs(pixel->saa - pixel->vaaSln);
 		coordinates[2] = pixel->vzaSln;
+
 		lutSlnRatm.getValues(&coordinates[0], matRatmSln, f, w);
 		lutT.getValues(&coordinates[2], matTv, f, w);
 
@@ -315,6 +386,7 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 
 		coordinates[0] = abs(pixel->saa - pixel->vaaSlo);
 		coordinates[2] = pixel->vzaSlo;
+
 		lutSloRatm.getValues(&coordinates[0], matRatmSlo, f, w);
 		lutT.getValues(&coordinates[2], matTv, f, w);
 
@@ -345,6 +417,7 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		coordinates[1] = pixel->airPressure;
 		coordinates[2] = tau550;
 		coordinates[3] = amin;
+
 		lutD.getValues(&coordinates[0], diffuseFractions);
 	}
 }
