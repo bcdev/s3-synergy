@@ -2,7 +2,7 @@
  * ErrorMetric.cpp
  *
  *  Created on: 13.10.2011
- *      Author: thomasstorm
+ *      Author: Thomas Storm, Ralf Quast
  */
 
 #include <cmath>
@@ -116,13 +116,11 @@ double ErrorMetric::getValue(double x) {
 		if (true) {
 			linearSolve();
 		} else {
-			MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer2, 0,
-					2, pn, p0, pe, directionSet, 1.0e-4, 100);
+			MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer2, 0, 2, pn, p0, pe, directionSet, 1.0e-4, 100);
 		}
 	}
 	if (doSLS) {
-		MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer8, 2, 10,
-				pn, p0, pe, directionSet, 1.0e-4, 100);
+		MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer8, 2, 10, pn, p0, pe, directionSet, 1.0e-4, 100);
 	}
 
 	return computeRss10(pn);
@@ -336,15 +334,12 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		for (size_t b = 0; b < 18; b++) {
 			if (pixel->radiances[b] != Constants::FILL_VALUE_DOUBLE) {
 				// Eq. 2-1
-				const double rtoa = toaReflectance(pixel->radiances[b],
-						pixel->solarIrradiances[b], pixel->sza);
-
+				const double rtoa = toaReflectance(pixel->radiances[b], pixel->solarIrradiances[b], pixel->sza);
 				// Eq. 2-2
-				const double tO3 = ozoneTransmission(pixel->cO3[b], pixel->sza,
-						pixel->vzaOlc, pixel->ozone);
-
+				const double tO3 = ozoneTransmission(pixel->cO3[b], pixel->sza, pixel->vzaOlc, pixel->ozone);
 				// Eq. 2-3
 				const double ratm = matRatmOlc(amin - 1, b);
+
 				const double ts = matTs(amin - 1, b);
 				const double tv = matTv(amin - 1, b);
 				const double rho = matRho(amin - 1, b);
@@ -365,20 +360,16 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		for (size_t b = 18; b < 24; b++) {
 			if (pixel->radiances[b] != Constants::FILL_VALUE_DOUBLE) {
 				// Eq. 2-1
-				const double rtoa = toaReflectance(pixel->radiances[b],
-						pixel->solarIrradiances[b], pixel->sza);
-
+				const double rtoa = toaReflectance(pixel->radiances[b], pixel->solarIrradiances[b], pixel->sza);
 				// Eq. 2-2
-				const double tO3 = ozoneTransmission(pixel->cO3[b], pixel->sza,
-						pixel->vzaOlc, pixel->ozone);
-
+				const double tO3 = ozoneTransmission(pixel->cO3[b], pixel->sza, pixel->vzaOlc, pixel->ozone);
 				// Eq. 2-3
 				const double ratm = matRatmSln(amin - 1, b - 18);
+
 				const double ts = matTs(amin - 1, b);
 				const double tv = matTv(amin - 1, b);
 				const double rho = matRho(amin - 1, b);
-				const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho,
-						tO3);
+				const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho, tO3);
 
 				sdrs[b] = sdr;
 			}
@@ -394,20 +385,16 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		for (size_t b = 24; b < 30; b++) {
 			if (pixel->radiances[b] != Constants::FILL_VALUE_DOUBLE) {
 				// Eq. 2-1
-				const double rtoa = toaReflectance(pixel->radiances[b],
-						pixel->solarIrradiances[b], pixel->sza);
-
+				const double rtoa = toaReflectance(pixel->radiances[b], pixel->solarIrradiances[b], pixel->sza);
 				// Eq. 2-2
-				const double tO3 = ozoneTransmission(pixel->cO3[b], pixel->sza,
-						pixel->vzaOlc, pixel->ozone);
-
+				const double tO3 = ozoneTransmission(pixel->cO3[b], pixel->sza, pixel->vzaOlc, pixel->ozone);
 				// Eq. 2-3
 				const double ratm = matRatmSlo(amin - 1, b - 24);
+
 				const double ts = matTs(amin - 1, b);
 				const double tv = matTv(amin - 1, b);
 				const double rho = matRho(amin - 1, b);
-				const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho,
-						tO3);
+				const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho, tO3);
 
 				sdrs[b] = sdr;
 			}
