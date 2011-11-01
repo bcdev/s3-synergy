@@ -31,9 +31,9 @@ public:
 
 private:
     void setAerosolOpticalThickness(double tau550);
-    double computeRss2(const valarray<double>& x);
-    double computeRss8(const valarray<double>& x);
-    double computeRss10(const valarray<double>& x);
+    double computeRss2(valarray<double>& x);
+    double computeRss8(valarray<double>& x);
+    double computeRss10(valarray<double>& x);
     double getValue(double x);
     void setPixel(const Pixel& p);
 
@@ -90,7 +90,7 @@ private:
 	LineMinimizer<ErrorMetric> lineMinimizer8;
 };
 
-inline double ErrorMetric::computeRss10(const valarray<double>& x) {
+inline double ErrorMetric::computeRss10(valarray<double>& x) {
     return (1.0 - totalAngularWeight) * computeRss2(x) / sum2 + totalAngularWeight * computeRss8(x) / sum8;    
 }
 

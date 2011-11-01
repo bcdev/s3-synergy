@@ -184,7 +184,7 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	pixel = &p;
 }
 
-double ErrorMetric::computeRss2(const valarray<double>& x) {
+double ErrorMetric::computeRss2(valarray<double>& x) {
 	double sum = 0.0;
 	if (doOLC) {
 #pragma omp parallel for reduction(+ : sum)
@@ -198,7 +198,7 @@ double ErrorMetric::computeRss2(const valarray<double>& x) {
 	return sum;
 }
 
-double ErrorMetric::computeRss8(const valarray<double>& x) {
+double ErrorMetric::computeRss8(valarray<double>& x) {
 	double sum = 0.0;
 	if (doSLS) {
 #pragma omp parallel for reduction(+ : sum)
