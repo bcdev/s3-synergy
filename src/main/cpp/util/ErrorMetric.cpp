@@ -64,7 +64,7 @@ bool ErrorMetric::findMinimum(Pixel& p) {
 		bracket.minimumF = getValue(0.1);
 		bracket.upperF = getValue(2.0);
 
-		const bool success = Min::brent(*this, bracket, 1.0e-4);
+		const bool success = Min::brent(*this, bracket, 0.05);
 
 		if (doOLC) {
 			p.c1 = pn[0];
@@ -116,7 +116,7 @@ double ErrorMetric::getValue(double x) {
 					u[i][j] = u[j][i] = 0.0;
 				}
 			}
-			MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer2, 0, 2, pn, p0, pe, u, 1.0e-4, 100);
+			MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer2, 0, 2, pn, p0, pe, u, 5.0e-4, 100);
 		}
 	}
 	if (doSLS) {
@@ -126,7 +126,7 @@ double ErrorMetric::getValue(double x) {
 				u[i][j] = u[j][i] = 0.0;
 			}
 		}
-		MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer8, 2, 10, pn, p0, pe, u, 1.0e-4, 100);
+		MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer8, 2, 10, pn, p0, pe, u, 5.0e-4, 100);
 	}
 
 	return computeRss10(pn);

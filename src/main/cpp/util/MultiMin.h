@@ -164,6 +164,10 @@ bool MultiMin::powell(T* obj, double(T::*f)(valarray<double>&), LineMinimizer<T>
             zn = z;
         }
         // 4. Stop if ||pn - p0|| < accuracyGoal
+        if (2.0 * (z0 - zn) <= accuracyGoal * (abs(z0) + abs(zn)) + 1.0e-20) {
+			return true;
+		}
+        /*
         double sum = 0.0;
 #pragma omp parallel for reduction(+ : sum)
         for (size_t k = begin; k < end; ++k) {
@@ -172,6 +176,7 @@ bool MultiMin::powell(T* obj, double(T::*f)(valarray<double>&), LineMinimizer<T>
         if (sum < square(accuracyGoal)) {
             return true;
         }
+        */
         // 5. Extrapolate
 #pragma omp parallel for
         for (size_t k = begin; k < end; ++k) {
