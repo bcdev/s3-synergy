@@ -16,6 +16,7 @@
 
 class MultiMinTest: public CPPUNIT_NS::TestFixture {
 CPPUNIT_TEST_SUITE(MultiMinTest);
+		CPPUNIT_TEST(testChol2D);
 		CPPUNIT_TEST(testPowellCigar);
 		CPPUNIT_TEST(testPowellRosenbrock);
 	CPPUNIT_TEST_SUITE_END();
@@ -27,6 +28,7 @@ public:
 	void tearDown();
 
 private:
+	void testChol2D();
 	void testPowellCigar();
 	void testPowellRosenbrock();
 };

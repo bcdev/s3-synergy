@@ -46,8 +46,8 @@ class MultiMin {
 public:
 	virtual ~MultiMin();
 
-	static bool linearSolve2D(valarray<double>& c, valarray<double>& b, valarray<valarray<double> >& a,
-			const valarray<double>& data, size_t begin, size_t end, double fillValue,
+	static bool chol2D(valarray<double>& c, valarray<double>& b, valarray<valarray<double> >& a,
+			const valarray<double>& data, size_t begin, size_t end, const valarray<bool>& validMask,
 			const valarray<double>& w,
 			const valarray<double>& model1,
 			const valarray<double>& model2);

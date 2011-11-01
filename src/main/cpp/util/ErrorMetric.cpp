@@ -29,6 +29,7 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		soilModel(configurationAuxdata.getVectorDouble("R_soil")),
 		spectralWeights(configurationAuxdata.getVectorDouble("weight_spec")),
 		angularWeights(configurationAuxdata.getMatrixDouble("weight_ang")),
+		validMask(30),
 		sdrs(30),
 		coordinates(10),
 		matRatmOlc(40, 18),
@@ -107,7 +108,7 @@ double ErrorMetric::getValue(double x) {
 
 	if (doOLC) {
 		if (true) {
-			MultiMin::linearSolve2D(pn, p0, u, pixel->radiances, 0, 18, Constants::FILL_VALUE_DOUBLE, spectralWeights, vegetationModel, soilModel);
+			MultiMin::chol2D(pn, p0, u, pixel->sdrs, 0, 18, validMask, spectralWeights, vegetationModel, soilModel);
 		} else {
 			for (size_t i = 0; i < 2; i++) {
 				u[i][i] = 1.0;
@@ -154,7 +155,8 @@ void ErrorMetric::setPixel(const Pixel& p) {
 
 #pragma omp parallel for reduction(+ : sum2, olcCount)
 	for (size_t i = 0; i < 18; i++) {
-		if (p.radiances[i] != Constants::FILL_VALUE_DOUBLE) {
+		validMask[i] = p.radiances[i] != Constants::FILL_VALUE_DOUBLE;
+		if (validMask[i]) {
 			sum2 += spectralWeights[i];
 			olcCount++;
 		}
@@ -163,7 +165,8 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	for (size_t o = 0; o < 2; o++) {
 		for (size_t j = 0; j < 6; j++) {
 			const int i = 18 + 6 * o + j;
-			if (p.radiances[i] != Constants::FILL_VALUE_DOUBLE) {
+			validMask[i] = p.radiances[i] != Constants::FILL_VALUE_DOUBLE;
+			if (validMask[i]) {
 				sum8 += angularWeights(o, j);
 				slsCount++;
 			}
@@ -186,7 +189,7 @@ double ErrorMetric::computeRss2(valarray<double>& x) {
 	if (doOLC) {
 #pragma omp parallel for reduction(+ : sum)
 		for (size_t i = 0; i < 18; i++) {
-			if (pixel->radiances[i] != Constants::FILL_VALUE_DOUBLE) {
+			if (validMask[i]) {
 				const double rSpec = x[0] * vegetationModel[i] + x[1] * soilModel[i];
 				sum += spectralWeights[i] * square(sdrs[i] - rSpec);
 			}
@@ -202,7 +205,7 @@ double ErrorMetric::computeRss8(valarray<double>& x) {
 		for (size_t o = 0; o < 2; o++) {
 			for (size_t j = 0; j < 6; j++) {
 				const int i = 18 + 6 * o + j;
-				if (pixel->radiances[i] != Constants::FILL_VALUE_DOUBLE) {
+				if (validMask[i]) {
 					const double d = diffuseFractions[j];
 					const double nu = x[o + 2];
 					const double omega = x[j + 4];
@@ -273,7 +276,7 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 
 #pragma omp parallel for
 		for (size_t b = 0; b < 18; b++) {
-			if (pixel->radiances[b] != Constants::FILL_VALUE_DOUBLE) {
+			if (validMask[b]) {
 				// Eq. 2-1
 				const double rtoa = toaReflectance(pixel->radiances[b], pixel->solarIrradiances[b], pixel->sza);
 				// Eq. 2-2
@@ -299,7 +302,7 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 
 #pragma omp parallel for
 		for (size_t b = 18; b < 24; b++) {
-			if (pixel->radiances[b] != Constants::FILL_VALUE_DOUBLE) {
+			if (validMask[b]) {
 				// Eq. 2-1
 				const double rtoa = toaReflectance(pixel->radiances[b], pixel->solarIrradiances[b], pixel->sza);
 				// Eq. 2-2
@@ -324,7 +327,7 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 
 #pragma omp parallel for
 		for (size_t b = 24; b < 30; b++) {
-			if (pixel->radiances[b] != Constants::FILL_VALUE_DOUBLE) {
+			if (validMask[b]) {
 				// Eq. 2-1
 				const double rtoa = toaReflectance(pixel->radiances[b], pixel->solarIrradiances[b], pixel->sza);
 				// Eq. 2-2

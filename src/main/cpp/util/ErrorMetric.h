@@ -66,6 +66,7 @@ private:
     double sum8;
     double totalAngularWeight;    
     
+    valarray<bool> validMask;
     valarray<double> sdrs;
     
     // for atmospheric correction

@@ -16,7 +16,7 @@ MultiMin::MultiMin() {
 MultiMin::~MultiMin() {
 }
 
-bool MultiMin::linearSolve2D(valarray<double>& c, valarray<double>& b, valarray<valarray<double> >& a, const valarray<double>& data, size_t begin, size_t end, double fillValue, const valarray<double>& w, const valarray<double>& model1, const valarray<double>& model2) {
+bool MultiMin::chol2D(valarray<double>& c, valarray<double>& b, valarray<valarray<double> >& a, const valarray<double>& data, size_t begin, size_t end, const valarray<bool>& validMask, const valarray<double>& w, const valarray<double>& model1, const valarray<double>& model2) {
 	using std::fill;
 	using std::sqrt;
 
@@ -27,7 +27,7 @@ bool MultiMin::linearSolve2D(valarray<double>& c, valarray<double>& b, valarray<
 
 	// establish the normal equations
 	for (size_t i = begin; i < end; ++i) {
-		if (data[i] != fillValue) {
+		if (validMask[i]) {
 			c[0] = model1[i];
 			c[1] = model2[i];
 

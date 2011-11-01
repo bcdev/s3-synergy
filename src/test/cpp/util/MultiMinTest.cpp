@@ -48,6 +48,28 @@ void MultiMinTest::tearDown() {
 
 }
 
+void MultiMinTest::testChol2D() {
+	valarray<double> data(0.5 , 2);
+	valarray<bool> mask(true, 2);
+	valarray<double> weights(1.0, 2);
+	valarray<double> model1(2);
+	valarray<double> model2(2);
+
+	model1[0] = 0.0;
+	model1[1] = 1.0;
+	model2[0] = 1.0;
+	model2[1] = 0.0;
+
+	valarray<double> c(2);
+	valarray<double> b(2);
+	valarray<valarray<double> > a(b, 2);
+
+	MultiMin::chol2D(c, b, a, data, 0, 2, mask, weights, model1, model2);
+
+	CPPUNIT_ASSERT(c[0] == 0.5);
+	CPPUNIT_ASSERT(c[1] == 0.5);
+}
+
 void MultiMinTest::testPowellCigar() {
 	double xInit[] = { 1.0, 1.0, 1.0 };
 	valarray<double> x(xInit, 3);
