@@ -89,7 +89,8 @@ private:
 	LineMinimizer<ErrorMetric> lineMinimizer2;
 	LineMinimizer<ErrorMetric> lineMinimizer8;
 
-	bool doLut;
+	bool doLutOlc;
+	bool doLutSls;
 };
 
 inline double ErrorMetric::computeRss10(valarray<double>& x) {
