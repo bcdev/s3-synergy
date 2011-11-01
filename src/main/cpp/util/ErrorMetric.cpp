@@ -175,8 +175,7 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	this->sum2 = sum2;
 	this->sum8 = sum8;
 	this->doOLC = olcCount >= 12;
-	// TODO - revert
-	this->doSLS = false; //slsCount >= 8;
+	this->doSLS = slsCount >= 8;
 
 	const double ndvi = computeNdvi(p);
 	totalAngularWeight = lutTotalAngularWeights.getValue(&ndvi);
@@ -210,7 +209,6 @@ double ErrorMetric::computeRss8(valarray<double>& x) {
 					const double nu = x[o + 2];
 					const double omega = x[j + 4];
 					const double g = (1.0 - gamma) * omega;
-					// TODO - check
 					const double rAng = (1.0 - d) * nu * omega + (gamma * omega) / (1.0 - g) * (d + g * (1.0 - d));
 
 					sum += angularWeights(o, j) * square(sdrs[i] - rAng);
