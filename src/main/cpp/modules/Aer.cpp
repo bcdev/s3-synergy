@@ -419,7 +419,7 @@ void Aer::aer_s(shared_ptr<Pixel> p, shared_ptr<Pixel> previous) {
 			}
 			q.tau550 = initialTau550;
 			q.c1 = em->computeNdvi(q);
-			q.c2 = 1 - q.c1;
+			q.c2 = 1.0 - q.c1;
 		} else {
 			// TODO - ensure that previous pixel is a neighbour
 			q.nu[0] = previous->nu[0];

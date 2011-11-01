@@ -108,7 +108,7 @@ double ErrorMetric::getValue(double x) {
 
 	if (doOLC) {
 		if (true) {
-			MultiMin::chol2D(pn, p0, u, pixel->sdrs, 0, 18, validMask, spectralWeights, vegetationModel, soilModel);
+			MultiMin::chol2D(pn, p0, u, sdrs, 0, 18, validMask, spectralWeights, vegetationModel, soilModel);
 		} else {
 			for (size_t i = 0; i < 2; i++) {
 				u[i][i] = 1.0;
