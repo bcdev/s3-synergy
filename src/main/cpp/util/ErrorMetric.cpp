@@ -176,8 +176,7 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	this->sum2 = sum2;
 	this->sum8 = sum8;
 	this->doOLC = olcCount >= 12;
-	// TODO - revert
-	this->doSLS = false; // slsCount >= 8;
+	this->doSLS = slsCount >= 8;
 
 	const double ndvi = computeNdvi(p);
 	totalAngularWeight = lutTotalAngularWeights.getValue(&ndvi);
