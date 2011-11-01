@@ -291,14 +291,13 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 			}
 		}
 	}
-	doLut = false;
 
 	if (doSLS) {
 		coordinates[0] = abs(pixel->saa - pixel->vaaSln);
 		coordinates[2] = pixel->vzaSln;
 
-		lutSlnRatm.getValues(&coordinates[0], matRatmSln, lutWeights, lutWorkspace);
-		lutT.getValues(&coordinates[2], matTv, lutWeights, lutWorkspace);
+		if (doLut) lutSlnRatm.getValues(&coordinates[0], matRatmSln, lutWeights, lutWorkspace);
+		if (doLut) lutT.getValues(&coordinates[2], matTv, lutWeights, lutWorkspace);
 
 #pragma omp parallel for
 		for (size_t b = 18; b < 24; b++) {
@@ -322,8 +321,8 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		coordinates[0] = abs(pixel->saa - pixel->vaaSlo);
 		coordinates[2] = pixel->vzaSlo;
 
-		lutSloRatm.getValues(&coordinates[0], matRatmSlo, lutWeights, lutWorkspace);
-		lutT.getValues(&coordinates[2], matTv, lutWeights, lutWorkspace);
+		if (doLut) lutSloRatm.getValues(&coordinates[0], matRatmSlo, lutWeights, lutWorkspace);
+		if (doLut) lutT.getValues(&coordinates[2], matTv, lutWeights, lutWorkspace);
 
 #pragma omp parallel for
 		for (size_t b = 24; b < 30; b++) {
@@ -349,6 +348,8 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		coordinates[2] = tau550;
 		coordinates[3] = amin;
 
-		lutD.getValues(&coordinates[0], diffuseFractions);
+		if (doLut) lutD.getValues(&coordinates[0], diffuseFractions);
+
+		doLut = false;
 	}
 }
