@@ -175,7 +175,8 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	this->sum2 = sum2;
 	this->sum8 = sum8;
 	this->doOLC = olcCount >= 12;
-	this->doSLS = slsCount >= 8;
+	// TODO - revert
+	this->doSLS = false; // slsCount >= 8;
 
 	const double ndvi = computeNdvi(p);
 	totalAngularWeight = lutTotalAngularWeights.getValue(&ndvi);
@@ -183,7 +184,7 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	pixel = &p;
 }
 
-double ErrorMetric::computeRss2(valarray<double>& x) {
+double ErrorMetric::computeRss2(const valarray<double>& x) {
 	double sum = 0.0;
 	if (doOLC) {
 #pragma omp parallel for reduction(+ : sum)
@@ -197,7 +198,7 @@ double ErrorMetric::computeRss2(valarray<double>& x) {
 	return sum;
 }
 
-double ErrorMetric::computeRss8(valarray<double>& x) {
+double ErrorMetric::computeRss8(const valarray<double>& x) {
 	double sum = 0.0;
 	if (doSLS) {
 #pragma omp parallel for reduction(+ : sum)
@@ -219,8 +220,7 @@ double ErrorMetric::computeRss8(valarray<double>& x) {
 	return sum;
 }
 
-static double ozoneTransmission(double cO3, double sza, double vza,
-		double nO3) {
+static double ozoneTransmission(double cO3, double sza, double vza, double nO3) {
 	using std::cos;
 	using std::exp;
 

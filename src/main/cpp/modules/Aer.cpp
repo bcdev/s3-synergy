@@ -411,7 +411,7 @@ void Aer::aer_s(shared_ptr<Pixel> p, shared_ptr<Pixel> previous) {
 	for (size_t i = 0; i < amins.size(); i++) {
 		const int16_t amin = amins[i];
 		Pixel q = Pixel(*p);
-		if (previous.get() == 0) {
+		if (true /*previous.get() == 0*/) {
 			q.nu[0] = initialNu[0];
 			q.nu[1] = initialNu[1];
 			for (size_t j = 0; j < initialOmega.size(); j++) {
