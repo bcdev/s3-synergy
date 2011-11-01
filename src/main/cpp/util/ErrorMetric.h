@@ -88,6 +88,8 @@ private:
 	valarray<valarray<double> > u;
 	LineMinimizer<ErrorMetric> lineMinimizer2;
 	LineMinimizer<ErrorMetric> lineMinimizer8;
+
+	bool doLut;
 };
 
 inline double ErrorMetric::computeRss10(valarray<double>& x) {

@@ -47,6 +47,7 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		u(valarray<double>(10), 10),
 		lineMinimizer2(this, &ErrorMetric::computeRss2, pn, u),
 		lineMinimizer8(this, &ErrorMetric::computeRss8, pn, u) {
+	doLut = true;
 }
 
 ErrorMetric::~ErrorMetric() {
@@ -259,18 +260,18 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 	coordinates[4] = pixel->waterVapour;
 	coordinates[5] = tau550;
 
-	lutRhoAtm.getValues(&coordinates[3], matRho, lutWeights, lutWorkspace);
+	if (doLut) lutRhoAtm.getValues(&coordinates[3], matRho, lutWeights, lutWorkspace);
 
 	coordinates[6] = coordinates[1]; // SZA
 	coordinates[7] = coordinates[3]; // air pressure
 	coordinates[8] = coordinates[4]; // water vapour
 	coordinates[9] = coordinates[5]; // aerosol
 
-	lutT.getValues(&coordinates[6], matTs, lutWeights, lutWorkspace);
+	if (doLut) lutT.getValues(&coordinates[6], matTs, lutWeights, lutWorkspace);
 
 	if (doOLC) {
-		lutOlcRatm.getValues(&coordinates[0], matRatmOlc, lutWeights, lutWorkspace);
-		lutT.getValues(&coordinates[2], matTv, lutWeights, lutWorkspace);
+		if (doLut) lutOlcRatm.getValues(&coordinates[0], matRatmOlc, lutWeights, lutWorkspace);
+		if (doLut) lutT.getValues(&coordinates[2], matTv, lutWeights, lutWorkspace);
 
 #pragma omp parallel for
 		for (size_t b = 0; b < 18; b++) {
@@ -291,6 +292,8 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 			}
 		}
 	}
+	doLut = false;
+
 	if (doSLS) {
 		coordinates[0] = abs(pixel->saa - pixel->vaaSln);
 		coordinates[2] = pixel->vzaSln;
