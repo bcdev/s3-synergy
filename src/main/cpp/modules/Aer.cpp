@@ -292,7 +292,7 @@ void Aer::process(Context& context) {
 		if (p->l < 300 || p->l > 400) {
 			continue;
 		}
-		context.getLogging().debug("... for pixel with line(index) " + lexical_cast<string>(p->l) + "(" + lexical_cast<string>(p->index) + ")", getId());
+		// context.getLogging().debug("... for pixel with line(index) " + lexical_cast<string>(p->l) + "(" + lexical_cast<string>(p->index) + ")", getId());
 		aer_s(p, previous);
 		if (p->amin == 0) {
 			//	missingPixels[p->index] = p;
