@@ -47,8 +47,6 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		u(valarray<double>(10), 10),
 		lineMinimizer2(this, &ErrorMetric::computeRss2, pn, u),
 		lineMinimizer8(this, &ErrorMetric::computeRss8, pn, u) {
-	doLutOlc = true;
-	doLutSls = true;
 }
 
 ErrorMetric::~ErrorMetric() {
@@ -260,18 +258,18 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 	coordinates[4] = pixel->waterVapour;
 	coordinates[5] = tau550;
 
-	if (doLutOlc) lutRhoAtm.getValues(&coordinates[3], matRho, lutWeights, lutWorkspace);
+	lutRhoAtm.getValues(&coordinates[3], matRho, lutWeights, lutWorkspace);
 
 	coordinates[6] = coordinates[1]; // SZA
 	coordinates[7] = coordinates[3]; // air pressure
 	coordinates[8] = coordinates[4]; // water vapour
 	coordinates[9] = coordinates[5]; // aerosol
 
-	if (doLutOlc) lutT.getValues(&coordinates[6], matTs, lutWeights, lutWorkspace);
+	lutT.getValues(&coordinates[6], matTs, lutWeights, lutWorkspace);
 
 	if (doOLC) {
-		if (doLutOlc) lutOlcRatm.getValues(&coordinates[0], matRatmOlc, lutWeights, lutWorkspace);
-		if (doLutOlc) lutT.getValues(&coordinates[2], matTv, lutWeights, lutWorkspace);
+		lutOlcRatm.getValues(&coordinates[0], matRatmOlc, lutWeights, lutWorkspace);
+		lutT.getValues(&coordinates[2], matTv, lutWeights, lutWorkspace);
 
 #pragma omp parallel for
 		for (size_t b = 0; b < 18; b++) {
@@ -292,14 +290,13 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 			}
 		}
 	}
-	doLutOlc = false;
 
 	if (doSLS) {
 		coordinates[0] = abs(pixel->saa - pixel->vaaSln);
 		coordinates[2] = pixel->vzaSln;
 
-		if (doLutSls) lutSlnRatm.getValues(&coordinates[0], matRatmSln, lutWeights, lutWorkspace);
-		if (doLutSls) lutT.getValues(&coordinates[2], matTv, lutWeights, lutWorkspace);
+		lutSlnRatm.getValues(&coordinates[0], matRatmSln, lutWeights, lutWorkspace);
+		lutT.getValues(&coordinates[2], matTv, lutWeights, lutWorkspace);
 
 #pragma omp parallel for
 		for (size_t b = 18; b < 24; b++) {
@@ -323,8 +320,8 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		coordinates[0] = abs(pixel->saa - pixel->vaaSlo);
 		coordinates[2] = pixel->vzaSlo;
 
-		if (doLutSls) lutSloRatm.getValues(&coordinates[0], matRatmSlo, lutWeights, lutWorkspace);
-		if (doLutSls) lutT.getValues(&coordinates[2], matTv, lutWeights, lutWorkspace);
+		lutSloRatm.getValues(&coordinates[0], matRatmSlo, lutWeights, lutWorkspace);
+		lutT.getValues(&coordinates[2], matTv, lutWeights, lutWorkspace);
 
 #pragma omp parallel for
 		for (size_t b = 24; b < 30; b++) {
@@ -350,8 +347,7 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		coordinates[2] = tau550;
 		coordinates[3] = amin;
 
-		if (doLutSls) lutD.getValues(&coordinates[0], diffuseFractions);
-
-		doLutSls = false;
+		// TODO - use matrix lookup table?
+		lutD.getValues(&coordinates[0], diffuseFractions);
 	}
 }

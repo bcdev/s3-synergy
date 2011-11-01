@@ -42,7 +42,9 @@ public:
 
 	const string& getId() const;
 
+	valarray<W>& getArray(const W coordinates[], size_t dimIndex, valarray<W>& v) const;
 	W getValue(const W coordinates[]) const;
+	W getValue(const W coordinates[], size_t dimIndex, const valarray<W>& v, valarray<W>& w) const;
 
 	size_t getDimensionCount() const;
 	size_t getDimensionLength(size_t dimIndex) const;
@@ -129,6 +131,51 @@ W ScalarLookupTableImpl<T, W>::getValue(const W coordinates[]) const {
 }
 
 template<class T, class W>
+valarray<W>& ScalarLookupTableImpl<T, W>::getArray(const W coordinates[], size_t dimIndex, valarray<W>& v) const {
+	assert(v.size() >= strides[0]);
+
+	W a;
+	W b;
+	W f;
+
+	for (size_t i = 0; i < dimIndex; ++i) {
+		const size_t origin = getIndex(i, coordinates[i], &f) * strides[i];
+#pragma omp parallel for
+		for (size_t k = 0; k < strides[i]; ++k) {
+			if (i == 0) {
+				a = boost::numeric_cast<W>(y[origin + k]);
+				b = boost::numeric_cast<W>(y[origin + k + strides[i]]);
+			} else {
+				a = v[origin + k];
+				b = v[origin + k + strides[i]];
+			}
+			v[k] = a + f * (b - a);
+		}
+	}
+
+	return v;
+}
+
+template<class T, class W>
+W ScalarLookupTableImpl<T, W>::getValue(const W coordinates[], size_t dimIndex, const valarray<W>& v, valarray<W>& w) const {
+	assert(w.size() >= strides[dimIndex]);
+
+	W f;
+
+	for (size_t i = dimIndex; i < n; ++i) {
+		const size_t origin = getIndex(i, coordinates[i], &f) * strides[i];
+#pragma omp parallel for
+		for (size_t k = 0; k < strides[i]; ++k) {
+			const W a = v[origin + k];
+			const W b = v[origin + k + strides[i]];
+			w[k] = a + f * (b - a);
+		}
+	}
+
+	return w[0];
+}
+
+template<class T, class W>
 inline const string& ScalarLookupTableImpl<T, W>::getId() const {
 	return id;
 }
@@ -209,4 +256,5 @@ size_t ScalarLookupTableImpl<T, W>::getIndex(size_t dimIndex, W coordinate, W& f
 }
 
 #endif	/* SCALARLOOKUPTABLEIMPL_H */
+
 
