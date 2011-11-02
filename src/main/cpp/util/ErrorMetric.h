@@ -88,6 +88,8 @@ private:
 	valarray<valarray<double> > u;
 	LineMinimizer<ErrorMetric> lineMinimizer2;
 	LineMinimizer<ErrorMetric> lineMinimizer8;
+
+	static const double ACCURACY_GOAL = 5.0e-4;
 };
 
 inline double ErrorMetric::computeRss10(valarray<double>& x) {

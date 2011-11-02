@@ -64,7 +64,7 @@ bool ErrorMetric::findMinimum(Pixel& p) {
 		bracket.minimumF = getValue(0.1);
 		bracket.upperF = getValue(2.0);
 
-		const bool success = Min::brent(*this, bracket, 5.0e-4);
+		const bool success = Min::brent(*this, bracket, ACCURACY_GOAL);
 
 		if (doOLC) {
 			p.c1 = pn[0];
@@ -107,17 +107,7 @@ double ErrorMetric::getValue(double x) {
 	}
 
 	if (doOLC) {
-		if (true) {
-			MultiMin::chol2D(pn, p0, u, sdrs, 0, 18, validMask, spectralWeights, vegetationModel, soilModel);
-		} else {
-			for (size_t i = 0; i < 2; i++) {
-				u[i][i] = 1.0;
-				for (size_t j = 0; j < i; j++) {
-					u[i][j] = u[j][i] = 0.0;
-				}
-			}
-			MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer2, 0, 2, pn, p0, pe, u, 5.0e-4, 100);
-		}
+		MultiMin::chol2D(pn, p0, u, sdrs, 0, 18, validMask, spectralWeights, vegetationModel, soilModel);
 	}
 	if (doSLS) {
 		for (size_t i = 2; i < 10; i++) {
@@ -126,7 +116,7 @@ double ErrorMetric::getValue(double x) {
 				u[i][j] = u[j][i] = 0.0;
 			}
 		}
-		MultiMin::powell(this, &ErrorMetric::computeRss2, lineMinimizer8, 2, 10, pn, p0, pe, u, 5.0e-4, 100);
+		MultiMin::powell(this, &ErrorMetric::computeRss8, lineMinimizer8, 2, 10, pn, p0, pe, u, ACCURACY_GOAL, 100);
 	}
 
 	return computeRss10(pn);
