@@ -1,5 +1,5 @@
 /*
- * ScalarLookupTableTest.cpp
+ * LookupTableTest.cpp
  *
  *  Created on: Nov 1, 2011
  *      Author: ralf
@@ -8,24 +8,25 @@
 #include <cstdlib>
 #include <cmath>
 
-#include "ScalarLookupTableTest.h"
 #include "../../../main/cpp/core/LookupTable.h"
 
-CPPUNIT_TEST_SUITE_REGISTRATION(ScalarLookupTableTest);
+#include "LookupTableTest.h"
 
-ScalarLookupTableTest::ScalarLookupTableTest() {
+CPPUNIT_TEST_SUITE_REGISTRATION(LookupTableTest);
+
+LookupTableTest::LookupTableTest() {
 }
 
-ScalarLookupTableTest::~ScalarLookupTableTest() {
+LookupTableTest::~LookupTableTest() {
 }
 
-void ScalarLookupTableTest::setUp() {
+void LookupTableTest::setUp() {
 }
 
-void ScalarLookupTableTest::tearDown() {
+void LookupTableTest::tearDown() {
 }
 
-void ScalarLookupTableTest::testInterpolation1D() {
+void LookupTableTest::testInterpolation1D() {
 	vector<valarray<double> > dimensions(1, valarray<double>(2));
 	dimensions[0][0] = 0.0;
 	dimensions[0][1] = 1.0;
@@ -50,7 +51,7 @@ void ScalarLookupTableTest::testInterpolation1D() {
 	CPPUNIT_ASSERT(lut->getValue(&coordinate) == 0.5);
 }
 
-void ScalarLookupTableTest::testInterpolation2D() {
+void LookupTableTest::testInterpolation2D() {
 	vector<valarray<double> > dimensions(2, valarray<double>(2));
 	dimensions[0][0] = 0.0;
 	dimensions[0][1] = 1.0;
@@ -108,7 +109,7 @@ void ScalarLookupTableTest::testInterpolation2D() {
 	CPPUNIT_ASSERT(lut->getValue(coordinates, 1, t, w) == 2.5);
 }
 
-void ScalarLookupTableTest::testInterpolation3D() {
+void LookupTableTest::testInterpolation3D() {
 	using std::abs;
 	using std::rand;
 	using std::srand;

@@ -26,7 +26,7 @@
 
 #include "Boost.h"
 #include "Identifiable.h"
-#include "ScalarLookupTableImpl.h"
+#include "LookupTableImpl.h"
 #include "VectorLookupTableImpl.h"
 #include "MatrixLookupTableImpl.h"
 
@@ -42,6 +42,8 @@ template<class W>
 class LookupTable: public Identifiable {
 public:
 	typedef valarray<W> Dimension;
+	typedef valarray<W> Vector;
+	typedef valarray<valarray<W> > Matrix;
 
 	virtual ~LookupTable() {
 	}

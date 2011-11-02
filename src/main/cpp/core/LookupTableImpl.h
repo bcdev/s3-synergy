@@ -12,14 +12,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
- * File:   ScalarLookupTableImpl.h
+ * File:   LookupTableImpl.h
  * Author: ralf
  *
  * Created on January 25, 2011, 4:50 PM
  */
 
-#ifndef SCALARLOOKUPTABLEIMPL_H
-#define	SCALARLOOKUPTABLEIMPL_H
+#ifndef LOOKUPTABLEIMPL_H
+#define	LOOKUPTABLEIMPL_H
 
 #include <algorithm>
 #include <cassert>
@@ -354,6 +354,6 @@ size_t LookupTableImpl<T, W>::getIndex(size_t dimIndex, W coordinate, W& f) cons
 	return lo;
 }
 
-#endif	/* SCALARLOOKUPTABLEIMPL_H */
+#endif	/* LOOKUPTABLEIMPL_H */
 
 
