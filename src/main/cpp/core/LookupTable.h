@@ -34,21 +34,24 @@ using std::valarray;
 using std::vector;
 
 /**
- * A scalar lookup table.
+ * A lookup table.
  *
  * @author Ralf Quast
  */
 template<class W>
-class ScalarLookupTable: public Identifiable {
+class LookupTable: public Identifiable {
 public:
 	typedef valarray<W> Dimension;
 
-	virtual ~ScalarLookupTable() {
+	virtual ~LookupTable() {
 	}
 
 	virtual valarray<W>& getTable(const W coordinates[], size_t dimIndex, valarray<W>& tableValues) const = 0;
 	virtual W getValue(const W coordinates[]) const = 0;
 	virtual W getValue(const W coordinates[], size_t dimIndex, const valarray<W>& tableValues, valarray<W>& w) const = 0;
+
+	virtual matrix<W>& getMatrix(const W coordinates[], matrix<W>& matrix, valarray<W>& f, valarray<W>& w) const = 0;
+	virtual valarray<W>& getVector(const W coordinates[], valarray<W>& vector) const = 0;
 
 	virtual size_t getDimensionCount() const = 0;
 	virtual size_t getDimensionLength(size_t dimIndex) const = 0;
@@ -62,12 +65,8 @@ public:
 	virtual W getValue(size_t i) const = 0;
 
 	template<class T>
-	static shared_ptr<ScalarLookupTable<W> > newScalarLookupTable(const string& id,
-			const vector<Dimension>& dims, const shared_array<T>& values,
-			W scaleFactor = W(1), W addOffset = W(0)) {
-		return shared_ptr<ScalarLookupTable<W> >(
-				new ScalarLookupTableImpl<T, W>(id, dims, values, scaleFactor,
-						addOffset));
+	static shared_ptr<LookupTable<W> > newLookupTable(const string& id, const vector<Dimension>& dims, const shared_array<T>& values, W scaleFactor = W(1), W addOffset = W(0)) {
+		return shared_ptr<LookupTable<W> >(new LookupTableImpl<T, W>(id, dims, values, scaleFactor, addOffset));
 	}
 };
 

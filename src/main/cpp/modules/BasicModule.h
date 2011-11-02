@@ -76,7 +76,7 @@ protected:
 
     MatrixLookupTable<double>& getMatrixLookupTable(Context& context, const string& fileName, const string& varName) const;
     VectorLookupTable<double>& getVectorLookupTable(Context& context, const string& fileName, const string& varName) const;
-    ScalarLookupTable<double>& getScalarLookupTable(Context& context, const string& fileName, const string& varName) const;
+    LookupTable<double>& getScalarLookupTable(Context& context, const string& fileName, const string& varName) const;
 };
 
 #endif	/* BASICMODULE_H */

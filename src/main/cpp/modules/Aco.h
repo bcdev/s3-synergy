@@ -20,7 +20,7 @@ public:
 	void stop(Context& context);
 	void process(Context& context);
 private:
-	static double ozoneTransmission(const ScalarLookupTable<double>& lut, double sza, double vza, double nO3, double channel);
+	static double ozoneTransmission(const LookupTable<double>& lut, double sza, double vza, double nO3, double channel);
 	static double surfaceReflectance(double rtoa, double ratm, double ts, double tv, double rho, double tO3);
 	static double toaReflectance(double ltoa, double f0, double sza);
 

@@ -34,7 +34,7 @@ void ScalarLookupTableTest::testInterpolation1D() {
 	values[0] = 0.0;
 	values[1] = 1.0;
 
-	shared_ptr<ScalarLookupTable<double> > lut = ScalarLookupTable<double>::newScalarLookupTable("id", dimensions, values);
+	shared_ptr<LookupTable<double> > lut = LookupTable<double>::newLookupTable("id", dimensions, values);
 	CPPUNIT_ASSERT(lut->getDimensionCount() == 1);
 
 	CPPUNIT_ASSERT(lut->getMinCoordinate(0) == 0.0);
@@ -63,7 +63,7 @@ void ScalarLookupTableTest::testInterpolation2D() {
 	values[2] = 2.0;
 	values[3] = 3.0;
 
-	shared_ptr<ScalarLookupTable<double> > lut = ScalarLookupTable<double>::newScalarLookupTable("id", dimensions, values);
+	shared_ptr<LookupTable<double> > lut = LookupTable<double>::newLookupTable("id", dimensions, values);
 	CPPUNIT_ASSERT(lut->getDimensionCount() == 2);
 
 	CPPUNIT_ASSERT(lut->getMinCoordinate(0) == 0.0);
@@ -135,7 +135,7 @@ void ScalarLookupTableTest::testInterpolation3D() {
 		values[i] = i;
 	}
 
-	shared_ptr<ScalarLookupTable<double> > lut = ScalarLookupTable<double>::newScalarLookupTable("id", dimensions, values);
+	shared_ptr<LookupTable<double> > lut = LookupTable<double>::newLookupTable("id", dimensions, values);
 	CPPUNIT_ASSERT(lut->getDimensionCount() == 3);
 
 	double r[3];

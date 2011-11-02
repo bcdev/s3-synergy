@@ -39,11 +39,11 @@ VectorLookupTable<double>& BasicModule::getVectorLookupTable(Context& context, c
     return (VectorLookupTable<double>&) context.getObject(varName);
 }
 
-ScalarLookupTable<double>& BasicModule::getScalarLookupTable(Context& context, const string& fileName, const string& varName) const {
+LookupTable<double>& BasicModule::getScalarLookupTable(Context& context, const string& fileName, const string& varName) const {
     if (!context.hasObject(varName)) {
         const LookupTableReader reader(getAuxdataPath() + fileName);
         context.getLogging().info("Reading LUT '" + varName + "'", getId());
-        context.addObject(reader.readScalarLookupTable<double>(varName));
+        context.addObject(reader.readLookupTable<double>(varName));
     }
-    return (ScalarLookupTable<double>&) context.getObject(varName);
+    return (LookupTable<double>&) context.getObject(varName);
 }

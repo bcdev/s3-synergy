@@ -48,7 +48,7 @@ private:
     const MatrixLookupTable<double>& lutSloRatm;
     const MatrixLookupTable<double>& lutT;
     const MatrixLookupTable<double>& lutRhoAtm;
-    const ScalarLookupTable<double>& lutTotalAngularWeights;
+    const LookupTable<double>& lutTotalAngularWeights;
     const VectorLookupTable<double>& lutD;
     const AuxdataProvider& configurationAuxdata;
     const double gamma;

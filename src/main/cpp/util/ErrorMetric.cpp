@@ -20,7 +20,7 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		lutSloRatm((MatrixLookupTable<double>&) context.getObject("SLO_R_atm")),
 		lutT((MatrixLookupTable<double>&) context.getObject("t")),
 		lutRhoAtm((MatrixLookupTable<double>&) context.getObject("rho_atm")),
-		lutTotalAngularWeights((ScalarLookupTable<double>&) context.getObject("weight_ang_tot")),
+		lutTotalAngularWeights((LookupTable<double>&) context.getObject("weight_ang_tot")),
 		lutD((VectorLookupTable<double>&) context.getObject("D")),
 		configurationAuxdata((AuxdataProvider&) context.getObject(Constants::AUX_ID_SYCPAX)),
 		gamma(configurationAuxdata.getDouble("gamma")),

@@ -122,7 +122,7 @@ void Aco::process(Context& context) {
 	const MatrixLookupTable<double>& lutSloRatm = (MatrixLookupTable<double>&) context.getObject("SLO_R_atm");
 	const MatrixLookupTable<double>& lutT = (MatrixLookupTable<double>&) context.getObject("t");
 	const MatrixLookupTable<double>& lutRhoAtm = (MatrixLookupTable<double>&) context.getObject("rho_atm");
-	const ScalarLookupTable<double>& lutCO3 = (ScalarLookupTable<double>&) context.getObject("C_O3");
+	const LookupTable<double>& lutCO3 = (LookupTable<double>&) context.getObject("C_O3");
 
 	context.getLogging().progress("Processing segment '" + collocatedSegment.toString() + "'", getId());
 
@@ -423,7 +423,7 @@ void Aco::process(Context& context) {
 	context.setLastComputedL(collocatedSegment, *this, lastL);
 }
 
-double Aco::ozoneTransmission(const ScalarLookupTable<double>& lut, double sza, double vza, double nO3, double channel) {
+double Aco::ozoneTransmission(const LookupTable<double>& lut, double sza, double vza, double nO3, double channel) {
 	// Eq. 2-2
 	const double m = 0.5 * (1.0 / cos(sza * D2R) + 1.0 / cos(vza * D2R));
 	const double cO3 = lut.getValue(&channel);
