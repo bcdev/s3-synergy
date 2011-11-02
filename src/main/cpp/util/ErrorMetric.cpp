@@ -64,7 +64,7 @@ bool ErrorMetric::findMinimum(Pixel& p) {
 		bracket.minimumF = getValue(0.1);
 		bracket.upperF = getValue(2.0);
 
-		const bool success = Min::brent(*this, bracket, 0.05);
+		const bool success = Min::brent(*this, bracket, 5.0e-4);
 
 		if (doOLC) {
 			p.c1 = pn[0];
