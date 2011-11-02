@@ -43,13 +43,13 @@ private:
 
 	const Context& context;
 
-	const MatrixLookupTable<double>& lutOlcRatm;
-    const MatrixLookupTable<double>& lutSlnRatm;
-    const MatrixLookupTable<double>& lutSloRatm;
-    const MatrixLookupTable<double>& lutT;
-    const MatrixLookupTable<double>& lutRhoAtm;
+	const LookupTable<double>& lutOlcRatm;
+    const LookupTable<double>& lutSlnRatm;
+    const LookupTable<double>& lutSloRatm;
+    const LookupTable<double>& lutT;
+    const LookupTable<double>& lutRhoAtm;
     const LookupTable<double>& lutTotalAngularWeights;
-    const VectorLookupTable<double>& lutD;
+    const LookupTable<double>& lutD;
     const AuxdataProvider& configurationAuxdata;
     const double gamma;
     const valarray<int16_t>& ndviIndices;
@@ -61,6 +61,7 @@ private:
 	const Pixel* pixel;
 
     bool doOLC;
+    bool doSLN;
     bool doSLS;
 	double sum2;
     double sum8;
@@ -86,8 +87,7 @@ private:
 	valarray<double> p0;
 	valarray<double> pe;
 	valarray<valarray<double> > u;
-	LineMinimizer<ErrorMetric> lineMinimizer2;
-	LineMinimizer<ErrorMetric> lineMinimizer8;
+	LineMinimizer<ErrorMetric> lineMinimizer;
 
 	static const double ACCURACY_GOAL = 5.0e-4;
 };

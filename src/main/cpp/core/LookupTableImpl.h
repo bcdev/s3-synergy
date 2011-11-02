@@ -47,6 +47,10 @@ public:
 	W getValue(const W coordinates[], size_t dimIndex, const valarray<W>& tableValues, valarray<W>& w) const;
 
 	matrix<W>& getMatrix(const W coordinates[], matrix<W>& matrix, valarray<W>& f, valarray<W>& w) const;
+	size_t getMatrixColCount() const;
+	size_t getMatrixRowCount() const;
+	size_t getMatrixWorkspaceSize() const;
+
 	valarray<W>& getVector(const W coordinates[], valarray<W>& vector) const;
 
 	size_t getDimensionCount() const;
@@ -135,6 +139,8 @@ W LookupTableImpl<T, W>::getValue(const W coordinates[]) const {
 
 template<class T, class W>
 valarray<W>& LookupTableImpl<T, W>::getVector(const W coordinates[], valarray<W>& values) const {
+	assert(n > 1);
+
 	const size_t r = n - 1;
 	const size_t length = sizes[r];
 	const size_t vertexCount = 1 << r;
@@ -177,9 +183,11 @@ valarray<W>& LookupTableImpl<T, W>::getVector(const W coordinates[], valarray<W>
 
 template<class T, class W>
 matrix<W>& LookupTableImpl<T, W>::getMatrix(const W coordinates[], matrix<W>& matrix, valarray<W>& f, valarray<W>& w) const {
+	assert(n > 2);
+
 	const size_t r = n - 2;
-	const size_t rowCount = sizes[r];
-	const size_t colCount = sizes[r+ 1];
+	const size_t rowCount = getMatrixRowCount();
+	const size_t colCount = getMatrixColCount();
 	const size_t elementCount = rowCount * colCount;
 	const size_t vertexCount = 1 << r;
 
@@ -322,6 +330,24 @@ template<class T, class W>
 inline W LookupTableImpl<T, W>::getMinCoordinate(size_t dimIndex) const {
 	assert(dimIndex < n and sizes[dimIndex] > 0);
 	return x[dimIndex][0];
+}
+
+template<class T, class W>
+inline size_t LookupTableImpl<T, W>::getMatrixColCount() const {
+	assert(n > 2);
+	return sizes[n - 1];
+}
+
+template<class T, class W>
+inline size_t LookupTableImpl<T, W>::getMatrixRowCount() const {
+	assert(n > 2);
+	return sizes[n - 2];
+}
+
+template<class T, class W>
+inline size_t LookupTableImpl<T, W>::getMatrixWorkspaceSize() const {
+	assert(n > 2);
+	return (1 << (n - 2)) * sizes[n - 2] * sizes[n - 1];
 }
 
 template<class T, class W>

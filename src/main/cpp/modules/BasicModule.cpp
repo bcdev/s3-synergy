@@ -21,25 +21,7 @@ AuxdataProvider& BasicModule::getAuxdataProvider(Context& context, const string&
     return (AuxdataProvider&) context.getObject(id);
 }
 
-MatrixLookupTable<double>& BasicModule::getMatrixLookupTable(Context& context, const string& fileName, const string& varName) const {
-    if (!context.hasObject(varName)) {
-        const LookupTableReader reader(getAuxdataPath() + fileName);
-        context.getLogging().info("Reading LUT '" + varName + "'", getId());
-        context.addObject(reader.readMatrixLookupTable<double>(varName));
-    }
-    return (MatrixLookupTable<double>&) context.getObject(varName);
-}
-
-VectorLookupTable<double>& BasicModule::getVectorLookupTable(Context& context, const string& fileName, const string& varName) const {
-    if (!context.hasObject(varName)) {
-        const LookupTableReader reader(getAuxdataPath() + fileName);
-        context.getLogging().info("Reading LUT '" + varName + "'", getId());
-        context.addObject(reader.readVectorLookupTable<double>(varName));
-    }
-    return (VectorLookupTable<double>&) context.getObject(varName);
-}
-
-LookupTable<double>& BasicModule::getScalarLookupTable(Context& context, const string& fileName, const string& varName) const {
+LookupTable<double>& BasicModule::getLookupTable(Context& context, const string& fileName, const string& varName) const {
     if (!context.hasObject(varName)) {
         const LookupTableReader reader(getAuxdataPath() + fileName);
         context.getLogging().info("Reading LUT '" + varName + "'", getId());

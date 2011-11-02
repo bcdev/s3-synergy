@@ -27,8 +27,6 @@
 #include "Boost.h"
 #include "Identifiable.h"
 #include "LookupTableImpl.h"
-#include "VectorLookupTableImpl.h"
-#include "MatrixLookupTableImpl.h"
 
 using std::valarray;
 using std::vector;
@@ -53,6 +51,10 @@ public:
 	virtual W getValue(const W coordinates[], size_t dimIndex, const valarray<W>& tableValues, valarray<W>& w) const = 0;
 
 	virtual matrix<W>& getMatrix(const W coordinates[], matrix<W>& matrix, valarray<W>& f, valarray<W>& w) const = 0;
+	virtual size_t getMatrixColCount() const = 0;
+	virtual size_t getMatrixRowCount() const = 0;
+	virtual size_t getMatrixWorkspaceSize() const = 0;
+
 	virtual valarray<W>& getVector(const W coordinates[], valarray<W>& vector) const = 0;
 
 	virtual size_t getDimensionCount() const = 0;
@@ -69,73 +71,6 @@ public:
 	template<class T>
 	static shared_ptr<LookupTable<W> > newLookupTable(const string& id, const vector<Dimension>& dims, const shared_array<T>& values, W scaleFactor = W(1), W addOffset = W(0)) {
 		return shared_ptr<LookupTable<W> >(new LookupTableImpl<T, W>(id, dims, values, scaleFactor, addOffset));
-	}
-};
-
-/**
- * A vector lookup table.
- *
- * @author Ralf Quast
- */
-template<class W>
-class VectorLookupTable: public Identifiable {
-public:
-	typedef valarray<W> Dimension;
-
-	virtual ~VectorLookupTable() {
-	}
-
-	virtual valarray<W>& getValues(const W coordinates[], valarray<W>& values) const = 0;
-
-	virtual size_t getDimensionCount() const = 0;
-	virtual size_t getDimensionLength(size_t dimIndex) const = 0;
-	virtual size_t getStride(size_t dimIndex) const = 0;
-
-	virtual W getScaleFactor() const = 0;
-	virtual W getAddOffset() const = 0;
-	virtual W getMaxCoordinate(size_t dimIndex) const = 0;
-	virtual W getMinCoordinate(size_t dimIndex) const = 0;
-
-	virtual W getValue(size_t i) const = 0;
-
-	template<class T>
-	static shared_ptr<VectorLookupTable<W> > newVectorLookupTable(const string& id, size_t length, const vector<Dimension>& dims, const shared_array<T>& values, W scaleFactor = W(1),
-			W addOffset = W(0)) {
-		return shared_ptr<VectorLookupTable<W> >(new VectorLookupTableImpl<T, W>(id, length, dims, values, scaleFactor, addOffset));
-	}
-};
-
-/**
- * A matrix lookup table.
- *
- * @author Ralf Quast
- */
-template<class W>
-class MatrixLookupTable: public Identifiable {
-public:
-	typedef valarray<W> Dimension;
-
-	virtual ~MatrixLookupTable() {
-	}
-
-	virtual matrix<W>& getValues(const W coordinates[], matrix<W>& matrix) const = 0;
-	virtual matrix<W>& getValues(const W coordinates[], matrix<W>& matrix, valarray<W>& f, valarray<W>& w) const = 0;
-
-	virtual size_t getDimensionCount() const = 0;
-	virtual size_t getDimensionLength(size_t dimIndex) const = 0;
-	virtual size_t getStride(size_t dimIndex) const = 0;
-	virtual size_t getWorkspaceSize() const = 0;
-	virtual W getScaleFactor() const = 0;
-	virtual W getAddOffset() const = 0;
-	virtual W getMaxCoordinate(size_t dimIndex) const = 0;
-	virtual W getMinCoordinate(size_t dimIndex) const = 0;
-
-	virtual W getValue(size_t i) const = 0;
-
-	template<class T>
-	static shared_ptr<MatrixLookupTable<W> > newMatrixLookupTable(const string& id, size_t rowCount, size_t colCount, const vector<Dimension>& dims, const shared_array<T>& values,
-			W scaleFactor = W(1), W addOffset = W(0)) {
-		return shared_ptr<MatrixLookupTable<W> >(new MatrixLookupTableImpl<T, W>(id, rowCount, colCount, dims, values, scaleFactor, addOffset));
 	}
 };
 

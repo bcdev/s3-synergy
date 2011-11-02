@@ -23,12 +23,12 @@ Aco::~Aco() {
 }
 
 void Aco::start(Context& context) {
-	getMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "OLC_R_atm");
-	getMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLN_R_atm");
-	getMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLO_R_atm");
-	getMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "t");
-	getMatrixLookupTable(context, "S3__SY_2_SYRTAX.nc", "rho_atm");
-	getScalarLookupTable(context, "S3__SY_2_SYRTAX.nc", "C_O3");
+	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "OLC_R_atm");
+	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLN_R_atm");
+	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLO_R_atm");
+	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "t");
+	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "rho_atm");
+	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "C_O3");
 
 	Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 	const SegmentDescriptor& targetSegmentDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
@@ -117,11 +117,11 @@ void Aco::process(Context& context) {
 		errAccessors.push_back(&collocatedSegment.getAccessor("SDR_" + lexical_cast<string>(i) + "_er"));
 	}
 
-	const MatrixLookupTable<double>& lutOlcRatm = (MatrixLookupTable<double>&) context.getObject("OLC_R_atm");
-	const MatrixLookupTable<double>& lutSlnRatm = (MatrixLookupTable<double>&) context.getObject("SLN_R_atm");
-	const MatrixLookupTable<double>& lutSloRatm = (MatrixLookupTable<double>&) context.getObject("SLO_R_atm");
-	const MatrixLookupTable<double>& lutT = (MatrixLookupTable<double>&) context.getObject("t");
-	const MatrixLookupTable<double>& lutRhoAtm = (MatrixLookupTable<double>&) context.getObject("rho_atm");
+	const LookupTable<double>& lutOlcRatm = (LookupTable<double>&) context.getObject("OLC_R_atm");
+	const LookupTable<double>& lutSlnRatm = (LookupTable<double>&) context.getObject("SLN_R_atm");
+	const LookupTable<double>& lutSloRatm = (LookupTable<double>&) context.getObject("SLO_R_atm");
+	const LookupTable<double>& lutT = (LookupTable<double>&) context.getObject("t");
+	const LookupTable<double>& lutRhoAtm = (LookupTable<double>&) context.getObject("rho_atm");
 	const LookupTable<double>& lutCO3 = (LookupTable<double>&) context.getObject("C_O3");
 
 	context.getLogging().progress("Processing segment '" + collocatedSegment.toString() + "'", getId());
@@ -148,7 +148,7 @@ void Aco::process(Context& context) {
 		matrix<double> matRho(40, 30);
 
 		valarray<double> f(lutOlcRatm.getDimensionCount());
-		valarray<double> w(lutOlcRatm.getWorkspaceSize());
+		valarray<double> w(lutOlcRatm.getMatrixWorkspaceSize());
 
 		valarray<double> ts(30);
 		valarray<double> tv(30);
@@ -197,10 +197,10 @@ void Aco::process(Context& context) {
 				coordinates[8] = coordinates[4]; // water vapour
 				coordinates[9] = coordinates[5]; // aerosol
 
-				lutOlcRatm.getValues(&coordinates[0], matRatmOlc, f, w);
-				lutT.getValues(&coordinates[6], matTs, f, w);
-				lutT.getValues(&coordinates[2], matTv, f, w);
-				lutRhoAtm.getValues(&coordinates[3], matRho, f, w);
+				lutOlcRatm.getMatrix(&coordinates[0], matRatmOlc, f, w);
+				lutT.getMatrix(&coordinates[6], matTs, f, w);
+				lutT.getMatrix(&coordinates[2], matTv, f, w);
+				lutRhoAtm.getMatrix(&coordinates[3], matRho, f, w);
 
 				for (size_t b = 0; b < 18; b++) {
 					// Eq. 2-1
@@ -240,8 +240,8 @@ void Aco::process(Context& context) {
 				coordinates[4] = wv; // water vapour
 				coordinates[5] = tau550; // aerosol
 
-				lutSlnRatm.getValues(&coordinates[0], matRatmSln, f, w);
-				lutT.getValues(&coordinates[2], matTv, f, w);
+				lutSlnRatm.getMatrix(&coordinates[0], matRatmSln, f, w);
+				lutT.getMatrix(&coordinates[2], matTv, f, w);
 
 				for (size_t b = 18; b < 24; b++) {
 					// Eq. 2-1
@@ -281,8 +281,8 @@ void Aco::process(Context& context) {
 				coordinates[4] = wv; // water vapour
 				coordinates[5] = tau550; // aerosol
 
-				lutSloRatm.getValues(&coordinates[0], matRatmSlo, f, w);
-				lutT.getValues(&coordinates[2], matTv, f, w);
+				lutSloRatm.getMatrix(&coordinates[0], matRatmSlo, f, w);
+				lutT.getMatrix(&coordinates[2], matTv, f, w);
 
 				for (size_t b = 24; b < 30; b++) {
 					// Eq. 2-1
@@ -322,10 +322,10 @@ void Aco::process(Context& context) {
 				coordinates[8] = coordinates[4]; // water vapour
 				coordinates[9] = coordinates[5]; // aerosol
 
-				lutOlcRatm.getValues(&coordinates[0], matRatmOlc, f, w);
-				lutT.getValues(&coordinates[6], matTs, f, w);
-				lutT.getValues(&coordinates[2], matTv, f, w);
-				lutRhoAtm.getValues(&coordinates[3], matRho, f, w);
+				lutOlcRatm.getMatrix(&coordinates[0], matRatmOlc, f, w);
+				lutT.getMatrix(&coordinates[6], matTs, f, w);
+				lutT.getMatrix(&coordinates[2], matTv, f, w);
+				lutRhoAtm.getMatrix(&coordinates[3], matRho, f, w);
 
 				for (size_t b = 0; b < 18; b++) {
 					if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
@@ -360,8 +360,8 @@ void Aco::process(Context& context) {
 				coordinates[4] = wv; // water vapour
 				coordinates[5] = 0.8 * tau550; // aerosol
 
-				lutSlnRatm.getValues(&coordinates[0], matRatmSln, f, w);
-				lutT.getValues(&coordinates[2], matTv, f, w);
+				lutSlnRatm.getMatrix(&coordinates[0], matRatmSln, f, w);
+				lutT.getMatrix(&coordinates[2], matTv, f, w);
 
 				for (size_t b = 18; b < 24; b++) {
 					if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
@@ -393,8 +393,8 @@ void Aco::process(Context& context) {
 				coordinates[4] = wv; // water vapour
 				coordinates[5] = 0.8 * tau550; // aerosol
 
-				lutSloRatm.getValues(&coordinates[0], matRatmSlo, f, w);
-				lutT.getValues(&coordinates[2], matTv, f, w);
+				lutSloRatm.getMatrix(&coordinates[0], matRatmSlo, f, w);
+				lutT.getMatrix(&coordinates[2], matTv, f, w);
 
 				for (size_t b = 24; b < 30; b++) {
 					if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {

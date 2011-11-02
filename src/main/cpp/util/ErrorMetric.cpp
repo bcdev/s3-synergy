@@ -15,13 +15,13 @@ static const double RADIAN = PI / 180.0;
 
 ErrorMetric::ErrorMetric(const Context& context) :
 		context(context),
-		lutOlcRatm((MatrixLookupTable<double>&) context.getObject("OLC_R_atm")),
-		lutSlnRatm((MatrixLookupTable<double>&) context.getObject("SLN_R_atm")),
-		lutSloRatm((MatrixLookupTable<double>&) context.getObject("SLO_R_atm")),
-		lutT((MatrixLookupTable<double>&) context.getObject("t")),
-		lutRhoAtm((MatrixLookupTable<double>&) context.getObject("rho_atm")),
+		lutOlcRatm((LookupTable<double>&) context.getObject("OLC_R_atm")),
+		lutSlnRatm((LookupTable<double>&) context.getObject("SLN_R_atm")),
+		lutSloRatm((LookupTable<double>&) context.getObject("SLO_R_atm")),
+		lutT((LookupTable<double>&) context.getObject("t")),
+		lutRhoAtm((LookupTable<double>&) context.getObject("rho_atm")),
 		lutTotalAngularWeights((LookupTable<double>&) context.getObject("weight_ang_tot")),
-		lutD((VectorLookupTable<double>&) context.getObject("D")),
+		lutD((LookupTable<double>&) context.getObject("D")),
 		configurationAuxdata((AuxdataProvider&) context.getObject(Constants::AUX_ID_SYCPAX)),
 		gamma(configurationAuxdata.getDouble("gamma")),
 		ndviIndices(configurationAuxdata.getVectorShort("NDV_channel")),
@@ -40,13 +40,12 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		matRho(40, 30),
 		diffuseFractions(6),
 		lutWeights(lutOlcRatm.getDimensionCount()),
-		lutWorkspace(lutOlcRatm.getWorkspaceSize()),
+		lutWorkspace(lutOlcRatm.getMatrixWorkspaceSize()),
 		pn(10),
 		p0(10),
 		pe(10),
 		u(valarray<double>(10), 10),
-		lineMinimizer2(this, &ErrorMetric::computeRss2, pn, u),
-		lineMinimizer8(this, &ErrorMetric::computeRss8, pn, u) {
+		lineMinimizer(this, &ErrorMetric::computeRss8, pn, u) {
 }
 
 ErrorMetric::~ErrorMetric() {
@@ -107,7 +106,7 @@ double ErrorMetric::getValue(double x) {
 	}
 
 	if (doOLC) {
-		MultiMin::chol2D(pn, p0, u, sdrs, 0, 18, validMask, spectralWeights, vegetationModel, soilModel);
+		MultiMin::chol2D(pn, p0, u, sdrs, 0, 24, validMask, spectralWeights, vegetationModel, soilModel);
 	}
 	if (doSLS) {
 		for (size_t i = 2; i < 10; i++) {
@@ -116,7 +115,7 @@ double ErrorMetric::getValue(double x) {
 				u[i][j] = u[j][i] = 0.0;
 			}
 		}
-		MultiMin::powell(this, &ErrorMetric::computeRss8, lineMinimizer8, 2, 10, pn, p0, pe, u, ACCURACY_GOAL, 100);
+		MultiMin::powell(this, &ErrorMetric::computeRss8, lineMinimizer, 2, 10, pn, p0, pe, u, ACCURACY_GOAL, 100);
 	}
 
 	return computeRss10(pn);
@@ -141,14 +140,19 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	double sum2 = 0.0;
 	double sum8 = 0.0;
 	unsigned olcCount = 0;
+	unsigned slnCount = 0;
 	unsigned slsCount = 0;
 
-#pragma omp parallel for reduction(+ : sum2, olcCount)
-	for (size_t i = 0; i < 18; i++) {
+#pragma omp parallel for reduction(+ : sum2, olcCount, slnCount)
+	for (size_t i = 0; i < 24; i++) {
 		validMask[i] = p.radiances[i] != Constants::FILL_VALUE_DOUBLE;
 		if (validMask[i]) {
 			sum2 += spectralWeights[i];
-			olcCount++;
+			if (i < 18) {
+				olcCount++;
+			} else {
+				slnCount++;
+			}
 		}
 	}
 #pragma omp parallel for reduction(+ : sum8, slsCount)
@@ -165,6 +169,7 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	this->sum2 = sum2;
 	this->sum8 = sum8;
 	this->doOLC = olcCount >= 12;
+	this->doSLN = slnCount >= 1;
 	this->doSLS = slsCount >= 11;
 
 	const double ndvi = computeNdvi(p);
@@ -177,7 +182,7 @@ double ErrorMetric::computeRss2(valarray<double>& x) {
 	double sum = 0.0;
 	if (doOLC) {
 #pragma omp parallel for reduction(+ : sum)
-		for (size_t i = 0; i < 18; i++) {
+		for (size_t i = 0; i < 24; i++) {
 			if (validMask[i]) {
 				const double rSpec = x[0] * vegetationModel[i] + x[1] * soilModel[i];
 				sum += spectralWeights[i] * square(sdrs[i] - rSpec);
@@ -248,18 +253,18 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 	coordinates[4] = pixel->waterVapour;
 	coordinates[5] = tau550;
 
-	lutRhoAtm.getValues(&coordinates[3], matRho, lutWeights, lutWorkspace);
+	lutRhoAtm.getMatrix(&coordinates[3], matRho, lutWeights, lutWorkspace);
 
 	coordinates[6] = coordinates[1]; // SZA
 	coordinates[7] = coordinates[3]; // air pressure
 	coordinates[8] = coordinates[4]; // water vapour
 	coordinates[9] = coordinates[5]; // aerosol
 
-	lutT.getValues(&coordinates[6], matTs, lutWeights, lutWorkspace);
+	lutT.getMatrix(&coordinates[6], matTs, lutWeights, lutWorkspace);
 
 	if (doOLC) {
-		lutOlcRatm.getValues(&coordinates[0], matRatmOlc, lutWeights, lutWorkspace);
-		lutT.getValues(&coordinates[2], matTv, lutWeights, lutWorkspace);
+		lutOlcRatm.getMatrix(&coordinates[0], matRatmOlc, lutWeights, lutWorkspace);
+		lutT.getMatrix(&coordinates[2], matTv, lutWeights, lutWorkspace);
 
 #pragma omp parallel for
 		for (size_t b = 0; b < 18; b++) {
@@ -281,12 +286,12 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		}
 	}
 
-	if (doSLS) {
+	if (doSLN) {
 		coordinates[0] = abs(pixel->saa - pixel->vaaSln);
 		coordinates[2] = pixel->vzaSln;
 
-		lutSlnRatm.getValues(&coordinates[0], matRatmSln, lutWeights, lutWorkspace);
-		lutT.getValues(&coordinates[2], matTv, lutWeights, lutWorkspace);
+		lutSlnRatm.getMatrix(&coordinates[0], matRatmSln, lutWeights, lutWorkspace);
+		lutT.getMatrix(&coordinates[2], matTv, lutWeights, lutWorkspace);
 
 #pragma omp parallel for
 		for (size_t b = 18; b < 24; b++) {
@@ -306,12 +311,14 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 				sdrs[b] = sdr;
 			}
 		}
+	}
 
+	if (doSLN) {
 		coordinates[0] = abs(pixel->saa - pixel->vaaSlo);
 		coordinates[2] = pixel->vzaSlo;
 
-		lutSloRatm.getValues(&coordinates[0], matRatmSlo, lutWeights, lutWorkspace);
-		lutT.getValues(&coordinates[2], matTv, lutWeights, lutWorkspace);
+		lutSloRatm.getMatrix(&coordinates[0], matRatmSlo, lutWeights, lutWorkspace);
+		lutT.getMatrix(&coordinates[2], matTv, lutWeights, lutWorkspace);
 
 #pragma omp parallel for
 		for (size_t b = 24; b < 30; b++) {
@@ -337,7 +344,6 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		coordinates[2] = tau550;
 		coordinates[3] = amin;
 
-		// TODO - use matrix lookup table?
-		lutD.getValues(&coordinates[0], diffuseFractions);
+		lutD.getVector(&coordinates[0], diffuseFractions);
 	}
 }
