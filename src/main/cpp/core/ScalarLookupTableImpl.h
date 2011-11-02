@@ -42,9 +42,9 @@ public:
 
 	const string& getId() const;
 
-	valarray<W>& getArray(const W coordinates[], size_t dimIndex, valarray<W>& v) const;
+	valarray<W>& getTable(const W coordinates[], size_t dimIndex, valarray<W>& tableValues) const;
 	W getValue(const W coordinates[]) const;
-	W getValue(const W coordinates[], size_t dimIndex, const valarray<W>& v, valarray<W>& w) const;
+	W getValue(const W coordinates[], size_t dimIndex, const valarray<W>& tableValues, valarray<W>& w) const;
 
 	size_t getDimensionCount() const;
 	size_t getDimensionLength(size_t dimIndex) const;
@@ -131,48 +131,55 @@ W ScalarLookupTableImpl<T, W>::getValue(const W coordinates[]) const {
 }
 
 template<class T, class W>
-valarray<W>& ScalarLookupTableImpl<T, W>::getArray(const W coordinates[], size_t dimIndex, valarray<W>& v) const {
-	assert(v.size() >= strides[0]);
+valarray<W>& ScalarLookupTableImpl<T, W>::getTable(const W coordinates[], size_t dimIndex, valarray<W>& tableValues) const {
+	assert(tableValues.size() >= strides[0]);
 
-	W a;
-	W b;
 	W f;
 
 	for (size_t i = 0; i < dimIndex; ++i) {
-		const size_t origin = getIndex(i, coordinates[i], &f) * strides[i];
+		const size_t origin = getIndex(i, coordinates[i], f) * strides[i];
 #pragma omp parallel for
 		for (size_t k = 0; k < strides[i]; ++k) {
+			W a;
+			W b;
 			if (i == 0) {
 				a = boost::numeric_cast<W>(y[origin + k]);
 				b = boost::numeric_cast<W>(y[origin + k + strides[i]]);
 			} else {
-				a = v[origin + k];
-				b = v[origin + k + strides[i]];
+				a = tableValues[origin + k];
+				b = tableValues[origin + k + strides[i]];
 			}
-			v[k] = a + f * (b - a);
+			tableValues[k] = a + f * (b - a);
 		}
 	}
 
-	return v;
+	return tableValues;
 }
 
 template<class T, class W>
-W ScalarLookupTableImpl<T, W>::getValue(const W coordinates[], size_t dimIndex, const valarray<W>& v, valarray<W>& w) const {
+W ScalarLookupTableImpl<T, W>::getValue(const W coordinates[], size_t dimIndex, const valarray<W>& tableValues, valarray<W>& w) const {
 	assert(w.size() >= strides[dimIndex]);
 
 	W f;
 
 	for (size_t i = dimIndex; i < n; ++i) {
-		const size_t origin = getIndex(i, coordinates[i], &f) * strides[i];
+		const size_t origin = getIndex(i, coordinates[i], f) * strides[i];
 #pragma omp parallel for
 		for (size_t k = 0; k < strides[i]; ++k) {
-			const W a = v[origin + k];
-			const W b = v[origin + k + strides[i]];
+			W a;
+			W b;
+			if (i == dimIndex) {
+				a = tableValues[origin + k];
+				b = tableValues[origin + k + strides[i]];
+			} else {
+				a = w[origin + k];
+				b = w[origin + k + strides[i]];
+			}
 			w[k] = a + f * (b - a);
 		}
 	}
 
-	return w[0];
+	return w[0] * scaleFactor + addOffset;
 }
 
 template<class T, class W>

@@ -15,8 +15,8 @@
 class ScalarLookupTableTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(ScalarLookupTableTest);
     CPPUNIT_TEST(testInterpolation1D);
-    //CPPUNIT_TEST(testInterpolation2D);
-    //CPPUNIT_TEST(testInterpolation3D);
+    CPPUNIT_TEST(testInterpolation2D);
+    CPPUNIT_TEST(testInterpolation3D);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -27,8 +27,8 @@ public:
 
 private:
     void testInterpolation1D();
-    //void testInterpolation2D();
-    //void testInterpolation3D();
+    void testInterpolation2D();
+    void testInterpolation3D();
 };
 
 #endif /* SCALARLOOKUPTABLETEST_H_ */
