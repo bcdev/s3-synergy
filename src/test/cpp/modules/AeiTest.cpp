@@ -72,6 +72,24 @@ void AeiTest::testComputeWeights() {
     CPPUNIT_ASSERT(weights[1] == -0.38671875f);
     CPPUNIT_ASSERT(weights[2] == -0.41015625f);
     CPPUNIT_ASSERT(weights[3] == 0.17578125f);
+}
 
+void AeiTest::testAei() {
+    shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
+    shared_ptr<Module> col = shared_ptr<Module>(new Col());
+    shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
+    shared_ptr<Module> ave = shared_ptr<Module>(new Ave());
+    shared_ptr<Module> aer = shared_ptr<Module>(new Aer());
+    shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
 
+    context->addModule(reader);
+    context->addModule(col);
+    context->addModule(pcl);
+    context->addModule(ave);
+    context->addModule(aer);
+    context->addModule(aei);
+    context->addModule(writer);
+
+    Processor processor;
+    processor.process(*context);
 }
