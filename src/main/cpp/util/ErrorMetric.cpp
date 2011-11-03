@@ -293,14 +293,14 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 	coordinates[4] = pixel->waterVapour;
 	coordinates[5] = tau550;
 
-	lutRhoAtm.getMatrix(&coordinates[3], matRho, lutWeights, lutWorkspace);
+	lutRhoAtm.getMatrix(&coordinates[3], 2, matRho, tabRhoAtm, lutWorkspace);
 
 	coordinates[6] = coordinates[1]; // SZA
 	coordinates[7] = coordinates[3]; // air pressure
 	coordinates[8] = coordinates[4]; // water vapour
 	coordinates[9] = coordinates[5]; // aerosol
 
-	lutT.getMatrix(&coordinates[6], matTs, lutWeights, lutWorkspace);
+	lutT.getMatrix(&coordinates[6], 3, matTs, tabTs, lutWorkspace);
 
 	if (doOLC) {
 		lutOlcRatm.getMatrix(&coordinates[0], 5, matRatmOlc, tabOlcRatm, lutWorkspace);
