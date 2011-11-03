@@ -173,7 +173,7 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	this->doSLS = slsCount >= 11;
 
 	const double ndvi = computeNdvi(p);
-	totalAngularWeight = lutTotalAngularWeights.getValue(&ndvi);
+	totalAngularWeight = lutTotalAngularWeights.getValue(&ndvi, lutWeights, lutWorkspace);
 
 	pixel = &p;
 }
@@ -344,6 +344,6 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		coordinates[2] = tau550;
 		coordinates[3] = amin;
 
-		lutD.getVector(&coordinates[0], diffuseFractions);
+		lutD.getVector(&coordinates[0], diffuseFractions, lutWeights, lutWorkspace);
 	}
 }

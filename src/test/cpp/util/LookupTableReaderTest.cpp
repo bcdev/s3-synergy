@@ -71,6 +71,8 @@ void LookupTableReaderTest::testRead_OLC_R_atm() {
 
 	valarray<float> coordinates(7);
 	valarray<float> values(18);
+	valarray<float> f(lut->getDimensionCount());
+	valarray<float> w(lut->getVectorWorkspaceSize());
 
 	coordinates[0] = 0.0f; // ADA
 	coordinates[1] = 0.0f; // SZA
@@ -80,7 +82,7 @@ void LookupTableReaderTest::testRead_OLC_R_atm() {
 	coordinates[5] = 0.1f; // aerosol
 	coordinates[6] = 1.0f; // aerosol model index
 
-	CPPUNIT_ASSERT( lut->getVector(&coordinates[0], values)[0] == 31 * lut->getScaleFactor());
+	CPPUNIT_ASSERT( lut->getVector(&coordinates[0], values, f, w)[0] == 31 * lut->getScaleFactor());
 
 	const float minAda = lut->getMinCoordinate(0);
 	const float maxAda = lut->getMaxCoordinate(0);
@@ -88,7 +90,7 @@ void LookupTableReaderTest::testRead_OLC_R_atm() {
 		coordinates[0] = minAda + i * (maxAda - minAda) / 30.0f;
 		const size_t index = i * lut->getStride(0) + 2 * lut->getStride(3) + lut->getStride(4) + 2 * lut->getStride(5);
 
-		CPPUNIT_ASSERT( lut->getVector(&coordinates[0], values)[0] == lut->getValue(index));
+		CPPUNIT_ASSERT( lut->getVector(&coordinates[0], values, f, w)[0] == lut->getValue(index));
 	}
 }
 
