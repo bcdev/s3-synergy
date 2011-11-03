@@ -37,7 +37,7 @@ class LookupTableImpl: public LookupTable<W> {
 public:
 	typedef valarray<W> Dimension;
 
-	LookupTableImpl(const string& id, const vector<Dimension>& dims, const shared_array<T>& values, W scaleFactor = W(1), W addOffset = W(0));
+	LookupTableImpl(const string& id, const vector<Dimension>& dims, const shared_array<T>& values, W scaleFactor = W(1.0), W addOffset = W(0.0));
 	virtual ~LookupTableImpl();
 
 	const string& getId() const;
