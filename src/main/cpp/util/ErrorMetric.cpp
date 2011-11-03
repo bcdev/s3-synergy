@@ -183,6 +183,8 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	const double ndvi = computeNdvi(p);
 	totalAngularWeight = lutTotalAngularWeights.getScalar(&ndvi, lutWeights, lutWorkspace);
 
+	pixel = &p;
+
 	/*
 	 * New stuff
 	 */
@@ -214,8 +216,6 @@ void ErrorMetric::setPixel(const Pixel& p) {
 
 	lutSloRatm.getTable(&coordinates[0], 5, tabSloRatm);
 	lutT.getTable(&coordinates[2], 3, tabTvSlo);
-
-	pixel = &p;
 }
 
 double ErrorMetric::computeRss2(valarray<double>& x) {
