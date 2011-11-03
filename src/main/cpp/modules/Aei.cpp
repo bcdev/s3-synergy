@@ -31,7 +31,7 @@ void Aei::start(Context& context) {
     averagingFactor = configurationAuxdataProvider.getShort("ave_square");
 
     accessorTau = &averagedSegment->getAccessor("T550");
-    accessorTauError = &averagedSegment->getAccessor("T550err");
+    accessorTauError = &averagedSegment->getAccessor("T550_er");
     accessorAlpha = &averagedSegment->getAccessor("A550");
 }
 
@@ -40,10 +40,12 @@ void Aei::process(Context& context) {
     const Accessor& accessorAmin = averagedSegment->getAccessor("AMIN");
     const Accessor& accessorFlags = averagedSegment->getAccessor("SYN_flags");
 
-    Accessor& collocatedAccessorTau550 = collocatedSegment->getAccessor("T550");
-    Accessor& collocatedAccessorTau550err = collocatedSegment->getAccessor("T550err");
-    Accessor& collocatedAccessorAlpha550 = collocatedSegment->getAccessor("A550");
-    Accessor& collocatedAccessorAmin = collocatedSegment->getAccessor("AMIN");
+    const SegmentDescriptor& collocatedSegmentDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
+    Accessor& collocatedAccessorTau550 = collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550"));
+    Accessor& collocatedAccessorTau550err = collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550_er"));
+    Accessor& collocatedAccessorAlpha550 = collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("A550"));
+    Accessor& collocatedAccessorAmin = collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("AMIN"));
+
     Accessor& collocatedAccessorFlags = collocatedSegment->getAccessor("SYN_flags");
 
     long firstL = context.getFirstComputableL(*averagedSegment, *this);
