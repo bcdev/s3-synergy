@@ -106,7 +106,7 @@ double ErrorMetric::getValue(double x) {
 	}
 
 	if (doOLC) {
-		MultiMin::chol2D(pn, p0, u, sdrs, 0, 24, validMask, spectralWeights, vegetationModel, soilModel);
+		MultiMin::chol2D(pn, p0, u, sdrs, 0, 18, validMask, spectralWeights, vegetationModel, soilModel);
 	}
 	if (doSLS) {
 		for (size_t i = 2; i < 10; i++) {
@@ -144,7 +144,7 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	unsigned slsCount = 0;
 
 #pragma omp parallel for reduction(+ : sum2, olcCount, slnCount)
-	for (size_t i = 0; i < 24; i++) {
+	for (size_t i = 0; i < 18; i++) {
 		validMask[i] = p.radiances[i] != Constants::FILL_VALUE_DOUBLE;
 		if (validMask[i]) {
 			sum2 += spectralWeights[i];
@@ -169,7 +169,7 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	this->sum2 = sum2;
 	this->sum8 = sum8;
 	this->doOLC = olcCount >= 12;
-	this->doSLN = slnCount >= 1;
+	//this->doSLN = slnCount >= 1;
 	this->doSLS = slsCount >= 11;
 
 	const double ndvi = computeNdvi(p);
@@ -182,7 +182,7 @@ double ErrorMetric::computeRss2(valarray<double>& x) {
 	double sum = 0.0;
 	if (doOLC) {
 #pragma omp parallel for reduction(+ : sum)
-		for (size_t i = 0; i < 24; i++) {
+		for (size_t i = 0; i < 18; i++) {
 			if (validMask[i]) {
 				const double rSpec = x[0] * vegetationModel[i] + x[1] * soilModel[i];
 				sum += spectralWeights[i] * square(sdrs[i] - rSpec);
@@ -286,7 +286,7 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		}
 	}
 
-	if (doSLN) {
+	if (doSLS) {
 		coordinates[0] = abs(pixel->saa - pixel->vaaSln);
 		coordinates[2] = pixel->vzaSln;
 
@@ -313,7 +313,7 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		}
 	}
 
-	if (doSLN) {
+	if (doSLS) {
 		coordinates[0] = abs(pixel->saa - pixel->vaaSlo);
 		coordinates[2] = pixel->vzaSlo;
 
