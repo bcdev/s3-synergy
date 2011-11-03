@@ -106,11 +106,11 @@ void LookupTableTest::testInterpolation2D() {
 	coordinates[1] = 0.5;
 	CPPUNIT_ASSERT(lut->getScalar(coordinates, f, workspace) == 2.5);
 
-	valarray<double> t(lut->getStride(0));
+	valarray<double> table(lut->getStride(0));
 	valarray<double> w(lut->getStride(1));
 
-	lut->getTable(coordinates, 1, t);
-	CPPUNIT_ASSERT(lut->getScalar(coordinates, 1, t, w) == 2.5);
+	lut->getTable(coordinates, 1, table);
+	CPPUNIT_ASSERT(lut->getScalar(coordinates, 1, table, w) == 2.5);
 }
 
 void LookupTableTest::testInterpolation3D() {
@@ -164,17 +164,93 @@ void LookupTableTest::testInterpolation3D() {
 		actual = lut->getScalar(x, f, workspace);
 		CPPUNIT_ASSERT(abs(expected - actual) < 1.0E-10);
 
-		valarray<double> t(lut->getStride(0));
+		valarray<double> table(lut->getStride(0));
 		valarray<double> w(lut->getStride(1));
 
-		lut->getTable(x, 1, t);
+		lut->getTable(x, 1, table);
 
-		actual = lut->getScalar(x, 1, t, w);
+		actual = lut->getScalar(x, 1, table, w);
 		CPPUNIT_ASSERT(abs(expected - actual) < 1.0E-10);
 
-		lut->getTable(x, 2, t);
+		lut->getTable(x, 2, table);
 
-		actual = lut->getScalar(x, 2, t, w);
+		actual = lut->getScalar(x, 2, table, w);
 		CPPUNIT_ASSERT(abs(expected - actual) < 1.0E-10);
+	}
+}
+
+void LookupTableTest::testInterpolation4D() {
+	using std::abs;
+	using std::rand;
+	using std::srand;
+
+	vector<valarray<double> > dimensions(4, valarray<double>(5));
+	dimensions[0][0] = 0.0;
+	dimensions[0][1] = 1.0;
+	dimensions[0][2] = 2.0;
+	dimensions[0][3] = 3.0;
+	dimensions[0][4] = 4.0;
+	dimensions[1][0] = 1.0;
+	dimensions[1][1] = 2.0;
+	dimensions[1][2] = 3.0;
+	dimensions[1][3] = 4.0;
+	dimensions[1][4] = 5.0;
+	dimensions[2][0] = 2.0;
+	dimensions[2][1] = 3.0;
+	dimensions[2][2] = 4.0;
+	dimensions[2][3] = 5.0;
+	dimensions[2][4] = 6.0;
+	dimensions[3][0] = 3.0;
+	dimensions[3][1] = 4.0;
+	dimensions[3][2] = 5.0;
+	dimensions[3][3] = 6.0;
+	dimensions[3][4] = 7.0;
+
+	shared_array<double> values = shared_array<double>(new double[625]);
+	for (size_t i = 0; i < 625; ++i) {
+		values[i] = i;
+	}
+
+	shared_ptr<LookupTable<double> > lut = LookupTable<double>::newLookupTable("id", dimensions, values);
+	CPPUNIT_ASSERT(lut->getDimensionCount() == 4);
+
+	double r[4];
+	double x[4];
+	valarray<double> f(lut->getDimensionCount());
+	valarray<double> workspace(lut->getScalarWorkspaceSize());
+
+	srand(5483);
+
+	for (size_t i = 0; i < 10; ++i) {
+		// compute random coordinates
+		for (size_t j = 0; j < 4; ++j) {
+			const double random = rand() / double(RAND_MAX);
+			r[j] = random * (lut->getMaxCoordinate(j) - lut->getMinCoordinate(j));
+			x[j] = r[j] + lut->getMinCoordinate(j);
+		}
+
+		const double expected = r[3] + 5.0 * (r[2] + 5.0 * (r[1] + 5.0 * r[0]));
+		double actual;
+
+		actual = lut->getScalar(x, f, workspace);
+		CPPUNIT_ASSERT(abs(expected - actual) < 1.0E-10);
+
+		matrix<double> mat1(lut->getMatrixRowCount(), lut->getMatrixColCount());
+		matrix<double> mat2(lut->getMatrixRowCount(), lut->getMatrixColCount());
+		valarray<double> w1(lut->getMatrixWorkspaceSize());
+
+		lut->getMatrix(x, mat1, f, w1);
+
+		valarray<double> table(lut->getStride(0));
+		valarray<double> w2(lut->getStride(1));
+
+		lut->getTable(x, 1, table);
+		lut->getMatrix(x, 1, mat2, table, w2);
+
+		for (size_t j = 0; j < mat1.size1(); ++j) {
+			for (size_t k = 0; k < mat1.size2(); ++k) {
+				CPPUNIT_ASSERT(abs(mat1(j, k) - mat2(j, k)) < 1.0E-10);
+			}
+		}
 	}
 }

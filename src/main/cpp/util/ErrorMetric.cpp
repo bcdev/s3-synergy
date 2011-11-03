@@ -177,8 +177,8 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	this->sum2 = sum2;
 	this->sum8 = sum8;
 	this->doOLC = olcCount >= 12;
-	this->doSLN = slnCount >= 1;
-	this->doSLS = slsCount >= 11;
+	this->doSLN = false; //slnCount >= 1;
+	this->doSLS = false; //slsCount >= 11;
 
 	const double ndvi = computeNdvi(p);
 	totalAngularWeight = lutTotalAngularWeights.getScalar(&ndvi, lutWeights, lutWorkspace);
@@ -205,17 +205,19 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	lutT.getTable(&coordinates[2], 3, tabTvOlc);
 	lutOlcRatm.getTable(&coordinates[0], 5, tabOlcRatm);
 
-	coordinates[0] = abs(pixel->saa - pixel->vaaSln);
-	coordinates[2] = pixel->vzaSln;
+	if (false) {
+		coordinates[0] = abs(pixel->saa - pixel->vaaSln);
+		coordinates[2] = pixel->vzaSln;
 
-	lutSlnRatm.getTable(&coordinates[0], 5, tabSlnRatm);
-	lutT.getTable(&coordinates[2], 3, tabTvSln);
+		lutSlnRatm.getTable(&coordinates[0], 5, tabSlnRatm);
+		lutT.getTable(&coordinates[2], 3, tabTvSln);
 
-	coordinates[0] = abs(pixel->saa - pixel->vaaSlo);
-	coordinates[2] = pixel->vzaSlo;
+		coordinates[0] = abs(pixel->saa - pixel->vaaSlo);
+		coordinates[2] = pixel->vzaSlo;
 
-	lutSloRatm.getTable(&coordinates[0], 5, tabSloRatm);
-	lutT.getTable(&coordinates[2], 3, tabTvSlo);
+		lutSloRatm.getTable(&coordinates[0], 5, tabSloRatm);
+		lutT.getTable(&coordinates[2], 3, tabTvSlo);
+	}
 }
 
 double ErrorMetric::computeRss2(valarray<double>& x) {
