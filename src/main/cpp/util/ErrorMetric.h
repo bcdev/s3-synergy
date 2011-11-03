@@ -53,6 +53,11 @@ private:
     valarray<double> tabOlcRatm;
     valarray<double> tabSlnRatm;
     valarray<double> tabSloRatm;
+    valarray<double> tabTs;
+    valarray<double> tabTvOlc;
+    valarray<double> tabTvSln;
+    valarray<double> tabTvSlo;
+    valarray<double> tabRhoAtm;
 
     const AuxdataProvider& configurationAuxdata;
     const double gamma;
