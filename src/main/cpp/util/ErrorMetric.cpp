@@ -173,7 +173,7 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	this->doSLS = slsCount >= 11;
 
 	const double ndvi = computeNdvi(p);
-	totalAngularWeight = lutTotalAngularWeights.getValue(&ndvi, lutWeights, lutWorkspace);
+	totalAngularWeight = lutTotalAngularWeights.getScalar(&ndvi, lutWeights, lutWorkspace);
 
 	pixel = &p;
 }

@@ -43,9 +43,10 @@ public:
 	const string& getId() const;
 
 	valarray<W>& getTable(const W coordinates[], size_t dimIndex, valarray<W>& tableValues) const;
-	W getValue(const W coordinates[], valarray<W>& f, valarray<W>& w) const;
+
+	W getScalar(const W coordinates[], valarray<W>& f, valarray<W>& w) const;
 	size_t getScalarWorkspaceSize() const;
-	W getValue(const W coordinates[], size_t dimIndex, const valarray<W>& tableValues, valarray<W>& w) const;
+	W getScalar(const W coordinates[], size_t dimIndex, const valarray<W>& tableValues, valarray<W>& w) const;
 
 	matrix<W>& getMatrix(const W coordinates[], matrix<W>& matrix, valarray<W>& f, valarray<W>& w) const;
 	size_t getMatrixColCount() const;
@@ -116,7 +117,10 @@ LookupTableImpl<T, W>::~LookupTableImpl() {
 }
 
 template<class T, class W>
-W LookupTableImpl<T, W>::getValue(const W coordinates[], valarray<W>& f, valarray<W>& w) const {
+W LookupTableImpl<T, W>::getScalar(const W coordinates[], valarray<W>& f, valarray<W>& w) const {
+	assert(f.size() >= n);
+	assert(w.size() >= offsets.size());
+
 	size_t origin = 0;
 #pragma omp parallel for reduction(+ : origin)
 	for (size_t i = 0; i < n; ++i) {
@@ -256,7 +260,7 @@ valarray<W>& LookupTableImpl<T, W>::getTable(const W coordinates[], size_t dimIn
 }
 
 template<class T, class W>
-W LookupTableImpl<T, W>::getValue(const W coordinates[], size_t dimIndex, const valarray<W>& tableValues, valarray<W>& w) const {
+W LookupTableImpl<T, W>::getScalar(const W coordinates[], size_t dimIndex, const valarray<W>& tableValues, valarray<W>& w) const {
 	assert(w.size() >= strides[dimIndex]);
 
 	W f;

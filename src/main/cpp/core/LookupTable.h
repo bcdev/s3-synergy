@@ -47,9 +47,10 @@ public:
 	}
 
 	virtual valarray<W>& getTable(const W coordinates[], size_t dimIndex, valarray<W>& tableValues) const = 0;
-	virtual W getValue(const W coordinates[], valarray<W>& f, valarray<W>& w) const = 0;
+
+	virtual W getScalar(const W coordinates[], valarray<W>& f, valarray<W>& w) const = 0;
 	virtual size_t getScalarWorkspaceSize() const = 0;
-	virtual W getValue(const W coordinates[], size_t dimIndex, const valarray<W>& tableValues, valarray<W>& w) const = 0;
+	virtual W getScalar(const W coordinates[], size_t dimIndex, const valarray<W>& tableValues, valarray<W>& w) const = 0;
 
 	virtual matrix<W>& getMatrix(const W coordinates[], matrix<W>& matrix, valarray<W>& f, valarray<W>& w) const = 0;
 	virtual size_t getMatrixColCount() const = 0;
