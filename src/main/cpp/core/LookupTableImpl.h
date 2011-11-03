@@ -201,12 +201,10 @@ matrix<W>& LookupTableImpl<T, W>::getMatrix(const W coordinates[], matrix<W>& ma
 	assert(w.size() >= vertexCount * elementCount);
 
 	size_t origin = 0;
-	/*
 #pragma omp parallel for reduction(+ : origin)
 	for (size_t i = 0; i < r; ++i) {
 		origin += getIndex(i, coordinates[i], f[i]) * strides[i];
 	}
-	*/
 #pragma omp parallel for
 	for (size_t i = 0; i < vertexCount; ++i) {
 		const size_t l = i * elementCount;
