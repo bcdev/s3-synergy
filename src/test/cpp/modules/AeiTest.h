@@ -16,6 +16,7 @@
 class AeiTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(AeiTest);
     CPPUNIT_TEST(testComputeWeights);
+    CPPUNIT_TEST(testAei);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -29,6 +30,7 @@ private:
     shared_ptr<Context> context;
     shared_ptr<Aei> aei;
     void testComputeWeights();
+    void testAei();
 };
 
 #endif	/* AEITEST_H */

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="netcdf">
+    <xs:complexType>
+      <xs:sequence minOccurs="0">
+        <xs:element ref="attribute"/>
+        <xs:element ref="aggregation"/>
+      </xs:sequence>
+      <xs:attribute name="location" type="xs:NCName"/>
+      <xs:attribute name="xmins" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="attribute">
+    <xs:complexType>
+      <xs:attribute name="name" use="required" type="xs:NCName"/>
+      <xs:attribute name="type" use="required" type="xs:NCName"/>
+      <xs:attribute name="value" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="aggregation">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="netcdf"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -1,0 +1,2194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- SENTINEL 3 SYN Level 2 archive
+This document is a sample manifest file of a SAFE archive. -->
+
+<xfdu:XFDU  xmlns:xfdu     ='urn:ccsds:schema:xfdu:1'
+            xmlns:safe     ='http://www.esa.int/safe/1.2'
+            xmlns:sentinel ='http://www.esa.int/safe/1.2/sentinel'
+            xmlns:syn     ='http://www.esa.int/safe/1.2/sentinel/syn'
+            xmlns:gml      ='http://opengis.net/gml'
+
+            version = 'esa/safe/1.2/sentinel-3/syn/level2'>
+
+    <!-- ============================================
+            INFORMATION PACKAGE MAP SECTION
+         ============================================ -->
+    <informationPackageMap>
+        <xfdu:contentUnit
+            unitType='Sentinel 3 Information Package'
+            textInfo='Sentinel 3 SYN Level 2 VGT S1'
+            pdiID='processing'
+            dmdID='acquisitionPeriod platform'>
+
+    <!-- Measurement Data Sets -->
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='OLCI Surface Reflectance 400nm'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0400nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='OLCI Surface Reflectance 413nm'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0413nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='OLCI Surface Reflectance 443nm'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0443nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='OLCI Surface Reflectance 490nm'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0490nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='OLCI Surface Reflectance 510nm'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0510nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='OLCI Surface Reflectance 560nm'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0560nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='OLCI Surface Reflectance 620nm'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0620nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='OLCI Surface Reflectance 665nm'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0665nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='OLCI Surface Reflectance 674nm'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0674nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='OLCI Surface Reflectance 681nm'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0681nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='OLCI Surface Reflectance 709nm'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0709nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='OLCI Surface Reflectance 754nm'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0754nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='OLCI Surface Reflectance 761nm'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0761nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='OLCI Surface Reflectance 779nm'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0779nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='OLCI Surface Reflectance 865nm'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0865nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='OLCI Surface Reflectance 885nm'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0885nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='OLCI Surface Reflectance 1020nm'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance1020nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='SLSTR Surface Reflectance 550 Nadir View'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0550nmN' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='SLSTR Surface Reflectance 665nm Nadir View'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0665nmN' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='SLSTR Surface Reflectance 865nm Nadir View'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0865nmN' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='SLSTR Surface Reflectance 1375nm Nadir View'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance1375nmN' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='SLSTR Surface Reflectance 1610nm Nadir View'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance1610nmN' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='SLSTR Surface Reflectance 2250nm Nadir View'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance2250nmN' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='SLSTR Surface Reflectance 550 Oblique View'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0550nmO' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='SLSTR Surface Reflectance 665nm Oblique View'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0665nmO' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='SLSTR Surface Reflectance 865nm Oblique View'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0865nmO' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='SLSTR Surface Reflectance 1375nm Oblique View'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance1375nmO' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='SLSTR Surface Reflectance 1610nm Oblique View'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance1610nmO' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='SLSTR Surface Reflectance 2250nm Oblique View'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance2250nmO' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Aerosol Optical Depth'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='aerosolOpticalDepth' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Aerosol Ansgtrom Exponent'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='aerosolAngstromExponent' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Aerosol Model Index'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='aerosolModelIndex' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Pixel Status Flags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='pixelStatusFlags' />
+            </xfdu:contentUnit>
+
+            <!-- Virtual Data Sets -->
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 400nm'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0400nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 413nm'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0413nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 443nm'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0443nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 490nm'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0490nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 510nm'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0510nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 560nm'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0560nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 620nm'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0620nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 665nm'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0665nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 674nm'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0674nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 681nm'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0681nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 709nm'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0709nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 754nm'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0754nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 761nm'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0761nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 779nm'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0779nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 865nm'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0865nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 885nm'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0885nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 1020nm'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance1020nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 550 Nadir View'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0550nmN' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 665nm Nadir View'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0665nmN' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 865nm Nadir View'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0865nmN' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 1375nm Nadir View'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance1375nmN' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 1610nm Nadir View'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance1610nmN' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 2250nm Nadir View'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance2250nmN' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 550 Oblique View'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0550nmO' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 665nm Oblique View'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0665nmO' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 865nm Oblique View'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0865nmO' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 1375nm Oblique View'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance1375nmO' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 1610nm Oblique View'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance1610nmO' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 2250nm Oblique View'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance2250nmO' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Aerosol Optical Depth'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_aerosolOpticalDepth' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Aerosol Ansgtrom Exponent'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_aerosolAngstromExponent' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
+                textInfo='Aerosol Model Index'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_aerosolModelIndex' />
+            </xfdu:contentUnit>
+
+
+            <!-- Metadata Sets -->
+
+            <xfdu:contentUnit
+                unitType='Metadata Unit'
+                textInfo='Geolocation Coordinates'
+                repID='geoCoordinatesSchema'>
+                <dataObjectPointer
+                    dataObjectID='geoCoordinates' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Metadata Unit'
+                textInfo='Time Coordinates'
+                repID='timeCoordinatesSchema'>
+                <dataObjectPointer
+                    dataObjectID='timeCoordinates' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Metadata Unit'
+                textInfo='Meteorological Fields'
+                repID='tiepointsSchema'>
+                <dataObjectPointer
+                    dataObjectID='tiepoints_meteo' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Metadata Unit'
+                textInfo='OLCI view/solar angles'
+                repID='geometryDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='tiepoints_olci' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Metadata Unit'
+                textInfo='SLSTR nadir view/solar angles'
+                repID='geometryDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='tiepoints_slstr_n' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Metadata Unit'
+                textInfo='SLSTR oblique view/solar angles'
+                repID='geometryDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='tiepoints_slstr_o' />
+            </xfdu:contentUnit>
+
+
+       </xfdu:contentUnit>
+
+    </informationPackageMap>
+
+
+    <!-- ========================================
+         METADATA OBJECT SECTION
+         ======================================== -->
+    <metadataSection>
+
+        <!-- PRODUCT GENERAL METADATA =========== -->
+        <!-- Platform Description -->
+        <metadataObject
+            ID='platform'
+            classification='DESCRIPTION'
+            category='DMD'>
+            <metadataWrap
+                textinfo='Platform Description'
+                vocabularyName='SAFE'
+                mimeType='text/xml'>
+                <xmlData>
+                    <safe:platform>
+                        <!-- Platform Identification -->
+                        <safe:nssdcIdentifier>YYYY-XXXX</safe:nssdcIdentifier>
+                        <safe:familyName>SENTINEL</safe:familyName>
+                        <safe:Number>3A</safe:Number>
+                        <!-- Instrument Identification -->
+                        <safe:instrument>
+                            <safe:familyName abbreviation='SYN'>
+                                OCLI and SLSTR synergy
+                            </safe:familyName>
+                        </safe:instrument>
+                    </safe:platform>
+                </xmlData>
+            </metadataWrap>
+        </metadataObject>
+
+        <!-- Processing -->
+        <metadataObject
+            ID='processing'
+            classification='PROVENANCE'
+            category='PDI'>
+            <metadataWrap
+                textinfo='Processing Information'
+                vocabularyName='SAFE'
+                mimeType='text/xml'>
+                <xmlData>
+                    <safe:processing
+                        name='L2 Processing'
+                        start='INS_L2ProcTime'>
+                        <safe:facility
+                            country='INS_L2FacilityCountry'
+                            name='INS_L2FacilityName'
+                            organisation='INS_L2FacilityOrganisation'
+                            site='INS_L2FacilitySite'>
+                            <safe:software
+                                name='INS_L2SoftwareName'
+                                version='INS_L2SoftwareVersion' />
+                        </safe:facility>
+                        <safe:resource
+                            name='INS_L2ResourceName'
+                            role='Applicable Document'>
+                        </safe:resource>
+                        <safe:resource
+                            name='INS_L1ResourceName'
+                            role='Input Data'>
+                            <safe:processing
+                                name='L1B Processing'
+                                start='INS_L1ProcTime'>
+                                <safe:facility
+                                    country='INS_L1FacilityCountry'
+                                    name='INS_L1FacilityName'
+                                    organisation='INS_L1FacilityOrganisation'
+                                    site='INS_L1FacilitySite'>
+                                    <safe:software
+                                        name='INS_L1SoftwareName'
+                                        version='INS_L1SoftwareVersion' />
+                                </safe:facility>
+                            </safe:processing>
+                        </safe:resource>
+                        <safe:resource
+                            name='S3__SY_2_SYCPAX.nc'
+                            role='Auxiliary Data' />
+                        <safe:resource
+                            name='S3__SY_2_SYRTAX.nc'
+                            role='Auxiliary Data' />
+                    </safe:processing>
+                </xmlData>
+            </metadataWrap>
+        </metadataObject>
+
+        <!-- Acquisition Period -->
+        <metadataObject
+            ID='acquisitionPeriod'
+            classification='DESCRIPTION'
+            category='DMD'>
+            <metadataWrap
+                textInfo='Acquisition Period'
+                vocabularyName='SAFE'
+                mimeType='text/xml'>
+                <xmlData>
+                    <safe:acquisitionPeriod>
+                        <safe:startTime>2013-06-21T10:09:20</safe:startTime>
+                        <safe:stopTime>2013-06-21T10:14:13</safe:stopTime>
+                    </safe:acquisitionPeriod>
+                </xmlData>
+            </metadataWrap>
+        </metadataObject>
+
+
+        <!-- MEASUREMENT METADATA =============== -->
+
+            <!-- None Defined for SYN in IODD Part 0 -->
+
+        <!-- ANNOTATION METADATA COMPONENTS ===== -->
+
+        <metadataObject
+            ID='geoCoordinates'
+            repID='geocoordinatesSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='geolocation.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </metadataObject>
+
+        <metadataObject
+            ID='timeCoordinates'
+            repID='TimeCoordinatesSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='time.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </metadataObject>
+
+        <metadataObject
+            ID='tiepoints_meteo'
+            repID='tiepointsSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='tiepoints_meteo.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </metadataObject>
+
+        <metadataObject
+            ID='tiepoints_olci'
+            repID='tiepointsSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='tiepoints_olci.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </metadataObject>
+
+        <metadataObject
+            ID='tiepoints_slstr_n'
+            repID='tiepointsSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='tiepoints_slstr_n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </metadataObject>
+
+        <metadataObject
+            ID='tiepoints_slstr_o'
+            repID='tiepointsSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='tiepoints_slstr_o.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </metadataObject>
+
+        <!-- XML SCHEMA FOR DATA COMPONENTS ===== -->
+
+        <metadataObject
+            ID='measurementDataSchema'
+            classification='SYNTAX'
+            category='REP'>
+            <metadataReference
+                locatorType='URL'
+                href='schema/measurementDataSchema.xsd'
+                vocabularyName='SDF'
+                mimeType='text/xml' />
+        </metadataObject>
+
+        <metadataObject
+            ID='geoCoordinatesSchema'
+            classification='SYNTAX'
+            category='REP'>
+            <metadataReference
+                locatorType='URL'
+                href='schema/geocoordinatesDataSchema.xsd'
+                vocabularyName='SDF'
+                mimeType='text/xml' />
+        </metadataObject>
+
+        <metadataObject
+            ID='timeCoordinatesSchema'
+            classification='SYNTAX'
+            category='REP'>
+            <metadataReference
+                locatorType='URL'
+                href='schema/timeCoordinatesSchema.xsd'
+                vocabularyName='SDF'
+                mimeType='text/xml' />
+        </metadataObject>
+
+        <metadataObject
+            ID='geometryDataSchema'
+            classification='SYNTAX'
+            category='REP'>
+            <metadataReference
+                locatorType='URL'
+                href='schema/geometryDataSchema.xsd'
+                vocabularyName='SDF'
+                mimeType='text/xml' />
+        </metadataObject>
+
+        <metadataObject
+            ID='tiepointsSchema'
+            classification='SYNTAX'
+            category='REP'>
+            <metadataReference
+                locatorType='URL'
+                href='schema/tiepointsSchema.xsd'
+                vocabularyName='SDF'
+                mimeType='text/xml' />
+        </metadataObject>
+
+        <metadataObject
+            ID='statusFlagsSchema'
+            classification='SYNTAX'
+            category='REP'>
+            <metadataReference
+                locatorType='URL'
+                href='schema/statusFlagsSchema.xsd'
+                vocabularyName='SDF'
+                mimeType='text/xml' />
+        </metadataObject>
+
+        <metadataObject
+            ID='virtualDataSchema'
+            classification='SYNTAX'
+            category='REP'>
+            <metadataReference
+                locatorType='URL'
+                href='schema/virtualDataSchema.xsd'
+                vocabularyName='SDF'
+                mimeType='text/xml' />
+        </metadataObject>
+
+    </metadataSection>
+
+    <!-- ========================================
+         DATA OBJECT SECTION
+         ======================================== -->
+    <dataObjectSection>
+
+        <!-- DATA COMPONENTS ==================== -->
+        <dataObject
+            ID='surfaceReflectance0400nm'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0400.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0413nm'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0413.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0443nm'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0443.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0490nm'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0490.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0510nm'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0510.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0560m'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0560.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0620m'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0620.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0665nm'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0665.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0674nm'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0674.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0681nm'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0681.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0709nm'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0709.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0754nm'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0754.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0761nm'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0761.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0779nm'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0779.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0865nm'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0865.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0885nm'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0885.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance1020nm'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1020.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0550nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0550n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0665nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0665n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0856nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0865n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance1375nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1375n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance1610nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1610n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance2250nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r2250n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0550nmO'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0550o.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0665nmO'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0665o.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0856nmO'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0865o.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance1375nmO'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1375o.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance1610nmO'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1610o.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance2250nmO'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r2250o.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0550nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0550n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0665nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0665n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0856nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0865n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance1375nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1375n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance1610nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1610n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='aerosolOpticalDepth'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='t550.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+
+
+        <dataObject
+            ID='surfaceReflectance0550nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0550n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0665nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0665n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0856nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0865n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance1375nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1375n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance1610nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1610n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='aerosolAngstromExponent'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='a550.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+
+        <dataObject
+            ID='surfaceReflectance0550nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0550n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0665nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0665n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0856nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0865n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance1375nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1375n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance1610nmN'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1610n.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='aerosolModelIndex'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='amin.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+
+        <!--  VIRTUAL DATASET COMPONENTS ============= -->
+
+        <dataObject
+            ID='v_surfaceReflectance0400nm'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0400.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0413nm'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0413.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0443nm'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0443.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0490nm'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0490.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0510nm'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0510.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0560m'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0560.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0620m'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0620.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0665nm'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0665.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0674nm'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0674.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0681nm'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0681.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0709nm'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0709.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0754nm'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0754.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0761nm'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0761.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0779nm'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0779.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0865nm'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0865.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0885nm'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0885.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance1020nm'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1020.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0550nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0550n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0665nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0665n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0856nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0865n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance1375nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1375n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance1610nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1610n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance2250nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r2250n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0550nmO'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0550o.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0665nmO'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0665o.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0856nmO'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0865o.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance1375nmO'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1375o.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance1610nmO'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1610o.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance2250nmO'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r2250o.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0550nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0550n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0665nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0665n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0856nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0865n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance1375nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1375n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance1610nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1610n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_aerosolOpticalDepth'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='t550.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+
+
+        <dataObject
+            ID='v_surfaceReflectance0550nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0550n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0665nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0665n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0856nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0865n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance1375nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1375n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance1610nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1610n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_aerosolAngstromExponent'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='a550.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+
+        <dataObject
+            ID='v_surfaceReflectance0550nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0550n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0665nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0665n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0856nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0865n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance1375nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1375n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance1610nmN'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r1610n.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_aerosolModelIndex'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='amin.ncml' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+
+        <!--  ANNOTATION COMPONENTS ============= -->
+
+        <dataObject
+            ID='pixelStatusFlags'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='flags.nc' />
+                <checksum checksumName='MD5'>
+                    INS_checksum
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+    </dataObjectSection>
+
+</xfdu:XFDU>
+
