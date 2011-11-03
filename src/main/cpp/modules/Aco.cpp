@@ -28,7 +28,7 @@ void Aco::start(Context& context) {
 	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLO_R_atm");
 	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "t");
 	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "rho_atm");
-	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "C_O3");
+	getAuxdataProvider(context, Constants::AUX_ID_SYRTAX);
 
 	Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 	const SegmentDescriptor& targetSegmentDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
@@ -36,10 +36,6 @@ void Aco::start(Context& context) {
 		addAccessor(context, collocatedSegment, targetSegmentDescriptor.getVariableDescriptor("SDR_" + lexical_cast<string>(i)));
 		addAccessor(context, collocatedSegment, targetSegmentDescriptor.getVariableDescriptor("SDR_" + lexical_cast<string>(i) + "_er"));
 	}
-}
-
-void Aco::stop(Context& context) {
-
 }
 
 void Aco::process(Context& context) {
@@ -122,7 +118,8 @@ void Aco::process(Context& context) {
 	const LookupTable<double>& lutSloRatm = (LookupTable<double>&) context.getObject("SLO_R_atm");
 	const LookupTable<double>& lutT = (LookupTable<double>&) context.getObject("t");
 	const LookupTable<double>& lutRhoAtm = (LookupTable<double>&) context.getObject("rho_atm");
-	const LookupTable<double>& lutCO3 = (LookupTable<double>&) context.getObject("C_O3");
+	AuxdataProvider& auxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUX_ID_SYRTAX);
+	const valarray<double>& cO3 = auxdataProvider.getVectorDouble("C_O3");
 
 	context.getLogging().progress("Processing segment '" + collocatedSegment.toString() + "'", getId());
 
@@ -209,7 +206,7 @@ void Aco::process(Context& context) {
 					rtoa[b] = toaReflectance(ltoa, f0, szaOlc);
 
 					// Eq. 2-2
-					tO3[b] = ozoneTransmission(lutCO3, szaOlc, vzaOlc, nO3, b + 1.0);
+					tO3[b] = ozoneTransmission(cO3[b], szaOlc, vzaOlc, nO3);
 
 					// Eq. 2-3
 					const double ratm = matRatmOlc(amin - 1, b);
@@ -250,7 +247,7 @@ void Aco::process(Context& context) {
 					rtoa[b] = toaReflectance(ltoa, f0, szaOlc);
 
 					// Eq. 2-2
-					tO3[b] = ozoneTransmission(lutCO3, szaOlc, vzaSln, nO3, b + 1.0);
+					tO3[b] = ozoneTransmission(cO3[b], szaOlc, vzaSln, nO3);
 
 					// Eq. 2-3
 					const double ratm = matRatmSln(amin - 1, b - 18);
@@ -291,7 +288,7 @@ void Aco::process(Context& context) {
 					rtoa[b] = toaReflectance(ltoa, f0, szaOlc);
 
 					// Eq. 2-2
-					tO3[b] = ozoneTransmission(lutCO3, szaOlc, vzaSlo, nO3, b + 1.0);
+					tO3[b] = ozoneTransmission(cO3[b], szaOlc, vzaSlo, nO3);
 
 					// Eq. 2-3
 					const double ratm = matRatmSlo(amin - 1, b - 24);
@@ -423,10 +420,9 @@ void Aco::process(Context& context) {
 	context.setLastComputedL(collocatedSegment, *this, lastL);
 }
 
-double Aco::ozoneTransmission(const LookupTable<double>& lut, double sza, double vza, double nO3, double channel) {
+double Aco::ozoneTransmission(double cO3, double sza, double vza, double nO3) {
 	// Eq. 2-2
 	const double m = 0.5 * (1.0 / cos(sza * D2R) + 1.0 / cos(vza * D2R));
-	const double cO3 = lut.getValue(&channel);
 	const double tO3 = exp(-m * nO3 * cO3);
 
 	return tO3;

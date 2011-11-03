@@ -47,15 +47,20 @@ public:
 	}
 
 	virtual valarray<W>& getTable(const W coordinates[], size_t dimIndex, valarray<W>& tableValues) const = 0;
-	virtual W getValue(const W coordinates[]) const = 0;
-	virtual W getValue(const W coordinates[], size_t dimIndex, const valarray<W>& tableValues, valarray<W>& w) const = 0;
+
+	virtual W getScalar(const W coordinates[], valarray<W>& f, valarray<W>& w) const = 0;
+	virtual size_t getScalarWorkspaceSize() const = 0;
+	virtual W getScalar(const W coordinates[], size_t dimIndex, const valarray<W>& tableValues, valarray<W>& w) const = 0;
 
 	virtual matrix<W>& getMatrix(const W coordinates[], matrix<W>& matrix, valarray<W>& f, valarray<W>& w) const = 0;
 	virtual size_t getMatrixColCount() const = 0;
 	virtual size_t getMatrixRowCount() const = 0;
 	virtual size_t getMatrixWorkspaceSize() const = 0;
+	virtual matrix<W>& getMatrix(const W coordinates[], size_t dimIndex, matrix<W>& matrix, const valarray<W>& tableValues, valarray<W>& w) const = 0;
 
-	virtual valarray<W>& getVector(const W coordinates[], valarray<W>& vector) const = 0;
+	virtual valarray<W>& getVector(const W coordinates[], valarray<W>& vector, valarray<W>& f, valarray<W>& w) const = 0;
+	virtual size_t getVectorDimensionCount() const = 0;
+	virtual size_t getVectorWorkspaceSize() const = 0;
 
 	virtual size_t getDimensionCount() const = 0;
 	virtual size_t getDimensionLength(size_t dimIndex) const = 0;

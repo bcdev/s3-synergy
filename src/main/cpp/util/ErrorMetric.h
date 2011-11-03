@@ -50,6 +50,15 @@ private:
     const LookupTable<double>& lutRhoAtm;
     const LookupTable<double>& lutTotalAngularWeights;
     const LookupTable<double>& lutD;
+    valarray<double> tabOlcRatm;
+    valarray<double> tabSlnRatm;
+    valarray<double> tabSloRatm;
+    valarray<double> tabTs;
+    valarray<double> tabTvOlc;
+    valarray<double> tabTvSln;
+    valarray<double> tabTvSlo;
+    valarray<double> tabRhoAtm;
+
     const AuxdataProvider& configurationAuxdata;
     const double gamma;
     const valarray<int16_t>& ndviIndices;

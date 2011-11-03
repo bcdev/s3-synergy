@@ -22,6 +22,14 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		lutRhoAtm((LookupTable<double>&) context.getObject("rho_atm")),
 		lutTotalAngularWeights((LookupTable<double>&) context.getObject("weight_ang_tot")),
 		lutD((LookupTable<double>&) context.getObject("D")),
+		tabOlcRatm(lutOlcRatm.getStride(0)),
+		tabSlnRatm(lutSlnRatm.getStride(0)),
+		tabSloRatm(lutSloRatm.getStride(0)),
+		tabTs(lutT.getStride(0)),
+		tabTvOlc(lutT.getStride(0)),
+		tabTvSln(lutT.getStride(0)),
+		tabTvSlo(lutT.getStride(0)),
+		tabRhoAtm(lutRhoAtm.getStride(0)),
 		configurationAuxdata((AuxdataProvider&) context.getObject(Constants::AUX_ID_SYCPAX)),
 		gamma(configurationAuxdata.getDouble("gamma")),
 		ndviIndices(configurationAuxdata.getVectorShort("NDV_channel")),
@@ -169,13 +177,47 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	this->sum2 = sum2;
 	this->sum8 = sum8;
 	this->doOLC = olcCount >= 12;
-	//this->doSLN = slnCount >= 1;
-	this->doSLS = slsCount >= 11;
+	this->doSLN = false; //slnCount >= 1;
+	this->doSLS = false; //slsCount >= 11;
 
 	const double ndvi = computeNdvi(p);
-	totalAngularWeight = lutTotalAngularWeights.getValue(&ndvi);
+	totalAngularWeight = lutTotalAngularWeights.getScalar(&ndvi, lutWeights, lutWorkspace);
 
 	pixel = &p;
+
+	/*
+	 * New stuff
+	 */
+	coordinates[0] = abs(pixel->saa - pixel->vaaOlc);
+	coordinates[1] = pixel->sza;
+	coordinates[2] = pixel->vzaOlc;
+	coordinates[3] = pixel->airPressure;
+	coordinates[4] = pixel->waterVapour;
+	// coordinates[5] = aerosol
+
+	coordinates[6] = coordinates[1]; // SZA
+	coordinates[7] = coordinates[3]; // air pressure
+	coordinates[8] = coordinates[4]; // water vapour
+	// coordinates[9] = aerosol
+
+	lutRhoAtm.getTable(&coordinates[3], 2, tabRhoAtm);
+	lutT.getTable(&coordinates[6], 3, tabTs);
+	lutT.getTable(&coordinates[2], 3, tabTvOlc);
+	lutOlcRatm.getTable(&coordinates[0], 5, tabOlcRatm);
+
+	if (false) {
+		coordinates[0] = abs(pixel->saa - pixel->vaaSln);
+		coordinates[2] = pixel->vzaSln;
+
+		lutSlnRatm.getTable(&coordinates[0], 5, tabSlnRatm);
+		lutT.getTable(&coordinates[2], 3, tabTvSln);
+
+		coordinates[0] = abs(pixel->saa - pixel->vaaSlo);
+		coordinates[2] = pixel->vzaSlo;
+
+		lutSloRatm.getTable(&coordinates[0], 5, tabSloRatm);
+		lutT.getTable(&coordinates[2], 3, tabTvSlo);
+	}
 }
 
 double ErrorMetric::computeRss2(valarray<double>& x) {
@@ -253,18 +295,18 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 	coordinates[4] = pixel->waterVapour;
 	coordinates[5] = tau550;
 
-	lutRhoAtm.getMatrix(&coordinates[3], matRho, lutWeights, lutWorkspace);
+	lutRhoAtm.getMatrix(&coordinates[3], 2, matRho, tabRhoAtm, lutWorkspace);
 
 	coordinates[6] = coordinates[1]; // SZA
 	coordinates[7] = coordinates[3]; // air pressure
 	coordinates[8] = coordinates[4]; // water vapour
 	coordinates[9] = coordinates[5]; // aerosol
 
-	lutT.getMatrix(&coordinates[6], matTs, lutWeights, lutWorkspace);
+	lutT.getMatrix(&coordinates[6], 3, matTs, tabTs, lutWorkspace);
 
 	if (doOLC) {
-		lutOlcRatm.getMatrix(&coordinates[0], matRatmOlc, lutWeights, lutWorkspace);
-		lutT.getMatrix(&coordinates[2], matTv, lutWeights, lutWorkspace);
+		lutOlcRatm.getMatrix(&coordinates[0], 5, matRatmOlc, tabOlcRatm, lutWorkspace);
+		lutT.getMatrix(&coordinates[2], 3, matTv, tabTvOlc, lutWorkspace);
 
 #pragma omp parallel for
 		for (size_t b = 0; b < 18; b++) {
@@ -286,12 +328,12 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		}
 	}
 
-	if (doSLS) {
+	if (doSLN || doSLS) {
 		coordinates[0] = abs(pixel->saa - pixel->vaaSln);
 		coordinates[2] = pixel->vzaSln;
 
-		lutSlnRatm.getMatrix(&coordinates[0], matRatmSln, lutWeights, lutWorkspace);
-		lutT.getMatrix(&coordinates[2], matTv, lutWeights, lutWorkspace);
+		lutSlnRatm.getMatrix(&coordinates[0], 5, matRatmSln, tabSlnRatm, lutWorkspace);
+		lutT.getMatrix(&coordinates[2], 3, matTv, tabTvSln, lutWorkspace);
 
 #pragma omp parallel for
 		for (size_t b = 18; b < 24; b++) {
@@ -317,8 +359,8 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		coordinates[0] = abs(pixel->saa - pixel->vaaSlo);
 		coordinates[2] = pixel->vzaSlo;
 
-		lutSloRatm.getMatrix(&coordinates[0], matRatmSlo, lutWeights, lutWorkspace);
-		lutT.getMatrix(&coordinates[2], matTv, lutWeights, lutWorkspace);
+		lutSloRatm.getMatrix(&coordinates[0], 5, matRatmSlo, tabSloRatm, lutWorkspace);
+		lutT.getMatrix(&coordinates[2], 3, matTv, tabTvSlo, lutWorkspace);
 
 #pragma omp parallel for
 		for (size_t b = 24; b < 30; b++) {
@@ -344,6 +386,6 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		coordinates[2] = tau550;
 		coordinates[3] = amin;
 
-		lutD.getVector(&coordinates[0], diffuseFractions);
+		lutD.getVector(&coordinates[0], diffuseFractions, lutWeights, lutWorkspace);
 	}
 }
