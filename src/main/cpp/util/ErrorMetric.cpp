@@ -22,6 +22,9 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		lutRhoAtm((LookupTable<double>&) context.getObject("rho_atm")),
 		lutTotalAngularWeights((LookupTable<double>&) context.getObject("weight_ang_tot")),
 		lutD((LookupTable<double>&) context.getObject("D")),
+		tabOlcRatm(lutOlcRatm.getStride(0)),
+		tabSlnRatm(lutSlnRatm.getStride(0)),
+		tabSloRatm(lutSloRatm.getStride(0)),
 		configurationAuxdata((AuxdataProvider&) context.getObject(Constants::AUX_ID_SYCPAX)),
 		gamma(configurationAuxdata.getDouble("gamma")),
 		ndviIndices(configurationAuxdata.getVectorShort("NDV_channel")),
@@ -169,11 +172,33 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	this->sum2 = sum2;
 	this->sum8 = sum8;
 	this->doOLC = olcCount >= 12;
-	//this->doSLN = slnCount >= 1;
+	this->doSLN = slnCount >= 1;
 	this->doSLS = slsCount >= 11;
 
 	const double ndvi = computeNdvi(p);
 	totalAngularWeight = lutTotalAngularWeights.getScalar(&ndvi, lutWeights, lutWorkspace);
+
+	if (doOLC) {
+		coordinates[0] = abs(pixel->saa - pixel->vaaOlc);
+		coordinates[1] = pixel->sza;
+		coordinates[2] = pixel->vzaOlc;
+		coordinates[3] = pixel->airPressure;
+		coordinates[4] = pixel->waterVapour;
+
+		lutOlcRatm.getTable(&coordinates[0], 5, tabOlcRatm);
+	}
+	if (doSLN || doSLS) {
+		coordinates[0] = abs(pixel->saa - pixel->vaaSln);
+		coordinates[2] = pixel->vzaSln;
+
+		lutSlnRatm.getTable(&coordinates[0], 5, tabSlnRatm);
+	}
+	if (doSLS) {
+		coordinates[0] = abs(pixel->saa - pixel->vaaSlo);
+		coordinates[2] = pixel->vzaSlo;
+
+		lutSlnRatm.getTable(&coordinates[0], 5, tabSloRatm);
+	}
 
 	pixel = &p;
 }
@@ -263,7 +288,7 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 	lutT.getMatrix(&coordinates[6], matTs, lutWeights, lutWorkspace);
 
 	if (doOLC) {
-		lutOlcRatm.getMatrix(&coordinates[0], matRatmOlc, lutWeights, lutWorkspace);
+		lutOlcRatm.getMatrix(&coordinates[0], 5, matRatmOlc, tabOlcRatm, lutWorkspace);
 		lutT.getMatrix(&coordinates[2], matTv, lutWeights, lutWorkspace);
 
 #pragma omp parallel for
@@ -286,11 +311,11 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		}
 	}
 
-	if (doSLS) {
+	if (doSLN || doSLS) {
 		coordinates[0] = abs(pixel->saa - pixel->vaaSln);
 		coordinates[2] = pixel->vzaSln;
 
-		lutSlnRatm.getMatrix(&coordinates[0], matRatmSln, lutWeights, lutWorkspace);
+		lutSlnRatm.getMatrix(&coordinates[0], 5, matRatmSln, tabSlnRatm, lutWorkspace);
 		lutT.getMatrix(&coordinates[2], matTv, lutWeights, lutWorkspace);
 
 #pragma omp parallel for
@@ -317,7 +342,7 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		coordinates[0] = abs(pixel->saa - pixel->vaaSlo);
 		coordinates[2] = pixel->vzaSlo;
 
-		lutSloRatm.getMatrix(&coordinates[0], matRatmSlo, lutWeights, lutWorkspace);
+		lutSloRatm.getMatrix(&coordinates[0], 5, matRatmSlo, tabSloRatm, lutWorkspace);
 		lutT.getMatrix(&coordinates[2], matTv, lutWeights, lutWorkspace);
 
 #pragma omp parallel for
