@@ -117,6 +117,8 @@ const uint32_t SY1_OLCI_LAND_FLAG = 2147483648U;
 const uint8_t SY1_SLSTR_CLOUD_FLAG = 64U;
 
 const uint16_t SY2_CLOUD_FLAG = 1U;
+const uint16_t SY2_SNOW_RISK_FLAG = 2U;
+const uint16_t SY2_SHADOW_RISK_FLAG = 4U;
 const uint16_t SY2_CLOUD_FILLED_FLAG = 8U;
 const uint16_t SY2_LAND_FLAG = 16U;
 const uint16_t SY2_NO_OLC_FLAG = 32U;
@@ -125,6 +127,11 @@ const uint16_t SY2_NO_SLO_FLAG = 128U;
 const uint16_t SY2_PARTLY_CLOUDY_FLAG = 256U;
 const uint16_t SY2_PARTLY_WATER_FLAG = 512U;
 const uint16_t SY2_BORDER_FLAG = 1024U;
+const uint16_t SY2_AEROSOL_FILLED_FLAG = 2048U;
+const uint16_t SY2_AEROSOL_SUCCESS_FLAG = 4096U;
+const uint16_t SY2_AEROSOL_NEGATIVE_CURVATURE_FLAG = 8192U;
+const uint16_t SY2_AEROSOL_TOO_LOW_FLAG = 16384U;
+const uint16_t SY2_AEROSOL_HIGH_ERROR_FLAG = 32768U;
 
 const double FILL_VALUE_DOUBLE = -numeric_limits<double>::max();
 }

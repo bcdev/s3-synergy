@@ -360,7 +360,7 @@ void Aer::process(Context& context) {
 	 p->tau550err = deltaTau_500 / K;
 	 p->alpha550 = alpha550 / K;
 	 p->amin = amin;
-	 p->synFlags |= 2048;
+	 p->synFlags |= Constants::SY2_AEROSOL_FILLED;
 	 completedPixels.insert(p->index);
 	 }
 	 }
@@ -446,15 +446,15 @@ void Aer::aer_s(shared_ptr<Pixel> p, shared_ptr<Pixel> previous) {
 			if (a > 0) {
 				p->tau550err = kappa * sqrt(p->E2 / a);
 				if (tau550 > 0.1 && p->tau550err > 5 * tau550) {
-					p->synFlags |= 32768;
+					p->synFlags |= Constants::SY2_AEROSOL_HIGH_ERROR_FLAG;
 				} else {
-					p->synFlags |= 4096;
+					p->synFlags |= Constants::SY2_AEROSOL_SUCCESS_FLAG;
 				}
 			} else {
-				p->synFlags |= 8192;
+				p->synFlags |= Constants::SY2_AEROSOL_NEGATIVE_CURVATURE_FLAG;
 			}
 		} else {
-			p->synFlags |= 16384;
+			p->synFlags |= Constants::SY2_AEROSOL_TOO_LOW_FLAG;
 		}
 	}
 }

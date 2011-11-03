@@ -39,20 +39,25 @@ void Aco::start(Context& context) {
 }
 
 void Aco::process(Context& context) {
-	const Accessor& tpVzaOlc = context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("OLC_VZA");
-	const Accessor& tpVaaOlc = context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("OLC_VAA");
-	const Accessor& tpVzaSln = context.getSegment(Constants::SEGMENT_SLN_TP).getAccessor("SLN_VZA");
-	const Accessor& tpVaaSln = context.getSegment(Constants::SEGMENT_SLN_TP).getAccessor("SLN_VAA");
-	const Accessor& tpVzaSlo = context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_VZA");
-	const Accessor& tpVaaSlo = context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_VAA");
-	const Accessor& tpSzaOlc = context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("SZA");
-	const Accessor& tpSaaOlc = context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("SAA");
-	const Accessor& tpLatOlc = context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("OLC_TP_lat");
-	const Accessor& tpLonOlc = context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("OLC_TP_lon");
-	const Accessor& tpLatSln = context.getSegment(Constants::SEGMENT_SLN_TP).getAccessor("SLN_TP_lat");
-	const Accessor& tpLonSln = context.getSegment(Constants::SEGMENT_SLN_TP).getAccessor("SLN_TP_lon");
-	const Accessor& tpLatSlo = context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lat");
-	const Accessor& tpLonSlo = context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lon");
+    const Segment& tpSegmentOlc = context.getSegment(Constants::SEGMENT_OLC_TP);
+    const Segment& tpSegmentSln = context.getSegment(Constants::SEGMENT_SLN_TP);
+    const Segment& tpSegmentSlo = context.getSegment(Constants::SEGMENT_SLO_TP);
+	const Accessor& tpVzaOlc = tpSegmentOlc.getAccessor("OLC_VZA");
+	const Accessor& tpVaaOlc = tpSegmentOlc.getAccessor("OLC_VAA");
+	const Accessor& tpVzaSln = tpSegmentSln.getAccessor("SLN_VZA");
+	const Accessor& tpVaaSln = tpSegmentSln.getAccessor("SLN_VAA");
+	const Accessor& tpVzaSlo = tpSegmentSlo.getAccessor("SLO_VZA");
+	const Accessor& tpVaaSlo = tpSegmentSlo.getAccessor("SLO_VAA");
+	const Accessor& tpSzaOlc = tpSegmentOlc.getAccessor("SZA");
+	const Accessor& tpSaaOlc = tpSegmentOlc.getAccessor("SAA");
+	const Accessor& tpLatOlc = tpSegmentOlc.getAccessor("OLC_TP_lat");
+	const Accessor& tpLonOlc = tpSegmentOlc.getAccessor("OLC_TP_lon");
+	const Accessor& tpLatSln = tpSegmentSln.getAccessor("SLN_TP_lat");
+	const Accessor& tpLonSln = tpSegmentSln.getAccessor("SLN_TP_lon");
+	const Accessor& tpLatSlo = tpSegmentSlo.getAccessor("SLO_TP_lat");
+	const Accessor& tpLonSlo = tpSegmentSlo.getAccessor("SLO_TP_lon");
+	const Accessor& tpOzone = tpSegmentOlc.getAccessor("ozone");
+	const Accessor& tpAirPressure = tpSegmentOlc.getAccessor("air_pressure");
 
 	const valarray<double> tpLonsOlc = tpLonOlc.getDoubles();
 	const valarray<double> tpLatsOlc = tpLatOlc.getDoubles();
@@ -68,6 +73,8 @@ void Aco::process(Context& context) {
 	const valarray<double> tpVaasSln = tpVaaSln.getDoubles();
 	const valarray<double> tpVzasSlo = tpVzaSlo.getDoubles();
 	const valarray<double> tpVaasSlo = tpVaaSlo.getDoubles();
+	const valarray<double> tpOzones = tpOzone.getDoubles();
+	const valarray<double> tpAirPressures = tpAirPressure.getDoubles();
 
 	const TiePointInterpolator<double> tpiOlc = TiePointInterpolator<double>(tpLonsOlc, tpLatsOlc);
 	const TiePointInterpolator<double> tpiSln = TiePointInterpolator<double>(tpLonsSln, tpLatsSln);
@@ -86,6 +93,10 @@ void Aco::process(Context& context) {
 	for (size_t i = 1; i <= 18; i++) {
 		ltoaErrAccessors.push_back(&collocatedSegment.getAccessor("L_" + lexical_cast<string>(i) + "_er"));
 	}
+    const Accessor& tau550Accessor = collocatedSegment.getAccessor("T550");
+    const Accessor& tau550ErrAccessor = collocatedSegment.getAccessor("T550_er");
+    const Accessor& aminAccessor = collocatedSegment.getAccessor("AMIN");
+    const Accessor& flagsAccessor = collocatedSegment.getAccessor("SYN_flags");
 	const Accessor& latAccessor = collocatedSegment.getAccessor("latitude");
 	const Accessor& lonAccessor = collocatedSegment.getAccessor("longitude");
 	const Accessor& solarIrrOlcAccessor = olcInfoSegment.getAccessor("solar_irradiance");
@@ -128,8 +139,7 @@ void Aco::process(Context& context) {
 	const long lastL = context.getLastComputableL(collocatedSegment, *this);
 	context.getLogging().debug("Segment [" + collocatedSegment.toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
 
-	// TODO - get from auxiliary data
-	const double delta3 = 0.005;
+	const double delta3 = getAuxdataProvider(context, Constants::AUX_ID_SYCPAX).getDouble("delta_rt");
 
 #pragma omp parallel for
 	for (long l = firstL; l <= lastL; l++) {
@@ -160,23 +170,34 @@ void Aco::process(Context& context) {
 			for (long m = collocatedGrid.getFirstM(); m < collocatedGrid.getFirstM() + collocatedGrid.getSizeM(); m++) {
 				const size_t i = collocatedGrid.getIndex(k, l, m);
 
-				// TODO: consider flags
+				const uint16_t flags = flagsAccessor.getUShort(i);
+				bool isLand = (flags & Constants::SY2_LAND_FLAG) == Constants::SY2_LAND_FLAG;
+				bool success = (flags & Constants::SY2_AEROSOL_SUCCESS_FLAG) == Constants::SY2_AEROSOL_SUCCESS_FLAG;
+				bool isFilled = (flags & Constants::SY2_AEROSOL_FILLED_FLAG) == Constants::SY2_AEROSOL_FILLED_FLAG;
+				if((!isLand || !success) && !isFilled) {
+				    for(size_t b = 0; b < sdrAccessors.size(); b++) {
+				        sdrAccessors[b]->setFillValue(i);
+				        errAccessors[b]->setFillValue(i);
+				    }
+				    continue;
+				}
 
-				// TODO - get from ECMWF tie points
-				const double nO3 = 0.0;
+				// TODO - clarify water vapour
+//				const double nO3 = 0.0;
 				const double wv = 2.0;
-				const double p = 1000;
+//				const double p = 1000;
 
-				// TODO - get from segment data
-				const double tau550 = 0.1;
-				const double tau550Err = 0.05;
-				const uint8_t amin = 1;
+				tpiOlc.prepare(lonAccessor.getDouble(i), latAccessor.getDouble(i), tpiWeights, tpiIndexes);
+				const double nO3 = tpiOlc.interpolate(tpOzones, tpiWeights, tpiIndexes);
+				const double p = tpiOlc.interpolate(tpAirPressures, tpiWeights, tpiIndexes);
+
+				const double tau550 = tau550Accessor.getDouble(i);
+				const double tau550Err = tau550ErrAccessor.getDouble(i);
+				const uint8_t amin = aminAccessor.getUByte(i);
 
 				/*
 				 * Surface reflectance for OLC channels
 				 */
-				tpiOlc.prepare(lonAccessor.getDouble(i), latAccessor.getDouble(i), tpiWeights, tpiIndexes);
-
 				const double szaOlc = tpiOlc.interpolate(tpSzasOlc, tpiWeights, tpiIndexes);
 				const double saaOlc = tpiOlc.interpolate(tpSaasOlc, tpiWeights, tpiIndexes);
 				const double vzaOlc = tpiOlc.interpolate(tpVzasOlc, tpiWeights, tpiIndexes);
