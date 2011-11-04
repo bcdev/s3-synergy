@@ -72,7 +72,7 @@ void PclTest::tearDown() {
 void PclTest::testStart() {
 	Pcl pcl;
 	Segment& segment = context->addSegment(Constants::SEGMENT_SYN_COLLOCATED, 20, 20, 20, 20, 120);
-	segment.addVariable("OLC_flags", Constants::TYPE_BYTE);
+	segment.addVariable("OLC_confidence", Constants::TYPE_BYTE);
 	segment.addVariable("SLN_confidence", Constants::TYPE_BYTE);
 	segment.addVariable("SLO_confidence", Constants::TYPE_BYTE);
 	for (size_t b = 1; b <= 30; b++) {
