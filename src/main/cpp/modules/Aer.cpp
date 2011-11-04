@@ -136,8 +136,6 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
 	const size_t pixelIndex = averagedGrid.getIndex(k, l, m);
 	shared_ptr<Pixel> p = shared_ptr<Pixel>(new Pixel(k, l, m, pixelIndex));
 
-	context.getLogging().progress("Setting up radiances...", "id");
-
 	/*
 	 * Radiances
 	 */
@@ -154,8 +152,6 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
 	 * SDRs
 	 */
 	// not needed
-
-	context.getLogging().progress("Setting up solar irradiances...", "id");
 
 	/*
 	 * Solar irradiances
@@ -188,8 +184,6 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
 		}
 	}
 
-	context.getLogging().progress("Setting up ozone...", "id");
-
 	/*
 	 * Ozone coefficients
 	 */
@@ -197,7 +191,6 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
 		p->cO3[i] = cO3[i];
 	}
 
-	context.getLogging().progress("Setting up flags...", "id");
 	/*
 	 * Flags
 	 */
@@ -205,14 +198,12 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
 	// set flags SYN_success, SYN_negative_curvature, SYN_too_low, and SY_high_error to false
 	p->synFlags &= 3887;
 
-	context.getLogging().progress("Setting up geoloction...", "id");
 	/*
 	 * Geo-location
 	 */
 	p->lat = lat.getDouble(pixelIndex);
 	p->lon = lon.getDouble(pixelIndex);
 
-	context.getLogging().progress("Setting up tie point data...", "id");
 	/*
 	 * Tie Point data
 	 */
@@ -220,21 +211,14 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
 	valarray<size_t> tpiIndexes(1);
 	tiePointInterpolatorOlc.prepare(p->lat, p->lon, tpiWeights, tpiIndexes);
 
-	context.getLogging().progress("Setting up SZA tie point data...", "id");
 	p->sza = tiePointInterpolatorOlc.interpolate(szaTiePointsOlc, tpiWeights, tpiIndexes);
-	context.getLogging().progress("Setting up SAA tie point data...", "id");
 	p->saa = tiePointInterpolatorOlc.interpolate(saaTiePointsOlc, tpiWeights, tpiIndexes);
-	context.getLogging().progress("Setting up VZA tie point data...", "id");
 	p->vzaOlc = tiePointInterpolatorOlc.interpolate(vzaTiePointsOlc, tpiWeights, tpiIndexes);
-	context.getLogging().progress("Setting up VAA tie point data...", "id");
 	p->vaaOlc = tiePointInterpolatorOlc.interpolate(vaaTiePointsOlc, tpiWeights, tpiIndexes);
 
-	context.getLogging().progress("Setting up air pressure tie point data...", "id");
 	p->airPressure = tiePointInterpolatorOlc.interpolate(airPressureTiePoints, tpiWeights, tpiIndexes);
-	context.getLogging().progress("Setting up ozone tie point data...", "id");
 	p->ozone = tiePointInterpolatorOlc.interpolate(ozoneTiePoints, tpiWeights, tpiIndexes);
 	if (waterVapourTiePoints.size() != 0) {
-		context.getLogging().progress("Setting up water vapour tie point data...", "id");
 		p->waterVapour = tiePointInterpolatorOlc.interpolate(waterVapourTiePoints, tpiWeights, tpiIndexes);
 	} else {
 		p->waterVapour = 0.2;
@@ -247,8 +231,6 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
 	tiePointInterpolatorSlo.prepare(p->lat, p->lon, tpiWeights, tpiIndexes);
 	p->vaaSlo = tiePointInterpolatorSlo.interpolate(vaaTiePointsSlo, tpiWeights, tpiIndexes);
 	p->vzaSlo = tiePointInterpolatorSlo.interpolate(vzaTiePointsSlo, tpiWeights, tpiIndexes);
-
-	context.getLogging().progress("Setting up anything...", "id");
 
 	/*
 	 * Anything else
@@ -296,7 +278,6 @@ void Aer::process(Context& context) {
 	vector<shared_ptr<Pixel> > pixels;
 	map<size_t, shared_ptr<Pixel> > pixelMap;
 	map<size_t, shared_ptr<Pixel> > missingPixels;
-	context.getLogging().progress("Getting pixels...", getId());
 	pixels = getPixels(context, firstL, lastL, pixels);
 
 	foreach(shared_ptr<Pixel> p, pixels)
@@ -314,6 +295,7 @@ void Aer::process(Context& context) {
 	 long N_b = 1;
 	 long I = 0;
 
+	 context.getLogging().progress("Filling missing pixels...", getId());
 	 typedef pair<size_t, shared_ptr<Pixel> > Entry;
 	 while (!missingPixels.empty()) {
 		if (I >= 5 && I <= 12) {
@@ -323,6 +305,7 @@ void Aer::process(Context& context) {
 		foreach(Entry entry, missingPixels)
 				{
 					shared_ptr<Pixel> p = entry.second;
+					context.getLogging().progress("Filling pixel(index = " + lexical_cast<string>(p->index) + ")...", getId());
 					double tau_550, deltaTau_500, alpha550 = 0;
 					uint8_t amin = 0;
 					uint32_t K = 0;
@@ -387,7 +370,6 @@ void Aer::process(Context& context) {
 
 vector<shared_ptr<Pixel> >& Aer::getPixels(Context& context, long firstL, long lastL, vector<shared_ptr<Pixel> >& pixels) const {
 	const PixelInitializer pixelInitializer(context);
-	context.getLogging().progress("Initializing pixels...", getId());
 	for (long l = firstL; l <= lastL; l++) {
 		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
