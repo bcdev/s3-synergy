@@ -33,6 +33,13 @@ void Aei::start(Context& context) {
     accessorTau = &averagedSegment->getAccessor("T550");
     accessorTauError = &averagedSegment->getAccessor("T550_er");
     accessorAlpha = &averagedSegment->getAccessor("A550");
+
+    const SegmentDescriptor& collocatedSegmentDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
+
+    collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550"));
+    collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550_er"));
+    collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("A550"));
+    collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("AMIN"));
 }
 
 void Aei::process(Context& context) {
@@ -40,11 +47,10 @@ void Aei::process(Context& context) {
     const Accessor& accessorAmin = averagedSegment->getAccessor("AMIN");
     const Accessor& accessorFlags = averagedSegment->getAccessor("SYN_flags");
 
-    const SegmentDescriptor& collocatedSegmentDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
-    Accessor& collocatedAccessorTau550 = collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550"));
-    Accessor& collocatedAccessorTau550err = collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550_er"));
-    Accessor& collocatedAccessorAlpha550 = collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("A550"));
-    Accessor& collocatedAccessorAmin = collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("AMIN"));
+    Accessor& collocatedAccessorTau550 = collocatedSegment->getAccessor("T550");
+    Accessor& collocatedAccessorTau550err = collocatedSegment->getAccessor("T550_er");
+    Accessor& collocatedAccessorAlpha550 = collocatedSegment->getAccessor("A550");
+    Accessor& collocatedAccessorAmin = collocatedSegment->getAccessor("AMIN");
 
     Accessor& collocatedAccessorFlags = collocatedSegment->getAccessor("SYN_flags");
 
