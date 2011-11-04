@@ -129,7 +129,7 @@ void Aco::process(Context& context) {
 	const LookupTable<double>& lutSloRatm = (LookupTable<double>&) context.getObject("SLO_R_atm");
 	const LookupTable<double>& lutT = (LookupTable<double>&) context.getObject("t");
 	const LookupTable<double>& lutRhoAtm = (LookupTable<double>&) context.getObject("rho_atm");
-	AuxdataProvider& auxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUX_ID_SYRTAX);
+	AuxdataProvider& auxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYRTAX);
 	const valarray<double>& cO3 = auxdataProvider.getVectorDouble("C_O3");
 
 	context.getLogging().progress("Processing segment '" + collocatedSegment.toString() + "'", getId());
@@ -139,7 +139,7 @@ void Aco::process(Context& context) {
 	const long lastL = context.getLastComputableL(collocatedSegment, *this);
 	context.getLogging().debug("Segment [" + collocatedSegment.toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
 
-	const double delta3 = getAuxdataProvider(context, Constants::AUX_ID_SYRTAX).getDouble("delta_rt");
+	const double delta3 = auxdataProvider.getDouble("delta_rt");
 
 #pragma omp parallel for
 	for (long l = firstL; l <= lastL; l++) {
@@ -174,7 +174,7 @@ void Aco::process(Context& context) {
 				bool isLand = (flags & Constants::SY2_LAND_FLAG) == Constants::SY2_LAND_FLAG;
 				bool success = (flags & Constants::SY2_AEROSOL_SUCCESS_FLAG) == Constants::SY2_AEROSOL_SUCCESS_FLAG;
 				bool isFilled = (flags & Constants::SY2_AEROSOL_FILLED_FLAG) == Constants::SY2_AEROSOL_FILLED_FLAG;
-				if((!isLand || !success) && !isFilled) {
+				if(!(isLand && (success || isFilled))) {
 				    for(size_t b = 0; b < sdrAccessors.size(); b++) {
 				        sdrAccessors[b]->setFillValue(i);
 				        errAccessors[b]->setFillValue(i);
@@ -182,10 +182,8 @@ void Aco::process(Context& context) {
 				    continue;
 				}
 
-				// TODO - clarify water vapour
-//				const double nO3 = 0.0;
+				// TODO - read from auxdata when available
 				const double wv = 2.0;
-//				const double p = 1000;
 
 				tpiOlc.prepare(lonAccessor.getDouble(i), latAccessor.getDouble(i), tpiWeights, tpiIndexes);
 				const double nO3 = tpiOlc.interpolate(tpOzones, tpiWeights, tpiIndexes);
