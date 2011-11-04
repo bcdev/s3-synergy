@@ -36,21 +36,16 @@ void Aei::start(Context& context) {
 
     const SegmentDescriptor& collocatedSegmentDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
 
-    collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550"));
-    collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550_er"));
-    collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("A550"));
-    collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("AMIN"));
+    collocatedAccessorTau550 = &collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550"));
+    collocatedAccessorTau550err = &collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550_er"));
+    collocatedAccessorAlpha550 = &collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("A550"));
+    collocatedAccessorAmin = &collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("AMIN"));
 }
 
 void Aei::process(Context& context) {
     context.getLogging().progress("Performing aerosol interpolation...", getId());
     const Accessor& accessorAmin = averagedSegment->getAccessor("AMIN");
     const Accessor& accessorFlags = averagedSegment->getAccessor("SYN_flags");
-
-    Accessor& collocatedAccessorTau550 = collocatedSegment->getAccessor("T550");
-    Accessor& collocatedAccessorTau550err = collocatedSegment->getAccessor("T550_er");
-    Accessor& collocatedAccessorAlpha550 = collocatedSegment->getAccessor("A550");
-    Accessor& collocatedAccessorAmin = collocatedSegment->getAccessor("AMIN");
 
     Accessor& collocatedAccessorFlags = collocatedSegment->getAccessor("SYN_flags");
 
@@ -99,9 +94,9 @@ void Aei::process(Context& context) {
                 }
 
                 const size_t collocatedIndex = collocatedGrid->getIndex(k, l, m);
-                collocatedAccessorAlpha550.setDouble(collocatedIndex, alpha550);
-                collocatedAccessorTau550.setDouble(collocatedIndex, tau550);
-                collocatedAccessorTau550err.setDouble(collocatedIndex, tau550err);
+                collocatedAccessorAlpha550->setDouble(collocatedIndex, alpha550);
+                collocatedAccessorTau550->setDouble(collocatedIndex, tau550);
+                collocatedAccessorTau550err->setDouble(collocatedIndex, tau550err);
 
                 size_t averagedIndex;
                 if ((abs(l0 - l) <= (averagingFactor / 2)) && (abs(m0 - m) <= (averagingFactor / 2))) {
@@ -115,7 +110,7 @@ void Aei::process(Context& context) {
                 } else {
                     BOOST_THROW_EXCEPTION(logic_error("no averaged index found for collocated index k=" + lexical_cast<string>(k) + ",l=" + lexical_cast<string>(l) + ",m=" + lexical_cast<string>(m) ));
                 }
-                collocatedAccessorAmin.setShort(collocatedIndex, accessorAmin.getShort(averagedIndex));
+                collocatedAccessorAmin->setShort(collocatedIndex, accessorAmin.getShort(averagedIndex));
                 collocatedAccessorFlags.setUShort(collocatedIndex, accessorFlags.getUShort(averagedIndex));
             }
         }
