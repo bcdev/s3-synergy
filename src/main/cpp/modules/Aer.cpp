@@ -227,14 +227,21 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
 	valarray<size_t> tpiIndexes(1);
 	tiePointInterpolatorOlc.prepare(p->lat, p->lon, tpiWeights, tpiIndexes);
 
+	context.getLogging().progress("Setting up SZA tie point data...", "id");
 	p->sza = tiePointInterpolatorOlc.interpolate(szaTiePointsOlc, tpiWeights, tpiIndexes);
+	context.getLogging().progress("Setting up SAA tie point data...", "id");
 	p->saa = tiePointInterpolatorOlc.interpolate(saaTiePointsOlc, tpiWeights, tpiIndexes);
+	context.getLogging().progress("Setting up VZA tie point data...", "id");
 	p->vzaOlc = tiePointInterpolatorOlc.interpolate(vzaTiePointsOlc, tpiWeights, tpiIndexes);
+	context.getLogging().progress("Setting up VAA tie point data...", "id");
 	p->vaaOlc = tiePointInterpolatorOlc.interpolate(vaaTiePointsOlc, tpiWeights, tpiIndexes);
 
+	context.getLogging().progress("Setting up air pressure tie point data...", "id");
 	p->airPressure = tiePointInterpolatorOlc.interpolate(airPressureTiePoints, tpiWeights, tpiIndexes);
+	context.getLogging().progress("Setting up ozone tie point data...", "id");
 	p->ozone = tiePointInterpolatorOlc.interpolate(ozoneTiePoints, tpiWeights, tpiIndexes);
 	if (waterVapourTiePoints.size() != 0) {
+		context.getLogging().progress("Setting up water vapour tie point data...", "id");
 		p->waterVapour = tiePointInterpolatorOlc.interpolate(waterVapourTiePoints, tpiWeights, tpiIndexes);
 	} else {
 		p->waterVapour = 0.2;
