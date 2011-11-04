@@ -21,9 +21,9 @@ using std::min;
 using std::numeric_limits;
 using std::set;
 
-static void copyValarray(const valarray<double>& source, valarray<double>& target) {
+static void copyValarray(const std::valarray<double>& source, std::valarray<double>& target) {
 	target.resize(source.size());
-	copy(source[0], source[source.size()], target[0]);
+	copy(&source[0], &source[source.size()], &target[0]);
 }
 
 class PixelInitializer {
@@ -100,20 +100,6 @@ PixelInitializer::PixelInitializer(const Context& context) :
 	const Segment& olciTiepointSegment = context.getSegment(Constants::SEGMENT_OLC_TP);
 	const Segment& slnTiepointSegment = context.getSegment(Constants::SEGMENT_SLN_TP);
 	const Segment& sloTiepointSegment = context.getSegment(Constants::SEGMENT_SLO_TP);
-
-	const Accessor& latOlc = olciTiepointSegment.getAccessor("OLC_TP_lat");
-	const Accessor& lonOlc = olciTiepointSegment.getAccessor("OLC_TP_lon");
-	const Accessor& latSln = slnTiepointSegment.getAccessor("SLN_TP_lat");
-	const Accessor& lonSln = slnTiepointSegment.getAccessor("SLN_TP_lon");
-	const Accessor& latSlo = sloTiepointSegment.getAccessor("SLO_TP_lat");
-	const Accessor& lonSlo = sloTiepointSegment.getAccessor("SLO_TP_lon");
-
-	const valarray<double> lonTiePointsOlc = lonOlc.getDoubles();
-	const valarray<double> latTiePointsOlc = latOlc.getDoubles();
-	const valarray<double> lonTiePointsSln = lonSln.getDoubles();
-	const valarray<double> latTiePointsSln = latSln.getDoubles();
-	const valarray<double> lonTiePointsSlo = lonSlo.getDoubles();
-	const valarray<double> latTiePointsSlo = latSlo.getDoubles();
 
 	const Accessor& szaOlc = olciTiepointSegment.getAccessor("SZA");
 	const Accessor& saaOlc = olciTiepointSegment.getAccessor("SAA");
