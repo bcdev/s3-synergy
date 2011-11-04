@@ -21,6 +21,11 @@ using std::min;
 using std::numeric_limits;
 using std::set;
 
+static void copyValarray(const valarray<double>& source, valarray<double>& target) {
+	target.resize(source.size());
+	copy(source[0], source[source.size()], target[0]);
+}
+
 class PixelInitializer {
 
 public:
@@ -119,22 +124,24 @@ PixelInitializer::PixelInitializer(const Context& context) :
 	const Accessor& vzaSlo = sloTiepointSegment.getAccessor("SLO_VZA");
 	const Accessor& vaaSlo = sloTiepointSegment.getAccessor("SLO_VAA");
 
-	szaTiePointsOlc = szaOlc.getDoubles();
-	saaTiePointsOlc = saaOlc.getDoubles();
-	vzaTiePointsOlc = vzaOlc.getDoubles();
-	vaaTiePointsOlc = vaaOlc.getDoubles();
-	vzaTiePointsSln = vzaSln.getDoubles();
-	vzaTiePointsSlo = vzaSlo.getDoubles();
-	vaaTiePointsSln = vaaSln.getDoubles();
-	vaaTiePointsSlo = vaaSlo.getDoubles();
 
-	ozoneTiePoints = olciTiepointSegment.getAccessor("ozone").getDoubles();
-	airPressureTiePoints = olciTiepointSegment.getAccessor("air_pressure").getDoubles();
+	copyValarray(szaOlc.getDoubles(), szaTiePointsOlc);
+	copyValarray(saaOlc.getDoubles(), saaTiePointsOlc);
+	copyValarray(vzaOlc.getDoubles(), vzaTiePointsOlc);
+	copyValarray(vaaOlc.getDoubles(), vaaTiePointsOlc);
+	copyValarray(vzaSln.getDoubles(), vzaTiePointsSln);
+	copyValarray(vzaSlo.getDoubles(), vzaTiePointsSlo);
+	copyValarray(vaaSln.getDoubles(), vaaTiePointsSln);
+	copyValarray(vaaSlo.getDoubles(), vaaTiePointsSlo);
+
+	copyValarray(olciTiepointSegment.getAccessor("ozone").getDoubles(), ozoneTiePoints);
+	copyValarray(olciTiepointSegment.getAccessor("air_pressure").getDoubles(), airPressureTiePoints);
 
 	if (olciTiepointSegment.hasVariable("water_vapour")) {
-		waterVapourTiePoints = olciTiepointSegment.getAccessor("water_vapour").getDoubles();
+		copyValarray(olciTiepointSegment.getAccessor("water_vapour").getDoubles(), waterVapourTiePoints);
 	}
 }
+
 
 PixelInitializer::~PixelInitializer() {
 }
