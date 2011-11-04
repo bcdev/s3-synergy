@@ -202,7 +202,9 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
 	/*
 	 * Ozone coefficients
 	 */
-	copy(&cO3[0], &cO3[30], &(p->cO3[0]));
+	for (size_t i = 0; i < 30; i++) {
+		p->cO3[i] = cO3[i];
+	}
 
 	context.getLogging().progress("Setting up flags...", "id");
 	/*
