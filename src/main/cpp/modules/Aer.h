@@ -40,7 +40,7 @@ private:
 	shared_ptr<ErrorMetric> em;
 
 	static bool isSolarIrradianceFillValue(double f, const valarray<double> fillValues, int16_t index);
-	map<size_t, shared_ptr<Pixel> > getPixels(Context& context, long firstL, long lastL) const;
+	map<size_t, shared_ptr<Pixel> >& getPixels(Context& context, long firstL, long lastL, map<size_t, shared_ptr<Pixel> >& pixels) const;
 	void putPixels(map<size_t, shared_ptr<Pixel> >& pixels) const;
 	const vector<long> createIndices(long base, long bound) const;
 	void readAuxdata(Context& context);

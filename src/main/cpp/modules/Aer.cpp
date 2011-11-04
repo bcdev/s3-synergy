@@ -281,8 +281,9 @@ void Aer::process(Context& context) {
 		lastL -= 10;
 	}
 
+	map<size_t, shared_ptr<Pixel> > pixels;
 	map<size_t, shared_ptr<Pixel> > missingPixels;
-	map<size_t, shared_ptr<Pixel> > pixels = getPixels(context, firstL, lastL);
+	pixels = getPixels(context, firstL, lastL, pixels);
 
 	for (size_t i = 0; i < pixels.size(); i++) {
 		shared_ptr<Pixel> p = pixels[i];
@@ -369,9 +370,8 @@ void Aer::process(Context& context) {
 	context.setFirstRequiredL(*averagedSegment, *this, lastL + 1);
 }
 
-map<size_t, shared_ptr<Pixel> > Aer::getPixels(Context& context, long firstL, long lastL) const {
+map<size_t, shared_ptr<Pixel> >& Aer::getPixels(Context& context, long firstL, long lastL, map<size_t, shared_ptr<Pixel> >& pixels) const {
 	const PixelInitializer pixelInitializer(context);
-	map<size_t, shared_ptr<Pixel> > pixels;
 	for (long l = firstL; l <= lastL; l++) {
 		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
