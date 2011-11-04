@@ -145,6 +145,8 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
 	const size_t pixelIndex = averagedGrid.getIndex(k, l, m);
 	shared_ptr<Pixel> p = shared_ptr<Pixel>(new Pixel(k, l, m, pixelIndex));
 
+	context.getLogging().progress("Setting up radiances...", "id");
+
 	/*
 	 * Radiances
 	 */
@@ -161,6 +163,9 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
 	 * SDRs
 	 */
 	// not needed
+
+	context.getLogging().progress("Setting up solar irradiances...", "id");
+
 	/*
 	 * Solar irradiances
 	 */
@@ -192,11 +197,14 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
 		}
 	}
 
+	context.getLogging().progress("Setting up ozone...", "id");
+
 	/*
 	 * Ozone coefficients
 	 */
 	copy(&cO3[0], &cO3[30], &(p->cO3[0]));
 
+	context.getLogging().progress("Setting up flags...", "id");
 	/*
 	 * Flags
 	 */
@@ -204,12 +212,14 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
 	// set flags SYN_success, SYN_negative_curvature, SYN_too_low, and SY_high_error to false
 	p->synFlags &= 3887;
 
+	context.getLogging().progress("Setting up geoloction...", "id");
 	/*
 	 * Geo-location
 	 */
 	p->lat = lat.getDouble(pixelIndex);
 	p->lon = lon.getDouble(pixelIndex);
 
+	context.getLogging().progress("Setting up tie point data...", "id");
 	/*
 	 * Tie Point data
 	 */
@@ -237,6 +247,8 @@ shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
 	tiePointInterpolatorSlo.prepare(p->lat, p->lon, tpiWeights, tpiIndexes);
 	p->vaaSlo = tiePointInterpolatorSlo.interpolate(vaaTiePointsSlo, tpiWeights, tpiIndexes);
 	p->vzaSlo = tiePointInterpolatorSlo.interpolate(vzaTiePointsSlo, tpiWeights, tpiIndexes);
+
+	context.getLogging().progress("Setting up anything...", "id");
 
 	/*
 	 * Anything else
