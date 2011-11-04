@@ -284,6 +284,7 @@ void Aer::process(Context& context) {
 	vector<shared_ptr<Pixel> > pixels;
 	map<size_t, shared_ptr<Pixel> > pixelMap;
 	map<size_t, shared_ptr<Pixel> > missingPixels;
+	context.getLogging().progress("Getting pixels...", getId());
 	pixels = getPixels(context, firstL, lastL, pixels);
 
 	foreach(shared_ptr<Pixel> p, pixels)
@@ -374,6 +375,7 @@ void Aer::process(Context& context) {
 
 vector<shared_ptr<Pixel> >& Aer::getPixels(Context& context, long firstL, long lastL, vector<shared_ptr<Pixel> >& pixels) const {
 	const PixelInitializer pixelInitializer(context);
+	context.getLogging().progress("Initializing pixels...", getId());
 	for (long l = firstL; l <= lastL; l++) {
 		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
