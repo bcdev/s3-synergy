@@ -286,7 +286,6 @@ void Aer::process(Context& context) {
 	map<size_t, shared_ptr<Pixel> > missingPixels;
 	pixels = getPixels(context, firstL, lastL, pixels);
 
-	typedef pair<size_t, shared_ptr<Pixel> > Entry;
 	foreach(shared_ptr<Pixel> p, pixels)
 			{
 				if (p->k == 0 && p->m == 0) {
@@ -302,6 +301,7 @@ void Aer::process(Context& context) {
 	 long N_b = 1;
 	 long I = 0;
 
+	 typedef pair<size_t, shared_ptr<Pixel> > Entry;
 	 while (!missingPixels.empty()) {
 		if (I >= 5 && I <= 12) {
 			N_b++;
@@ -328,7 +328,7 @@ void Aer::process(Context& context) {
 
 												const size_t pixelIndex = averagedGrid->getIndex(k, i_prime, j_prime);
 												if (!contains(missingPixels, pixelIndex) || contains(completedPixels, pixelIndex)) {
-													shared_ptr<Pixel> q = pixels[pixelIndex];
+													shared_ptr<Pixel> q = pixelMap[pixelIndex];
 
 													tau_550 += q->tau550;
 													deltaTau_500 += q->tau550err;
@@ -453,7 +453,6 @@ void Aer::applyMedianFiltering(map<size_t, shared_ptr<Pixel> >& pixels, long fir
 				for (long l = p->l - 1; l <= p->l + 1; l++) {
 					for (long m = p->m - 1; m <= p->m + 1; m++) {
 						if (averagedGrid->isValidPosition(p->k, l, m)) {
-							const size_t index = averagedGrid->getIndex(p->k, l, m);
 							tau550Values[i] = p->tau550;
 							tau550ErrValues[i] = p->tau550err;
 							i++;
