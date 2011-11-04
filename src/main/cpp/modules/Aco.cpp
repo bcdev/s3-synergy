@@ -139,7 +139,7 @@ void Aco::process(Context& context) {
 	const long lastL = context.getLastComputableL(collocatedSegment, *this);
 	context.getLogging().debug("Segment [" + collocatedSegment.toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
 
-	const double delta3 = getAuxdataProvider(context, Constants::AUX_ID_SYCPAX).getDouble("delta_rt");
+	const double delta3 = getAuxdataProvider(context, Constants::AUX_ID_SYRTAX).getDouble("delta_rt");
 
 #pragma omp parallel for
 	for (long l = firstL; l <= lastL; l++) {
