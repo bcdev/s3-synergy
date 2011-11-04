@@ -281,14 +281,14 @@ void Aer::process(Context& context) {
 		lastL -= 10;
 	}
 
-	map<size_t, shared_ptr<Pixel> > pixels;
+	vector<shared_ptr<Pixel> > pixels;
+	map<size_t, shared_ptr<Pixel> > pixelMap;
 	map<size_t, shared_ptr<Pixel> > missingPixels;
 	pixels = getPixels(context, firstL, lastL, pixels);
 
 	typedef pair<size_t, shared_ptr<Pixel> > Entry;
-	foreach(Entry entry, pixels)
+	foreach(shared_ptr<Pixel> p, pixels)
 			{
-				shared_ptr<Pixel> p = entry.second;
 				if (p->k == 0 && p->m == 0) {
 					context.getLogging().debug("... for line l = " + lexical_cast<string>(p->l), getId());
 				}
@@ -296,6 +296,7 @@ void Aer::process(Context& context) {
 				if (p->amin == 0) {
 					missingPixels[p->index] = p;
 				}
+				pixelMap[p->index] = p;
 			}
 
 	 long N_b = 1;
@@ -365,18 +366,18 @@ void Aer::process(Context& context) {
 				}
 		I++;
 	}
-	applyMedianFiltering(pixels, firstL, lastL);
+	applyMedianFiltering(pixelMap, firstL, lastL);
 	putPixels(pixels);
 	context.setLastComputedL(*averagedSegment, *this, lastL);
 	context.setFirstRequiredL(*averagedSegment, *this, lastL + 1);
 }
 
-map<size_t, shared_ptr<Pixel> >& Aer::getPixels(Context& context, long firstL, long lastL, map<size_t, shared_ptr<Pixel> >& pixels) const {
+vector<shared_ptr<Pixel> >& Aer::getPixels(Context& context, long firstL, long lastL, vector<shared_ptr<Pixel> >& pixels) const {
 	const PixelInitializer pixelInitializer(context);
 	for (long l = firstL; l <= lastL; l++) {
 		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
-				pixels[averagedGrid->getIndex(k, l, m)] = pixelInitializer.getPixel(k, l, m);
+				pixels.push_back(pixelInitializer.getPixel(k, l, m));
 			}
 		}
 	}
@@ -491,17 +492,15 @@ void Aer::readAuxdata(Context& context) {
 	aerosolAngstromExponents = radiometricAuxdataProvider.getVectorDouble("A550");
 }
 
-void Aer::putPixels(map<size_t, shared_ptr<Pixel> >& pixels) const {
+void Aer::putPixels(vector<shared_ptr<Pixel> >& pixels) const {
 	Accessor& amin = averagedSegment->getAccessor("AMIN");
 	Accessor& t550 = averagedSegment->getAccessor("T550");
 	Accessor& t550err = averagedSegment->getAccessor("T550_er");
 	Accessor& a550 = averagedSegment->getAccessor("A550");
 	Accessor& synFlags = averagedSegment->getAccessor("SYN_flags");
 
-	typedef pair<size_t, shared_ptr<Pixel> > Entry;
-	foreach(Entry entry, pixels)
+	foreach(shared_ptr<Pixel> p, pixels)
 			{
-				shared_ptr<Pixel> p = entry.second;
 				amin.setUByte(p->index, p->amin);
 				if (p->tau550Filtered == Constants::FILL_VALUE_DOUBLE) {
 					t550.setFillValue(p->index);
