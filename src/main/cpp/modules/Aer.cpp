@@ -278,112 +278,104 @@ void Aer::process(Context& context) {
 	long firstL = context.getFirstComputableL(*averagedSegment, *this);
 	long lastL = context.getLastComputableL(*averagedSegment, *this);
 	if (lastL < averagedGrid->getMaxL()) {
-//		lastL -= 10;
+		lastL -= 10;
 	}
 
 	map<size_t, shared_ptr<Pixel> > missingPixels;
-//	vector<shared_ptr<Pixel> > pixels = getPixels(context, firstL, lastL < averagedGrid->getMaxL() ? lastL + 1 : lastL);
-	vector<shared_ptr<Pixel> > pixels = getPixels(context, firstL, lastL);
-
-	shared_ptr<Pixel> previous;
+	map<size_t, shared_ptr<Pixel> > pixels = getPixels(context, firstL, lastL);
 
 	for (size_t i = 0; i < pixels.size(); i++) {
 		shared_ptr<Pixel> p = pixels[i];
 		if (p->k == 0 && p->m == 0) {
 			context.getLogging().debug("... for line l = " + lexical_cast<string>(p->l), getId());
 		}
-		aer_s(p, previous);
+		aer_s(p);
 		if (p->amin == 0) {
-			//	missingPixels[p->index] = p;
-			previous = shared_ptr<Pixel>();
-		} else {
-			previous = p;
+			missingPixels[p->index] = p;
 		}
 	}
 
-	/*
 	 long N_b = 1;
 	 long I = 0;
 
 	 while (!missingPixels.empty()) {
-	 if (I >= 5 && I <= 12) {
-	 N_b++;
-	 }
-	 set<size_t> completedPixels;
-	 typedef pair<size_t, shared_ptr<Pixel> > Entry;
-	 foreach(Entry entry, missingPixels)
-	 {
-	 shared_ptr<Pixel> p = entry.second;
-	 double tau_550, deltaTau_500, alpha550 = 0;
-	 uint8_t amin = 0;
-	 uint32_t K = 0;
-	 const long k = p->k;
-	 const long l_prime = p->l;
-	 const long m_prime = p->m;
-	 const vector<long> iPrimeIndices = createIndices(p->l, N_b);
-	 const vector<long> jPrimeIndices = createIndices(p->m, N_b);
-	 long minIDiff = numeric_limits<long>::max();
-	 long minJDiff = numeric_limits<long>::max();
-	 foreach(long i_prime, iPrimeIndices)
-	 {
-	 foreach(long j_prime, jPrimeIndices)
-	 {
-	 if (averagedGrid->isValidPosition(k, i_prime, j_prime)) {
+		if (I >= 5 && I <= 12) {
+			N_b++;
+		}
+		set<size_t> completedPixels;
+		typedef pair<size_t, shared_ptr<Pixel> > Entry;
+		foreach(Entry entry, missingPixels)
+				{
+					shared_ptr<Pixel> p = entry.second;
+					double tau_550, deltaTau_500, alpha550 = 0;
+					uint8_t amin = 0;
+					uint32_t K = 0;
+					const long k = p->k;
+					const long l_prime = p->l;
+					const long m_prime = p->m;
+					const vector<long> iPrimeIndices = createIndices(p->l, N_b);
+					const vector<long> jPrimeIndices = createIndices(p->m, N_b);
+					long minIDiff = numeric_limits<long>::max();
+					long minJDiff = numeric_limits<long>::max();
+					foreach(long i_prime, iPrimeIndices)
+							{
+								foreach(long j_prime, jPrimeIndices)
+										{
+											if (averagedGrid->isValidPosition(k, i_prime, j_prime)) {
 
-	 const size_t pixelIndex = averagedGrid->getIndex(k, i_prime, j_prime);
-	 if (!contains(missingPixels, pixelIndex) || contains(completedPixels, pixelIndex)) {
-	 shared_ptr<Pixel> q = pixels[pixelIndex];
+												const size_t pixelIndex = averagedGrid->getIndex(k, i_prime, j_prime);
+												if (!contains(missingPixels, pixelIndex) || contains(completedPixels, pixelIndex)) {
+													shared_ptr<Pixel> q = pixels[pixelIndex];
 
-	 tau_550 += q->tau550;
-	 deltaTau_500 += q->tau550err;
-	 alpha550 += q->alpha550;
+													tau_550 += q->tau550;
+													deltaTau_500 += q->tau550err;
+													alpha550 += q->alpha550;
 
-	 long iDiff = std::abs(i_prime - l_prime);
-	 if (iDiff < minIDiff) {
-	 minIDiff = iDiff;
-	 }
-	 long jDiff = std::abs(j_prime - m_prime);
-	 if (jDiff < minIDiff) {
-	 minIDiff = iDiff;
-	 }
+													long iDiff = std::abs(i_prime - l_prime);
+													if (iDiff < minIDiff) {
+														minIDiff = iDiff;
+													}
+													long jDiff = std::abs(j_prime - m_prime);
+													if (jDiff < minIDiff) {
+														minIDiff = iDiff;
+													}
 
-	 if (minIDiff == iDiff && minJDiff == jDiff) {
-	 amin = q->amin;
-	 }
-	 K++;
-	 }
-	 }
-	 }
-	 }
-	 if (K > 1) {
-	 p->tau550 = tau_550 / K;
-	 p->tau550err = deltaTau_500 / K;
-	 p->alpha550 = alpha550 / K;
-	 p->amin = amin;
-	 p->synFlags |= Constants::SY2_AEROSOL_FILLED;
-	 completedPixels.insert(p->index);
-	 }
-	 }
-	 foreach(size_t index, completedPixels)
-	 {
-	 missingPixels.erase(index);
-	 }
-	 I++;
-	 }
-	 */
-	//applyMedianFiltering(pixels, firstL, lastL);
+													if (minIDiff == iDiff && minJDiff == jDiff) {
+														amin = q->amin;
+													}
+													K++;
+												}
+											}
+										}
+							}
+					if (K > 1) {
+						p->tau550 = tau_550 / K;
+						p->tau550err = deltaTau_500 / K;
+						p->alpha550 = alpha550 / K;
+						p->amin = amin;
+						p->synFlags |= Constants::SY2_AEROSOL_FILLED_FLAG;
+						completedPixels.insert(p->index);
+					}
+				}
+		foreach(size_t index, completedPixels)
+				{
+					missingPixels.erase(index);
+				}
+		I++;
+	}
+	applyMedianFiltering(pixels, firstL, lastL);
 	putPixels(pixels);
 	context.setLastComputedL(*averagedSegment, *this, lastL);
 	context.setFirstRequiredL(*averagedSegment, *this, lastL + 1);
 }
 
-vector<shared_ptr<Pixel> > Aer::getPixels(Context& context, long firstL, long lastL) const {
+map<size_t, shared_ptr<Pixel> > Aer::getPixels(Context& context, long firstL, long lastL) const {
 	const PixelInitializer pixelInitializer(context);
-	vector<shared_ptr<Pixel> > pixels;
+	map<size_t, shared_ptr<Pixel> > pixels;
 	for (long l = firstL; l <= lastL; l++) {
 		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
-				pixels.push_back(pixelInitializer.getPixel(k, l, m));
+				pixels[averagedGrid->getIndex(k, l, m)] = pixelInitializer.getPixel(k, l, m);
 			}
 		}
 	}
@@ -400,7 +392,7 @@ const vector<long> Aer::createIndices(long base, long bound) const {
 	return result;
 }
 
-void Aer::aer_s(shared_ptr<Pixel> p, shared_ptr<Pixel> previous) {
+void Aer::aer_s(shared_ptr<Pixel> p) {
 	const bool isPartlyCloudy = (p->synFlags & Constants::SY2_PARTLY_CLOUDY_FLAG) == Constants::SY2_PARTLY_CLOUDY_FLAG;
 	const bool isPartlyWater = (p->synFlags & Constants::SY2_PARTLY_WATER_FLAG) == Constants::SY2_PARTLY_WATER_FLAG;
 
@@ -411,26 +403,14 @@ void Aer::aer_s(shared_ptr<Pixel> p, shared_ptr<Pixel> previous) {
 	for (size_t i = 0; i < amins.size(); i++) {
 		const int16_t amin = amins[i];
 		Pixel q = Pixel(*p);
-		if (true /*previous.get() == 0*/) {
-			q.nu[0] = initialNu[0];
-			q.nu[1] = initialNu[1];
-			for (size_t j = 0; j < initialOmega.size(); j++) {
-				q.omega[j] = initialOmega[j];
-			}
-			q.tau550 = initialTau550;
-			q.c1 = em->computeNdvi(q);
-			q.c2 = 1.0 - q.c1;
-		} else {
-			// TODO - ensure that previous pixel is a neighbour
-			q.nu[0] = previous->nu[0];
-			q.nu[1] = previous->nu[1];
-			for (size_t j = 0; j < initialOmega.size(); j++) {
-				q.omega[j] = previous->omega[j];
-			}
-			q.tau550 = previous->tau550;
-			q.c1 = previous->c1;
-			q.c2 = previous->c2;
+		q.nu[0] = initialNu[0];
+		q.nu[1] = initialNu[1];
+		for (size_t j = 0; j < initialOmega.size(); j++) {
+			q.omega[j] = initialOmega[j];
 		}
+		q.tau550 = initialTau550;
+		q.c1 = em->computeNdvi(q);
+		q.c2 = 1.0 - q.c1;
 		q.amin = amin;
 		bool success = em->findMinimum(q);
 		if (success && q.E2 < p->E2) {
@@ -459,7 +439,7 @@ void Aer::aer_s(shared_ptr<Pixel> p, shared_ptr<Pixel> previous) {
 	}
 }
 
-void Aer::applyMedianFiltering(vector<shared_ptr<Pixel> >& pixels, long firstL, long lastL) {
+void Aer::applyMedianFiltering(map<size_t, shared_ptr<Pixel> >& pixels, long firstL, long lastL) {
 	valarray<double> tau550Values(9);
 	valarray<double> tau550ErrValues(9);
 	for (long l = firstL; l <= lastL; l++) {
@@ -472,8 +452,8 @@ void Aer::applyMedianFiltering(vector<shared_ptr<Pixel> >& pixels, long firstL, 
 					for (long m = p->m - 1; m <= p->m + 1; m++) {
 						if (averagedGrid->isValidPosition(p->k, l, m)) {
 							const size_t index = averagedGrid->getIndex(p->k, l, m);
-							tau550Values[i] = pixels.at(index)->tau550;
-							tau550ErrValues[i] = pixels.at(index)->tau550err;
+							tau550Values[i] = p->tau550;
+							tau550ErrValues[i] = p->tau550err;
 							i++;
 						}
 					}
@@ -510,30 +490,33 @@ void Aer::readAuxdata(Context& context) {
 	aerosolAngstromExponents = radiometricAuxdataProvider.getVectorDouble("A550");
 }
 
-void Aer::putPixels(vector<shared_ptr<Pixel> > pixels) const {
+void Aer::putPixels(map<size_t, shared_ptr<Pixel> >& pixels) const {
 	Accessor& amin = averagedSegment->getAccessor("AMIN");
 	Accessor& t550 = averagedSegment->getAccessor("T550");
 	Accessor& t550err = averagedSegment->getAccessor("T550_er");
 	Accessor& a550 = averagedSegment->getAccessor("A550");
 	Accessor& synFlags = averagedSegment->getAccessor("SYN_flags");
 
-	foreach(shared_ptr<Pixel> p, pixels)
+	typedef pair<size_t, shared_ptr<Pixel> > Entry;
+	foreach(Entry entry, pixels)
 			{
+				shared_ptr<Pixel> p = entry.second;
 				amin.setUByte(p->index, p->amin);
-				// TODO - revert to commented lines
-//				t550.setDouble(p->index, p->tau550Filtered);
-				if (p->tau550 == Constants::FILL_VALUE_DOUBLE) {
+				if (p->tau550Filtered == Constants::FILL_VALUE_DOUBLE) {
 					t550.setFillValue(p->index);
 				} else {
-					t550.setDouble(p->index, p->tau550);
+					t550.setDouble(p->index, p->tau550Filtered);
 				}
-//				t550err.setDouble(p->index, p->tau550errFiltered);
-				if (p->tau550err == Constants::FILL_VALUE_DOUBLE) {
+				if (p->tau550errFiltered == Constants::FILL_VALUE_DOUBLE) {
 					t550err.setFillValue(p->index);
 				} else {
-					t550err.setDouble(p->index, p->tau550err);
+					t550err.setDouble(p->index, p->tau550errFiltered);
 				}
-				// a550.setDouble(p->index, p->alpha550);
+				if (p->alpha550 == Constants::FILL_VALUE_DOUBLE) {
+					a550.setFillValue(p->index);
+				} else {
+					a550.setDouble(p->index, p->alpha550);
+				}
 				synFlags.setUShort(p->index, p->synFlags);
 			}
 }
