@@ -54,7 +54,7 @@ private:
 	vector<Accessor*> solarIrradiancesSln;
 	vector<Accessor*> solarIrradiancesSlo;
 
-	valarray<double> cO3;
+	const valarray<double>& cO3;
 
 	valarray<double> szaTiePointsOlc;
 	valarray<double> saaTiePointsOlc;
@@ -77,7 +77,8 @@ PixelInitializer::PixelInitializer(const Context& context) :
 				averagedSegment.getAccessor("latitude")), lon(averagedSegment.getAccessor("longitude")), tiePointInterpolatorOlc(
 				context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("OLC_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("OLC_TP_lat").getDoubles()), tiePointInterpolatorSln(
 				context.getSegment(Constants::SEGMENT_SLN_TP).getAccessor("SLN_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_SLN_TP).getAccessor("SLN_TP_lat").getDoubles()), tiePointInterpolatorSlo(
-				context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lat").getDoubles()) {
+				context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lat").getDoubles()),
+				cO3(((AuxdataProvider&) context.getObject(Constants::AUX_ID_SYRTAX)).getVectorDouble("C_O3")) {
 	for (size_t b = 0; b < 30; b++) {
 		radiances.push_back(&averagedSegment.getAccessor("L_" + lexical_cast<string>(b + 1)));
 	}
@@ -90,9 +91,6 @@ PixelInitializer::PixelInitializer(const Context& context) :
 	for (size_t b = 24; b < 30; b++) {
 		solarIrradiancesSlo.push_back(&averagedSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(b + 1)));
 	}
-
-	AuxdataProvider& radiometricAuxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUX_ID_SYRTAX);
-	cO3 = radiometricAuxdataProvider.getVectorDouble("C_O3");
 
 	const Segment& olciTiepointSegment = context.getSegment(Constants::SEGMENT_OLC_TP);
 	const Segment& slnTiepointSegment = context.getSegment(Constants::SEGMENT_SLN_TP);
