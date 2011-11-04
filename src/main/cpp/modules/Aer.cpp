@@ -285,16 +285,18 @@ void Aer::process(Context& context) {
 	map<size_t, shared_ptr<Pixel> > missingPixels;
 	pixels = getPixels(context, firstL, lastL, pixels);
 
-	for (size_t i = 0; i < pixels.size(); i++) {
-		shared_ptr<Pixel> p = pixels[i];
-		if (p->k == 0 && p->m == 0) {
-			context.getLogging().debug("... for line l = " + lexical_cast<string>(p->l), getId());
-		}
-		aer_s(p);
-		if (p->amin == 0) {
-			missingPixels[p->index] = p;
-		}
-	}
+	typedef pair<size_t, shared_ptr<Pixel> > Entry;
+	foreach(Entry entry, pixels)
+			{
+				shared_ptr<Pixel> p = entry.second;
+				if (p->k == 0 && p->m == 0) {
+					context.getLogging().debug("... for line l = " + lexical_cast<string>(p->l), getId());
+				}
+				aer_s(p);
+				if (p->amin == 0) {
+					missingPixels[p->index] = p;
+				}
+			}
 
 	 long N_b = 1;
 	 long I = 0;
@@ -304,7 +306,6 @@ void Aer::process(Context& context) {
 			N_b++;
 		}
 		set<size_t> completedPixels;
-		typedef pair<size_t, shared_ptr<Pixel> > Entry;
 		foreach(Entry entry, missingPixels)
 				{
 					shared_ptr<Pixel> p = entry.second;
