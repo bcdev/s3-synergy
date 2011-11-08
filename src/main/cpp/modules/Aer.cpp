@@ -380,7 +380,6 @@ valarray<Pixel>& Aer::getPixels(Context& context, valarray<Pixel>& pixels) const
 		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
 				const size_t index = averagedGrid->getIndex(k, l, m);
-				context.getLogging().debug("getting pixel index = " + lexical_cast<string>(index), "");
 				pixelInitializer.getPixel(k, l, m, pixels[index]);
 			}
 		}
