@@ -15,7 +15,7 @@ using std::copy;
 using std::valarray;
 
 struct Pixel {
-	Pixel() : k(0), l(0), m(0), index(0) {
+	Pixel() : k(0), l(0), m(0), index(0), radiances(30), sdrs(30), solarIrradiances(30), cO3(30), nu(2), omega(6) {
 
 	}
 
