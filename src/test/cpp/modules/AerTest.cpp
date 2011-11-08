@@ -141,7 +141,7 @@ void AerTest::testAer_s() {
     p.E2 = numeric_limits<double>::max();
 
 	ErrorMetric em(*context);
-    aer->aer_s(p, em);
+    aer->retrieveAerosolProperties(p, em);
 }
 
 void AerTest::testAer() {

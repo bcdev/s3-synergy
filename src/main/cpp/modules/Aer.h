@@ -37,13 +37,10 @@ private:
 	valarray<double> initialOmega;
 	valarray<double> aerosolAngstromExponents;
 
-	static bool isSolarIrradianceFillValue(double f, const valarray<double> fillValues, int16_t index);
-	valarray<Pixel>& getPixels(Context& context, valarray<Pixel>& pixels) const;
+	void getPixels(Context& context, valarray<Pixel>& pixels) const;
 	void putPixels(const valarray<Pixel>& pixels, long firstL, long lastL) const;
-	const vector<long> createIndices(long base, long bound) const;
 	void readAuxdata(Context& context);
-	void aer_s(Pixel& p, ErrorMetric& em);
-	void applyMedianFiltering(map<size_t, shared_ptr<Pixel> >& pixels, long firstL, long lastL);
+	void retrieveAerosolProperties(Pixel& p, ErrorMetric& em);
 };
 
 #endif /* AER_H_ */

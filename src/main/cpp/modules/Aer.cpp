@@ -262,6 +262,7 @@ void Aer::process(Context& context) {
 
 	valarray<Pixel> pixels(averagedGrid->getSize());
 	getPixels(context, pixels);
+	set<size_t> missingPixelIndexes;
 
 	ErrorMetric em(context);
 
@@ -274,17 +275,7 @@ void Aer::process(Context& context) {
 				if (p.synFlags & (Constants::SY2_AEROSOL_SUCCESS_FLAG | Constants::SY2_AEROSOL_FILLED_FLAG) != 0) {
 					continue;
 				}
-				aer_s(p, em);
-			}
-		}
-	}
-
-	set<size_t> missingPixelIndexes;
-	for (long l = firstL; l <= lastL; l++) {
-		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
-			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
-				const size_t index = averagedGrid->getIndex(k, l, m);
-				Pixel& p = pixels[index];
+				retrieveAerosolProperties(p, em);
 				if (p.amin == 0) {
 					missingPixelIndexes.insert(index);
 				}
@@ -403,7 +394,7 @@ void Aer::process(Context& context) {
 	context.setFirstRequiredL(*averagedSegment, *this, lastFilterableL - 10);
 }
 
-valarray<Pixel>& Aer::getPixels(Context& context, valarray<Pixel>& pixels) const {
+void Aer::getPixels(Context& context, valarray<Pixel>& pixels) const {
 	const PixelInitializer pixelInitializer(context);
 	for (long l = averagedGrid->getFirstL(); l <= averagedGrid->getLastL(); l++) {
 		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
@@ -413,20 +404,9 @@ valarray<Pixel>& Aer::getPixels(Context& context, valarray<Pixel>& pixels) const
 			}
 		}
 	}
-	return pixels;
 }
 
-const vector<long> Aer::createIndices(long base, long bound) const {
-	vector<long> result;
-	for (long index = base - bound; index <= base + bound; index++) {
-		if (index != base) {
-			result.push_back(index);
-		}
-	}
-	return result;
-}
-
-void Aer::aer_s(Pixel& p, ErrorMetric& em) {
+void Aer::retrieveAerosolProperties(Pixel& p, ErrorMetric& em) {
 	const bool partlyCloudy = (p.synFlags & Constants::SY2_PARTLY_CLOUDY_FLAG) == Constants::SY2_PARTLY_CLOUDY_FLAG;
 	const bool partlyWater = (p.synFlags & Constants::SY2_PARTLY_WATER_FLAG) == Constants::SY2_PARTLY_WATER_FLAG;
 
@@ -469,33 +449,6 @@ void Aer::aer_s(Pixel& p, ErrorMetric& em) {
 			}
 		} else {
 			p.synFlags |= Constants::SY2_AEROSOL_TOO_LOW_FLAG;
-		}
-	}
-}
-
-void Aer::applyMedianFiltering(map<size_t, shared_ptr<Pixel> >& pixels, long firstL, long lastL) {
-	valarray<double> tau550Values(9);
-	valarray<double> tau550ErrValues(9);
-	for (long l = firstL; l <= lastL; l++) {
-		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
-			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
-				const size_t index = averagedGrid->getIndex(k, l, m);
-				shared_ptr<Pixel> p = pixels[index];
-				size_t i = 0;
-				for (long l = p->l - 1; l <= p->l + 1; l++) {
-					for (long m = p->m - 1; m <= p->m + 1; m++) {
-						if (averagedGrid->isValidPosition(p->k, l, m)) {
-							tau550Values[i] = p->tau550;
-							tau550ErrValues[i] = p->tau550Error;
-							i++;
-						}
-					}
-				}
-				std::nth_element(&tau550Values[0], &tau550Values[i / 2], &tau550Values[i + 1]);
-				std::nth_element(&tau550ErrValues[0], &tau550ErrValues[i / 2], &tau550ErrValues[i + 1]);
-				p->tau550Filtered = tau550Values[i / 2];
-				p->tau550ErrorFiltered = tau550ErrValues[i / 2];
-			}
 		}
 	}
 }
