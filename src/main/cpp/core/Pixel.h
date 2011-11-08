@@ -56,6 +56,11 @@ struct Pixel {
     }
 
     void assign(const Pixel& q) {
+    	k = q.k;
+    	l = q.l;
+    	m = q.m;
+    	index = q.index;
+
         alpha550 = q.alpha550;
         tau550 = q.tau550;
         tau550err = q.tau550err;
@@ -91,10 +96,10 @@ struct Pixel {
         copy(&q.cO3[0], &q.cO3[q.cO3.size()], &cO3[0]);
     }
 
-    const long k;
-    const long l;
-    const long m;
-    const size_t index;
+    long k;
+    long l;
+    long m;
+    size_t index;
 
     valarray<double> radiances;
     valarray<double> sdrs;

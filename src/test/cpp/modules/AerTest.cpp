@@ -69,76 +69,76 @@ void AerTest::tearDown() {
 
 void AerTest::testAer_s() {
     aer->readAuxdata(*context);
-    shared_ptr<Pixel> p = shared_ptr<Pixel>(new Pixel(0, 0, 1, 1));
-    p->tau550 = 0.5;
-    p->synFlags = 0;
-    p->lat = 57.10812;
-    p->lon = -3.3295166;
-    p->radiances[0] = 72.2334;
-    p->radiances[1] = 96.2851;
-    p->radiances[2] = 69.1;
-    p->radiances[3] = 59.4;
-    p->radiances[4] = 56.5;
-    p->radiances[5] = 82.0;
-    p->radiances[6] = 36.2;
-    p->radiances[7] = 28.6;
-    p->radiances[8] = 29.8;
-    p->radiances[9] = 31.7;
-    p->radiances[10] = 60.0;
-    p->radiances[11] = 166.7;
-    p->radiances[12] = 58.6;
-    p->radiances[13] = 160.5;
-    p->radiances[14] = 134.6;
-    p->radiances[15] = 129.5;
-    p->radiances[16] = 76.8;
-    p->radiances[17] = 72.0;
-    p->radiances[18] = 52.0;
-    p->radiances[19] = 22.1;
-    p->radiances[20] = 115.6;
-    p->radiances[21] = 0;
-    p->radiances[22] = 0;
-    p->radiances[23] = 0;
-    p->radiances[24] = Constants::FILL_VALUE_DOUBLE;
-    p->radiances[25] = Constants::FILL_VALUE_DOUBLE;
-    p->radiances[26] = Constants::FILL_VALUE_DOUBLE;
-    p->radiances[27] = Constants::FILL_VALUE_DOUBLE;
-    p->radiances[28] = Constants::FILL_VALUE_DOUBLE;
-    p->radiances[29] = Constants::FILL_VALUE_DOUBLE;
+    Pixel p(0, 0, 1, 1);
+    p.tau550 = 0.5;
+    p.synFlags = 0;
+    p.lat = 57.10812;
+    p.lon = -3.3295166;
+    p.radiances[0] = 72.2334;
+    p.radiances[1] = 96.2851;
+    p.radiances[2] = 69.1;
+    p.radiances[3] = 59.4;
+    p.radiances[4] = 56.5;
+    p.radiances[5] = 82.0;
+    p.radiances[6] = 36.2;
+    p.radiances[7] = 28.6;
+    p.radiances[8] = 29.8;
+    p.radiances[9] = 31.7;
+    p.radiances[10] = 60.0;
+    p.radiances[11] = 166.7;
+    p.radiances[12] = 58.6;
+    p.radiances[13] = 160.5;
+    p.radiances[14] = 134.6;
+    p.radiances[15] = 129.5;
+    p.radiances[16] = 76.8;
+    p.radiances[17] = 72.0;
+    p.radiances[18] = 52.0;
+    p.radiances[19] = 22.1;
+    p.radiances[20] = 115.6;
+    p.radiances[21] = 0;
+    p.radiances[22] = 0;
+    p.radiances[23] = 0;
+    p.radiances[24] = Constants::FILL_VALUE_DOUBLE;
+    p.radiances[25] = Constants::FILL_VALUE_DOUBLE;
+    p.radiances[26] = Constants::FILL_VALUE_DOUBLE;
+    p.radiances[27] = Constants::FILL_VALUE_DOUBLE;
+    p.radiances[28] = Constants::FILL_VALUE_DOUBLE;
+    p.radiances[29] = Constants::FILL_VALUE_DOUBLE;
 
     for(size_t i = 0; i < 18; i++) {
-        p->solarIrradiances[i] = 1530.923;
+        p.solarIrradiances[i] = 1530.923;
     }
     for(size_t i = 18; i < 24; i++) {
-        p->solarIrradiances[i] = 1802.648;
+        p.solarIrradiances[i] = 1802.648;
     }
     for(size_t i = 24; i < 30; i++) {
-        p->solarIrradiances[i] = 1490.223;
+        p.solarIrradiances[i] = 1490.223;
     }
 
     AuxdataProvider& rap = (AuxdataProvider&)context->getObject(Constants::AUX_ID_SYRTAX);
     valarray<double> cO3 = rap.getVectorDouble("C_O3");
-    copy(&cO3[0], &cO3[30], &(p->cO3[0]));
+    copy(&cO3[0], &cO3[30], &(p.cO3[0]));
 
-    p->sza = 44.426440;
-    p->saa = 134.502528;
-    p->vzaOlc = 56.402192;
-    p->vaaOlc = 93.820264;
-    p->vzaSln = 0;
-    p->vaaSln = Constants::FILL_VALUE_DOUBLE;
-    p->vzaSln = 0;
-    p->vaaSlo = Constants::FILL_VALUE_DOUBLE;
+    p.sza = 44.426440;
+    p.saa = 134.502528;
+    p.vzaOlc = 56.402192;
+    p.vaaOlc = 93.820264;
+    p.vzaSln = 0;
+    p.vaaSln = Constants::FILL_VALUE_DOUBLE;
+    p.vzaSln = 0;
+    p.vaaSlo = Constants::FILL_VALUE_DOUBLE;
 
-    p->ozone = 0.006393726;
-    p->airPressure = 1018.949;
-    p->waterVapour = 0.2;
+    p.ozone = 0.006393726;
+    p.airPressure = 1018.949;
+    p.waterVapour = 0.2;
 
-    p->tau550 = Constants::FILL_VALUE_DOUBLE;
-    p->tau550err = Constants::FILL_VALUE_DOUBLE;
-    p->tau550Filtered = Constants::FILL_VALUE_DOUBLE;
-    p->tau550errFiltered = Constants::FILL_VALUE_DOUBLE;
-    p->alpha550 = Constants::FILL_VALUE_DOUBLE;
-    p->amin = numeric_limits<short>::min();
-    p->E2 = numeric_limits<double>::max();
+    p.tau550 = Constants::FILL_VALUE_DOUBLE;
+    p.tau550err = Constants::FILL_VALUE_DOUBLE;
+    p.tau550Filtered = Constants::FILL_VALUE_DOUBLE;
+    p.tau550errFiltered = Constants::FILL_VALUE_DOUBLE;
+    p.alpha550 = Constants::FILL_VALUE_DOUBLE;
+    p.amin = numeric_limits<short>::min();
+    p.E2 = numeric_limits<double>::max();
 
 	aer->em = shared_ptr<ErrorMetric>(new ErrorMetric(*context));
     aer->aer_s(p);

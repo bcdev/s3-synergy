@@ -31,7 +31,7 @@ class PixelInitializer {
 public:
 	PixelInitializer(const Context& context);
 	~PixelInitializer();
-	shared_ptr<Pixel> getPixel(long k, long l, long m) const;
+	Pixel& getPixel(long k, long l, long m, Pixel& p) const;
 
 private:
 	const Context& context;
@@ -132,116 +132,109 @@ PixelInitializer::PixelInitializer(const Context& context) :
 PixelInitializer::~PixelInitializer() {
 }
 
-shared_ptr<Pixel> PixelInitializer::getPixel(long k, long l, long m) const {
-	const size_t pixelIndex = averagedGrid.getIndex(k, l, m);
-	shared_ptr<Pixel> p = shared_ptr<Pixel>(new Pixel(k, l, m, pixelIndex));
+Pixel& PixelInitializer::getPixel(long k, long l, long m, Pixel& p) const {
+	p.k = k;
+	p.l = l;
+	p.m = m;
+	p.index = averagedGrid.getIndex(k, l, m);
 
 	/*
 	 * Radiances
 	 */
 	for (size_t b = 0; b < 30; b++) {
-		Accessor& radiance = *radiances[b];
-		if (!radiance.isFillValue(pixelIndex)) {
-			p->radiances[b] = radiance.getDouble(pixelIndex);
+		const Accessor& radiance = *radiances[b];
+		if (!radiance.isFillValue(p.index)) {
+			p.radiances[b] = radiance.getDouble(p.index);
 		} else {
-			p->radiances[b] = Constants::FILL_VALUE_DOUBLE;
+			p.radiances[b] = Constants::FILL_VALUE_DOUBLE;
 		}
 	}
-
-	/*
-	 * SDRs
-	 */
-	// not needed
-
 	/*
 	 * Solar irradiances
 	 */
 	for (size_t i = 0; i < 18; i++) {
 		const Accessor& accessor = *solarIrradiancesOlc[i];
-		const size_t index = averagedGrid.getIndex(k, l, m);
-		if (!accessor.isFillValue(index)) {
-			p->solarIrradiances[i] = accessor.getDouble(index);
+		if (!accessor.isFillValue(p.index)) {
+			p.solarIrradiances[i] = accessor.getDouble(p.index);
 		} else {
-			p->solarIrradiances[i] = Constants::FILL_VALUE_DOUBLE;
+			p.solarIrradiances[i] = Constants::FILL_VALUE_DOUBLE;
 		}
 	}
 	for (size_t i = 0; i < 6; i++) {
 		const Accessor& accessor = *solarIrradiancesSln[i];
-		const size_t index = averagedGrid.getIndex(k, l, m);
-		if (!accessor.isFillValue(index)) {
-			p->solarIrradiances[i + 18] = accessor.getDouble(index);
+		if (!accessor.isFillValue(p.index)) {
+			p.solarIrradiances[i + 18] = accessor.getDouble(p.index);
 		} else {
-			p->solarIrradiances[i + 18] = Constants::FILL_VALUE_DOUBLE;
+			p.solarIrradiances[i + 18] = Constants::FILL_VALUE_DOUBLE;
 		}
 	}
 	for (size_t i = 0; i < 6; i++) {
 		const Accessor& accessor = *solarIrradiancesSlo[i];
-		const size_t index = averagedGrid.getIndex(k, l, m);
-		if (!accessor.isFillValue(index)) {
-			p->solarIrradiances[i + 24] = accessor.getDouble(index);
+		if (!accessor.isFillValue(p.index)) {
+			p.solarIrradiances[i + 24] = accessor.getDouble(p.index);
 		} else {
-			p->solarIrradiances[i + 24] = Constants::FILL_VALUE_DOUBLE;
+			p.solarIrradiances[i + 24] = Constants::FILL_VALUE_DOUBLE;
 		}
 	}
-
 	/*
 	 * Ozone coefficients
 	 */
+	// TODO - remove from pixel
 	for (size_t i = 0; i < 30; i++) {
-		p->cO3[i] = cO3[i];
+		p.cO3[i] = cO3[i];
 	}
 
 	/*
 	 * Flags
 	 */
-	p->synFlags = synFlags.getUShort(pixelIndex);
-	// set flags SYN_success, SYN_negative_curvature, SYN_too_low, and SY_high_error to false
-	p->synFlags &= 3887;
+	p.synFlags = synFlags.getUShort(p.index);
+	// set flags SYN_success, SYN_negative_curvature, SYN_too_low, and SYN_high_error to false
+	p.synFlags &= 3887;
 
 	/*
 	 * Geo-location
 	 */
-	p->lat = lat.getDouble(pixelIndex);
-	p->lon = lon.getDouble(pixelIndex);
+	p.lat = lat.getDouble(p.index);
+	p.lon = lon.getDouble(p.index);
 
 	/*
 	 * Tie Point data
 	 */
 	valarray<double> tpiWeights(1);
 	valarray<size_t> tpiIndexes(1);
-	tiePointInterpolatorOlc.prepare(p->lat, p->lon, tpiWeights, tpiIndexes);
+	tiePointInterpolatorOlc.prepare(p.lat, p.lon, tpiWeights, tpiIndexes);
 
-	p->sza = tiePointInterpolatorOlc.interpolate(szaTiePointsOlc, tpiWeights, tpiIndexes);
-	p->saa = tiePointInterpolatorOlc.interpolate(saaTiePointsOlc, tpiWeights, tpiIndexes);
-	p->vzaOlc = tiePointInterpolatorOlc.interpolate(vzaTiePointsOlc, tpiWeights, tpiIndexes);
-	p->vaaOlc = tiePointInterpolatorOlc.interpolate(vaaTiePointsOlc, tpiWeights, tpiIndexes);
+	p.sza = tiePointInterpolatorOlc.interpolate(szaTiePointsOlc, tpiWeights, tpiIndexes);
+	p.saa = tiePointInterpolatorOlc.interpolate(saaTiePointsOlc, tpiWeights, tpiIndexes);
+	p.vzaOlc = tiePointInterpolatorOlc.interpolate(vzaTiePointsOlc, tpiWeights, tpiIndexes);
+	p.vaaOlc = tiePointInterpolatorOlc.interpolate(vaaTiePointsOlc, tpiWeights, tpiIndexes);
 
-	p->airPressure = tiePointInterpolatorOlc.interpolate(airPressureTiePoints, tpiWeights, tpiIndexes);
-	p->ozone = tiePointInterpolatorOlc.interpolate(ozoneTiePoints, tpiWeights, tpiIndexes);
+	p.airPressure = tiePointInterpolatorOlc.interpolate(airPressureTiePoints, tpiWeights, tpiIndexes);
+	p.ozone = tiePointInterpolatorOlc.interpolate(ozoneTiePoints, tpiWeights, tpiIndexes);
 	if (waterVapourTiePoints.size() != 0) {
-		p->waterVapour = tiePointInterpolatorOlc.interpolate(waterVapourTiePoints, tpiWeights, tpiIndexes);
+		p.waterVapour = tiePointInterpolatorOlc.interpolate(waterVapourTiePoints, tpiWeights, tpiIndexes);
 	} else {
-		p->waterVapour = 0.2;
+		p.waterVapour = 0.2;
 	}
 
-	tiePointInterpolatorSln.prepare(p->lat, p->lon, tpiWeights, tpiIndexes);
-	p->vaaSln = tiePointInterpolatorSln.interpolate(vaaTiePointsSln, tpiWeights, tpiIndexes);
-	p->vzaSln = tiePointInterpolatorSln.interpolate(vzaTiePointsSln, tpiWeights, tpiIndexes);
+	tiePointInterpolatorSln.prepare(p.lat, p.lon, tpiWeights, tpiIndexes);
+	p.vaaSln = tiePointInterpolatorSln.interpolate(vaaTiePointsSln, tpiWeights, tpiIndexes);
+	p.vzaSln = tiePointInterpolatorSln.interpolate(vzaTiePointsSln, tpiWeights, tpiIndexes);
 
-	tiePointInterpolatorSlo.prepare(p->lat, p->lon, tpiWeights, tpiIndexes);
-	p->vaaSlo = tiePointInterpolatorSlo.interpolate(vaaTiePointsSlo, tpiWeights, tpiIndexes);
-	p->vzaSlo = tiePointInterpolatorSlo.interpolate(vzaTiePointsSlo, tpiWeights, tpiIndexes);
+	tiePointInterpolatorSlo.prepare(p.lat, p.lon, tpiWeights, tpiIndexes);
+	p.vaaSlo = tiePointInterpolatorSlo.interpolate(vaaTiePointsSlo, tpiWeights, tpiIndexes);
+	p.vzaSlo = tiePointInterpolatorSlo.interpolate(vzaTiePointsSlo, tpiWeights, tpiIndexes);
 
 	/*
 	 * Anything else
 	 */
-	p->tau550 = Constants::FILL_VALUE_DOUBLE;
-	p->tau550err = Constants::FILL_VALUE_DOUBLE;
-	p->tau550Filtered = Constants::FILL_VALUE_DOUBLE;
-	p->tau550errFiltered = Constants::FILL_VALUE_DOUBLE;
-	p->alpha550 = Constants::FILL_VALUE_DOUBLE;
-	p->amin = numeric_limits<short>::min();
-	p->E2 = numeric_limits<double>::max();
+	p.tau550 = Constants::FILL_VALUE_DOUBLE;
+	p.tau550err = Constants::FILL_VALUE_DOUBLE;
+	p.tau550Filtered = Constants::FILL_VALUE_DOUBLE;
+	p.tau550errFiltered = Constants::FILL_VALUE_DOUBLE;
+	p.alpha550 = Constants::FILL_VALUE_DOUBLE;
+	p.amin = numeric_limits<short>::min();
+	p.E2 = numeric_limits<double>::max();
 
 	return p;
 }
@@ -275,11 +268,22 @@ void Aer::process(Context& context) {
 		lastL -= 10;
 	}
 
-	vector<shared_ptr<Pixel> > pixels;
+	valarray<Pixel> pixels(averagedGrid->getSize());
+	pixels = getPixels(context, pixels);
 	map<size_t, shared_ptr<Pixel> > pixelMap;
 	map<size_t, shared_ptr<Pixel> > missingPixels;
-	pixels = getPixels(context, firstL, lastL, pixels);
 
+	for (long l = firstL; l < lastL; l++) {
+		context.getLogging().progress("Retrieving aerosol properties for line l = " + lexical_cast<string>(l), getId());
+		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
+			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
+				const size_t index = averagedGrid->getIndex(k, l, m);
+				aer_s(pixels[index]);
+			}
+		}
+	}
+
+	/*
 	foreach(shared_ptr<Pixel> p, pixels)
 			{
 				if (p->k == 0 && p->m == 0) {
@@ -363,17 +367,20 @@ void Aer::process(Context& context) {
 		I++;
 	}
 	applyMedianFiltering(pixelMap, firstL, lastL);
-	putPixels(pixels);
+	*/
+	putPixels(pixels, firstL, lastL);
 	context.setLastComputedL(*averagedSegment, *this, lastL);
 	context.setFirstRequiredL(*averagedSegment, *this, lastL + 1);
 }
 
-vector<shared_ptr<Pixel> >& Aer::getPixels(Context& context, long firstL, long lastL, vector<shared_ptr<Pixel> >& pixels) const {
+valarray<Pixel>& Aer::getPixels(Context& context, valarray<Pixel>& pixels) const {
 	const PixelInitializer pixelInitializer(context);
-	for (long l = firstL; l <= lastL; l++) {
+	for (long l = averagedGrid->getFirstL(); l < averagedGrid->getLastL(); l++) {
 		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
-				pixels.push_back(pixelInitializer.getPixel(k, l, m));
+				const size_t index = averagedGrid->getIndex(k, l, m);
+
+				pixelInitializer.getPixel(k, l, m, pixels[index]);
 			}
 		}
 	}
@@ -390,17 +397,17 @@ const vector<long> Aer::createIndices(long base, long bound) const {
 	return result;
 }
 
-void Aer::aer_s(shared_ptr<Pixel> p) {
-	const bool isPartlyCloudy = (p->synFlags & Constants::SY2_PARTLY_CLOUDY_FLAG) == Constants::SY2_PARTLY_CLOUDY_FLAG;
-	const bool isPartlyWater = (p->synFlags & Constants::SY2_PARTLY_WATER_FLAG) == Constants::SY2_PARTLY_WATER_FLAG;
+void Aer::aer_s(Pixel& p) {
+	const bool partlyCloudy = (p.synFlags & Constants::SY2_PARTLY_CLOUDY_FLAG) == Constants::SY2_PARTLY_CLOUDY_FLAG;
+	const bool partlyWater = (p.synFlags & Constants::SY2_PARTLY_WATER_FLAG) == Constants::SY2_PARTLY_WATER_FLAG;
 
-	if (isPartlyCloudy || isPartlyWater) {
+	if (partlyCloudy || partlyWater) {
 		return;
 	}
 
 	for (size_t i = 0; i < amins.size(); i++) {
 		const int16_t amin = amins[i];
-		Pixel q = Pixel(*p);
+		Pixel q = Pixel(p);
 		q.nu[0] = initialNu[0];
 		q.nu[1] = initialNu[1];
 		for (size_t j = 0; j < initialOmega.size(); j++) {
@@ -411,28 +418,28 @@ void Aer::aer_s(shared_ptr<Pixel> p) {
 		q.c2 = 1.0 - q.c1;
 		q.amin = amin;
 		bool success = em->findMinimum(q);
-		if (success && q.E2 < p->E2) {
-			p->assign(q);
-			p->alpha550 = aerosolAngstromExponents[amin];
-			p->amin = amin;
+		if (success && q.E2 < p.E2) {
+			p.assign(q);
+			p.alpha550 = aerosolAngstromExponents[amin];
+			p.amin = amin;
 		}
 	}
-	if (p->amin > 0) {
-		double tau550 = p->tau550;
+	if (p.amin > 0) {
+		double tau550 = p.tau550;
 		if (tau550 > 0.0001) {
-			double a = em->computeErrorSurfaceCurvature(*p);
+			double a = em->computeErrorSurfaceCurvature(p);
 			if (a > 0) {
-				p->tau550err = kappa * sqrt(p->E2 / a);
-				if (tau550 > 0.1 && p->tau550err > 5 * tau550) {
-					p->synFlags |= Constants::SY2_AEROSOL_HIGH_ERROR_FLAG;
+				p.tau550err = kappa * sqrt(p.E2 / a);
+				if (tau550 > 0.1 && p.tau550err > 5 * tau550) {
+					p.synFlags |= Constants::SY2_AEROSOL_HIGH_ERROR_FLAG;
 				} else {
-					p->synFlags |= Constants::SY2_AEROSOL_SUCCESS_FLAG;
+					p.synFlags |= Constants::SY2_AEROSOL_SUCCESS_FLAG;
 				}
 			} else {
-				p->synFlags |= Constants::SY2_AEROSOL_NEGATIVE_CURVATURE_FLAG;
+				p.synFlags |= Constants::SY2_AEROSOL_NEGATIVE_CURVATURE_FLAG;
 			}
 		} else {
-			p->synFlags |= Constants::SY2_AEROSOL_TOO_LOW_FLAG;
+			p.synFlags |= Constants::SY2_AEROSOL_TOO_LOW_FLAG;
 		}
 	}
 }
@@ -487,32 +494,38 @@ void Aer::readAuxdata(Context& context) {
 	aerosolAngstromExponents = radiometricAuxdataProvider.getVectorDouble("A550");
 }
 
-void Aer::putPixels(vector<shared_ptr<Pixel> >& pixels) const {
+void Aer::putPixels(const valarray<Pixel>& pixels, long firstL, long lastL) const {
 	Accessor& amin = averagedSegment->getAccessor("AMIN");
 	Accessor& t550 = averagedSegment->getAccessor("T550");
 	Accessor& t550err = averagedSegment->getAccessor("T550_er");
 	Accessor& a550 = averagedSegment->getAccessor("A550");
 	Accessor& synFlags = averagedSegment->getAccessor("SYN_flags");
 
-	foreach(shared_ptr<Pixel> p, pixels)
-			{
-				amin.setUByte(p->index, p->amin);
-				if (p->tau550Filtered == Constants::FILL_VALUE_DOUBLE) {
-					t550.setFillValue(p->index);
+	for (long l = firstL; l < lastL; l++) {
+		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
+			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
+				const size_t index = averagedGrid->getIndex(k, l, m);
+				const Pixel& p = pixels[index];
+
+				amin.setUByte(p.index, p.amin);
+				if (p.tau550Filtered == Constants::FILL_VALUE_DOUBLE) {
+					t550.setFillValue(p.index);
 				} else {
-					t550.setDouble(p->index, p->tau550Filtered);
+					t550.setDouble(p.index, p.tau550Filtered);
 				}
-				if (p->tau550errFiltered == Constants::FILL_VALUE_DOUBLE) {
-					t550err.setFillValue(p->index);
+				if (p.tau550errFiltered == Constants::FILL_VALUE_DOUBLE) {
+					t550err.setFillValue(p.index);
 				} else {
-					t550err.setDouble(p->index, p->tau550errFiltered);
+					t550err.setDouble(p.index, p.tau550errFiltered);
 				}
-				if (p->alpha550 == Constants::FILL_VALUE_DOUBLE) {
-					a550.setFillValue(p->index);
+				if (p.alpha550 == Constants::FILL_VALUE_DOUBLE) {
+					a550.setFillValue(p.index);
 				} else {
-					a550.setDouble(p->index, p->alpha550);
+					a550.setDouble(p.index, p.alpha550);
 				}
-				synFlags.setUShort(p->index, p->synFlags);
+				synFlags.setUShort(p.index, p.synFlags);
 			}
+		}
+	}
 }
 
