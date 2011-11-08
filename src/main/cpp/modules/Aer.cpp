@@ -308,14 +308,14 @@ void Aer::process(Context& context) {
 						size_t pixelCount = 0;
 						long minPixelDistance = numeric_limits<long>::max();
 
-						for (size_t l = p.l - n; l <= p.l + n; l++) {
-							for (size_t m = p.m - n; m <= p.m + n; m++) {
+						for (long l = p.l - n; l <= p.l + n; l++) {
+							for (long m = p.m - n; m <= p.m + n; m++) {
 								if (!averagedGrid->isValidPosition(p.k, l, m)) {
 									continue;
 								}
 								const size_t pixelIndex = averagedGrid->getIndex(p.k, l, m);
 								const Pixel& q = pixels[pixelIndex];
-								if (q.amin == 0 /*contains(missingPixelIndexes, pixelIndex)*/) {
+								if (contains(missingPixelIndexes, pixelIndex)) {
 									continue;
 								}
 								const long dist = (q.l - p.l) * (q.l - p.l) + (q.m - p.m) * (q.m - p.m);
@@ -347,14 +347,6 @@ void Aer::process(Context& context) {
 					missingPixelIndexes.erase(i);
 				}
 		iterationCount++;
-		if (iterationCount > 1000) {
-			foreach(size_t missingPixelIndex, missingPixelIndexes)
-					{
-						Pixel& p = pixels[missingPixelIndex];
-						context.getLogging().debug("k = " + lexical_cast<string>(p.k) + ", l = " + lexical_cast<string>(p.l) + ", m = " + lexical_cast<string>(p.m), getId());
-					}
-			break;
-		}
 	}
 
 	long lastFilterableL;
@@ -375,8 +367,8 @@ void Aer::process(Context& context) {
 				Pixel& p = pixels[pixelIndex];
 
 				size_t i = 0;
-				for (long sourceL = p.l - 1; sourceL <= targetL + 1; sourceL++) {
-					for (long sourceM = p.m - 1; sourceM <= targetM + 1; sourceM++) {
+				for (long sourceL = targetL - 1; sourceL <= targetL + 1; sourceL++) {
+					for (long sourceM = targetM - 1; sourceM <= targetM + 1; sourceM++) {
 						if (!averagedGrid->isValidPosition(k, sourceL, sourceM)) {
 							continue;
 						}
@@ -385,10 +377,11 @@ void Aer::process(Context& context) {
 						i++;
 					}
 				}
-				std::nth_element(&tauValues[0], &tauValues[i / 2], &tauValues[i + 1]);
-				std::nth_element(&errValues[0], &errValues[i / 2], &errValues[i + 1]);
-				p.tau550Filtered = tauValues[i / 2];
-				p.tau550ErrorFiltered = errValues[i / 2];
+				const size_t h = i / 2;
+				std::nth_element(&tauValues[0], &tauValues[h], &tauValues[i]);
+				std::nth_element(&errValues[0], &errValues[h], &errValues[i]);
+				p.tau550Filtered = tauValues[h];
+				p.tau550ErrorFiltered = errValues[h];
 			}
 		}
 	}
