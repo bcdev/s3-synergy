@@ -262,16 +262,13 @@ void Aer::start(Context& context) {
 void Aer::process(Context& context) {
 	context.getLogging().progress("Performing aerosol retrieval...", getId());
 
-	long firstL = context.getFirstComputableL(*averagedSegment, *this);
+	const long firstL = context.getFirstComputableL(*averagedSegment, *this);
 	long lastL = context.getLastComputableL(*averagedSegment, *this);
-	if (lastL < averagedGrid->getMaxL()) {
-		lastL -= 10;
-	}
 
 	valarray<Pixel> pixels(averagedGrid->getSize());
-	pixels = getPixels(context, pixels);
-	map<size_t, shared_ptr<Pixel> > pixelMap;
-	map<size_t, shared_ptr<Pixel> > missingPixels;
+	getPixels(context, pixels);
+	//map<size_t, shared_ptr<Pixel> > pixelMap;
+	//map<size_t, shared_ptr<Pixel> > missingPixels;
 
 	for (long l = firstL; l < lastL; l++) {
 		context.getLogging().progress("Retrieving aerosol properties for line l = " + lexical_cast<string>(l), getId());
@@ -281,6 +278,10 @@ void Aer::process(Context& context) {
 				aer_s(pixels[index]);
 			}
 		}
+	}
+
+	if (lastL < averagedGrid->getMaxL()) {
+		lastL -= 10;
 	}
 
 	/*
