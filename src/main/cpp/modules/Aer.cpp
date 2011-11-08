@@ -310,25 +310,23 @@ void Aer::process(Context& context) {
 
 						for (long l = p.l - n; l <= p.l + n; l++) {
 							for (long m = p.m - n; m <= p.m + n; m++) {
-								if (!averagedGrid->isValidPosition(p.k, l, m)) {
-									continue;
-								}
-								const size_t pixelIndex = averagedGrid->getIndex(p.k, l, m);
-								const Pixel& q = pixels[pixelIndex];
-								if (contains(missingPixelIndexes, pixelIndex)) {
-									continue;
-								}
-								const long dist = (q.l - p.l) * (q.l - p.l) + (q.m - p.m) * (q.m - p.m);
-								if (dist < minPixelDistance) {
-									minPixelDistance = dist;
-									p.amin = q.amin;
-								}
+								if (averagedGrid->isValidPosition(p.k, l, m)) {
+									const size_t pixelIndex = averagedGrid->getIndex(p.k, l, m);
+									if (!contains(missingPixelIndexes, pixelIndex)) {
+										const Pixel& q = pixels[pixelIndex];
+										const long dist = (q.l - p.l) * (q.l - p.l) + (q.m - p.m) * (q.m - p.m);
+										if (dist < minPixelDistance) {
+											minPixelDistance = dist;
+											p.amin = q.amin;
+										}
 
-								tau550 += q.tau550;
-								tau550err += q.tau550Error;
-								alpha550 += q.alpha550;
+										tau550 += q.tau550;
+										tau550err += q.tau550Error;
+										alpha550 += q.alpha550;
 
-								pixelCount++;
+										pixelCount++;
+									}
+								}
 							}
 						}
 						if (pixelCount > 0) {
