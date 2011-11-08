@@ -298,12 +298,12 @@ void Aer::process(Context& context) {
 		if (iterationCount >= 5 && iterationCount <= 12) {
 			n++;
 		}
-		set<size_t> filledPixelIdexes;
+		set<size_t> filledPixelIndexes;
 		foreach(size_t missingPixelIndex, missingPixelIndexes)
 				{
 					Pixel& p = pixels[missingPixelIndex];
 					if (p.l > lastFillableL) {
-						filledPixelIdexes.insert(missingPixelIndex);
+						filledPixelIndexes.insert(missingPixelIndex);
 						continue;
 					}
 					double tau550 = 0.0;
@@ -320,7 +320,7 @@ void Aer::process(Context& context) {
 							const size_t pixelIndex = averagedGrid->getIndex(p.k, l, m);
 							const Pixel& q = pixels[pixelIndex];
 
-							if (q.amin == 0 || contains(filledPixelIdexes, pixelIndex)) {
+							if (contains(missingPixelIndexes, pixelIndex)) {
 								continue;
 							}
 
@@ -342,10 +342,10 @@ void Aer::process(Context& context) {
 						p.tau550Error = tau550err / pixelCount;
 						p.alpha550 = alpha550 / pixelCount;
 						p.synFlags |= Constants::SY2_AEROSOL_FILLED_FLAG;
-						filledPixelIdexes.insert(missingPixelIndex);
+						filledPixelIndexes.insert(missingPixelIndex);
 					}
 				}
-		foreach(size_t i, filledPixelIdexes)
+		foreach(size_t i, filledPixelIndexes)
 				{
 					missingPixelIndexes.erase(i);
 				}
