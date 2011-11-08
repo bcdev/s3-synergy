@@ -265,7 +265,7 @@ void Aer::process(Context& context) {
 	const long firstL = context.getFirstComputableL(*averagedSegment, *this);
 	long lastL = context.getLastComputableL(*averagedSegment, *this);
 
-	valarray<Pixel> pixels(averagedGrid->getSize());
+	valarray<Pixel> pixels(Pixel(), averagedGrid->getSize());
 	getPixels(context, pixels);
 	//map<size_t, shared_ptr<Pixel> > pixelMap;
 	//map<size_t, shared_ptr<Pixel> > missingPixels;
