@@ -347,6 +347,14 @@ void Aer::process(Context& context) {
 					missingPixelIndexes.erase(i);
 				}
 		iterationCount++;
+		if (iterationCount > 1000) {
+			foreach(size_t missingPixelIndex, missingPixelIndexes)
+					{
+						Pixel& p = pixels[missingPixelIndex];
+						context.getLogging().debug("k = " + lexical_cast<string>(p.k) + ", l = " + lexical_cast<string>(p.l) + ", m = " + lexical_cast<string>(p.m), getId());
+					}
+			break;
+		}
 	}
 
 	long lastFilterableL;
