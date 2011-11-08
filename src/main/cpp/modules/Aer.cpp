@@ -262,7 +262,6 @@ void Aer::process(Context& context) {
 
 	valarray<Pixel> pixels(averagedGrid->getSize());
 	getPixels(context, pixels);
-	set<size_t> missingPixelIndexes;
 
 #pragma omp parallel for
 	for (long l = firstL; l <= lastL; l++) {
@@ -276,6 +275,16 @@ void Aer::process(Context& context) {
 					continue;
 				}
 				aer_s(p, em);
+			}
+		}
+	}
+
+	set<size_t> missingPixelIndexes;
+	for (long l = firstL; l <= lastL; l++) {
+		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
+			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
+				const size_t index = averagedGrid->getIndex(k, l, m);
+				Pixel& p = pixels[index];
 				if (p.amin == 0) {
 					missingPixelIndexes.insert(index);
 				}
