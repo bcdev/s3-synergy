@@ -298,53 +298,54 @@ void Aer::process(Context& context) {
 			n++;
 		}
 		set<size_t> filledPixelIndexes;
-		foreach(size_t missingPixelIndex, missingPixelIndexes)
-				{
-					Pixel& p = pixels[missingPixelIndex];
-					if (p.l <= lastFillableL) {
-						double tau550 = 0.0;
-						double tau550err = 0.0;
-						double alpha550 = 0.0;
-						size_t pixelCount = 0;
-						long minPixelDistance = numeric_limits<long>::max();
+		for (set<size_t>::iterator missingPixelIter = missingPixelIndexes.begin(); missingPixelIter != missingPixelIndexes.end(); missingPixelIter++) {
+			Pixel& p = pixels[*missingPixelIter];
+			if (p.l <= lastFillableL) {
+				double tau550 = 0.0;
+				double tau550err = 0.0;
+				double alpha550 = 0.0;
+				size_t pixelCount = 0;
+				long minPixelDistance = numeric_limits<long>::max();
 
-						for (long l = p.l - n; l <= p.l + n; l++) {
-							for (long m = p.m - n; m <= p.m + n; m++) {
-								if (averagedGrid->isValidPosition(p.k, l, m)) {
-									const size_t pixelIndex = averagedGrid->getIndex(p.k, l, m);
-									if (true || !contains(missingPixelIndexes, pixelIndex)) {
-										const Pixel& q = pixels[pixelIndex];
-										const long dist = (q.l - p.l) * (q.l - p.l) + (q.m - p.m) * (q.m - p.m);
-										if (dist < minPixelDistance) {
-											minPixelDistance = dist;
-											p.amin = q.amin;
-										}
-
-										tau550 += q.tau550;
-										tau550err += q.tau550Error;
-										alpha550 += q.alpha550;
-
-										pixelCount++;
-									}
+				for (long l = p.l - n; l <= p.l + n; l++) {
+					for (long m = p.m - n; m <= p.m + n; m++) {
+						if (averagedGrid->isValidPosition(p.k, l, m)) {
+							const size_t pixelIndex = averagedGrid->getIndex(p.k, l, m);
+							if (!contains(missingPixelIndexes, pixelIndex)) {
+								const Pixel& q = pixels[pixelIndex];
+								const long dist = (q.l - p.l) * (q.l - p.l) + (q.m - p.m) * (q.m - p.m);
+								if (dist < minPixelDistance) {
+									minPixelDistance = dist;
+									p.amin = q.amin;
 								}
+
+								tau550 += q.tau550;
+								tau550err += q.tau550Error;
+								alpha550 += q.alpha550;
+
+								pixelCount++;
 							}
 						}
-						if (pixelCount > 0) {
-							p.tau550 = tau550 / pixelCount;
-							p.tau550Error = tau550err / pixelCount;
-							p.alpha550 = alpha550 / pixelCount;
-							p.synFlags |= Constants::SY2_AEROSOL_FILLED_FLAG;
-							filledPixelIndexes.insert(missingPixelIndex);
-						}
-					} else {
-						filledPixelIndexes.insert(missingPixelIndex);
 					}
 				}
-		foreach(size_t i, filledPixelIndexes)
-				{
-					missingPixelIndexes.erase(i);
+				if (pixelCount > 0) {
+					p.tau550 = tau550 / pixelCount;
+					p.tau550Error = tau550err / pixelCount;
+					p.alpha550 = alpha550 / pixelCount;
+					p.synFlags |= Constants::SY2_AEROSOL_FILLED_FLAG;
+					filledPixelIndexes.insert(*missingPixelIter);
 				}
+			} else {
+				filledPixelIndexes.insert(*missingPixelIter);
+			}
+		}
+		for (set<size_t>::iterator filledPixelIter = filledPixelIndexes.begin(); filledPixelIter != filledPixelIndexes.end(); filledPixelIter++) {
+			missingPixelIndexes.erase(*filledPixelIter);
+		}
 		iterationCount++;
+		if (iterationCount > 1000) {
+			break;
+		}
 	}
 
 	long lastFilterableL;
