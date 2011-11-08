@@ -270,14 +270,14 @@ void Aer::process(Context& context) {
 		context.getLogging().progress("Retrieving aerosol properties for line l = " + lexical_cast<string>(l), getId());
 		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
-				const size_t index = averagedGrid->getIndex(k, l, m);
-				Pixel& p = pixels[index];
+				const size_t pixelIndex = averagedGrid->getIndex(k, l, m);
+				Pixel& p = pixels[pixelIndex];
 				if (p.synFlags & (Constants::SY2_AEROSOL_SUCCESS_FLAG | Constants::SY2_AEROSOL_FILLED_FLAG) != 0) {
 					continue;
 				}
 				retrieveAerosolProperties(p, em);
 				if (p.amin == 0) {
-					missingPixelIndexes.insert(index);
+					missingPixelIndexes.insert(pixelIndex);
 				}
 			}
 		}
@@ -302,10 +302,6 @@ void Aer::process(Context& context) {
 		foreach(size_t missingPixelIndex, missingPixelIndexes)
 				{
 					Pixel& p = pixels[missingPixelIndex];
-					if (p.l > lastFillableL) {
-						filledPixelIndexes.insert(missingPixelIndex);
-						continue;
-					}
 					double tau550 = 0.0;
 					double tau550err = 0.0;
 					double alpha550 = 0.0;
@@ -318,21 +314,21 @@ void Aer::process(Context& context) {
 								continue;
 							}
 							const size_t pixelIndex = averagedGrid->getIndex(p.k, l, m);
-							const Pixel& q = pixels[pixelIndex];
-
 							if (contains(missingPixelIndexes, pixelIndex)) {
 								continue;
+							}
+
+							const Pixel& q = pixels[pixelIndex];
+							const long dist = (q.l - p.l) * (q.l - p.l) + (q.m - p.m) * (q.m - p.m);
+
+							if (dist < minPixelDistance) {
+								minPixelDistance = dist;
+								p.amin = q.amin;
 							}
 
 							tau550 += q.tau550;
 							tau550err += q.tau550Error;
 							alpha550 += q.alpha550;
-
-							const long dist = (q.l - p.l) * (q.l - p.l) + (q.m - p.m) * (q.m - p.m);
-							if (dist < minPixelDistance) {
-								minPixelDistance = dist;
-								p.amin = q.amin;
-							}
 
 							pixelCount++;
 						}
