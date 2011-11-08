@@ -186,8 +186,6 @@ Pixel& PixelInitializer::getPixel(long k, long l, long m, Pixel& p) const {
 	 * Flags
 	 */
 	p.synFlags = synFlags.getUShort(p.index);
-	// set flags SYN_success, SYN_negative_curvature, SYN_too_low, and SYN_high_error to false
-	p.synFlags &= 3887;
 
 	/*
 	 * Geo-location
@@ -227,9 +225,9 @@ Pixel& PixelInitializer::getPixel(long k, long l, long m, Pixel& p) const {
 	 * Anything else
 	 */
 	p.tau550 = Constants::FILL_VALUE_DOUBLE;
-	p.tau550err = Constants::FILL_VALUE_DOUBLE;
+	p.tau550Error = Constants::FILL_VALUE_DOUBLE;
 	p.tau550Filtered = Constants::FILL_VALUE_DOUBLE;
-	p.tau550errFiltered = Constants::FILL_VALUE_DOUBLE;
+	p.tau550ErrorFiltered = Constants::FILL_VALUE_DOUBLE;
 	p.alpha550 = Constants::FILL_VALUE_DOUBLE;
 	p.amin = numeric_limits<short>::min();
 	p.E2 = numeric_limits<double>::max();
@@ -252,6 +250,10 @@ void Aer::start(Context& context) {
 	averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550_er"));
 	averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("A550"));
 	averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("AMIN"));
+	averagedSegment->addVariable("T550_filtered", Constants::TYPE_DOUBLE);
+	averagedSegment->addVariable("T550_er_filtered", Constants::TYPE_DOUBLE);
+	averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("AMIN"));
+
 	averagedGrid = &averagedSegment->getGrid();
 
 	em = shared_ptr<ErrorMetric>(new ErrorMetric(context));
@@ -265,25 +267,35 @@ void Aer::process(Context& context) {
 	getPixels(context, pixels);
 	set<size_t> missingPixelIndexes;
 
-	for (long l = firstL; l < lastL; l++) {
+	for (long l = firstL; l <= lastL; l++) {
 		context.getLogging().progress("Retrieving aerosol properties for line l = " + lexical_cast<string>(l), getId());
 		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
 				const size_t index = averagedGrid->getIndex(k, l, m);
-				aer_s(pixels[index]);
-				if (pixels[index].amin == 0) {
+				Pixel& p = pixels[index];
+				if (p.synFlags & (Constants::SY2_AEROSOL_SUCCESS_FLAG | Constants::SY2_AEROSOL_FILLED_FLAG) != 0) {
+					continue;
+				}
+				aer_s(p);
+				if (p.amin == 0) {
 					missingPixelIndexes.insert(index);
 				}
 			}
 		}
 	}
 
-	context.getLogging().progress("Filling aerosol properties ...", getId());
+	long lastFillableL;
+	if (lastL < averagedGrid->getMaxL()) {
+		lastFillableL = lastL - 9;
+	} else {
+		lastFillableL = lastL;
+	}
 
 	size_t iterationCount = 0;
 	size_t n = 1;
 
 	while (!missingPixelIndexes.empty()) {
+		context.getLogging().progress("Filling " + lexical_cast<string>(missingPixelIndexes.size()) + " pixels with aerosol properties ...", getId());
 		if (iterationCount >= 5 && iterationCount <= 12) {
 			n++;
 		}
@@ -291,6 +303,10 @@ void Aer::process(Context& context) {
 		foreach(size_t missingPixelIndex, missingPixelIndexes)
 				{
 					Pixel& p = pixels[missingPixelIndex];
+					if (p.l > lastFillableL) {
+						filledPixelIdexes.insert(missingPixelIndex);
+						continue;
+					}
 					double tau550 = 0.0;
 					double tau550err = 0.0;
 					double alpha550 = 0.0;
@@ -310,7 +326,7 @@ void Aer::process(Context& context) {
 							}
 
 							tau550 += q.tau550;
-							tau550err += q.tau550err;
+							tau550err += q.tau550Error;
 							alpha550 += q.alpha550;
 
 							const long dist = (q.l - p.l) * (q.l - p.l) + (q.m - p.m) * (q.m - p.m);
@@ -324,7 +340,7 @@ void Aer::process(Context& context) {
 					}
 					if (pixelCount > 0) {
 						p.tau550 = tau550 / pixelCount;
-						p.tau550err = tau550err / pixelCount;
+						p.tau550Error = tau550err / pixelCount;
 						p.alpha550 = alpha550 / pixelCount;
 						p.synFlags |= Constants::SY2_AEROSOL_FILLED_FLAG;
 						filledPixelIdexes.insert(missingPixelIndex);
@@ -337,14 +353,18 @@ void Aer::process(Context& context) {
 		iterationCount++;
 	}
 
+	long lastFilterableL;
 	if (lastL < averagedGrid->getMaxL()) {
-		lastL -= 10;
+		lastFillableL = lastL - 1;
+	} else {
+		lastFillableL = lastL;
 	}
 
 	valarray<double> tauValues(9);
 	valarray<double> errValues(9);
-	for (long targetL = firstL; targetL <= lastL; targetL++) {
+	for (long targetL = firstL; targetL <= lastFilterableL; targetL++) {
 		context.getLogging().progress("Filtering aerosol properties for line l = " + lexical_cast<string>(targetL), getId());
+
 		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long targetM = averagedGrid->getFirstM(); targetM <= averagedGrid->getMaxM(); targetM++) {
 				const size_t pixelIndex = averagedGrid->getIndex(k, targetL, targetM);
@@ -357,22 +377,22 @@ void Aer::process(Context& context) {
 							continue;
 						}
 						tauValues[i] = p.tau550;
-						errValues[i] = p.tau550err;
+						errValues[i] = p.tau550Error;
 						i++;
 					}
 				}
 				std::nth_element(&tauValues[0], &tauValues[i / 2], &tauValues[i + 1]);
 				std::nth_element(&errValues[0], &errValues[i / 2], &errValues[i + 1]);
 				p.tau550Filtered = tauValues[i / 2];
-				p.tau550errFiltered = errValues[i / 2];
+				p.tau550ErrorFiltered = errValues[i / 2];
 			}
 		}
 	}
 
 	putPixels(pixels, firstL, lastL);
 
-	context.setLastComputedL(*averagedSegment, *this, lastL);
-	context.setFirstRequiredL(*averagedSegment, *this, lastL - 10);
+	context.setLastComputedL(*averagedSegment, *this, lastFilterableL);
+	context.setFirstRequiredL(*averagedSegment, *this, lastFilterableL - 10);
 }
 
 valarray<Pixel>& Aer::getPixels(Context& context, valarray<Pixel>& pixels) const {
@@ -430,8 +450,8 @@ void Aer::aer_s(Pixel& p) {
 		if (tau550 > 0.0001) {
 			double a = em->computeErrorSurfaceCurvature(p);
 			if (a > 0) {
-				p.tau550err = kappa * sqrt(p.E2 / a);
-				if (tau550 > 0.1 && p.tau550err > 5 * tau550) {
+				p.tau550Error = kappa * sqrt(p.E2 / a);
+				if (tau550 > 0.1 && p.tau550Error > 5 * tau550) {
 					p.synFlags |= Constants::SY2_AEROSOL_HIGH_ERROR_FLAG;
 				} else {
 					p.synFlags |= Constants::SY2_AEROSOL_SUCCESS_FLAG;
@@ -458,7 +478,7 @@ void Aer::applyMedianFiltering(map<size_t, shared_ptr<Pixel> >& pixels, long fir
 					for (long m = p->m - 1; m <= p->m + 1; m++) {
 						if (averagedGrid->isValidPosition(p->k, l, m)) {
 							tau550Values[i] = p->tau550;
-							tau550ErrValues[i] = p->tau550err;
+							tau550ErrValues[i] = p->tau550Error;
 							i++;
 						}
 					}
@@ -466,7 +486,7 @@ void Aer::applyMedianFiltering(map<size_t, shared_ptr<Pixel> >& pixels, long fir
 				std::nth_element(&tau550Values[0], &tau550Values[i / 2], &tau550Values[i + 1]);
 				std::nth_element(&tau550ErrValues[0], &tau550ErrValues[i / 2], &tau550ErrValues[i + 1]);
 				p->tau550Filtered = tau550Values[i / 2];
-				p->tau550errFiltered = tau550ErrValues[i / 2];
+				p->tau550ErrorFiltered = tau550ErrValues[i / 2];
 			}
 		}
 	}
@@ -498,9 +518,11 @@ void Aer::readAuxdata(Context& context) {
 void Aer::putPixels(const valarray<Pixel>& pixels, long firstL, long lastL) const {
 	Accessor& amin = averagedSegment->getAccessor("AMIN");
 	Accessor& t550 = averagedSegment->getAccessor("T550");
-	Accessor& t550err = averagedSegment->getAccessor("T550_er");
+	Accessor& t550Err = averagedSegment->getAccessor("T550_er");
 	Accessor& a550 = averagedSegment->getAccessor("A550");
 	Accessor& synFlags = averagedSegment->getAccessor("SYN_flags");
+	Accessor& t550Filtered = averagedSegment->getAccessor("T550_filtered");
+	Accessor& t550ErrFiltered = averagedSegment->getAccessor("T550_er_filtered");
 
 	for (long l = firstL; l < lastL; l++) {
 		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
@@ -509,15 +531,15 @@ void Aer::putPixels(const valarray<Pixel>& pixels, long firstL, long lastL) cons
 				const Pixel& p = pixels[index];
 
 				amin.setUByte(p.index, p.amin);
-				if (p.tau550Filtered == Constants::FILL_VALUE_DOUBLE) {
+				if (p.tau550 == Constants::FILL_VALUE_DOUBLE) {
 					t550.setFillValue(p.index);
 				} else {
-					t550.setDouble(p.index, p.tau550Filtered);
+					t550.setDouble(p.index, p.tau550);
 				}
-				if (p.tau550errFiltered == Constants::FILL_VALUE_DOUBLE) {
-					t550err.setFillValue(p.index);
+				if (p.tau550Error == Constants::FILL_VALUE_DOUBLE) {
+					t550Err.setFillValue(p.index);
 				} else {
-					t550err.setDouble(p.index, p.tau550errFiltered);
+					t550Err.setDouble(p.index, p.tau550Error);
 				}
 				if (p.alpha550 == Constants::FILL_VALUE_DOUBLE) {
 					a550.setFillValue(p.index);
@@ -525,6 +547,16 @@ void Aer::putPixels(const valarray<Pixel>& pixels, long firstL, long lastL) cons
 					a550.setDouble(p.index, p.alpha550);
 				}
 				synFlags.setUShort(p.index, p.synFlags);
+				if (p.tau550Filtered == Constants::FILL_VALUE_DOUBLE) {
+					t550Filtered.setFillValue(p.index);
+				} else {
+					t550Filtered.setDouble(p.index, p.tau550Filtered);
+				}
+				if (p.tau550ErrorFiltered == Constants::FILL_VALUE_DOUBLE) {
+					t550ErrFiltered.setFillValue(p.index);
+				} else {
+					t550ErrFiltered.setDouble(p.index, p.tau550ErrorFiltered);
+				}
 			}
 		}
 	}

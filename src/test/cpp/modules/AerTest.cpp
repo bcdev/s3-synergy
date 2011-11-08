@@ -133,9 +133,9 @@ void AerTest::testAer_s() {
     p.waterVapour = 0.2;
 
     p.tau550 = Constants::FILL_VALUE_DOUBLE;
-    p.tau550err = Constants::FILL_VALUE_DOUBLE;
+    p.tau550Error = Constants::FILL_VALUE_DOUBLE;
     p.tau550Filtered = Constants::FILL_VALUE_DOUBLE;
-    p.tau550errFiltered = Constants::FILL_VALUE_DOUBLE;
+    p.tau550ErrorFiltered = Constants::FILL_VALUE_DOUBLE;
     p.alpha550 = Constants::FILL_VALUE_DOUBLE;
     p.amin = numeric_limits<short>::min();
     p.E2 = numeric_limits<double>::max();

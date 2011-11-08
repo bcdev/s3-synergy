@@ -26,9 +26,9 @@ struct Pixel {
     Pixel(const Pixel& q) : k(q.k), l(q.l), m(q.m), index(q.index), radiances(q.radiances), sdrs(q.sdrs), solarIrradiances(q.solarIrradiances), cO3(q.cO3), nu(q.nu), omega(q.omega) {
         alpha550 = q.alpha550;
         tau550 = q.tau550;
-        tau550err = q.tau550err;
+        tau550Error = q.tau550Error;
         tau550Filtered = q.tau550Filtered;
-        tau550errFiltered = q.tau550errFiltered;
+        tau550ErrorFiltered = q.tau550ErrorFiltered;
         synFlags = q.synFlags;
         amin = q.amin;
 
@@ -63,9 +63,9 @@ struct Pixel {
 
         alpha550 = q.alpha550;
         tau550 = q.tau550;
-        tau550err = q.tau550err;
+        tau550Error = q.tau550Error;
         tau550Filtered = q.tau550Filtered;
-        tau550errFiltered = q.tau550errFiltered;
+        tau550ErrorFiltered = q.tau550ErrorFiltered;
         synFlags = q.synFlags;
         amin = q.amin;
 
@@ -108,9 +108,9 @@ struct Pixel {
 
     double alpha550;
     double tau550;
-    double tau550err;
+    double tau550Error;
     double tau550Filtered;
-    double tau550errFiltered;
+    double tau550ErrorFiltered;
     uint16_t synFlags;
     uint8_t amin;
 
