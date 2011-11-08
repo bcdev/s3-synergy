@@ -263,10 +263,10 @@ void Aer::process(Context& context) {
 	valarray<Pixel> pixels(averagedGrid->getSize());
 	getPixels(context, pixels);
 
-#pragma omp parallel for
+	ErrorMetric em(context);
+
 	for (long l = firstL; l <= lastL; l++) {
 		context.getLogging().progress("Retrieving aerosol properties for line l = " + lexical_cast<string>(l), getId());
-		ErrorMetric em(context);
 		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
 				const size_t index = averagedGrid->getIndex(k, l, m);
