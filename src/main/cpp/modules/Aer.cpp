@@ -294,7 +294,7 @@ void Aer::process(Context& context) {
 	size_t n = 1;
 
 	while (!missingPixelIndexes.empty()) {
-		context.getLogging().progress("Filling " + lexical_cast<string>(missingPixelIndexes.size()) + " pixels with aerosol properties ...", getId());
+		context.getLogging().progress("Filling " + lexical_cast<string>(missingPixelIndexes.size()) + " pixels ...", getId());
 		if (iterationCount >= 5 && iterationCount <= 12) {
 			n++;
 		}
@@ -302,42 +302,44 @@ void Aer::process(Context& context) {
 		foreach(size_t missingPixelIndex, missingPixelIndexes)
 				{
 					Pixel& p = pixels[missingPixelIndex];
-					double tau550 = 0.0;
-					double tau550err = 0.0;
-					double alpha550 = 0.0;
-					size_t pixelCount = 0;
-					long minPixelDistance = numeric_limits<long>::max();
+					if (p.l <= lastFillableL) {
+						double tau550 = 0.0;
+						double tau550err = 0.0;
+						double alpha550 = 0.0;
+						size_t pixelCount = 0;
+						long minPixelDistance = numeric_limits<long>::max();
 
-					for (size_t l = p.l - n; l <= p.l + n; l++) {
-						for (size_t m = p.m - n; m <= p.m + n; m++) {
-							if (!averagedGrid->isValidPosition(p.k, l, m)) {
-								continue;
+						for (size_t l = p.l - n; l <= p.l + n; l++) {
+							for (size_t m = p.m - n; m <= p.m + n; m++) {
+								if (!averagedGrid->isValidPosition(p.k, l, m)) {
+									continue;
+								}
+								const size_t pixelIndex = averagedGrid->getIndex(p.k, l, m);
+								const Pixel& q = pixels[pixelIndex];
+								if (q.amin == 0 /*contains(missingPixelIndexes, pixelIndex)*/) {
+									continue;
+								}
+								const long dist = (q.l - p.l) * (q.l - p.l) + (q.m - p.m) * (q.m - p.m);
+								if (dist < minPixelDistance) {
+									minPixelDistance = dist;
+									p.amin = q.amin;
+								}
+
+								tau550 += q.tau550;
+								tau550err += q.tau550Error;
+								alpha550 += q.alpha550;
+
+								pixelCount++;
 							}
-							const size_t pixelIndex = averagedGrid->getIndex(p.k, l, m);
-							if (contains(missingPixelIndexes, pixelIndex)) {
-								continue;
-							}
-
-							const Pixel& q = pixels[pixelIndex];
-							const long dist = (q.l - p.l) * (q.l - p.l) + (q.m - p.m) * (q.m - p.m);
-
-							if (dist < minPixelDistance) {
-								minPixelDistance = dist;
-								p.amin = q.amin;
-							}
-
-							tau550 += q.tau550;
-							tau550err += q.tau550Error;
-							alpha550 += q.alpha550;
-
-							pixelCount++;
 						}
-					}
-					if (pixelCount > 0) {
-						p.tau550 = tau550 / pixelCount;
-						p.tau550Error = tau550err / pixelCount;
-						p.alpha550 = alpha550 / pixelCount;
-						p.synFlags |= Constants::SY2_AEROSOL_FILLED_FLAG;
+						if (pixelCount > 0) {
+							p.tau550 = tau550 / pixelCount;
+							p.tau550Error = tau550err / pixelCount;
+							p.alpha550 = alpha550 / pixelCount;
+							p.synFlags |= Constants::SY2_AEROSOL_FILLED_FLAG;
+							filledPixelIndexes.insert(missingPixelIndex);
+						}
+					} else {
 						filledPixelIndexes.insert(missingPixelIndex);
 					}
 				}
