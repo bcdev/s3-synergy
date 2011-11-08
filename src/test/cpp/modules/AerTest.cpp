@@ -140,8 +140,8 @@ void AerTest::testAer_s() {
     p.amin = numeric_limits<short>::min();
     p.E2 = numeric_limits<double>::max();
 
-	aer->em = shared_ptr<ErrorMetric>(new ErrorMetric(*context));
-    aer->aer_s(p);
+	ErrorMetric em(*context);
+    aer->aer_s(p, em);
 }
 
 void AerTest::testAer() {
