@@ -90,7 +90,7 @@ bool GridImpl::isValidPosition(long k, long l, long m) const {
     return (getFirstK() <= k &&
             getMaxK() >= k &&
             getFirstL() <= l &&
-            getMaxL() >= l &&
+            getLastL() >= l &&
             getFirstM() <= m &&
             getMaxM() >= m);
 }

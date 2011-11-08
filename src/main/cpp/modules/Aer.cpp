@@ -258,8 +258,6 @@ void Aer::start(Context& context) {
 }
 
 void Aer::process(Context& context) {
-	context.getLogging().progress("Performing aerosol retrieval...", getId());
-
 	const long firstL = context.getFirstComputableL(*averagedSegment, *this);
 	long lastL = context.getLastComputableL(*averagedSegment, *this);
 
@@ -278,9 +276,6 @@ void Aer::process(Context& context) {
 				}
 			}
 		}
-	}
-	if (lastL < averagedGrid->getMaxL()) {
-		lastL -= 10;
 	}
 
 	context.getLogging().progress("Filling aerosol properties ...", getId());
@@ -341,12 +336,43 @@ void Aer::process(Context& context) {
 				}
 		iterationCount++;
 	}
-	/*
-	 applyMedianFiltering(pixelMap, firstL, lastL);
-	 */
+
+	if (lastL < averagedGrid->getMaxL()) {
+		lastL -= 10;
+	}
+
+	valarray<double> tauValues(9);
+	valarray<double> errValues(9);
+	for (long targetL = firstL; targetL <= lastL; targetL++) {
+		context.getLogging().progress("Filtering aerosol properties for line l = " + lexical_cast<string>(targetL), getId());
+		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
+			for (long targetM = averagedGrid->getFirstM(); targetM <= averagedGrid->getMaxM(); targetM++) {
+				const size_t pixelIndex = averagedGrid->getIndex(k, targetL, targetM);
+				Pixel& p = pixels[pixelIndex];
+
+				size_t i = 0;
+				for (long sourceL = p.l - 1; sourceL <= targetL + 1; sourceL++) {
+					for (long sourceM = p.m - 1; sourceM <= targetM + 1; sourceM++) {
+						if (!averagedGrid->isValidPosition(k, sourceL, sourceM)) {
+							continue;
+						}
+						tauValues[i] = p.tau550;
+						errValues[i] = p.tau550err;
+						i++;
+					}
+				}
+				std::nth_element(&tauValues[0], &tauValues[i / 2], &tauValues[i + 1]);
+				std::nth_element(&errValues[0], &errValues[i / 2], &errValues[i + 1]);
+				p.tau550Filtered = tauValues[i / 2];
+				p.tau550errFiltered = errValues[i / 2];
+			}
+		}
+	}
+
 	putPixels(pixels, firstL, lastL);
+
 	context.setLastComputedL(*averagedSegment, *this, lastL);
-	context.setFirstRequiredL(*averagedSegment, *this, lastL + 1);
+	context.setFirstRequiredL(*averagedSegment, *this, lastL - 10);
 }
 
 valarray<Pixel>& Aer::getPixels(Context& context, valarray<Pixel>& pixels) const {
