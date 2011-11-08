@@ -312,7 +312,7 @@ void Aer::process(Context& context) {
 							for (long m = p.m - n; m <= p.m + n; m++) {
 								if (averagedGrid->isValidPosition(p.k, l, m)) {
 									const size_t pixelIndex = averagedGrid->getIndex(p.k, l, m);
-									if (!contains(missingPixelIndexes, pixelIndex)) {
+									if (true || !contains(missingPixelIndexes, pixelIndex)) {
 										const Pixel& q = pixels[pixelIndex];
 										const long dist = (q.l - p.l) * (q.l - p.l) + (q.m - p.m) * (q.m - p.m);
 										if (dist < minPixelDistance) {
@@ -392,8 +392,8 @@ void Aer::process(Context& context) {
 
 void Aer::getPixels(Context& context, valarray<Pixel>& pixels) const {
 	const PixelInitializer pixelInitializer(context);
-	for (long l = averagedGrid->getFirstL(); l <= averagedGrid->getLastL(); l++) {
-		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
+	for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
+		for (long l = averagedGrid->getFirstL(); l <= averagedGrid->getLastL(); l++) {
 			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
 				const size_t index = averagedGrid->getIndex(k, l, m);
 				pixelInitializer.getPixel(k, l, m, pixels[index]);
