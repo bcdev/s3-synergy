@@ -272,12 +272,11 @@ void Aer::process(Context& context) {
 			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
 				const size_t pixelIndex = averagedGrid->getIndex(k, l, m);
 				Pixel& p = pixels[pixelIndex];
-				if (p.synFlags & (Constants::SY2_AEROSOL_SUCCESS_FLAG | Constants::SY2_AEROSOL_FILLED_FLAG) != 0) {
-					continue;
-				}
-				retrieveAerosolProperties(p, em);
 				if (p.amin == 0) {
-					missingPixelIndexes.insert(pixelIndex);
+					retrieveAerosolProperties(p, em);
+					if (p.amin == 0) {
+						missingPixelIndexes.insert(pixelIndex);
+					}
 				}
 			}
 		}
