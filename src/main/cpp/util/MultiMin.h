@@ -119,7 +119,6 @@ double LineMinimizer<T>::findMinimum(valarray<double>& x, size_t k, size_t begin
     Min::brent(*this, bracket);
     
     const valarray<double>& v = u[k];
-#pragma omp parallel for
     for (size_t i = begin; i < end; ++i) {
         x[i] = p[i] + v[i] * bracket.minimumX;
     }
@@ -130,7 +129,6 @@ double LineMinimizer<T>::findMinimum(valarray<double>& x, size_t k, size_t begin
 template<class T>
 double LineMinimizer<T>::getValue(double x) {
     const valarray<double>& v = u[k];
-#pragma omp parallel for
     for (size_t i = begin; i < end; i++) {
         point[i] = p[i] + x * v[i];
     }
@@ -168,7 +166,6 @@ bool MultiMin::powell(T* obj, double(T::*f)(valarray<double>&), LineMinimizer<T>
 			return true;
 		}
         // 5. Extrapolate
-#pragma omp parallel for
         for (size_t k = begin; k < end; ++k) {
             pe[k] = 2.0 * pn[k] - p0[k];
         }
@@ -177,7 +174,6 @@ bool MultiMin::powell(T* obj, double(T::*f)(valarray<double>&), LineMinimizer<T>
         if (ze < z0) {
             if (2.0 * (z0 - 2.0 * zn + ze) * square(z0 - zn - maxDecrease) < maxDecrease * square(z0 - ze)) {
                 valarray<double>& innerU = u[maxIndex];
-#pragma omp parallel for
                 for (size_t k = begin; k < end; ++k) {
                     innerU[k] = pn[k] - p0[k];
                 }

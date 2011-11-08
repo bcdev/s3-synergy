@@ -143,7 +143,6 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	unsigned slnCount = 0;
 	unsigned slsCount = 0;
 
-#pragma omp parallel for reduction(+ : sum2, olcCount, slnCount)
 	for (size_t i = 0; i < 18; i++) {
 		validMask[i] = p.radiances[i] != Constants::FILL_VALUE_DOUBLE;
 		if (validMask[i]) {
@@ -155,7 +154,6 @@ void ErrorMetric::setPixel(const Pixel& p) {
 			}
 		}
 	}
-#pragma omp parallel for reduction(+ : sum8, slsCount)
 	for (size_t o = 0; o < 2; o++) {
 		for (size_t j = 0; j < 6; j++) {
 			const int i = 18 + 6 * o + j;
@@ -181,7 +179,6 @@ void ErrorMetric::setPixel(const Pixel& p) {
 double ErrorMetric::computeRss2(valarray<double>& x) {
 	double sum = 0.0;
 	if (doOLC) {
-#pragma omp parallel for reduction(+ : sum)
 		for (size_t i = 0; i < 18; i++) {
 			if (validMask[i]) {
 				const double rSpec = x[0] * vegetationModel[i] + x[1] * soilModel[i];
@@ -195,7 +192,6 @@ double ErrorMetric::computeRss2(valarray<double>& x) {
 double ErrorMetric::computeRss8(valarray<double>& x) {
 	double sum = 0.0;
 	if (doSLS) {
-#pragma omp parallel for reduction(+ : sum)
 		for (size_t o = 0; o < 2; o++) {
 			for (size_t j = 0; j < 6; j++) {
 				const int i = 18 + 6 * o + j;
@@ -266,7 +262,6 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		lutOlcRatm.getMatrix(&coordinates[0], matRatmOlc, lutWeights, lutWorkspace);
 		lutT.getMatrix(&coordinates[2], matTv, lutWeights, lutWorkspace);
 
-#pragma omp parallel for
 		for (size_t b = 0; b < 18; b++) {
 			if (validMask[b]) {
 				// Eq. 2-1
@@ -293,7 +288,6 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		lutSlnRatm.getMatrix(&coordinates[0], matRatmSln, lutWeights, lutWorkspace);
 		lutT.getMatrix(&coordinates[2], matTv, lutWeights, lutWorkspace);
 
-#pragma omp parallel for
 		for (size_t b = 18; b < 24; b++) {
 			if (validMask[b]) {
 				// Eq. 2-1
@@ -320,7 +314,6 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 		lutSloRatm.getMatrix(&coordinates[0], matRatmSlo, lutWeights, lutWorkspace);
 		lutT.getMatrix(&coordinates[2], matTv, lutWeights, lutWorkspace);
 
-#pragma omp parallel for
 		for (size_t b = 24; b < 30; b++) {
 			if (validMask[b]) {
 				// Eq. 2-1

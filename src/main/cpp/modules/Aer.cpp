@@ -254,8 +254,6 @@ void Aer::start(Context& context) {
 	averagedSegment->addVariable("T550_er_filtered", Constants::TYPE_DOUBLE);
 
 	averagedGrid = &averagedSegment->getGrid();
-
-	em = shared_ptr<ErrorMetric>(new ErrorMetric(context));
 }
 
 void Aer::process(Context& context) {
@@ -266,8 +264,10 @@ void Aer::process(Context& context) {
 	getPixels(context, pixels);
 	set<size_t> missingPixelIndexes;
 
+#pragma omp parallel for
 	for (long l = firstL; l <= lastL; l++) {
 		context.getLogging().progress("Retrieving aerosol properties for line l = " + lexical_cast<string>(l), getId());
+		ErrorMetric em(context);
 		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
 				const size_t index = averagedGrid->getIndex(k, l, m);
@@ -275,7 +275,7 @@ void Aer::process(Context& context) {
 				if (p.synFlags & (Constants::SY2_AEROSOL_SUCCESS_FLAG | Constants::SY2_AEROSOL_FILLED_FLAG) != 0) {
 					continue;
 				}
-				aer_s(p);
+				aer_s(p, em);
 				if (p.amin == 0) {
 					missingPixelIndexes.insert(index);
 				}
@@ -417,7 +417,7 @@ const vector<long> Aer::createIndices(long base, long bound) const {
 	return result;
 }
 
-void Aer::aer_s(Pixel& p) {
+void Aer::aer_s(Pixel& p, ErrorMetric& em) {
 	const bool partlyCloudy = (p.synFlags & Constants::SY2_PARTLY_CLOUDY_FLAG) == Constants::SY2_PARTLY_CLOUDY_FLAG;
 	const bool partlyWater = (p.synFlags & Constants::SY2_PARTLY_WATER_FLAG) == Constants::SY2_PARTLY_WATER_FLAG;
 
@@ -434,10 +434,10 @@ void Aer::aer_s(Pixel& p) {
 			q.omega[j] = initialOmega[j];
 		}
 		q.tau550 = initialTau550;
-		q.c1 = em->computeNdvi(q);
+		q.c1 = em.computeNdvi(q);
 		q.c2 = 1.0 - q.c1;
 		q.amin = amin;
-		bool success = em->findMinimum(q);
+		bool success = em.findMinimum(q);
 		if (success && q.E2 < p.E2) {
 			p.assign(q);
 			p.alpha550 = aerosolAngstromExponents[amin];
@@ -447,7 +447,7 @@ void Aer::aer_s(Pixel& p) {
 	if (p.amin > 0) {
 		double tau550 = p.tau550;
 		if (tau550 > 0.0001) {
-			double a = em->computeErrorSurfaceCurvature(p);
+			double a = em.computeErrorSurfaceCurvature(p);
 			if (a > 0) {
 				p.tau550Error = kappa * sqrt(p.E2 / a);
 				if (tau550 > 0.1 && p.tau550Error > 5 * tau550) {
