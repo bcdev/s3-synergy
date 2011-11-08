@@ -252,7 +252,6 @@ void Aer::start(Context& context) {
 	averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("AMIN"));
 	averagedSegment->addVariable("T550_filtered", Constants::TYPE_DOUBLE);
 	averagedSegment->addVariable("T550_er_filtered", Constants::TYPE_DOUBLE);
-	averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("AMIN"));
 
 	averagedGrid = &averagedSegment->getGrid();
 
