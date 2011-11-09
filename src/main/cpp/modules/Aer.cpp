@@ -10,11 +10,12 @@
 #include <limits>
 #include <set>
 
-#include "Aer.h"
 #include "../core/TiePointInterpolator.h"
 #include "../util/ErrorMetric.h"
 #include "../util/LookupTableReader.h"
 #include "../util/AuxdataProvider.h"
+
+#include "Aer.h"
 
 using std::copy;
 using std::min;
@@ -236,7 +237,7 @@ Pixel& PixelInitializer::getPixel(long k, long l, long m, Pixel& p) const {
 }
 
 Aer::Aer() :
-		BasicModule("AER"), initialNu(2), initialOmega(6), aerosolAngstromExponents(40) {
+		BasicModule("AER") {
 }
 
 Aer::~Aer() {
@@ -261,6 +262,8 @@ void Aer::process(Context& context) {
 	long lastL = context.getLastComputableL(*averagedSegment, *this);
 
 	valarray<Pixel> pixels(averagedGrid->getSize());
+
+	context.getLogging().info("Putting lines ..." , getId());
 	getPixels(context, pixels);
 
 	ErrorMetric em(context);
@@ -271,9 +274,21 @@ void Aer::process(Context& context) {
 			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
 				const size_t pixelIndex = averagedGrid->getIndex(k, l, m);
 				Pixel& p = pixels[pixelIndex];
-				if ((p.synFlags & (Constants::SY2_AEROSOL_SUCCESS_FLAG | Constants::SY2_AEROSOL_FILLED_FLAG)) == 0) {
-					retrieveAerosolProperties(p, em);
+
+				if (isSet(p.synFlags, Constants::SY2_PARTLY_CLOUDY_FLAG)) {
+					continue;
 				}
+				if (isSet(p.synFlags, Constants::SY2_PARTLY_WATER_FLAG)) {
+					continue;
+				}
+				if (isSet(p.synFlags, Constants::SY2_AEROSOL_SUCCESS_FLAG)) {
+					continue;
+				}
+				if (isSet(p.synFlags, Constants::SY2_AEROSOL_FILLED_FLAG)) {
+					continue;
+				}
+
+				retrieveAerosolProperties(p, em);
 			}
 		}
 	}
@@ -295,13 +310,13 @@ void Aer::process(Context& context) {
 			n++;
 		}
 		for (long targetL = firstL; targetL <= lastFillableL; targetL++) {
-			context.getLogging().progress("Filling pixels for line l = " + lexical_cast<string>(targetL), getId());
+			context.getLogging().info("Filling line l = " + lexical_cast<string>(targetL), getId());
 			for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
 				for (long targetM = averagedGrid->getFirstM(); targetM <= averagedGrid->getMaxM(); targetM++) {
 					const size_t targetPixelIndex = averagedGrid->getIndex(k, targetL, targetM);
 					Pixel& p = pixels[targetPixelIndex];
 
-					if ((p.synFlags & (Constants::SY2_AEROSOL_SUCCESS_FLAG | Constants::SY2_AEROSOL_FILLED_FLAG)) == 0) {
+					if (!isSet(p.synFlags, Constants::SY2_AEROSOL_SUCCESS_FLAG) && !isSet(p.synFlags, Constants::SY2_AEROSOL_FILLED_FLAG)) {
 						missingPixelCount++;
 
 						double tau550 = 0.0;
@@ -315,7 +330,7 @@ void Aer::process(Context& context) {
 								if (averagedGrid->isValidPosition(k, sourceL, sourceM)) {
 									const size_t sourcePixelIndex = averagedGrid->getIndex(k, sourceL, sourceM);
 									const Pixel& q = pixels[sourcePixelIndex];
-									if ((q.synFlags & (Constants::SY2_AEROSOL_SUCCESS_FLAG | Constants::SY2_AEROSOL_FILLED_FLAG)) != 0) {
+									if (isSet(q.synFlags, Constants::SY2_AEROSOL_SUCCESS_FLAG) || isSet(q.synFlags, Constants::SY2_AEROSOL_FILLED_FLAG)) {
 										const long dist = (sourceL - targetL) * (sourceL - targetL) + (sourceM - targetM) * (sourceM - targetM);
 										if (dist < minPixelDistance) {
 											minPixelDistance = dist;
@@ -341,7 +356,7 @@ void Aer::process(Context& context) {
 				}
 			}
 		}
-		context.getLogging().info("Filled " + lexical_cast<string>(missingPixelCount) + " pixels", getId());
+		context.getLogging().info(lexical_cast<string>(missingPixelCount) + " pixels filled", getId());
 		iterationCount++;
 	} while (missingPixelCount != 0);
 
@@ -355,7 +370,7 @@ void Aer::process(Context& context) {
 	valarray<double> tauValues(9);
 	valarray<double> errValues(9);
 	for (long targetL = firstL; targetL <= lastFilterableL; targetL++) {
-		context.getLogging().progress("Filtering aerosol properties for line l = " + lexical_cast<string>(targetL), getId());
+		context.getLogging().info("Filtering line l = " + lexical_cast<string>(targetL), getId());
 
 		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long targetM = averagedGrid->getFirstM(); targetM <= averagedGrid->getMaxM(); targetM++) {
@@ -382,7 +397,8 @@ void Aer::process(Context& context) {
 		}
 	}
 
-	putPixels(pixels, firstL, lastL);
+	context.getLogging().info("Putting lines ..." , getId());
+	putPixels(pixels, firstL, lastFilterableL);
 
 	context.setLastComputedL(*averagedSegment, *this, lastFilterableL);
 	if (lastFilterableL < averagedGrid->getMaxL()) {
@@ -394,8 +410,8 @@ void Aer::process(Context& context) {
 
 void Aer::getPixels(Context& context, valarray<Pixel>& pixels) const {
 	const PixelInitializer pixelInitializer(context);
-	for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
-		for (long l = averagedGrid->getFirstL(); l <= averagedGrid->getLastL(); l++) {
+	for (long l = averagedGrid->getFirstL(); l <= averagedGrid->getLastL(); l++) {
+		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
 				const size_t index = averagedGrid->getIndex(k, l, m);
 				pixelInitializer.getPixel(k, l, m, pixels[index]);
@@ -405,29 +421,24 @@ void Aer::getPixels(Context& context, valarray<Pixel>& pixels) const {
 }
 
 void Aer::retrieveAerosolProperties(Pixel& p, ErrorMetric& em) {
-	const bool partlyCloudy = (p.synFlags & Constants::SY2_PARTLY_CLOUDY_FLAG) == Constants::SY2_PARTLY_CLOUDY_FLAG;
-	const bool partlyWater = (p.synFlags & Constants::SY2_PARTLY_WATER_FLAG) == Constants::SY2_PARTLY_WATER_FLAG;
+	using std::sqrt;
 
-	if (partlyCloudy || partlyWater) {
-		return;
-	}
-
-	for (size_t i = 0; i < amins.size(); i++) {
-		const int16_t amin = amins[i];
+	for (size_t i = 0; i < amins->size(); i++) {
+		const int16_t amin = (*amins)[i];
 		Pixel q = Pixel(p);
-		q.nu[0] = initialNu[0];
-		q.nu[1] = initialNu[1];
-		for (size_t j = 0; j < initialOmega.size(); j++) {
-			q.omega[j] = initialOmega[j];
+		q.nu[0] = (*initialNus)[0];
+		q.nu[1] = (*initialNus)[1];
+		for (size_t j = 0; j < initialOmegas->size(); j++) {
+			q.omega[j] = (*initialOmegas)[j];
 		}
 		q.tau550 = initialTau550;
-		q.c1 = em.computeNdvi(q);
-		q.c2 = 1.0 - q.c1;
+		q.c1 = 0.5;
+		q.c2 = 0.5;
 		q.amin = amin;
 		bool success = em.findMinimum(q);
 		if (success && q.E2 < p.E2) {
 			p.assign(q);
-			p.alpha550 = aerosolAngstromExponents[amin];
+			p.alpha550 = (*aerosolAngstromExponents)[amin];
 			p.amin = amin;
 		}
 	}
@@ -461,17 +472,15 @@ void Aer::readAuxdata(Context& context) {
 	getLookupTable(context, "S3__SY_2_SYCPAX.nc", "weight_ang_tot");
 	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "C_O3");
 
-	AuxdataProvider& configurationAuxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYCPAX);
-	AuxdataProvider& radiometricAuxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYRTAX);
+	AuxdataProvider& cpAuxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYCPAX);
+	AuxdataProvider& rtAuxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYRTAX);
 
-	initialTau550 = configurationAuxdataProvider.getDouble("T550_ini");
-	const valarray<int16_t>& amins = configurationAuxdataProvider.getVectorShort("AMIN");
-	this->amins.resize(amins.size());
-	this->amins = amins;
-	initialNu = configurationAuxdataProvider.getVectorDouble("v_ini");
-	initialOmega = configurationAuxdataProvider.getVectorDouble("w_ini");
-	kappa = configurationAuxdataProvider.getDouble("kappa");
-	aerosolAngstromExponents = radiometricAuxdataProvider.getVectorDouble("A550");
+	initialTau550 = cpAuxdataProvider.getDouble("T550_ini");
+	amins = &cpAuxdataProvider.getVectorShort("AMIN");
+	initialNus = &cpAuxdataProvider.getVectorDouble("v_ini");
+	initialOmegas = &cpAuxdataProvider.getVectorDouble("w_ini");
+	kappa = cpAuxdataProvider.getDouble("kappa");
+	aerosolAngstromExponents = &rtAuxdataProvider.getVectorDouble("A550");
 }
 
 void Aer::putPixels(const valarray<Pixel>& pixels, long firstL, long lastL) const {

@@ -33,12 +33,10 @@ void Processor::process(Context& context) {
 					try {
 						module->start(context);
 					} catch (boost::exception& e) {
-						addErrorInfo(e, module->getId(), "start()",
-								ExitCode::FAILURE);
+						addErrorInfo(e, module->getId(), "start()", ExitCode::FAILURE);
 						throw;
 					} catch (std::exception& e) {
-						addErrorInfo(e, module->getId(), "start()",
-								ExitCode::FAILURE);
+						addErrorInfo(e, module->getId(), "start()", ExitCode::FAILURE);
 						BOOST_THROW_EXCEPTION(e);
 					}
 				}
@@ -48,12 +46,10 @@ void Processor::process(Context& context) {
 						try {
 							module->process(context);
 						} catch (boost::exception& e) {
-							addErrorInfo(e, module->getId(), "process()",
-									ExitCode::FAILURE);
+							addErrorInfo(e, module->getId(), "process()", ExitCode::FAILURE);
 							throw;
 						} catch (std::exception& e) {
-							addErrorInfo(e, module->getId(), "process()",
-									ExitCode::FAILURE);
+							addErrorInfo(e, module->getId(), "process()", ExitCode::FAILURE);
 							BOOST_THROW_EXCEPTION(e);
 						}
 					}
@@ -64,12 +60,10 @@ void Processor::process(Context& context) {
 					try {
 						module->stop(context);
 					} catch (boost::exception& e) {
-						addErrorInfo(e, module->getId(), "stop()",
-								ExitCode::INCOMPLETE);
+						addErrorInfo(e, module->getId(), "stop()", ExitCode::INCOMPLETE);
 						throw;
 					} catch (std::exception& e) {
-						addErrorInfo(e, module->getId(), "stop()",
-								ExitCode::INCOMPLETE);
+						addErrorInfo(e, module->getId(), "stop()", ExitCode::INCOMPLETE);
 						BOOST_THROW_EXCEPTION(e);
 					}
 				}
@@ -77,9 +71,7 @@ void Processor::process(Context& context) {
 	} catch (std::exception& e) {
 		context.handleError(e);
 	}
-	context.getLogging().info(
-			"Main processing completed in " + timer.getTime()
-					+ " (HH:MM:SS.mm)", "Processor");
+	context.getLogging().info("Main processing completed in " + timer.getTime() + " (HH:MM:SS.mm)", "Processor");
 }
 
 Processor::Timer::Timer() {
@@ -103,7 +95,6 @@ string Processor::Timer::getTime() const {
 	const double s = secs - h * 3600.0 - m * 60.0;
 
 	std::ostringstream oss;
-	oss << std::setfill('0') << std::setw(2) << h << ":" << std::setw(2) << m
-			<< ":" << std::fixed << std::setw(5) << std::setprecision(2) << s;
+	oss << std::setfill('0') << std::setw(2) << h << ":" << std::setw(2) << m << ":" << std::fixed << std::setw(5) << std::setprecision(2) << s;
 	return oss.str();
 }

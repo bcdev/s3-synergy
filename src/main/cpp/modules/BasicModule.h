@@ -70,6 +70,11 @@ protected:
         return set.find(key) != set.end();
     }
 
+    template<class T>
+    static bool isSet(T flags, T flagMasks) {
+        return flags & flagMasks != 0;
+    }
+
     void addAccessor(Context& context, Segment& s, const VariableDescriptor& varDescriptor) const;
 
     AuxdataProvider& getAuxdataProvider(Context& context, const string& id) const;

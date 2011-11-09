@@ -27,20 +27,21 @@ public:
 
 private:
 	friend class AerTest;
-	Segment* averagedSegment;
-	const Grid* averagedGrid;
-
-	double initialTau550;
-	double kappa;
-	valarray<int16_t> amins;
-	valarray<double> initialNu;
-	valarray<double> initialOmega;
-	valarray<double> aerosolAngstromExponents;
 
 	void getPixels(Context& context, valarray<Pixel>& pixels) const;
 	void putPixels(const valarray<Pixel>& pixels, long firstL, long lastL) const;
 	void readAuxdata(Context& context);
 	void retrieveAerosolProperties(Pixel& p, ErrorMetric& em);
+
+	Segment* averagedSegment;
+	const Grid* averagedGrid;
+
+	double initialTau550;
+	double kappa;
+	const valarray<int16_t>* amins;
+	const valarray<double>* initialNus;
+	const valarray<double>* initialOmegas;
+	const valarray<double>* aerosolAngstromExponents;
 };
 
 #endif /* AER_H_ */

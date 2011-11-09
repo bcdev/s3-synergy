@@ -26,11 +26,11 @@ public:
     ~ErrorMetric();
 
     double computeErrorSurfaceCurvature(const Pixel& p);
-    double computeNdvi(const Pixel& q) const;
     bool findMinimum(Pixel& p);
 
 private:
     void setAerosolOpticalThickness(double tau550);
+    double computeNdvi(const Pixel& q) const;
     double computeRss2(valarray<double>& x);
     double computeRss8(valarray<double>& x);
     double computeRss10(valarray<double>& x);
