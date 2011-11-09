@@ -262,7 +262,6 @@ void Aer::process(Context& context) {
 
 	valarray<Pixel> pixels(averagedGrid->getSize());
 	getPixels(context, pixels);
-	set<size_t> missingPixelIndexes;
 
 	ErrorMetric em(context);
 
@@ -274,9 +273,6 @@ void Aer::process(Context& context) {
 				Pixel& p = pixels[pixelIndex];
 				if (p.amin == 0) {
 					retrieveAerosolProperties(p, em);
-					if (p.amin == 0) {
-						missingPixelIndexes.insert(pixelIndex);
-					}
 				}
 			}
 		}
@@ -291,62 +287,63 @@ void Aer::process(Context& context) {
 
 	size_t iterationCount = 0;
 	size_t n = 1;
+	size_t missingPixelCount;
 
-	while (!missingPixelIndexes.empty()) {
-		context.getLogging().progress("Filling " + lexical_cast<string>(missingPixelIndexes.size()) + " pixels ...", getId());
+	do {
+		missingPixelCount = 0;
 		if (iterationCount >= 5 && iterationCount <= 12) {
 			n++;
 		}
-		set<size_t> filledPixelIndexes;
-		for (set<size_t>::iterator missingPixelIter = missingPixelIndexes.begin(); missingPixelIter != missingPixelIndexes.end(); missingPixelIter++) {
-			Pixel& p = pixels[*missingPixelIter];
-			if (p.l <= lastFillableL) {
-				double tau550 = 0.0;
-				double tau550err = 0.0;
-				double alpha550 = 0.0;
-				size_t pixelCount = 0;
-				long minPixelDistance = numeric_limits<long>::max();
+		for (long targetL = firstL; targetL <= lastFillableL; targetL++) {
+			context.getLogging().progress("Filling pixels for line l = " + lexical_cast<string>(targetL), getId());
+			for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
+				for (long targetM = averagedGrid->getFirstM(); targetM <= averagedGrid->getMaxM(); targetM++) {
+					const size_t targetPixelIndex = averagedGrid->getIndex(k, targetL, targetM);
+					Pixel& targetPixel = pixels[targetPixelIndex];
 
-				for (long l = p.l - n; l <= p.l + n; l++) {
-					for (long m = p.m - n; m <= p.m + n; m++) {
-						if (averagedGrid->isValidPosition(p.k, l, m)) {
-							const size_t pixelIndex = averagedGrid->getIndex(p.k, l, m);
-							if (!contains(missingPixelIndexes, pixelIndex)) {
-								const Pixel& q = pixels[pixelIndex];
-								const long dist = (q.l - p.l) * (q.l - p.l) + (q.m - p.m) * (q.m - p.m);
-								if (dist < minPixelDistance) {
-									minPixelDistance = dist;
-									p.amin = q.amin;
+					if ((targetPixel.synFlags & (Constants::SY2_AEROSOL_SUCCESS_FLAG | Constants::SY2_AEROSOL_FILLED_FLAG)) == 0) {
+						missingPixelCount++;
+
+						double tau550 = 0.0;
+						double tau550err = 0.0;
+						double alpha550 = 0.0;
+						size_t pixelCount = 0;
+						long minPixelDistance = numeric_limits<long>::max();
+
+						for (long sourceL = targetL - n; sourceL <= targetL + n; sourceL++) {
+							for (long sourceM = targetM - n; sourceM <= targetM + n; sourceM++) {
+								if (averagedGrid->isValidPosition(k, sourceL, sourceM)) {
+									const size_t sourcePixelIndex = averagedGrid->getIndex(k, sourceL, sourceM);
+									const Pixel& sourcePixel = pixels[sourcePixelIndex];
+									if ((sourcePixel.synFlags & (Constants::SY2_AEROSOL_SUCCESS_FLAG | Constants::SY2_AEROSOL_FILLED_FLAG)) != 0) {
+										const long dist = (sourceL - targetL) * (sourceL - targetL) + (sourceM - targetM) * (sourceM - targetM);
+										if (dist < minPixelDistance) {
+											minPixelDistance = dist;
+											targetPixel.amin = sourcePixel.amin;
+										}
+
+										tau550 += sourcePixel.tau550;
+										tau550err += sourcePixel.tau550Error;
+										alpha550 += sourcePixel.alpha550;
+
+										pixelCount++;
+									}
 								}
-
-								tau550 += q.tau550;
-								tau550err += q.tau550Error;
-								alpha550 += q.alpha550;
-
-								pixelCount++;
 							}
+						}
+						if (pixelCount > 0) {
+							targetPixel.tau550 = tau550 / pixelCount;
+							targetPixel.tau550Error = tau550err / pixelCount;
+							targetPixel.alpha550 = alpha550 / pixelCount;
+							targetPixel.synFlags |= Constants::SY2_AEROSOL_FILLED_FLAG;
 						}
 					}
 				}
-				if (pixelCount > 0) {
-					p.tau550 = tau550 / pixelCount;
-					p.tau550Error = tau550err / pixelCount;
-					p.alpha550 = alpha550 / pixelCount;
-					p.synFlags |= Constants::SY2_AEROSOL_FILLED_FLAG;
-					filledPixelIndexes.insert(*missingPixelIter);
-				}
-			} else {
-				filledPixelIndexes.insert(*missingPixelIter);
 			}
 		}
-		for (set<size_t>::iterator filledPixelIter = filledPixelIndexes.begin(); filledPixelIter != filledPixelIndexes.end(); filledPixelIter++) {
-			missingPixelIndexes.erase(*filledPixelIter);
-		}
+		context.getLogging().info("Filled " + lexical_cast<string>(missingPixelCount) + " pixels", getId());
 		iterationCount++;
-		if (iterationCount > 1000) {
-			break;
-		}
-	}
+	} while (missingPixelCount != 0);
 
 	long lastFilterableL;
 	if (lastL < averagedGrid->getMaxL()) {
