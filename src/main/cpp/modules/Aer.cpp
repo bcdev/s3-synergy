@@ -48,7 +48,13 @@ private:
 	const Grid& slnInfoGrid;
 	const Grid& sloInfoGrid;
 
+	const Accessor& tau550;
+	const Accessor& tau550Error;
+	const Accessor& tau550Filtered;
+	const Accessor& tau550ErrorFiltered;
+	const Accessor& alpha550;
 	const Accessor& synFlags;
+	const Accessor& amin;
 	const Accessor& lat;
 	const Accessor& lon;
 
@@ -78,14 +84,28 @@ private:
 };
 
 PixelInitializer::PixelInitializer(const Context& context) :
-		context(context), averagedSegment(context.getSegment(Constants::SEGMENT_SYN_AVERAGED)), olcInfoSegment(context.getSegment(Constants::SEGMENT_OLC_INFO)), slnInfoSegment(
-				context.getSegment(Constants::SEGMENT_SLN_INFO)), sloInfoSegment(context.getSegment(Constants::SEGMENT_SLO_INFO)), averagedGrid(averagedSegment.getGrid()), olcInfoGrid(
-				olcInfoSegment.getGrid()), slnInfoGrid(slnInfoSegment.getGrid()), sloInfoGrid(sloInfoSegment.getGrid()), synFlags(averagedSegment.getAccessor("SYN_flags")), lat(
-				averagedSegment.getAccessor("latitude")), lon(averagedSegment.getAccessor("longitude")), tiePointInterpolatorOlc(
-				context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("OLC_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("OLC_TP_lat").getDoubles()), tiePointInterpolatorSln(
-				context.getSegment(Constants::SEGMENT_SLN_TP).getAccessor("SLN_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_SLN_TP).getAccessor("SLN_TP_lat").getDoubles()), tiePointInterpolatorSlo(
-				context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lat").getDoubles()), cO3(
-				((AuxdataProvider&) context.getObject(Constants::AUX_ID_SYRTAX)).getVectorDouble("C_O3")) {
+		context(context),
+		averagedSegment(context.getSegment(Constants::SEGMENT_SYN_AVERAGED)),
+		olcInfoSegment(context.getSegment(Constants::SEGMENT_OLC_INFO)),
+		slnInfoSegment(context.getSegment(Constants::SEGMENT_SLN_INFO)),
+		sloInfoSegment(context.getSegment(Constants::SEGMENT_SLO_INFO)),
+		averagedGrid(averagedSegment.getGrid()),
+		olcInfoGrid(olcInfoSegment.getGrid()),
+		slnInfoGrid(slnInfoSegment.getGrid()),
+		sloInfoGrid(sloInfoSegment.getGrid()),
+		tau550(averagedSegment.getAccessor("T550")),
+		tau550Error(averagedSegment.getAccessor("T550_er")),
+		tau550Filtered(averagedSegment.getAccessor("T550_filtered")),
+		tau550ErrorFiltered(averagedSegment.getAccessor("T550_er_filtered")),
+		alpha550(averagedSegment.getAccessor("A550")),
+		synFlags(averagedSegment.getAccessor("SYN_flags")),
+		amin(averagedSegment.getAccessor("AMIN")),
+		lat(averagedSegment.getAccessor("latitude")),
+		lon(averagedSegment.getAccessor("longitude")),
+		tiePointInterpolatorOlc(context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("OLC_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("OLC_TP_lat").getDoubles()),
+		tiePointInterpolatorSln(context.getSegment(Constants::SEGMENT_SLN_TP).getAccessor("SLN_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_SLN_TP).getAccessor("SLN_TP_lat").getDoubles()),
+		tiePointInterpolatorSlo(context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lat").getDoubles()),
+		cO3(((AuxdataProvider&) context.getObject(Constants::AUX_ID_SYRTAX)).getVectorDouble("C_O3")) {
 	for (size_t b = 0; b < 30; b++) {
 		radiances.push_back(&averagedSegment.getAccessor("L_" + lexical_cast<string>(b + 1)));
 	}
@@ -185,9 +205,15 @@ Pixel& PixelInitializer::getPixel(long k, long l, long m, Pixel& p) const {
 	}
 
 	/*
-	 * Flags
+	 * Aerosol properties
 	 */
+	p.tau550 = tau550.isFillValue(p.index) ? Constants::FILL_VALUE_DOUBLE : tau550.getDouble(p.index);
+	p.tau550Error = tau550Error.isFillValue(p.index) ? Constants::FILL_VALUE_DOUBLE : tau550Error.getDouble(p.index);
+	p.tau550Filtered = tau550Filtered.isFillValue(p.index) ? Constants::FILL_VALUE_DOUBLE : tau550Filtered.getDouble(p.index);
+	p.tau550ErrorFiltered = tau550ErrorFiltered.isFillValue(p.index) ? Constants::FILL_VALUE_DOUBLE : tau550ErrorFiltered.getDouble(p.index);
+	p.alpha550 = alpha550.isFillValue(p.index) ? Constants::FILL_VALUE_DOUBLE : alpha550.getDouble(p.index);
 	p.synFlags = synFlags.getUShort(p.index);
+	p.amin = amin.getUByte(p.index);
 
 	/*
 	 * Geo-location
@@ -226,12 +252,6 @@ Pixel& PixelInitializer::getPixel(long k, long l, long m, Pixel& p) const {
 	/*
 	 * Anything else
 	 */
-	p.tau550 = Constants::FILL_VALUE_DOUBLE;
-	p.tau550Error = Constants::FILL_VALUE_DOUBLE;
-	p.tau550Filtered = Constants::FILL_VALUE_DOUBLE;
-	p.tau550ErrorFiltered = Constants::FILL_VALUE_DOUBLE;
-	p.alpha550 = Constants::FILL_VALUE_DOUBLE;
-	p.amin = numeric_limits<short>::min();
 	p.E2 = numeric_limits<double>::max();
 
 	return p;
