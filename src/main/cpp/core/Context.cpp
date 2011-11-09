@@ -160,7 +160,7 @@ void Context::moveForward(shared_ptr<Segment> segment) const {
 	if (l + segment->getGrid().getSizeL() - 1 > segment->getGrid().getMaxL()) {
 		l = segment->getGrid().getMaxL() - segment->getGrid().getSizeL() + 1;
 	}
-	if (l > segment->getGrid().getLastL()) {
+	if (l > segment->getGrid().getFirstL()) {
 		getLogging().debug("Moving segment [" + segment->toString() + "] forward to line " + lexical_cast<string>(l), "Context");
 		segment->moveForward(l);
 	}
