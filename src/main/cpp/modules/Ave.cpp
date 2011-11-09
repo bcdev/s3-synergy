@@ -5,6 +5,7 @@
  *      Author: thomasstorm
  */
 
+#include <algorithm>
 #include <cmath>
 
 #include "Ave.h"
@@ -17,25 +18,30 @@ Ave::~Ave() {
 }
 
 void Ave::start(Context& context) {
+	using std::ceil;
+
 	averagingFactor = getAuxdataProvider(context, Constants::AUX_ID_SYCPAX).getUByte("ave_square");
 	sourceSegment = &context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 	const Grid& sourceGrid = sourceSegment->getGrid();
 	const size_t sizeL = sourceGrid.getSizeL() / averagingFactor;
-	const size_t sizeM = std::ceil(sourceGrid.getSizeM() / double(averagingFactor));
+	const size_t sizeM = ceil(sourceGrid.getSizeM() / double(averagingFactor));
 	const size_t sizeK = sourceGrid.getSizeK();
-	const size_t maxL = std::ceil((sourceGrid.getMaxL() - sourceGrid.getMinL() + 1) / double(averagingFactor)) - 1;
+	const size_t maxL = ceil((sourceGrid.getMaxL() - sourceGrid.getMinL() + 1) / double(averagingFactor)) - 1;
 	targetSegment = &context.addSegment(Constants::SEGMENT_SYN_AVERAGED, sizeL, sizeM, sizeK, 0, maxL);
 
 	addVariables(context);
 }
 
 void Ave::process(Context& context) {
+	using std::min;
+
 	const long lastSourceL = context.getLastComputableL(*sourceSegment, *this);
 	const long firstTargetL = context.getFirstComputableL(*targetSegment, *this);
 	long lastTargetL = (lastSourceL - sourceSegment->getGrid().getMinL() + 1) / averagingFactor;
 	if (lastSourceL < sourceSegment->getGrid().getMaxL()) {
 		lastTargetL--;
 	}
+	lastTargetL = min(lastTargetL, context.getLastComputableL(*targetSegment, *this));
 
 	context.getLogging().debug("Segment [" + targetSegment->toString() + "]: firstComputableL = " + lexical_cast<string>(firstTargetL), getId());
 	context.getLogging().debug("Segment [" + targetSegment->toString() + "]: lastComputableL = " + lexical_cast<string>(lastTargetL), getId());
