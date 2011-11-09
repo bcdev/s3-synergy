@@ -26,7 +26,7 @@
 class DoubleAccessor : public virtual AbstractAccessor<double, Constants::TYPE_DOUBLE> {
 public:
 
-    DoubleAccessor(size_t n, double fillValue = numeric_limits<double>::min()) : AbstractAccessor<double, Constants::TYPE_DOUBLE>(n, fillValue) {
+    DoubleAccessor(size_t n, double fillValue = -numeric_limits<double>::max()) : AbstractAccessor<double, Constants::TYPE_DOUBLE>(n, fillValue) {
     }
 
     virtual ~DoubleAccessor() {
