@@ -483,43 +483,64 @@ void Aer::putPixels(const valarray<Pixel>& pixels, long firstL, long lastL) cons
 	Accessor& t550ErrFiltered = averagedSegment->getAccessor("T550_er_filtered");
 
 	for (long l = firstL; l <= lastL; l++) {
-		try {
-			for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
-				for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
-					const size_t index = averagedGrid->getIndex(k, l, m);
-					const Pixel& p = pixels[index];
+		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
+			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
+				const size_t index = averagedGrid->getIndex(k, l, m);
+				const Pixel& p = pixels[index];
 
-					amin.setUByte(p.index, p.amin);
-					if (p.tau550 == Constants::FILL_VALUE_DOUBLE) {
-						t550.setFillValue(index);
-					} else {
+				amin.setUByte(p.index, p.amin);
+				if (p.tau550 == Constants::FILL_VALUE_DOUBLE) {
+					t550.setFillValue(index);
+				} else {
+					try {
 						t550.setDouble(index, p.tau550);
+					} catch (std::exception& e) {
+						std::cout << "line " << l << ": " << e.what() << ": " << "t550 = " << p.tau550 << std::endl;
+						throw e;
 					}
-					if (p.tau550Error == Constants::FILL_VALUE_DOUBLE) {
-						t550Err.setFillValue(index);
-					} else {
+				}
+				if (p.tau550Error == Constants::FILL_VALUE_DOUBLE) {
+					t550Err.setFillValue(index);
+				} else {
+					try {
 						t550Err.setDouble(index, p.tau550Error);
+					} catch (std::exception& e) {
+						std::cout << "line " << l << ": " << e.what() << ": " << "t550Err = " << p.tau550Error << std::endl;
+						throw e;
 					}
-					if (p.alpha550 == Constants::FILL_VALUE_DOUBLE) {
-						a550.setFillValue(index);
-					} else {
+				}
+				if (p.alpha550 == Constants::FILL_VALUE_DOUBLE) {
+					a550.setFillValue(index);
+				} else {
+					try {
 						a550.setDouble(index, p.alpha550);
+					} catch (std::exception& e) {
+						std::cout << "line " << l << ": " << e.what() << ": " << "a550 = " << p.alpha550 << std::endl;
+						throw e;
 					}
-					synFlags.setUShort(index, p.synFlags);
-					if (p.tau550Filtered == Constants::FILL_VALUE_DOUBLE) {
-						t550Filtered.setFillValue(index);
-					} else {
+				}
+				synFlags.setUShort(index, p.synFlags);
+				if (p.tau550Filtered == Constants::FILL_VALUE_DOUBLE) {
+					t550Filtered.setFillValue(index);
+				} else {
+					try {
 						t550Filtered.setDouble(index, p.tau550Filtered);
+					} catch (std::exception& e) {
+						std::cout << "line " << l << ": " << e.what() << ": " << "t550Filtered = " << p.tau550Filtered << std::endl;
+						throw e;
 					}
-					if (p.tau550ErrorFiltered == Constants::FILL_VALUE_DOUBLE) {
-						t550ErrFiltered.setFillValue(index);
-					} else {
+				}
+				if (p.tau550ErrorFiltered == Constants::FILL_VALUE_DOUBLE) {
+					t550ErrFiltered.setFillValue(index);
+				} else {
+					try {
 						t550ErrFiltered.setDouble(index, p.tau550ErrorFiltered);
+					} catch (std::exception& e) {
+						std::cout << "line " << l << ": " << e.what() << ": " << "t550ErrorFiltered = " << p.tau550ErrorFiltered << std::endl;
+						throw e;
 					}
 				}
 			}
-		} catch (std::exception& e) {
-			std::cout << "line " << l << ": " << e.what() << std::endl;
 		}
 	}
 }
