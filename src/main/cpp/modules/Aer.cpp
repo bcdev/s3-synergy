@@ -286,7 +286,7 @@ void Aer::process(Context& context) {
 	}
 
 	size_t iterationCount = 0;
-	size_t n = 1;
+	unsigned n = 1;
 	size_t missingPixelCount;
 
 	do {
