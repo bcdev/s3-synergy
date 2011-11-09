@@ -156,12 +156,14 @@ void Context::moveForward(shared_ptr<Segment> segment) const {
 					lastComputedL = min(lastComputedL, q.second);
 				}
 	}
-    long l = min(lastComputedL + 1, getFirstRequiredL(*segment));
+	long l = min(lastComputedL + 1, getFirstRequiredL(*segment));
 	if (l + segment->getGrid().getSizeL() - 1 > segment->getGrid().getMaxL()) {
 		l = segment->getGrid().getMaxL() - segment->getGrid().getSizeL() + 1;
 	}
-	getLogging().debug("Moving segment [" + segment->toString() + "] forward to line " + lexical_cast<string>(l), "Context");
-	segment->moveForward(l);
+	if (l > segment->getGrid().getLastL()) {
+		getLogging().debug("Moving segment [" + segment->toString() + "] forward to line " + lexical_cast<string>(l), "Context");
+		segment->moveForward(l);
+	}
 }
 
 void Context::moveSegmentsForward() const {
@@ -199,11 +201,11 @@ long Context::getLastComputableL(const Segment& segment, const Module& module) c
 }
 
 bool Context::hasFirstRequiredL(const Segment& segment, const Module& module) const {
-	return contains(firstRequiredLMap, segment) && contains(firstRequiredLMap.at(&segment), module);
+	return contains(firstRequiredLMap, segment) && contains(firstRequiredLMap.at(&segment), module) && firstRequiredLMap.at(&segment).at(&module) > 0;
 }
 
 bool Context::hasLastComputedL(const Segment& segment, const Module& module) const {
-	return contains(lastComputedLMap, segment) && contains(lastComputedLMap.at(&segment), module);
+	return contains(lastComputedLMap, segment) && contains(lastComputedLMap.at(&segment), module) && lastComputedLMap.at(&segment).at(&module) > 0;
 }
 
 void Context::setFirstRequiredL(const Segment& segment, const Module& module, long l) {
