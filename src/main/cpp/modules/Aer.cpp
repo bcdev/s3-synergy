@@ -9,6 +9,7 @@
 #include <cmath>
 #include <limits>
 #include <set>
+#include <iostream>
 
 #include "../core/TiePointInterpolator.h"
 #include "../util/ErrorMetric.h"
@@ -263,10 +264,11 @@ void Aer::process(Context& context) {
 
 	valarray<Pixel> pixels(averagedGrid->getSize());
 
-	context.getLogging().info("Putting lines ..." , getId());
+	context.getLogging().info("Putting lines ...", getId());
 	getPixels(context, pixels);
 
 	ErrorMetric em(context);
+	Pixel q;
 
 	for (long l = firstL; l <= lastL; l++) {
 		context.getLogging().progress("Retrieving aerosol properties for line l = " + lexical_cast<string>(l), getId());
@@ -288,7 +290,7 @@ void Aer::process(Context& context) {
 					continue;
 				}
 
-				retrieveAerosolProperties(p, em);
+				retrieveAerosolProperties(p, q, em);
 			}
 		}
 	}
@@ -397,8 +399,8 @@ void Aer::process(Context& context) {
 		}
 	}
 
-	context.getLogging().info("Putting lines ..." , getId());
-	putPixels(pixels, firstL, lastFilterableL);
+	context.getLogging().info("Putting lines ...", getId());
+	putPixels(pixels, firstL, lastL);
 
 	context.setLastComputedL(*averagedSegment, *this, lastFilterableL);
 	if (lastFilterableL < averagedGrid->getMaxL()) {
@@ -420,20 +422,12 @@ void Aer::getPixels(Context& context, valarray<Pixel>& pixels) const {
 	}
 }
 
-void Aer::retrieveAerosolProperties(Pixel& p, ErrorMetric& em) {
+void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 	using std::sqrt;
 
 	for (size_t i = 0; i < amins->size(); i++) {
 		const int16_t amin = (*amins)[i];
-		Pixel q = Pixel(p);
-		q.nu[0] = (*initialNus)[0];
-		q.nu[1] = (*initialNus)[1];
-		for (size_t j = 0; j < initialOmegas->size(); j++) {
-			q.omega[j] = (*initialOmegas)[j];
-		}
-		q.tau550 = initialTau550;
-		q.c1 = 0.5;
-		q.c2 = 0.5;
+		q.assign(p);
 		q.amin = amin;
 		bool success = em.findMinimum(q);
 		if (success && q.E2 < p.E2) {
@@ -443,12 +437,11 @@ void Aer::retrieveAerosolProperties(Pixel& p, ErrorMetric& em) {
 		}
 	}
 	if (p.amin > 0) {
-		double tau550 = p.tau550;
-		if (tau550 > 0.0001) {
+		if (p.tau550 > 0.0001) {
 			double a = em.computeErrorSurfaceCurvature(p);
-			if (a > 0) {
+			if (a > 0.0) {
 				p.tau550Error = kappa * sqrt(p.E2 / a);
-				if (tau550 > 0.1 && p.tau550Error > 5 * tau550) {
+				if (p.tau550 > 0.1 && p.tau550Error > 5.0 * p.tau550) {
 					p.synFlags |= Constants::SY2_AEROSOL_HIGH_ERROR_FLAG;
 				} else {
 					p.synFlags |= Constants::SY2_AEROSOL_SUCCESS_FLAG;
@@ -475,10 +468,7 @@ void Aer::readAuxdata(Context& context) {
 	AuxdataProvider& cpAuxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYCPAX);
 	AuxdataProvider& rtAuxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYRTAX);
 
-	initialTau550 = cpAuxdataProvider.getDouble("T550_ini");
 	amins = &cpAuxdataProvider.getVectorShort("AMIN");
-	initialNus = &cpAuxdataProvider.getVectorDouble("v_ini");
-	initialOmegas = &cpAuxdataProvider.getVectorDouble("w_ini");
 	kappa = cpAuxdataProvider.getDouble("kappa");
 	aerosolAngstromExponents = &rtAuxdataProvider.getVectorDouble("A550");
 }
@@ -492,40 +482,44 @@ void Aer::putPixels(const valarray<Pixel>& pixels, long firstL, long lastL) cons
 	Accessor& t550Filtered = averagedSegment->getAccessor("T550_filtered");
 	Accessor& t550ErrFiltered = averagedSegment->getAccessor("T550_er_filtered");
 
-	for (long l = firstL; l < lastL; l++) {
-		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
-			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
-				const size_t index = averagedGrid->getIndex(k, l, m);
-				const Pixel& p = pixels[index];
+	for (long l = firstL; l <= lastL; l++) {
+		try {
+			for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
+				for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
+					const size_t index = averagedGrid->getIndex(k, l, m);
+					const Pixel& p = pixels[index];
 
-				amin.setUByte(p.index, p.amin);
-				if (p.tau550 == Constants::FILL_VALUE_DOUBLE) {
-					t550.setFillValue(p.index);
-				} else {
-					t550.setDouble(p.index, p.tau550);
-				}
-				if (p.tau550Error == Constants::FILL_VALUE_DOUBLE) {
-					t550Err.setFillValue(p.index);
-				} else {
-					t550Err.setDouble(p.index, p.tau550Error);
-				}
-				if (p.alpha550 == Constants::FILL_VALUE_DOUBLE) {
-					a550.setFillValue(p.index);
-				} else {
-					a550.setDouble(p.index, p.alpha550);
-				}
-				synFlags.setUShort(p.index, p.synFlags);
-				if (p.tau550Filtered == Constants::FILL_VALUE_DOUBLE) {
-					t550Filtered.setFillValue(p.index);
-				} else {
-					t550Filtered.setDouble(p.index, p.tau550Filtered);
-				}
-				if (p.tau550ErrorFiltered == Constants::FILL_VALUE_DOUBLE) {
-					t550ErrFiltered.setFillValue(p.index);
-				} else {
-					t550ErrFiltered.setDouble(p.index, p.tau550ErrorFiltered);
+					amin.setUByte(p.index, p.amin);
+					if (p.tau550 == Constants::FILL_VALUE_DOUBLE) {
+						t550.setFillValue(index);
+					} else {
+						t550.setDouble(index, p.tau550);
+					}
+					if (p.tau550Error == Constants::FILL_VALUE_DOUBLE) {
+						t550Err.setFillValue(index);
+					} else {
+						t550Err.setDouble(index, p.tau550Error);
+					}
+					if (p.alpha550 == Constants::FILL_VALUE_DOUBLE) {
+						a550.setFillValue(index);
+					} else {
+						a550.setDouble(index, p.alpha550);
+					}
+					synFlags.setUShort(index, p.synFlags);
+					if (p.tau550Filtered == Constants::FILL_VALUE_DOUBLE) {
+						t550Filtered.setFillValue(index);
+					} else {
+						t550Filtered.setDouble(index, p.tau550Filtered);
+					}
+					if (p.tau550ErrorFiltered == Constants::FILL_VALUE_DOUBLE) {
+						t550ErrFiltered.setFillValue(index);
+					} else {
+						t550ErrFiltered.setDouble(index, p.tau550ErrorFiltered);
+					}
 				}
 			}
+		} catch (std::exception& e) {
+			std::cout << "line " << l << ": " << e.what() << std::endl;
 		}
 	}
 }

@@ -23,6 +23,9 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		lutTotalAngularWeights((LookupTable<double>&) context.getObject("weight_ang_tot")),
 		lutD((LookupTable<double>&) context.getObject("D")),
 		configurationAuxdata((AuxdataProvider&) context.getObject(Constants::AUX_ID_SYCPAX)),
+		initialTau550(configurationAuxdata.getDouble("T550_ini")),
+		initialNus(configurationAuxdata.getVectorDouble("v_ini")),
+		initialOmegas(configurationAuxdata.getVectorDouble("w_ini")),
 		gamma(configurationAuxdata.getDouble("gamma")),
 		ndviIndices(configurationAuxdata.getVectorShort("NDV_channel")),
 		vegetationModel(configurationAuxdata.getVectorDouble("R_veg")),
@@ -57,11 +60,11 @@ bool ErrorMetric::findMinimum(Pixel& p) {
 	if (doOLC || doSLS) {
 		Bracket bracket;
 		bracket.lowerX = 0.0;
-		bracket.minimumX = p.tau550;
-		bracket.upperX = 2.0;
+		bracket.minimumX = initialTau550;
+		bracket.upperX = 3.0;
 		bracket.lowerF = getValue(0.0);
-		bracket.minimumF = getValue(0.1);
-		bracket.upperF = getValue(2.0);
+		bracket.minimumF = getValue(initialTau550);
+		bracket.upperF = getValue(3.0);
 
 		const bool success = Min::brent(*this, bracket, ACCURACY_GOAL);
 
@@ -97,12 +100,12 @@ double ErrorMetric::computeErrorSurfaceCurvature(const Pixel& p) {
 double ErrorMetric::getValue(double x) {
 	setAerosolOpticalThickness(x);
 
-	pn[0] = pixel->c1;
-	pn[1] = pixel->c2;
-	pn[2] = pixel->nu[0];
-	pn[3] = pixel->nu[1];
+	pn[0] = 0.5;
+	pn[1] = 0.5;
+	pn[2] = initialNus[0];
+	pn[3] = initialNus[1];
 	for (size_t i = 0; i < 6; i++) {
-		pn[i + 4] = pixel->omega[i];
+		pn[i + 4] = initialOmegas[i];
 	}
 
 	if (doOLC) {

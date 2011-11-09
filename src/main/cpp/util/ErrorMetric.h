@@ -52,6 +52,9 @@ private:
     const LookupTable<double>& lutD;
 
     const AuxdataProvider& configurationAuxdata;
+	const double initialTau550;
+	const valarray<double>& initialNus;
+	const valarray<double>& initialOmegas;
     const double gamma;
     const valarray<int16_t>& ndviIndices;
     const valarray<double>& vegetationModel;

@@ -69,6 +69,7 @@ void AerTest::tearDown() {
 
 void AerTest::testAer_s() {
     aer->readAuxdata(*context);
+
     Pixel p(0, 0, 1, 1);
     p.tau550 = 0.5;
     p.synFlags = 0;
@@ -141,7 +142,9 @@ void AerTest::testAer_s() {
     p.E2 = numeric_limits<double>::max();
 
 	ErrorMetric em(*context);
-    aer->retrieveAerosolProperties(p, em);
+
+	Pixel q;
+    aer->retrieveAerosolProperties(p, q, em);
 }
 
 void AerTest::testAer() {
@@ -169,20 +172,6 @@ void AerTest::testReadAuxdata() {
     CPPUNIT_ASSERT(amins[0] == 1);
     CPPUNIT_ASSERT(amins[1] == 2);
     CPPUNIT_ASSERT(amins[2] == 3);
-
-    const float initialTau550 = aer->initialTau550;
-    CPPUNIT_ASSERT(initialTau550 == 0.1f);
-
-    const valarray<double>& initialNus = *(aer->initialNus);
-    CPPUNIT_ASSERT(initialNus.size() == 2);
-    CPPUNIT_ASSERT(initialNus[0] == 0.5f);
-    CPPUNIT_ASSERT(initialNus[1] == 0.3f);
-
-    const valarray<double>& initialOmegas = *(aer->initialOmegas);
-    CPPUNIT_ASSERT(initialOmegas.size() == 6);
-    for(size_t i = 0; i < initialOmegas.size(); i++) {
-        CPPUNIT_ASSERT(initialOmegas[i] == 0.1f);
-    }
 
     double alpha550 = (*aer->aerosolAngstromExponents)[0];
     CPPUNIT_ASSERT(alpha550 == 1.25f);
