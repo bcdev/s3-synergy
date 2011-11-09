@@ -264,7 +264,7 @@ void Aer::process(Context& context) {
 
 	valarray<Pixel> pixels(averagedGrid->getSize());
 
-	context.getLogging().info("Putting lines ...", getId());
+	context.getLogging().info("Getting lines ...", getId());
 	getPixels(context, pixels);
 
 	ErrorMetric em(context);
