@@ -41,8 +41,8 @@ struct Pixel {
     double aotError;
     double aotFiltered;
     double aotErrorFiltered;
-    uint16_t flags;
-    uint8_t aerosolModel;
+    unsigned short flags;
+    unsigned char aerosolModel;
 
     double c1;
     double c2;
