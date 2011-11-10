@@ -315,6 +315,7 @@ void Aer::process(Context& context) {
 		}
 	}
 
+	/*
 	long lastFillableL;
 	if (lastL < averagedGrid->getMaxL()) {
 		lastFillableL = lastL - 9;
@@ -419,15 +420,20 @@ void Aer::process(Context& context) {
 		}
 	}
 
+	*/
 	context.getLogging().info("Putting lines ...", getId());
 	putPixels(pixels, firstL, lastL);
 
+	context.setLastComputedL(*averagedSegment, *this, lastL);
+
+	/*
 	context.setLastComputedL(*averagedSegment, *this, lastFilterableL);
 	if (lastFilterableL < averagedGrid->getMaxL()) {
 		context.setFirstRequiredL(*averagedSegment, *this, lastFilterableL - 10);
 	} else {
 		context.setFirstRequiredL(*averagedSegment, *this, -1);
 	}
+	*/
 }
 
 void Aer::getPixels(Context& context, valarray<Pixel>& pixels) const {
@@ -472,6 +478,12 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 		} else {
 			p.synFlags |= Constants::SY2_AEROSOL_TOO_LOW_FLAG;
 		}
+	} else {
+		p.amin = 0;
+		p.tau550 = 0.0;
+		p.tau550Error = 0.0;
+		p.alpha550 = 0.0;
+		p.synFlags |= Constants::SY2_AEROSOL_FILLED_FLAG;
 	}
 }
 
