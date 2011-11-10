@@ -115,7 +115,7 @@ std::ostream& operator<<(std::ostream& s, Pixel& p) {
 	s << p.aotFiltered << " ";
 	s << p.aotErrorFiltered;
 	s << p.flags << " ";
-	s << p.aerosolModel << " ";
+	s << (unsigned short) p.aerosolModel << " ";
 
 	s << p.c1 << " ";
 	s << p.c2 << " ";
