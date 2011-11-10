@@ -318,6 +318,7 @@ void Aer::process(Context& context) {
 		if (iterationCount >= 5 && iterationCount <= 12) {
 			n++;
 		}
+		set<size_t> filledPixelIndexes;
 		for (long targetL = firstL; targetL <= lastFillableL; targetL++) {
 			context.getLogging().info("Filling line l = " + lexical_cast<string>(targetL), getId());
 			for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
@@ -338,19 +339,21 @@ void Aer::process(Context& context) {
 							for (long sourceM = targetM - n; sourceM <= targetM + n; sourceM++) {
 								if (averagedGrid->isValidPosition(k, sourceL, sourceM)) {
 									const size_t sourcePixelIndex = averagedGrid->getIndex(k, sourceL, sourceM);
-									const Pixel& q = pixels[sourcePixelIndex];
-									if (isSet(q.synFlags, Constants::SY2_AEROSOL_SUCCESS_FLAG) || isSet(q.synFlags, Constants::SY2_AEROSOL_FILLED_FLAG)) {
-										const long dist = (sourceL - targetL) * (sourceL - targetL) + (sourceM - targetM) * (sourceM - targetM);
-										if (dist < minPixelDistance) {
-											minPixelDistance = dist;
-											p.amin = q.amin;
+									if (!contains(filledPixelIndexes, sourcePixelIndex)) {
+										const Pixel& q = pixels[sourcePixelIndex];
+										if (isSet(q.synFlags, Constants::SY2_AEROSOL_SUCCESS_FLAG) || isSet(q.synFlags, Constants::SY2_AEROSOL_FILLED_FLAG)) {
+											const long dist = (sourceL - targetL) * (sourceL - targetL) + (sourceM - targetM) * (sourceM - targetM);
+											if (dist < minPixelDistance) {
+												minPixelDistance = dist;
+												p.amin = q.amin;
+											}
+
+											tau550 += q.tau550;
+											tau550err += q.tau550Error;
+											alpha550 += q.alpha550;
+
+											pixelCount++;
 										}
-
-										tau550 += q.tau550;
-										tau550err += q.tau550Error;
-										alpha550 += q.alpha550;
-
-										pixelCount++;
 									}
 								}
 							}
@@ -360,12 +363,12 @@ void Aer::process(Context& context) {
 							p.tau550Error = tau550err / pixelCount;
 							p.alpha550 = alpha550 / pixelCount;
 							p.synFlags |= Constants::SY2_AEROSOL_FILLED_FLAG;
+							filledPixelIndexes.insert(targetPixelIndex);
 						}
 					}
 				}
 			}
 		}
-		context.getLogging().info(lexical_cast<string>(missingPixelCount) + " pixels filled", getId());
 		iterationCount++;
 	} while (missingPixelCount != 0);
 
@@ -459,11 +462,6 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 		} else {
 			p.synFlags |= Constants::SY2_AEROSOL_TOO_LOW_FLAG;
 		}
-	} else {
-		p.amin = 0;
-		p.tau550 = Constants::FILL_VALUE_DOUBLE;
-		p.tau550Error = Constants::FILL_VALUE_DOUBLE;
-		p.alpha550 = Constants::FILL_VALUE_DOUBLE;
 	}
 }
 
