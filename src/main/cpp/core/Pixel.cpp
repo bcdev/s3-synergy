@@ -88,7 +88,7 @@ void Pixel::assign(const Pixel& q) {
 	a = q.a;
 }
 
-std::ostream& operator<<(std::ostream& s, Pixel& p) {
+std::ostream& operator<<(std::ostream& s, const Pixel& p) {
 	for (size_t i = 0; i < p.radiances.size(); i++) {
 		s << p.radiances[i] << " ";
 	}
@@ -115,7 +115,7 @@ std::ostream& operator<<(std::ostream& s, Pixel& p) {
 	s << p.aot << " ";
 	s << p.aotError << " ";
 	s << p.aotFiltered << " ";
-	s << p.aotErrorFiltered;
+	s << p.aotErrorFiltered << " ";
 	s << p.flags << " ";
 	s << (unsigned short) p.aerosolModel << " ";
 
@@ -136,49 +136,51 @@ std::ostream& operator<<(std::ostream& s, Pixel& p) {
 }
 
 std::istream& operator>>(std::istream& s, Pixel& p) {
-	/*
 	for (size_t i = 0; i < p.radiances.size(); i++) {
-		s << p.radiances[i] << " ";
+		s >> p.radiances[i];
 	}
 	for (size_t i = 0; i < p.solarIrradiances.size(); i++) {
-		s << p.solarIrradiances[i] << " ";
+		s >> p.solarIrradiances[i];
 	}
-	s << p.lat << " ";
-	s << p.lon << " ";
+	s >> p.lat;
+	s >> p.lon;
 
-	s << p.sza << " ";
-	s << p.saa << " ";
-	s << p.vzaOlc << " ";
-	s << p.vzaSln << " ";
-	s << p.vzaSlo << " ";
-	s << p.vaaOlc << " ";
-	s << p.vaaSln << " ";
-	s << p.vaaSlo << " ";
+	s >> p.sza;
+	s >> p.saa;
+	s >> p.vzaOlc;
+	s >> p.vzaSln;
+	s >> p.vzaSlo;
+	s >> p.vaaOlc;
+	s >> p.vaaSln;
+	s >> p.vaaSlo;
 
-	s << p.ozone << " ";
-	s << p.airPressure << " ";
-	s << p.waterVapour << " ";
+	s >> p.ozone;
+	s >> p.airPressure;
+	s >> p.waterVapour;
 
-	s << p.angstromExponent << " ";
-	s << p.aot << " ";
-	s << p.aotError << " ";
-	s << p.aotFiltered << " ";
-	s << p.aotErrorFiltered;
-	s << p.flags << " ";
-	s << (unsigned short) p.aerosolModel << " ";
+	s >> p.angstromExponent;
+	s >> p.aot;
+	s >> p.aotError;
+	s >> p.aotFiltered;
+	s >> p.aotErrorFiltered;
+	s >> p.flags;
+	unsigned short aerosolModel;
+	s >> aerosolModel;
+	p.aerosolModel = (unsigned char) aerosolModel;
 
-	s << p.c1 << " ";
-	s << p.c2 << " ";
+	s >> p.c1;
+	s >> p.c2;
 
 	for (size_t i = 0; i < p.nus.size(); i++) {
-		s << p.nus[i] << " ";
+		s >> p.nus[i];
 	}
 	for (size_t i = 0; i < p.omegas.size(); i++) {
-		s << p.omegas[i] << " ";
+		s >> p.omegas[i];
 	}
 
-	s << p.errorMetric << std::endl;
-	*/
+	s >> p.errorMetric;
+	s >> p.a;
+
 	return s;
 }
 

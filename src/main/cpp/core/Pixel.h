@@ -53,7 +53,7 @@ struct Pixel {
     double a;
 };
 
-std::ostream& operator<<(std::ostream& os, Pixel& p);
+std::ostream& operator<<(std::ostream& os, const Pixel& p);
 
 std::istream& operator>>(std::istream& is, Pixel& p);
 

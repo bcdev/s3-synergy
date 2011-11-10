@@ -46,6 +46,10 @@ private:
 	ofstream pos;
 	ofstream zero;
 	ofstream neg;
+
+	unsigned posCount;
+	unsigned zeroCount;
+	unsigned negCount;
 };
 
 #endif /* AER_H_ */
