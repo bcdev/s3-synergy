@@ -43,6 +43,7 @@ Pixel::Pixel(const Pixel& q) :
 	c2 = q.c2;
 
 	errorMetric = q.errorMetric;
+	a = q.a;
 }
 
 Pixel::~Pixel() {
@@ -84,6 +85,7 @@ void Pixel::assign(const Pixel& q) {
 	copy(&q.omegas[0], &q.omegas[q.omegas.size()], &omegas[0]);
 
 	errorMetric = q.errorMetric;
+	a = q.a;
 }
 
 std::ostream& operator<<(std::ostream& s, Pixel& p) {
@@ -127,7 +129,8 @@ std::ostream& operator<<(std::ostream& s, Pixel& p) {
 		s << p.omegas[i] << " ";
 	}
 
-	s << p.errorMetric << std::endl;
+	s << p.errorMetric << " ";
+	s << p.a << std::endl;
 
 	return s;
 }

@@ -50,6 +50,7 @@ struct Pixel {
     std::valarray<double> omegas;
 
     double errorMetric;
+    double a;
 };
 
 std::ostream& operator<<(std::ostream& os, Pixel& p);
