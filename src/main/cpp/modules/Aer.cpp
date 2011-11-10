@@ -453,6 +453,7 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 					p.synFlags |= Constants::SY2_AEROSOL_HIGH_ERROR_FLAG;
 				}
 			} else {
+				p.tau550Error = Constants::FILL_VALUE_DOUBLE;
 				p.synFlags |= Constants::SY2_AEROSOL_NEGATIVE_CURVATURE_FLAG;
 			}
 		} else {
@@ -460,10 +461,9 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 		}
 	} else {
 		p.amin = 0;
-		p.tau550 = 0.0;
-		p.tau550Error = 0.0;
-		p.alpha550 = 0.0;
-		p.synFlags |= Constants::SY2_AEROSOL_FILLED_FLAG;
+		p.tau550 = Constants::FILL_VALUE_DOUBLE;
+		p.tau550Error = Constants::FILL_VALUE_DOUBLE;
+		p.alpha550 = Constants::FILL_VALUE_DOUBLE;
 	}
 }
 
