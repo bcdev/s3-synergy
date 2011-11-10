@@ -54,4 +54,6 @@ struct Pixel {
 
 std::ostream& operator<<(std::ostream& os, Pixel& p);
 
+std::istream& operator>>(std::istream& is, Pixel& p);
+
 #endif /* PIXEL_H_ */

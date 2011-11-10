@@ -43,8 +43,9 @@ private:
 	const valarray<int16_t>* amins;
 	const valarray<double>* aerosolAngstromExponents;
 
-	ofstream good;
-	ofstream bad;
+	ofstream pos;
+	ofstream zero;
+	ofstream neg;
 };
 
 #endif /* AER_H_ */

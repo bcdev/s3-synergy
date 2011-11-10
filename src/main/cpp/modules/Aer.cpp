@@ -264,13 +264,15 @@ void Aer::start(Context& context) {
 
 	averagedGrid = &averagedSegment->getGrid();
 
-	good.open("good.csv");
-	bad.open("bad.csv");
+	pos.open("pos.csv");
+	zero.open("zero.csv");
+	neg.open("neg.csv");
 }
 
 void Aer::stop(Context& context) {
-	bad.close();
-	good.close();
+	neg.close();
+	zero.close();
+	pos.close();
 }
 
 void Aer::process(Context& context) {
@@ -458,7 +460,7 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 		if (p.aot > 0.0001) {
 			double a = em.computeErrorSurfaceCurvature(p);
 			if (a > 0.0) {
-				good << p;
+				pos << p;
 				p.aotError = kappa * sqrt(p.errorMetric / a);
 				if (p.aotError > 3.0) {
 					p.aotError = 3.0;
@@ -469,7 +471,11 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 					p.flags |= Constants::SY2_AEROSOL_SUCCESS_FLAG;
 				}
 			} else {
-				bad << p;
+				if (a == 0.0) {
+					zero << p;
+				} else {
+					neg << p;
+				}
 				p.flags |= Constants::SY2_AEROSOL_NEGATIVE_CURVATURE_FLAG;
 			}
 		} else {
