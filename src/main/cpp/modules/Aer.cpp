@@ -478,6 +478,7 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 			if (a > 0.0) {
 				if (posCount < 1000) {
 					pos << p;
+					posCount++;
 				}
 				p.aotError = kappa * sqrt(p.errorMetric / a);
 				if (p.aotError > 3.0) {
@@ -492,10 +493,12 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 				if (a == 0.0) {
 					if (zeroCount < 1000) {
 						zero << p;
+						zeroCount++;
 					}
 				} else {
 					if (negCount < 1000) {
 						neg << p;
+						negCount++;
 					}
 				}
 				p.flags |= Constants::SY2_AEROSOL_NEGATIVE_CURVATURE_FLAG;
