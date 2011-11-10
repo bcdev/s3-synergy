@@ -24,7 +24,7 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		lutD((LookupTable<double>&) context.getObject("D")),
 		cO3(((AuxdataProvider&) context.getObject(Constants::AUX_ID_SYRTAX)).getVectorDouble("C_O3")),
 		configurationAuxdata((AuxdataProvider&) context.getObject(Constants::AUX_ID_SYCPAX)),
-		initialTau550(configurationAuxdata.getDouble("T550_ini")),
+		initialAot(configurationAuxdata.getDouble("T550_ini")),
 		initialNus(configurationAuxdata.getVectorDouble("v_ini")),
 		initialOmegas(configurationAuxdata.getVectorDouble("w_ini")),
 		gamma(configurationAuxdata.getDouble("gamma")),
@@ -61,10 +61,10 @@ bool ErrorMetric::findMinimum(Pixel& p) {
 	if (doOLC || doSLS) {
 		Bracket bracket;
 		bracket.lowerX = 0.0;
-		bracket.minimumX = initialTau550;
+		bracket.minimumX = initialAot;
 		bracket.upperX = 3.0;
 		bracket.lowerF = getValue(0.0);
-		bracket.minimumF = getValue(initialTau550);
+		bracket.minimumF = getValue(initialAot);
 		bracket.upperF = getValue(3.0);
 
 		const bool success = Min::brent(*this, bracket, ACCURACY_GOAL) && bracket.minimumX >= 0.0 && bracket.minimumX <= 3.0;
@@ -74,14 +74,14 @@ bool ErrorMetric::findMinimum(Pixel& p) {
 			p.c2 = pn[1];
 		}
 		if (doSLS) {
-			p.nu[0] = pn[2];
-			p.nu[1] = pn[3];
+			p.nus[0] = pn[2];
+			p.nus[1] = pn[3];
 			for (size_t i = 0; i < 6; i++) {
-				p.omega[i] = pn[i + 4];
+				p.omegas[i] = pn[i + 4];
 			}
 		}
-		p.tau550 = bracket.minimumX;
-		p.minErrorMetric = bracket.minimumF;
+		p.aot = bracket.minimumX;
+		p.errorMetric = bracket.minimumF;
 
 		return success;
 	}
@@ -92,8 +92,8 @@ bool ErrorMetric::findMinimum(Pixel& p) {
 double ErrorMetric::computeErrorSurfaceCurvature(const Pixel& p) {
 	setPixel(p);
 
-	const double x0 = p.tau550;
-	const double y0 = p.minErrorMetric;
+	const double x0 = p.aot;
+	const double y0 = p.errorMetric;
 	const double y1 = getValue(0.8 * x0);
 	const double y2 = getValue(0.6 * x0);
 
@@ -245,17 +245,17 @@ static double surfaceReflectance(double rtoa, double ratm, double ts, double tv,
 	return rboa;
 }
 
-void ErrorMetric::setAerosolOpticalThickness(double tau550) {
+void ErrorMetric::setAerosolOpticalThickness(double aot) {
 	using std::abs;
 
-	const size_t amin = pixel->amin;
+	const size_t amin = pixel->aerosolModel;
 
 	coordinates[0] = abs(pixel->saa - pixel->vaaOlc);
 	coordinates[1] = pixel->sza;
 	coordinates[2] = pixel->vzaOlc;
 	coordinates[3] = pixel->airPressure;
 	coordinates[4] = pixel->waterVapour;
-	coordinates[5] = tau550;
+	coordinates[5] = aot;
 
 	lutRhoAtm.getMatrix(&coordinates[3], matRho, lutWeights, lutWorkspace);
 
@@ -342,7 +342,7 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 
 		coordinates[0] = pixel->sza;
 		coordinates[1] = pixel->airPressure;
-		coordinates[2] = tau550;
+		coordinates[2] = aot;
 		coordinates[3] = amin;
 
 		lutD.getVector(&coordinates[0], diffuseFractions, lutWeights, lutWorkspace);

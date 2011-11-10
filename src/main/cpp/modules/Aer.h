@@ -8,6 +8,8 @@
 #ifndef AER_H_
 #define AER_H_
 
+#include <fstream>
+
 #include "../modules/BasicModule.h"
 #include "../core/Pixel.h"
 #include "../util/Min.h"
@@ -23,6 +25,7 @@ public:
 	virtual ~Aer();
 
 	void start(Context& context);
+	void stop(Context& context);
 	void process(Context& context);
 
 private:
@@ -39,6 +42,9 @@ private:
 	double kappa;
 	const valarray<int16_t>* amins;
 	const valarray<double>* aerosolAngstromExponents;
+
+	ofstream good;
+	ofstream bad;
 };
 
 #endif /* AER_H_ */

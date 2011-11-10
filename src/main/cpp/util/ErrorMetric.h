@@ -29,7 +29,7 @@ public:
     bool findMinimum(Pixel& p);
 
 private:
-    void setAerosolOpticalThickness(double tau550);
+    void setAerosolOpticalThickness(double aot);
     double computeNdvi(const Pixel& q) const;
     double computeRss2(valarray<double>& x);
     double computeRss8(valarray<double>& x);
@@ -53,7 +53,7 @@ private:
     const valarray<double>& cO3;
 
     const AuxdataProvider& configurationAuxdata;
-	const double initialTau550;
+	const double initialAot;
 	const valarray<double>& initialNus;
 	const valarray<double>& initialOmegas;
     const double gamma;
