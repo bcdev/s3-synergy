@@ -33,7 +33,7 @@ class PixelInitializer {
 public:
 	PixelInitializer(const Context& context);
 	~PixelInitializer();
-	Pixel& getPixel(long k, long l, long m, Pixel& p) const;
+	Pixel& getPixel(size_t index, Pixel& p) const;
 
 private:
 	const Context& context;
@@ -152,19 +152,14 @@ PixelInitializer::PixelInitializer(const Context& context) :
 PixelInitializer::~PixelInitializer() {
 }
 
-Pixel& PixelInitializer::getPixel(long k, long l, long m, Pixel& p) const {
-	p.k = k;
-	p.l = l;
-	p.m = m;
-	p.index = averagedGrid.getIndex(k, l, m);
-
+Pixel& PixelInitializer::getPixel(size_t index, Pixel& p) const {
 	/*
 	 * Radiances
 	 */
 	for (size_t b = 0; b < 30; b++) {
 		const Accessor& radiance = *radiances[b];
-		if (!radiance.isFillValue(p.index)) {
-			p.radiances[b] = radiance.getDouble(p.index);
+		if (!radiance.isFillValue(index)) {
+			p.radiances[b] = radiance.getDouble(index);
 		} else {
 			p.radiances[b] = Constants::FILL_VALUE_DOUBLE;
 		}
@@ -174,52 +169,44 @@ Pixel& PixelInitializer::getPixel(long k, long l, long m, Pixel& p) const {
 	 */
 	for (size_t i = 0; i < 18; i++) {
 		const Accessor& accessor = *solarIrradiancesOlc[i];
-		if (!accessor.isFillValue(p.index)) {
-			p.solarIrradiances[i] = accessor.getDouble(p.index);
+		if (!accessor.isFillValue(index)) {
+			p.solarIrradiances[i] = accessor.getDouble(index);
 		} else {
 			p.solarIrradiances[i] = Constants::FILL_VALUE_DOUBLE;
 		}
 	}
 	for (size_t i = 0; i < 6; i++) {
 		const Accessor& accessor = *solarIrradiancesSln[i];
-		if (!accessor.isFillValue(p.index)) {
-			p.solarIrradiances[i + 18] = accessor.getDouble(p.index);
+		if (!accessor.isFillValue(index)) {
+			p.solarIrradiances[i + 18] = accessor.getDouble(index);
 		} else {
 			p.solarIrradiances[i + 18] = Constants::FILL_VALUE_DOUBLE;
 		}
 	}
 	for (size_t i = 0; i < 6; i++) {
 		const Accessor& accessor = *solarIrradiancesSlo[i];
-		if (!accessor.isFillValue(p.index)) {
-			p.solarIrradiances[i + 24] = accessor.getDouble(p.index);
+		if (!accessor.isFillValue(index)) {
+			p.solarIrradiances[i + 24] = accessor.getDouble(index);
 		} else {
 			p.solarIrradiances[i + 24] = Constants::FILL_VALUE_DOUBLE;
 		}
 	}
 	/*
-	 * Ozone coefficients
-	 */
-	// TODO - remove from pixel
-	for (size_t i = 0; i < 30; i++) {
-		p.cO3[i] = cO3[i];
-	}
-
-	/*
 	 * Aerosol properties
 	 */
-	p.tau550 = tau550.isFillValue(p.index) ? Constants::FILL_VALUE_DOUBLE : tau550.getDouble(p.index);
-	p.tau550Error = tau550Error.isFillValue(p.index) ? Constants::FILL_VALUE_DOUBLE : tau550Error.getDouble(p.index);
-	p.tau550Filtered = tau550Filtered.isFillValue(p.index) ? Constants::FILL_VALUE_DOUBLE : tau550Filtered.getDouble(p.index);
-	p.tau550ErrorFiltered = tau550ErrorFiltered.isFillValue(p.index) ? Constants::FILL_VALUE_DOUBLE : tau550ErrorFiltered.getDouble(p.index);
-	p.alpha550 = alpha550.isFillValue(p.index) ? Constants::FILL_VALUE_DOUBLE : alpha550.getDouble(p.index);
-	p.synFlags = synFlags.getUShort(p.index);
-	p.amin = amin.getUByte(p.index);
+	p.tau550 = tau550.isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : tau550.getDouble(index);
+	p.tau550Error = tau550Error.isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : tau550Error.getDouble(index);
+	p.tau550Filtered = tau550Filtered.isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : tau550Filtered.getDouble(index);
+	p.tau550ErrorFiltered = tau550ErrorFiltered.isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : tau550ErrorFiltered.getDouble(index);
+	p.alpha550 = alpha550.isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : alpha550.getDouble(index);
+	p.synFlags = synFlags.getUShort(index);
+	p.amin = amin.getUByte(index);
 
 	/*
 	 * Geo-location
 	 */
-	p.lat = lat.getDouble(p.index);
-	p.lon = lon.getDouble(p.index);
+	p.lat = lat.getDouble(index);
+	p.lon = lon.getDouble(index);
 
 	/*
 	 * Tie Point data
@@ -252,7 +239,7 @@ Pixel& PixelInitializer::getPixel(long k, long l, long m, Pixel& p) const {
 	/*
 	 * Anything else
 	 */
-	p.E2 = numeric_limits<double>::max();
+	p.minErrorMetric = numeric_limits<double>::max();
 
 	return p;
 }
@@ -315,7 +302,6 @@ void Aer::process(Context& context) {
 		}
 	}
 
-	/*
 	long lastFillableL;
 	if (lastL < averagedGrid->getMaxL()) {
 		lastFillableL = lastL - 9;
@@ -420,20 +406,15 @@ void Aer::process(Context& context) {
 		}
 	}
 
-	*/
 	context.getLogging().info("Putting lines ...", getId());
 	putPixels(pixels, firstL, lastL);
 
-	context.setLastComputedL(*averagedSegment, *this, lastL);
-
-	/*
 	context.setLastComputedL(*averagedSegment, *this, lastFilterableL);
 	if (lastFilterableL < averagedGrid->getMaxL()) {
 		context.setFirstRequiredL(*averagedSegment, *this, lastFilterableL - 10);
 	} else {
 		context.setFirstRequiredL(*averagedSegment, *this, -1);
 	}
-	*/
 }
 
 void Aer::getPixels(Context& context, valarray<Pixel>& pixels) const {
@@ -442,7 +423,7 @@ void Aer::getPixels(Context& context, valarray<Pixel>& pixels) const {
 		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
 				const size_t index = averagedGrid->getIndex(k, l, m);
-				pixelInitializer.getPixel(k, l, m, pixels[index]);
+				pixelInitializer.getPixel(index, pixels[index]);
 			}
 		}
 	}
@@ -456,21 +437,20 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 		q.assign(p);
 		q.amin = amin;
 		bool success = em.findMinimum(q);
-		if (success && q.E2 < p.E2) {
+		if (success && q.minErrorMetric < p.minErrorMetric) {
 			p.assign(q);
 			p.alpha550 = (*aerosolAngstromExponents)[amin];
 			p.amin = amin;
 		}
 	}
 	if (p.amin > 0) {
+		p.synFlags |= Constants::SY2_AEROSOL_SUCCESS_FLAG;
 		if (p.tau550 > 0.0001) {
 			double a = em.computeErrorSurfaceCurvature(p);
 			if (a > 0.0) {
-				p.tau550Error = kappa * sqrt(p.E2 / a);
+				p.tau550Error = kappa * sqrt(p.minErrorMetric / a);
 				if (p.tau550 > 0.1 && p.tau550Error > 5.0 * p.tau550) {
 					p.synFlags |= Constants::SY2_AEROSOL_HIGH_ERROR_FLAG;
-				} else {
-					p.synFlags |= Constants::SY2_AEROSOL_SUCCESS_FLAG;
 				}
 			} else {
 				p.synFlags |= Constants::SY2_AEROSOL_NEGATIVE_CURVATURE_FLAG;
@@ -520,7 +500,7 @@ void Aer::putPixels(const valarray<Pixel>& pixels, long firstL, long lastL) cons
 				const size_t index = averagedGrid->getIndex(k, l, m);
 				const Pixel& p = pixels[index];
 
-				amin.setUByte(p.index, p.amin);
+				amin.setUByte(index, p.amin);
 				if (p.tau550 == Constants::FILL_VALUE_DOUBLE) {
 					t550.setFillValue(index);
 				} else {

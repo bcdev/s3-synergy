@@ -5,6 +5,9 @@
  *      Author: thomasstorm
  */
 
+#include "../../../main/cpp/util/MultiMin.h"
+#include "../../../main/cpp/util/MultivariateFunction.h"
+
 #include "MultiMinTest.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(MultiMinTest);

@@ -10,10 +10,6 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../main/cpp/core/Boost.h"
-#include "../../../main/cpp/util/MultiMin.h"
-#include "../../../main/cpp/util/MultivariateFunction.h"
-
 class MultiMinTest: public CPPUNIT_NS::TestFixture {
 CPPUNIT_TEST_SUITE(MultiMinTest);
 		CPPUNIT_TEST(testChol2D);

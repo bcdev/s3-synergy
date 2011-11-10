@@ -116,10 +116,6 @@ void AerTest::testAer_s() {
         p.solarIrradiances[i] = 1490.223;
     }
 
-    AuxdataProvider& rap = (AuxdataProvider&)context->getObject(Constants::AUX_ID_SYRTAX);
-    valarray<double> cO3 = rap.getVectorDouble("C_O3");
-    copy(&cO3[0], &cO3[30], &(p.cO3[0]));
-
     p.sza = 44.426440;
     p.saa = 134.502528;
     p.vzaOlc = 56.402192;
@@ -139,7 +135,7 @@ void AerTest::testAer_s() {
     p.tau550ErrorFiltered = Constants::FILL_VALUE_DOUBLE;
     p.alpha550 = Constants::FILL_VALUE_DOUBLE;
     p.amin = numeric_limits<short>::min();
-    p.E2 = numeric_limits<double>::max();
+    p.minErrorMetric = numeric_limits<double>::max();
 
 	ErrorMetric em(*context);
 

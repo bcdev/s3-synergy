@@ -118,7 +118,7 @@ bool Min::brent(UnivariateFunction& f, Bracket& bracket, double relativeAccuracy
             r = e;
             e = d;
         }
-        if (std::abs(p) < abs(0.5 * q * r) && p < q * lowerW && p < q * upperW) {
+        if (abs(p) < abs(0.5 * q * r) && p < q * lowerW && p < q * upperW) {
             const double t2 = 2.0 * tolerance;
 
             d = p / q;

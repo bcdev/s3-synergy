@@ -22,6 +22,7 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		lutRhoAtm((LookupTable<double>&) context.getObject("rho_atm")),
 		lutTotalAngularWeights((LookupTable<double>&) context.getObject("weight_ang_tot")),
 		lutD((LookupTable<double>&) context.getObject("D")),
+		cO3(((AuxdataProvider&) context.getObject(Constants::AUX_ID_SYRTAX)).getVectorDouble("C_O3")),
 		configurationAuxdata((AuxdataProvider&) context.getObject(Constants::AUX_ID_SYCPAX)),
 		initialTau550(configurationAuxdata.getDouble("T550_ini")),
 		initialNus(configurationAuxdata.getVectorDouble("v_ini")),
@@ -80,7 +81,7 @@ bool ErrorMetric::findMinimum(Pixel& p) {
 			}
 		}
 		p.tau550 = bracket.minimumX;
-		p.E2 = bracket.minimumF;
+		p.minErrorMetric = bracket.minimumF;
 
 		return success;
 	}
@@ -91,10 +92,12 @@ bool ErrorMetric::findMinimum(Pixel& p) {
 double ErrorMetric::computeErrorSurfaceCurvature(const Pixel& p) {
 	setPixel(p);
 
-	const double a = getValue(0.8 * p.tau550);
-	const double b = getValue(0.6 * p.tau550);
+	const double x0 = p.tau550;
+	const double y0 = p.minErrorMetric;
+	const double y1 = getValue(0.8 * x0);
+	const double y2 = getValue(0.6 * x0);
 
-	return 25.0 * (p.E2 - 2.0 * a + b) / (2.0 * p.E2 * p.E2);
+	return 25.0 * (y0 - 2.0 * y1 + y2) / (2.0 * x0 * x0);
 }
 
 double ErrorMetric::getValue(double x) {
@@ -270,7 +273,7 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 				// Eq. 2-1
 				const double rtoa = toaReflectance(pixel->radiances[b], pixel->solarIrradiances[b], pixel->sza);
 				// Eq. 2-2
-				const double tO3 = ozoneTransmission(pixel->cO3[b], pixel->sza, pixel->vzaOlc, pixel->ozone);
+				const double tO3 = ozoneTransmission(cO3[b], pixel->sza, pixel->vzaOlc, pixel->ozone);
 				// Eq. 2-3
 				const double ratm = matRatmOlc(amin - 1, b);
 
@@ -296,7 +299,7 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 				// Eq. 2-1
 				const double rtoa = toaReflectance(pixel->radiances[b], pixel->solarIrradiances[b], pixel->sza);
 				// Eq. 2-2
-				const double tO3 = ozoneTransmission(pixel->cO3[b], pixel->sza, pixel->vzaOlc, pixel->ozone);
+				const double tO3 = ozoneTransmission(cO3[b], pixel->sza, pixel->vzaOlc, pixel->ozone);
 				// Eq. 2-3
 				const double ratm = matRatmSln(amin - 1, b - 18);
 
@@ -322,7 +325,7 @@ void ErrorMetric::setAerosolOpticalThickness(double tau550) {
 				// Eq. 2-1
 				const double rtoa = toaReflectance(pixel->radiances[b], pixel->solarIrradiances[b], pixel->sza);
 				// Eq. 2-2
-				const double tO3 = ozoneTransmission(pixel->cO3[b], pixel->sza, pixel->vzaOlc, pixel->ozone);
+				const double tO3 = ozoneTransmission(cO3[b], pixel->sza, pixel->vzaOlc, pixel->ozone);
 				// Eq. 2-3
 				const double ratm = matRatmSlo(amin - 1, b - 24);
 

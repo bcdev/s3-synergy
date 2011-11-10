@@ -8,10 +8,10 @@
 #ifndef MINTEST_H_
 #define MINTEST_H_
 
+#include <cmath>
+
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../main/cpp/core/Boost.h"
-#include "../../../main/cpp/util/Min.h"
 #include "../../../main/cpp/util/UnivariateFunction.h"
 
 class MinTest : public CPPUNIT_NS::TestFixture {
@@ -38,14 +38,14 @@ private:
 class Cos : public UnivariateFunction {
 
     double getValue(double x) {
-        return cos(x);
+        return std::cos(x);
     }
 };
 
 class Sin : public UnivariateFunction {
 
     double getValue(double x) {
-        return sin(x);
+        return std::sin(x);
     }
 };
 

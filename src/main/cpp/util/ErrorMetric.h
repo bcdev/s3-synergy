@@ -50,6 +50,7 @@ private:
     const LookupTable<double>& lutRhoAtm;
     const LookupTable<double>& lutTotalAngularWeights;
     const LookupTable<double>& lutD;
+    const valarray<double>& cO3;
 
     const AuxdataProvider& configurationAuxdata;
 	const double initialTau550;
