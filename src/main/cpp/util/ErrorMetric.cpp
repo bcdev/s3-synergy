@@ -97,7 +97,9 @@ double ErrorMetric::computeErrorSurfaceCurvature(const Pixel& p) {
 	const double y1 = getValue(0.8 * x0);
 	const double y2 = getValue(0.6 * x0);
 
-	return 25.0 * (y0 - 2.0 * y1 + y2) / (2.0 * x0 * x0);
+	const double a = 25.0 * (y0 - 2.0 * y1 + y2) / (2.0 * x0 * x0);
+
+	return a;
 }
 
 double ErrorMetric::getValue(double x) {

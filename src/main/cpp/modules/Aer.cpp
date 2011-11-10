@@ -447,16 +447,19 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 		}
 	}
 	if (p.amin > 0) {
-		p.synFlags |= Constants::SY2_AEROSOL_SUCCESS_FLAG;
 		if (p.tau550 > 0.0001) {
 			double a = em.computeErrorSurfaceCurvature(p);
 			if (a > 0.0) {
 				p.tau550Error = kappa * sqrt(p.minErrorMetric / a);
-				if (p.tau550 > 0.1 && p.tau550Error > 5.0 * p.tau550) {
+				if (p.tau550Error > 3.0) {
+					p.tau550Error = 3.0;
 					p.synFlags |= Constants::SY2_AEROSOL_HIGH_ERROR_FLAG;
+				} else if (p.tau550 > 0.1 && p.tau550Error > 5.0 * p.tau550) {
+					p.synFlags |= Constants::SY2_AEROSOL_HIGH_ERROR_FLAG;
+				} else {
+					p.synFlags |= Constants::SY2_AEROSOL_SUCCESS_FLAG;
 				}
 			} else {
-				p.tau550Error = Constants::FILL_VALUE_DOUBLE;
 				p.synFlags |= Constants::SY2_AEROSOL_NEGATIVE_CURVATURE_FLAG;
 			}
 		} else {
