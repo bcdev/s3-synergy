@@ -267,6 +267,9 @@ void Aer::start(Context& context) {
 	pos.open("pos.csv");
 	zero.open("zero.csv");
 	neg.open("neg.csv");
+	posCount = 0;
+	zeroCount = 0;
+	negCount = 0;
 }
 
 void Aer::stop(Context& context) {
