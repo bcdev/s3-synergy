@@ -303,6 +303,12 @@ void Aer::process(Context& context) {
 				if (isSet(p.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)) {
 					continue;
 				}
+				if (isSet(p.flags, Constants::SY2_AEROSOL_TOO_LOW_FLAG)) {
+					continue;
+				}
+				if (isSet(p.flags, Constants::SY2_AEROSOL_HIGH_ERROR_FLAG)) {
+					continue;
+				}
 				if (isSet(p.flags, Constants::SY2_AEROSOL_FILLED_FLAG)) {
 					continue;
 				}
@@ -336,7 +342,10 @@ void Aer::process(Context& context) {
 					const size_t targetPixelIndex = averagedGrid->getIndex(k, targetL, targetM);
 					Pixel& p = pixels[targetPixelIndex];
 
-					if (!isSet(p.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG) && !isSet(p.flags, Constants::SY2_AEROSOL_FILLED_FLAG)) {
+					if (!isSet(p.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)
+							&& !isSet(q.flags, Constants::SY2_AEROSOL_TOO_LOW_FLAG)
+							&& !isSet(q.flags, Constants::SY2_AEROSOL_HIGH_ERROR_FLAG)
+							&& !isSet(p.flags, Constants::SY2_AEROSOL_FILLED_FLAG)) {
 						missingPixelCount++;
 
 						double tau550 = 0.0;
@@ -351,7 +360,10 @@ void Aer::process(Context& context) {
 									const size_t sourcePixelIndex = averagedGrid->getIndex(k, sourceL, sourceM);
 									if (!contains(filledPixelIndexes, sourcePixelIndex)) {
 										const Pixel& q = pixels[sourcePixelIndex];
-										if (isSet(q.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG) || isSet(q.flags, Constants::SY2_AEROSOL_FILLED_FLAG)) {
+										if (isSet(q.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)
+												|| isSet(q.flags, Constants::SY2_AEROSOL_TOO_LOW_FLAG)
+												|| isSet(q.flags, Constants::SY2_AEROSOL_HIGH_ERROR_FLAG)
+												|| isSet(q.flags, Constants::SY2_AEROSOL_FILLED_FLAG)) {
 											const long dist = (sourceL - targetL) * (sourceL - targetL) + (sourceM - targetM) * (sourceM - targetM);
 											if (dist < minPixelDistance) {
 												minPixelDistance = dist;
