@@ -384,7 +384,7 @@ void Aer::process(Context& context) {
 							p.aotError = tau550err / pixelCount;
 							p.angstromExponent = alpha550 / pixelCount;
 							p.flags |= Constants::SY2_AEROSOL_FILLED_FLAG;
-							filledPixelIndexes.insert(targetPixelIndex);
+							filledPixelIndexes.push_back(targetPixelIndex);
 						}
 					}
 				}
