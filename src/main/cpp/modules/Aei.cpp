@@ -12,6 +12,7 @@
 
 using std::abs;
 using std::floor;
+using std::max;
 using std::min;
 using std::numeric_limits;
 
@@ -43,14 +44,6 @@ void Aei::start(Context& context) {
 }
 
 void Aei::process(Context& context) {
-	const long lastSourceL = context.getLastComputableL(*averagedSegment, *this);
-	/*
-	long lastTargetL = (lastSourceL - sourceSegment->getGrid().getMinL() + 1) / averagingFactor;
-	if (lastSourceL < sourceSegment->getGrid().getMaxL()) {
-		lastTargetL--;
-	}
-	lastTargetL = min(lastTargetL, context.getLastComputableL(*targetSegment, *this));
-	*/
 
     context.getLogging().progress("Performing aerosol interpolation...", getId());
     const Accessor& accessorAmin = averagedSegment->getAccessor("AMIN");
@@ -58,6 +51,7 @@ void Aei::process(Context& context) {
 
     Accessor& collocatedAccessorFlags = collocatedSegment->getAccessor("SYN_flags");
 
+	const long lastSourceL = context.getLastComputableL(*averagedSegment, *this);
     long firstTargetL = context.getFirstComputableL(*collocatedSegment, *this);
     long lastTargetL = context.getLastComputableL(*collocatedSegment, *this);
 
@@ -69,15 +63,20 @@ void Aei::process(Context& context) {
     for (long targetL = firstTargetL; targetL <= lastTargetL; targetL++) {
         context.getLogging().progress("Interpolating line l = " + lexical_cast<string>(targetL), getId());
 
-        const long sourceL0 = min(0.0, floor((targetL - averagingFactor / 2) / averagingFactor));
+        const long sourceL0 = min(max(0L, long(floor((targetL - averagingFactor / 2) / averagingFactor))), averagedGrid->getMaxL() - 1L);
         const long sourceL1 = sourceL0 + 1;
+
+        if (sourceL1 > lastSourceL) {
+        	lastTargetL = targetL - 1;
+        	break;
+        }
 
         const long targetL0 = sourceL0 * averagingFactor + averagingFactor / 2;
         const long targetL1 = sourceL1 * averagingFactor + averagingFactor / 2;
 
         for (long k = collocatedGrid->getFirstK(); k < collocatedGrid->getMaxK(); k++) {
 			for (long targetM = collocatedGrid->getFirstM(); targetM < collocatedGrid->getMaxM(); targetM++) {
-				const long sourceM0 = min(0.0, floor((targetM - averagingFactor / 2) / averagingFactor));
+				const long sourceM0 = min(max(0L, long(floor((targetM - averagingFactor / 2) / averagingFactor))), averagedGrid->getMaxM() - 1L);
 				const long sourceM1 = sourceM0 + 1;
 
 				const long targetM0 = sourceM0 * averagingFactor + averagingFactor / 2;

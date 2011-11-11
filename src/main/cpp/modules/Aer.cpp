@@ -323,64 +323,56 @@ void Aer::process(Context& context) {
 
 	long lastFillableL;
 	if (lastL < averagedGrid->getMaxL()) {
-		lastFillableL = lastL - averagedGrid->getSizeM() - 1;
+		lastFillableL = lastL;
 	} else {
 		lastFillableL = lastL;
 	}
 
-	size_t iterationCount = 0;
-	const size_t n = averagedGrid->getSizeM() - 1;
-	size_t missingPixelCount;
+	for (long targetL = firstL; targetL <= lastFillableL; targetL++) {
+		context.getLogging().info("Filling line l = " + lexical_cast<string>(targetL), getId());
+		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
+			for (long targetM = averagedGrid->getFirstM(); targetM <= averagedGrid->getMaxM(); targetM++) {
+				const size_t targetPixelIndex = averagedGrid->getIndex(k, targetL, targetM);
+				Pixel& p = pixels[targetPixelIndex];
 
-	do {
-		missingPixelCount = 0;
-		for (long targetL = firstL; targetL <= lastFillableL; targetL++) {
-			context.getLogging().info("Filling line l = " + lexical_cast<string>(targetL), getId());
-			for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
-				for (long targetM = averagedGrid->getFirstM(); targetM <= averagedGrid->getMaxM(); targetM++) {
-					const size_t targetPixelIndex = averagedGrid->getIndex(k, targetL, targetM);
-					Pixel& p = pixels[targetPixelIndex];
+				if (!isSet<int>(p.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG | Constants::SY2_AEROSOL_HIGH_ERROR_FLAG | Constants::SY2_AEROSOL_TOO_LOW_FLAG)) {
+					double w = 1.0e-10;
+					double tau550 = 0.0 * w;
+					double tau550err = 0.0 * w;
+					double alpha550 = 1.25 * w;
+					//double minPixelDistance = numeric_limits<double>::max();
 
-					if (!isSet(p.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)
-							&& !isSet(p.flags, Constants::SY2_AEROSOL_FILLED_FLAG)) {
-						missingPixelCount++;
+					/*
+					 for (long sourceL = targetL - n; sourceL <= targetL + n; sourceL++) {
+					 for (long sourceM = targetM - n; sourceM <= targetM + n; sourceM++) {
+					 if (averagedGrid->isValidPosition(k, sourceL, sourceM)) {
+					 const size_t sourcePixelIndex = averagedGrid->getIndex(k, sourceL, sourceM);
+					 const Pixel& q = pixels[sourcePixelIndex];
+					 if (isSet(q.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)) {
+					 const double d = (sourceL - targetL) * (sourceL - targetL) + (sourceM - targetM) * (sourceM - targetM);
+					 if (d < minPixelDistance) {
+					 minPixelDistance = d;
+					 p.aerosolModel = q.aerosolModel;
+					 }
 
-						double w = 1.0e-10;
-						double tau550 = 0.0 * w;
-						double tau550err = 0.0 * w;
-						double alpha550 = 0.0 * w;
-						double minPixelDistance = numeric_limits<double>::max();
+					 tau550 += q.aot / (d * d);
+					 tau550err += q.aotError / (d * d);
+					 alpha550 += q.angstromExponent / (d * d);
+					 w += 1.0 / (d * d);
+					 }
+					 }
+					 }
+					 }
+					 */
 
-						for (long sourceL = targetL - n; sourceL <= targetL + n; sourceL++) {
-							for (long sourceM = targetM - n; sourceM <= targetM + n; sourceM++) {
-								if (averagedGrid->isValidPosition(k, sourceL, sourceM)) {
-									const size_t sourcePixelIndex = averagedGrid->getIndex(k, sourceL, sourceM);
-									const Pixel& q = pixels[sourcePixelIndex];
-									if (isSet(q.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)) {
-										const double dist = (sourceL - targetL) * (sourceL - targetL) + (sourceM - targetM) * (sourceM - targetM);
-										if (dist < minPixelDistance) {
-											minPixelDistance = dist;
-											p.aerosolModel = q.aerosolModel;
-										}
-
-										tau550 += q.aot / (dist * dist * dist * dist);
-										tau550err += q.aotError / (dist * dist * dist * dist);
-										alpha550 += q.angstromExponent / (dist * dist * dist * dist);
-										w += 1.0 / (dist * dist * dist * dist);
-									}
-								}
-							}
-						}
-						p.aot = tau550 / w;
-						p.aotError = tau550err / w;
-						p.angstromExponent = alpha550 / w;
-						p.flags |= Constants::SY2_AEROSOL_FILLED_FLAG;
-					}
+					p.aot = tau550 / w;
+					p.aotError = tau550err / w;
+					p.angstromExponent = alpha550 / w;
+					p.flags |= Constants::SY2_AEROSOL_FILLED_FLAG;
 				}
 			}
 		}
-		//iterationCount++;
-	} while (missingPixelCount != 0);
+	}
 
 	long lastFilterableL;
 	if (lastL < averagedGrid->getMaxL()) {
