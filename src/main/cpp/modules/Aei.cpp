@@ -40,16 +40,16 @@ void Aei::start(Context& context) {
 }
 
 void Aei::process(Context& context) {
-    const Accessor& aotSourceAccessor = &sourceSegment->getAccessor("T550");
-    const Accessor& aotErrorSourceAccessor = &sourceSegment->getAccessor("T550_er");
-    const Accessor& angstromExponentSourceAccessor = &sourceSegment->getAccessor("A550");
+    const Accessor& aotSourceAccessor = sourceSegment->getAccessor("T550");
+    const Accessor& aotErrorSourceAccessor = sourceSegment->getAccessor("T550_er");
+    const Accessor& angstromExponentSourceAccessor = sourceSegment->getAccessor("A550");
     const Accessor& aerosolModelSourceAccessor = sourceSegment->getAccessor("AMIN");
     const Accessor& flagsSourceAccessor = sourceSegment->getAccessor("SYN_flags");
 
-    Accessor& aotTargetAccessor = &targetSegment->getAccessor("T550");
-    Accessor& aotErrorTargetAccessor = &targetSegment->getAccessor("T550_er");
-    Accessor& angstromExponentTargetAccessor = &targetSegment->getAccessor("A550");
-    Accessor& aerosolModelTargetAccessor = &targetSegment->getAccessor("AMIN");
+    Accessor& aotTargetAccessor = targetSegment->getAccessor("T550");
+    Accessor& aotErrorTargetAccessor = targetSegment->getAccessor("T550_er");
+    Accessor& angstromExponentTargetAccessor = targetSegment->getAccessor("A550");
+    Accessor& aerosolModelTargetAccessor = targetSegment->getAccessor("AMIN");
     Accessor& flagsTargetAccessor = targetSegment->getAccessor("SYN_flags");
 
 	const long lastSourceL = context.getLastComputableL(*sourceSegment, *this);
