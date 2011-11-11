@@ -337,7 +337,7 @@ void Aer::process(Context& context) {
 		if (iterationCount >= 5 && iterationCount <= 12) {
 			n++;
 		}
-		set<size_t> filledPixelIndexes;
+		vector<size_t> filledPixelIndexes;
 		for (long targetL = firstL; targetL <= lastFillableL; targetL++) {
 			context.getLogging().info("Filling line l = " + lexical_cast<string>(targetL), getId());
 			for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
@@ -346,8 +346,6 @@ void Aer::process(Context& context) {
 					Pixel& p = pixels[targetPixelIndex];
 
 					if (!isSet(p.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)
-							&& !isSet(q.flags, Constants::SY2_AEROSOL_TOO_LOW_FLAG)
-							&& !isSet(q.flags, Constants::SY2_AEROSOL_HIGH_ERROR_FLAG)
 							&& !isSet(p.flags, Constants::SY2_AEROSOL_FILLED_FLAG)) {
 						missingPixelCount++;
 
@@ -364,8 +362,6 @@ void Aer::process(Context& context) {
 									if (!contains(filledPixelIndexes, sourcePixelIndex)) {
 										const Pixel& q = pixels[sourcePixelIndex];
 										if (isSet(q.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)
-												|| isSet(q.flags, Constants::SY2_AEROSOL_TOO_LOW_FLAG)
-												|| isSet(q.flags, Constants::SY2_AEROSOL_HIGH_ERROR_FLAG)
 												|| isSet(q.flags, Constants::SY2_AEROSOL_FILLED_FLAG)) {
 											const long dist = (sourceL - targetL) * (sourceL - targetL) + (sourceM - targetM) * (sourceM - targetM);
 											if (dist < minPixelDistance) {

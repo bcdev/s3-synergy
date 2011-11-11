@@ -21,6 +21,7 @@
 #ifndef BASICMODULE_H
 #define	BASICMODULE_H
 
+#include <algorithm>
 #include <set>
 
 #include "../core/AbstractModule.h"
@@ -68,6 +69,11 @@ protected:
     template<class K>
     static bool contains(const set<K>& set, const K& key) {
         return set.find(key) != set.end();
+    }
+
+    template<class T>
+    static bool contains(const vector<T>& v, const T& t) {
+        return std::find(v.begin(), v.end(), t) != v.end();
     }
 
     template<class T>
