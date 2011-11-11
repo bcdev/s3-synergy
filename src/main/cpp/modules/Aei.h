@@ -39,9 +39,7 @@ private:
     Accessor* collocatedAccessorAmin;
 
     void computeWeights(long l, long l0, long l1, long m, long m0, long m1, valarray<double>& weights) const;
-    void getAveragedTaus(long k, long averagedL0, long averagedL1, long averagedM0, long averagedM1, valarray<double>& averagedTaus) const;
-    void getAveragedTauErrors(long k, long averagedL0, long averagedL1, long averagedM0, long averagedM1, valarray<double>& averagedTauErrors) const;
-    void getAveragedAlphas(long k, long averagedL0, long averagedL1, long averagedM0, long averagedM1, valarray<double>& averagedAlpha) const;
+    void getVertexes(const Accessor& accessor, long k, long l0, long l1, long m0, long m1, valarray<double>& vertexes) const;
 };
 
 #endif /* AEI_H_ */

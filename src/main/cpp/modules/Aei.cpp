@@ -10,6 +10,7 @@
 
 #include "Aei.h"
 
+using std::abs;
 using std::floor;
 using std::min;
 using std::numeric_limits;
@@ -59,80 +60,66 @@ void Aei::process(Context& context) {
     for (long targetL = firstTargetL; targetL <= lastTargetL; targetL++) {
         context.getLogging().progress("Interpolating line l = " + lexical_cast<string>(targetL), getId());
 
-        long sourceL0 = min(0.0, floor((targetL - averagingFactor / 2) / averagingFactor));
-        long sourceL1 = sourceL0 + 1;
+        const long sourceL0 = min(0.0, floor((targetL - averagingFactor / 2) / averagingFactor));
+        const long sourceL1 = sourceL0 + 1;
 
-        long targetL0 = sourceL0 * averagingFactor + averagingFactor / 2;
-        long targetL1 = sourceL1 * averagingFactor + averagingFactor / 2;
+        const long targetL0 = sourceL0 * averagingFactor + averagingFactor / 2;
+        const long targetL1 = sourceL1 * averagingFactor + averagingFactor / 2;
 
-        for (long m = collocatedGrid->getFirstM(); m < collocatedGrid->getMaxM(); m++) {
-            long averagedM0 = min(0.0, floor((m - averagingFactor / 2) / averagingFactor));
-            long averagedM1 = averagedM0 + 1;
+        for (long k = collocatedGrid->getFirstK(); k < collocatedGrid->getMaxK(); k++) {
+			for (long targetM = collocatedGrid->getFirstM(); targetM < collocatedGrid->getMaxM(); targetM++) {
+				const long sourceM0 = min(0.0, floor((targetM - averagingFactor / 2) / averagingFactor));
+				const long sourceM1 = sourceM0 + 1;
 
-            double m0 = averagedM0 * averagingFactor + averagingFactor / 2;
-            double m1 = averagedM1 * averagingFactor + averagingFactor / 2;
+				const long targetM0 = sourceM0 * averagingFactor + averagingFactor / 2;
+				const long targetM1 = sourceM1 * averagingFactor + averagingFactor / 2;
 
-            computeWeights(targetL, targetL0, targetL1, m, m0, m1, weights);
+				computeWeights(targetL, targetL0, targetL1, targetM, targetM0, targetM1, weights);
 
-            for (long k = collocatedGrid->getFirstK(); k < collocatedGrid->getMaxK(); k++) {
+				double tau550 = 0.0;
+				double tau550err = 0.0;
+				double alpha550 = 0.0;
 
-                double tau550 = 0.0;
-                double tau550err = 0.0;
-                double alpha550 = 0.0;
+				getVertexes(*accessorTau, k, sourceL0, sourceL1, sourceM0, sourceM1, averagedTaus);
+				getVertexes(*accessorTauError, k, sourceL0, sourceL1, sourceM0, sourceM1, averagedTauErrors);
+				getVertexes(*accessorAlpha, k, sourceL0, sourceL1, sourceM0, sourceM1, averagedAlphas);
 
-                getAveragedTaus(k, sourceL0, sourceL1, averagedM0, averagedM1, averagedTaus);
-                getAveragedTauErrors(k, sourceL0, sourceL1, averagedM0, averagedM1, averagedTauErrors);
-                getAveragedAlphas(k, sourceL0, sourceL1, averagedM0, averagedM1, averagedAlphas);
+				for (size_t i = 0; i < weights.size(); i++) {
+					tau550 += weights[i] * averagedTaus[i];
+					tau550err += weights[i] * averagedTauErrors[i];
+					alpha550 += weights[i] * averagedAlphas[i];
+				}
 
-                for (size_t i = 0; i < weights.size(); i++) {
-                    tau550 += weights[i] * averagedTaus[i];
-                    tau550err += weights[i] * averagedTauErrors[i];
-                    alpha550 += weights[i] * averagedAlphas[i];
-                }
+				const size_t targetIndex = collocatedGrid->getIndex(k, targetL, targetM);
+				collocatedAccessorAlpha550->setDouble(targetIndex, alpha550);
+				collocatedAccessorTau550->setDouble(targetIndex, tau550);
+				collocatedAccessorTau550err->setDouble(targetIndex, tau550err);
 
-                const size_t collocatedIndex = collocatedGrid->getIndex(k, targetL, m);
-                collocatedAccessorAlpha550->setDouble(collocatedIndex, alpha550);
-                collocatedAccessorTau550->setDouble(collocatedIndex, tau550);
-                collocatedAccessorTau550err->setDouble(collocatedIndex, tau550err);
+				size_t sourceIndex;
+				if (abs(targetL0 - targetL) <= (averagingFactor / 2) && abs(targetM0 - targetM) <= (averagingFactor / 2)) {
+					sourceIndex = averagedGrid->getIndex(k, sourceL0, sourceM0);
+				} else if (abs(targetL0 - targetL) <= (averagingFactor / 2) && abs(targetM1 - targetM) <= (averagingFactor / 2)) {
+					sourceIndex = averagedGrid->getIndex(k, sourceL0, sourceM1);
+				} else if (abs(targetL1 - targetL) <= (averagingFactor / 2) && abs(targetM0 - targetM) <= (averagingFactor / 2)) {
+					sourceIndex = averagedGrid->getIndex(k, sourceL1, sourceM0);
+				} else if (abs(targetL1 - targetL) <= (averagingFactor / 2) && abs(targetM1 - targetM) <= (averagingFactor / 2)) {
+					sourceIndex = averagedGrid->getIndex(k, sourceL1, sourceM1);
+				}
+				collocatedAccessorAmin->setUByte(targetIndex, accessorAmin.getUByte(sourceIndex));
+				collocatedAccessorFlags.setUShort(targetIndex, accessorFlags.getUShort(sourceIndex));
+			}
+		}
+	}
 
-                size_t averagedIndex;
-                if ((abs(targetL0 - targetL) <= (averagingFactor / 2)) && (abs(m0 - m) <= (averagingFactor / 2))) {
-                    averagedIndex = averagedGrid->getIndex(k, sourceL0, averagedM0);
-                } else if ((abs(targetL0 - targetL) <= (averagingFactor / 2)) && (abs(m1 - m) <= (averagingFactor / 2))) {
-                    averagedIndex = averagedGrid->getIndex(k, sourceL0, averagedM1);
-                } else if ((abs(targetL1 - targetL) <= (averagingFactor / 2)) && (abs(m0 - m) <= (averagingFactor / 2))) {
-                    averagedIndex = averagedGrid->getIndex(k, sourceL1, averagedM0);
-                } else if ((abs(targetL1 - targetL) <= (averagingFactor / 2)) && (abs(m1 - m) <= (averagingFactor / 2))) {
-                    averagedIndex = averagedGrid->getIndex(k, sourceL1, averagedM1);
-                } else {
-                    BOOST_THROW_EXCEPTION(logic_error("no averaged index found for collocated index k=" + lexical_cast<string>(k) + ",l=" + lexical_cast<string>(targetL) + ",m=" + lexical_cast<string>(m) ));
-                }
-                collocatedAccessorAmin->setShort(collocatedIndex, accessorAmin.getShort(averagedIndex));
-                collocatedAccessorFlags.setUShort(collocatedIndex, accessorFlags.getUShort(averagedIndex));
-            }
-        }
-    }
+    context.setLastComputedL(*collocatedSegment, *this, lastTargetL);
+    context.setFirstRequiredL(*averagedSegment, *this, );
 }
 
-void Aei::getAveragedTaus(long k, long averagedL0, long averagedL1, long averagedM0, long averagedM1, valarray<double>& averagedTaus) const {
-    averagedTaus[0] = accessorTau->getDouble(averagedGrid->getIndex(k, averagedL0, averagedM0));
-    averagedTaus[1] = accessorTau->getDouble(averagedGrid->getIndex(k, averagedL0, averagedM1));
-    averagedTaus[2] = accessorTau->getDouble(averagedGrid->getIndex(k, averagedL1, averagedM0));
-    averagedTaus[3] = accessorTau->getDouble(averagedGrid->getIndex(k, averagedL1, averagedM1));
-}
-
-void Aei::getAveragedTauErrors(long k, long averagedL0, long averagedL1, long averagedM0, long averagedM1, valarray<double>& averagedTauErrors) const {
-    averagedTauErrors[0] = accessorTauError->getDouble(averagedGrid->getIndex(k, averagedL0, averagedM0));
-    averagedTauErrors[1] = accessorTauError->getDouble(averagedGrid->getIndex(k, averagedL0, averagedM1));
-    averagedTauErrors[2] = accessorTauError->getDouble(averagedGrid->getIndex(k, averagedL1, averagedM0));
-    averagedTauErrors[3] = accessorTauError->getDouble(averagedGrid->getIndex(k, averagedL1, averagedM1));
-}
-
-void Aei::getAveragedAlphas(long k, long averagedL0, long averagedL1, long averagedM0, long averagedM1, valarray<double>& averagedAlphas) const {
-    averagedAlphas[0] = accessorAlpha->getDouble(averagedGrid->getIndex(k, averagedL0, averagedM0));
-    averagedAlphas[1] = accessorAlpha->getDouble(averagedGrid->getIndex(k, averagedL0, averagedM1));
-    averagedAlphas[2] = accessorAlpha->getDouble(averagedGrid->getIndex(k, averagedL1, averagedM0));
-    averagedAlphas[3] = accessorAlpha->getDouble(averagedGrid->getIndex(k, averagedL1, averagedM1));
+void Aei::getVertexes(const Accessor& accessor, long k, long l0, long l1, long m0, long m1, valarray<double>& values) const {
+    values[0] = accessor.getDouble(averagedGrid->getIndex(k, l0, m0));
+    values[1] = accessor.getDouble(averagedGrid->getIndex(k, l0, m1));
+    values[2] = accessor.getDouble(averagedGrid->getIndex(k, l1, m0));
+    values[3] = accessor.getDouble(averagedGrid->getIndex(k, l1, m1));
 }
 
 void Aei::computeWeights(long l, long l0, long l1, long m, long m0, long m1, valarray<double>& weights) const {
