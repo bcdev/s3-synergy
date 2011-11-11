@@ -416,7 +416,7 @@ void Aer::process(Context& context) {
 
 	context.setLastComputedL(*averagedSegment, *this, lastFilterableL);
 	if (lastFilterableL < averagedGrid->getMaxL()) {
-		context.setFirstRequiredL(*averagedSegment, *this, lastFilterableL - averagedGrid->getSizeM() + 1);
+		context.setFirstRequiredL(*averagedSegment, *this, lastFilterableL);
 	} else {
 		context.setFirstRequiredL(*averagedSegment, *this, -1);
 	}
