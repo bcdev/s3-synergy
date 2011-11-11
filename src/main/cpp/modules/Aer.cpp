@@ -321,6 +321,7 @@ void Aer::process(Context& context) {
 		}
 	}
 
+	/*
 	long lastFillableL;
 	if (lastL < averagedGrid->getMaxL()) {
 		lastFillableL = lastL;
@@ -342,7 +343,6 @@ void Aer::process(Context& context) {
 					double alpha550 = 1.25 * w;
 					//double minPixelDistance = numeric_limits<double>::max();
 
-					/*
 					 for (long sourceL = targetL - n; sourceL <= targetL + n; sourceL++) {
 					 for (long sourceM = targetM - n; sourceM <= targetM + n; sourceM++) {
 					 if (averagedGrid->isValidPosition(k, sourceL, sourceM)) {
@@ -363,8 +363,6 @@ void Aer::process(Context& context) {
 					 }
 					 }
 					 }
-					 */
-
 					p.aot = tau550 / w;
 					p.aotError = tau550err / w;
 					p.angstromExponent = alpha550 / w;
@@ -410,16 +408,12 @@ void Aer::process(Context& context) {
 			}
 		}
 	}
+	*/
 
 	context.getLogging().info("Putting lines ...", getId());
 	putPixels(pixels, firstL, lastL);
 
-	context.setLastComputedL(*averagedSegment, *this, lastFilterableL);
-	if (lastFilterableL < averagedGrid->getMaxL()) {
-		context.setFirstRequiredL(*averagedSegment, *this, lastFilterableL);
-	} else {
-		context.setFirstRequiredL(*averagedSegment, *this, -1);
-	}
+	context.setLastComputedL(*averagedSegment, *this, lastL);
 }
 
 void Aer::getPixels(Context& context, valarray<Pixel>& pixels) const {
@@ -478,11 +472,16 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 						negCount++;
 					}
 				}
+				p.aotError = Constants::FILL_VALUE_DOUBLE;
 				p.flags |= Constants::SY2_AEROSOL_NEGATIVE_CURVATURE_FLAG;
 			}
 		} else {
 			p.flags |= Constants::SY2_AEROSOL_TOO_LOW_FLAG;
 		}
+	} else {
+		p.aot = Constants::FILL_VALUE_DOUBLE;
+		p.aotError = Constants::FILL_VALUE_DOUBLE;
+		p.angstromExponent = Constants::FILL_VALUE_DOUBLE;
 	}
 }
 

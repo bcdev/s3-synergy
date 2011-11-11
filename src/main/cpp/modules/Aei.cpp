@@ -24,46 +24,42 @@ Aei::~Aei() {
 }
 
 void Aei::start(Context& context) {
-    averagedSegment = &context.getSegment(Constants::SEGMENT_SYN_AVERAGED);
-    averagedGrid = &averagedSegment->getGrid();
-    collocatedSegment = &context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-    collocatedGrid = &collocatedSegment->getGrid();
+    sourceSegment = &context.getSegment(Constants::SEGMENT_SYN_AVERAGED);
+    sourceGrid = &sourceSegment->getGrid();
+    targetSegment = &context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+    targetGrid = &targetSegment->getGrid();
+
     AuxdataProvider& configurationAuxdataProvider = (AuxdataProvider&)context.getObject(Constants::AUX_ID_SYCPAX);
     averagingFactor = configurationAuxdataProvider.getShort("ave_square");
 
-    accessorTau = &averagedSegment->getAccessor("T550");
-    accessorTauError = &averagedSegment->getAccessor("T550_er");
-    accessorAlpha = &averagedSegment->getAccessor("A550");
-
-    const SegmentDescriptor& collocatedSegmentDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
-
-    collocatedAccessorTau550 = &collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550"));
-    collocatedAccessorTau550err = &collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550_er"));
-    collocatedAccessorAlpha550 = &collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("A550"));
-    collocatedAccessorAmin = &collocatedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("AMIN"));
+    const SegmentDescriptor& targetSegmentDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
+    targetSegment->addVariable(targetSegmentDescriptor.getVariableDescriptor("T550"));
+    targetSegment->addVariable(targetSegmentDescriptor.getVariableDescriptor("T550_er"));
+    targetSegment->addVariable(targetSegmentDescriptor.getVariableDescriptor("A550"));
+    targetSegment->addVariable(targetSegmentDescriptor.getVariableDescriptor("AMIN"));
 }
 
 void Aei::process(Context& context) {
+    const Accessor& aotSourceAccessor = &sourceSegment->getAccessor("T550");
+    const Accessor& aotErrorSourceAccessor = &sourceSegment->getAccessor("T550_er");
+    const Accessor& angstromExponentSourceAccessor = &sourceSegment->getAccessor("A550");
+    const Accessor& aerosolModelSourceAccessor = sourceSegment->getAccessor("AMIN");
+    const Accessor& flagsSourceAccessor = sourceSegment->getAccessor("SYN_flags");
 
-    context.getLogging().progress("Performing aerosol interpolation...", getId());
-    const Accessor& accessorAmin = averagedSegment->getAccessor("AMIN");
-    const Accessor& accessorFlags = averagedSegment->getAccessor("SYN_flags");
+    Accessor& aotTargetAccessor = &targetSegment->getAccessor("T550");
+    Accessor& aotErrorTargetAccessor = &targetSegment->getAccessor("T550_er");
+    Accessor& angstromExponentTargetAccessor = &targetSegment->getAccessor("A550");
+    Accessor& aerosolModelTargetAccessor = &targetSegment->getAccessor("AMIN");
+    Accessor& flagsTargetAccessor = targetSegment->getAccessor("SYN_flags");
 
-    Accessor& collocatedAccessorFlags = collocatedSegment->getAccessor("SYN_flags");
-
-	const long lastSourceL = context.getLastComputableL(*averagedSegment, *this);
-    long firstTargetL = context.getFirstComputableL(*collocatedSegment, *this);
-    long lastTargetL = context.getLastComputableL(*collocatedSegment, *this);
-
-    valarray<double> weights(4);
-    valarray<double> averagedTaus(4);
-    valarray<double> averagedTauErrors(4);
-    valarray<double> averagedAlphas(4);
+	const long lastSourceL = context.getLastComputableL(*sourceSegment, *this);
+    long firstTargetL = context.getFirstComputableL(*targetSegment, *this);
+    long lastTargetL = context.getLastComputableL(*targetSegment, *this);
 
     for (long targetL = firstTargetL; targetL <= lastTargetL; targetL++) {
         context.getLogging().progress("Interpolating line l = " + lexical_cast<string>(targetL), getId());
 
-        const long sourceL0 = min(max(0L, long(floor((targetL - averagingFactor / 2) / averagingFactor))), averagedGrid->getMaxL() - 1L);
+        const long sourceL0 = min(max(0L, long(floor((targetL - averagingFactor / 2) / averagingFactor))), sourceGrid->getMaxL() - 1L);
         const long sourceL1 = sourceL0 + 1;
 
         if (sourceL1 > lastSourceL) {
@@ -71,63 +67,111 @@ void Aei::process(Context& context) {
         	break;
         }
 
-        const long targetL0 = sourceL0 * averagingFactor + averagingFactor / 2;
-        const long targetL1 = sourceL1 * averagingFactor + averagingFactor / 2;
+        const double targetL0 = sourceL0 * averagingFactor + averagingFactor / 2.0;
+        const double targetL1 = sourceL1 + averagingFactor;
 
-        for (long k = collocatedGrid->getFirstK(); k < collocatedGrid->getMaxK(); k++) {
-			for (long targetM = collocatedGrid->getFirstM(); targetM < collocatedGrid->getMaxM(); targetM++) {
-				const long sourceM0 = min(max(0L, long(floor((targetM - averagingFactor / 2) / averagingFactor))), averagedGrid->getMaxM() - 1L);
+        for (long k = targetGrid->getFirstK(); k < targetGrid->getMaxK(); k++) {
+			for (long targetM = targetGrid->getFirstM(); targetM < targetGrid->getMaxM(); targetM++) {
+				const long sourceM0 = min(max(0L, long(floor((targetM - averagingFactor / 2) / averagingFactor))), sourceGrid->getMaxM() - 1L);
 				const long sourceM1 = sourceM0 + 1;
 
-				const long targetM0 = sourceM0 * averagingFactor + averagingFactor / 2;
-				const long targetM1 = sourceM1 * averagingFactor + averagingFactor / 2;
+				const double targetM0 = sourceM0 * averagingFactor + averagingFactor / 2.0;
+				const double targetM1 = targetM0 + averagingFactor;
 
-				computeWeights(targetL, targetL0, targetL1, targetM, targetM0, targetM1, weights);
+				const double wl = (targetL + 0.5 - targetL0) / averagingFactor;
+				const double wm = (targetM + 0.5 - targetM0) / averagingFactor;
 
-				double tau550 = 0.0;
-				double tau550err = 0.0;
-				double alpha550 = 0.0;
+				const double aot = interpolation(aotSourceAccessor, k, sourceL0, sourceL1, sourceM0, sourceM1, wl, wm);
+				const double aotError = interpolation(aotErrorSourceAccessor, k, sourceL0, sourceL1, sourceM0, sourceM1, wl, wm);
+				const double angstromExponent = interpolation(angstromExponentSourceAccessor, k, sourceL0, sourceL1, sourceM0, sourceM1, wl, wm);
 
-				getVertexes(*accessorTau, k, sourceL0, sourceL1, sourceM0, sourceM1, averagedTaus);
-				getVertexes(*accessorTauError, k, sourceL0, sourceL1, sourceM0, sourceM1, averagedTauErrors);
-				getVertexes(*accessorAlpha, k, sourceL0, sourceL1, sourceM0, sourceM1, averagedAlphas);
-
-				for (size_t i = 0; i < weights.size(); i++) {
-					tau550 += weights[i] * averagedTaus[i];
-					tau550err += weights[i] * averagedTauErrors[i];
-					alpha550 += weights[i] * averagedAlphas[i];
+				const size_t targetIndex = targetGrid->getIndex(k, targetL, targetM);
+				if (aot == Constants::FILL_VALUE_DOUBLE) {
+					aotTargetAccessor.setFillValue(targetIndex);
+				} else {
+					aotTargetAccessor.setDouble(targetIndex, aot);
 				}
-
-				const size_t targetIndex = collocatedGrid->getIndex(k, targetL, targetM);
-				collocatedAccessorAlpha550->setDouble(targetIndex, alpha550);
-				collocatedAccessorTau550->setDouble(targetIndex, tau550);
-				collocatedAccessorTau550err->setDouble(targetIndex, tau550err);
+				if (aotError == Constants::FILL_VALUE_DOUBLE) {
+					aotErrorTargetAccessor.setFillValue(targetIndex);
+				} else {
+					aotErrorTargetAccessor.setDouble(targetIndex, aotError);
+				}
+				if (angstromExponent == Constants::FILL_VALUE_DOUBLE) {
+					angstromExponentTargetAccessor.setFillValue(targetIndex);
+				} else {
+					angstromExponentTargetAccessor.setDouble(targetIndex, angstromExponent);
+				}
 
 				size_t sourceIndex;
 				if (abs(targetL0 - targetL) <= (averagingFactor / 2) && abs(targetM0 - targetM) <= (averagingFactor / 2)) {
-					sourceIndex = averagedGrid->getIndex(k, sourceL0, sourceM0);
+					sourceIndex = sourceGrid->getIndex(k, sourceL0, sourceM0);
 				} else if (abs(targetL0 - targetL) <= (averagingFactor / 2) && abs(targetM1 - targetM) <= (averagingFactor / 2)) {
-					sourceIndex = averagedGrid->getIndex(k, sourceL0, sourceM1);
+					sourceIndex = sourceGrid->getIndex(k, sourceL0, sourceM1);
 				} else if (abs(targetL1 - targetL) <= (averagingFactor / 2) && abs(targetM0 - targetM) <= (averagingFactor / 2)) {
-					sourceIndex = averagedGrid->getIndex(k, sourceL1, sourceM0);
+					sourceIndex = sourceGrid->getIndex(k, sourceL1, sourceM0);
 				} else if (abs(targetL1 - targetL) <= (averagingFactor / 2) && abs(targetM1 - targetM) <= (averagingFactor / 2)) {
-					sourceIndex = averagedGrid->getIndex(k, sourceL1, sourceM1);
+					sourceIndex = sourceGrid->getIndex(k, sourceL1, sourceM1);
 				}
-				collocatedAccessorAmin->setUByte(targetIndex, accessorAmin.getUByte(sourceIndex));
-				collocatedAccessorFlags.setUShort(targetIndex, accessorFlags.getUShort(sourceIndex));
+				aerosolModelTargetAccessor.setUByte(targetIndex, aerosolModelSourceAccessor.getUByte(sourceIndex));
+				flagsTargetAccessor.setUShort(targetIndex, flagsSourceAccessor.getUShort(sourceIndex));
 			}
 		}
 	}
 
-    context.setLastComputedL(*collocatedSegment, *this, lastTargetL);
-    context.setFirstRequiredL(*averagedSegment, *this, 0);
+    context.setLastComputedL(*targetSegment, *this, lastTargetL);
+    if (lastTargetL < targetGrid->getMaxL()) {
+    	context.setFirstRequiredL(*sourceSegment, *this, lastSourceL);
+    } else {
+    	context.setFirstRequiredL(*sourceSegment, *this, -1);
+    }
 }
 
-void Aei::getVertexes(const Accessor& accessor, long k, long l0, long l1, long m0, long m1, valarray<double>& values) const {
-    values[0] = accessor.getDouble(averagedGrid->getIndex(k, l0, m0));
-    values[1] = accessor.getDouble(averagedGrid->getIndex(k, l0, m1));
-    values[2] = accessor.getDouble(averagedGrid->getIndex(k, l1, m0));
-    values[3] = accessor.getDouble(averagedGrid->getIndex(k, l1, m1));
+double Aei::interpolation(const Accessor& accessor, long k, long l0, long l1, long m0, long m1, double wl, double wm) const {
+	double v00;
+	double v01;
+	double v10;
+	double v11;
+	double w00;
+	double w01;
+	double w10;
+	double w11;
+
+	const size_t i00 = sourceGrid->getIndex(k, l0, m0);
+	if (accessor.isFillValue(i00)) {
+		v00 = 0.0;
+		w00 = 0.0;
+	} else {
+		v00 = accessor.getDouble(i00);
+		w00 = (1.0 - wl) * (1.0 - wm);
+	}
+	const size_t i01 = sourceGrid->getIndex(k, l0, m1);
+	if (accessor.isFillValue(i01)) {
+		v01 = 0.0;
+		w01 = 0.0;
+	} else {
+		v01 = accessor.getDouble(i01);
+		w01 = (1.0 - wl) * wm;
+	}
+	const size_t i10 = sourceGrid->getIndex(k, l1, m0);
+	if (accessor.isFillValue(i10)) {
+		v10 = 0.0;
+		w10 = 0.0;
+	} else {
+		v10 = accessor.getDouble(i10);
+		w10 = wl * (1.0 - wm);
+	}
+	const size_t i11 = sourceGrid->getIndex(k, l1, m1);
+	if (accessor.isFillValue(i11)) {
+		v11 = 0.0;
+		w11 = 0.0;
+	} else {
+		v11 = accessor.getDouble(i11);
+		w11 = wl * wm;
+	}
+	if (w00 > 0.0 || w01 > 0.0 || w10 > 0.0 || w11 > 0.0) {
+		return (w00 * v00 + w01 * v01 + w10 * v10 + w11 * v11) / (w00 + w01 + w10 + w11);
+	}
+	return Constants::FILL_VALUE_DOUBLE;
 }
 
 void Aei::computeWeights(long l, long l0, long l1, long m, long m0, long m1, valarray<double>& weights) const {

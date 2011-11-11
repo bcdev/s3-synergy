@@ -21,25 +21,17 @@ public:
     void process(Context& context);
 private:
     friend class AeiTest;
-    const Grid* averagedGrid;
-    const Grid* collocatedGrid;
 
-    Segment* averagedSegment;
-    Segment* collocatedSegment;
+    const Grid* targetGrid;
+    const Grid* sourceGrid;
+
+    const Segment* sourceSegment;
+    Segment* targetSegment;
 
     int16_t averagingFactor;
 
-    Accessor* accessorTau;
-    Accessor* accessorTauError;
-    Accessor* accessorAlpha;
-
-    Accessor* collocatedAccessorTau550;
-    Accessor* collocatedAccessorTau550err;
-    Accessor* collocatedAccessorAlpha550;
-    Accessor* collocatedAccessorAmin;
-
     void computeWeights(long l, long l0, long l1, long m, long m0, long m1, valarray<double>& weights) const;
-    void getVertexes(const Accessor& accessor, long k, long l0, long l1, long m0, long m1, valarray<double>& vertexes) const;
+    double interpolation(const Accessor& accessor, long k, long l0, long l1, long m0, long m1, double wl, double wm) const;
 };
 
 #endif /* AEI_H_ */
