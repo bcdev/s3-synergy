@@ -329,14 +329,11 @@ void Aer::process(Context& context) {
 	}
 
 	size_t iterationCount = 0;
-	unsigned n = 0;
+	const size_t n = averagedGrid->getSizeM() - 1;
 	size_t missingPixelCount;
 
 	do {
 		missingPixelCount = 0;
-		if (n < averagedGrid->getSizeM() - 1) {
-			n++;
-		}
 		for (long targetL = firstL; targetL <= lastFillableL; targetL++) {
 			context.getLogging().info("Filling line l = " + lexical_cast<string>(targetL), getId());
 			for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
@@ -348,11 +345,11 @@ void Aer::process(Context& context) {
 							&& !isSet(p.flags, Constants::SY2_AEROSOL_FILLED_FLAG)) {
 						missingPixelCount++;
 
-						double tau550 = 0.0;
-						double tau550err = 0.0;
-						double alpha550 = 0.0;
-						size_t pixelCount = 0;
-						long minPixelDistance = numeric_limits<long>::max();
+						double w = 1.0e-10;
+						double tau550 = 0.0 * w;
+						double tau550err = 0.0 * w;
+						double alpha550 = 0.0 * w;
+						double minPixelDistance = numeric_limits<double>::max();
 
 						for (long sourceL = targetL - n; sourceL <= targetL + n; sourceL++) {
 							for (long sourceM = targetM - n; sourceM <= targetM + n; sourceM++) {
@@ -360,27 +357,24 @@ void Aer::process(Context& context) {
 									const size_t sourcePixelIndex = averagedGrid->getIndex(k, sourceL, sourceM);
 									const Pixel& q = pixels[sourcePixelIndex];
 									if (isSet(q.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)) {
-										const long dist = (sourceL - targetL) * (sourceL - targetL) + (sourceM - targetM) * (sourceM - targetM);
+										const double dist = (sourceL - targetL) * (sourceL - targetL) + (sourceM - targetM) * (sourceM - targetM);
 										if (dist < minPixelDistance) {
 											minPixelDistance = dist;
 											p.aerosolModel = q.aerosolModel;
 										}
 
-										tau550 += q.aot;
-										tau550err += q.aotError;
-										alpha550 += q.angstromExponent;
-
-										pixelCount++;
+										tau550 += q.aot / (dist * dist * dist * dist);
+										tau550err += q.aotError / (dist * dist * dist * dist);
+										alpha550 += q.angstromExponent / (dist * dist * dist * dist);
+										w += 1.0 / (dist * dist * dist * dist);
 									}
 								}
 							}
 						}
-						if (pixelCount > 0) {
-							p.aot = tau550 / pixelCount;
-							p.aotError = tau550err / pixelCount;
-							p.angstromExponent = alpha550 / pixelCount;
-							p.flags |= Constants::SY2_AEROSOL_FILLED_FLAG;
-						}
+						p.aot = tau550 / w;
+						p.aotError = tau550err / w;
+						p.angstromExponent = alpha550 / w;
+						p.flags |= Constants::SY2_AEROSOL_FILLED_FLAG;
 					}
 				}
 			}
