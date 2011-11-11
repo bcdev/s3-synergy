@@ -5,14 +5,13 @@
  *      Author: thomasstorm
  */
 
+#include <algorithm>
 #include <cmath>
 
 #include "Aei.h"
-#include "../core/Boost.h"
-#include "../util/AuxdataProvider.h"
 
-using std::min;
 using std::floor;
+using std::min;
 using std::numeric_limits;
 
 Aei::Aei() :
@@ -49,24 +48,22 @@ void Aei::process(Context& context) {
 
     Accessor& collocatedAccessorFlags = collocatedSegment->getAccessor("SYN_flags");
 
-    long firstL = context.getFirstComputableL(*averagedSegment, *this);
-    long lastL = context.getLastComputableL(*averagedSegment, *this);
+    long firstTargetL = context.getFirstComputableL(*collocatedSegment, *this);
+    long lastTargetL = context.getLastComputableL(*collocatedSegment, *this);
 
     valarray<double> weights(4);
     valarray<double> averagedTaus(4);
     valarray<double> averagedTauErrors(4);
     valarray<double> averagedAlphas(4);
 
-    for (long l = firstL; l <= lastL; l++) {
-        if (l % 100 == 0) {
-            context.getLogging().progress("   ...in line " + lexical_cast<string>(l), getId());
-        }
+    for (long targetL = firstTargetL; targetL <= lastTargetL; targetL++) {
+        context.getLogging().progress("Interpolating line l = " + lexical_cast<string>(targetL), getId());
 
-        long averagedL0 = min(0.0, floor((l - averagingFactor / 2) / averagingFactor));
-        long averagedL1 = averagedL0 + 1;
+        long sourceL0 = min(0.0, floor((targetL - averagingFactor / 2) / averagingFactor));
+        long sourceL1 = sourceL0 + 1;
 
-        long l0 = averagedL0 * averagingFactor + averagingFactor / 2;
-        long l1 = averagedL1 * averagingFactor + averagingFactor / 2;
+        long targetL0 = sourceL0 * averagingFactor + averagingFactor / 2;
+        long targetL1 = sourceL1 * averagingFactor + averagingFactor / 2;
 
         for (long m = collocatedGrid->getFirstM(); m < collocatedGrid->getMaxM(); m++) {
             long averagedM0 = min(0.0, floor((m - averagingFactor / 2) / averagingFactor));
@@ -75,7 +72,7 @@ void Aei::process(Context& context) {
             double m0 = averagedM0 * averagingFactor + averagingFactor / 2;
             double m1 = averagedM1 * averagingFactor + averagingFactor / 2;
 
-            computeWeights(l, l0, l1, m, m0, m1, weights);
+            computeWeights(targetL, targetL0, targetL1, m, m0, m1, weights);
 
             for (long k = collocatedGrid->getFirstK(); k < collocatedGrid->getMaxK(); k++) {
 
@@ -83,9 +80,9 @@ void Aei::process(Context& context) {
                 double tau550err = 0.0;
                 double alpha550 = 0.0;
 
-                getAveragedTaus(k, averagedL0, averagedL1, averagedM0, averagedM1, averagedTaus);
-                getAveragedTauErrors(k, averagedL0, averagedL1, averagedM0, averagedM1, averagedTauErrors);
-                getAveragedAlphas(k, averagedL0, averagedL1, averagedM0, averagedM1, averagedAlphas);
+                getAveragedTaus(k, sourceL0, sourceL1, averagedM0, averagedM1, averagedTaus);
+                getAveragedTauErrors(k, sourceL0, sourceL1, averagedM0, averagedM1, averagedTauErrors);
+                getAveragedAlphas(k, sourceL0, sourceL1, averagedM0, averagedM1, averagedAlphas);
 
                 for (size_t i = 0; i < weights.size(); i++) {
                     tau550 += weights[i] * averagedTaus[i];
@@ -93,22 +90,22 @@ void Aei::process(Context& context) {
                     alpha550 += weights[i] * averagedAlphas[i];
                 }
 
-                const size_t collocatedIndex = collocatedGrid->getIndex(k, l, m);
+                const size_t collocatedIndex = collocatedGrid->getIndex(k, targetL, m);
                 collocatedAccessorAlpha550->setDouble(collocatedIndex, alpha550);
                 collocatedAccessorTau550->setDouble(collocatedIndex, tau550);
                 collocatedAccessorTau550err->setDouble(collocatedIndex, tau550err);
 
                 size_t averagedIndex;
-                if ((abs(l0 - l) <= (averagingFactor / 2)) && (abs(m0 - m) <= (averagingFactor / 2))) {
-                    averagedIndex = averagedGrid->getIndex(k, averagedL0, averagedM0);
-                } else if ((abs(l0 - l) <= (averagingFactor / 2)) && (abs(m1 - m) <= (averagingFactor / 2))) {
-                    averagedIndex = averagedGrid->getIndex(k, averagedL0, averagedM1);
-                } else if ((abs(l1 - l) <= (averagingFactor / 2)) && (abs(m0 - m) <= (averagingFactor / 2))) {
-                    averagedIndex = averagedGrid->getIndex(k, averagedL1, averagedM0);
-                } else if ((abs(l1 - l) <= (averagingFactor / 2)) && (abs(m1 - m) <= (averagingFactor / 2))) {
-                    averagedIndex = averagedGrid->getIndex(k, averagedL1, averagedM1);
+                if ((abs(targetL0 - targetL) <= (averagingFactor / 2)) && (abs(m0 - m) <= (averagingFactor / 2))) {
+                    averagedIndex = averagedGrid->getIndex(k, sourceL0, averagedM0);
+                } else if ((abs(targetL0 - targetL) <= (averagingFactor / 2)) && (abs(m1 - m) <= (averagingFactor / 2))) {
+                    averagedIndex = averagedGrid->getIndex(k, sourceL0, averagedM1);
+                } else if ((abs(targetL1 - targetL) <= (averagingFactor / 2)) && (abs(m0 - m) <= (averagingFactor / 2))) {
+                    averagedIndex = averagedGrid->getIndex(k, sourceL1, averagedM0);
+                } else if ((abs(targetL1 - targetL) <= (averagingFactor / 2)) && (abs(m1 - m) <= (averagingFactor / 2))) {
+                    averagedIndex = averagedGrid->getIndex(k, sourceL1, averagedM1);
                 } else {
-                    BOOST_THROW_EXCEPTION(logic_error("no averaged index found for collocated index k=" + lexical_cast<string>(k) + ",l=" + lexical_cast<string>(l) + ",m=" + lexical_cast<string>(m) ));
+                    BOOST_THROW_EXCEPTION(logic_error("no averaged index found for collocated index k=" + lexical_cast<string>(k) + ",l=" + lexical_cast<string>(targetL) + ",m=" + lexical_cast<string>(m) ));
                 }
                 collocatedAccessorAmin->setShort(collocatedIndex, accessorAmin.getShort(averagedIndex));
                 collocatedAccessorFlags.setUShort(collocatedIndex, accessorFlags.getUShort(averagedIndex));

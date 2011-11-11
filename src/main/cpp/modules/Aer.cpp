@@ -337,7 +337,6 @@ void Aer::process(Context& context) {
 		if (n < averagedGrid->getSizeM() - 1) {
 			n++;
 		}
-		vector<size_t> filledPixelIndexes;
 		for (long targetL = firstL; targetL <= lastFillableL; targetL++) {
 			context.getLogging().info("Filling line l = " + lexical_cast<string>(targetL), getId());
 			for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
@@ -359,21 +358,19 @@ void Aer::process(Context& context) {
 							for (long sourceM = targetM - n; sourceM <= targetM + n; sourceM++) {
 								if (averagedGrid->isValidPosition(k, sourceL, sourceM)) {
 									const size_t sourcePixelIndex = averagedGrid->getIndex(k, sourceL, sourceM);
-									if (!contains(filledPixelIndexes, sourcePixelIndex)) {
-										const Pixel& q = pixels[sourcePixelIndex];
-										if (isSet(q.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)) {
-											const long dist = (sourceL - targetL) * (sourceL - targetL) + (sourceM - targetM) * (sourceM - targetM);
-											if (dist < minPixelDistance) {
-												minPixelDistance = dist;
-												p.aerosolModel = q.aerosolModel;
-											}
-
-											tau550 += q.aot;
-											tau550err += q.aotError;
-											alpha550 += q.angstromExponent;
-
-											pixelCount++;
+									const Pixel& q = pixels[sourcePixelIndex];
+									if (isSet(q.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)) {
+										const long dist = (sourceL - targetL) * (sourceL - targetL) + (sourceM - targetM) * (sourceM - targetM);
+										if (dist < minPixelDistance) {
+											minPixelDistance = dist;
+											p.aerosolModel = q.aerosolModel;
 										}
+
+										tau550 += q.aot;
+										tau550err += q.aotError;
+										alpha550 += q.angstromExponent;
+
+										pixelCount++;
 									}
 								}
 							}
@@ -383,7 +380,6 @@ void Aer::process(Context& context) {
 							p.aotError = tau550err / pixelCount;
 							p.angstromExponent = alpha550 / pixelCount;
 							p.flags |= Constants::SY2_AEROSOL_FILLED_FLAG;
-							filledPixelIndexes.push_back(targetPixelIndex);
 						}
 					}
 				}

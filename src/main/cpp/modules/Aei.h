@@ -8,8 +8,9 @@
 #ifndef AEI_H_
 #define AEI_H_
 
-#include "BasicModule.h"
 #include "../core/Segment.h"
+
+#include "BasicModule.h"
 
 class Aei : public BasicModule {
 public:
