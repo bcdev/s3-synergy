@@ -44,11 +44,13 @@ void Aei::start(Context& context) {
 
 void Aei::process(Context& context) {
 	const long lastSourceL = context.getLastComputableL(*averagedSegment, *this);
+	/*
 	long lastTargetL = (lastSourceL - sourceSegment->getGrid().getMinL() + 1) / averagingFactor;
 	if (lastSourceL < sourceSegment->getGrid().getMaxL()) {
 		lastTargetL--;
 	}
 	lastTargetL = min(lastTargetL, context.getLastComputableL(*targetSegment, *this));
+	*/
 
     context.getLogging().progress("Performing aerosol interpolation...", getId());
     const Accessor& accessorAmin = averagedSegment->getAccessor("AMIN");
