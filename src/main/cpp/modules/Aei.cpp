@@ -112,7 +112,7 @@ void Aei::process(Context& context) {
 	}
 
     context.setLastComputedL(*collocatedSegment, *this, lastTargetL);
-    context.setFirstRequiredL(*averagedSegment, *this, );
+    context.setFirstRequiredL(*averagedSegment, *this, 0);
 }
 
 void Aei::getVertexes(const Accessor& accessor, long k, long l0, long l1, long m0, long m1, valarray<double>& values) const {
