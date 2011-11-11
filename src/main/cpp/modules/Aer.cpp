@@ -323,18 +323,18 @@ void Aer::process(Context& context) {
 
 	long lastFillableL;
 	if (lastL < averagedGrid->getMaxL()) {
-		lastFillableL = lastL - 9;
+		lastFillableL = lastL - averagedGrid->getSizeM() - 1;
 	} else {
 		lastFillableL = lastL;
 	}
 
 	size_t iterationCount = 0;
-	unsigned n = 1;
+	unsigned n = 0;
 	size_t missingPixelCount;
 
 	do {
 		missingPixelCount = 0;
-		if (iterationCount >= 5 && iterationCount <= 12) {
+		if (n < averagedGrid->getSizeM() - 1) {
 			n++;
 		}
 		vector<size_t> filledPixelIndexes;
@@ -361,8 +361,7 @@ void Aer::process(Context& context) {
 									const size_t sourcePixelIndex = averagedGrid->getIndex(k, sourceL, sourceM);
 									if (!contains(filledPixelIndexes, sourcePixelIndex)) {
 										const Pixel& q = pixels[sourcePixelIndex];
-										if (isSet(q.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)
-												|| isSet(q.flags, Constants::SY2_AEROSOL_FILLED_FLAG)) {
+										if (isSet(q.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)) {
 											const long dist = (sourceL - targetL) * (sourceL - targetL) + (sourceM - targetM) * (sourceM - targetM);
 											if (dist < minPixelDistance) {
 												minPixelDistance = dist;
@@ -390,7 +389,7 @@ void Aer::process(Context& context) {
 				}
 			}
 		}
-		iterationCount++;
+		//iterationCount++;
 	} while (missingPixelCount != 0);
 
 	long lastFilterableL;
