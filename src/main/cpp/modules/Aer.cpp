@@ -280,7 +280,9 @@ void Aer::stop(Context& context) {
 
 void Aer::process(Context& context) {
 	const long firstL = context.getFirstComputableL(*averagedSegment, *this);
+	context.getLogging().debug("Segment [" + averagedSegment->toString() + "]: firstComputableL = " + lexical_cast<string>(firstL), getId());
 	long lastL = context.getLastComputableL(*averagedSegment, *this);
+	context.getLogging().debug("Segment [" + averagedSegment->toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
 
 	valarray<Pixel> pixels(averagedGrid->getSize());
 

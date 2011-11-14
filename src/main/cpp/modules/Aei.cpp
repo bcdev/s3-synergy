@@ -53,13 +53,16 @@ void Aei::process(Context& context) {
     Accessor& flagsTargetAccessor = targetSegment->getAccessor("SYN_flags");
 
 	const long lastSourceL = context.getLastComputableL(*sourceSegment, *this);
-    long firstTargetL = context.getFirstComputableL(*targetSegment, *this);
+    const long firstTargetL = context.getFirstComputableL(*targetSegment, *this);
+	context.getLogging().debug("Segment [" + targetSegment->toString() + "]: firstComputableL = " + lexical_cast<string>(firstTargetL), getId());
     long lastTargetL = context.getLastComputableL(*targetSegment, *this);
+	context.getLogging().debug("Segment [" + targetSegment->toString() + "]: lastComputableL = " + lexical_cast<string>(lastTargetL), getId());
 
     for (long targetL = firstTargetL; targetL <= lastTargetL; targetL++) {
         context.getLogging().progress("Interpolating line l = " + lexical_cast<string>(targetL), getId());
 
-        const long sourceL0 = min(max(0L, long(floor((targetL - averagingFactor / 2) / averagingFactor))), sourceGrid->getMaxL() - 1L);
+        const long sourceL0 = min(max(0L, (long) floor((targetL - averagingFactor / 2) / averagingFactor)), sourceGrid->getMaxL() - 1L);
+    	context.getLogging().debug("Segment [" + sourceSegment->toString() + "]: sourceL0 = " + lexical_cast<string>(sourceL0), getId());
         const long sourceL1 = sourceL0 + 1;
 
         if (sourceL1 > lastSourceL) {
@@ -72,7 +75,7 @@ void Aei::process(Context& context) {
 
         for (long k = targetGrid->getFirstK(); k < targetGrid->getMaxK(); k++) {
 			for (long targetM = targetGrid->getFirstM(); targetM < targetGrid->getMaxM(); targetM++) {
-				const long sourceM0 = min(max(0L, long(floor((targetM - averagingFactor / 2) / averagingFactor))), sourceGrid->getMaxM() - 1L);
+				const long sourceM0 = min(max(0L, (long) floor((targetM - averagingFactor / 2) / averagingFactor)), sourceGrid->getMaxM() - 1L);
 				const long sourceM1 = sourceM0 + 1;
 
 				const double targetM0 = sourceM0 * averagingFactor + averagingFactor / 2.0;
