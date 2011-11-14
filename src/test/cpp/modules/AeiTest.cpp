@@ -11,6 +11,7 @@
 #include "../../../main/cpp/core/Processor.h"
 #include "../../../main/cpp/core/Context.h"
 #include "../../../main/cpp/reader/SynL1Reader.h"
+#include "../../../main/cpp/modules/Aei.h"
 #include "../../../main/cpp/modules/Aer.h"
 #include "../../../main/cpp/modules/Ave.h"
 #include "../../../main/cpp/modules/Col.h"
@@ -20,7 +21,6 @@
 #include "../../../main/cpp/util/JobOrderParser.h"
 #include "../../../main/cpp/core/Pixel.h"
 #include "../../../main/cpp/util/ErrorMetric.h"
-
 
 #include "AeiTest.h"
 
@@ -64,6 +64,12 @@ void AeiTest::tearDown() {
 }
 
 void AeiTest::testAei() {
+	using std::max;
+	using std::min;
+
+    const long sourceL0 = min(max(0L, (2000L - 8 / 2) / 8), 833L - 1L);
+    CPPUNIT_ASSERT(sourceL0 == 249);
+
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
     shared_ptr<Module> col = shared_ptr<Module>(new Col());
     shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());

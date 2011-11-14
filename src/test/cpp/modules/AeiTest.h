@@ -10,7 +10,6 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../../src/main/cpp/modules/Aei.h"
 #include "../../../../src/main/cpp/core/Context.h"
 
 class AeiTest : public CPPUNIT_NS::TestFixture {

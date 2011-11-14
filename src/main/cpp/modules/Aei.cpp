@@ -8,13 +8,8 @@
 #include <algorithm>
 #include <cmath>
 
-#include "Aei.h"
 
-using std::abs;
-using std::floor;
-using std::max;
-using std::min;
-using std::numeric_limits;
+#include "Aei.h"
 
 Aei::Aei() :
         BasicModule("AEI") {
@@ -40,7 +35,11 @@ void Aei::start(Context& context) {
 }
 
 void Aei::process(Context& context) {
-    const Accessor& aotSourceAccessor = sourceSegment->getAccessor("T550");
+	using std::abs;
+	using std::max;
+	using std::min;
+
+	const Accessor& aotSourceAccessor = sourceSegment->getAccessor("T550");
     const Accessor& aotErrorSourceAccessor = sourceSegment->getAccessor("T550_er");
     const Accessor& angstromExponentSourceAccessor = sourceSegment->getAccessor("A550");
     const Accessor& aerosolModelSourceAccessor = sourceSegment->getAccessor("AMIN");
@@ -61,7 +60,7 @@ void Aei::process(Context& context) {
     for (long targetL = firstTargetL; targetL <= lastTargetL; targetL++) {
         context.getLogging().progress("Interpolating line l = " + lexical_cast<string>(targetL), getId());
 
-        const long sourceL0 = min(max(0L, (long) floor((targetL - averagingFactor / 2) / averagingFactor)), sourceGrid->getMaxL() - 1L);
+        const long sourceL0 = min(max(0L, (targetL - averagingFactor / 2) / averagingFactor), sourceGrid->getMaxL() - 1L);
     	context.getLogging().debug("Segment [" + sourceSegment->toString() + "]: sourceL0 = " + lexical_cast<string>(sourceL0), getId());
         const long sourceL1 = sourceL0 + 1;
 
@@ -75,7 +74,7 @@ void Aei::process(Context& context) {
 
         for (long k = targetGrid->getFirstK(); k < targetGrid->getMaxK(); k++) {
 			for (long targetM = targetGrid->getFirstM(); targetM < targetGrid->getMaxM(); targetM++) {
-				const long sourceM0 = min(max(0L, (long) floor((targetM - averagingFactor / 2) / averagingFactor)), sourceGrid->getMaxM() - 1L);
+				const long sourceM0 = min(max(0L, (targetM - averagingFactor / 2) / averagingFactor), sourceGrid->getMaxM() - 1L);
 				const long sourceM1 = sourceM0 + 1;
 
 				const double targetM0 = sourceM0 * averagingFactor + averagingFactor / 2.0;
