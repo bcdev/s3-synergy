@@ -5,9 +5,7 @@
  *      Author: thomasstorm
  */
 
-#include <algorithm>
 #include <cmath>
-
 
 #include "Aei.h"
 
@@ -36,8 +34,6 @@ void Aei::start(Context& context) {
 
 void Aei::process(Context& context) {
 	using std::abs;
-	using std::max;
-	using std::min;
 
 	const Accessor& aotSourceAccessor = sourceSegment->getAccessor("T550");
     const Accessor& aotErrorSourceAccessor = sourceSegment->getAccessor("T550_er");
@@ -60,7 +56,7 @@ void Aei::process(Context& context) {
     for (long targetL = firstTargetL; targetL <= lastTargetL; targetL++) {
         context.getLogging().progress("Interpolating line l = " + lexical_cast<string>(targetL), getId());
 
-        const long sourceL0 = min(max(0L, (targetL - averagingFactor / 2) / averagingFactor), sourceGrid->getMaxL() - 1L);
+        const long sourceL0 = minMax((targetL - averagingFactor / 2) / averagingFactor, 0, sourceGrid->getMaxL() - 1);
     	context.getLogging().debug("Segment [" + sourceSegment->toString() + "]: sourceL0 = " + lexical_cast<string>(sourceL0), getId());
         const long sourceL1 = sourceL0 + 1;
 
@@ -74,7 +70,7 @@ void Aei::process(Context& context) {
 
         for (long k = targetGrid->getFirstK(); k < targetGrid->getMaxK(); k++) {
 			for (long targetM = targetGrid->getFirstM(); targetM < targetGrid->getMaxM(); targetM++) {
-				const long sourceM0 = min(max(0L, (targetM - averagingFactor / 2) / averagingFactor), sourceGrid->getMaxM() - 1L);
+				const long sourceM0 = minMax((targetM - averagingFactor / 2) / averagingFactor, 0, sourceGrid->getMaxM() - 1);
 				const long sourceM1 = sourceM0 + 1;
 
 				const double targetM0 = sourceM0 * averagingFactor + averagingFactor / 2.0;

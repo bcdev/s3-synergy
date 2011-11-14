@@ -12,25 +12,36 @@
 
 #include "BasicModule.h"
 
-class Aei : public BasicModule {
+class Aei: public BasicModule {
 public:
 	Aei();
 	virtual ~Aei();
 
-    void start(Context& context);
-    void process(Context& context);
+	void start(Context& context);
+	void process(Context& context);
+
 private:
-    friend class AeiTest;
+	friend class AeiTest;
 
-    const Grid* targetGrid;
-    const Grid* sourceGrid;
+	double interpolation(const Accessor& accessor, long k, long l0, long l1, long m0, long m1, double wl, double wm) const;
 
-    const Segment* sourceSegment;
-    Segment* targetSegment;
+	static long minMax(long x, long min, long max) {
+		if (x < min) {
+			return min;
+		}
+		if (x > max) {
+			return max;
+		}
+		return x;
+	}
 
-    int16_t averagingFactor;
+	const Grid* targetGrid;
+	const Grid* sourceGrid;
 
-    double interpolation(const Accessor& accessor, long k, long l0, long l1, long m0, long m1, double wl, double wm) const;
+	const Segment* sourceSegment;
+	Segment* targetSegment;
+
+	int16_t averagingFactor;
 };
 
 #endif /* AEI_H_ */

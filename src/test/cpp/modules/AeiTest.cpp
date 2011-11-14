@@ -64,10 +64,7 @@ void AeiTest::tearDown() {
 }
 
 void AeiTest::testAei() {
-	using std::max;
-	using std::min;
-
-    const long sourceL0 = min(max(0L, (2000L - 8 / 2) / 8), 833L - 1L);
+    const long sourceL0 = Aei::minMax((2000L - 8 / 2) / 8, 0, 833L - 1);
     CPPUNIT_ASSERT(sourceL0 == 249);
 
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
