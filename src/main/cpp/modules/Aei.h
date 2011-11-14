@@ -41,7 +41,7 @@ private:
 	const Segment* sourceSegment;
 	Segment* targetSegment;
 
-	int16_t averagingFactor;
+	uint8_t averagingFactor;
 };
 
 #endif /* AEI_H_ */
