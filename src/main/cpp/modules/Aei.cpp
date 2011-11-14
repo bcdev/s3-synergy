@@ -173,11 +173,3 @@ double Aei::interpolation(const Accessor& accessor, long k, long l0, long l1, lo
 	}
 	return Constants::FILL_VALUE_DOUBLE;
 }
-
-void Aei::computeWeights(long l, long l0, long l1, long m, long m0, long m1, valarray<double>& weights) const {
-    weights[0] = (l + 0.5 - l0) * (m + 0.5 - m0) / (averagingFactor * averagingFactor);
-    weights[1] = (l + 0.5 - l0) * (m1 - m - 0.5) / (averagingFactor * averagingFactor);
-    weights[2] = (l1 - l - 0.5) * (m + 0.5 - m0) / (averagingFactor * averagingFactor);
-    weights[3] = (l1 - l - 0.5) * (m1 - m - 0.5) / (averagingFactor * averagingFactor);
-}
-

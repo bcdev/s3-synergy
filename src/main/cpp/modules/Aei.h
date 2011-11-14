@@ -30,7 +30,6 @@ private:
 
     int16_t averagingFactor;
 
-    void computeWeights(long l, long l0, long l1, long m, long m0, long m1, valarray<double>& weights) const;
     double interpolation(const Accessor& accessor, long k, long l0, long l1, long m0, long m1, double wl, double wm) const;
 };
 

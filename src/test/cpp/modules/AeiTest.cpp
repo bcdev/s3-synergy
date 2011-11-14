@@ -64,16 +64,6 @@ void AeiTest::tearDown() {
 	context.reset();
 }
 
-void AeiTest::testComputeWeights() {
-    valarray<double> weights(4);
-    aei->averagingFactor = 8;
-    aei->computeWeights(10, 5, 8, 20, 10, 16, weights);
-    CPPUNIT_ASSERT(weights[0] == 0.90234375f);
-    CPPUNIT_ASSERT(weights[1] == -0.38671875f);
-    CPPUNIT_ASSERT(weights[2] == -0.41015625f);
-    CPPUNIT_ASSERT(weights[3] == 0.17578125f);
-}
-
 void AeiTest::testAei() {
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
     shared_ptr<Module> col = shared_ptr<Module>(new Col());
