@@ -24,6 +24,7 @@ void Aei::start(Context& context) {
 
     AuxdataProvider& configurationAuxdataProvider = (AuxdataProvider&)context.getObject(Constants::AUX_ID_SYCPAX);
     averagingFactor = configurationAuxdataProvider.getShort("ave_square");
+	context.getLogging().debug("Averaging factor averagingFactor = " + lexical_cast<string>(averagingFactor), getId());
 
     const SegmentDescriptor& targetSegmentDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
     targetSegment->addVariable(targetSegmentDescriptor.getVariableDescriptor("T550"));
