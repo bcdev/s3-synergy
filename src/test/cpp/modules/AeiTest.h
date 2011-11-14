@@ -27,7 +27,6 @@ public:
 private:
     void prepareContext();
     shared_ptr<Context> context;
-    shared_ptr<Aei> aei;
     void testAei();
 };
 

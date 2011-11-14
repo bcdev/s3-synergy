@@ -38,7 +38,6 @@ AeiTest::~AeiTest() {
 void AeiTest::setUp() {
     XPathInitializer init;
     prepareContext();
-    aei = shared_ptr<Aei>(new Aei());
 }
 
 void AeiTest::prepareContext() {
@@ -70,6 +69,7 @@ void AeiTest::testAei() {
     shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
     shared_ptr<Module> ave = shared_ptr<Module>(new Ave());
     shared_ptr<Module> aer = shared_ptr<Module>(new Aer());
+    shared_ptr<Module> aei = shared_ptr<Aei>(new Aei());
     shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
 
     context->addModule(reader);
