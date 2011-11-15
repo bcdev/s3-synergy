@@ -34,8 +34,6 @@ Pixel::Pixel(const Pixel& q) :
 	angstromExponent = q.angstromExponent;
 	aot = q.aot;
 	aotError = q.aotError;
-	aotFiltered = q.aotFiltered;
-	aotErrorFiltered = q.aotErrorFiltered;
 	flags = q.flags;
 	aerosolModel = q.aerosolModel;
 
@@ -74,8 +72,6 @@ void Pixel::assign(const Pixel& q) {
 	angstromExponent = q.angstromExponent;
 	aot = q.aot;
 	aotError = q.aotError;
-	aotFiltered = q.aotFiltered;
-	aotErrorFiltered = q.aotErrorFiltered;
 	flags = q.flags;
 	aerosolModel = q.aerosolModel;
 
@@ -114,8 +110,6 @@ std::ostream& operator<<(std::ostream& s, const Pixel& p) {
 	s << p.angstromExponent << " ";
 	s << p.aot << " ";
 	s << p.aotError << " ";
-	s << p.aotFiltered << " ";
-	s << p.aotErrorFiltered << " ";
 	s << p.flags << " ";
 	s << (unsigned short) p.aerosolModel << " ";
 
@@ -161,8 +155,6 @@ std::istream& operator>>(std::istream& s, Pixel& p) {
 	s >> p.angstromExponent;
 	s >> p.aot;
 	s >> p.aotError;
-	s >> p.aotFiltered;
-	s >> p.aotErrorFiltered;
 	s >> p.flags;
 	unsigned short aerosolModel;
 	s >> aerosolModel;

@@ -39,8 +39,6 @@ struct Pixel {
     double angstromExponent;
     double aot;
     double aotError;
-    double aotFiltered;
-    double aotErrorFiltered;
     unsigned short flags;
     unsigned char aerosolModel;
 

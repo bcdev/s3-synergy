@@ -193,8 +193,6 @@ Pixel& PixelInitializer::getPixel(size_t index, Pixel& p) const {
 	 */
 	p.aot = tau550.isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : tau550.getDouble(index);
 	p.aotError = tau550Error.isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : tau550Error.getDouble(index);
-	p.aotFiltered = tau550Filtered.isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : tau550Filtered.getDouble(index);
-	p.aotErrorFiltered = tau550ErrorFiltered.isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : tau550ErrorFiltered.getDouble(index);
 	p.angstromExponent = alpha550.isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : alpha550.getDouble(index);
 	p.flags = synFlags.getUShort(index);
 	p.aerosolModel = amin.getUByte(index);

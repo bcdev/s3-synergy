@@ -131,8 +131,6 @@ void AerTest::testAer_s() {
 
     p.aot = Constants::FILL_VALUE_DOUBLE;
     p.aotError = Constants::FILL_VALUE_DOUBLE;
-    p.aotFiltered = Constants::FILL_VALUE_DOUBLE;
-    p.aotErrorFiltered = Constants::FILL_VALUE_DOUBLE;
     p.angstromExponent = Constants::FILL_VALUE_DOUBLE;
     p.aerosolModel = numeric_limits<short>::min();
     p.errorMetric = numeric_limits<double>::max();
