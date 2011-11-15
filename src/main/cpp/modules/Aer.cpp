@@ -8,8 +8,6 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
-#include <set>
-#include <fstream>
 
 #include "../core/TiePointInterpolator.h"
 #include "../util/ErrorMetric.h"
@@ -18,15 +16,8 @@
 
 #include "Aer.h"
 
-using std::copy;
 using std::min;
 using std::numeric_limits;
-using std::set;
-
-static void copyValarray(const std::valarray<double>& source, std::valarray<double>& target) {
-	target.resize(source.size());
-	copy(&source[0], &source[source.size()], &target[0]);
-}
 
 class PixelInitializer {
 
@@ -36,6 +27,12 @@ public:
 	Pixel& getPixel(size_t index, Pixel& p) const;
 
 private:
+	template<class T>
+	static void copy(const std::valarray<T>& s, std::valarray<T>& t) {
+		t.resize(s.size());
+		std::copy(&s[0], &s[s.size()], &t[0]);
+	}
+
 	const Context& context;
 
 	const Segment& averagedSegment;
@@ -132,20 +129,20 @@ PixelInitializer::PixelInitializer(const Context& context) :
 	const Accessor& vzaSlo = sloTiepointSegment.getAccessor("SLO_VZA");
 	const Accessor& vaaSlo = sloTiepointSegment.getAccessor("SLO_VAA");
 
-	copyValarray(szaOlc.getDoubles(), szaTiePointsOlc);
-	copyValarray(saaOlc.getDoubles(), saaTiePointsOlc);
-	copyValarray(vzaOlc.getDoubles(), vzaTiePointsOlc);
-	copyValarray(vaaOlc.getDoubles(), vaaTiePointsOlc);
-	copyValarray(vzaSln.getDoubles(), vzaTiePointsSln);
-	copyValarray(vzaSlo.getDoubles(), vzaTiePointsSlo);
-	copyValarray(vaaSln.getDoubles(), vaaTiePointsSln);
-	copyValarray(vaaSlo.getDoubles(), vaaTiePointsSlo);
+	copy(szaOlc.getDoubles(), szaTiePointsOlc);
+	copy(saaOlc.getDoubles(), saaTiePointsOlc);
+	copy(vzaOlc.getDoubles(), vzaTiePointsOlc);
+	copy(vaaOlc.getDoubles(), vaaTiePointsOlc);
+	copy(vzaSln.getDoubles(), vzaTiePointsSln);
+	copy(vzaSlo.getDoubles(), vzaTiePointsSlo);
+	copy(vaaSln.getDoubles(), vaaTiePointsSln);
+	copy(vaaSlo.getDoubles(), vaaTiePointsSlo);
 
-	copyValarray(olciTiepointSegment.getAccessor("ozone").getDoubles(), ozoneTiePoints);
-	copyValarray(olciTiepointSegment.getAccessor("air_pressure").getDoubles(), airPressureTiePoints);
+	copy(olciTiepointSegment.getAccessor("ozone").getDoubles(), ozoneTiePoints);
+	copy(olciTiepointSegment.getAccessor("air_pressure").getDoubles(), airPressureTiePoints);
 
 	if (olciTiepointSegment.hasVariable("water_vapour")) {
-		copyValarray(olciTiepointSegment.getAccessor("water_vapour").getDoubles(), waterVapourTiePoints);
+		copy(olciTiepointSegment.getAccessor("water_vapour").getDoubles(), waterVapourTiePoints);
 	}
 }
 
@@ -263,19 +260,6 @@ void Aer::start(Context& context) {
 	averagedSegment->addVariable("T550_er_filtered", Constants::TYPE_DOUBLE);
 
 	averagedGrid = &averagedSegment->getGrid();
-
-	pos.open("pos.csv");
-	zero.open("zero.csv");
-	neg.open("neg.csv");
-	posCount = 0;
-	zeroCount = 0;
-	negCount = 0;
-}
-
-void Aer::stop(Context& context) {
-	neg.close();
-	zero.close();
-	pos.close();
 }
 
 void Aer::process(Context& context) {
@@ -449,10 +433,6 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 			double a = em.computeErrorSurfaceCurvature(p);
 			p.a = a;
 			if (a > 0.0) {
-				if (posCount < 1000) {
-					pos << p;
-					posCount++;
-				}
 				p.aotError = kappa * sqrt(p.errorMetric / a);
 				if (p.aot > 0.1 && p.aotError > 5.0 * p.aot) {
 					p.flags |= Constants::SY2_AEROSOL_HIGH_ERROR_FLAG;
@@ -460,17 +440,6 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 					p.flags |= Constants::SY2_AEROSOL_SUCCESS_FLAG;
 				}
 			} else {
-				if (a == 0.0) {
-					if (zeroCount < 1000) {
-						zero << p;
-						zeroCount++;
-					}
-				} else {
-					if (negCount < 1000) {
-						neg << p;
-						negCount++;
-					}
-				}
 				p.aotError = Constants::FILL_VALUE_DOUBLE;
 				p.flags |= Constants::SY2_AEROSOL_NEGATIVE_CURVATURE_FLAG;
 			}

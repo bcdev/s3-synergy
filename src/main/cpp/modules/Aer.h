@@ -8,8 +8,6 @@
 #ifndef AER_H_
 #define AER_H_
 
-#include <fstream>
-
 #include "../modules/BasicModule.h"
 #include "../core/Pixel.h"
 #include "../util/Min.h"
@@ -17,15 +15,12 @@
 #include "../util/UnivariateFunction.h"
 #include "../util/ErrorMetric.h"
 
-using std::copy;
-
 class Aer: public BasicModule {
 public:
 	Aer();
 	virtual ~Aer();
 
 	void start(Context& context);
-	void stop(Context& context);
 	void process(Context& context);
 
 private:
@@ -42,14 +37,6 @@ private:
 	double kappa;
 	const valarray<int16_t>* amins;
 	const valarray<double>* aerosolAngstromExponents;
-
-	ofstream pos;
-	ofstream zero;
-	ofstream neg;
-
-	unsigned posCount;
-	unsigned zeroCount;
-	unsigned negCount;
 };
 
 #endif /* AER_H_ */
