@@ -454,13 +454,13 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 					posCount++;
 				}
 				p.aotError = kappa * sqrt(p.errorMetric / a);
-				if (p.aotError > 3.0) {
-					p.aotError = 3.0;
-					p.flags |= Constants::SY2_AEROSOL_HIGH_ERROR_FLAG;
-				} else if (p.aot > 0.1 && p.aotError > 5.0 * p.aot) {
+				if (p.aot > 0.1 && p.aotError > 5.0 * p.aot) {
 					p.flags |= Constants::SY2_AEROSOL_HIGH_ERROR_FLAG;
 				} else {
 					p.flags |= Constants::SY2_AEROSOL_SUCCESS_FLAG;
+				}
+				if (p.aotError > 15.0) {
+					p.aotError = 15.0;
 				}
 			} else {
 				if (a == 0.0) {
@@ -478,6 +478,9 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 				p.flags |= Constants::SY2_AEROSOL_NEGATIVE_CURVATURE_FLAG;
 			}
 		} else {
+			if (p.aotError > 15.0) {
+				p.aotError = 15.0;
+			}
 			p.flags |= Constants::SY2_AEROSOL_TOO_LOW_FLAG;
 		}
 	} else {

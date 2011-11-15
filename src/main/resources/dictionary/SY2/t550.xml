@@ -72,12 +72,12 @@
                 <attribute>
                     <name>_FillValue</name>
                     <type>short</type>
-                    <value>-10000</value>
+                    <value>-2000</value>
                 </attribute>
                 <attribute>
                     <name>scale_factor</name>
                     <type>float</type>
-                    <value>0.0001</value>
+                    <value>0.0005</value>
                 </attribute>
                 <attribute>
                     <name>valid_min</name>
