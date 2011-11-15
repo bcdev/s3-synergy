@@ -79,15 +79,10 @@ void Aei::process(Context& context) {
 
 				const double wl = (targetL + 0.5 - targetL0) / averagingFactor;
 				const double wm = (targetM + 0.5 - targetM0) / averagingFactor;
-		    	context.getLogging().debug("wl = " + lexical_cast<string>(wl), getId());
-		    	context.getLogging().debug("wm = " + lexical_cast<string>(wm), getId());
 
 				const double aot = interpolation(aotSourceAccessor, k, sourceL0, sourceL1, sourceM0, sourceM1, wl, wm);
 				const double aotError = interpolation(aotErrorSourceAccessor, k, sourceL0, sourceL1, sourceM0, sourceM1, wl, wm);
 				const double angstromExponent = interpolation(angstromExponentSourceAccessor, k, sourceL0, sourceL1, sourceM0, sourceM1, wl, wm);
-		    	context.getLogging().debug("aot = " + lexical_cast<string>(aot), getId());
-		    	context.getLogging().debug("aotError = " + lexical_cast<string>(aotError), getId());
-		    	context.getLogging().debug("angstromExponent = " + lexical_cast<string>(angstromExponent), getId());
 
 				const size_t targetIndex = targetGrid->getIndex(k, targetL, targetM);
 				if (aot < 0.0) {
