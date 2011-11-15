@@ -459,9 +459,6 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 				} else {
 					p.flags |= Constants::SY2_AEROSOL_SUCCESS_FLAG;
 				}
-				if (p.aotError > 15.0) {
-					p.aotError = 15.0;
-				}
 			} else {
 				if (a == 0.0) {
 					if (zeroCount < 1000) {
@@ -478,9 +475,6 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 				p.flags |= Constants::SY2_AEROSOL_NEGATIVE_CURVATURE_FLAG;
 			}
 		} else {
-			if (p.aotError > 15.0) {
-				p.aotError = 15.0;
-			}
 			p.flags |= Constants::SY2_AEROSOL_TOO_LOW_FLAG;
 		}
 	} else {
@@ -527,53 +521,28 @@ void Aer::putPixels(const valarray<Pixel>& pixels, long firstL, long lastL) cons
 				if (p.aot == Constants::FILL_VALUE_DOUBLE) {
 					t550.setFillValue(index);
 				} else {
-					try {
-						t550.setDouble(index, p.aot);
-					} catch (std::exception& e) {
-						std::cout << "line " << l << ": " << e.what() << ": " << "t550 = " << p.aot << std::endl;
-						throw e;
-					}
+					t550.setDouble(index, p.aot);
 				}
 				if (p.aotError == Constants::FILL_VALUE_DOUBLE) {
 					t550Err.setFillValue(index);
 				} else {
-					try {
-						t550Err.setDouble(index, p.aotError);
-					} catch (std::exception& e) {
-						std::cout << "line " << l << ": " << e.what() << ": " << "t550Err = " << p.aotError << std::endl;
-						throw e;
-					}
+					t550Err.setDouble(index, p.aotError);
 				}
 				if (p.angstromExponent == Constants::FILL_VALUE_DOUBLE) {
 					a550.setFillValue(index);
 				} else {
-					try {
-						a550.setDouble(index, p.angstromExponent);
-					} catch (std::exception& e) {
-						std::cout << "line " << l << ": " << e.what() << ": " << "a550 = " << p.angstromExponent << std::endl;
-						throw e;
-					}
+					a550.setDouble(index, p.angstromExponent);
 				}
 				synFlags.setUShort(index, p.flags);
 				if (p.aotFiltered == Constants::FILL_VALUE_DOUBLE) {
 					t550Filtered.setFillValue(index);
 				} else {
-					try {
-						t550Filtered.setDouble(index, p.aotFiltered);
-					} catch (std::exception& e) {
-						std::cout << "line " << l << ": " << e.what() << ": " << "t550Filtered = " << p.aotFiltered << std::endl;
-						throw e;
-					}
+					t550Filtered.setDouble(index, p.aotFiltered);
 				}
 				if (p.aotErrorFiltered == Constants::FILL_VALUE_DOUBLE) {
 					t550ErrFiltered.setFillValue(index);
 				} else {
-					try {
-						t550ErrFiltered.setDouble(index, p.aotErrorFiltered);
-					} catch (std::exception& e) {
-						std::cout << "line " << l << ": " << e.what() << ": " << "t550ErrorFiltered = " << p.aotErrorFiltered << std::endl;
-						throw e;
-					}
+					t550ErrFiltered.setDouble(index, p.aotErrorFiltered);
 				}
 			}
 		}

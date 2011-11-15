@@ -51,7 +51,12 @@ public:
 	}
 
 	void setDouble(size_t i, double value) throw (bad_cast, out_of_range) {
-		data[at(i)] = boost::numeric_cast<T>((value - addOffset) / scaleFactor);
+		value = (value - addOffset) / scaleFactor;
+		if (value > numeric_limits<T>::max()) {
+			data[at(i)] = numeric_limits<T>::max();
+		} else {
+			data[at(i)] = boost::numeric_cast<T>(value);
+		}
 	}
 
 	float getFloat(size_t i) const throw (bad_cast, out_of_range) {
@@ -59,7 +64,12 @@ public:
 	}
 
 	void setFloat(size_t i, float value) throw (bad_cast, out_of_range) {
-		data[at(i)] = boost::numeric_cast<T>((value - float(addOffset)) / float(scaleFactor));
+		value = (value - float(addOffset)) / float(scaleFactor);
+		if (value > numeric_limits<T>::max()) {
+			data[at(i)] = numeric_limits<T>::max();
+		} else {
+			data[at(i)] = boost::numeric_cast<T>(value);
+		}
 	}
 
 	int32_t getInt(size_t i) const throw (bad_cast, out_of_range) {
@@ -203,13 +213,13 @@ public:
 	}
 
 	string getFillValue() const {
-	    if(getType() == Constants::TYPE_BYTE) {
-	        return lexical_cast<string>(numeric_cast<int16_t>(fillValue));
-	    }
-	    if(getType() == Constants::TYPE_UBYTE) {
-	        return lexical_cast<string>(numeric_cast<uint16_t>(fillValue));
-	    }
-	    return lexical_cast<string>(fillValue);
+		if (getType() == Constants::TYPE_BYTE) {
+			return lexical_cast<string>(numeric_cast<int16_t>(fillValue));
+		}
+		if (getType() == Constants::TYPE_UBYTE) {
+			return lexical_cast<string>(numeric_cast<uint16_t>(fillValue));
+		}
+		return lexical_cast<string>(fillValue);
 	}
 
 	void shift(long n, long strideK, long strideL) {

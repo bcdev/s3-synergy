@@ -37,7 +37,7 @@ SegmentImpl::~SegmentImpl() {
 }
 
 Accessor& SegmentImpl::addVariable(const VariableDescriptor& d) throw (logic_error) {
-	addVariable(d, d.getName());
+	return addVariable(d, d.getName());
 }
 
 Accessor& SegmentImpl::addVariable(const VariableDescriptor& d, const string& targetName) throw (logic_error) {

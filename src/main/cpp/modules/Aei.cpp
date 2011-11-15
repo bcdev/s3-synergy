@@ -83,9 +83,6 @@ void Aei::process(Context& context) {
 				const double aot = interpolation(aotSourceAccessor, k, sourceL0, sourceL1, sourceM0, sourceM1, wl, wm);
 				const double aotError = interpolation(aotErrorSourceAccessor, k, sourceL0, sourceL1, sourceM0, sourceM1, wl, wm);
 				const double angstromExponent = interpolation(angstromExponentSourceAccessor, k, sourceL0, sourceL1, sourceM0, sourceM1, wl, wm);
-		    	context.getLogging().debug("aot = " + lexical_cast<string>(aot), getId());
-		    	context.getLogging().debug("aotError = " + lexical_cast<string>(aotError), getId());
-		    	context.getLogging().debug("angstromExponent = " + lexical_cast<string>(angstromExponent), getId());
 
 				const size_t targetIndex = targetGrid->getIndex(k, targetL, targetM);
 				if (aot == Constants::FILL_VALUE_DOUBLE) {
