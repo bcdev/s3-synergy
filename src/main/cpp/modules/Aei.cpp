@@ -90,17 +90,17 @@ void Aei::process(Context& context) {
 		    	context.getLogging().debug("angstromExponent = " + lexical_cast<string>(angstromExponent), getId());
 
 				const size_t targetIndex = targetGrid->getIndex(k, targetL, targetM);
-				if (aot == Constants::FILL_VALUE_DOUBLE) {
+				if (aot < 0.0) {
 					aotTargetAccessor.setFillValue(targetIndex);
 				} else {
 					aotTargetAccessor.setDouble(targetIndex, aot);
 				}
-				if (aotError == Constants::FILL_VALUE_DOUBLE) {
+				if (aotError < 0.0) {
 					aotErrorTargetAccessor.setFillValue(targetIndex);
 				} else {
 					aotErrorTargetAccessor.setDouble(targetIndex, aotError);
 				}
-				if (angstromExponent == Constants::FILL_VALUE_DOUBLE) {
+				if (angstromExponent < 0.0) {
 					angstromExponentTargetAccessor.setFillValue(targetIndex);
 				} else {
 					angstromExponentTargetAccessor.setDouble(targetIndex, angstromExponent);
