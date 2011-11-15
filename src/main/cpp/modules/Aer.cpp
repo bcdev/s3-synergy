@@ -47,8 +47,6 @@ private:
 
 	const Accessor& tau550;
 	const Accessor& tau550Error;
-	const Accessor& tau550Filtered;
-	const Accessor& tau550ErrorFiltered;
 	const Accessor& alpha550;
 	const Accessor& synFlags;
 	const Accessor& amin;
@@ -92,8 +90,6 @@ PixelInitializer::PixelInitializer(const Context& context) :
 		sloInfoGrid(sloInfoSegment.getGrid()),
 		tau550(averagedSegment.getAccessor("T550")),
 		tau550Error(averagedSegment.getAccessor("T550_er")),
-		tau550Filtered(averagedSegment.getAccessor("T550_filtered")),
-		tau550ErrorFiltered(averagedSegment.getAccessor("T550_er_filtered")),
 		alpha550(averagedSegment.getAccessor("A550")),
 		synFlags(averagedSegment.getAccessor("SYN_flags")),
 		amin(averagedSegment.getAccessor("AMIN")),
