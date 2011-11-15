@@ -79,6 +79,8 @@ void Aei::process(Context& context) {
 
 				const double wl = (targetL + 0.5 - targetL0) / averagingFactor;
 				const double wm = (targetM + 0.5 - targetM0) / averagingFactor;
+		    	context.getLogging().debug("wl = " + lexical_cast<string>(wl), getId());
+		    	context.getLogging().debug("wm = " + lexical_cast<string>(wm), getId());
 
 				const double aot = interpolation(aotSourceAccessor, k, sourceL0, sourceL1, sourceM0, sourceM1, wl, wm);
 				const double aotError = interpolation(aotErrorSourceAccessor, k, sourceL0, sourceL1, sourceM0, sourceM1, wl, wm);
@@ -129,47 +131,37 @@ void Aei::process(Context& context) {
 }
 
 double Aei::interpolation(const Accessor& accessor, long k, long l0, long l1, long m0, long m1, double wl, double wm) const {
-	double v00;
-	double v01;
-	double v10;
-	double v11;
-	double w00;
-	double w01;
-	double w10;
-	double w11;
-
 	const size_t i00 = sourceGrid->getIndex(k, l0, m0);
-	if (accessor.isFillValue(i00)) {
-		v00 = 0.0;
-		w00 = 0.0;
-	} else {
+	const size_t i01 = sourceGrid->getIndex(k, l0, m1);
+	const size_t i10 = sourceGrid->getIndex(k, l1, m0);
+	const size_t i11 = sourceGrid->getIndex(k, l1, m1);
+
+	double v00 = 0.0;
+	double v01 = 0.0;
+	double v10 = 0.0;
+	double v11 = 0.0;
+	double w00 = 0.0;
+	double w01 = 0.0;
+	double w10 = 0.0;
+	double w11 = 0.0;
+
+	if (!accessor.isFillValue(i00)) {
 		v00 = accessor.getDouble(i00);
 		w00 = (1.0 - wl) * (1.0 - wm);
 	}
-	const size_t i01 = sourceGrid->getIndex(k, l0, m1);
-	if (accessor.isFillValue(i01)) {
-		v01 = 0.0;
-		w01 = 0.0;
-	} else {
+	if (!accessor.isFillValue(i01)) {
 		v01 = accessor.getDouble(i01);
 		w01 = (1.0 - wl) * wm;
 	}
-	const size_t i10 = sourceGrid->getIndex(k, l1, m0);
-	if (accessor.isFillValue(i10)) {
-		v10 = 0.0;
-		w10 = 0.0;
-	} else {
+	if (!accessor.isFillValue(i10)) {
 		v10 = accessor.getDouble(i10);
 		w10 = wl * (1.0 - wm);
 	}
-	const size_t i11 = sourceGrid->getIndex(k, l1, m1);
-	if (accessor.isFillValue(i11)) {
-		v11 = 0.0;
-		w11 = 0.0;
-	} else {
+	if (!accessor.isFillValue(i11)) {
 		v11 = accessor.getDouble(i11);
 		w11 = wl * wm;
 	}
+
 	if (w00 > 0.0 || w01 > 0.0 || w10 > 0.0 || w11 > 0.0) {
 		return (w00 * v00 + w01 * v01 + w10 * v10 + w11 * v11) / (w00 + w01 + w10 + w11);
 	}

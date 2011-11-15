@@ -434,6 +434,9 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 			p.a = a;
 			if (a > 0.0) {
 				p.aotError = kappa * sqrt(p.errorMetric / a);
+				if (p.aotError < 0.0) {
+					throw runtime_error("error is negative!");
+				}
 				if (p.aot > 0.1 && p.aotError > 5.0 * p.aot) {
 					p.flags |= Constants::SY2_AEROSOL_HIGH_ERROR_FLAG;
 				} else {
@@ -444,6 +447,7 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 				p.flags |= Constants::SY2_AEROSOL_NEGATIVE_CURVATURE_FLAG;
 			}
 		} else {
+			p.aotError = Constants::FILL_VALUE_DOUBLE;
 			p.flags |= Constants::SY2_AEROSOL_TOO_LOW_FLAG;
 		}
 	} else {
