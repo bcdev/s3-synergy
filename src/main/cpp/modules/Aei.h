@@ -25,7 +25,8 @@ private:
 
 	double interpolation(const Accessor& accessor, long k, long l0, long l1, long m0, long m1, double wl, double wm) const;
 
-	static long minMax(long x, long min, long max) {
+	template<class T>
+	static long minMax(T x, T min, T max) {
 		if (x < min) {
 			return min;
 		}

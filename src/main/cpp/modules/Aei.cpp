@@ -57,7 +57,7 @@ void Aei::process(Context& context) {
     for (long targetL = firstTargetL; targetL <= lastTargetL; targetL++) {
         context.getLogging().progress("Interpolating line l = " + lexical_cast<string>(targetL), getId());
 
-        const long sourceL0 = minMax((targetL - averagingFactor / 2) / averagingFactor, 0, sourceGrid->getMaxL() - 1);
+        const long sourceL0 = minMax<long>((targetL - averagingFactor / 2) / averagingFactor, 0, sourceGrid->getMaxL() - 1);
     	context.getLogging().debug("sourceL0 = " + lexical_cast<string>(sourceL0), getId());
         const long sourceL1 = sourceL0 + 1;
 
@@ -71,31 +71,31 @@ void Aei::process(Context& context) {
 
         for (long k = targetGrid->getFirstK(); k < targetGrid->getMaxK(); k++) {
 			for (long targetM = targetGrid->getFirstM(); targetM < targetGrid->getMaxM(); targetM++) {
-				const long sourceM0 = minMax((targetM - averagingFactor / 2) / averagingFactor, 0, sourceGrid->getMaxM() - 1);
+				const long sourceM0 = minMax<long>((targetM - averagingFactor / 2) / averagingFactor, 0, sourceGrid->getMaxM() - 1);
 				const long sourceM1 = sourceM0 + 1;
 
 				const double targetM0 = sourceM0 * averagingFactor + averagingFactor / 2.0;
 				const double targetM1 = targetM0 + averagingFactor;
 
-				const double wl = (targetL + 0.5 - targetL0) / averagingFactor;
-				const double wm = (targetM + 0.5 - targetM0) / averagingFactor;
+				const double wl = minMax((targetL + 0.5 - targetL0) / averagingFactor, 0.0, 1.0);
+				const double wm = minMax((targetM + 0.5 - targetM0) / averagingFactor, 0.0, 1.0);
 
 				const double aot = interpolation(aotSourceAccessor, k, sourceL0, sourceL1, sourceM0, sourceM1, wl, wm);
 				const double aotError = interpolation(aotErrorSourceAccessor, k, sourceL0, sourceL1, sourceM0, sourceM1, wl, wm);
 				const double angstromExponent = interpolation(angstromExponentSourceAccessor, k, sourceL0, sourceL1, sourceM0, sourceM1, wl, wm);
 
 				const size_t targetIndex = targetGrid->getIndex(k, targetL, targetM);
-				if (aot < 0.0) {
+				if (aot == Constants::FILL_VALUE_DOUBLE) {
 					aotTargetAccessor.setFillValue(targetIndex);
 				} else {
 					aotTargetAccessor.setDouble(targetIndex, aot);
 				}
-				if (aotError < 0.0) {
+				if (aotError == Constants::FILL_VALUE_DOUBLE) {
 					aotErrorTargetAccessor.setFillValue(targetIndex);
 				} else {
 					aotErrorTargetAccessor.setDouble(targetIndex, aotError);
 				}
-				if (angstromExponent < 0.0) {
+				if (angstromExponent == Constants::FILL_VALUE_DOUBLE) {
 					angstromExponentTargetAccessor.setFillValue(targetIndex);
 				} else {
 					angstromExponentTargetAccessor.setDouble(targetIndex, angstromExponent);
