@@ -58,7 +58,7 @@ void Aei::process(Context& context) {
         context.getLogging().progress("Interpolating line l = " + lexical_cast<string>(targetL), getId());
 
         const long sourceL0 = minMax((targetL - averagingFactor / 2) / averagingFactor, 0, sourceGrid->getMaxL() - 1);
-    	context.getLogging().debug("Segment [" + sourceSegment->toString() + "]: sourceL0 = " + lexical_cast<string>(sourceL0), getId());
+    	context.getLogging().debug("sourceL0 = " + lexical_cast<string>(sourceL0), getId());
         const long sourceL1 = sourceL0 + 1;
 
         if (sourceL1 > lastSourceL) {
@@ -83,6 +83,9 @@ void Aei::process(Context& context) {
 				const double aot = interpolation(aotSourceAccessor, k, sourceL0, sourceL1, sourceM0, sourceM1, wl, wm);
 				const double aotError = interpolation(aotErrorSourceAccessor, k, sourceL0, sourceL1, sourceM0, sourceM1, wl, wm);
 				const double angstromExponent = interpolation(angstromExponentSourceAccessor, k, sourceL0, sourceL1, sourceM0, sourceM1, wl, wm);
+		    	context.getLogging().debug("aot = " + lexical_cast<string>(aot), getId());
+		    	context.getLogging().debug("aotError = " + lexical_cast<string>(aotError), getId());
+		    	context.getLogging().debug("angstromExponent = " + lexical_cast<string>(angstromExponent), getId());
 
 				const size_t targetIndex = targetGrid->getIndex(k, targetL, targetM);
 				if (aot == Constants::FILL_VALUE_DOUBLE) {
