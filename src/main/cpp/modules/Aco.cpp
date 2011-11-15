@@ -14,6 +14,7 @@
 using std::abs;
 using std::cos;
 using std::exp;
+using std::sqrt;
 
 Aco::Aco() :
 		BasicModule("ACO") {
@@ -171,10 +172,9 @@ void Aco::process(Context& context) {
 				const size_t i = collocatedGrid.getIndex(k, l, m);
 
 				const uint16_t flags = flagsAccessor.getUShort(i);
-				bool isLand = (flags & Constants::SY2_LAND_FLAG) == Constants::SY2_LAND_FLAG;
-				bool success = (flags & Constants::SY2_AEROSOL_SUCCESS_FLAG) == Constants::SY2_AEROSOL_SUCCESS_FLAG;
-				bool isFilled = (flags & Constants::SY2_AEROSOL_FILLED_FLAG) == Constants::SY2_AEROSOL_FILLED_FLAG;
-				if(!(isLand && (success || isFilled))) {
+				const bool success = isSet(flags, Constants::SY2_AEROSOL_SUCCESS_FLAG);
+				const bool filled = isSet(flags, Constants::SY2_AEROSOL_FILLED_FLAG);
+				if(!success && !filled) {
 				    for(size_t b = 0; b < sdrAccessors.size(); b++) {
 				        sdrAccessors[b]->setFillValue(i);
 				        errAccessors[b]->setFillValue(i);
@@ -219,25 +219,29 @@ void Aco::process(Context& context) {
 				lutRhoAtm.getMatrix(&coordinates[3], matRho, f, w);
 
 				for (size_t b = 0; b < 18; b++) {
-					// Eq. 2-1
-					const double ltoa = ltoaAccessors[b]->getDouble(i);
-					const double f0 = solarIrrOlcAccessor.getDouble(olcInfoGrid.getIndex(k, b, m));
-					rtoa[b] = toaReflectance(ltoa, f0, szaOlc);
-
-					// Eq. 2-2
-					tO3[b] = ozoneTransmission(cO3[b], szaOlc, vzaOlc, nO3);
-
-					// Eq. 2-3
-					const double ratm = matRatmOlc(amin - 1, b);
-					ts[b] = matTs(amin - 1, b);
-					tv[b] = matTv(amin - 1, b);
-					const double rho = matRho(amin - 1, b);
-					rboa[b] = surfaceReflectance(rtoa[b], ratm, ts[b], tv[b], rho, tO3[b]);
-
-					if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
-						sdrAccessors[b]->setDouble(i, rboa[b]);
-					} else {
+					if (ltoaAccessors[b]->isFillValue(i)) {
 						sdrAccessors[b]->setFillValue(i);
+					} else {
+						// Eq. 2-1
+						const double ltoa = ltoaAccessors[b]->getDouble(i);
+						const double f0 = solarIrrOlcAccessor.getDouble(olcInfoGrid.getIndex(k, b, m));
+						rtoa[b] = toaReflectance(ltoa, f0, szaOlc);
+
+						// Eq. 2-2
+						tO3[b] = ozoneTransmission(cO3[b], szaOlc, vzaOlc, nO3);
+
+						// Eq. 2-3
+						const double ratm = matRatmOlc(amin - 1, b);
+						ts[b] = matTs(amin - 1, b);
+						tv[b] = matTv(amin - 1, b);
+						const double rho = matRho(amin - 1, b);
+						rboa[b] = surfaceReflectance(rtoa[b], ratm, ts[b], tv[b], rho, tO3[b]);
+
+						if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
+							sdrAccessors[b]->setDouble(i, rboa[b]);
+						} else {
+							sdrAccessors[b]->setFillValue(i);
+						}
 					}
 				}
 
@@ -260,25 +264,29 @@ void Aco::process(Context& context) {
 				lutT.getMatrix(&coordinates[2], matTv, f, w);
 
 				for (size_t b = 18; b < 24; b++) {
-					// Eq. 2-1
-					const double ltoa = ltoaAccessors[b]->getDouble(i);
-					const double f0 = solarIrrSlnAccessors[b - 18]->getDouble(slnInfoGrid.getIndex(0, 0, l % 4));
-					rtoa[b] = toaReflectance(ltoa, f0, szaOlc);
-
-					// Eq. 2-2
-					tO3[b] = ozoneTransmission(cO3[b], szaOlc, vzaSln, nO3);
-
-					// Eq. 2-3
-					const double ratm = matRatmSln(amin - 1, b - 18);
-					ts[b] = matTs(amin - 1, b);
-					tv[b] = matTv(amin - 1, b);
-					const double rho = matRho(amin - 1, b);
-					rboa[b] = surfaceReflectance(rtoa[b], ratm, ts[b], tv[b], rho, tO3[b]);
-
-					if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
-						sdrAccessors[b]->setDouble(i, rboa[b]);
-					} else {
+					if (ltoaAccessors[b]->isFillValue(i)) {
 						sdrAccessors[b]->setFillValue(i);
+					} else {
+						// Eq. 2-1
+						const double ltoa = ltoaAccessors[b]->getDouble(i);
+						const double f0 = solarIrrSlnAccessors[b - 18]->getDouble(slnInfoGrid.getIndex(0, 0, l % 4));
+						rtoa[b] = toaReflectance(ltoa, f0, szaOlc);
+
+						// Eq. 2-2
+						tO3[b] = ozoneTransmission(cO3[b], szaOlc, vzaSln, nO3);
+
+						// Eq. 2-3
+						const double ratm = matRatmSln(amin - 1, b - 18);
+						ts[b] = matTs(amin - 1, b);
+						tv[b] = matTv(amin - 1, b);
+						const double rho = matRho(amin - 1, b);
+						rboa[b] = surfaceReflectance(rtoa[b], ratm, ts[b], tv[b], rho, tO3[b]);
+
+						if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
+							sdrAccessors[b]->setDouble(i, rboa[b]);
+						} else {
+							sdrAccessors[b]->setFillValue(i);
+						}
 					}
 				}
 
@@ -301,25 +309,29 @@ void Aco::process(Context& context) {
 				lutT.getMatrix(&coordinates[2], matTv, f, w);
 
 				for (size_t b = 24; b < 30; b++) {
-					// Eq. 2-1
-					const double ltoa = ltoaAccessors[b]->getDouble(i);
-					const double f0 = solarIrrSloAccessors[b - 24]->getDouble(sloInfoGrid.getIndex(0, 0, l % 4));
-					rtoa[b] = toaReflectance(ltoa, f0, szaOlc);
-
-					// Eq. 2-2
-					tO3[b] = ozoneTransmission(cO3[b], szaOlc, vzaSlo, nO3);
-
-					// Eq. 2-3
-					const double ratm = matRatmSlo(amin - 1, b - 24);
-					ts[b] = matTs(amin - 1, b);
-					tv[b] = matTv(amin - 1, b);
-					const double rho = matRho(amin - 1, b);
-					rboa[b] = surfaceReflectance(rtoa[b], ratm, ts[b], tv[b], rho, tO3[b]);
-
-					if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
-						sdrAccessors[b]->setDouble(i, rboa[b]);
-					} else {
+					if (ltoaAccessors[b]->isFillValue(i)) {
 						sdrAccessors[b]->setFillValue(i);
+					} else {
+						// Eq. 2-1
+						const double ltoa = ltoaAccessors[b]->getDouble(i);
+						const double f0 = solarIrrSloAccessors[b - 24]->getDouble(sloInfoGrid.getIndex(0, 0, l % 4));
+						rtoa[b] = toaReflectance(ltoa, f0, szaOlc);
+
+						// Eq. 2-2
+						tO3[b] = ozoneTransmission(cO3[b], szaOlc, vzaSlo, nO3);
+
+						// Eq. 2-3
+						const double ratm = matRatmSlo(amin - 1, b - 24);
+						ts[b] = matTs(amin - 1, b);
+						tv[b] = matTv(amin - 1, b);
+						const double rho = matRho(amin - 1, b);
+						rboa[b] = surfaceReflectance(rtoa[b], ratm, ts[b], tv[b], rho, tO3[b]);
+
+						if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
+							sdrAccessors[b]->setDouble(i, rboa[b]);
+						} else {
+							sdrAccessors[b]->setFillValue(i);
+						}
 					}
 				}
 
@@ -355,12 +367,8 @@ void Aco::process(Context& context) {
 						const double ltoaErr = ltoaErrAccessors[b]->getDouble(i);
 						const double f0 = solarIrrOlcAccessor.getDouble(olcInfoGrid.getIndex(k, b, m));
 						const double delta2 = toaReflectance(ltoaErr, f0, szaOlc) / (ts[b] * tv[b] * tO3[b]);
-						const double err = std::sqrt(delta1 * delta1 + delta2 * delta2 + delta3 * delta3);
-						if (err >= 0.0 && err <= 1.0) {
-							errAccessors[b]->setDouble(i, err);
-						} else {
-							errAccessors[b]->setFillValue(i);
-						}
+						const double err = sqrt(delta1 * delta1 + delta2 * delta2 + delta3 * delta3);
+						errAccessors[b]->setDouble(i, err);
 					} else {
 						errAccessors[b]->setFillValue(i);
 					}
@@ -388,12 +396,8 @@ void Aco::process(Context& context) {
 						const double deltaR = rboa[b] - surfaceReflectance(rtoa[b], ratm, ts1, tv1, rho, tO3[b]);
 						const double deltaTau = 0.2 * tau550;
 						const double delta1 = (deltaR / deltaTau) * tau550Err;
-						const double err = std::sqrt(delta1 * delta1 + delta3 * delta3);
-						if (err >= 0.0 && err <= 1.0) {
-							errAccessors[b]->setDouble(i, err);
-						} else {
-							errAccessors[b]->setFillValue(i);
-						}
+						const double err = sqrt(delta1 * delta1 + delta3 * delta3);
+						errAccessors[b]->setDouble(i, err);
 					} else {
 						errAccessors[b]->setFillValue(i);
 					}
@@ -422,12 +426,8 @@ void Aco::process(Context& context) {
 							const double deltaR = rboa[b] - surfaceReflectance(rtoa[b], ratm, ts1, tv1, rho, tO3[b]);
 							const double deltaTau = 0.2 * tau550;
 							const double delta1 = (deltaR / deltaTau) * tau550Err;
-							const double err = std::sqrt(delta1 * delta1 + delta3 * delta3);
-							if (err >= 0.0 && err <= 1.0) {
-								errAccessors[b]->setDouble(i, err);
-							} else {
-								errAccessors[b]->setFillValue(i);
-							}
+							const double err = sqrt(delta1 * delta1 + delta3 * delta3);
+							errAccessors[b]->setDouble(i, err);
 						} else {
 							errAccessors[b]->setFillValue(i);
 						}

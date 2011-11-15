@@ -58,7 +58,6 @@ void Aei::process(Context& context) {
         context.getLogging().progress("Interpolating line l = " + lexical_cast<string>(targetL), getId());
 
         const long sourceL0 = minMax<long>((targetL - averagingFactor / 2) / averagingFactor, 0, sourceGrid->getMaxL() - 1);
-    	context.getLogging().debug("sourceL0 = " + lexical_cast<string>(sourceL0), getId());
         const long sourceL1 = sourceL0 + 1;
 
         if (sourceL1 > lastSourceL) {
@@ -112,7 +111,7 @@ void Aei::process(Context& context) {
 					sourceIndex = sourceGrid->getIndex(k, sourceL1, sourceM1);
 				}
 				aerosolModelTargetAccessor.setUByte(targetIndex, aerosolModelSourceAccessor.getUByte(sourceIndex));
-				flagsTargetAccessor.setUShort(targetIndex, flagsSourceAccessor.getUShort(sourceIndex));
+				flagsTargetAccessor.setUShort(targetIndex, flagsTargetAccessor.getUShort(targetIndex) | (flagsSourceAccessor.getUShort(sourceIndex) & Constants::SY2_AVERAGE_FLAG_MASK));
 			}
 		}
 	}

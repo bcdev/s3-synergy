@@ -104,8 +104,8 @@ void Pcl::process(Context& context) {
 }
 
 uint16_t Pcl::computeFlagValue(uint32_t olcFlags, uint8_t slnFlags, uint8_t sloFlags) {
-	const bool land = (olcFlags & Constants::SY1_OLCI_LAND_FLAG) == Constants::SY1_OLCI_LAND_FLAG;
-	const bool cloud = (slnFlags & Constants::SY1_SLSTR_CLOUD_FLAG) == Constants::SY1_SLSTR_CLOUD_FLAG || (sloFlags & Constants::SY1_SLSTR_CLOUD_FLAG) == Constants::SY1_SLSTR_CLOUD_FLAG;
+	const bool land = isSet(olcFlags, Constants::SY1_OLCI_LAND_FLAG);
+	const bool cloud = isSet(slnFlags, Constants::SY1_SLSTR_CLOUD_FLAG) || isSet(sloFlags, Constants::SY1_SLSTR_CLOUD_FLAG);
 
 	uint16_t synFlags = 0;
 	if (land) {
