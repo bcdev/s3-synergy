@@ -216,9 +216,7 @@ void Aco::process(Context& context) {
 				lutRhoAtm.getMatrix(&coordinates[3], matRho, f, w);
 
 				for (size_t b = 0; b < 18; b++) {
-					if (ltoaAccessors[b]->isFillValue(i)) {
-						sdrAccessors[b]->setFillValue(i);
-					} else {
+					if (!ltoaAccessors[b]->isFillValue(i)) {
 						// Eq. 2-1
 						const double ltoa = ltoaAccessors[b]->getDouble(i);
 						const double f0 = solarIrrOlcAccessor.getDouble(olcInfoGrid.getIndex(k, b, m));
@@ -236,8 +234,6 @@ void Aco::process(Context& context) {
 
 						if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
 							sdrAccessors[b]->setDouble(i, rboa[b]);
-						} else {
-							sdrAccessors[b]->setFillValue(i);
 						}
 					}
 				}
@@ -261,9 +257,7 @@ void Aco::process(Context& context) {
 				lutT.getMatrix(&coordinates[2], matTv, f, w);
 
 				for (size_t b = 18; b < 24; b++) {
-					if (ltoaAccessors[b]->isFillValue(i)) {
-						sdrAccessors[b]->setFillValue(i);
-					} else {
+					if (!ltoaAccessors[b]->isFillValue(i)) {
 						// Eq. 2-1
 						const double ltoa = ltoaAccessors[b]->getDouble(i);
 						const double f0 = solarIrrSlnAccessors[b - 18]->getDouble(slnInfoGrid.getIndex(0, 0, l % 4));
@@ -281,8 +275,6 @@ void Aco::process(Context& context) {
 
 						if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
 							sdrAccessors[b]->setDouble(i, rboa[b]);
-						} else {
-							sdrAccessors[b]->setFillValue(i);
 						}
 					}
 				}
@@ -306,9 +298,7 @@ void Aco::process(Context& context) {
 				lutT.getMatrix(&coordinates[2], matTv, f, w);
 
 				for (size_t b = 24; b < 30; b++) {
-					if (ltoaAccessors[b]->isFillValue(i)) {
-						sdrAccessors[b]->setFillValue(i);
-					} else {
+					if (!ltoaAccessors[b]->isFillValue(i)) {
 						// Eq. 2-1
 						const double ltoa = ltoaAccessors[b]->getDouble(i);
 						const double f0 = solarIrrSloAccessors[b - 24]->getDouble(sloInfoGrid.getIndex(0, 0, l % 4));
@@ -326,8 +316,6 @@ void Aco::process(Context& context) {
 
 						if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
 							sdrAccessors[b]->setDouble(i, rboa[b]);
-						} else {
-							sdrAccessors[b]->setFillValue(i);
 						}
 					}
 				}
@@ -366,8 +354,6 @@ void Aco::process(Context& context) {
 						const double delta2 = toaReflectance(ltoaErr, f0, szaOlc) / (ts[b] * tv[b] * tO3[b]);
 						const double err = sqrt(delta1 * delta1 + delta2 * delta2 + delta3 * delta3);
 						errAccessors[b]->setDouble(i, err);
-					} else {
-						errAccessors[b]->setFillValue(i);
 					}
 				}
 
@@ -395,8 +381,6 @@ void Aco::process(Context& context) {
 						const double delta1 = (deltaR / deltaTau) * tau550Err;
 						const double err = sqrt(delta1 * delta1 + delta3 * delta3);
 						errAccessors[b]->setDouble(i, err);
-					} else {
-						errAccessors[b]->setFillValue(i);
 					}
 				}
 
@@ -425,8 +409,6 @@ void Aco::process(Context& context) {
 							const double delta1 = (deltaR / deltaTau) * tau550Err;
 							const double err = sqrt(delta1 * delta1 + delta3 * delta3);
 							errAccessors[b]->setDouble(i, err);
-						} else {
-							errAccessors[b]->setFillValue(i);
 						}
 					}
 				}
