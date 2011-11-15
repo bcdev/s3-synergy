@@ -171,15 +171,16 @@ void Aco::process(Context& context) {
 			for (long m = collocatedGrid.getFirstM(); m < collocatedGrid.getFirstM() + collocatedGrid.getSizeM(); m++) {
 				const size_t i = collocatedGrid.getIndex(k, l, m);
 
-				const uint16_t flags = flagsAccessor.getUShort(i);
-				const bool success = isSet(flags, Constants::SY2_AEROSOL_SUCCESS_FLAG);
-				const bool filled = isSet(flags, Constants::SY2_AEROSOL_FILLED_FLAG);
-				if(!success && !filled) {
-				    for(size_t b = 0; b < sdrAccessors.size(); b++) {
-				        sdrAccessors[b]->setFillValue(i);
-				        errAccessors[b]->setFillValue(i);
-				    }
-				    continue;
+			    for(size_t b = 0; b < sdrAccessors.size(); b++) {
+			        sdrAccessors[b]->setFillValue(i);
+			        errAccessors[b]->setFillValue(i);
+			    }
+
+				const double tau550 = tau550Accessor.getDouble(i);
+				const double tau550Err = tau550ErrAccessor.getDouble(i);
+				const uint8_t amin = aminAccessor.getUByte(i);
+				if (amin == 0) {
+					continue;
 				}
 
 				// TODO - read from auxdata when available
@@ -188,10 +189,6 @@ void Aco::process(Context& context) {
 				tpiOlc.prepare(lonAccessor.getDouble(i), latAccessor.getDouble(i), tpiWeights, tpiIndexes);
 				const double nO3 = tpiOlc.interpolate(tpOzones, tpiWeights, tpiIndexes);
 				const double p = tpiOlc.interpolate(tpAirPressures, tpiWeights, tpiIndexes);
-
-				const double tau550 = tau550Accessor.getDouble(i);
-				const double tau550Err = tau550ErrAccessor.getDouble(i);
-				const uint8_t amin = aminAccessor.getUByte(i);
 
 				/*
 				 * Surface reflectance for OLC channels
