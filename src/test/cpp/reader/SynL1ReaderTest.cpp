@@ -9,6 +9,7 @@
 
 #include "../../../../src/main/cpp/core/Processor.h"
 #include "../../../../src/main/cpp/reader/SynL1Reader.h"
+#include "../../../../src/main/cpp/writer/SegmentWriter.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
 
@@ -52,7 +53,9 @@ void SynL1ReaderTest::tearDown() {
 
 void SynL1ReaderTest::testReader() {
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
+    shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
 	context->addModule(reader);
+	context->addModule(writer);
 
 	Processor processor;
 	processor.process(*context);
