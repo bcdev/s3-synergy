@@ -38,21 +38,15 @@ void SynL2WriterTest::prepareContext() {
     context->setErrorHandler(errorHandler);
 
     const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
-    shared_ptr<Module> module = getSegmentProvider();
-    shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
-    context->addModule(module);
-    context->addModule(writer);
 
-    shared_ptr<JobOrderParser> jobOrderParser = shared_ptr<JobOrderParser>(new JobOrderParser());
-    shared_ptr<JobOrder> jobOrder = jobOrderParser->parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_SWR.xml");
+    JobOrderParser jobOrderParser;
+    shared_ptr<JobOrder> jobOrder = jobOrderParser.parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_SWR.xml");
     context->setJobOrder(jobOrder);
 
-    const bool breakpointEnabled = jobOrder->getIpfConfiguration().isBreakpointEnable();
-    shared_ptr<DictionaryParser> dictionaryParser = shared_ptr<DictionaryParser>(new DictionaryParser(breakpointEnabled));
-    shared_ptr<Dictionary> dictionary = dictionaryParser->parse(S3_SYNERGY_HOME + "/src/main/resources/dictionary");
+    shared_ptr<Dictionary> dictionary = DictionaryParser().parse(S3_SYNERGY_HOME + "/src/main/resources/dictionary");
     context->setDictionary(dictionary);
 
-    shared_ptr<Logging> logging = jobOrderParser->createLogging("LOG.SY_UNT_SWR");
+    shared_ptr<Logging> logging = jobOrderParser.createLogging("LOG.SY_UNT_SWR");
     context->setLogging(logging);
 }
 
@@ -60,10 +54,11 @@ void SynL2WriterTest::tearDown() {
 }
 
 void SynL2WriterTest::testWriter() {
-	Processor processor;
-	processor.process(*context);
-}
+    shared_ptr<Module> module = shared_ptr<Module>(new SynL2SegmentProvider());
+    shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
+    context->addModule(module);
+    context->addModule(writer);
 
-shared_ptr<Module> SynL2WriterTest::getSegmentProvider() {
-    return shared_ptr<Module>(new SynL2SegmentProvider());
+    Processor processor;
+	processor.process(*context);
 }

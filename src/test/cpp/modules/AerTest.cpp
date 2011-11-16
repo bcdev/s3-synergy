@@ -49,11 +49,11 @@ void AerTest::prepareContext() {
     context->setErrorHandler(errorHandler);
 
     const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
-    shared_ptr<JobOrderParser> jobOrderParser = shared_ptr<JobOrderParser>(new JobOrderParser());
-    shared_ptr<JobOrder> jobOrder = jobOrderParser->parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_AER.xml");
+    JobOrderParser jobOrderParser;
+    shared_ptr<JobOrder> jobOrder = jobOrderParser.parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_AER.xml");
     context->setJobOrder(jobOrder);
 
-    shared_ptr<Logging> logging = jobOrderParser->createLogging("LOG.SY_UNT_AER");
+    shared_ptr<Logging> logging = jobOrderParser.createLogging("LOG.SY_UNT_AER");
     context->setLogging(logging);
 
 

@@ -40,15 +40,15 @@ void ColTest::prepareContext() {
 
     const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
 
-    shared_ptr<JobOrderParser> jobOrderParser = shared_ptr<JobOrderParser>(new JobOrderParser());
-    shared_ptr<JobOrder> jobOrder = jobOrderParser->parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_COL.xml");
+    JobOrderParser jobOrderParser;
+    shared_ptr<JobOrder> jobOrder = jobOrderParser.parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_COL.xml");
     const bool createBreakpoints = jobOrder->getIpfConfiguration().isBreakpointEnable();
     context->setJobOrder(jobOrder);
 
     shared_ptr<Dictionary> dictionary = DictionaryParser().parse(S3_SYNERGY_HOME + "/src/main/resources/dictionary");
     context->setDictionary(dictionary);
 
-    shared_ptr<Logging> logging = jobOrderParser->createLogging("LOG.SY_UNT_COL");
+    shared_ptr<Logging> logging = jobOrderParser.createLogging("LOG.SY_UNT_COL");
     context->setLogging(logging);
 }
 

@@ -282,7 +282,7 @@ Output JobOrderParser::parseOutput(const string& path,
 
 const shared_ptr<Logging> JobOrderParser::createLogging(const string& logFileName) const {
     if(standardLogLevel.empty()) {
-        BOOST_THROW_EXCEPTION(logic_error("The ipf configuration needs to be parsed first."));
+        BOOST_THROW_EXCEPTION(logic_error("The IPF configuration needs to be parsed first."));
     }
     if(standardLogLevel.compare("DEBUG") == 0) {
         return shared_ptr<Logging>(new DebugLogging(logFileName));
