@@ -33,6 +33,8 @@ void PclTest::setUp() {
     prepareContext();
 }
 
+void PclTest::tearDown() {
+}
 
 void PclTest::prepareContext() {
     context = shared_ptr<Context>(new Context());
