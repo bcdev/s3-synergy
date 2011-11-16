@@ -30,23 +30,6 @@ AcoTest::~AcoTest() {
 
 void AcoTest::setUp() {
     prepareContext();
-	shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
-	shared_ptr<Module> col = shared_ptr<Module>(new Col());
-	shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
-	shared_ptr<Module> ave = shared_ptr<Module>(new Ave());
-	shared_ptr<Module> aer = shared_ptr<Module>(new Aer());
-	shared_ptr<Module> aei = shared_ptr<Module>(new Aei());
-	shared_ptr<Module> aco = shared_ptr<Module>(new Aco());
-	shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
-
-	context->addModule(reader);
-	context->addModule(col);
-	context->addModule(pcl);
-	context->addModule(ave);
-	context->addModule(aer);
-	context->addModule(aei);
-	context->addModule(aco);
-	context->addModule(writer);
 }
 
 void AcoTest::prepareContext() {
@@ -73,6 +56,24 @@ void AcoTest::tearDown() {
 }
 
 void AcoTest::testAco() {
+	shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
+	shared_ptr<Module> col = shared_ptr<Module>(new Col());
+	shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
+	shared_ptr<Module> ave = shared_ptr<Module>(new Ave());
+	shared_ptr<Module> aer = shared_ptr<Module>(new Aer());
+	shared_ptr<Module> aei = shared_ptr<Module>(new Aei());
+	shared_ptr<Module> aco = shared_ptr<Module>(new Aco());
+	shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
+
+	context->addModule(reader);
+	context->addModule(col);
+	context->addModule(pcl);
+	context->addModule(ave);
+	context->addModule(aer);
+	context->addModule(aei);
+	context->addModule(aco);
+	context->addModule(writer);
+
 	Processor processor;
 	processor.process(*context);
 }
