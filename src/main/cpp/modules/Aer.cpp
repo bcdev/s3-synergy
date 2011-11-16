@@ -275,25 +275,15 @@ void Aer::process(Context& context) {
 				const size_t pixelIndex = averagedGrid->getIndex(k, l, m);
 				Pixel& p = pixels[pixelIndex];
 
-				if (isSet(p.flags, Constants::SY2_PARTLY_CLOUDY_FLAG)) {
+				if (isSet(p.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG) || isSet(p.flags, Constants::SY2_AEROSOL_TOO_LOW_FLAG) || isSet(p.flags, Constants::SY2_AEROSOL_HIGH_ERROR_FLAG) || isSet(p.flags, Constants::SY2_AEROSOL_FILLED_FLAG)) {
 					continue;
 				}
-				if (isSet(p.flags, Constants::SY2_PARTLY_WATER_FLAG)) {
+				if (isSet(p.flags, Constants::SY2_PARTLY_CLOUDY_FLAG) || isSet(p.flags, Constants::SY2_PARTLY_WATER_FLAG)) {
+					p.aot = Constants::FILL_VALUE_DOUBLE;
+					p.aotError = Constants::FILL_VALUE_DOUBLE;
+					p.angstromExponent = Constants::FILL_VALUE_DOUBLE;
 					continue;
 				}
-				if (isSet(p.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)) {
-					continue;
-				}
-				if (isSet(p.flags, Constants::SY2_AEROSOL_TOO_LOW_FLAG)) {
-					continue;
-				}
-				if (isSet(p.flags, Constants::SY2_AEROSOL_HIGH_ERROR_FLAG)) {
-					continue;
-				}
-				if (isSet(p.flags, Constants::SY2_AEROSOL_FILLED_FLAG)) {
-					continue;
-				}
-
 				retrieveAerosolProperties(p, q, em);
 			}
 		}
