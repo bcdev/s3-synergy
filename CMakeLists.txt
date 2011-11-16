@@ -20,16 +20,19 @@ file(GLOB_RECURSE CORE_TEST_SOURCES src/test/cpp/core/*.cpp)
 file(GLOB_RECURSE READER_MAIN_SOURCES src/main/cpp/reader/*.cpp)
 file(GLOB_RECURSE READER_TEST_SOURCES src/test/cpp/reader/*.cpp)
 file(GLOB_RECURSE MODULES_MAIN_SOURCES src/main/cpp/modules/*.cpp)
+file(GLOB_RECURSE WRITER_MAIN_SOURCES src/main/cpp/writer/*.cpp)
+file(GLOB_RECURSE WRITER_TEST_SOURCES src/test/cpp/writer/*.cpp)
+file(GLOB_RECURSE UTIL_MAIN_SOURCES src/main/cpp/util/*.cpp)
+file(GLOB_RECURSE UTIL_TEST_SOURCES src/test/cpp/util/*.cpp)
+
 file(GLOB_RECURSE ACO_TEST_SOURCES src/test/cpp/modules/AcoTest.cpp)
 file(GLOB_RECURSE AEI_TEST_SOURCES src/test/cpp/modules/AeiTest.cpp)
 file(GLOB_RECURSE AER_TEST_SOURCES src/test/cpp/modules/AerTest.cpp)
 file(GLOB_RECURSE AVE_TEST_SOURCES src/test/cpp/modules/AveTest.cpp)
 file(GLOB_RECURSE COL_TEST_SOURCES src/test/cpp/modules/ColTest.cpp)
 file(GLOB_RECURSE PCL_TEST_SOURCES src/test/cpp/modules/PclTest.cpp)
-file(GLOB_RECURSE WRITER_MAIN_SOURCES src/main/cpp/writer/*.cpp)
-file(GLOB_RECURSE WRITER_TEST_SOURCES src/test/cpp/writer/*.cpp)
-file(GLOB_RECURSE UTIL_MAIN_SOURCES src/main/cpp/util/*.cpp)
-file(GLOB_RECURSE UTIL_TEST_SOURCES src/test/cpp/util/*.cpp)
+
+file(GLOB_RECURSE SYL2_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/Syl2_2_Test.cpp)
 
 ##
 # Sytem include directories
@@ -238,6 +241,27 @@ target_link_libraries(sy_unt_ave
 	boost_filesystem-mt
 )
 set_property(TARGET sy_unt_ave PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+#
+add_executable(sy_int_syl2_2
+    src/test/cpp/SyIntSyl2_2_Runner.cpp
+    ${CORE_MAIN_SOURCES}
+    ${UTIL_MAIN_SOURCES}
+    ${READER_MAIN_SOURCES}
+    ${WRITER_MAIN_SOURCES}
+    ${MODULES_MAIN_SOURCES}
+    ${SYL2_2_INTEGRATION_TEST_SOURCES}
+)
+target_link_libraries(sy_int_syl2_2
+    cppunit
+    netcdf
+    Xfdu
+    xerces-c
+    xqilla
+    boost_regex-mt
+    boost_system-mt
+    boost_filesystem-mt
+)
+set_property(TARGET sy_int_syl2_2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 
 ##
 # Project main targets
