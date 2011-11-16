@@ -16,8 +16,7 @@
 class PclTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(PclTest);
     CPPUNIT_TEST(testPcl);
-    CPPUNIT_TEST(testGetValue);
-    CPPUNIT_TEST(testStart);
+    // CPPUNIT_TEST(testComputeFlagValue);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -27,9 +26,8 @@ public:
     void tearDown();
 
 private:
-    void testStart();
     void testPcl();
-    void testGetValue();
+    void testComputeFlagValue();
     void prepareContext();
     shared_ptr<Context> context;
 };

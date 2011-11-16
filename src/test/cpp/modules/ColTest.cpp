@@ -45,9 +45,9 @@ void ColTest::prepareContext() {
     const bool createBreakpoints = jobOrder->getIpfConfiguration().isBreakpointEnable();
     context->setJobOrder(jobOrder);
 
-    shared_ptr<DictionaryParser> dictionaryParser = shared_ptr<DictionaryParser>(new DictionaryParser(createBreakpoints));
-    shared_ptr<Dictionary> dictionary = dictionaryParser->parse(S3_SYNERGY_HOME + "/src/main/resources/dictionary");
+    shared_ptr<Dictionary> dictionary = DictionaryParser().parse(S3_SYNERGY_HOME + "/src/main/resources/dictionary");
     context->setDictionary(dictionary);
+
     shared_ptr<Logging> logging = jobOrderParser->createLogging("LOG.SY_UNT_COL");
     context->setLogging(logging);
 }

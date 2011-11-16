@@ -35,55 +35,24 @@ void PclTest::setUp() {
 
 
 void PclTest::prepareContext() {
-    const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
-    shared_ptr<Dictionary> dictionary = DictionaryParser().parse(S3_SYNERGY_HOME + "/src/main/resources/dictionary");
-
     context = shared_ptr<Context>(new Context());
     shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
     context->setErrorHandler(errorHandler);
+
+    const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
 
     shared_ptr<JobOrderParser> jobOrderParser = shared_ptr<JobOrderParser>(new JobOrderParser());
     shared_ptr<JobOrder> jobOrder = jobOrderParser->parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_PCL.xml");
     context->setJobOrder(jobOrder);
 
+    shared_ptr<Dictionary> dictionary = DictionaryParser().parse(S3_SYNERGY_HOME + "/src/main/resources/dictionary");
+    context->setDictionary(dictionary);
+
     shared_ptr<Logging> logging = jobOrderParser->createLogging("LOG.SY_UNT_PCL");
     context->setLogging(logging);
-
-
-    shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
-    shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
-    shared_ptr<Module> col = shared_ptr<Module>(new Col());
-    shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
-
-    context->setDictionary(dictionary);
-    context->setJobOrder(jobOrder);
-    context->addModule(reader);
-    context->addModule(col);
-    context->addModule(pcl);
-    context->addModule(writer);
 }
 
-void PclTest::tearDown() {
-	foreach(string id, context->getSegmentIds()) {
-		context->removeSegment(id);
-	}
-}
-
-void PclTest::testStart() {
-	Pcl pcl;
-	Segment& segment = context->addSegment(Constants::SEGMENT_SYN_COLLOCATED, 20, 20, 20, 20, 120);
-	segment.addVariable("OLC_confidence", Constants::TYPE_BYTE);
-	segment.addVariable("SLN_confidence", Constants::TYPE_BYTE);
-	segment.addVariable("SLO_confidence", Constants::TYPE_BYTE);
-	for (size_t b = 1; b <= 30; b++) {
-		segment.addVariable("L_" + lexical_cast<string>(b), Constants::TYPE_DOUBLE);
-	}
-	CPPUNIT_ASSERT(!segment.hasVariable("SYN_flags"));
-	pcl.start(*context);
-	CPPUNIT_ASSERT(segment.hasVariable("SYN_flags"));
-}
-
-void PclTest::testGetValue() {
+void PclTest::testComputeFlagValue() {
 	long olcFlags = Constants::SY1_OLCI_LAND_FLAG;
 	short slnFlags = Constants::SY1_SLSTR_CLOUD_FLAG;
 	short sloFlags = Constants::SY1_SLSTR_CLOUD_FLAG;
@@ -110,6 +79,16 @@ void PclTest::testGetValue() {
 }
 
 void PclTest::testPcl() {
-	Processor processor;
+    shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
+    shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
+    shared_ptr<Module> col = shared_ptr<Module>(new Col());
+    shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
+
+    context->addModule(reader);
+    context->addModule(col);
+    context->addModule(pcl);
+    context->addModule(writer);
+
+    Processor processor;
 	processor.process(*context);
 }
