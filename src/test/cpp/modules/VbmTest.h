@@ -16,6 +16,7 @@
 
 class VbmTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(VbmTest);
+    CPPUNIT_TEST(testComputeT550);
     CPPUNIT_TEST(testDownscaling);
     CPPUNIT_TEST_SUITE_END();
 
@@ -27,6 +28,7 @@ public:
 
 private:
     void prepareContext();
+    void testComputeT550();
     void testDownscaling();
     shared_ptr<Context> context;
     shared_ptr<Vbm> vbm;

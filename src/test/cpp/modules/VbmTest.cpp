@@ -7,15 +7,10 @@
 
 #include <cstdlib>
 
-#include "../../../../src/main/cpp/core/Processor.h"
 #include "../../../../src/main/cpp/core/Context.h"
-#include "../../../../src/main/cpp/reader/SynL1Reader.h"
-#include "../../../../src/main/cpp/modules/Ave.h"
-#include "../../../../src/main/cpp/modules/Col.h"
-#include "../../../../src/main/cpp/modules/Pcl.h"
-#include "../../../../src/main/cpp/writer/SegmentWriter.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
+#include "../../../../src/main/cpp/core/Pixel.h"
 
 
 #include "VbmTest.h"
@@ -59,6 +54,30 @@ void VbmTest::prepareContext() {
 void VbmTest::tearDown() {
 }
 
-void VbmTest::testDownscaling() {
-
+void VbmTest::testComputeT550() {
+    double lat = 53.2;
+    double t550 = Vbm::computeT550(lat);
+    CPPUNIT_ASSERT(std::abs(0.28031252522321136148 - t550) < 0.0001);
 }
+
+void VbmTest::testDownscaling() {
+    Pixel p;
+    valarray<double> result(24);
+    uint16_t aerosolModelIndex = 22;
+    p.waterVapour = 0.2;
+    p.airPressure = 0.5;
+    p.sza = 5.0;
+    p.saa = 10.0;
+    p.vaaOlc = 15.0;
+    p.vzaOlc = 20.0;
+    p.vaaSln = 25.0;
+    p.vzaSln = 30.0;
+    for(size_t i = 0; i < 18; i++) {
+        p.radiances[i] = 10.0;
+        p.solarIrradiances[i] = 20.0;
+    }
+
+    vbm->downscale(p, aerosolModelIndex, 0.5, result);
+    CPPUNIT_ASSERT(result.size() == 24);
+}
+
