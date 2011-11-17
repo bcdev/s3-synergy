@@ -17,7 +17,7 @@ This document is a sample manifest file of a SAFE archive. -->
     <informationPackageMap>
         <xfdu:contentUnit
             unitType='Sentinel 3 Information Package'
-            textInfo='Sentinel 3 SYN Level 2 VGT S1'
+            textInfo='Sentinel 3 SYN Level 2'
             pdiID='processing'
             dmdID='acquisitionPeriod platform'>
 
@@ -466,6 +466,15 @@ This document is a sample manifest file of a SAFE archive. -->
 
             <xfdu:contentUnit
                 unitType='Measurement Data Unit'
+                textInfo='Surface Reflectance 900nm'
+                dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='virtualDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='v_surfaceReflectance0900nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
                 textInfo='Surface Reflectance 1020nm'
                 dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
                 repID='virtualDataSchema'>
@@ -592,7 +601,7 @@ This document is a sample manifest file of a SAFE archive. -->
 
             <xfdu:contentUnit
                 unitType='Measurement Data Unit'
-                textInfo='Aerosol Ansgtrom Exponent'
+                textInfo='Aerosol Angtrom Exponent'
                 dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
                 repID='virtualDataSchema'>
                 <dataObjectPointer
@@ -709,34 +718,34 @@ This document is a sample manifest file of a SAFE archive. -->
                 <xmlData>
                     <safe:processing
                         name='L2 Processing'
-                        start='INS_L2ProcTime'>
+                        start='2011-11-16T18:06:31'>
                         <safe:facility
-                            country='INS_L2FacilityCountry'
-                            name='INS_L2FacilityName'
-                            organisation='INS_L2FacilityOrganisation'
-                            site='INS_L2FacilitySite'>
+                            country='TBD'
+                            name='TBD'
+                            organisation='TBD'
+                            site='TBD'>
                             <safe:software
-                                name='INS_L2SoftwareName'
-                                version='INS_L2SoftwareVersion' />
+                                name='TBD'
+                                version='TBD' />
                         </safe:facility>
                         <safe:resource
-                            name='INS_L2ResourceName'
+                            name='TBD'
                             role='Applicable Document'>
                         </safe:resource>
                         <safe:resource
-                            name='INS_L1ResourceName'
+                            name='TBD'
                             role='Input Data'>
                             <safe:processing
                                 name='L1B Processing'
-                                start='INS_L1ProcTime'>
+                                start='TBD'>
                                 <safe:facility
-                                    country='INS_L1FacilityCountry'
-                                    name='INS_L1FacilityName'
-                                    organisation='INS_L1FacilityOrganisation'
-                                    site='INS_L1FacilitySite'>
+                                    country='TBD'
+                                    name='TBD'
+                                    organisation='TBD'
+                                    site='TBD'>
                                     <safe:software
-                                        name='INS_L1SoftwareName'
-                                        version='INS_L1SoftwareVersion' />
+                                        name='TBD'
+                                        version='TBD' />
                                 </safe:facility>
                             </safe:processing>
                         </safe:resource>
@@ -784,7 +793,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='geolocation.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    1d8d969992bb1a36126a3567501f6929
                 </checksum>
             </byteStream>
         </metadataObject>
@@ -797,7 +806,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='time.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    4697428df587c7ab62c01e9704e9702e
                 </checksum>
             </byteStream>
         </metadataObject>
@@ -810,7 +819,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='tiepoints_meteo.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    318a5589356802d56dd51cb60596fa12
                 </checksum>
             </byteStream>
         </metadataObject>
@@ -823,7 +832,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='tiepoints_olci.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    45ff9989ee26a0c9c93729a9f76f5caf
                 </checksum>
             </byteStream>
         </metadataObject>
@@ -836,7 +845,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='tiepoints_slstr_n.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    2dc59215f62235b03f43eac72fc5ef11
                 </checksum>
             </byteStream>
         </metadataObject>
@@ -849,7 +858,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='tiepoints_slstr_o.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    88a72add71e9e66d3b2cb8090537d1ba
                 </checksum>
             </byteStream>
         </metadataObject>
@@ -885,17 +894,6 @@ This document is a sample manifest file of a SAFE archive. -->
             <metadataReference
                 locatorType='URL'
                 href='schema/timeCoordinatesSchema.xsd'
-                vocabularyName='SDF'
-                mimeType='text/xml' />
-        </metadataObject>
-
-        <metadataObject
-            ID='geometryDataSchema'
-            classification='SYNTAX'
-            category='REP'>
-            <metadataReference
-                locatorType='URL'
-                href='schema/geometryDataSchema.xsd'
                 vocabularyName='SDF'
                 mimeType='text/xml' />
         </metadataObject>
@@ -949,7 +947,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0400.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    fe73184db1ae4e71610b5acd4db09ec8
                 </checksum>
             </byteStream>
         </dataObject>
@@ -962,7 +960,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0413.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    7fcf02400a0a002ec89e9df56f06a205
                 </checksum>
             </byteStream>
         </dataObject>
@@ -975,7 +973,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0443.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    fe2cc25c37591e504351cb451af7d7ba
                 </checksum>
             </byteStream>
         </dataObject>
@@ -988,7 +986,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0490.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    0d07f735d091d242e4d5fe6f3e193e99
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1001,7 +999,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0510.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    f5d751a2f813e7ec6d6693abfcec7671
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1014,7 +1012,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0560.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    2d19e4e4ef123eeba53140db02361186
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1027,7 +1025,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0620.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    7f74a72ec1081232a21a70d41e44231f
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1040,7 +1038,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0665.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    aaa176ee04509aa56de8e55bb0d5c15d
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1053,7 +1051,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0674.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    cea89d896e07a2a327830f6b3713ee03
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1066,7 +1064,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0681.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    147ef2f5aee59dfcbfd31ba63cd659b1
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1079,7 +1077,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0709.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    bc92696b5a6529ff355edddfa716449c
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1092,7 +1090,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0754.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    1ba36a2333c5e358d2c7cde346013841
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1105,7 +1103,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0761.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    0368fc5d9400b075b30a6fb3a77f4087
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1118,7 +1116,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0779.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    10b1709198d813eea2da234f2996106b
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1131,7 +1129,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0865.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    aaf840075aacc318498284e5a0d830f0
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1144,7 +1142,20 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0885.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    f428ea308ceef53b9afd0bdd9e7a9a9d
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='surfaceReflectance0900nm'
+            repID='measurementDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0900.nc' />
+                <checksum checksumName='MD5'>
+                    39250ce291bfa63468848f0fe2caddeb
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1157,7 +1168,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r1020.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    b25ad2c7f1eaab426cd29868a6aa6736
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1170,7 +1181,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0550n.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    129a9e94a84d50ba5075d721927dd115
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1183,20 +1194,20 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0665n.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    6f7169ca74b207ae0a71e0e9f36247fa
                 </checksum>
             </byteStream>
         </dataObject>
 
         <dataObject
-            ID='surfaceReflectance0856nmN'
+            ID='surfaceReflectance0865nmN'
             repID='measurementDataSchema'>
             <byteStream mimeType='application/octetstream'>
                 <fileLocation
                     locatorType='URL'
                     href='r0865n.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    dfa541500d8b7e2371c0e55aa03d5fc9
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1209,7 +1220,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r1375n.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    c55ce81acf0d29e35fa2fdb12166a395
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1222,7 +1233,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r1610n.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    3d5b2a56d2bb5213c12278adcf4e36a4
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1235,7 +1246,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r2250n.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    e62131ed8593cf40a37d6c04bd07deb6
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1248,7 +1259,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0550o.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    8f546787b9b8b5c50d1a3df637914c30
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1261,20 +1272,20 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0665o.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    cccf1f4bbd9e1c613481bb4c64ba8725
                 </checksum>
             </byteStream>
         </dataObject>
 
         <dataObject
-            ID='surfaceReflectance0856nmO'
+            ID='surfaceReflectance0865nmO'
             repID='measurementDataSchema'>
             <byteStream mimeType='application/octetstream'>
                 <fileLocation
                     locatorType='URL'
                     href='r0865o.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    e63b99d79dd74d3dc544f71bcc76d43d
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1287,7 +1298,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r1375o.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    8a226282758e4e34332322edfc13d17b
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1300,7 +1311,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r1610o.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    8393520871a5b673e78fec62b0f716ab
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1313,75 +1324,11 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r2250o.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    46fa6b9e99c172850090c13e8b749c65
                 </checksum>
             </byteStream>
         </dataObject>
 
-        <dataObject
-            ID='surfaceReflectance0550nmN'
-            repID='measurementDataSchema'>
-            <byteStream mimeType='application/octetstream'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r0550n.nc' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='surfaceReflectance0665nmN'
-            repID='measurementDataSchema'>
-            <byteStream mimeType='application/octetstream'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r0665n.nc' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='surfaceReflectance0856nmN'
-            repID='measurementDataSchema'>
-            <byteStream mimeType='application/octetstream'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r0865n.nc' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='surfaceReflectance1375nmN'
-            repID='measurementDataSchema'>
-            <byteStream mimeType='application/octetstream'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r1375n.nc' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='surfaceReflectance1610nmN'
-            repID='measurementDataSchema'>
-            <byteStream mimeType='application/octetstream'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r1610n.nc' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
 
         <dataObject
             ID='aerosolOpticalDepth'
@@ -1391,74 +1338,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='t550.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-
-
-        <dataObject
-            ID='surfaceReflectance0550nmN'
-            repID='measurementDataSchema'>
-            <byteStream mimeType='application/octetstream'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r0550n.nc' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='surfaceReflectance0665nmN'
-            repID='measurementDataSchema'>
-            <byteStream mimeType='application/octetstream'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r0665n.nc' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='surfaceReflectance0856nmN'
-            repID='measurementDataSchema'>
-            <byteStream mimeType='application/octetstream'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r0865n.nc' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='surfaceReflectance1375nmN'
-            repID='measurementDataSchema'>
-            <byteStream mimeType='application/octetstream'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r1375n.nc' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='surfaceReflectance1610nmN'
-            repID='measurementDataSchema'>
-            <byteStream mimeType='application/octetstream'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r1610n.nc' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
+                    68ba000fd2754dd4b92a4935a7ab5656
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1471,73 +1351,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='a550.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-
-        <dataObject
-            ID='surfaceReflectance0550nmN'
-            repID='measurementDataSchema'>
-            <byteStream mimeType='application/octetstream'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r0550n.nc' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='surfaceReflectance0665nmN'
-            repID='measurementDataSchema'>
-            <byteStream mimeType='application/octetstream'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r0665n.nc' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='surfaceReflectance0856nmN'
-            repID='measurementDataSchema'>
-            <byteStream mimeType='application/octetstream'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r0865n.nc' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='surfaceReflectance1375nmN'
-            repID='measurementDataSchema'>
-            <byteStream mimeType='application/octetstream'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r1375n.nc' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='surfaceReflectance1610nmN'
-            repID='measurementDataSchema'>
-            <byteStream mimeType='application/octetstream'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r1610n.nc' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
+                    e4dd21213d7ad3f1ca0b518f56165f63
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1550,7 +1364,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='amin.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    c9bfe7929bab7c3c50852c2ad4037150
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1566,7 +1380,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0400.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    6af37f07c14f8299f27c614f064f14da
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1579,7 +1393,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0413.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    82c056ea883a546ec189bab1df175002
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1592,7 +1406,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0443.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    e0dfdc664bde4e3073cbfc93c3b01333
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1605,7 +1419,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0490.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    2393002f3770a6dc48050567a2bb20df
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1618,7 +1432,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0510.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    42bbe93ac5e82e12b9e7a3134eed6f8e
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1631,7 +1445,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0560.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    d83d3bc95ed589a57ab8a480d8d4dd79
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1644,7 +1458,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0620.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    007ade5c794a3687fc7f6c0396f8c1cc
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1657,7 +1471,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0665.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    92d5975ffc4361e02c71e6d2e13756b0
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1670,7 +1484,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0674.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    b0d0f79f45dafd4985905e93503fd1ab
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1683,7 +1497,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0681.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    a3557ffc2cad34cad68f07ff06e48253
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1696,7 +1510,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0709.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    da31609010c5c495ce68bb9b65dce62c
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1709,7 +1523,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0754.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    d6f25a6eb057d752039ced9875d851ca
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1722,7 +1536,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0761.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    f8eb525adf10c3b34b1261a6abb2195f
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1735,7 +1549,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0779.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    9d7ba205c704300ebea6d96fc8c6e980
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1748,7 +1562,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0865.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    48cc526398c23dafdc8ec867886d8023
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1761,7 +1575,20 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0885.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    3416d63ab443b870dcbc14381fa78f1d
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='v_surfaceReflectance0900nm'
+            repID='virtualDataSchema'>
+            <byteStream mimeType='text/xml'>
+                <fileLocation
+                    locatorType='URL'
+                    href='r0900.ncml' />
+                <checksum checksumName='MD5'>
+                    56a3cc4ef4d45050299505c2cd320c1e
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1774,7 +1601,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r1020.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    9d9119ab4ee08b47515c43b2be5a6994
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1787,7 +1614,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0550n.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    920748d434cb56d0f531a3404b5a94d7
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1800,20 +1627,20 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0665n.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    7ecaf2f241e4e8455ffcaf80319e7de1
                 </checksum>
             </byteStream>
         </dataObject>
 
         <dataObject
-            ID='v_surfaceReflectance0856nmN'
+            ID='v_surfaceReflectance0865nmN'
             repID='virtualDataSchema'>
             <byteStream mimeType='text/xml'>
                 <fileLocation
                     locatorType='URL'
                     href='r0865n.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    ef49e929a9d1ba4be6847a27d4edddcf
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1826,7 +1653,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r1375n.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    d01929480df40eb9643f28231a8d4ced
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1839,7 +1666,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r1610n.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    98097b4c572a66392657e535005e5e6f
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1852,7 +1679,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r2250n.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    c38b39a3a6f300999f97f876a95c2dc6
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1865,7 +1692,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0550o.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    ac528535c677dddd28f5368f5bcc70e2
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1878,20 +1705,20 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0665o.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    6fd2e870aa649b954c997107f1a1873c
                 </checksum>
             </byteStream>
         </dataObject>
 
         <dataObject
-            ID='v_surfaceReflectance0856nmO'
+            ID='v_surfaceReflectance0865nmO'
             repID='virtualDataSchema'>
             <byteStream mimeType='text/xml'>
                 <fileLocation
                     locatorType='URL'
                     href='r0865o.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    c296507d299d3c121e06f0244375ff43
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1904,7 +1731,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r1375o.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    3b6ffd98fa2cd02bad7e12893df8be20
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1917,7 +1744,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r1610o.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    aa5acd2cff44f7b8a5f1d5d66d7b4614
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1930,72 +1757,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r2250o.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='v_surfaceReflectance0550nmN'
-            repID='virtualDataSchema'>
-            <byteStream mimeType='text/xml'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r0550n.ncml' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='v_surfaceReflectance0665nmN'
-            repID='virtualDataSchema'>
-            <byteStream mimeType='text/xml'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r0665n.ncml' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='v_surfaceReflectance0856nmN'
-            repID='virtualDataSchema'>
-            <byteStream mimeType='text/xml'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r0865n.ncml' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='v_surfaceReflectance1375nmN'
-            repID='virtualDataSchema'>
-            <byteStream mimeType='text/xml'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r1375n.ncml' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='v_surfaceReflectance1610nmN'
-            repID='virtualDataSchema'>
-            <byteStream mimeType='text/xml'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r1610n.ncml' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
+                    fb8f65fec3362294d663dbe7b6da016a
                 </checksum>
             </byteStream>
         </dataObject>
@@ -2008,74 +1770,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='t550.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-
-
-        <dataObject
-            ID='v_surfaceReflectance0550nmN'
-            repID='virtualDataSchema'>
-            <byteStream mimeType='text/xml'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r0550n.ncml' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='v_surfaceReflectance0665nmN'
-            repID='virtualDataSchema'>
-            <byteStream mimeType='text/xml'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r0665n.ncml' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='v_surfaceReflectance0856nmN'
-            repID='virtualDataSchema'>
-            <byteStream mimeType='text/xml'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r0865n.ncml' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='v_surfaceReflectance1375nmN'
-            repID='virtualDataSchema'>
-            <byteStream mimeType='text/xml'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r1375n.ncml' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='v_surfaceReflectance1610nmN'
-            repID='virtualDataSchema'>
-            <byteStream mimeType='text/xml'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r1610n.ncml' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
+                    730d5e5b7562e4365834c563970bb87b
                 </checksum>
             </byteStream>
         </dataObject>
@@ -2088,73 +1783,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='a550.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-
-        <dataObject
-            ID='v_surfaceReflectance0550nmN'
-            repID='virtualDataSchema'>
-            <byteStream mimeType='text/xml'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r0550n.ncml' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='v_surfaceReflectance0665nmN'
-            repID='virtualDataSchema'>
-            <byteStream mimeType='text/xml'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r0665n.ncml' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='v_surfaceReflectance0856nmN'
-            repID='virtualDataSchema'>
-            <byteStream mimeType='text/xml'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r0865n.ncml' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='v_surfaceReflectance1375nmN'
-            repID='virtualDataSchema'>
-            <byteStream mimeType='text/xml'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r1375n.ncml' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
-                </checksum>
-            </byteStream>
-        </dataObject>
-
-        <dataObject
-            ID='v_surfaceReflectance1610nmN'
-            repID='virtualDataSchema'>
-            <byteStream mimeType='text/xml'>
-                <fileLocation
-                    locatorType='URL'
-                    href='r1610n.ncml' />
-                <checksum checksumName='MD5'>
-                    INS_checksum
+                    e0ba77dc2f5656b18dda32e27b2bd1ff
                 </checksum>
             </byteStream>
         </dataObject>
@@ -2167,7 +1796,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='amin.ncml' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    99ae1ed0a5310b45155d5d0399fd3278
                 </checksum>
             </byteStream>
         </dataObject>
@@ -2183,7 +1812,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='flags.nc' />
                 <checksum checksumName='MD5'>
-                    INS_checksum
+                    1af046f15f95dc3b41f1698f0fa2c4aa
                 </checksum>
             </byteStream>
         </dataObject>
