@@ -234,10 +234,14 @@ int NetCDF::defineDimension(int fileId, const string& dimName, size_t size) {
 	return dimId;
 }
 
-int NetCDF::defineVariable(int fileId, const string& varName, int type, const valarray<int>& dimIds) {
+int NetCDF::defineVariable(int fileId, const string& varName, int type, const valarray<int>& dimIds, bool compress) {
 	int varId;
-	const int status = nc_def_var(fileId, varName.c_str(), type, dimIds.size(), &dimIds[0], &varId);
+	int status = nc_def_var(fileId, varName.c_str(), type, dimIds.size(), &dimIds[0], &varId);
 	checkStatus(status, "defining variable");
+	if (compress) {
+		status = nc_def_var_deflate(fileId, varId, 1, 1, 7);
+		checkStatus(status, "defining compression parameters");
+	}
 	return varId;
 }
 
