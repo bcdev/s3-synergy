@@ -31,6 +31,7 @@ file(GLOB_RECURSE AER_TEST_SOURCES src/test/cpp/modules/AerTest.cpp)
 file(GLOB_RECURSE AVE_TEST_SOURCES src/test/cpp/modules/AveTest.cpp)
 file(GLOB_RECURSE COL_TEST_SOURCES src/test/cpp/modules/ColTest.cpp)
 file(GLOB_RECURSE PCL_TEST_SOURCES src/test/cpp/modules/PclTest.cpp)
+file(GLOB_RECURSE VBM_TEST_SOURCES src/test/cpp/modules/VbmTest.cpp)
 
 file(GLOB_RECURSE SYL2_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/Syl2_2_Test.cpp)
 
@@ -262,6 +263,27 @@ target_link_libraries(sy_int_syl2_2
     boost_filesystem-mt
 )
 set_property(TARGET sy_int_syl2_2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+#
+add_executable(sy_unt_vbm
+    src/test/cpp/SyUntVbmRunner.cpp
+    ${CORE_MAIN_SOURCES}
+    ${UTIL_MAIN_SOURCES}
+    ${READER_MAIN_SOURCES}
+    ${WRITER_MAIN_SOURCES}
+    ${MODULES_MAIN_SOURCES}
+    ${VBM_TEST_SOURCES}
+)
+target_link_libraries(sy_unt_vbm
+    cppunit
+    netcdf
+    Xfdu
+    xerces-c
+    xqilla
+    boost_regex-mt
+    boost_system-mt
+    boost_filesystem-mt
+)
+set_property(TARGET sy_unt_vbm PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 
 ##
 # Project main targets
