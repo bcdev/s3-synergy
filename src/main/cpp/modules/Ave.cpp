@@ -84,7 +84,7 @@ void Ave::averageVariables(Logging& logging, long firstL, long lastL) {
 
 	const Accessor& sourceFlagsAccessor = sourceSegment->getAccessor("SYN_flags");
 
-#pragma omp parallel for
+//#pragma omp parallel for
 	for (long targetL = firstL; targetL <= lastL; targetL++) {
 		logging.progress("Averaging line l = " + lexical_cast<string>(targetL), getId());
 
