@@ -601,7 +601,7 @@ This document is a sample manifest file of a SAFE archive. -->
 
             <xfdu:contentUnit
                 unitType='Measurement Data Unit'
-                textInfo='Aerosol Angtrom Exponent'
+                textInfo='Aerosol Angstrom Exponent'
                 dmdID='tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
                 repID='virtualDataSchema'>
                 <dataObjectPointer

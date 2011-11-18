@@ -108,6 +108,11 @@ const string LOG_LEVEL_ERROR = "ERROR";
  */
 const string AUX_ID_SYCPAX = "SYCPAX";
 const string AUX_ID_SYRTAX = "SYRTAX";
+const string AUX_ID_VPCPAX = "VPCPAX";
+const string AUX_ID_VPSRAX = "VPSRAX";
+const string AUX_ID_VSRTAX = "VSRTAX";
+const string AUX_ID_VPRTAX = "VPRTAX";
+const string AUX_ID_VSCPAX = "VSCPAX";
 
 /**
  * Flags.
