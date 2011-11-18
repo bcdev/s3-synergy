@@ -12,9 +12,6 @@
 #include <vector>
 
 #include "../modules/BasicModule.h"
-#include "../core/Boost.h"
-
-using std::logic_error;
 
 /**
  * AVE - the SYN L2 averaging module.

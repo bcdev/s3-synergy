@@ -219,18 +219,18 @@ void Ave::averageLatLon(long targetL) {
 }
 
 void Ave::addVariables(Context& context) {
-	vector<string> allVariableNames = sourceSegment->getVariableNames();
+	const vector<string> allVariableNames = sourceSegment->getVariableNames();
 
-	foreach(string variableName, allVariableNames)
-			{
-				if (isRadianceName(variableName) || variableName.compare("SYN_flags") == 0) {
-					const Accessor& sourceAccessor = sourceSegment->getAccessor(variableName);
-					context.getLogging().info("Adding variable '" + variableName + "' to segment '" + targetSegment->toString() + "'.", getId());
-					targetSegment->addVariable(variableName, sourceAccessor.getType(), sourceAccessor.getScaleFactor(), sourceAccessor.getAddOffset());
+	for (size_t i = 0; i < allVariableNames.size(); i++) {
+		const string& variableName = allVariableNames[i];
+		if (isRadianceName(variableName) || variableName.compare("SYN_flags") == 0) {
+			const Accessor& sourceAccessor = sourceSegment->getAccessor(variableName);
+			context.getLogging().info("Adding variable '" + variableName + "' to segment '" + targetSegment->toString() + "'.", getId());
+			targetSegment->addVariable(variableName, sourceAccessor.getType(), sourceAccessor.getScaleFactor(), sourceAccessor.getAddOffset());
 
-					variableNames.push_back(variableName);
-				}
-			}
+			variableNames.push_back(variableName);
+		}
+	}
 	context.getLogging().info("Adding variable 'longitude' to segment '" + targetSegment->toString() + "'.", getId());
 	targetSegment->addVariable("longitude", Constants::TYPE_DOUBLE);
 	context.getLogging().info("Adding variable 'latitude' to segment '" + targetSegment->toString() + "'.", getId());
