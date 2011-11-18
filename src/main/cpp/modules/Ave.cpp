@@ -52,10 +52,11 @@ void Ave::process(Context& context) {
 	context.setFirstRequiredL(*sourceSegment, *this, (lastTargetL + 1) * averagingFactor);
 }
 
-static void toLatLon(double x, double y, double z, double& lat, double& lon) {
-	static const double R2D = 180.0 / 3.14159265358979323846;
+void Ave::toLatLon(double x, double y, double z, double& lat, double& lon) {
+	using std::sqrt;
 
 	const double length = std::sqrt(x * x + y * y + z * z);
+
 	x /= length;
 	y /= length;
 	z /= length;
@@ -64,8 +65,7 @@ static void toLatLon(double x, double y, double z, double& lat, double& lon) {
 	lon = std::atan2(y, x) * R2D;
 }
 
-static void accumulateLatLon(double lat, double lon, double& x, double& y, double& z) {
-	static const double D2R = 3.14159265358979323846 / 180.0;
+void Ave::accumulateLatLon(double lat, double lon, double& x, double& y, double& z) {
 	const double u = lon * D2R;
 	const double v = lat * D2R;
 	const double w = std::cos(v);

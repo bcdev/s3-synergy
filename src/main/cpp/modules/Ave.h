@@ -39,12 +39,17 @@ private:
     void averageFlags(long targetL);
     void averageSolarIrradiances(long targetL);
 
+    static void accumulateLatLon(double lat, double lon, double& x, double& y, double& z);
+    static bool isRadianceName(const string& variableName);
+    static void toLatLon(double x, double y, double z, double& lat, double& lon);
+
     const Segment* sourceSegment;
     Segment* targetSegment;
     vector<string> variableNames;
     uint8_t averagingFactor;
 
-    static bool isRadianceName(const string& variableName);
+    static const double D2R = 3.14159265358979323846 / 180.0;
+    static const double R2D = 180.0 / 3.14159265358979323846;
 };
 
 #endif /* AVE_H_ */
