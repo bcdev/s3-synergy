@@ -36,8 +36,14 @@ file(GLOB_RECURSE VBM_TEST_SOURCES src/test/cpp/modules/VbmTest.cpp)
 file(GLOB_RECURSE SYL2_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/Syl2_2_Test.cpp)
 
 ##
-# Sytem include directories
+# System include directories
 #
+include_directories(
+    ${BOOST_HOME}/include
+    ${NETCDF_HOME}/include
+    ${XERCES_HOME}/include
+    ${XQILLA_HOME}/include
+)
 include_directories(
 	${JAVA_HOME}/${JAVA_INC_DIR}
 	${SAFE_HOME}/${SAFE_INC_DIR}
@@ -48,6 +54,12 @@ include_directories(SYSTEM /usr/local/include /usr/include)
 ##
 # System link directories
 #
+link_directories(
+    ${BOOST_HOME}/lib
+    ${NETCDF_HOME}/lib
+    ${XERCES_HOME}/lib
+    ${XQILLA_HOME}/lib
+)
 link_directories(
 	${JAVA_HOME}/${JAVA_LIB_DIR}
 	${JAVA_HOME}/${JAVA_JVM_DIR}
@@ -72,9 +84,9 @@ target_link_libraries(sy_unt_gen
 	Xfdu
 	xerces-c
 	xqilla
-	boost_regex-mt
-	boost_system-mt
-	boost_filesystem-mt
+	boost_regex
+	boost_system
+	boost_filesystem
 )
 set_property(TARGET sy_unt_gen PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -92,9 +104,9 @@ target_link_libraries(sy_unt_sre
 	Xfdu
 	xerces-c
 	xqilla
-	boost_regex-mt
-	boost_system-mt
-	boost_filesystem-mt
+	boost_regex
+	boost_system
+	boost_filesystem
 )
 set_property(TARGET sy_unt_sre PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -111,9 +123,9 @@ target_link_libraries(sy_unt_swr
 	Xfdu
 	xerces-c
 	xqilla
-	boost_regex-mt
-	boost_system-mt
-	boost_filesystem-mt
+	boost_regex
+	boost_system
+	boost_filesystem
 )
 set_property(TARGET sy_unt_swr PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -132,9 +144,9 @@ target_link_libraries(sy_unt_col
 	Xfdu
 	xerces-c
 	xqilla
-	boost_regex-mt
-	boost_system-mt
-	boost_filesystem-mt
+	boost_regex
+	boost_system
+	boost_filesystem
 )
 set_property(TARGET sy_unt_col PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -153,9 +165,9 @@ target_link_libraries(sy_unt_pcl
 	Xfdu
 	xerces-c
 	xqilla
-	boost_regex-mt
-	boost_system-mt
-	boost_filesystem-mt
+	boost_regex
+	boost_system
+	boost_filesystem
 )
 set_property(TARGET sy_unt_pcl PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -174,9 +186,9 @@ target_link_libraries(sy_unt_aco
 	Xfdu
 	xerces-c
 	xqilla
-	boost_regex-mt
-	boost_system-mt
-	boost_filesystem-mt
+	boost_regex
+	boost_system
+	boost_filesystem
 )
 set_property(TARGET sy_unt_aco PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -195,9 +207,9 @@ target_link_libraries(sy_unt_aei
 	Xfdu
 	xerces-c
 	xqilla
-	boost_regex-mt
-	boost_system-mt
-	boost_filesystem-mt
+	boost_regex
+	boost_system
+	boost_filesystem
 )
 set_property(TARGET sy_unt_aei PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -216,9 +228,9 @@ target_link_libraries(sy_unt_aer
 	Xfdu
 	xerces-c
 	xqilla
-	boost_regex-mt
-	boost_system-mt
-	boost_filesystem-mt
+	boost_regex
+	boost_system
+	boost_filesystem
 )
 set_property(TARGET sy_unt_aer PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -237,9 +249,9 @@ target_link_libraries(sy_unt_ave
 	Xfdu
 	xerces-c
 	xqilla
-	boost_regex-mt
-	boost_system-mt
-	boost_filesystem-mt
+	boost_regex
+	boost_system
+	boost_filesystem
 )
 set_property(TARGET sy_unt_ave PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -258,9 +270,9 @@ target_link_libraries(sy_int_syl2_2
     Xfdu
     xerces-c
     xqilla
-    boost_regex-mt
-    boost_system-mt
-    boost_filesystem-mt
+    boost_regex
+    boost_system
+    boost_filesystem
 )
 set_property(TARGET sy_int_syl2_2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -279,9 +291,9 @@ target_link_libraries(sy_unt_vbm
     Xfdu
     xerces-c
     xqilla
-    boost_regex-mt
-    boost_system-mt
-    boost_filesystem-mt
+    boost_regex
+    boost_system
+    boost_filesystem
 )
 set_property(TARGET sy_unt_vbm PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 
@@ -302,7 +314,7 @@ set_property(TARGET sy_unt_vbm PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #	Xfdu
 #	xerces-c
 #	xqilla
-#	boost_system-mt
-#	boost_filesystem-mt
+#	boost_system
+#	boost_filesystem
 #)
 #set_property(TARGET syl2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
