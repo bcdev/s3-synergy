@@ -168,6 +168,15 @@ This document is a sample manifest file of a SAFE archive. -->
 
             <xfdu:contentUnit
                 unitType='Measurement Data Unit'
+                textInfo='OLCI Surface Reflectance 900nm'
+                dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
+                repID='measurementDataSchema'>
+                <dataObjectPointer
+                    dataObjectID='surfaceReflectance0900nm' />
+            </xfdu:contentUnit>
+
+            <xfdu:contentUnit
+                unitType='Measurement Data Unit'
                 textInfo='OLCI Surface Reflectance 1020nm'
                 dmdID='geoCoordinate timeCoordinate tiepoints_olci tiepoints_slstr_n tiepoints_slstr_o tiepoints_meteo pixelStatusFlags'
                 repID='measurementDataSchema'>
@@ -647,7 +656,7 @@ This document is a sample manifest file of a SAFE archive. -->
             <xfdu:contentUnit
                 unitType='Metadata Unit'
                 textInfo='OLCI view/solar angles'
-                repID='geometryDataSchema'>
+                repID='tiepointsSchema'>
                 <dataObjectPointer
                     dataObjectID='tiepoints_olci' />
             </xfdu:contentUnit>
@@ -655,7 +664,7 @@ This document is a sample manifest file of a SAFE archive. -->
             <xfdu:contentUnit
                 unitType='Metadata Unit'
                 textInfo='SLSTR nadir view/solar angles'
-                repID='geometryDataSchema'>
+                repID='tiepointsSchema'>
                 <dataObjectPointer
                     dataObjectID='tiepoints_slstr_n' />
             </xfdu:contentUnit>
@@ -663,7 +672,7 @@ This document is a sample manifest file of a SAFE archive. -->
             <xfdu:contentUnit
                 unitType='Metadata Unit'
                 textInfo='SLSTR oblique view/solar angles'
-                repID='geometryDataSchema'>
+                repID='tiepointsSchema'>
                 <dataObjectPointer
                     dataObjectID='tiepoints_slstr_o' />
             </xfdu:contentUnit>
@@ -800,7 +809,7 @@ This document is a sample manifest file of a SAFE archive. -->
 
         <metadataObject
             ID='timeCoordinates'
-            repID='TimeCoordinatesSchema'>
+            repID='timeCoordinatesSchema'>
             <byteStream mimeType='application/octetstream'>
                 <fileLocation
                     locatorType='URL'
@@ -882,7 +891,7 @@ This document is a sample manifest file of a SAFE archive. -->
             category='REP'>
             <metadataReference
                 locatorType='URL'
-                href='schema/geocoordinatesDataSchema.xsd'
+                href='schema/geoCoordinatesSchema.xsd'
                 vocabularyName='SDF'
                 mimeType='text/xml' />
         </metadataObject>
@@ -905,17 +914,6 @@ This document is a sample manifest file of a SAFE archive. -->
             <metadataReference
                 locatorType='URL'
                 href='schema/tiepointsSchema.xsd'
-                vocabularyName='SDF'
-                mimeType='text/xml' />
-        </metadataObject>
-
-        <metadataObject
-            ID='statusFlagsSchema'
-            classification='SYNTAX'
-            category='REP'>
-            <metadataReference
-                locatorType='URL'
-                href='schema/statusFlagsSchema.xsd'
                 vocabularyName='SDF'
                 mimeType='text/xml' />
         </metadataObject>

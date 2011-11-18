@@ -6,7 +6,7 @@
         <xs:element ref="ncml-2.2:dimension"/>
         <xs:element ref="ncml-2.2:variable"/>
       </xs:sequence>
-      <xs:attribute name="location" use="required" type="xs:NCName"/>
+      <xs:attribute name="location" use="required"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="dimension">
