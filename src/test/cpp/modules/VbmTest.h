@@ -17,7 +17,8 @@
 class VbmTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(VbmTest);
     CPPUNIT_TEST(testComputeT550);
-    CPPUNIT_TEST(testDownscaling);
+    CPPUNIT_TEST(testSurfaceReflectance);
+    CPPUNIT_TEST(testHyperspectralUpscale);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -29,7 +30,8 @@ public:
 private:
     void prepareContext();
     void testComputeT550();
-    void testDownscaling();
+    void testSurfaceReflectance();
+    void testHyperspectralUpscale();
     shared_ptr<Context> context;
     shared_ptr<Vbm> vbm;
 };
