@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2" location="../../../../data/SY2/SY_INT_SYL2_2/S3A_SY_2_SYN____2013621T10920_2013621T101413_0270_001_002_0001_ARG_D_NT_TDS_01.SAFE/geolocation.nc">
+  <dimension name="N_CAM" length="5" />
+  <dimension name="N_LINE_OLC" length="6663" />
+  <dimension name="N_DET_CAM" length="740" />
+  <variable name="latitude" shape="N_CAM N_LINE_OLC N_DET_CAM" type="int">
+    <attribute name="long_name" value="DEM-corrected latitude" />
+    <attribute name="scale_factor" type="float" value="1.e-06" />
+    <attribute name="standard_name" value="latitude" />
+    <attribute name="units" value="degrees_north" />
+    <attribute name="valid_max" type="int" value="90000000" />
+    <attribute name="valid_min" type="int" value="-90000000" />
+  </variable>
+  <variable name="longitude" shape="N_CAM N_LINE_OLC N_DET_CAM" type="int">
+    <attribute name="long_name" value="DEM-corrected longitude" />
+    <attribute name="scale_factor" type="float" value="1.e-06" />
+    <attribute name="standard_name" value="longitude" />
+    <attribute name="units" value="degrees_east" />
+    <attribute name="valid_max" type="int" value="180000000" />
+    <attribute name="valid_min" type="int" value="-180000000" />
+  </variable>
+  <variable name="altitude" shape="N_CAM N_LINE_OLC N_DET_CAM" type="short">
+    <attribute name="long_name" value="DEM-corrected altitude" />
+    <attribute name="positive" value="up" />
+    <attribute name="standard_name" value="altitude" />
+    <attribute name="units" value="meters" />
+    <attribute name="valid_max" type="int" value="9000" />
+    <attribute name="valid_min" type="int" value="-1000" />
+  </variable>
+</netcdf>

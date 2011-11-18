@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2" location="../../../../data/SY2/SY_INT_SYL2_2/S3A_SY_2_SYN____2013621T10920_2013621T101413_0270_001_002_0001_ARG_D_NT_TDS_01.SAFE/tiepoints_meteo.nc">
+  <dimension name="N_OLC_TP" length="8162" />
+  <variable name="air_pressure" shape="N_OLC_TP" type="float">
+    <attribute name="_FillValue" type="float" value="-1." />
+    <attribute name="coordinates" value="OLC_TP_lat OLC_TP_lon" />
+    <attribute name="long_name" value="Mean sea level pressure" />
+    <attribute name="standard_name" value="air_pressure_at_sea_level" />
+    <attribute name="units" value="hPa" />
+    <attribute name="valid_max" type="float" value="1100." />
+    <attribute name="valid_min" type="float" value="850." />
+  </variable>
+  <variable name="ozone" shape="N_OLC_TP" type="float">
+    <attribute name="_FillValue" type="float" value="-1." />
+    <attribute name="coordinates" value="OLC_TP_lat OLC_TP_lon" />
+    <attribute name="long_name" value="Total column ozone" />
+    <attribute name="standard_name" value="atmosphere_mass_content_of_ozone" />
+    <attribute name="units" value="kg m-2" />
+    <attribute name="valid_max" type="float" value="-1." />
+    <attribute name="valid_min" type="float" value="0." />
+  </variable>
+  <variable name="water_vapour" shape="N_OLC_TP" type="float">
+    <attribute name="_FillValue" type="float" value="-1." />
+    <attribute name="coordinates" value="OLC_TP_lat OLC_TP_lon" />
+    <attribute name="long_name" value="Total column water vapour" />
+    <attribute name="standard_name" value="atmosphere_water_vapour_content" />
+    <attribute name="units" value="g m-2" />
+    <attribute name="valid_max" type="float" value="-1." />
+    <attribute name="valid_min" type="float" value="0." />
+  </variable>
+</netcdf>
