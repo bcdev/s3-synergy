@@ -81,7 +81,6 @@ add_executable(sy_unt_gen
 target_link_libraries(sy_unt_gen
 	cppunit
 	netcdf
-	Xfdu
 	xerces-c
 	xqilla
 	boost_regex
@@ -101,7 +100,6 @@ add_executable(sy_unt_sre
 target_link_libraries(sy_unt_sre
 	cppunit
 	netcdf
-	Xfdu
 	xerces-c
 	xqilla
 	boost_regex
@@ -120,7 +118,6 @@ add_executable(sy_unt_swr
 target_link_libraries(sy_unt_swr
 	cppunit
 	netcdf
-	Xfdu
 	xerces-c
 	xqilla
 	boost_regex
@@ -141,7 +138,6 @@ add_executable(sy_unt_col
 target_link_libraries(sy_unt_col
 	cppunit
 	netcdf
-	Xfdu
 	xerces-c
 	xqilla
 	boost_regex
@@ -162,7 +158,6 @@ add_executable(sy_unt_pcl
 target_link_libraries(sy_unt_pcl
 	cppunit
 	netcdf
-	Xfdu
 	xerces-c
 	xqilla
 	boost_regex
@@ -183,7 +178,6 @@ add_executable(sy_unt_aco
 target_link_libraries(sy_unt_aco
 	cppunit
 	netcdf
-	Xfdu
 	xerces-c
 	xqilla
 	boost_regex
@@ -204,7 +198,6 @@ add_executable(sy_unt_aei
 target_link_libraries(sy_unt_aei
 	cppunit
 	netcdf
-	Xfdu
 	xerces-c
 	xqilla
 	boost_regex
@@ -225,7 +218,6 @@ add_executable(sy_unt_aer
 target_link_libraries(sy_unt_aer
 	cppunit
 	netcdf
-	Xfdu
 	xerces-c
 	xqilla
 	boost_regex
@@ -246,7 +238,6 @@ add_executable(sy_unt_ave
 target_link_libraries(sy_unt_ave
 	cppunit
 	netcdf
-	Xfdu
 	xerces-c
 	xqilla
 	boost_regex
@@ -267,7 +258,6 @@ add_executable(sy_int_syl2_2
 target_link_libraries(sy_int_syl2_2
     cppunit
     netcdf
-    Xfdu
     xerces-c
     xqilla
     boost_regex
@@ -288,7 +278,6 @@ add_executable(sy_unt_vbm
 target_link_libraries(sy_unt_vbm
     cppunit
     netcdf
-    Xfdu
     xerces-c
     xqilla
     boost_regex
