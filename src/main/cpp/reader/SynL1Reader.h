@@ -9,7 +9,6 @@
 #define	SYNL1READER_H
 
 #include <map>
-#include <netcdf.h>
 
 #include "../modules/BasicModule.h"
 

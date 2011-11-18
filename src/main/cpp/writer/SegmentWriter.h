@@ -8,11 +8,13 @@
 #ifndef SEGMENTWRITER_H
 #define	SEGMENTWRITER_H
 
+#include <map>
 #include <valarray>
 
 #include "../modules/BasicModule.h"
 
 using std::map;
+using std::valarray;
 
 class SegmentWriter: public BasicModule {
 public:

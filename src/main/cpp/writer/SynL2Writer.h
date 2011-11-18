@@ -8,11 +8,13 @@
 #ifndef SYNL2WRITER_H
 #define	SYNL2WRITER_H
 
+#include <map>
 #include <valarray>
 
 #include "../modules/BasicModule.h"
 
 using std::map;
+using std::valarray;
 
 class SynL2Writer: public BasicModule {
 public:
