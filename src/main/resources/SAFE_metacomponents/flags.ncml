@@ -1,30 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2" location="../../../../data/SY2/SY_INT_SYL2_2/S3A_SY_2_SYN____2013621T10920_2013621T101413_0270_001_002_0001_ARG_D_NT_TDS_01.SAFE/flags.nc">
-  <dimension name="N_CAM" length="5" />
-  <dimension name="N_LINE_OLC" length="6663" />
-  <dimension name="N_DET_CAM" length="740" />
-  <variable name="SYN_flags" shape="N_CAM N_LINE_OLC N_DET_CAM" type="ushort">
-    <attribute name="_FillValue" type="ushort" value="0" />
-    <attribute name="flag_masks" type="ushort" value="1 0 2 0 4 0 8 0 16 0 32 0 64 0 128 0" />
-    <attribute name="flag_meanings" value="SYN_cloud SYN_snow_risk SYN_shadow_risk SYN_cloud_filled SYN_land SYN_no_olc SYN_no_sln SYN_no_slo SYN_partly_cloudy SYN_partly_water SYN_border SYN_aerosol_filled SYN_success SYN_negative_curvature SYN_too_low SYN_high_error" />
-    <attribute name="long_name" value="Synergy flags" />
-  </variable>
-  <variable name="OLC_flags" shape="N_CAM N_LINE_OLC N_DET_CAM" type="ushort">
-    <attribute name="_FillValue" type="ushort" value="0" />
-    <attribute name="flag_masks" type="ushort" value="1 0 2 0 4 0 8 0 16 0" />
-    <attribute name="flag_meanings" value="OLC_saturated OLC_dubious OLC_sun_glint_risk OLC_cosmetic OLC_invalid OLC_bright OLC_tidal_region OLC_fresh_inland_water OLC_coastline OLC_land" />
-    <attribute name="long_name" value="OLCI flags" />
-  </variable>
-  <variable name="SLN_flags" shape="N_CAM N_LINE_OLC N_DET_CAM" type="uint">
-    <attribute name="_FillValue" type="uint" value="0" />
-    <attribute name="flag_masks" type="uint" value="1 2 4 8 16 32 64 128 256 512 1024 2048 4096 65536 262144 524288 1048576 2097152 4194304 8388608" />
-    <attribute name="flag_meanings" value="SLN_summary_ISP_absent SLN_pixel_absent SLN_not_decompressed SLN_no_signal SLN_saturation SLN_invalid_radiance SLN_no_parameters SLN_unfilled_pixel SLN_coastline SLN_ocean SLN_tidal SLN_land SLN_inland_water SLN_cosmetic SLN_day SLN_twilight SLN_sun_glint SLN_snow SLN_summary_cloud SLN_summary_pointing" />
-    <attribute name="long_name" value="SLSTR nadir-view flags" />
-  </variable>
-  <variable name="SLO_flags" shape="N_CAM N_LINE_OLC N_DET_CAM" type="uint">
-    <attribute name="_FillValue" type="uint" value="0" />
-    <attribute name="flag_masks" type="uint" value="1 2 4 8 16 32 64 128 256 512 1024 2048 4096 65536 262144 524288 1048576 2097152 4194304 8388608" />
-    <attribute name="flag_meanings" value="SLO_summary_ISP_absent SLO_pixel_absent SLO_not_decompressed SLO_no_signal SLO_saturation SLO_invalid_radiance SLO_no_parameters SLO_unfilled_pixel SLO_coastline SLO_ocean SLO_tidal SLO_land SLO_inland_water SLO_cosmetic SLO_day SLO_twilight SLO_sun_glint SLO_snow SLO_summary_cloud SLO_summary_pointing" />
-    <attribute name="long_name" value="SLSTR oblique-view flags" />
-  </variable>
+<netcdf xmins='http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2'>
+  <attribute name='title' type='string' value='Union pixel status flags and coordinates' />
+  <aggregation>
+    <netcdf location='flags.nc' />
+    <netcdf location='geolocation.nc' />
+    <netcdf location='time.nc' />
+  </aggregation>
 </netcdf>
