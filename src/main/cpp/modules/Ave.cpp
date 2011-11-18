@@ -66,13 +66,16 @@ void Ave::toLatLon(double x, double y, double z, double& lat, double& lon) {
 }
 
 void Ave::accumulateLatLon(double lat, double lon, double& x, double& y, double& z) {
+	using std::cos;
+	using std::sin;
+
 	const double u = lon * D2R;
 	const double v = lat * D2R;
-	const double w = std::cos(v);
+	const double w = cos(v);
 
-	x += std::cos(u) * w;
-	y += std::sin(u) * w;
-	z += std::sin(v);
+	x += cos(u) * w;
+	y += sin(u) * w;
+	z += sin(v);
 }
 
 void Ave::averageVariables(Logging& logging, long firstL, long lastL) {
@@ -85,44 +88,44 @@ void Ave::averageVariables(Logging& logging, long firstL, long lastL) {
 	for (long targetL = firstL; targetL <= lastL; targetL++) {
 		logging.progress("Averaging line l = " + lexical_cast<string>(targetL), getId());
 
-		foreach(string& variableName, variableNames)
-				{
-					const Accessor& sourceAccessor = sourceSegment->getAccessor(variableName);
-					Accessor& targetAccessor = targetSegment->getAccessor(variableName);
+		for (size_t i = 0; i < variableNames.size(); i++) {
+			const string& variableName = variableNames[i];
+			const Accessor& sourceAccessor = sourceSegment->getAccessor(variableName);
+			Accessor& targetAccessor = targetSegment->getAccessor(variableName);
 
-					for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
-						for (long targetM = targetGrid.getFirstM(); targetM < targetGrid.getFirstM() + targetGrid.getSizeM(); targetM++) {
-							const size_t targetIndex = targetGrid.getIndex(k, targetL, targetM);
+			for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
+				for (long targetM = targetGrid.getFirstM(); targetM < targetGrid.getFirstM() + targetGrid.getSizeM(); targetM++) {
+					const size_t targetIndex = targetGrid.getIndex(k, targetL, targetM);
 
-							double sum = 0.0;
-							long pixelCount = 0;
-							long validCount = 0;
+					double sum = 0.0;
+					long pixelCount = 0;
+					long validCount = 0;
 
-							for (long sourceL = targetL * averagingFactor + sourceGrid.getMinL(); sourceL < (targetL + 1) * averagingFactor + sourceGrid.getMinL(); sourceL++) {
-								for (long sourceM = targetM * averagingFactor; sourceM < (targetM + 1) * averagingFactor; sourceM++) {
-									if (!sourceGrid.isValidPosition(k, sourceL, sourceM)) {
-										continue;
-									}
-									const size_t sourceIndex = sourceGrid.getIndex(k, sourceL, sourceM);
-
-									pixelCount++;
-									const uint16_t synFlags = sourceFlagsAccessor.getUShort(sourceIndex);
-									const bool land = (synFlags & Constants::SY2_LAND_FLAG) == Constants::SY2_LAND_FLAG;
-									const bool cloud = (synFlags & Constants::SY2_CLOUD_FLAG) == Constants::SY2_CLOUD_FLAG;
-									if (land && !cloud && !sourceAccessor.isFillValue(sourceIndex)) {
-										sum += sourceAccessor.getDouble(sourceIndex);
-										validCount++;
-									}
-								}
+					for (long sourceL = targetL * averagingFactor + sourceGrid.getMinL(); sourceL < (targetL + 1) * averagingFactor + sourceGrid.getMinL(); sourceL++) {
+						for (long sourceM = targetM * averagingFactor; sourceM < (targetM + 1) * averagingFactor; sourceM++) {
+							if (!sourceGrid.isValidPosition(k, sourceL, sourceM)) {
+								continue;
 							}
-							if (validCount == pixelCount) {
-								targetAccessor.setDouble(targetIndex, sum / validCount);
-							} else {
-								targetAccessor.setFillValue(targetIndex);
+							const size_t sourceIndex = sourceGrid.getIndex(k, sourceL, sourceM);
+
+							pixelCount++;
+							const uint16_t synFlags = sourceFlagsAccessor.getUShort(sourceIndex);
+							const bool land = (synFlags & Constants::SY2_LAND_FLAG) == Constants::SY2_LAND_FLAG;
+							const bool cloud = (synFlags & Constants::SY2_CLOUD_FLAG) == Constants::SY2_CLOUD_FLAG;
+							if (land && !cloud && !sourceAccessor.isFillValue(sourceIndex)) {
+								sum += sourceAccessor.getDouble(sourceIndex);
+								validCount++;
 							}
 						}
 					}
+					if (validCount == pixelCount) {
+						targetAccessor.setDouble(targetIndex, sum / validCount);
+					} else {
+						targetAccessor.setFillValue(targetIndex);
+					}
 				}
+			}
+		}
 		averageFlags(targetL);
 		averageLatLon(targetL);
 	}
