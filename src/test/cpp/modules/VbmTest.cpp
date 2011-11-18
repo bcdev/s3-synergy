@@ -60,24 +60,12 @@ void VbmTest::testComputeT550() {
     CPPUNIT_ASSERT(std::abs(0.28031252522321136148 - t550) < 0.0001);
 }
 
-void VbmTest::testDownscaling() {
-    Pixel p;
-    valarray<double> result(24);
-    uint16_t aerosolModelIndex = 22;
-    p.waterVapour = 0.2;
-    p.airPressure = 0.5;
-    p.sza = 5.0;
-    p.saa = 10.0;
-    p.vaaOlc = 15.0;
-    p.vzaOlc = 20.0;
-    p.vaaSln = 25.0;
-    p.vzaSln = 30.0;
-    for(size_t i = 0; i < 18; i++) {
-        p.radiances[i] = 10.0;
-        p.solarIrradiances[i] = 20.0;
-    }
-
-    vbm->downscale(p, aerosolModelIndex, 0.5, result);
-    CPPUNIT_ASSERT(result.size() == 24);
+void VbmTest::testSurfaceReflectance() {
+    const double surfRefl = Vbm::surfaceReflectance(0.4, 85.9, 66.34, 0.34, 0.68, 0.21, 0.2, 0.3, 0.3, 0.3);
+    CPPUNIT_ASSERT(std::abs(surfRefl - 5.392082012) < 0.0001);
 }
 
+void VbmTest::testHyperspectralUpscale() {
+    const double result = vbm->hyperspectralUpscale(64.3, 68.2, 0.3, 0.5, 0.2, 0.1, 0.4, 0.8, 0.9);
+    CPPUNIT_ASSERT(std::abs(result - 0.85244299269730513062) < 0.0001);
+}

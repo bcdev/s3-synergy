@@ -33,13 +33,27 @@ private:
 	}
 
 	uint16_t amin;
-	valarray<double> cO3;
 	Segment* collocatedSegment;
 	Context* context;
+	LookupTable<double>* synLutRhoAtm;
+	LookupTable<double>* synLutOlcRatm;
+	LookupTable<double>* synLutSlnRatm;
+	LookupTable<double>* synLutT;
+	const valarray<double>* synCo3;
 
-	void downscale(const Pixel& p, uint16_t aerosolModelIndex, double t550, valarray<double>& surfReflNadirSyn);
-	double surfaceReflectance(size_t i, uint16_t aerosolModelIndex, double t550, double waterVapour, double airPressure, double vzaOlc,
-	        double sza, double vaaOlc, double saa, double solarIrradiance, double radiance, double rhoAtm, double rAtm, double tSun, double tView);
+	LookupTable<double>* vgtLutRhoAtm;
+	LookupTable<double>* vgtLutRAtm;
+	LookupTable<double>* vgtLutT;
+	const valarray<double>* vgtCo3;
+
+	void downscale(const Pixel& p, valarray<double>& surfReflNadirSyn);
+	static double surfaceReflectance(double ozone, double vza, double sza, double solarIrradiance, double radiance,
+	        double co3, double rhoAtm, double rAtm, double tSun, double tView);
+	void performHyperspectralInterpolation(const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances);
+	double linearInterpolation(const valarray<double>& surfaceReflectances, double wavelength);
+	void performHyperspectralUpscaling(const valarray<double>& hyperSpectralReflectances, const Pixel& p, valarray<double>& toaReflectances);
+	double hyperspectralUpscale(double sza, double vzaOlc, double ozone, double hyperSpectralReflectance, double co3, double rhoAtm, double rAtm, double tSun, double tView);
+	void setupPixel(Pixel& p, size_t index);
 };
 
 #endif /* VBM_H_ */
