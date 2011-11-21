@@ -142,8 +142,9 @@ void Aco::process(Context& context) {
 
 	const double delta3 = auxdataProvider.getDouble("delta_rt");
 
-	// NOTE: using OpenMP for this loop does not compile on the ARGANS target machine
-	// #pragma omp parallel for
+#if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100) > 40100
+#pragma omp parallel for
+#endif
 	for (long l = firstL; l <= lastL; l++) {
 		valarray<double> coordinates(10);
 		valarray<double> tpiWeights(1);

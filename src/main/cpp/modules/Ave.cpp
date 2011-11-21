@@ -84,8 +84,9 @@ void Ave::averageVariables(Logging& logging, long firstL, long lastL) {
 
 	const Accessor& sourceFlagsAccessor = sourceSegment->getAccessor("SYN_flags");
 
-	// NOTE: using OpenMP for this loop does not compile on the ARGANS target machine
-	// #pragma omp parallel for
+#if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100) > 40100
+#pragma omp parallel for
+#endif
 	for (long targetL = firstL; targetL <= lastL; targetL++) {
 		logging.progress("Averaging line l = " + lexical_cast<string>(targetL), getId());
 
