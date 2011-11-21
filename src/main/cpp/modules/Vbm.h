@@ -12,6 +12,7 @@
 
 #include "../modules/BasicModule.h"
 #include "../core/Pixel.h"
+#include "../core/TiePointInterpolator.h"
 
 class Vbm: public BasicModule {
 public:
@@ -28,13 +29,20 @@ public:
 
 private:
 	friend class VbmTest;
-	static double cube(double x) {
+
+	template<class T>
+	static T cube(T x) {
 	    return x * x * x;
 	}
 
+    template<class T>
+    static void copy(const std::valarray<T>& s, std::valarray<T>& t) {
+        t.resize(s.size());
+        std::copy(&s[0], &s[s.size()], &t[0]);
+    }
+
 	uint16_t amin;
 	Segment* collocatedSegment;
-	Context* context;
 	LookupTable<double>* synLutRhoAtm;
 	LookupTable<double>* synLutOlcRatm;
 	LookupTable<double>* synLutSlnRatm;
@@ -48,18 +56,48 @@ private:
 	valarray<LookupTable<double>*> vgtBSrfLuts;
 	const valarray<double>* vgtCo3;
 
-	void downscale(const Pixel& p, valarray<double>& surfReflNadirSyn);
+    Accessor* synOzoneAccessor;
+    Accessor* synLatitudeAccessor;
+    Accessor* synLongitudeAccessor;
+
+    valarray<Accessor*> synRadianceAccessors;
+    valarray<Accessor*> synSolarIrradianceAccessors;
+
+    Accessor* vgtFlagsAccessor;
+    Accessor* vgtB0Accessor;
+    Accessor* vgtB2Accessor;
+    Accessor* vgtB3Accessor;
+    Accessor* vgtMirAccessor;
+
+    shared_ptr<TiePointInterpolator<double> > tiePointInterpolatorOlc;
+    shared_ptr<TiePointInterpolator<double> > tiePointInterpolatorSln;
+
+    valarray<double>* szaOlcTiePoints;
+    valarray<double>* saaOlcTiePoints;
+    valarray<double>* vzaOlcTiePoints;
+    valarray<double>* vzaSlnTiePoints;
+
+    valarray<double>* waterVapourTiePoints;
+    valarray<double>* airPressureTiePoints;
+    valarray<double>* ozoneTiePoints;
+
+    // todo - sort
 	static double surfaceReflectance(double ozone, double vza, double sza, double solarIrradiance, double radiance,
 	        double co3, double rhoAtm, double rAtm, double tSun, double tView);
-	void performHyperspectralInterpolation(const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances);
+
+    void addVariables();
+	void downscale(const Pixel& p, valarray<double>& surfReflNadirSyn);
+	void performHyperspectralInterpolation(Context& context, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances);
 	double linearInterpolation(const valarray<double>& surfaceReflectances, double wavelength);
 	void performHyperspectralUpscaling(const valarray<double>& hyperSpectralReflectances, const Pixel& p, valarray<double>& toaReflectances);
 	double hyperspectralUpscale(double sza, double vzaOlc, double ozone, double hyperSpectralReflectance, double co3, double rhoAtm, double rAtm, double tSun, double tView);
 	void performHyperspectralFiltering(valarray<double>& toaReflectances, valarray<double>& filteredRToa);
-	uint16_t getFlagsAndFills(Pixel & p, valarray<double> & vgtToaReflectances);
+	uint8_t getFlagsAndFills(Pixel& p, valarray<double>& vgtToaReflectances);
 	void cleanup(valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances, valarray<double>& toaReflectances, valarray<double>& vgtToaReflectances);
 	void setupPixel(Pixel& p, size_t index);
-	void setValues(uint16_t flags, valarray<double>& vgtToaReflectances);
+	void prepareAuxdata(Context& context);
+	void prepareTiePointData(Context& context);
+	void setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances);
 };
 
 #endif /* VBM_H_ */
