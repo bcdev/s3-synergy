@@ -19,6 +19,7 @@ void Vbm::start(Context& context) {
     AuxdataProvider& radiativeTransfer = getAuxdataProvider(context, Constants::AUX_ID_VPRTAX);
     amin = radiativeTransfer.getShort("AMIN");
     collocatedSegment = &context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+    olciInfoSegment = &context.getSegment(Constants::SEGMENT_OLC_INFO);
 
     synLatitudeAccessor = &collocatedSegment->getAccessor("latitude");
     synLongitudeAccessor = &collocatedSegment->getAccessor("longitude");
@@ -111,7 +112,7 @@ void Vbm::process(Context& context) {
                 setupPixel(p, index);
                 p.aot = computeT550(p.lat);
                 downscale(p, surfaceReflectances);
-                performHyperspectralInterpolation(context, surfaceReflectances, hyperSpectralReflectances);
+                performHyperspectralInterpolation(k, m, context, surfaceReflectances, hyperSpectralReflectances);
                 performHyperspectralUpscaling(hyperSpectralReflectances, p, toaReflectances);
                 performHyperspectralFiltering(toaReflectances, vgtToaReflectances);
 
@@ -262,22 +263,47 @@ void Vbm::setupPixel(Pixel& p, size_t index) {
     p.vzaSln = tiePointInterpolatorSln->interpolate((*vzaSlnTiePoints), tpiWeights, tpiIndexes);
 }
 
-void Vbm::performHyperspectralInterpolation(Context& context, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances) {
+void Vbm::performHyperspectralInterpolation(const long k, const long m, Context& context, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances) {
     const valarray<double>& wavelengths = getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("wavelength");
     for(size_t i = 0; i < wavelengths.size(); i++) {
-        hyperSpectralReflectances[i] = linearInterpolation(surfaceReflectances, wavelengths[i]);
+        hyperSpectralReflectances[i] = linearInterpolation(k, m, surfaceReflectances, wavelengths[i]);
     }
 }
 
-double Vbm::linearInterpolation(const valarray<double>& surfaceReflectances, double wavelength) {
-    for(size_t i = 0; i < surfaceReflectances.size(); i++) {
-        if(surfaceReflectances[i] == Constants::FILL_VALUE_DOUBLE) {
+double Vbm::linearInterpolation(const long k, const long m, const valarray<double>& surfaceReflectances, double wavelength) {
+    for(size_t channel = 0; channel < surfaceReflectances.size(); channel++) {
+        if(surfaceReflectances[channel] == Constants::FILL_VALUE_DOUBLE) {
             return Constants::FILL_VALUE_DOUBLE;
+        }
+        double channelWavelength;
+        if(channel < 18) {
+            const size_t index = olciInfoSegment->getGrid().getIndex(k, channel, m);
+            channelWavelength = olciInfoSegment->getAccessor("lambda0").getDouble(index);
+        } else {
+            channelWavelength = getSlnWavelength(channel);
         }
     }
 
     // todo - implement
     return 0.0;
+}
+
+double Vbm::getSlnWavelength(size_t channel) {
+    switch (channel) {
+    case 18:
+        return 550;
+    case 19:
+        return 665;
+    case 20:
+        return 865;
+    case 21:
+        return 1375;
+    case 22:
+        return 1610;
+    case 23:
+        return 2250;
+    }
+    BOOST_THROW_EXCEPTION(logic_error("invalid channel index '" + lexical_cast<string>(channel) + "'"));
 }
 
 void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralReflectances, const Pixel& p, valarray<double>& toaReflectances) {

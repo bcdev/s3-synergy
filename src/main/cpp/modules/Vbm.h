@@ -43,6 +43,8 @@ private:
 
 	uint16_t amin;
 	Segment* collocatedSegment;
+	Segment* olciInfoSegment;
+
 	LookupTable<double>* synLutRhoAtm;
 	LookupTable<double>* synLutOlcRatm;
 	LookupTable<double>* synLutSlnRatm;
@@ -87,8 +89,9 @@ private:
 
     void addVariables();
 	void downscale(const Pixel& p, valarray<double>& surfReflNadirSyn);
-	void performHyperspectralInterpolation(Context& context, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances);
-	double linearInterpolation(const valarray<double>& surfaceReflectances, double wavelength);
+	void performHyperspectralInterpolation(const long k, const long m, Context& context, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances);
+	double linearInterpolation(const long k, const long m, const valarray<double>& surfaceReflectances, double wavelength);
+	double getSlnWavelength(size_t channel);
 	void performHyperspectralUpscaling(const valarray<double>& hyperSpectralReflectances, const Pixel& p, valarray<double>& toaReflectances);
 	double hyperspectralUpscale(double sza, double vzaOlc, double ozone, double hyperSpectralReflectance, double co3, double rhoAtm, double rAtm, double tSun, double tView);
 	void performHyperspectralFiltering(valarray<double>& toaReflectances, valarray<double>& filteredRToa);
