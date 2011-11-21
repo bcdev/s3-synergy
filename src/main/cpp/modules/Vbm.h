@@ -44,6 +44,8 @@ private:
 	LookupTable<double>* vgtLutRhoAtm;
 	LookupTable<double>* vgtLutRAtm;
 	LookupTable<double>* vgtLutT;
+	LookupTable<double>* vgtLutSolarIrradiance;
+	valarray<LookupTable<double>*> vgtBSrfLuts;
 	const valarray<double>* vgtCo3;
 
 	void downscale(const Pixel& p, valarray<double>& surfReflNadirSyn);
@@ -53,7 +55,11 @@ private:
 	double linearInterpolation(const valarray<double>& surfaceReflectances, double wavelength);
 	void performHyperspectralUpscaling(const valarray<double>& hyperSpectralReflectances, const Pixel& p, valarray<double>& toaReflectances);
 	double hyperspectralUpscale(double sza, double vzaOlc, double ozone, double hyperSpectralReflectance, double co3, double rhoAtm, double rAtm, double tSun, double tView);
+	void performHyperspectralFiltering(valarray<double>& toaReflectances, valarray<double>& filteredRToa);
+	uint16_t getFlagsAndFills(Pixel & p, valarray<double> & vgtToaReflectances);
+	void cleanup(valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances, valarray<double>& toaReflectances, valarray<double>& vgtToaReflectances);
 	void setupPixel(Pixel& p, size_t index);
+	void setValues(uint16_t flags, valarray<double>& vgtToaReflectances);
 };
 
 #endif /* VBM_H_ */

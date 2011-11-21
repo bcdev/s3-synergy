@@ -69,3 +69,16 @@ void VbmTest::testHyperspectralUpscale() {
     const double result = vbm->hyperspectralUpscale(64.3, 68.2, 0.3, 0.5, 0.2, 0.1, 0.4, 0.8, 0.9);
     CPPUNIT_ASSERT(std::abs(result - 0.85244299269730513062) < 0.0001);
 }
+
+void VbmTest::testClearValarray() {
+    valarray<double> test(3);
+    test[0] = 0.5;
+    test[1] = 0.5;
+    test[2] = 0.5;
+
+    test.resize(test.size(), 0.0);
+
+    CPPUNIT_ASSERT(test[0] == 0.0);
+    CPPUNIT_ASSERT(test[1] == 0.0);
+    CPPUNIT_ASSERT(test[2] == 0.0);
+}

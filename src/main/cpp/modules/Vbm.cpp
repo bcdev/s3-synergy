@@ -8,7 +8,7 @@
 #include "Vbm.h"
 
 Vbm::Vbm() :
-		BasicModule("PCL") {
+		BasicModule("PCL"), vgtBSrfLuts(4) {
 }
 
 Vbm::~Vbm() {
@@ -30,6 +30,13 @@ void Vbm::start(Context& context) {
     vgtLutRAtm = &getLookupTable(context, Constants::AUX_ID_VPRTAX, "R_atm");
     vgtLutT = &getLookupTable(context, Constants::AUX_ID_VPRTAX, "t");
     vgtCo3 = &getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("C_O3");
+
+    vgtBSrfLuts[0] = &getLookupTable(context, Constants::AUX_ID_VPSRAX, "B0_SRF");
+    vgtBSrfLuts[1] = &getLookupTable(context, Constants::AUX_ID_VPSRAX, "B2_SRF");
+    vgtBSrfLuts[2] = &getLookupTable(context, Constants::AUX_ID_VPSRAX, "B3_SRF");
+    vgtBSrfLuts[3] = &getLookupTable(context, Constants::AUX_ID_VPSRAX, "MIR_SRF");
+
+    vgtLutSolarIrradiance = &getLookupTable(context, Constants::AUX_ID_VPSRAX, "solar_irradiance");
 }
 
 void Vbm::stop(Context& context) {
@@ -45,6 +52,7 @@ void Vbm::process(Context& context) {
     valarray<double> surfaceReflectances(24);
     valarray<double> hyperSpectralReflectances(914);
     valarray<double> toaReflectances(914);
+    valarray<double> vgtToaReflectances(4);
 
     Pixel p;
 
@@ -52,11 +60,19 @@ void Vbm::process(Context& context) {
         for(long m = collocatedGrid.getFirstM(); m <= collocatedGrid.getMaxM(); m++) {
             for(long k = collocatedGrid.getFirstK(); k <= collocatedGrid.getMaxK(); k++) {
                 const size_t index = collocatedGrid.getIndex(k, l, m);
+
                 setupPixel(p, index);
                 p.aot = computeT550(p.lat);
                 downscale(p, surfaceReflectances);
                 performHyperspectralInterpolation(surfaceReflectances, hyperSpectralReflectances);
                 performHyperspectralUpscaling(hyperSpectralReflectances, p, toaReflectances);
+                performHyperspectralFiltering(toaReflectances, vgtToaReflectances);
+
+                uint16_t flags = getFlagsAndFills(p, vgtToaReflectances);
+
+                setValues(flags, vgtToaReflectances);
+
+                cleanup(surfaceReflectances, hyperSpectralReflectances, toaReflectances, vgtToaReflectances);
             }
         }
     }
@@ -235,4 +251,73 @@ double Vbm::hyperspectralUpscale(double sza, double vzaOlc, double ozone, double
     double tO3 = std::exp(-M * ozone * co3);
     double g = tSun * tView;
     return tO3 * (rAtm + (g * hyperSpectralReflectance) / ((1 - rhoAtm) * hyperSpectralReflectance));
+}
+
+void Vbm::performHyperspectralFiltering(valarray<double>& toaReflectances, valarray<double>& filteredRToa) {
+    valarray<double> coordinates(1);
+    valarray<double> f(vgtBSrfLuts[0]->getDimensionCount());
+    valarray<double> w(vgtBSrfLuts[0]->getMatrixWorkspaceSize());
+
+    for(size_t b = 0; b < 4; b++) {
+        double numerator = 0.0;
+        double denominator = 0.0;
+        for(size_t h = 0; h < 914; h++) {
+            coordinates[0] = h;
+            double solarIrr = vgtLutSolarIrradiance->getScalar(&coordinates[0], f, w);
+            double bSurf = vgtBSrfLuts[b]->getScalar(&coordinates[0], f, w);
+            numerator += solarIrr * bSurf * toaReflectances[h];
+            denominator += solarIrr * bSurf;
+        }
+        if(denominator != 0.0) {
+            filteredRToa[b] = numerator / denominator;
+        } else {
+            filteredRToa[b] = Constants::FILL_VALUE_DOUBLE;
+        }
+    }
+}
+
+uint16_t Vbm::getFlagsAndFills(Pixel& p, valarray<double>& vgtToaReflectances) {
+    uint16_t flags = 0;
+    if (p.radiances[1] != Constants::FILL_VALUE_DOUBLE && p.radiances[2] != Constants::FILL_VALUE_DOUBLE) {
+        flags |= Constants::VGT_B0_GOOD;
+    } else {
+        vgtToaReflectances[0] = Constants::FILL_VALUE_DOUBLE;
+    }
+    bool vgtB2Good = true;
+    for (size_t i = 5; i < 10; i++) {
+        if (p.radiances[i] == Constants::FILL_VALUE_DOUBLE) {
+            vgtB2Good = false;
+            vgtToaReflectances[1] = Constants::FILL_VALUE_DOUBLE;
+            break;
+        }
+    }
+
+    flags |= vgtB2Good ? Constants::VGT_B2_GOOD : 0;
+    bool vgtB3Good = true;
+    for (size_t i = 13; i < 18; i++) {
+        if (p.radiances[i] == Constants::FILL_VALUE_DOUBLE) {
+            vgtB3Good = false;
+            vgtToaReflectances[2] = Constants::FILL_VALUE_DOUBLE;
+            break;
+        }
+    }
+
+    flags |= vgtB3Good ? Constants::VGT_B3_GOOD : 0;
+    if (p.radiances[22] != Constants::FILL_VALUE_DOUBLE && p.radiances[23] != Constants::FILL_VALUE_DOUBLE) {
+        flags |= Constants::VGT_MIR_GOOD;
+    } else {
+        vgtToaReflectances[3] = Constants::FILL_VALUE_DOUBLE;
+    }
+    return flags;
+}
+
+void Vbm::cleanup(valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances, valarray<double>& toaReflectances, valarray<double>& vgtToaReflectances) {
+    surfaceReflectances.resize(surfaceReflectances.size(), 0.0);
+    hyperSpectralReflectances.resize(hyperSpectralReflectances.size(), 0.0);
+    toaReflectances.resize(toaReflectances.size(), 0.0);
+    vgtToaReflectances.resize(vgtToaReflectances.size(), 0.0);
+}
+
+void Vbm::setValues(uint16_t flags, valarray<double>& vgtToaReflectances) {
+    // todo - implement
 }
