@@ -78,57 +78,60 @@ void Ave::accumulateLatLon(double lat, double lon, double& x, double& y, double&
 	z += sin(v);
 }
 
+void Ave::processLine(const Grid & targetGrid, long  targetL, const Grid & sourceGrid, const Accessor & sourceFlagsAccessor) {
+    for(size_t i = 0;i < variableNames.size();i++){
+        const string & variableName = variableNames[i];
+        const Accessor & sourceAccessor = sourceSegment->getAccessor(variableName);
+        Accessor & targetAccessor = targetSegment->getAccessor(variableName);
+        for(long k = targetGrid.getFirstK();k < targetGrid.getFirstK() + targetGrid.getSizeK();k++){
+            for(long targetM = targetGrid.getFirstM();targetM < targetGrid.getFirstM() + targetGrid.getSizeM();targetM++){
+                const size_t targetIndex = targetGrid.getIndex(k, targetL, targetM);
+                double sum = 0.0;
+                long pixelCount = 0;
+                long validCount = 0;
+                for(long sourceL = targetL * averagingFactor + sourceGrid.getMinL();sourceL < (targetL + 1) * averagingFactor + sourceGrid.getMinL();sourceL++){
+                    for(long sourceM = targetM * averagingFactor;sourceM < (targetM + 1) * averagingFactor;sourceM++){
+                        if(!sourceGrid.isValidPosition(k, sourceL, sourceM)){
+                            continue;
+                        }
+                        const size_t sourceIndex = sourceGrid.getIndex(k, sourceL, sourceM);
+                        pixelCount++;
+                        const uint16_t synFlags = sourceFlagsAccessor.getUShort(sourceIndex);
+                        const bool land = (synFlags & Constants::SY2_LAND_FLAG) == Constants::SY2_LAND_FLAG;
+                        const bool cloud = (synFlags & Constants::SY2_CLOUD_FLAG) == Constants::SY2_CLOUD_FLAG;
+                        if(land && !cloud && !sourceAccessor.isFillValue(sourceIndex)){
+                            sum += sourceAccessor.getDouble(sourceIndex);
+                            validCount++;
+                        }
+                    }
+
+                }
+
+                if(validCount == pixelCount){
+                    targetAccessor.setDouble(targetIndex, sum / validCount);
+                }else{
+                    targetAccessor.setFillValue(targetIndex);
+                }
+            }
+
+        }
+
+    }
+
+    averageFlags(targetL);
+    averageLatLon(targetL);
+}
+
 void Ave::averageVariables(Logging& logging, long firstL, long lastL) {
 	const Grid& sourceGrid = sourceSegment->getGrid();
 	const Grid& targetGrid = targetSegment->getGrid();
 
 	const Accessor& sourceFlagsAccessor = sourceSegment->getAccessor("SYN_flags");
 
-	// NOTE: using OpenMP for this loop does not compile on the ARGANS target machine
-	// #pragma omp parallel for
+#pragma omp parallel for
 	for (long targetL = firstL; targetL <= lastL; targetL++) {
 		logging.progress("Averaging line l = " + lexical_cast<string>(targetL), getId());
-
-		for (size_t i = 0; i < variableNames.size(); i++) {
-			const string& variableName = variableNames[i];
-			const Accessor& sourceAccessor = sourceSegment->getAccessor(variableName);
-			Accessor& targetAccessor = targetSegment->getAccessor(variableName);
-
-			for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
-				for (long targetM = targetGrid.getFirstM(); targetM < targetGrid.getFirstM() + targetGrid.getSizeM(); targetM++) {
-					const size_t targetIndex = targetGrid.getIndex(k, targetL, targetM);
-
-					double sum = 0.0;
-					long pixelCount = 0;
-					long validCount = 0;
-
-					for (long sourceL = targetL * averagingFactor + sourceGrid.getMinL(); sourceL < (targetL + 1) * averagingFactor + sourceGrid.getMinL(); sourceL++) {
-						for (long sourceM = targetM * averagingFactor; sourceM < (targetM + 1) * averagingFactor; sourceM++) {
-							if (!sourceGrid.isValidPosition(k, sourceL, sourceM)) {
-								continue;
-							}
-							const size_t sourceIndex = sourceGrid.getIndex(k, sourceL, sourceM);
-
-							pixelCount++;
-							const uint16_t synFlags = sourceFlagsAccessor.getUShort(sourceIndex);
-							const bool land = (synFlags & Constants::SY2_LAND_FLAG) == Constants::SY2_LAND_FLAG;
-							const bool cloud = (synFlags & Constants::SY2_CLOUD_FLAG) == Constants::SY2_CLOUD_FLAG;
-							if (land && !cloud && !sourceAccessor.isFillValue(sourceIndex)) {
-								sum += sourceAccessor.getDouble(sourceIndex);
-								validCount++;
-							}
-						}
-					}
-					if (validCount == pixelCount) {
-						targetAccessor.setDouble(targetIndex, sum / validCount);
-					} else {
-						targetAccessor.setFillValue(targetIndex);
-					}
-				}
-			}
-		}
-		averageFlags(targetL);
-		averageLatLon(targetL);
+		processLine(targetGrid, targetL, sourceGrid, sourceFlagsAccessor);
 	}
 }
 

@@ -39,6 +39,7 @@ private:
     static void accumulateLatLon(double lat, double lon, double& x, double& y, double& z);
     static bool isRadianceName(const string& variableName);
     static void toLatLon(double x, double y, double z, double& lat, double& lon);
+    void processLine(const Grid & targetGrid, long  targetL, const Grid & sourceGrid, const Accessor & sourceFlagsAccessor);
 
     const Segment* sourceSegment;
     Segment* targetSegment;
