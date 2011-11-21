@@ -233,7 +233,7 @@ void Col::process(Context& context) {
 					if (sourceL < 0) {
 						targetAccessor->setFillValue(targetIndex);
 					} else {
-						const long detectorIndex = detectorIndex % 4;
+						const long detectorIndex = sourceL % 4;
 						const size_t sourceIndex = i < 24 ? slnInfoGrid.getIndex(0, 0, detectorIndex) : sloInfoGrid.getIndex(0, 0, detectorIndex);
 						if (sourceAccessor->isFillValue(sourceIndex)) {
 							targetAccessor->setFillValue(targetIndex);
