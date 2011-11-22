@@ -39,23 +39,23 @@ void Vbm::stop(Context& context) {
 }
 
 void Vbm::prepareAuxdata(Context& context) {
-    synLutRhoAtm = &getLookupTable(context, "S3_SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "rho_atm");
-    synLutOlcRatm = &getLookupTable(context, "S3_SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "OLC_R_atm");
-    synLutSlnRatm = &getLookupTable(context, "S3_SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "SLN_R_atm");
-    synLutT = &getLookupTable(context, "S3_SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "t");
+    synLutRhoAtm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "rho_atm");
+    synLutOlcRatm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "OLC_R_atm");
+    synLutSlnRatm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "SLN_R_atm");
+    synLutT = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "t");
     synCo3 = &getAuxdataProvider(context, Constants::AUX_ID_SYRTAX).getVectorDouble("C_O3");
 
-    vgtLutRhoAtm = &getLookupTable(context, "S3_SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "rho_atm");
-    vgtLutRAtm = &getLookupTable(context, "S3_SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "R_atm");
-    vgtLutT = &getLookupTable(context, "S3_SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "t");
+    vgtLutRhoAtm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "rho_atm");
+    vgtLutRAtm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "R_atm");
+    vgtLutT = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "t");
     vgtCo3 = &getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("C_O3");
 
-    vgtBSrfLuts[0] = &getLookupTable(context, "S3_SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "B0_SRF");
-    vgtBSrfLuts[1] = &getLookupTable(context, "S3_SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "B2_SRF");
-    vgtBSrfLuts[2] = &getLookupTable(context, "S3_SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "B3_SRF");
-    vgtBSrfLuts[3] = &getLookupTable(context, "S3_SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "MIR_SRF");
+    vgtBSrfLuts[0] = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "B0_SRF");
+    vgtBSrfLuts[1] = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "B2_SRF");
+    vgtBSrfLuts[2] = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "B3_SRF");
+    vgtBSrfLuts[3] = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "MIR_SRF");
 
-    vgtLutSolarIrradiance = &getLookupTable(context, "S3_SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "solar_irradiance");
+    vgtLutSolarIrradiance = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "solar_irradiance");
 }
 
 void Vbm::prepareTiePointData(Context& context) {
