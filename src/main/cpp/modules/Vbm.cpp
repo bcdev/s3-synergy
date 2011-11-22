@@ -270,7 +270,8 @@ void Vbm::performHyperspectralInterpolation(const long k, const long m, Context&
     }
 }
 
-double Vbm::linearInterpolation(const long k, const long m, const valarray<double>& surfaceReflectances, double wavelength) {
+double Vbm::linearInterpolation(long k, long m, const valarray<double>& surfaceReflectances, const double wavelength) {
+    valarray<double> channelWavelengths(surfaceReflectances.size())
     for(size_t channel = 0; channel < surfaceReflectances.size(); channel++) {
         if(surfaceReflectances[channel] == Constants::FILL_VALUE_DOUBLE) {
             return Constants::FILL_VALUE_DOUBLE;
@@ -278,15 +279,43 @@ double Vbm::linearInterpolation(const long k, const long m, const valarray<doubl
         double channelWavelength;
         if(channel < 18) {
             const size_t index = olciInfoSegment->getGrid().getIndex(k, channel, m);
-            channelWavelength = olciInfoSegment->getAccessor("lambda0").getDouble(index);
+            channelWavelengths[channel] = olciInfoSegment->getAccessor("lambda0").getDouble(index);
         } else {
-            channelWavelength = getSlnWavelength(channel);
+            channelWavelength[channel] = getSlnWavelength(channel);
         }
     }
 
-    // todo - implement
-    return 0.0;
+    return linearInterpolation(channelWavelengths, surfaceReflectances, wavelength);
 }
+
+double Vbm::linearInterpolation(const valarray<double> x, const valarray<double> f, const double wavelength) {
+    size_t x0Index = numeric_limits<size_t>::max();
+    size_t x1Index = numeric_limits<size_t>::max();
+    double x0Delta = numeric_limits<size_t>::max();
+    double x1Delta = numeric_limits<size_t>::max();
+    for(size_t i = 0; i < x.size(); i++) {
+        double delta = std::abs(x[i] - wavelength);
+        if(x[i] <= wavelength) {
+            if(delta < x0Delta) {
+                x0Index = i;
+                x0Delta = delta;
+            }
+        } else {
+            if(delta < x1Delta) {
+                x1Index = i;
+                x1Delta = delta;
+            }
+        }
+    }
+
+    const double x0 = x[x0Index];
+    const double x1 = x[x1Index];
+    const double f0 = f[x0Index];
+    const double f1 = f[x1Index];
+
+    return f0 + (f1 - f0) / (x1 - x0) * (wavelength - x0);
+}
+
 
 double Vbm::getSlnWavelength(size_t channel) {
     switch (channel) {

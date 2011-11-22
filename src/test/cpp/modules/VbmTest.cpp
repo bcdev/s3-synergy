@@ -70,6 +70,33 @@ void VbmTest::testHyperspectralUpscale() {
     CPPUNIT_ASSERT(std::abs(result - 0.85244299269730513062) < 0.0001);
 }
 
+void VbmTest::testLinearInterpolation() {
+    valarray<double> x(5);
+    x[0] = 400;
+    x[1] = 412;
+    x[2] = 422;
+    x[3] = 425;
+    x[4] = 451;
+
+    valarray<double> f(5);
+    f[0] = 0.3;
+    f[1] = 0.5;
+    f[2] = 0.7;
+    f[3] = 0.4;
+    f[4] = 0.2;
+
+    double first = vbm->linearInterpolation(x, f, 403);
+    double second = vbm->linearInterpolation(x, f, 412);
+    double third = vbm->linearInterpolation(x, f, 423);
+    double fourth = vbm->linearInterpolation(x, f, 438);
+
+    CPPUNIT_ASSERT(0.35f == float(first));
+    CPPUNIT_ASSERT(0.5f == float(second));
+    CPPUNIT_ASSERT(0.6f == float(third));
+    CPPUNIT_ASSERT(0.3f == float(fourth));
+}
+
+
 void VbmTest::testClearValarray() {
     valarray<double> test(3);
     test[0] = 0.5;
