@@ -271,17 +271,16 @@ void Vbm::performHyperspectralInterpolation(const long k, const long m, Context&
 }
 
 double Vbm::linearInterpolation(long k, long m, const valarray<double>& surfaceReflectances, const double wavelength) {
-    valarray<double> channelWavelengths(surfaceReflectances.size())
+    valarray<double> channelWavelengths(surfaceReflectances.size());
     for(size_t channel = 0; channel < surfaceReflectances.size(); channel++) {
         if(surfaceReflectances[channel] == Constants::FILL_VALUE_DOUBLE) {
             return Constants::FILL_VALUE_DOUBLE;
         }
-        double channelWavelength;
         if(channel < 18) {
             const size_t index = olciInfoSegment->getGrid().getIndex(k, channel, m);
             channelWavelengths[channel] = olciInfoSegment->getAccessor("lambda0").getDouble(index);
         } else {
-            channelWavelength[channel] = getSlnWavelength(channel);
+            channelWavelengths[channel] = getSlnWavelength(channel);
         }
     }
 

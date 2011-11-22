@@ -21,6 +21,7 @@ class VbmTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(testHyperspectralUpscale);
     CPPUNIT_TEST(testClearValarray);
     CPPUNIT_TEST(testLinearInterpolation);
+    CPPUNIT_TEST(testVbmIntegration);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -39,6 +40,7 @@ private:
     void testHyperspectralUpscale();
     void testClearValarray();
     void testLinearInterpolation();
+    void testVbmIntegration();
 
 };
 

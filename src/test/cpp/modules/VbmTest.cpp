@@ -11,6 +11,10 @@
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
 #include "../../../../src/main/cpp/core/Pixel.h"
+#include "../../../../src/main/cpp/core/Processor.h"
+#include "../../../../src/main/cpp/reader/SynL1Reader.h"
+#include "../../../../src/main/cpp/modules/Col.h"
+#include "../../../../src/main/cpp/writer/SegmentWriter.h"
 
 
 #include "VbmTest.h"
@@ -94,6 +98,21 @@ void VbmTest::testLinearInterpolation() {
     CPPUNIT_ASSERT(0.5f == float(second));
     CPPUNIT_ASSERT(0.6f == float(third));
     CPPUNIT_ASSERT(0.3f == float(fourth));
+}
+
+void VbmTest::testVbmIntegration() {
+    shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
+    shared_ptr<Module> col = shared_ptr<Col>(new Col());
+    shared_ptr<Module> vbm = shared_ptr<Vbm>(new Vbm());
+    shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
+
+    context->addModule(reader);
+    context->addModule(col);
+    context->addModule(vbm);
+    context->addModule(writer);
+
+    Processor processor;
+    processor.process(*context);
 }
 
 
