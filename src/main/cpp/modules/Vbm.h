@@ -74,14 +74,14 @@ private:
     shared_ptr<TiePointInterpolator<double> > tiePointInterpolatorOlc;
     shared_ptr<TiePointInterpolator<double> > tiePointInterpolatorSln;
 
-    valarray<double>* szaOlcTiePoints;
-    valarray<double>* saaOlcTiePoints;
-    valarray<double>* vzaOlcTiePoints;
-    valarray<double>* vzaSlnTiePoints;
+    valarray<double> szaOlcTiePoints;
+    valarray<double> saaOlcTiePoints;
+    valarray<double> vzaOlcTiePoints;
+    valarray<double> vzaSlnTiePoints;
 
-    valarray<double>* waterVapourTiePoints;
-    valarray<double>* airPressureTiePoints;
-    valarray<double>* ozoneTiePoints;
+    valarray<double> waterVapourTiePoints;
+    valarray<double> airPressureTiePoints;
+    valarray<double> ozoneTiePoints;
 
     // todo - sort
 	static double surfaceReflectance(double ozone, double vza, double sza, double solarIrradiance, double radiance,

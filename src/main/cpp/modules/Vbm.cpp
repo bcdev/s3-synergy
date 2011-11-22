@@ -9,7 +9,8 @@
 #include "Vbm.h"
 
 Vbm::Vbm() :
-		BasicModule("VBM"), vgtBSrfLuts(4), synRadianceAccessors(30), synSolarIrradianceAccessors(30) {
+		BasicModule("VBM"), vgtBSrfLuts(4), synRadianceAccessors(30), synSolarIrradianceAccessors(30), szaOlcTiePoints(0), saaOlcTiePoints(0),
+		vzaOlcTiePoints(0), vzaSlnTiePoints(0), waterVapourTiePoints(0), airPressureTiePoints(0), ozoneTiePoints(0) {
 }
 
 Vbm::~Vbm() {
@@ -62,16 +63,16 @@ void Vbm::prepareTiePointData(Context& context) {
     const Segment& olciTiepointSegment = context.getSegment(Constants::SEGMENT_OLC_TP);
     const Segment& slnTiepointSegment = context.getSegment(Constants::SEGMENT_SLN_TP);
 
-    copy(olciTiepointSegment.getAccessor("SZA").getDoubles(), (*szaOlcTiePoints));
-    copy(olciTiepointSegment.getAccessor("SAA").getDoubles(), (*saaOlcTiePoints));
-    copy(olciTiepointSegment.getAccessor("OLC_VZA").getDoubles(), (*vzaOlcTiePoints));
-    copy(slnTiepointSegment.getAccessor("SLN_VZA").getDoubles(), (*vzaSlnTiePoints));
+    copy(olciTiepointSegment.getAccessor("SZA").getDoubles(), szaOlcTiePoints);
+    copy(olciTiepointSegment.getAccessor("SAA").getDoubles(), saaOlcTiePoints);
+    copy(olciTiepointSegment.getAccessor("OLC_VZA").getDoubles(), vzaOlcTiePoints);
+    copy(slnTiepointSegment.getAccessor("SLN_VZA").getDoubles(), vzaSlnTiePoints);
 
-    copy(olciTiepointSegment.getAccessor("ozone").getDoubles(), (*ozoneTiePoints));
-    copy(olciTiepointSegment.getAccessor("air_pressure").getDoubles(), (*airPressureTiePoints));
+    copy(olciTiepointSegment.getAccessor("ozone").getDoubles(), ozoneTiePoints);
+    copy(olciTiepointSegment.getAccessor("air_pressure").getDoubles(), airPressureTiePoints);
 
     if (olciTiepointSegment.hasVariable("water_vapour")) {
-        copy(olciTiepointSegment.getAccessor("water_vapour").getDoubles(), (*waterVapourTiePoints));
+        copy(olciTiepointSegment.getAccessor("water_vapour").getDoubles(), waterVapourTiePoints);
     }
 
     const valarray<double> olciLats = olciTiepointSegment.getAccessor("OLC_TP_lat").getDoubles();
@@ -247,20 +248,20 @@ void Vbm::setupPixel(Pixel& p, size_t index) {
 
     tiePointInterpolatorOlc->prepare(p.lat, p.lon, tpiWeights, tpiIndexes);
 
-    p.sza = tiePointInterpolatorOlc->interpolate((*szaOlcTiePoints), tpiWeights, tpiIndexes);
-    p.saa = tiePointInterpolatorOlc->interpolate((*saaOlcTiePoints), tpiWeights, tpiIndexes);
-    p.vzaOlc = tiePointInterpolatorOlc->interpolate((*vzaOlcTiePoints), tpiWeights, tpiIndexes);
+    p.sza = tiePointInterpolatorOlc->interpolate(szaOlcTiePoints, tpiWeights, tpiIndexes);
+    p.saa = tiePointInterpolatorOlc->interpolate(saaOlcTiePoints, tpiWeights, tpiIndexes);
+    p.vzaOlc = tiePointInterpolatorOlc->interpolate(vzaOlcTiePoints, tpiWeights, tpiIndexes);
 
-    p.airPressure = tiePointInterpolatorOlc->interpolate((*airPressureTiePoints), tpiWeights, tpiIndexes);
-    p.ozone = tiePointInterpolatorOlc->interpolate((*ozoneTiePoints), tpiWeights, tpiIndexes);
-    if (waterVapourTiePoints->size() != 0) {
-        p.waterVapour = tiePointInterpolatorOlc->interpolate((*waterVapourTiePoints), tpiWeights, tpiIndexes);
+    p.airPressure = tiePointInterpolatorOlc->interpolate(airPressureTiePoints, tpiWeights, tpiIndexes);
+    p.ozone = tiePointInterpolatorOlc->interpolate(ozoneTiePoints, tpiWeights, tpiIndexes);
+    if (waterVapourTiePoints.size() != 0) {
+        p.waterVapour = tiePointInterpolatorOlc->interpolate(waterVapourTiePoints, tpiWeights, tpiIndexes);
     } else {
         p.waterVapour = 0.2;
     }
 
     tiePointInterpolatorSln->prepare(p.lat, p.lon, tpiWeights, tpiIndexes);
-    p.vzaSln = tiePointInterpolatorSln->interpolate((*vzaSlnTiePoints), tpiWeights, tpiIndexes);
+    p.vzaSln = tiePointInterpolatorSln->interpolate(vzaSlnTiePoints, tpiWeights, tpiIndexes);
 }
 
 void Vbm::performHyperspectralInterpolation(const long k, const long m, Context& context, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances) {
