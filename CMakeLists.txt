@@ -294,16 +294,15 @@ add_executable(syl2
     ${CORE_MAIN_SOURCES}
     ${UTIL_MAIN_SOURCES}
 	${READER_MAIN_SOURCES}
-	${MODULES_MAIN_SOURCES}
 	${WRITER_MAIN_SOURCES}
+    ${MODULES_MAIN_SOURCES}
 )
 target_link_libraries(syl2
-	netcdf
-#	Safe
-#	Xfdu
-	xerces-c
-	xqilla
-	boost_system
-	boost_filesystem
+    netcdf
+    xerces-c
+    xqilla
+    boost_regex
+    boost_system
+    boost_filesystem
 )
 set_property(TARGET syl2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
