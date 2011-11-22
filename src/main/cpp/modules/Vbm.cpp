@@ -5,21 +5,40 @@
  *      Author: thomasstorm
  */
 
+#include "Aer.h"
 #include "Vbm.h"
 
 Vbm::Vbm() :
-		BasicModule("PCL"), vgtBSrfLuts(4) {
+		BasicModule("PCL"), vgtBSrfLuts(4), synRadianceAccessors(30), synSolarIrradianceAccessors(30) {
 }
 
 Vbm::~Vbm() {
 }
 
 void Vbm::start(Context& context) {
-    this->context = &context;
     AuxdataProvider& radiativeTransfer = getAuxdataProvider(context, Constants::AUX_ID_VPRTAX);
     amin = radiativeTransfer.getShort("AMIN");
     collocatedSegment = &context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+    olciInfoSegment = &context.getSegment(Constants::SEGMENT_OLC_INFO);
 
+    synLatitudeAccessor = &collocatedSegment->getAccessor("latitude");
+    synLongitudeAccessor = &collocatedSegment->getAccessor("longitude");
+    for(size_t i = 0; i < 30; i++) {
+        const string index = lexical_cast<string>(i + 1);
+        synRadianceAccessors[i] = &collocatedSegment->getAccessor("L_" + index);
+        synSolarIrradianceAccessors[i] = &collocatedSegment->getAccessor("solar_irradiance_" + index);
+    }
+
+    prepareAuxdata(context);
+    prepareTiePointData(context);
+
+    addVariables();
+}
+
+void Vbm::stop(Context& context) {
+}
+
+void Vbm::prepareAuxdata(Context& context) {
     synLutRhoAtm = &getLookupTable(context, Constants::AUX_ID_SYRTAX, "rho_atm");
     synLutOlcRatm = &getLookupTable(context, Constants::AUX_ID_SYRTAX, "OLC_R_atm");
     synLutSlnRatm = &getLookupTable(context, Constants::AUX_ID_SYRTAX, "SLN_R_atm");
@@ -39,7 +58,36 @@ void Vbm::start(Context& context) {
     vgtLutSolarIrradiance = &getLookupTable(context, Constants::AUX_ID_VPSRAX, "solar_irradiance");
 }
 
-void Vbm::stop(Context& context) {
+void Vbm::prepareTiePointData(Context& context) {
+    const Segment& olciTiepointSegment = context.getSegment(Constants::SEGMENT_OLC_TP);
+    const Segment& slnTiepointSegment = context.getSegment(Constants::SEGMENT_SLN_TP);
+
+    copy(olciTiepointSegment.getAccessor("SZA").getDoubles(), (*szaOlcTiePoints));
+    copy(olciTiepointSegment.getAccessor("SAA").getDoubles(), (*saaOlcTiePoints));
+    copy(olciTiepointSegment.getAccessor("OLC_VZA").getDoubles(), (*vzaOlcTiePoints));
+    copy(slnTiepointSegment.getAccessor("SLN_VZA").getDoubles(), (*vzaSlnTiePoints));
+
+    copy(olciTiepointSegment.getAccessor("ozone").getDoubles(), (*ozoneTiePoints));
+    copy(olciTiepointSegment.getAccessor("air_pressure").getDoubles(), (*airPressureTiePoints));
+
+    if (olciTiepointSegment.hasVariable("water_vapour")) {
+        copy(olciTiepointSegment.getAccessor("water_vapour").getDoubles(), (*waterVapourTiePoints));
+    }
+
+    const valarray<double> olciLats = olciTiepointSegment.getAccessor("OLC_TP_lat").getDoubles();
+    const valarray<double> olciLons = olciTiepointSegment.getAccessor("OLC_TP_lon").getDoubles();
+    const valarray<double> slnLats = slnTiepointSegment.getAccessor("SLN_TP_lat").getDoubles();
+    const valarray<double> slnLons = slnTiepointSegment.getAccessor("SLN_TP_lon").getDoubles();
+    tiePointInterpolatorOlc = shared_ptr<TiePointInterpolator<double > >(new TiePointInterpolator<double>(olciLons, olciLats));
+    tiePointInterpolatorSln = shared_ptr<TiePointInterpolator<double > >(new TiePointInterpolator<double>(slnLons, slnLats));
+}
+
+void Vbm::addVariables() {
+    vgtFlagsAccessor = &collocatedSegment->addVariable("SM", Constants::TYPE_UBYTE);
+    vgtB0Accessor = &collocatedSegment->addVariable("B0", Constants::TYPE_UBYTE);
+    vgtB2Accessor = &collocatedSegment->addVariable("B2", Constants::TYPE_UBYTE);
+    vgtB3Accessor = &collocatedSegment->addVariable("B3", Constants::TYPE_UBYTE);
+    vgtMirAccessor = &collocatedSegment->addVariable("MIR", Constants::TYPE_UBYTE);
 }
 
 void Vbm::process(Context& context) {
@@ -64,13 +112,13 @@ void Vbm::process(Context& context) {
                 setupPixel(p, index);
                 p.aot = computeT550(p.lat);
                 downscale(p, surfaceReflectances);
-                performHyperspectralInterpolation(surfaceReflectances, hyperSpectralReflectances);
+                performHyperspectralInterpolation(k, m, context, surfaceReflectances, hyperSpectralReflectances);
                 performHyperspectralUpscaling(hyperSpectralReflectances, p, toaReflectances);
                 performHyperspectralFiltering(toaReflectances, vgtToaReflectances);
 
-                uint16_t flags = getFlagsAndFills(p, vgtToaReflectances);
+                const uint8_t flags = getFlagsAndFills(p, vgtToaReflectances);
 
-                setValues(flags, vgtToaReflectances);
+                setValues(index, flags, vgtToaReflectances);
 
                 cleanup(surfaceReflectances, hyperSpectralReflectances, toaReflectances, vgtToaReflectances);
             }
@@ -186,20 +234,104 @@ double Vbm::surfaceReflectance(double ozone, double vza, double sza, double sola
 }
 
 void Vbm::setupPixel(Pixel& p, size_t index) {
-    // todo - implement
     p.aerosolModel = amin;
+    for(size_t i = 0; i < 30; i++) {
+        p.radiances = synRadianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synRadianceAccessors[i]->getDouble(index);
+        p.solarIrradiances = synSolarIrradianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synSolarIrradianceAccessors[i]->getDouble(index);
+    }
+    p.lat = synLatitudeAccessor->getDouble(index);
+    p.lon = synLongitudeAccessor->getDouble(index);
+
+    valarray<double> tpiWeights(1);
+    valarray<size_t> tpiIndexes(1);
+
+    tiePointInterpolatorOlc->prepare(p.lat, p.lon, tpiWeights, tpiIndexes);
+
+    p.sza = tiePointInterpolatorOlc->interpolate((*szaOlcTiePoints), tpiWeights, tpiIndexes);
+    p.saa = tiePointInterpolatorOlc->interpolate((*saaOlcTiePoints), tpiWeights, tpiIndexes);
+    p.vzaOlc = tiePointInterpolatorOlc->interpolate((*vzaOlcTiePoints), tpiWeights, tpiIndexes);
+
+    p.airPressure = tiePointInterpolatorOlc->interpolate((*airPressureTiePoints), tpiWeights, tpiIndexes);
+    p.ozone = tiePointInterpolatorOlc->interpolate((*ozoneTiePoints), tpiWeights, tpiIndexes);
+    if (waterVapourTiePoints->size() != 0) {
+        p.waterVapour = tiePointInterpolatorOlc->interpolate((*waterVapourTiePoints), tpiWeights, tpiIndexes);
+    } else {
+        p.waterVapour = 0.2;
+    }
+
+    tiePointInterpolatorSln->prepare(p.lat, p.lon, tpiWeights, tpiIndexes);
+    p.vzaSln = tiePointInterpolatorSln->interpolate((*vzaSlnTiePoints), tpiWeights, tpiIndexes);
 }
 
-void Vbm::performHyperspectralInterpolation(const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances) {
-    const valarray<double>& wavelengths = getAuxdataProvider(*context, Constants::AUX_ID_VPRTAX).getVectorDouble("wavelength");
+void Vbm::performHyperspectralInterpolation(const long k, const long m, Context& context, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances) {
+    const valarray<double>& wavelengths = getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("wavelength");
     for(size_t i = 0; i < wavelengths.size(); i++) {
-        hyperSpectralReflectances[i] = linearInterpolation(surfaceReflectances, wavelengths[i]);
+        hyperSpectralReflectances[i] = linearInterpolation(k, m, surfaceReflectances, wavelengths[i]);
     }
 }
 
-double Vbm::linearInterpolation(const valarray<double>& surfaceReflectances, double wavelength) {
-    // todo - implement
-    return 0.0;
+double Vbm::linearInterpolation(long k, long m, const valarray<double>& surfaceReflectances, const double wavelength) {
+    valarray<double> channelWavelengths(surfaceReflectances.size());
+    for(size_t channel = 0; channel < surfaceReflectances.size(); channel++) {
+        if(surfaceReflectances[channel] == Constants::FILL_VALUE_DOUBLE) {
+            return Constants::FILL_VALUE_DOUBLE;
+        }
+        if(channel < 18) {
+            const size_t index = olciInfoSegment->getGrid().getIndex(k, channel, m);
+            channelWavelengths[channel] = olciInfoSegment->getAccessor("lambda0").getDouble(index);
+        } else {
+            channelWavelengths[channel] = getSlnWavelength(channel);
+        }
+    }
+
+    return linearInterpolation(channelWavelengths, surfaceReflectances, wavelength);
+}
+
+double Vbm::linearInterpolation(const valarray<double> x, const valarray<double> f, const double wavelength) {
+    size_t x0Index = numeric_limits<size_t>::max();
+    size_t x1Index = numeric_limits<size_t>::max();
+    double x0Delta = numeric_limits<size_t>::max();
+    double x1Delta = numeric_limits<size_t>::max();
+    for(size_t i = 0; i < x.size(); i++) {
+        double delta = std::abs(x[i] - wavelength);
+        if(x[i] <= wavelength) {
+            if(delta < x0Delta) {
+                x0Index = i;
+                x0Delta = delta;
+            }
+        } else {
+            if(delta < x1Delta) {
+                x1Index = i;
+                x1Delta = delta;
+            }
+        }
+    }
+
+    const double x0 = x[x0Index];
+    const double x1 = x[x1Index];
+    const double f0 = f[x0Index];
+    const double f1 = f[x1Index];
+
+    return f0 + (f1 - f0) / (x1 - x0) * (wavelength - x0);
+}
+
+
+double Vbm::getSlnWavelength(size_t channel) {
+    switch (channel) {
+    case 18:
+        return 550;
+    case 19:
+        return 665;
+    case 20:
+        return 865;
+    case 21:
+        return 1375;
+    case 22:
+        return 1610;
+    case 23:
+        return 2250;
+    }
+    BOOST_THROW_EXCEPTION(logic_error("invalid channel index '" + lexical_cast<string>(channel) + "'"));
 }
 
 void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralReflectances, const Pixel& p, valarray<double>& toaReflectances) {
@@ -276,8 +408,8 @@ void Vbm::performHyperspectralFiltering(valarray<double>& toaReflectances, valar
     }
 }
 
-uint16_t Vbm::getFlagsAndFills(Pixel& p, valarray<double>& vgtToaReflectances) {
-    uint16_t flags = 0;
+uint8_t Vbm::getFlagsAndFills(Pixel& p, valarray<double>& vgtToaReflectances) {
+    uint8_t flags = 0;
     if (p.radiances[1] != Constants::FILL_VALUE_DOUBLE && p.radiances[2] != Constants::FILL_VALUE_DOUBLE) {
         flags |= Constants::VGT_B0_GOOD;
     } else {
@@ -318,6 +450,20 @@ void Vbm::cleanup(valarray<double>& surfaceReflectances, valarray<double>& hyper
     vgtToaReflectances.resize(vgtToaReflectances.size(), 0.0);
 }
 
-void Vbm::setValues(uint16_t flags, valarray<double>& vgtToaReflectances) {
-    // todo - implement
+void Vbm::setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances) {
+    vgtFlagsAccessor->setUByte(index, flags);
+    valarray<Accessor*> targetAccessors(4);
+    targetAccessors[0] = vgtB0Accessor;
+    targetAccessors[1] = vgtB2Accessor;
+    targetAccessors[2] = vgtB3Accessor;
+    targetAccessors[3] = vgtMirAccessor;
+
+    for (size_t i = 0; i < targetAccessors.size(); i++) {
+        const double value = vgtToaReflectances[i];
+        if (value != Constants::FILL_VALUE_DOUBLE) {
+            targetAccessors[i]->setDouble(index, value);
+        } else {
+            targetAccessors[i]->setFillValue(index);
+        }
+    }
 }

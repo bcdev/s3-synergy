@@ -11,6 +11,10 @@
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
 #include "../../../../src/main/cpp/core/Pixel.h"
+#include "../../../../src/main/cpp/core/Processor.h"
+#include "../../../../src/main/cpp/reader/SynL1Reader.h"
+#include "../../../../src/main/cpp/modules/Col.h"
+#include "../../../../src/main/cpp/writer/SegmentWriter.h"
 
 
 #include "VbmTest.h"
@@ -69,6 +73,48 @@ void VbmTest::testHyperspectralUpscale() {
     const double result = vbm->hyperspectralUpscale(64.3, 68.2, 0.3, 0.5, 0.2, 0.1, 0.4, 0.8, 0.9);
     CPPUNIT_ASSERT(std::abs(result - 0.85244299269730513062) < 0.0001);
 }
+
+void VbmTest::testLinearInterpolation() {
+    valarray<double> x(5);
+    x[0] = 400;
+    x[1] = 412;
+    x[2] = 422;
+    x[3] = 425;
+    x[4] = 451;
+
+    valarray<double> f(5);
+    f[0] = 0.3;
+    f[1] = 0.5;
+    f[2] = 0.7;
+    f[3] = 0.4;
+    f[4] = 0.2;
+
+    double first = vbm->linearInterpolation(x, f, 403);
+    double second = vbm->linearInterpolation(x, f, 412);
+    double third = vbm->linearInterpolation(x, f, 423);
+    double fourth = vbm->linearInterpolation(x, f, 438);
+
+    CPPUNIT_ASSERT(0.35f == float(first));
+    CPPUNIT_ASSERT(0.5f == float(second));
+    CPPUNIT_ASSERT(0.6f == float(third));
+    CPPUNIT_ASSERT(0.3f == float(fourth));
+}
+
+void VbmTest::testVbmIntegration() {
+    shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
+    shared_ptr<Module> col = shared_ptr<Col>(new Col());
+    shared_ptr<Module> vbm = shared_ptr<Vbm>(new Vbm());
+    shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
+
+    context->addModule(reader);
+    context->addModule(col);
+    context->addModule(vbm);
+    context->addModule(writer);
+
+    Processor processor;
+    processor.process(*context);
+}
+
 
 void VbmTest::testClearValarray() {
     valarray<double> test(3);
