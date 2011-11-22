@@ -18,7 +18,7 @@ using std::set;
 
 class DictionaryParser {
 public:
-    DictionaryParser(bool writeBreakpoint = false);
+    DictionaryParser();
     virtual ~DictionaryParser();
 
     shared_ptr<Dictionary> parse(const string& path);

@@ -7,10 +7,7 @@
 
 #include "DictionaryParser.h"
 
-DictionaryParser::DictionaryParser(bool writeBreakpoint) : xmlParser(), exclusionSet() {
-    if(!writeBreakpoint) {
-        exclusionSet.insert("breakpoint_variables.xml");
-    }
+DictionaryParser::DictionaryParser() : xmlParser(), exclusionSet() {
     exclusionSet.insert("dimensions.xml");
 }
 
