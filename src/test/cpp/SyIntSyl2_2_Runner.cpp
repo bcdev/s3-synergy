@@ -6,7 +6,6 @@
  */
 
 // CppUnit site http://sourceforge.net/projects/cppunit/files
-
 #include <cstdlib>
 #include <iostream>
 
