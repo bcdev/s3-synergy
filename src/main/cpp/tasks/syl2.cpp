@@ -1,82 +1,91 @@
 /*
- * This code is outdated.
+ * syl2.cpp
+ *
+ *  Created on: Nov 22, 2011
+ *      Author: ralf
  */
 
-#include <time.h>
-#include <unistd.h>
-#include <vector>
+#include "../../../../src/main/cpp/core/Context.h"
+#include "../../../../src/main/cpp/core/ExitCode.h"
+#include "../../../../src/main/cpp/core/Processor.h"
+#include "../../../../src/main/cpp/modules/Aer.h"
+#include "../../../../src/main/cpp/modules/Aei.h"
+#include "../../../../src/main/cpp/modules/Ave.h"
+#include "../../../../src/main/cpp/modules/Aco.h"
+#include "../../../../src/main/cpp/modules/Col.h"
+#include "../../../../src/main/cpp/modules/Pcl.h"
+#include "../../../../src/main/cpp/reader/SynL1Reader.h"
+#include "../../../../src/main/cpp/util/DictionaryParser.h"
+#include "../../../../src/main/cpp/util/JobOrderParser.h"
+#include "../../../../src/main/cpp/writer/SynL2Writer.h"
 
-#include "../core/Processor.h"
-#include "../util/JobOrderParser.h"
-#include "../util/Logger.h"
-#include "../reader/L1cReader.h"
-#include "../writer/SynL2Writer.h"
-#include "../modules/TestModule.h"
-
-#include <iostream>
-
-void logIOParameters(JobOrder& jobOrder, DefaultLogging* logger);
+void logIOParameters(JobOrder& jobOrder, Logging& logging);
 
 int main(int argc, char* argv[]) {
 	if (argc < 2) {
 		std::cerr << "Missing job order file." << std::endl;
-		std::cerr << "Usage: " << argv[0] << " <jobOrderFile>." << std::endl;
-		exit(128);
+		std::cerr << "Usage: " << argv[0] << " <jobOrderPath>" << std::endl;
+		return ExitCode::FAILURE;
 	}
-	ErrorHandler errorHandler;
-	try {
+	if (getenv("S3_SYNERGY_HOME") == NULL) {
+		std::cerr << "The test runner cannot be executed because the" << std::endl;
+		std::cerr << "'S3_SYNERGY_HOME' environment variable has not" << std::endl;
+		std::cerr << "been set." << std::endl;
+		return ExitCode::FAILURE;
+	}
+
+	Context context;
+    try {
 		XPathInitializer init;
 
-		string jobOrderXml = string(argv[1]);
+		shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
+	    context.setErrorHandler(errorHandler);
 
-		JobOrderParser parser;
-		JobOrder* jobOrder = parser.parse(jobOrderXml);
+	    shared_ptr<JobOrderParser> jobOrderParser = shared_ptr<JobOrderParser>(new JobOrderParser());
+		const string jobOrderPath = string(argv[1]);
 
-		// set up logger
-		// TODO - use argument for log file name/path
+	    shared_ptr<JobOrder> jobOrder = jobOrderParser->parse(jobOrderPath);
+	    context.setJobOrder(jobOrder);
+
 		string logFileName = "LOG.";
 		logFileName.append(jobOrder->getIpfConfiguration().getOrderId());
-		DefaultLogging logger(logFileName);
-		logger.setProcessorVersion(jobOrder->getIpfConfiguration().getVersion());
-		logger.setOutLogLevel(jobOrder->getIpfConfiguration().getStandardLogLevel());
-		logger.setErrLogLevel(jobOrder->getIpfConfiguration().getErrorLogLevel());
+	    shared_ptr<Logging> logging = jobOrderParser->createLogging(logFileName);
+	    context.setLogging(logging);
 
-		Dictionary* dict = new Dictionary();
+	    const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
+	    shared_ptr<Dictionary> dictionary = DictionaryParser().parse(S3_SYNERGY_HOME + "/src/main/resources/dictionary");
+	    context.setDictionary(dictionary);
 
-		// configure modules
-		// TODO - replace "SYL2" by 'argv[0]'
-		SynL1Reader reader;
-//		L1cReader reader(
-//				jobOrder.getProcessorConfiguration("SYL2").getInputList()[0].getFileNames()[0]);
-		SynL2SegmentProvider test;
-		SynL2Writer writer(
-				jobOrder->getIpfProcessor("SYL2").getOutputList()[0].getFileName());
+		shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
+		shared_ptr<Module> col = shared_ptr<Module>(new Col());
+		shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
+		shared_ptr<Module> ave = shared_ptr<Module>(new Ave());
+		shared_ptr<Module> aer = shared_ptr<Module>(new Aer());
+		shared_ptr<Module> aei = shared_ptr<Module>(new Aei());
+		shared_ptr<Module> aco = shared_ptr<Module>(new Aco());
+		shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
+
+		context.addModule(reader);
+		context.addModule(col);
+		context.addModule(pcl);
+		context.addModule(ave);
+		context.addModule(aer);
+		context.addModule(aei);
+		context.addModule(aco);
+		context.addModule(writer);
 
 		Processor processor;
-
-		Context context;
-		context.setLogging(&logger);
-		context.setErrorHandler(&errorHandler);
-		context.setJobOrder(jobOrder);
-		context.addModule(reader);
-		context.addModule(test);
-		context.addModule(writer);
-		context.setDictionary(dict);
 		processor.process(context);
-
-		logger.info("Processing complete. Exit code: 0.", "Main");
-		return 0;
+		return ExitCode::OK;
 	} catch (exception& e) {
-		std::cerr
-				<< "An error has occurred while initializing the processor. Error Message:\n";
+		std::cerr << "An error has occurred while initializing the processor. Error Message:\n";
 		std::cerr << e.what() << std::endl;
 		std::cerr << "The system will exit.";
-		exit(ExitCode::FAILURE);
+		return ExitCode::FAILURE;
 	}
-	return 0;
 }
 
-void logIOParameters(JobOrder& jobOrder, DefaultLogging* logger) {
+void logIOParameters(JobOrder& jobOrder, Logging& logging) {
 	const vector<IpfProcessor>& processorConfigurations =
 			jobOrder.getIpfProcessors();
 	for (size_t k = 0; k < processorConfigurations.size(); k++) {
@@ -86,14 +95,14 @@ void logIOParameters(JobOrder& jobOrder, DefaultLogging* logger) {
 			const vector<string>& inputFileNames = inputList[i].getFileNames();
 			for (size_t j = 0; j < inputFileNames.size(); j++) {
 				const string message = "Input file: " + inputFileNames[j];
-				logger->info(message, "JobOrder");
+				logging.info(message, "JobOrder");
 			}
 		}
 		const vector<Output>& outputList =
 				processorConfigurations[k].getOutputList();
 		for (size_t i = 0; i < outputList.size(); i++) {
 			const string message = "Output file: " + outputList[i].getFileName();
-			logger->info(message, "JobOrder");
+			logging.info(message, "JobOrder");
 		}
 	}
 }

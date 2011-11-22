@@ -2,14 +2,14 @@
     <Ipf_Conf>
         <Processor_Name>S3L2PP-SYN</Processor_Name>
         <Version>01.00</Version>
-        <Stdout_Log_Level>DEBUG</Stdout_Log_Level> <!-- Default: INFO -->
-        <Stderr_Log_Level>DEBUG</Stderr_Log_Level> <!-- Default: INFO -->
+        <Stdout_Log_Level>PROGRESS</Stdout_Log_Level> <!-- Default: INFO -->
+        <Stderr_Log_Level>PROGRESS</Stderr_Log_Level> <!-- Default: INFO -->
         <Test>true</Test>
-        <Breakpoint_Enable>true</Breakpoint_Enable>
+        <Breakpoint_Enable>false</Breakpoint_Enable>
         <Acquisition_Station>unknown</Acquisition_Station>
         <Processing_Station>unknown</Processing_Station>
         <Config_Files>
-            <Conf_File_Name>src/test/resources/config/config.xml</Conf_File_Name>
+            <Conf_File_Name>not used</Conf_File_Name>
         </Config_Files>
         <Sensing_Time>
             <Start>20101214_000000.0000</Start>
@@ -19,26 +19,6 @@
             <Processing_Parameter>
                 <Name>Segment_Line_Count</Name>
                 <Value>2000</Value> <!-- Value range: [8, 2000], Default: 2000 -->
-            </Processing_Parameter>
-            <Processing_Parameter>
-                <Name>VGT_Northernmost_Latitude</Name>
-                <Value>75.0</Value> <!-- Value range: [-56.0, 75.0], Default: 75.0 -->
-            </Processing_Parameter>
-            <Processing_Parameter>
-                <Name>VGT_Southernmost_Latitude</Name>
-                <Value>-56.0</Value> <!-- Value range: [-56.0, 75.0], Default: -56.0 -->
-            </Processing_Parameter>
-            <Processing_Parameter>
-                <Name>VGT_Westernmost_Longitude</Name>
-                <Value>-180.0</Value> <!-- Value range: [-180.0, 180.0], Default: -180.0 -->
-            </Processing_Parameter>
-            <Processing_Parameter>
-                <Name>VGT_Easternmost_Longitude</Name>
-                <Value>180.0</Value> <!-- Value range: [-180.0, 180.0], Default: 180.0 -->
-            </Processing_Parameter>
-            <Processing_Parameter>
-                <Name>VGT_Synthesis_Period</Name>
-                <Value>1</Value> <!-- Value set: {1, 10}, Default: 1 -->
             </Processing_Parameter>
         </Dynamic_Processing_Parameters>
     </Ipf_Conf>
@@ -55,11 +35,11 @@
                     </List_of_File_Names>
                 </Input>
             </List_of_Inputs>
-            <List_of_Outputs count="1">
+            <List_of_Outputs count="0">
                 <Output>
                     <File_Type>SY2</File_Type>
                     <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
-                    <File_Name>data/SY2/test/some_file_name</File_Name>
+                    <File_Name>data/SY2/SY_SYS_SYL2_2/S3A_SY_2_SYN____2013621T10920_2013621T101413_0270_001_002_0001_ARG_D_NT_TDS_01.SAFE</File_Name>
                 </Output>
             </List_of_Outputs>
         </Ipf_Proc>

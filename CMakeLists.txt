@@ -289,21 +289,21 @@ set_property(TARGET sy_unt_vbm PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 ##
 # Project main targets
 #
-#add_executable(syl2
-#	src/main/cpp/tasks/*.cpp
-#	${READER_MAIN_SOURCES}
-#	${MODULES_MAIN_SOURCES}
-#	${WRITER_MAIN_SOURCES}
-#	${CORE_MAIN_SOURCES}
-#	${UTIL_MAIN_SOURCES}
-#)
-#target_link_libraries(syl2
-#	netcdf
+add_executable(syl2
+	src/main/cpp/tasks/syl2.cpp
+    ${CORE_MAIN_SOURCES}
+    ${UTIL_MAIN_SOURCES}
+	${READER_MAIN_SOURCES}
+	${MODULES_MAIN_SOURCES}
+	${WRITER_MAIN_SOURCES}
+)
+target_link_libraries(syl2
+	netcdf
 #	Safe
 #	Xfdu
-#	xerces-c
-#	xqilla
-#	boost_system
-#	boost_filesystem
-#)
-#set_property(TARGET syl2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+	xerces-c
+	xqilla
+	boost_system
+	boost_filesystem
+)
+set_property(TARGET syl2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
