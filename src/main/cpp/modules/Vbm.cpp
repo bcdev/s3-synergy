@@ -51,11 +51,13 @@ void Vbm::prepareAuxdata(Context& context) {
     vgtLutT = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "t");
     vgtCo3 = &getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("C_O3");
 
+    // TODO - these are vectors, not LUTs
     vgtBSrfLuts[0] = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "B0_SRF");
     vgtBSrfLuts[1] = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "B2_SRF");
     vgtBSrfLuts[2] = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "B3_SRF");
     vgtBSrfLuts[3] = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "MIR_SRF");
 
+    // TODO - this is a vector, not a LUT
     vgtLutSolarIrradiance = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "solar_irradiance");
 }
 
@@ -105,6 +107,7 @@ void Vbm::process(Context& context) {
 
     Pixel p;
 
+    // TODO - optimization: parallelize loop
     for(long l = firstL; l <= lastL; l++) {
         for(long m = collocatedGrid.getFirstM(); m <= collocatedGrid.getMaxM(); m++) {
             for(long k = collocatedGrid.getFirstK(); k <= collocatedGrid.getMaxK(); k++) {
@@ -121,6 +124,7 @@ void Vbm::process(Context& context) {
 
                 setValues(index, flags, vgtToaReflectances);
 
+                // TODO - this method should not be necessary, if all channels are computed or filled correctly in the previous steps
                 cleanup(surfaceReflectances, hyperSpectralReflectances, toaReflectances, vgtToaReflectances);
             }
         }
@@ -128,6 +132,7 @@ void Vbm::process(Context& context) {
 }
 
 void Vbm::downscale(const Pixel& p, valarray<double>& surfReflNadirSyn) {
+	// TODO - optimization: don't allocate new storage
     valarray<double> coordinates(7);
     coordinates[0] = p.airPressure;
     coordinates[1] = p.waterVapour;
@@ -205,6 +210,7 @@ void Vbm::downscale(const Pixel& p, valarray<double>& surfReflNadirSyn) {
     coordinates[4] = p.aerosolModel;
     synLutT->getVector(&coordinates[0], tViewSln, f, w);
 
+	// TODO - only last three channels shall be used, first three are already present in OLC
     for(size_t i = 18; i < 24; i++) {
         surfReflNadirSyn[i] = surfaceReflectance(
                 p.ozone,
@@ -265,6 +271,7 @@ void Vbm::setupPixel(Pixel& p, size_t index) {
 }
 
 void Vbm::performHyperspectralInterpolation(const long k, const long m, Context& context, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances) {
+	// TODO - optimization: use field
     const valarray<double>& wavelengths = getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("wavelength");
     for(size_t i = 0; i < wavelengths.size(); i++) {
         hyperSpectralReflectances[i] = linearInterpolation(k, m, surfaceReflectances, wavelengths[i]);
@@ -272,9 +279,11 @@ void Vbm::performHyperspectralInterpolation(const long k, const long m, Context&
 }
 
 double Vbm::linearInterpolation(long k, long m, const valarray<double>& surfaceReflectances, const double wavelength) {
+	// TODO - compute channel wavelengths only once, they are the same for all lines
     valarray<double> channelWavelengths(surfaceReflectances.size());
     for(size_t channel = 0; channel < surfaceReflectances.size(); channel++) {
         if(surfaceReflectances[channel] == Constants::FILL_VALUE_DOUBLE) {
+        	// TODO - do the linear interpolation with the nearest channels where there are no fill values
             return Constants::FILL_VALUE_DOUBLE;
         }
         if(channel < 18) {
@@ -289,6 +298,7 @@ double Vbm::linearInterpolation(long k, long m, const valarray<double>& surfaceR
 }
 
 double Vbm::linearInterpolation(const valarray<double> x, const valarray<double> f, const double wavelength) {
+	// TODO - compute indexes only once, they are the same for all lines
     size_t x0Index = numeric_limits<size_t>::max();
     size_t x1Index = numeric_limits<size_t>::max();
     double x0Delta = numeric_limits<size_t>::max();
@@ -336,6 +346,7 @@ double Vbm::getSlnWavelength(size_t channel) {
 }
 
 void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralReflectances, const Pixel& p, valarray<double>& toaReflectances) {
+	// TODO - optimization: do not allocate memory here
     valarray<double> coordinates(7);
 
     valarray<double> f(vgtLutRhoAtm->getDimensionCount());
@@ -387,6 +398,7 @@ double Vbm::hyperspectralUpscale(double sza, double vzaOlc, double ozone, double
 }
 
 void Vbm::performHyperspectralFiltering(valarray<double>& toaReflectances, valarray<double>& filteredRToa) {
+	// TODO - optimization: do not allocate memory here
     valarray<double> coordinates(1);
     valarray<double> f(vgtBSrfLuts[0]->getDimensionCount());
     valarray<double> w(vgtBSrfLuts[0]->getMatrixWorkspaceSize());
@@ -397,6 +409,7 @@ void Vbm::performHyperspectralFiltering(valarray<double>& toaReflectances, valar
         for(size_t h = 0; h < 914; h++) {
             coordinates[0] = h;
             double solarIrr = vgtLutSolarIrradiance->getScalar(&coordinates[0], f, w);
+            // TODO - renaming: this is a weight, not a surface reflectance
             double bSurf = vgtBSrfLuts[b]->getScalar(&coordinates[0], f, w);
             numerator += solarIrr * bSurf * toaReflectances[h];
             denominator += solarIrr * bSurf;
@@ -445,6 +458,7 @@ uint8_t Vbm::getFlagsAndFills(Pixel& p, valarray<double>& vgtToaReflectances) {
 }
 
 void Vbm::cleanup(valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances, valarray<double>& toaReflectances, valarray<double>& vgtToaReflectances) {
+	// TODO - use fill algorithm instead of resize, because nothing is resized
     surfaceReflectances.resize(surfaceReflectances.size(), 0.0);
     hyperSpectralReflectances.resize(hyperSpectralReflectances.size(), 0.0);
     toaReflectances.resize(toaReflectances.size(), 0.0);
