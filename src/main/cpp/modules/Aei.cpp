@@ -101,13 +101,13 @@ void Aei::process(Context& context) {
 				}
 
 				size_t sourceIndex;
-				if (abs(targetL0 - targetL) <= (averagingFactor / 2) && abs(targetM0 - targetM) <= (averagingFactor / 2)) {
+				if (wl <= 0.5 && wm <= 0.5) {
 					sourceIndex = sourceGrid->getIndex(k, sourceL0, sourceM0);
-				} else if (abs(targetL0 - targetL) <= (averagingFactor / 2) && abs(targetM1 - targetM) <= (averagingFactor / 2)) {
+				} else if (wl <= 0.5 && wm >= 0.5) {
 					sourceIndex = sourceGrid->getIndex(k, sourceL0, sourceM1);
-				} else if (abs(targetL1 - targetL) <= (averagingFactor / 2) && abs(targetM0 - targetM) <= (averagingFactor / 2)) {
+				} else if (wl >= 0.5 && wm <= 0.5) {
 					sourceIndex = sourceGrid->getIndex(k, sourceL1, sourceM0);
-				} else if (abs(targetL1 - targetL) <= (averagingFactor / 2) && abs(targetM1 - targetM) <= (averagingFactor / 2)) {
+				} else {
 					sourceIndex = sourceGrid->getIndex(k, sourceL1, sourceM1);
 				}
 				aerosolModelTargetAccessor.setUByte(targetIndex, aerosolModelSourceAccessor.getUByte(sourceIndex));
