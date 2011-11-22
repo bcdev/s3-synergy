@@ -68,8 +68,8 @@ void Aei::process(Context& context) {
         const double targetL0 = sourceL0 * averagingFactor + averagingFactor / 2.0;
         const double targetL1 = sourceL1 + averagingFactor;
 
-        for (long k = targetGrid->getFirstK(); k < targetGrid->getMaxK(); k++) {
-			for (long targetM = targetGrid->getFirstM(); targetM < targetGrid->getMaxM(); targetM++) {
+        for (long k = targetGrid->getFirstK(); k <= targetGrid->getMaxK(); k++) {
+			for (long targetM = targetGrid->getFirstM(); targetM <= targetGrid->getMaxM(); targetM++) {
 				const long sourceM0 = minMax<long>((targetM - averagingFactor / 2) / averagingFactor, 0, sourceGrid->getMaxM() - 1);
 				const long sourceM1 = sourceM0 + 1;
 
