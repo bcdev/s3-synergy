@@ -5,12 +5,13 @@
  *      Author: thomasstorm
  */
 
-#include "Aer.h"
 #include "Vbm.h"
 
 Vbm::Vbm() :
-		BasicModule("VBM"), vgtBSrfLuts(4), synRadianceAccessors(30), synSolarIrradianceAccessors(30), szaOlcTiePoints(0), saaOlcTiePoints(0),
-		vzaOlcTiePoints(0), vzaSlnTiePoints(0), waterVapourTiePoints(0), airPressureTiePoints(0), ozoneTiePoints(0) {
+		BasicModule("VBM"), vgtBSurfaceReflectanceWeights(4), vgtSolarIrradiances(914), wavelengths(914), synRadianceAccessors(30), synSolarIrradianceAccessors(30),
+		szaOlcTiePoints(0), saaOlcTiePoints(0), vzaOlcTiePoints(0), vzaSlnTiePoints(0), waterVapourTiePoints(0), airPressureTiePoints(0),
+		ozoneTiePoints(0), coordinates(7), vgtRhoAtm(914), vgtRAtm(914), vgtTSun(914), vgtTView(914), synRhoAtm(30), synRAtmOlc(18), synTSun(30),
+		synTViewOlc(30) {
 }
 
 Vbm::~Vbm() {
@@ -51,14 +52,24 @@ void Vbm::prepareAuxdata(Context& context) {
     vgtLutT = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "t");
     vgtCo3 = &getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("C_O3");
 
-    // TODO - these are vectors, not LUTs
-    vgtBSrfLuts[0] = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "B0_SRF");
-    vgtBSrfLuts[1] = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "B2_SRF");
-    vgtBSrfLuts[2] = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "B3_SRF");
-    vgtBSrfLuts[3] = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "MIR_SRF");
+    // T-ODO - these are vectors, not LUTs
+//    vgtBSrfLuts[0] = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "B0_SRF");
+//    vgtBSrfLuts[1] = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "B2_SRF");
+//    vgtBSrfLuts[2] = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "B3_SRF");
+//    vgtBSrfLuts[3] = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "MIR_SRF");
 
-    // TODO - this is a vector, not a LUT
-    vgtLutSolarIrradiance = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "solar_irradiance");
+    // T-ODO - this is a vector, not a LUT
+//    vgtLutSolarIrradiance = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "solar_irradiance");
+
+    const AuxdataProvider& vpsraxAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VPSRAX);
+    copy(vpsraxAuxdata.getVectorDouble("B0_SRF"), (*vgtBSurfaceReflectanceWeights[0]));
+    copy(vpsraxAuxdata.getVectorDouble("B2_SRF"), (*vgtBSurfaceReflectanceWeights[1]));
+    copy(vpsraxAuxdata.getVectorDouble("B3_SRF"), (*vgtBSurfaceReflectanceWeights[2]));
+    copy(vpsraxAuxdata.getVectorDouble("MIR_SRF"), (*vgtBSurfaceReflectanceWeights[3]));
+
+    copy(vpsraxAuxdata.getVectorDouble("solar_irradiance"), vgtSolarIrradiances);
+
+    copy(getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("wavelength"), wavelengths);
 }
 
 void Vbm::prepareTiePointData(Context& context) {
@@ -105,18 +116,22 @@ void Vbm::process(Context& context) {
     valarray<double> toaReflectances(914);
     valarray<double> vgtToaReflectances(4);
 
+    valarray<double> channelWavelengths(surfaceReflectances.size());
+
     Pixel p;
 
     // TODO - optimization: parallelize loop
-    for(long l = firstL; l <= lastL; l++) {
-        for(long m = collocatedGrid.getFirstM(); m <= collocatedGrid.getMaxM(); m++) {
-            for(long k = collocatedGrid.getFirstK(); k <= collocatedGrid.getMaxK(); k++) {
+    // parallelization impossible, because coordinates field is both written to and read from within loop
+    for (long m = collocatedGrid.getFirstM(); m <= collocatedGrid.getMaxM(); m++) {
+        for (long k = collocatedGrid.getFirstK(); k <= collocatedGrid.getMaxK(); k++) {
+            computeChannelWavelengths(k, m, channelWavelengths);
+            for (long l = firstL; l <= lastL; l++) {
                 const size_t index = collocatedGrid.getIndex(k, l, m);
 
                 setupPixel(p, index);
                 p.aot = computeT550(p.lat);
                 downscale(p, surfaceReflectances);
-                performHyperspectralInterpolation(k, m, context, surfaceReflectances, hyperSpectralReflectances);
+                performHyperspectralInterpolation(channelWavelengths, surfaceReflectances, hyperSpectralReflectances);
                 performHyperspectralUpscaling(hyperSpectralReflectances, p, toaReflectances);
                 performHyperspectralFiltering(toaReflectances, vgtToaReflectances);
 
@@ -131,23 +146,27 @@ void Vbm::process(Context& context) {
     }
 }
 
+void Vbm::computeChannelWavelengths(long k, long m, valarray<double>& channelWavelengths) {
+    for(size_t channel = 0; channel < channelWavelengths.size(); channel++) {
+        if(channel < 18) {
+            const size_t index = olciInfoSegment->getGrid().getIndex(k, channel, m);
+            channelWavelengths[channel] = olciInfoSegment->getAccessor("lambda0").getDouble(index);
+        } else {
+            channelWavelengths[channel] = getSlnWavelength(channel);
+        }
+    }
+}
+
 void Vbm::downscale(const Pixel& p, valarray<double>& surfReflNadirSyn) {
-	// TODO - optimization: don't allocate new storage
-    valarray<double> coordinates(7);
+    valarray<double> f(synLutRhoAtm->getDimensionCount());
+    valarray<double> w(synLutRhoAtm->getMatrixWorkspaceSize());
+
     coordinates[0] = p.airPressure;
     coordinates[1] = p.waterVapour;
     coordinates[2] = p.aot;
     coordinates[3] = p.aerosolModel;
 
-    valarray<double> f(synLutRhoAtm->getDimensionCount());
-    valarray<double> w(synLutRhoAtm->getMatrixWorkspaceSize());
-
-    valarray<double> rhoAtm(30);
-    valarray<double> rAtmOlc(18);
-    valarray<double> tSun(30);
-    valarray<double> tViewOlc(30);
-
-    synLutRhoAtm->getVector(&coordinates[0], rhoAtm, f, w);
+    synLutRhoAtm->getVector(&coordinates[0], synRhoAtm, f, w);
 
     coordinates[0] = std::abs(p.vaaOlc - p.saa);
     coordinates[1] = p.sza;
@@ -157,17 +176,17 @@ void Vbm::downscale(const Pixel& p, valarray<double>& surfReflNadirSyn) {
     coordinates[5] = p.aot;
     coordinates[6] = p.aerosolModel;
 
-    synLutOlcRatm->getVector(&coordinates[0], rAtmOlc, f, w);
+    synLutOlcRatm->getVector(&coordinates[0], synRAtmOlc, f, w);
 
     coordinates[0] = p.sza;
     coordinates[1] = p.airPressure;
     coordinates[2] = p.waterVapour;
     coordinates[3] = p.aot;
     coordinates[4] = p.aerosolModel;
-    synLutT->getVector(&coordinates[0], tSun, f, w);
+    synLutT->getVector(&coordinates[0], synTSun, f, w);
 
     coordinates[0] = p.vzaOlc;
-    synLutT->getVector(&coordinates[0], tViewOlc, f, w);
+    synLutT->getVector(&coordinates[0], synTViewOlc, f, w);
 
     for(size_t i = 0; i < 18; i++) {
         surfReflNadirSyn[i] = surfaceReflectance(
@@ -177,10 +196,10 @@ void Vbm::downscale(const Pixel& p, valarray<double>& surfReflNadirSyn) {
                 p.solarIrradiances[i],
                 p.radiances[i],
                 (*synCo3)[i],  // todo - verify!
-                rhoAtm[i],
-                rAtmOlc[i],
-                tSun[i],
-                tViewOlc[i]);
+                synRhoAtm[i],
+                synRAtmOlc[i],
+                synTSun[i],
+                synTViewOlc[i]);
     }
 
     valarray<double> rAtmSln(6);
@@ -210,8 +229,9 @@ void Vbm::downscale(const Pixel& p, valarray<double>& surfReflNadirSyn) {
     coordinates[4] = p.aerosolModel;
     synLutT->getVector(&coordinates[0], tViewSln, f, w);
 
-	// TODO - only last three channels shall be used, first three are already present in OLC
-    for(size_t i = 18; i < 24; i++) {
+	// todo - only last three channels shall be used, first three are already present in OLC
+//    for(size_t i = 18; i < 24; i++) {
+    for(size_t i = 21; i < 24; i++) {
         surfReflNadirSyn[i] = surfaceReflectance(
                 p.ozone,
                 p.vzaSln,
@@ -219,9 +239,9 @@ void Vbm::downscale(const Pixel& p, valarray<double>& surfReflNadirSyn) {
                 p.solarIrradiances[i],
                 p.radiances[i],
                 (*synCo3)[i],  // todo - verify!
-                rhoAtm[i],
+                synRhoAtm[i],
                 rAtmSln[i],
-                tSun[i],
+                synTSun[i],
                 tViewSln[i]);
     }
 }
@@ -270,34 +290,18 @@ void Vbm::setupPixel(Pixel& p, size_t index) {
     p.vzaSln = tiePointInterpolatorSln->interpolate(vzaSlnTiePoints, tpiWeights, tpiIndexes);
 }
 
-void Vbm::performHyperspectralInterpolation(const long k, const long m, Context& context, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances) {
-	// TODO - optimization: use field
-    const valarray<double>& wavelengths = getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("wavelength");
+void Vbm::performHyperspectralInterpolation(const valarray<double>& channelWavelengths, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances) {
     for(size_t i = 0; i < wavelengths.size(); i++) {
-        hyperSpectralReflectances[i] = linearInterpolation(k, m, surfaceReflectances, wavelengths[i]);
+        hyperSpectralReflectances[i] = linearInterpolation(channelWavelengths, surfaceReflectances, wavelengths[i]);
     }
-}
-
-double Vbm::linearInterpolation(long k, long m, const valarray<double>& surfaceReflectances, const double wavelength) {
-	// TODO - compute channel wavelengths only once, they are the same for all lines
-    valarray<double> channelWavelengths(surfaceReflectances.size());
-    for(size_t channel = 0; channel < surfaceReflectances.size(); channel++) {
-        if(surfaceReflectances[channel] == Constants::FILL_VALUE_DOUBLE) {
-        	// TODO - do the linear interpolation with the nearest channels where there are no fill values
-            return Constants::FILL_VALUE_DOUBLE;
-        }
-        if(channel < 18) {
-            const size_t index = olciInfoSegment->getGrid().getIndex(k, channel, m);
-            channelWavelengths[channel] = olciInfoSegment->getAccessor("lambda0").getDouble(index);
-        } else {
-            channelWavelengths[channel] = getSlnWavelength(channel);
-        }
-    }
-
-    return linearInterpolation(channelWavelengths, surfaceReflectances, wavelength);
 }
 
 double Vbm::linearInterpolation(const valarray<double> x, const valarray<double> f, const double wavelength) {
+//    if(surfaceReflectances[channel] == Constants::FILL_VALUE_DOUBLE) {
+//        // TODO - do the linear interpolation with the nearest channels where there are no fill values
+//        return Constants::FILL_VALUE_DOUBLE;
+//    }
+
 	// TODO - compute indexes only once, they are the same for all lines
     size_t x0Index = numeric_limits<size_t>::max();
     size_t x1Index = numeric_limits<size_t>::max();
@@ -326,7 +330,6 @@ double Vbm::linearInterpolation(const valarray<double> x, const valarray<double>
     return f0 + (f1 - f0) / (x1 - x0) * (wavelength - x0);
 }
 
-
 double Vbm::getSlnWavelength(size_t channel) {
     switch (channel) {
     case 18:
@@ -346,22 +349,14 @@ double Vbm::getSlnWavelength(size_t channel) {
 }
 
 void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralReflectances, const Pixel& p, valarray<double>& toaReflectances) {
-	// TODO - optimization: do not allocate memory here
-    valarray<double> coordinates(7);
-
     valarray<double> f(vgtLutRhoAtm->getDimensionCount());
     valarray<double> w(vgtLutRhoAtm->getMatrixWorkspaceSize());
-
-    valarray<double> rhoAtm(914);
-    valarray<double> rAtm(914);
-    valarray<double> tSun(914);
-    valarray<double> tView(914);
 
     coordinates[0] = p.airPressure;
     coordinates[1] = p.waterVapour;
     coordinates[2] = p.aot;
     coordinates[3] = p.aerosolModel;
-    vgtLutRhoAtm->getVector(&coordinates[0], rhoAtm, f, w);
+    vgtLutRhoAtm->getVector(&coordinates[0], vgtRhoAtm, f, w);
 
     coordinates[0] = std::abs(p.vaaOlc - p.saa);
     coordinates[1] = p.sza;
@@ -370,20 +365,20 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralRef
     coordinates[4] = p.waterVapour;
     coordinates[5] = p.aot;
     coordinates[6] = p.aerosolModel;
-    vgtLutRAtm->getVector(&coordinates[0], rAtm, f, w);
+    vgtLutRAtm->getVector(&coordinates[0], vgtRAtm, f, w);
 
     coordinates[0] = p.sza;
     coordinates[1] = p.airPressure;
     coordinates[2] = p.waterVapour;
     coordinates[3] = p.aot;
     coordinates[4] = p.aerosolModel;
-    vgtLutT->getVector(&coordinates[0], tSun, f, w);
+    vgtLutT->getVector(&coordinates[0], vgtTSun, f, w);
 
     coordinates[0] = p.vzaOlc;
-    vgtLutT->getVector(&coordinates[0], tView, f, w);
+    vgtLutT->getVector(&coordinates[0], vgtTView, f, w);
 
     for(size_t h = 0; h < hyperSpectralReflectances.size(); h++) {
-        toaReflectances[h] = hyperspectralUpscale(p.sza, p.vzaOlc, p.ozone, hyperSpectralReflectances[h], (*vgtCo3)[h], rhoAtm[h], rAtm[h], tSun[h], tView[h]);
+        toaReflectances[h] = hyperspectralUpscale(p.sza, p.vzaOlc, p.ozone, hyperSpectralReflectances[h], (*vgtCo3)[h], vgtRhoAtm[h], vgtRAtm[h], vgtTSun[h], vgtTView[h]);
     }
 }
 
@@ -397,20 +392,13 @@ double Vbm::hyperspectralUpscale(double sza, double vzaOlc, double ozone, double
     return tO3 * (rAtm + (g * hyperSpectralReflectance) / ((1 - rhoAtm) * hyperSpectralReflectance));
 }
 
-void Vbm::performHyperspectralFiltering(valarray<double>& toaReflectances, valarray<double>& filteredRToa) {
-	// TODO - optimization: do not allocate memory here
-    valarray<double> coordinates(1);
-    valarray<double> f(vgtBSrfLuts[0]->getDimensionCount());
-    valarray<double> w(vgtBSrfLuts[0]->getMatrixWorkspaceSize());
-
+void Vbm::performHyperspectralFiltering(const valarray<double>& toaReflectances, valarray<double>& filteredRToa) {
     for(size_t b = 0; b < 4; b++) {
         double numerator = 0.0;
         double denominator = 0.0;
         for(size_t h = 0; h < 914; h++) {
-            coordinates[0] = h;
-            double solarIrr = vgtLutSolarIrradiance->getScalar(&coordinates[0], f, w);
-            // TODO - renaming: this is a weight, not a surface reflectance
-            double bSurf = vgtBSrfLuts[b]->getScalar(&coordinates[0], f, w);
+            double solarIrr = vgtSolarIrradiances[h];
+            double bSurf = (*vgtBSurfaceReflectanceWeights[b])[h];
             numerator += solarIrr * bSurf * toaReflectances[h];
             denominator += solarIrr * bSurf;
         }
@@ -429,6 +417,7 @@ uint8_t Vbm::getFlagsAndFills(Pixel& p, valarray<double>& vgtToaReflectances) {
     } else {
         vgtToaReflectances[0] = Constants::FILL_VALUE_DOUBLE;
     }
+
     bool vgtB2Good = true;
     for (size_t i = 5; i < 10; i++) {
         if (p.radiances[i] == Constants::FILL_VALUE_DOUBLE) {
@@ -437,8 +426,8 @@ uint8_t Vbm::getFlagsAndFills(Pixel& p, valarray<double>& vgtToaReflectances) {
             break;
         }
     }
-
     flags |= vgtB2Good ? Constants::VGT_B2_GOOD : 0;
+
     bool vgtB3Good = true;
     for (size_t i = 13; i < 18; i++) {
         if (p.radiances[i] == Constants::FILL_VALUE_DOUBLE) {
@@ -447,8 +436,8 @@ uint8_t Vbm::getFlagsAndFills(Pixel& p, valarray<double>& vgtToaReflectances) {
             break;
         }
     }
-
     flags |= vgtB3Good ? Constants::VGT_B3_GOOD : 0;
+
     if (p.radiances[22] != Constants::FILL_VALUE_DOUBLE && p.radiances[23] != Constants::FILL_VALUE_DOUBLE) {
         flags |= Constants::VGT_MIR_GOOD;
     } else {
@@ -458,11 +447,10 @@ uint8_t Vbm::getFlagsAndFills(Pixel& p, valarray<double>& vgtToaReflectances) {
 }
 
 void Vbm::cleanup(valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances, valarray<double>& toaReflectances, valarray<double>& vgtToaReflectances) {
-	// TODO - use fill algorithm instead of resize, because nothing is resized
-    surfaceReflectances.resize(surfaceReflectances.size(), 0.0);
-    hyperSpectralReflectances.resize(hyperSpectralReflectances.size(), 0.0);
-    toaReflectances.resize(toaReflectances.size(), 0.0);
-    vgtToaReflectances.resize(vgtToaReflectances.size(), 0.0);
+    std::fill(&surfaceReflectances[0], &surfaceReflectances[surfaceReflectances.size()], 0);
+    std::fill(&hyperSpectralReflectances[0], &hyperSpectralReflectances[hyperSpectralReflectances.size()], 0.0);
+    std::fill(&toaReflectances[0], &toaReflectances[toaReflectances.size()], 0.0);
+    std::fill(&vgtToaReflectances[0], &vgtToaReflectances[vgtToaReflectances.size()], 0.0);
 }
 
 void Vbm::setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances) {

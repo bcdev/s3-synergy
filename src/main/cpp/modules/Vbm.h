@@ -54,9 +54,10 @@ private:
 	LookupTable<double>* vgtLutRhoAtm;
 	LookupTable<double>* vgtLutRAtm;
 	LookupTable<double>* vgtLutT;
-	LookupTable<double>* vgtLutSolarIrradiance;
-	valarray<LookupTable<double>*> vgtBSrfLuts;
+	valarray<valarray<double>*> vgtBSurfaceReflectanceWeights;
+	valarray<double> vgtSolarIrradiances;
 	const valarray<double>* vgtCo3;
+	valarray<double> wavelengths;
 
     Accessor* synOzoneAccessor;
     Accessor* synLatitudeAccessor;
@@ -83,19 +84,31 @@ private:
     valarray<double> airPressureTiePoints;
     valarray<double> ozoneTiePoints;
 
+    valarray<double> coordinates;
+
+    valarray<double> vgtRhoAtm;
+    valarray<double> vgtRAtm;
+    valarray<double> vgtTSun;
+    valarray<double> vgtTView;
+
+    valarray<double> synRhoAtm;
+    valarray<double> synRAtmOlc;
+    valarray<double> synTSun;
+    valarray<double> synTViewOlc;
+
     // todo - sort
 	static double surfaceReflectance(double ozone, double vza, double sza, double solarIrradiance, double radiance,
 	        double co3, double rhoAtm, double rAtm, double tSun, double tView);
 
     void addVariables();
 	void downscale(const Pixel& p, valarray<double>& surfReflNadirSyn);
-	void performHyperspectralInterpolation(const long k, const long m, Context& context, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances);
-	double linearInterpolation(long k, long m, const valarray<double>& surfaceReflectances, const double wavelength);
+	void performHyperspectralInterpolation(const valarray<double>& channelWavelengths, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances);
 	double linearInterpolation(const valarray<double> x, const valarray<double> y, const double wavelength);
 	double getSlnWavelength(size_t channel);
+	void computeChannelWavelengths(long k, long m, valarray<double>& channelWavelengths);
 	void performHyperspectralUpscaling(const valarray<double>& hyperSpectralReflectances, const Pixel& p, valarray<double>& toaReflectances);
 	double hyperspectralUpscale(double sza, double vzaOlc, double ozone, double hyperSpectralReflectance, double co3, double rhoAtm, double rAtm, double tSun, double tView);
-	void performHyperspectralFiltering(valarray<double>& toaReflectances, valarray<double>& filteredRToa);
+	void performHyperspectralFiltering(const valarray<double>& toaReflectances, valarray<double>& filteredRToa);
 	uint8_t getFlagsAndFills(Pixel& p, valarray<double>& vgtToaReflectances);
 	void cleanup(valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances, valarray<double>& toaReflectances, valarray<double>& vgtToaReflectances);
 	void setupPixel(Pixel& p, size_t index);

@@ -116,15 +116,42 @@ void VbmTest::testVbmIntegration() {
 }
 
 
-void VbmTest::testClearValarray() {
+void VbmTest::testCleanup() {
     valarray<double> test(3);
     test[0] = 0.5;
     test[1] = 0.5;
     test[2] = 0.5;
 
-    test.resize(test.size(), 0.0);
+    valarray<double> test2(3);
+    test[0] = 0.5;
+    test[1] = 0.5;
+    test[2] = 0.5;
+
+    valarray<double> test3(3);
+    test[0] = 0.5;
+    test[1] = 0.5;
+    test[2] = 0.5;
+
+    valarray<double> test4(3);
+    test[0] = 0.5;
+    test[1] = 0.5;
+    test[2] = 0.5;
+
+    vbm->cleanup(test, test2, test3, test4);
 
     CPPUNIT_ASSERT(test[0] == 0.0);
     CPPUNIT_ASSERT(test[1] == 0.0);
     CPPUNIT_ASSERT(test[2] == 0.0);
+
+    CPPUNIT_ASSERT(test2[0] == 0.0);
+    CPPUNIT_ASSERT(test2[1] == 0.0);
+    CPPUNIT_ASSERT(test2[2] == 0.0);
+
+    CPPUNIT_ASSERT(test3[0] == 0.0);
+    CPPUNIT_ASSERT(test3[1] == 0.0);
+    CPPUNIT_ASSERT(test3[2] == 0.0);
+
+    CPPUNIT_ASSERT(test4[0] == 0.0);
+    CPPUNIT_ASSERT(test4[1] == 0.0);
+    CPPUNIT_ASSERT(test4[2] == 0.0);
 }
