@@ -136,10 +136,6 @@ void Vbm::process(Context& context) {
         for (long k = collocatedGrid.getFirstK(); k <= collocatedGrid.getMaxK(); k++) {
             computeChannelWavelengths(k, m, channelWavelengths);
             for (long l = firstL; l <= lastL; l++) {
-                if(l % 1000 == 0) {
-                    context.getLogging().info("..." + lexical_cast<string>(l), getId());
-                }
-
                 computeInterpolationIndices(channelWavelengths, surfaceReflectances);
                 const size_t index = collocatedGrid.getIndex(k, l, m);
 
@@ -257,6 +253,9 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
     coordinates[5] = p.aot;
     coordinates[6] = p.aerosolModel;
 
+    f = valarray<double>(synLutOlcRatm->getDimensionCount());
+    w = valarray<double>(synLutOlcRatm->getMatrixWorkspaceSize());
+
     synLutOlcRatm->getVector(&coordinates[0], synRAtmOlc, f, w);
 
     coordinates[0] = p.sza;
@@ -264,6 +263,10 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
     coordinates[2] = p.waterVapour;
     coordinates[3] = p.aot;
     coordinates[4] = p.aerosolModel;
+
+    f = valarray<double>(synLutT->getDimensionCount());
+    w = valarray<double>(synLutT->getMatrixWorkspaceSize());
+
     synLutT->getVector(&coordinates[0], synTSun, f, w);
 
     coordinates[0] = p.vzaOlc;
@@ -291,6 +294,9 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
     coordinates[5] = p.aot;
     coordinates[6] = p.aerosolModel;
 
+    f = valarray<double>(synLutSlnRatm->getDimensionCount());
+    w = valarray<double>(synLutSlnRatm->getMatrixWorkspaceSize());
+
     synLutSlnRatm->getVector(&coordinates[0], synRAtmSln, f, w);
 
     coordinates[0] = p.sza;
@@ -304,6 +310,10 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
     coordinates[2] = p.waterVapour;
     coordinates[3] = p.aot;
     coordinates[4] = p.aerosolModel;
+
+    f = valarray<double>(synLutT->getDimensionCount());
+    w = valarray<double>(synLutT->getMatrixWorkspaceSize());
+
     synLutT->getVector(&coordinates[0], synTViewSln, f, w);
 
 	// only last three channels are used, since wavelengths of channels 18, 19, 20 are already present in OLC
@@ -371,6 +381,10 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralRef
     coordinates[4] = p.waterVapour;
     coordinates[5] = p.aot;
     coordinates[6] = p.aerosolModel;
+
+    f = valarray<double>(vgtLutRAtm->getDimensionCount());
+    w = valarray<double>(vgtLutRAtm->getMatrixWorkspaceSize());
+
     vgtLutRAtm->getVector(&coordinates[0], vgtRAtm, f, w);
 
     coordinates[0] = p.sza;
@@ -378,6 +392,10 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralRef
     coordinates[2] = p.waterVapour;
     coordinates[3] = p.aot;
     coordinates[4] = p.aerosolModel;
+
+    f = valarray<double>(vgtLutT->getDimensionCount());
+    w = valarray<double>(vgtLutT->getMatrixWorkspaceSize());
+
     vgtLutT->getVector(&coordinates[0], vgtTSun, f, w);
 
     coordinates[0] = p.vzaOlc;
