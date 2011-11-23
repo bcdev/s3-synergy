@@ -30,9 +30,7 @@ void Vbm::start(Context& context) {
     prepareAuxdata(context);
     prepareTiePointData(context);
 
-    context.getLogging().info("Adding variables to context.", getId());
-
-    addVariables();
+    addVariables(context);
 }
 
 void Vbm::prepareAccessors() {
@@ -111,7 +109,8 @@ void Vbm::prepareTiePointData(Context& context) {
     tiePointInterpolatorSln = shared_ptr<TiePointInterpolator<double > >(new TiePointInterpolator<double>(slnLons, slnLats));
 }
 
-void Vbm::addVariables() {
+void Vbm::addVariables(Context& context) {
+    context.getLogging().info("Adding variables to context", getId());
     vgtFlagsAccessor = &collocatedSegment->addVariable("SM", Constants::TYPE_UBYTE);
     vgtB0Accessor = &collocatedSegment->addVariable("B0", Constants::TYPE_UBYTE);
     vgtB2Accessor = &collocatedSegment->addVariable("B2", Constants::TYPE_UBYTE);

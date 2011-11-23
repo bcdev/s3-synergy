@@ -110,7 +110,7 @@ private:
 	void prepareAccessors();
 	void prepareAuxdata(Context& context);
 	void prepareTiePointData(Context& context);
-    void addVariables();
+    void addVariables(Context& context);
 
 	void computeChannelWavelengths(long k, long m, valarray<double>& channelWavelengths) const;
     void computeInterpolationIndices(valarray<double>& channelWavelengths, valarray<double>& surfaceReflectances);
