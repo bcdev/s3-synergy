@@ -52,15 +52,6 @@ void Vbm::prepareAuxdata(Context& context) {
     vgtLutT = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "t");
     vgtCo3 = &getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("C_O3");
 
-    // T-ODO - these are vectors, not LUTs
-//    vgtBSrfLuts[0] = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "B0_SRF");
-//    vgtBSrfLuts[1] = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "B2_SRF");
-//    vgtBSrfLuts[2] = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "B3_SRF");
-//    vgtBSrfLuts[3] = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "MIR_SRF");
-
-    // T-ODO - this is a vector, not a LUT
-//    vgtLutSolarIrradiance = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPSRAX + ".nc", "solar_irradiance");
-
     const AuxdataProvider& vpsraxAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VPSRAX);
     copy(vpsraxAuxdata.getVectorDouble("B0_SRF"), (*vgtBSurfaceReflectanceWeights[0]));
     copy(vpsraxAuxdata.getVectorDouble("B2_SRF"), (*vgtBSurfaceReflectanceWeights[1]));
