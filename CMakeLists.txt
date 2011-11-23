@@ -36,7 +36,7 @@ file(GLOB_RECURSE VBM_TEST_SOURCES src/test/cpp/modules/VbmTest.cpp)
 file(GLOB_RECURSE SYL2_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/Syl2_2_Test.cpp)
 
 ##
-# System include directories
+# Project include directories
 #
 include_directories(
     ${BOOST_HOME}/include
@@ -49,10 +49,8 @@ include_directories(
 	${SAFE_HOME}/${SAFE_INC_DIR}
 )
 
-include_directories(SYSTEM /usr/local/include /usr/include)
-
 ##
-# System link directories
+# Project link directories
 #
 link_directories(
     ${BOOST_HOME}/lib
@@ -65,8 +63,6 @@ link_directories(
 	${JAVA_HOME}/${JAVA_JVM_DIR}
 	${SAFE_HOME}/${SAFE_LIB_DIR}
 )
-
-link_directories(/usr/lib /usr/local/lib)
 
 ##
 # Project test targets
