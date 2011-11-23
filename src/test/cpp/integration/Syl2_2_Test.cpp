@@ -32,7 +32,7 @@ void Syl2_2_Test::tearDown() {
 }
 
 void Syl2_2_Test::testIntegrationOfSynL2Modules() {
-	BasicTask task("TEST");
+	BasicTask task("SY_INT_SYL2_2");
 
 	shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
 	shared_ptr<Module> col = shared_ptr<Module>(new Col());
