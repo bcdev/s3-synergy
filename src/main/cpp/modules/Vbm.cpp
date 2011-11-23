@@ -46,25 +46,41 @@ void Vbm::prepareAccessors() {
 }
 
 void Vbm::prepareAuxdata(Context& context) {
-    AuxdataProvider& radiativeTransfer = getAuxdataProvider(context, Constants::AUX_ID_VPRTAX);
-    amin = radiativeTransfer.getShort("AMIN");
-
-    synLutRhoAtm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "rho_atm");
-    synLutOlcRatm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "OLC_R_atm");
-    synLutSlnRatm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "SLN_R_atm");
-    synLutT = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "t");
-    synCo3 = &getAuxdataProvider(context, Constants::AUX_ID_SYRTAX).getVectorDouble("C_O3");
-
-    vgtLutRhoAtm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "rho_atm");
-    vgtLutRAtm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "R_atm");
-    vgtLutT = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "t");
-    vgtCo3 = &getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("C_O3");
+//    AuxdataProvider& radiativeTransfer = getAuxdataProvider(context, Constants::AUX_ID_VPRTAX);
+//    amin = radiativeTransfer.getShort("AMIN");
+//
+//    synLutRhoAtm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "rho_atm");
+//    synLutOlcRatm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "OLC_R_atm");
+//    synLutSlnRatm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "SLN_R_atm");
+//    synLutT = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "t");
+//    synCo3 = &getAuxdataProvider(context, Constants::AUX_ID_SYRTAX).getVectorDouble("C_O3");
+//
+//    vgtLutRhoAtm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "rho_atm");
+//    vgtLutRAtm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "R_atm");
+//    vgtLutT = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "t");
+//    vgtCo3 = &getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("C_O3");
 
     const AuxdataProvider& vpsraxAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VPSRAX);
-    copy(vpsraxAuxdata.getVectorDouble("B0_SRF"), (*vgtBSurfaceReflectanceWeights[0]));
-    copy(vpsraxAuxdata.getVectorDouble("B2_SRF"), (*vgtBSurfaceReflectanceWeights[1]));
-    copy(vpsraxAuxdata.getVectorDouble("B3_SRF"), (*vgtBSurfaceReflectanceWeights[2]));
-    copy(vpsraxAuxdata.getVectorDouble("MIR_SRF"), (*vgtBSurfaceReflectanceWeights[3]));
+
+
+    const valarray<double> b0Srf = vpsraxAuxdata.getVectorDouble("B0_SRF");
+    vgtBSurfaceReflectanceWeights[0] = valarray<double>(b0Srf.size());
+    copy(b0Srf, vgtBSurfaceReflectanceWeights[0]);
+
+    const valarray<double> b2Srf = vpsraxAuxdata.getVectorDouble("B2_SRF");
+    vgtBSurfaceReflectanceWeights[1] = valarray<double>(b2Srf.size());
+    copy(b2Srf, vgtBSurfaceReflectanceWeights[1]);
+
+    const valarray<double> b3Srf = vpsraxAuxdata.getVectorDouble("B3_SRF");
+    vgtBSurfaceReflectanceWeights[2] = valarray<double>(b3Srf.size());
+    copy(b3Srf, vgtBSurfaceReflectanceWeights[2]);
+
+    const valarray<double> mirSrf = vpsraxAuxdata.getVectorDouble("MIR_SRF");
+    vgtBSurfaceReflectanceWeights[3] = valarray<double>(mirSrf.size());
+    copy(mirSrf, vgtBSurfaceReflectanceWeights[3]);
+//    copy(vpsraxAuxdata.getVectorDouble("B2_SRF"), (*vgtBSurfaceReflectanceWeights[1]));
+//    copy(vpsraxAuxdata.getVectorDouble("B3_SRF"), (*vgtBSurfaceReflectanceWeights[2]));
+//    copy(vpsraxAuxdata.getVectorDouble("MIR_SRF"), (*vgtBSurfaceReflectanceWeights[3]));
 
     copy(vpsraxAuxdata.getVectorDouble("solar_irradiance"), vgtSolarIrradiances);
 
@@ -393,7 +409,7 @@ void Vbm::performHyperspectralFiltering(const valarray<double>& toaReflectances,
         double denominator = 0.0;
         for(size_t h = 0; h < 914; h++) {
             double solarIrr = vgtSolarIrradiances[h];
-            double bSurf = (*vgtBSurfaceReflectanceWeights[b])[h];
+            double bSurf = (vgtBSurfaceReflectanceWeights[b])[h];
             numerator += solarIrr * bSurf * toaReflectances[h];
             denominator += solarIrr * bSurf;
         }

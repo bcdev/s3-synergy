@@ -38,7 +38,7 @@ private:
 	LookupTable<double>* vgtLutRhoAtm;
 	LookupTable<double>* vgtLutRAtm;
 	LookupTable<double>* vgtLutT;
-	valarray<valarray<double>*> vgtBSurfaceReflectanceWeights;
+	valarray<valarray<double> > vgtBSurfaceReflectanceWeights;
 	valarray<double> vgtSolarIrradiances;
 	const valarray<double>* vgtCo3;
 	valarray<double> wavelengths;
