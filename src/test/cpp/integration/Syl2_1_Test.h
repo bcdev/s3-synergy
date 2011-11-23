@@ -12,7 +12,7 @@
 
 class Syl2_1_Test : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(Syl2_1_Test);
-    CPPUNIT_TEST(testParseJobOrder1);
+    CPPUNIT_TEST(testParseJobOrder_01);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -22,7 +22,7 @@ public:
     void tearDown();
 
 private:
-    void testParseJobOrder1();
+    void testParseJobOrder_01();
 };
 
 #endif	/* SYL2_2_TEST_H */
