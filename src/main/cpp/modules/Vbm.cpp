@@ -44,22 +44,21 @@ void Vbm::prepareAccessors() {
 }
 
 void Vbm::prepareAuxdata(Context& context) {
-//    AuxdataProvider& radiativeTransfer = getAuxdataProvider(context, Constants::AUX_ID_VPRTAX);
-//    amin = radiativeTransfer.getShort("AMIN");
-//
-//    synLutRhoAtm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "rho_atm");
-//    synLutOlcRatm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "OLC_R_atm");
-//    synLutSlnRatm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "SLN_R_atm");
-//    synLutT = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "t");
-//    synCo3 = &getAuxdataProvider(context, Constants::AUX_ID_SYRTAX).getVectorDouble("C_O3");
-//
-//    vgtLutRhoAtm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "rho_atm");
-//    vgtLutRAtm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "R_atm");
-//    vgtLutT = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "t");
-//    vgtCo3 = &getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("C_O3");
+    AuxdataProvider& radiativeTransfer = getAuxdataProvider(context, Constants::AUX_ID_VPRTAX);
+    amin = radiativeTransfer.getShort("AMIN");
+
+    synLutRhoAtm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "rho_atm");
+    synLutOlcRatm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "OLC_R_atm");
+    synLutSlnRatm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "SLN_R_atm");
+    synLutT = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "t");
+    synCo3 = &getAuxdataProvider(context, Constants::AUX_ID_SYRTAX).getVectorDouble("C_O3");
+
+    vgtLutRhoAtm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "rho_atm");
+    vgtLutRAtm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "R_atm");
+    vgtLutT = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "t");
+    vgtCo3 = &getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("C_O3");
 
     const AuxdataProvider& vpsraxAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VPSRAX);
-
 
     const valarray<double> b0Srf = vpsraxAuxdata.getVectorDouble("B0_SRF");
     vgtBSurfaceReflectanceWeights[0] = valarray<double>(b0Srf.size());
@@ -76,9 +75,6 @@ void Vbm::prepareAuxdata(Context& context) {
     const valarray<double> mirSrf = vpsraxAuxdata.getVectorDouble("MIR_SRF");
     vgtBSurfaceReflectanceWeights[3] = valarray<double>(mirSrf.size());
     copy(mirSrf, vgtBSurfaceReflectanceWeights[3]);
-//    copy(vpsraxAuxdata.getVectorDouble("B2_SRF"), (*vgtBSurfaceReflectanceWeights[1]));
-//    copy(vpsraxAuxdata.getVectorDouble("B3_SRF"), (*vgtBSurfaceReflectanceWeights[2]));
-//    copy(vpsraxAuxdata.getVectorDouble("MIR_SRF"), (*vgtBSurfaceReflectanceWeights[3]));
 
     copy(vpsraxAuxdata.getVectorDouble("solar_irradiance"), vgtSolarIrradiances);
 
