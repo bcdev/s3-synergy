@@ -70,7 +70,7 @@ void VbmTest::testSurfaceReflectance() {
 }
 
 void VbmTest::testHyperspectralUpscale() {
-    const double result = vbm->hyperspectralUpscale(64.3, 68.2, 0.3, 0.5, 0.2, 0.1, 0.4, 0.8, 0.9);
+    const double result = vbm->hyperspectralUpscale(0.3, 64.3, 68.2, 0.5, 0.2, 0.1, 0.4, 0.8, 0.9);
     CPPUNIT_ASSERT(std::abs(result - 0.85244299269730513062) < 0.0001);
 }
 
