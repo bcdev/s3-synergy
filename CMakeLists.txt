@@ -33,6 +33,7 @@ file(GLOB_RECURSE COL_TEST_SOURCES src/test/cpp/modules/ColTest.cpp)
 file(GLOB_RECURSE PCL_TEST_SOURCES src/test/cpp/modules/PclTest.cpp)
 file(GLOB_RECURSE VBM_TEST_SOURCES src/test/cpp/modules/VbmTest.cpp)
 
+file(GLOB_RECURSE SYL2_1_INTEGRATION_TEST_SOURCES src/test/cpp/integration/Syl2_1_Test.cpp)
 file(GLOB_RECURSE SYL2_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/Syl2_2_Test.cpp)
 
 ##
@@ -162,45 +163,25 @@ target_link_libraries(sy_unt_pcl
 )
 set_property(TARGET sy_unt_pcl PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_unt_aco
-    src/test/cpp/SyUntAcoRunner.cpp
-	${CORE_MAIN_SOURCES}
-	${UTIL_MAIN_SOURCES}
-	${READER_MAIN_SOURCES}
-	${WRITER_MAIN_SOURCES}
-	${MODULES_MAIN_SOURCES}
-	${ACO_TEST_SOURCES}
+add_executable(sy_unt_ave
+    src/test/cpp/SyUntAveRunner.cpp
+    ${CORE_MAIN_SOURCES}
+    ${UTIL_MAIN_SOURCES}
+    ${READER_MAIN_SOURCES}
+    ${WRITER_MAIN_SOURCES}
+    ${MODULES_MAIN_SOURCES}
+    ${AVE_TEST_SOURCES}
 )
-target_link_libraries(sy_unt_aco
-	cppunit
-	netcdf
-	xerces-c
-	xqilla
-	boost_regex
-	boost_system
-	boost_filesystem
+target_link_libraries(sy_unt_ave
+    cppunit
+    netcdf
+    xerces-c
+    xqilla
+    boost_regex
+    boost_system
+    boost_filesystem
 )
-set_property(TARGET sy_unt_aco PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
-#
-add_executable(sy_unt_aei
-    src/test/cpp/SyUntAeiRunner.cpp
-	${CORE_MAIN_SOURCES}
-	${UTIL_MAIN_SOURCES}
-	${READER_MAIN_SOURCES}
-	${WRITER_MAIN_SOURCES}
-	${MODULES_MAIN_SOURCES}
-	${AEI_TEST_SOURCES}
-)
-target_link_libraries(sy_unt_aei
-	cppunit
-	netcdf
-	xerces-c
-	xqilla
-	boost_regex
-	boost_system
-	boost_filesystem
-)
-set_property(TARGET sy_unt_aei PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+set_property(TARGET sy_unt_ave PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
 add_executable(sy_unt_aer
     src/test/cpp/SyUntAerRunner.cpp
@@ -222,25 +203,62 @@ target_link_libraries(sy_unt_aer
 )
 set_property(TARGET sy_unt_aer PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_unt_ave
-    src/test/cpp/SyUntAveRunner.cpp
-	${CORE_MAIN_SOURCES}
-	${UTIL_MAIN_SOURCES}
-	${READER_MAIN_SOURCES}
-	${WRITER_MAIN_SOURCES}
-	${MODULES_MAIN_SOURCES}
-	${AVE_TEST_SOURCES}
+add_executable(sy_unt_aei
+    src/test/cpp/SyUntAeiRunner.cpp
+    ${CORE_MAIN_SOURCES}
+    ${UTIL_MAIN_SOURCES}
+    ${READER_MAIN_SOURCES}
+    ${WRITER_MAIN_SOURCES}
+    ${MODULES_MAIN_SOURCES}
+    ${AEI_TEST_SOURCES}
 )
-target_link_libraries(sy_unt_ave
-	cppunit
-	netcdf
-	xerces-c
-	xqilla
-	boost_regex
-	boost_system
-	boost_filesystem
+target_link_libraries(sy_unt_aei
+    cppunit
+    netcdf
+    xerces-c
+    xqilla
+    boost_regex
+    boost_system
+    boost_filesystem
 )
-set_property(TARGET sy_unt_ave PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+set_property(TARGET sy_unt_aei PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+#
+add_executable(sy_unt_aco
+    src/test/cpp/SyUntAcoRunner.cpp
+    ${CORE_MAIN_SOURCES}
+    ${UTIL_MAIN_SOURCES}
+    ${READER_MAIN_SOURCES}
+    ${WRITER_MAIN_SOURCES}
+    ${MODULES_MAIN_SOURCES}
+    ${ACO_TEST_SOURCES}
+)
+target_link_libraries(sy_unt_aco
+    cppunit
+    netcdf
+    xerces-c
+    xqilla
+    boost_regex
+    boost_system
+    boost_filesystem
+)
+set_property(TARGET sy_unt_aco PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+#
+add_executable(sy_int_syl2_1
+    src/test/cpp/SyIntSyl2_1_Runner.cpp
+    ${CORE_MAIN_SOURCES}
+    ${UTIL_MAIN_SOURCES}
+    ${SYL2_1_INTEGRATION_TEST_SOURCES}
+)
+target_link_libraries(sy_int_syl2_1
+    cppunit
+    netcdf
+    xerces-c
+    xqilla
+    boost_regex
+    boost_system
+    boost_filesystem
+)
+set_property(TARGET sy_int_syl2_1 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
 add_executable(sy_int_syl2_2
     src/test/cpp/SyIntSyl2_2_Runner.cpp

@@ -10,8 +10,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../../src/main/cpp/core/Context.h"
-#include "../../../../src/main/cpp/core/Dictionary.h"
+#include "../../../../src/main/cpp/util/BasicTask.h"
 
 class Syl2_2_Test : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(Syl2_2_Test);
@@ -25,9 +24,7 @@ public:
     void tearDown();
 
 private:
-    void prepareContext();
     void testIntegrationOfSynL2Modules();
-    shared_ptr<Context> context;
 };
 
 #endif	/* SYL2_2_TEST_H */
