@@ -20,26 +20,10 @@ public:
 	virtual ~Vbm();
 
 	void start(Context& context);
-	void stop(Context& context);
 	void process(Context& context);
-
-	static double computeT550(double lat) {
-	    return 0.2 * (std::cos(lat) - 0.25) * cube(std::sin(lat + M_PI_2)) + 0.05;
-	}
 
 private:
 	friend class VbmTest;
-
-	template<class T>
-	static T cube(T x) {
-	    return x * x * x;
-	}
-
-    template<class T>
-    static void copy(const std::valarray<T>& s, std::valarray<T>& t) {
-        t.resize(s.size());
-        std::copy(&s[0], &s[s.size()], &t[0]);
-    }
 
 	uint16_t amin;
 	Segment* collocatedSegment;
@@ -96,24 +80,46 @@ private:
     valarray<double> synTSun;
     valarray<double> synTViewOlc;
 
-    // todo - sort
+    map<size_t, size_t> wavelengthIndices_0;
+    map<size_t, size_t> wavelengthIndices_1;
+
+    template<class T>
+    static T cube(T x) {
+        return x * x * x;
+    }
+
+    template<class T>
+    static void copy(const std::valarray<T>& s, std::valarray<T>& t) {
+        t.resize(s.size());
+        std::copy(&s[0], &s[s.size()], &t[0]);
+    }
+
+    static double computeT550(double lat) {
+        return 0.2 * (std::cos(lat) - 0.25) * cube(std::sin(lat + M_PI_2)) + 0.05;
+    }
+
 	static double surfaceReflectance(double ozone, double vza, double sza, double solarIrradiance, double radiance,
 	        double co3, double rhoAtm, double rAtm, double tSun, double tView);
+	static double hyperspectralUpscale(double ozone, double vza, double sza, double hyperSpectralReflectance,
+	        double co3, double rhoAtm, double rAtm, double tSun, double tView);
+	static double getSlnWavelength(size_t channel);
 
-    void addVariables();
-	void downscale(const Pixel& p, valarray<double>& surfReflNadirSyn);
-	void performHyperspectralInterpolation(const valarray<double>& channelWavelengths, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances);
-	double linearInterpolation(const valarray<double> x, const valarray<double> y, const double wavelength);
-	double getSlnWavelength(size_t channel);
-	void computeChannelWavelengths(long k, long m, valarray<double>& channelWavelengths);
-	void performHyperspectralUpscaling(const valarray<double>& hyperSpectralReflectances, const Pixel& p, valarray<double>& toaReflectances);
-	double hyperspectralUpscale(double sza, double vzaOlc, double ozone, double hyperSpectralReflectance, double co3, double rhoAtm, double rAtm, double tSun, double tView);
-	void performHyperspectralFiltering(const valarray<double>& toaReflectances, valarray<double>& filteredRToa);
-	uint8_t getFlagsAndFills(Pixel& p, valarray<double>& vgtToaReflectances);
-	void cleanup(valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances, valarray<double>& toaReflectances, valarray<double>& vgtToaReflectances);
-	void setupPixel(Pixel& p, size_t index);
+	void prepareAccessors();
 	void prepareAuxdata(Context& context);
 	void prepareTiePointData(Context& context);
+    void addVariables();
+
+	void computeChannelWavelengths(long k, long m, valarray<double>& channelWavelengths) const;
+    void computeInterpolationIndices(valarray<double>& channelWavelengths, valarray<double>& surfaceReflectances);
+
+	void setupPixel(Pixel& p, size_t index);
+	void performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn);
+	void performHyperspectralInterpolation(const valarray<double>& channelWavelengths, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances);
+	double linearInterpolation(const valarray<double> x, const valarray<double> y, const size_t index, const double wavelength);
+	void performHyperspectralUpscaling(const valarray<double>& hyperSpectralReflectances, const Pixel& p, valarray<double>& toaReflectances);
+	void performHyperspectralFiltering(const valarray<double>& toaReflectances, valarray<double>& filteredRToa) const;
+
+	uint8_t getFlagsAndFill(Pixel& p, valarray<double>& vgtToaReflectances) const;
 	void setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances);
 };
 
