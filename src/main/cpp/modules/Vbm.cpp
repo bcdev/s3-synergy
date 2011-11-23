@@ -8,8 +8,8 @@
 #include "Vbm.h"
 
 using std::abs;
-using std::cos;
-using std::exp;
+//using std::cos;
+//using std::exp;
 using std::fill;
 
 Vbm::Vbm() :
@@ -317,9 +317,9 @@ double Vbm::surfaceReflectance(double ozone, double vza, double sza, double sola
         return Constants::FILL_VALUE_DOUBLE;
     }
 
-    double rToa = M_PI * radiance / (solarIrradiance * cos(sza));
-    double M = 0.5 * (1/cos(sza) + 1/cos(vza));
-    double t_O3 = exp(-M * ozone * co3);
+    double rToa = M_PI * radiance / (solarIrradiance * std::cos(sza));
+    double M = 0.5 * (1/std::cos(sza) + 1/std::cos(vza));
+    double t_O3 = std::exp(-M * ozone * co3);
 
     double f = (rToa - t_O3 * rAtm) / (t_O3 * tSun * tView);
     return f / (1 + rhoAtm * f);
@@ -381,8 +381,8 @@ double Vbm::hyperspectralUpscale(double ozone, double vza, double sza, double hy
     if(hyperSpectralReflectance == Constants::FILL_VALUE_DOUBLE) {
         return Constants::FILL_VALUE_DOUBLE;
     }
-    double M = 0.5 * (1 / cos(sza) + 1 / (cos(vza)));
-    double tO3 = exp(-M * ozone * co3);
+    double M = 0.5 * (1 / std::cos(sza) + 1 / (std::cos(vza)));
+    double tO3 = std::exp(-M * ozone * co3);
     double g = tSun * tView;
     return tO3 * (rAtm + (g * hyperSpectralReflectance) / ((1 - rhoAtm) * hyperSpectralReflectance));
 }
