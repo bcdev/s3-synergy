@@ -8,16 +8,14 @@
 #ifndef EXITCODE_H_
 #define EXITCODE_H_
 
-#include "Context.h"
-
 class ExitCode {
 public:
 	~ExitCode() {
 	}
 
-	const static int OK = 0;
-	const static int INCOMPLETE = 1;
-	const static int FAILURE = 128;
+	const static int OK;
+	const static int INCOMPLETE;
+	const static int FAILURE;
 
 private:
 	ExitCode() {
