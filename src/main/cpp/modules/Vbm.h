@@ -80,6 +80,9 @@ private:
     valarray<double> synTSun;
     valarray<double> synTViewOlc;
 
+    valarray<double> synRAtmSln;
+    valarray<double> synTViewSln;
+
     map<size_t, size_t> wavelengthIndices_0;
     map<size_t, size_t> wavelengthIndices_1;
 

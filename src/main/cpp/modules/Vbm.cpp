@@ -16,7 +16,7 @@ Vbm::Vbm() :
 		BasicModule("VBM"), vgtBSurfaceReflectanceWeights(4), vgtSolarIrradiances(914), wavelengths(914), synRadianceAccessors(30), synSolarIrradianceAccessors(30),
 		szaOlcTiePoints(0), saaOlcTiePoints(0), vzaOlcTiePoints(0), vzaSlnTiePoints(0), waterVapourTiePoints(0), airPressureTiePoints(0),
 		ozoneTiePoints(0), coordinates(7), vgtRhoAtm(914), vgtRAtm(914), vgtTSun(914), vgtTView(914), synRhoAtm(30), synRAtmOlc(18), synTSun(30),
-		synTViewOlc(30), wavelengthIndices_0(), wavelengthIndices_1() {
+		synTViewOlc(30), synRAtmSln(6), synTViewSln(30), wavelengthIndices_0(), wavelengthIndices_1() {
 }
 
 Vbm::~Vbm() {
@@ -110,7 +110,7 @@ void Vbm::process(Context& context) {
     long firstL = context.getFirstComputableL(*collocatedSegment, *this);
     long lastL = context.getLastComputableL(*collocatedSegment, *this);
 
-    valarray<double> surfaceReflectances(24);
+    valarray<double> surfaceReflectances(21);
     valarray<double> hyperSpectralReflectances(914);
     valarray<double> toaReflectances(914);
     valarray<double> vgtToaReflectances(4);
@@ -121,8 +121,6 @@ void Vbm::process(Context& context) {
 
     context.getLogging().info("Performing band mapping...", getId());
 
-    // TODO - optimization: parallelize loop
-    // parallelization impossible, because coordinates field is both written to and read from within loop
     for (long m = collocatedGrid.getFirstM(); m <= collocatedGrid.getMaxM(); m++) {
         for (long k = collocatedGrid.getFirstK(); k <= collocatedGrid.getMaxK(); k++) {
             computeChannelWavelengths(k, m, channelWavelengths);
@@ -154,19 +152,14 @@ void Vbm::computeChannelWavelengths(long k, long m, valarray<double>& channelWav
             const size_t index = olciInfoSegment->getGrid().getIndex(k, channel, m);
             channelWavelengths[channel] = olciInfoSegment->getAccessor("lambda0").getDouble(index);
         } else {
-            channelWavelengths[channel] = getSlnWavelength(channel);
+            // ignoring channel indices 18, 19, 20
+            channelWavelengths[channel] = getSlnWavelength(channel + 3);
         }
     }
 }
 
 double Vbm::getSlnWavelength(size_t channel) {
     switch (channel) {
-    case 18:
-        return 550;
-    case 19:
-        return 665;
-    case 20:
-        return 865;
     case 21:
         return 1375;
     case 22:
@@ -279,8 +272,6 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
                 synTViewOlc[i]);
     }
 
-    valarray<double> rAtmSln(6);
-
     coordinates[0] = abs(p.vaaSln - p.saa);
     coordinates[1] = p.sza;
     coordinates[2] = p.vzaSln;
@@ -289,7 +280,7 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
     coordinates[5] = p.aot;
     coordinates[6] = p.aerosolModel;
 
-    synLutSlnRatm->getVector(&coordinates[0], rAtmSln, f, w);
+    synLutSlnRatm->getVector(&coordinates[0], synRAtmSln, f, w);
 
     coordinates[0] = p.sza;
     coordinates[1] = p.airPressure;
@@ -297,17 +288,14 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
     coordinates[3] = p.aot;
     coordinates[4] = p.aerosolModel;
 
-    valarray<double> tViewSln(30);
-
     coordinates[0] = p.vzaSln;
     coordinates[1] = p.airPressure;
     coordinates[2] = p.waterVapour;
     coordinates[3] = p.aot;
     coordinates[4] = p.aerosolModel;
-    synLutT->getVector(&coordinates[0], tViewSln, f, w);
+    synLutT->getVector(&coordinates[0], synTViewSln, f, w);
 
-	// todo - only last three channels shall be used, first three are already present in OLC
-//    for(size_t i = 18; i < 24; i++) {
+	// only last three channels are used, since wavelengths of channels 18, 19, 20 are already present in OLC
     for(size_t i = 21; i < 24; i++) {
         surfReflNadirSyn[i] = surfaceReflectance(
                 p.ozone,
@@ -317,9 +305,9 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
                 p.radiances[i],
                 (*synCo3)[i],  // todo - verify!
                 synRhoAtm[i],
-                rAtmSln[i],
+                synRAtmSln[i],
                 synTSun[i],
-                tViewSln[i]);
+                synTViewSln[i]);
     }
 }
 
