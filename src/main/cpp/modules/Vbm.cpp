@@ -161,7 +161,7 @@ void Vbm::computeChannelWavelengths(long k, long m, valarray<double>& channelWav
     for(size_t channel = 0; channel < channelWavelengths.size(); channel++) {
         if(channel < 18) {
             const size_t index = olciInfoSegment->getGrid().getIndex(k, channel, m);
-            channelWavelengths[channel] = olciInfoSegment->getAccessor("lambda0").getDouble(index);
+            channelWavelengths[channel] = olciInfoSegment->getAccessor("wavelength").getDouble(index);
         } else {
             // ignoring channel indices 18, 19, 20
             channelWavelengths[channel] = getSlnWavelength(channel + 3);
