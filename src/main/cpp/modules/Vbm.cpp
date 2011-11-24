@@ -13,8 +13,8 @@ using std::fill;
 Vbm::Vbm() :
         BasicModule("VBM"), vgtBSurfaceReflectanceWeights(4), vgtSolarIrradiances(914), wavelengths(914), synRadianceAccessors(30), synSolarIrradianceAccessors(30),
         szaOlcTiePoints(0), saaOlcTiePoints(0), vzaOlcTiePoints(0), vzaSlnTiePoints(0), waterVapourTiePoints(0), airPressureTiePoints(0),
-        ozoneTiePoints(0), coordinates(7), vgtRhoAtm(914), vgtRAtm(914), vgtTSun(914), vgtTView(914), synRhoAtm(30), synRAtmOlc(18), synTSun(30),
-        synTViewOlc(30), synRAtmSln(6), synTViewSln(30), wavelengthIndices_0(), wavelengthIndices_1() {
+        ozoneTiePoints(0), coordinates(7), f(), w(), vgtRhoAtm(914), vgtRAtm(914), vgtTSun(914), vgtTView(914), synRhoAtm(30), synRAtmOlc(18), synTSun(30),
+        synTViewOlc(30), synRAtmSln(6), synTViewSln(30), wavelengthIndices_0(), wavelengthIndices_1(), targetAccessors(4) {
 }
 
 Vbm::~Vbm() {
@@ -24,11 +24,11 @@ void Vbm::start(Context& context) {
     collocatedSegment = &context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
     olciInfoSegment = &context.getSegment(Constants::SEGMENT_OLC_INFO);
 
+    addVariables(context);
+
     prepareAccessors();
     prepareAuxdata(context);
     prepareTiePointData(context);
-
-    addVariables(context);
 }
 
 void Vbm::prepareAccessors() {
@@ -39,6 +39,10 @@ void Vbm::prepareAccessors() {
         synRadianceAccessors[i] = &collocatedSegment->getAccessor("L_" + index);
         synSolarIrradianceAccessors[i] = &collocatedSegment->getAccessor("solar_irradiance_" + index);
     }
+    targetAccessors[0] = vgtB0Accessor;
+    targetAccessors[1] = vgtB2Accessor;
+    targetAccessors[2] = vgtB3Accessor;
+    targetAccessors[3] = vgtMirAccessor;
 }
 
 void Vbm::prepareAuxdata(Context& context) {
@@ -231,8 +235,8 @@ void Vbm::setupPixel(Pixel& p, size_t index) {
 }
 
 void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn) {
-    valarray<double> f(synLutRhoAtm->getDimensionCount());
-    valarray<double> w(synLutRhoAtm->getVectorWorkspaceSize());
+    f.resize(synLutRhoAtm->getDimensionCount());
+    w.resize(synLutRhoAtm->getVectorWorkspaceSize());
 
     coordinates[0] = p.airPressure;
     coordinates[1] = p.waterVapour;
@@ -359,8 +363,8 @@ double Vbm::linearInterpolation(const valarray<double>& x, const valarray<double
 }
 
 void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralReflectances, const Pixel& p, valarray<double>& toaReflectances) {
-    valarray<double> f(vgtLutRhoAtm->getDimensionCount());
-    valarray<double> w(vgtLutRhoAtm->getVectorWorkspaceSize());
+    f.resize(vgtLutRhoAtm->getDimensionCount());
+    w.resize(vgtLutRhoAtm->getVectorWorkspaceSize());
 
     coordinates[0] = p.airPressure;
     coordinates[1] = p.waterVapour;
@@ -466,12 +470,6 @@ uint8_t Vbm::getFlagsAndFill(Pixel& p, valarray<double>& vgtToaReflectances) con
 
 void Vbm::setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances) {
     vgtFlagsAccessor->setUByte(index, flags);
-    valarray<Accessor*> targetAccessors(4);
-    targetAccessors[0] = vgtB0Accessor;
-    targetAccessors[1] = vgtB2Accessor;
-    targetAccessors[2] = vgtB3Accessor;
-    targetAccessors[3] = vgtMirAccessor;
-
     for (size_t i = 0; i < targetAccessors.size(); i++) {
         const double value = vgtToaReflectances[i];
         if (value != Constants::FILL_VALUE_DOUBLE) {

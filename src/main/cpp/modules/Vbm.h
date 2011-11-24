@@ -69,6 +69,8 @@ private:
     valarray<double> ozoneTiePoints;
 
     valarray<double> coordinates;
+    valarray<double> f;
+    valarray<double> w;
 
     valarray<double> vgtRhoAtm;
     valarray<double> vgtRAtm;
@@ -85,6 +87,8 @@ private:
 
     map<size_t, size_t> wavelengthIndices_0;
     map<size_t, size_t> wavelengthIndices_1;
+
+    valarray<Accessor*> targetAccessors;
 
     template<class T>
     static T cube(T x) {
