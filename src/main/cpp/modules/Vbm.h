@@ -113,7 +113,7 @@ private:
     void addVariables(Context& context);
 
 	void computeChannelWavelengths(long k, long m, valarray<double>& channelWavelengths) const;
-    void computeInterpolationIndices(valarray<double>& channelWavelengths, valarray<double>& surfaceReflectances);
+    void computeInterpolationIndices(const valarray<double>& channelWavelengths, const valarray<double>& surfaceReflectances);
 
 	void setupPixel(Pixel& p, size_t index);
 	void performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn);

@@ -175,7 +175,7 @@ double Vbm::getSlnWavelength(size_t channel) {
     BOOST_THROW_EXCEPTION(logic_error("invalid channel index '" + lexical_cast<string>(channel) + "'"));
 }
 
-void Vbm::computeInterpolationIndices(valarray<double>& channelWavelengths, valarray<double>& surfaceReflectances) {
+void Vbm::computeInterpolationIndices(const valarray<double>& channelWavelengths, const valarray<double>& surfaceReflectances) {
     for (size_t i = 0; i < wavelengths.size(); i++) {
         size_t x0Index = numeric_limits<size_t>::max();
         size_t x1Index = numeric_limits<size_t>::max();
