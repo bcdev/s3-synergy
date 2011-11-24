@@ -107,7 +107,7 @@ private:
 
 	static double surfaceReflectance(double ozone, double vza, double sza, double solarIrradiance, double radiance,
 	        double co3, double rhoAtm, double rAtm, double tSun, double tView);
-	static double hyperspectralUpscale(double ozone, double vza, double sza, double hyperSpectralReflectance,
+	static double hyperspectralUpscale(double ozone, double M, double hyperSpectralReflectance,
 	        double co3, double rhoAtm, double rAtm, double tSun, double tView);
 	static double getSlnWavelength(size_t channel);
 

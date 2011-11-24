@@ -13,7 +13,7 @@ using std::fill;
 Vbm::Vbm() :
         BasicModule("VBM"), vgtBSurfaceReflectanceWeights(4), vgtSolarIrradiances(914), wavelengths(914), synRadianceAccessors(30), synSolarIrradianceAccessors(30),
         szaOlcTiePoints(0), saaOlcTiePoints(0), vzaOlcTiePoints(0), vzaSlnTiePoints(0), waterVapourTiePoints(0), airPressureTiePoints(0),
-        ozoneTiePoints(0), coordinates(7), f(8), w(116992), vgtRhoAtm(914), vgtRAtm(914), vgtTSun(914), vgtTView(914), synRhoAtm(30), synRAtmOlc(18), synTSun(30),
+        ozoneTiePoints(0), coordinates(7), f(8), w(500000), vgtRhoAtm(914), vgtRAtm(914), vgtTSun(914), vgtTView(914), synRhoAtm(30), synRAtmOlc(18), synTSun(30),
         synTViewOlc(30), synRAtmSln(6), synTViewSln(30), wavelengthIndices_0(), wavelengthIndices_1(), targetAccessors(4) {
 }
 
@@ -375,16 +375,16 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralRef
     coordinates[0] = p.vzaOlc;
     vgtLutT->getVector(&coordinates[0], vgtTView, f, w);
 
+    double M = 0.5 * (1 / std::cos(p.sza) + 1 / (std::cos(p.vzaOlc)));
     for(size_t h = 0; h < hyperSpectralReflectances.size(); h++) {
-        toaReflectances[h] = hyperspectralUpscale(p.sza, p.vzaOlc, p.ozone, hyperSpectralReflectances[h], (*vgtCo3)[h], vgtRhoAtm[h], vgtRAtm[h], vgtTSun[h], vgtTView[h]);
+        toaReflectances[h] = hyperspectralUpscale(p.ozone, M, hyperSpectralReflectances[h], (*vgtCo3)[h], vgtRhoAtm[h], vgtRAtm[h], vgtTSun[h], vgtTView[h]);
     }
 }
 
-double Vbm::hyperspectralUpscale(double ozone, double vza, double sza, double hyperSpectralReflectance, double co3, double rhoAtm, double rAtm, double tSun, double tView) {
+double Vbm::hyperspectralUpscale(double ozone, double M, double hyperSpectralReflectance, double co3, double rhoAtm, double rAtm, double tSun, double tView) {
     if(hyperSpectralReflectance == Constants::FILL_VALUE_DOUBLE) {
         return Constants::FILL_VALUE_DOUBLE;
     }
-    double M = 0.5 * (1 / std::cos(sza) + 1 / (std::cos(vza)));
     double tO3 = std::exp(-M * ozone * co3);
     double g = tSun * tView;
     return tO3 * (rAtm + (g * hyperSpectralReflectance) / ((1 - rhoAtm) * hyperSpectralReflectance));
