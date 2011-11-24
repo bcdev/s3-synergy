@@ -39,7 +39,7 @@
                 <Output>
                     <File_Type>SY2</File_Type>
                     <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
-                    <File_Name>data/SY2/SY_UNT_ACO.SAFE</File_Name>
+                    <File_Name>data/SY2/SY_UNT_VBM.SAFE</File_Name>
                 </Output>
             </List_of_Outputs>
         </Ipf_Proc>

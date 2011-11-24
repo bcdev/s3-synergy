@@ -38,7 +38,7 @@ private:
 	LookupTable<double>* vgtLutRhoAtm;
 	LookupTable<double>* vgtLutRAtm;
 	LookupTable<double>* vgtLutT;
-	valarray<valarray<double>*> vgtBSurfaceReflectanceWeights;
+	valarray<valarray<double> > vgtBSurfaceReflectanceWeights;
 	valarray<double> vgtSolarIrradiances;
 	const valarray<double>* vgtCo3;
 	valarray<double> wavelengths;
@@ -69,6 +69,8 @@ private:
     valarray<double> ozoneTiePoints;
 
     valarray<double> coordinates;
+    valarray<double> f;
+    valarray<double> w;
 
     valarray<double> vgtRhoAtm;
     valarray<double> vgtRAtm;
@@ -85,6 +87,8 @@ private:
 
     map<size_t, size_t> wavelengthIndices_0;
     map<size_t, size_t> wavelengthIndices_1;
+
+    valarray<Accessor*> targetAccessors;
 
     template<class T>
     static T cube(T x) {
@@ -110,15 +114,15 @@ private:
 	void prepareAccessors();
 	void prepareAuxdata(Context& context);
 	void prepareTiePointData(Context& context);
-    void addVariables();
+    void addVariables(Context& context);
 
 	void computeChannelWavelengths(long k, long m, valarray<double>& channelWavelengths) const;
-    void computeInterpolationIndices(valarray<double>& channelWavelengths, valarray<double>& surfaceReflectances);
+    void computeInterpolationIndices(const valarray<double>& channelWavelengths, const valarray<double>& surfaceReflectances);
 
 	void setupPixel(Pixel& p, size_t index);
 	void performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn);
 	void performHyperspectralInterpolation(const valarray<double>& channelWavelengths, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances);
-	double linearInterpolation(const valarray<double> x, const valarray<double> y, const size_t index, const double wavelength);
+	double linearInterpolation(const valarray<double>& x, const valarray<double>& y, const size_t index);
 	void performHyperspectralUpscaling(const valarray<double>& hyperSpectralReflectances, const Pixel& p, valarray<double>& toaReflectances);
 	void performHyperspectralFiltering(const valarray<double>& toaReflectances, valarray<double>& filteredRToa) const;
 
