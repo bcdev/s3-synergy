@@ -317,34 +317,10 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
     }
 }
 
-double Vbm::surfaceReflectance(double ozone, double vza, double sza, double solarIrradiance, double radiance,
-        double co3, double rhoAtm, double rAtm, double tSun, double tView) {
-    if(radiance == Constants::FILL_VALUE_DOUBLE) {
-        return Constants::FILL_VALUE_DOUBLE;
-    }
-
-    double rToa = M_PI * radiance / (solarIrradiance * std::cos(sza));
-    double M = 0.5 * (1/std::cos(sza) + 1/std::cos(vza));
-    double t_O3 = std::exp(-M * ozone * co3);
-
-    double f = (rToa - t_O3 * rAtm) / (t_O3 * tSun * tView);
-    return f / (1 + rhoAtm * f);
-}
-
 void Vbm::performHyperspectralInterpolation(const valarray<double>& channelWavelengths, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances) {
     for(size_t i = 0; i < wavelengths.size(); i++) {
         hyperSpectralReflectances[i] = linearInterpolation(channelWavelengths, surfaceReflectances, i);
     }
-}
-
-double Vbm::linearInterpolation(const valarray<double>& x, const valarray<double>& f, const size_t index) {
-    size_t x0Index = wavelengthIndices_0[index];
-    size_t x1Index = wavelengthIndices_1[index];
-
-    const double x0 = x[x0Index];
-    const double f0 = f[x0Index];
-
-    return f0 + (f[x1Index] - f0) / (x[x1Index] - x0) * (wavelengths[index] - x0);
 }
 
 void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralReflectances, const Pixel& p, valarray<double>& toaReflectances) {
@@ -375,19 +351,10 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralRef
     coordinates[0] = p.vzaOlc;
     vgtLutT->getVector(&coordinates[0], vgtTView, f, w);
 
-    double M = 0.5 * (1 / std::cos(p.sza) + 1 / (std::cos(p.vzaOlc)));
+    const double M = 0.5 * (1 / std::cos(p.sza) + 1 / (std::cos(p.vzaOlc)));
     for(size_t h = 0; h < hyperSpectralReflectances.size(); h++) {
         toaReflectances[h] = hyperspectralUpscale(p.ozone, M, hyperSpectralReflectances[h], (*vgtCo3)[h], vgtRhoAtm[h], vgtRAtm[h], vgtTSun[h], vgtTView[h]);
     }
-}
-
-double Vbm::hyperspectralUpscale(double ozone, double M, double hyperSpectralReflectance, double co3, double rhoAtm, double rAtm, double tSun, double tView) {
-    if(hyperSpectralReflectance == Constants::FILL_VALUE_DOUBLE) {
-        return Constants::FILL_VALUE_DOUBLE;
-    }
-    double tO3 = std::exp(-M * ozone * co3);
-    double g = tSun * tView;
-    return tO3 * (rAtm + (g * hyperSpectralReflectance) / ((1 - rhoAtm) * hyperSpectralReflectance));
 }
 
 void Vbm::performHyperspectralFiltering(const valarray<double>& toaReflectances, valarray<double>& filteredRToa) const {
@@ -444,13 +411,3 @@ uint8_t Vbm::getFlagsAndFill(Pixel& p, valarray<double>& vgtToaReflectances) con
     return flags;
 }
 
-void Vbm::setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances) {
-    vgtFlagsAccessor->setUByte(index, flags);
-    for (size_t i = 0; i < targetAccessors.size(); i++) {
-        if (vgtToaReflectances[i] != Constants::FILL_VALUE_DOUBLE) {
-            targetAccessors[i]->setDouble(index, vgtToaReflectances[i]);
-        } else {
-            targetAccessors[i]->setFillValue(index);
-        }
-    }
-}
