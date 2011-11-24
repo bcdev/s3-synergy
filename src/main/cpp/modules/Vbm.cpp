@@ -8,8 +8,6 @@
 #include "Vbm.h"
 
 using std::abs;
-//using std::cos;
-//using std::exp;
 using std::fill;
 
 Vbm::Vbm() :
@@ -133,12 +131,12 @@ void Vbm::process(Context& context) {
     context.getLogging().info("Performing band mapping...", getId());
 
     for (long m = collocatedGrid.getFirstM(); m <= collocatedGrid.getMaxM(); m++) {
+        context.getLogging().info("...for column " + lexical_cast<string>(m + 1) + "/" + lexical_cast<string>(collocatedGrid.getMaxM() + 1), getId());
         for (long k = collocatedGrid.getFirstK(); k <= collocatedGrid.getMaxK(); k++) {
             computeChannelWavelengths(k, m, channelWavelengths);
+            computeInterpolationIndices(channelWavelengths, surfaceReflectances);
             for (long l = firstL; l <= lastL; l++) {
-                computeInterpolationIndices(channelWavelengths, surfaceReflectances);
                 const size_t index = collocatedGrid.getIndex(k, l, m);
-
                 setupPixel(p, index);
                 performDownscaling(p, surfaceReflectances);
                 performHyperspectralInterpolation(channelWavelengths, surfaceReflectances, hyperSpectralReflectances);
