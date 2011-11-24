@@ -142,9 +142,7 @@ void Vbm::process(Context& context) {
                 performHyperspectralInterpolation(channelWavelengths, surfaceReflectances, hyperSpectralReflectances);
                 performHyperspectralUpscaling(hyperSpectralReflectances, p, toaReflectances);
                 performHyperspectralFiltering(toaReflectances, vgtToaReflectances);
-
                 const uint8_t flags = getFlagsAndFill(p, vgtToaReflectances);
-
                 setValues(index, flags, vgtToaReflectances);
             }
         }
@@ -350,7 +348,7 @@ void Vbm::performHyperspectralInterpolation(const valarray<double>& channelWavel
     }
 }
 
-double Vbm::linearInterpolation(const valarray<double> x, const valarray<double> f, const size_t index, const double wavelength) {
+double Vbm::linearInterpolation(const valarray<double>& x, const valarray<double>& f, const size_t index, const double wavelength) {
     size_t x0Index = wavelengthIndices_0[index];
     size_t x1Index = wavelengthIndices_1[index];
 

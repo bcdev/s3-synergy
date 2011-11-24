@@ -118,7 +118,7 @@ private:
 	void setupPixel(Pixel& p, size_t index);
 	void performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn);
 	void performHyperspectralInterpolation(const valarray<double>& channelWavelengths, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances);
-	double linearInterpolation(const valarray<double> x, const valarray<double> y, const size_t index, const double wavelength);
+	double linearInterpolation(const valarray<double>& x, const valarray<double>& y, const size_t index, const double wavelength);
 	void performHyperspectralUpscaling(const valarray<double>& hyperSpectralReflectances, const Pixel& p, valarray<double>& toaReflectances);
 	void performHyperspectralFiltering(const valarray<double>& toaReflectances, valarray<double>& filteredRToa) const;
 
