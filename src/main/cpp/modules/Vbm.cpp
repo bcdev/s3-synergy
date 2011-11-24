@@ -344,20 +344,18 @@ double Vbm::surfaceReflectance(double ozone, double vza, double sza, double sola
 
 void Vbm::performHyperspectralInterpolation(const valarray<double>& channelWavelengths, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances) {
     for(size_t i = 0; i < wavelengths.size(); i++) {
-        hyperSpectralReflectances[i] = linearInterpolation(channelWavelengths, surfaceReflectances, i, wavelengths[i]);
+        hyperSpectralReflectances[i] = linearInterpolation(channelWavelengths, surfaceReflectances, i);
     }
 }
 
-double Vbm::linearInterpolation(const valarray<double>& x, const valarray<double>& f, const size_t index, const double wavelength) {
+double Vbm::linearInterpolation(const valarray<double>& x, const valarray<double>& f, const size_t index) {
     size_t x0Index = wavelengthIndices_0[index];
     size_t x1Index = wavelengthIndices_1[index];
 
     const double x0 = x[x0Index];
-    const double x1 = x[x1Index];
     const double f0 = f[x0Index];
-    const double f1 = f[x1Index];
 
-    return f0 + (f1 - f0) / (x1 - x0) * (wavelength - x0);
+    return f0 + (f[x1Index] - f0) / (x[x1Index] - x0) * (wavelengths[index] - x0);
 }
 
 void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralReflectances, const Pixel& p, valarray<double>& toaReflectances) {
