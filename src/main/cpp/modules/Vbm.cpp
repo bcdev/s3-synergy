@@ -142,12 +142,14 @@ void Vbm::process(Context& context) {
             for (long l = firstL; l <= lastL; l++) {
                 const size_t index = collocatedGrid.getIndex(k, l, m);
                 setupPixel(p, index);
+                /*
                 performDownscaling(p, surfaceReflectances);
                 performHyperspectralInterpolation(channelWavelengths, surfaceReflectances, hyperSpectralReflectances);
                 performHyperspectralUpscaling(hyperSpectralReflectances, p, toaReflectances);
                 performHyperspectralFiltering(toaReflectances, vgtToaReflectances);
                 const uint8_t flags = getFlagsAndFill(p, vgtToaReflectances);
                 setValues(index, flags, vgtToaReflectances);
+                */
             }
         }
     }
