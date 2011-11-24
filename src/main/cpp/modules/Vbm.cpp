@@ -13,7 +13,7 @@ using std::fill;
 Vbm::Vbm() :
         BasicModule("VBM"), vgtBSurfaceReflectanceWeights(4), vgtSolarIrradiances(914), wavelengths(914), synRadianceAccessors(30), synSolarIrradianceAccessors(30),
         szaOlcTiePoints(0), saaOlcTiePoints(0), vzaOlcTiePoints(0), vzaSlnTiePoints(0), waterVapourTiePoints(0), airPressureTiePoints(0),
-        ozoneTiePoints(0), coordinates(7), f(), w(), vgtRhoAtm(914), vgtRAtm(914), vgtTSun(914), vgtTView(914), synRhoAtm(30), synRAtmOlc(18), synTSun(30),
+        ozoneTiePoints(0), coordinates(7), f(8), w(116992), vgtRhoAtm(914), vgtRAtm(914), vgtTSun(914), vgtTView(914), synRhoAtm(30), synRAtmOlc(18), synTSun(30),
         synTViewOlc(30), synRAtmSln(6), synTViewSln(30), wavelengthIndices_0(), wavelengthIndices_1(), targetAccessors(4) {
 }
 
@@ -235,9 +235,6 @@ void Vbm::setupPixel(Pixel& p, size_t index) {
 }
 
 void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn) {
-    f.resize(synLutRhoAtm->getDimensionCount());
-    w.resize(synLutRhoAtm->getVectorWorkspaceSize());
-
     coordinates[0] = p.airPressure;
     coordinates[1] = p.waterVapour;
     coordinates[2] = p.aot;
@@ -253,9 +250,6 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
     coordinates[5] = p.aot;
     coordinates[6] = p.aerosolModel;
 
-    f.resize(synLutOlcRatm->getDimensionCount());
-    w.resize(synLutOlcRatm->getVectorWorkspaceSize());
-
     synLutOlcRatm->getVector(&coordinates[0], synRAtmOlc, f, w);
 
     coordinates[0] = p.sza;
@@ -263,9 +257,6 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
     coordinates[2] = p.waterVapour;
     coordinates[3] = p.aot;
     coordinates[4] = p.aerosolModel;
-
-    f.resize(synLutT->getDimensionCount());
-    w.resize(synLutT->getVectorWorkspaceSize());
 
     synLutT->getVector(&coordinates[0], synTSun, f, w);
 
@@ -294,9 +285,6 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
     coordinates[5] = p.aot;
     coordinates[6] = p.aerosolModel;
 
-    f.resize(synLutSlnRatm->getDimensionCount());
-    w.resize(synLutSlnRatm->getVectorWorkspaceSize());
-
     synLutSlnRatm->getVector(&coordinates[0], synRAtmSln, f, w);
 
     coordinates[0] = p.sza;
@@ -310,9 +298,6 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
     coordinates[2] = p.waterVapour;
     coordinates[3] = p.aot;
     coordinates[4] = p.aerosolModel;
-
-    f.resize(synLutT->getDimensionCount());
-    w.resize(synLutT->getVectorWorkspaceSize());
 
     synLutT->getVector(&coordinates[0], synTViewSln, f, w);
 
@@ -363,9 +348,6 @@ double Vbm::linearInterpolation(const valarray<double>& x, const valarray<double
 }
 
 void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralReflectances, const Pixel& p, valarray<double>& toaReflectances) {
-    f.resize(vgtLutRhoAtm->getDimensionCount());
-    w.resize(vgtLutRhoAtm->getVectorWorkspaceSize());
-
     coordinates[0] = p.airPressure;
     coordinates[1] = p.waterVapour;
     coordinates[2] = p.aot;
@@ -380,9 +362,6 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralRef
     coordinates[5] = p.aot;
     coordinates[6] = p.aerosolModel;
 
-    f.resize(vgtLutRAtm->getDimensionCount());
-    w.resize(vgtLutRAtm->getVectorWorkspaceSize());
-
     vgtLutRAtm->getVector(&coordinates[0], vgtRAtm, f, w);
 
     coordinates[0] = p.sza;
@@ -390,9 +369,6 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralRef
     coordinates[2] = p.waterVapour;
     coordinates[3] = p.aot;
     coordinates[4] = p.aerosolModel;
-
-    f.resize(vgtLutT->getDimensionCount());
-    w.resize(vgtLutT->getVectorWorkspaceSize());
 
     vgtLutT->getVector(&coordinates[0], vgtTSun, f, w);
 
@@ -471,9 +447,8 @@ uint8_t Vbm::getFlagsAndFill(Pixel& p, valarray<double>& vgtToaReflectances) con
 void Vbm::setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances) {
     vgtFlagsAccessor->setUByte(index, flags);
     for (size_t i = 0; i < targetAccessors.size(); i++) {
-        const double value = vgtToaReflectances[i];
-        if (value != Constants::FILL_VALUE_DOUBLE) {
-            targetAccessors[i]->setDouble(index, value);
+        if (vgtToaReflectances[i] != Constants::FILL_VALUE_DOUBLE) {
+            targetAccessors[i]->setDouble(index, vgtToaReflectances[i]);
         } else {
             targetAccessors[i]->setFillValue(index);
         }
