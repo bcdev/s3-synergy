@@ -25,7 +25,7 @@ void Syl2_1_Test::setUp() {
 void Syl2_1_Test::tearDown() {
 }
 
-void Syl2_1_Test::testParseJobOrder1() {
+void Syl2_1_Test::testParseJobOrder_01() {
 	BasicTask task("SY_INT_SYL2_2");
 
     const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
@@ -33,5 +33,5 @@ void Syl2_1_Test::testParseJobOrder1() {
 
 	const int exitCode = task.execute(jobOrderPath);
 
-	CPPUNIT_ASSERT(exitCode == ExitCode::FAILURE);
+	CPPUNIT_ASSERT(exitCode == ExitCode::OK);
 }
