@@ -143,13 +143,11 @@ void Vbm::process(Context& context) {
                 const size_t index = collocatedGrid.getIndex(k, l, m);
                 setupPixel(p, index);
                 performDownscaling(p, surfaceReflectances);
-                /*
                 performHyperspectralInterpolation(channelWavelengths, surfaceReflectances, hyperSpectralReflectances);
                 performHyperspectralUpscaling(hyperSpectralReflectances, p, toaReflectances);
                 performHyperspectralFiltering(toaReflectances, vgtToaReflectances);
                 const uint8_t flags = getFlagsAndFill(p, vgtToaReflectances);
                 setValues(index, flags, vgtToaReflectances);
-                */
             }
         }
     }
@@ -318,6 +316,30 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
                 synTViewSln[i]);
     }
 }
+
+double Vbm::surfaceReflectance(double ozone, double vza, double sza, double solarIrradiance, double radiance,
+        double co3, double rhoAtm, double rAtm, double tSun, double tView) {
+    if(radiance == Constants::FILL_VALUE_DOUBLE) {
+        return Constants::FILL_VALUE_DOUBLE;
+    }
+
+    double rToa = M_PI * radiance / (solarIrradiance * std::cos(sza));
+    double M = 0.5 * (1/std::cos(sza) + 1/std::cos(vza));
+    double t_O3 = std::exp(-M * ozone * co3);
+
+    double f = (rToa - t_O3 * rAtm) / (t_O3 * tSun * tView);
+    return f / (1 + rhoAtm * f);
+}
+
+double Vbm::hyperspectralUpscale(double ozone, double M, double hyperSpectralReflectance, double co3, double rhoAtm, double rAtm, double tSun, double tView) {
+    if(hyperSpectralReflectance == Constants::FILL_VALUE_DOUBLE) {
+        return Constants::FILL_VALUE_DOUBLE;
+    }
+    const double tO3 = std::exp(-M * ozone * co3);
+    const double g = tSun * tView;
+    return tO3 * (rAtm + (g * hyperSpectralReflectance) / ((1 - rhoAtm) * hyperSpectralReflectance));
+}
+
 
 void Vbm::performHyperspectralInterpolation(const valarray<double>& channelWavelengths, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances) {
     for(size_t i = 0; i < wavelengths.size(); i++) {

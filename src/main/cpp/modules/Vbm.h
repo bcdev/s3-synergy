@@ -130,15 +130,6 @@ private:
 	void setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances);
 };
 
-inline double Vbm::hyperspectralUpscale(double ozone, double M, double hyperSpectralReflectance, double co3, double rhoAtm, double rAtm, double tSun, double tView) {
-    if(hyperSpectralReflectance == Constants::FILL_VALUE_DOUBLE) {
-        return Constants::FILL_VALUE_DOUBLE;
-    }
-    const double tO3 = std::exp(-M * ozone * co3);
-    const double g = tSun * tView;
-    return tO3 * (rAtm + (g * hyperSpectralReflectance) / ((1 - rhoAtm) * hyperSpectralReflectance));
-}
-
 inline double Vbm::linearInterpolation(const valarray<double>& x, const valarray<double>& f, const size_t index) {
     size_t x0Index = wavelengthIndices_0[index];
     size_t x1Index = wavelengthIndices_1[index];
@@ -147,20 +138,6 @@ inline double Vbm::linearInterpolation(const valarray<double>& x, const valarray
     const double f0 = f[x0Index];
 
     return f0 + (f[x1Index] - f0) / (x[x1Index] - x0) * (wavelengths[index] - x0);
-}
-
-inline double Vbm::surfaceReflectance(double ozone, double vza, double sza, double solarIrradiance, double radiance,
-        double co3, double rhoAtm, double rAtm, double tSun, double tView) {
-    if(radiance == Constants::FILL_VALUE_DOUBLE) {
-        return Constants::FILL_VALUE_DOUBLE;
-    }
-
-    double rToa = M_PI * radiance / (solarIrradiance * std::cos(sza));
-    double M = 0.5 * (1/std::cos(sza) + 1/std::cos(vza));
-    double t_O3 = std::exp(-M * ozone * co3);
-
-    double f = (rToa - t_O3 * rAtm) / (t_O3 * tSun * tView);
-    return f / (1 + rhoAtm * f);
 }
 
 inline void Vbm::setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances) {
