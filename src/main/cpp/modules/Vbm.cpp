@@ -236,7 +236,7 @@ void Vbm::setupPixel(Pixel& p, size_t index) {
 
 void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn) {
     valarray<double> f(synLutRhoAtm->getDimensionCount());
-    valarray<double> w(synLutRhoAtm->getMatrixWorkspaceSize());
+    valarray<double> w(synLutRhoAtm->getVectorWorkspaceSize());
 
     coordinates[0] = p.airPressure;
     coordinates[1] = p.waterVapour;
@@ -254,7 +254,7 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
     coordinates[6] = p.aerosolModel;
 
     f.resize(synLutOlcRatm->getDimensionCount());
-    w.resize(synLutOlcRatm->getMatrixWorkspaceSize());
+    w.resize(synLutOlcRatm->getVectorWorkspaceSize());
 
     synLutOlcRatm->getVector(&coordinates[0], synRAtmOlc, f, w);
 
@@ -265,7 +265,7 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
     coordinates[4] = p.aerosolModel;
 
     f.resize(synLutT->getDimensionCount());
-    w.resize(synLutT->getMatrixWorkspaceSize());
+    w.resize(synLutT->getVectorWorkspaceSize());
 
     synLutT->getVector(&coordinates[0], synTSun, f, w);
 
@@ -295,7 +295,7 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
     coordinates[6] = p.aerosolModel;
 
     f.resize(synLutSlnRatm->getDimensionCount());
-    w.resize(synLutSlnRatm->getMatrixWorkspaceSize());
+    w.resize(synLutSlnRatm->getVectorWorkspaceSize());
 
     synLutSlnRatm->getVector(&coordinates[0], synRAtmSln, f, w);
 
@@ -312,7 +312,7 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
     coordinates[4] = p.aerosolModel;
 
     f.resize(synLutT->getDimensionCount());
-    w.resize(synLutT->getMatrixWorkspaceSize());
+    w.resize(synLutT->getVectorWorkspaceSize());
 
     synLutT->getVector(&coordinates[0], synTViewSln, f, w);
 
@@ -366,7 +366,7 @@ double Vbm::linearInterpolation(const valarray<double> x, const valarray<double>
 
 void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralReflectances, const Pixel& p, valarray<double>& toaReflectances) {
     valarray<double> f(vgtLutRhoAtm->getDimensionCount());
-    valarray<double> w(vgtLutRhoAtm->getMatrixWorkspaceSize());
+    valarray<double> w(vgtLutRhoAtm->getVectorWorkspaceSize());
 
     coordinates[0] = p.airPressure;
     coordinates[1] = p.waterVapour;
@@ -383,7 +383,7 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralRef
     coordinates[6] = p.aerosolModel;
 
     f.resize(vgtLutRAtm->getDimensionCount());
-    w.resize(vgtLutRAtm->getMatrixWorkspaceSize());
+    w.resize(vgtLutRAtm->getVectorWorkspaceSize());
 
     vgtLutRAtm->getVector(&coordinates[0], vgtRAtm, f, w);
 
@@ -394,7 +394,7 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralRef
     coordinates[4] = p.aerosolModel;
 
     f.resize(vgtLutT->getDimensionCount());
-    w.resize(vgtLutT->getMatrixWorkspaceSize());
+    w.resize(vgtLutT->getVectorWorkspaceSize());
 
     vgtLutT->getVector(&coordinates[0], vgtTSun, f, w);
 
