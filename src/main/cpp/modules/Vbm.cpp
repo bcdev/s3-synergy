@@ -303,7 +303,7 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
 
     // only last three channels are used, since wavelengths of channels 18, 19, 20 are already present in OLC
     for(size_t i = 21; i < 24; i++) {
-        surfReflNadirSyn[i] = surfaceReflectance(
+        surfReflNadirSyn[i-3] = surfaceReflectance(
                 p.ozone,
                 p.vzaSln,
                 p.sza,
