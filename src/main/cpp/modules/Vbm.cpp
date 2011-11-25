@@ -28,7 +28,6 @@ void Vbm::start(Context& context) {
 
     prepareAccessors();
     prepareAuxdata(context);
-    prepareTiePointData(context);
 }
 
 void Vbm::prepareAccessors() {
@@ -117,6 +116,8 @@ void Vbm::addVariables(Context& context) {
 }
 
 void Vbm::process(Context& context) {
+    prepareTiePointData(context);
+
     const Grid& collocatedGrid = collocatedSegment->getGrid();
 
     // todo - verify
