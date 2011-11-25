@@ -137,6 +137,14 @@ inline double Vbm::linearInterpolation(const valarray<double>& x, const valarray
     const double x0 = x[x0Index];
     const double f0 = f[x0Index];
 
+    if(x0 == x[x1Index]) {
+        return f0;
+    }
+
+    if(x0 == wavelengths[index]) {
+        return f[x1Index];
+    }
+
     return f0 + (f[x1Index] - f0) / (x[x1Index] - x0) * (wavelengths[index] - x0);
 }
 
