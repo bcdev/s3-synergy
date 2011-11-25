@@ -179,27 +179,32 @@ double Vbm::getSlnWavelength(size_t channel) {
 }
 
 void Vbm::computeInterpolationIndices(const valarray<double>& channelWavelengths, const valarray<double>& surfaceReflectances) {
-    for (size_t i = 0; i < wavelengths.size(); i++) {
-        size_t x0Index = numeric_limits<size_t>::max();
-        size_t x1Index = numeric_limits<size_t>::max();
+    for (size_t i = 0; i < channelWavelengths.size(); i++) {
         double x0Delta = numeric_limits<size_t>::max();
         double x1Delta = numeric_limits<size_t>::max();
-        for (size_t i = 0; i < channelWavelengths.size(); i++) {
-            if(surfaceReflectances[i] == Constants::FILL_VALUE_DOUBLE) {
-                continue;
-            }
-            double delta = abs(channelWavelengths[i] - wavelengths[i]);
-            if (channelWavelengths[i] <= wavelengths[i]) {
-                if (delta < x0Delta) {
-                    wavelengthIndices_0[i] = x0Index;
+        bool wavelengthIndex0Set = false;
+        bool wavelengthIndex1Set = false;
+        for(size_t h = 0; h < wavelengths.size(); h++) {
+            double delta = abs(channelWavelengths[i] - wavelengths[h]);
+            if (channelWavelengths[i] <= wavelengths[h]) {
+                if(delta < x0Delta) {
+                    wavelengthIndices_0[i] = h;
                     x0Delta = delta;
+                    wavelengthIndex0Set = true;
                 }
             } else {
-                if (delta < x1Delta) {
-                    wavelengthIndices_1[i] = x1Index;
+                if(delta < x1Delta) {
+                    wavelengthIndices_1[i] = h;
                     x1Delta = delta;
+                    wavelengthIndex1Set = true;
                 }
             }
+        }
+        if(!wavelengthIndex0Set) {
+            wavelengthIndices_0[i] = wavelengthIndices_1[i];
+        }
+        if(!wavelengthIndex1Set) {
+            wavelengthIndices_1[i] = wavelengthIndices_0[i];
         }
     }
 }
