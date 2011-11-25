@@ -130,4 +130,25 @@ private:
 	void setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances);
 };
 
+inline double Vbm::linearInterpolation(const valarray<double>& x, const valarray<double>& f, const size_t index) {
+    size_t x0Index = wavelengthIndices_0[index];
+    size_t x1Index = wavelengthIndices_1[index];
+
+    const double x0 = x[x0Index];
+    const double f0 = f[x0Index];
+
+    return f0 + (f[x1Index] - f0) / (x[x1Index] - x0) * (wavelengths[index] - x0);
+}
+
+inline void Vbm::setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances) {
+    vgtFlagsAccessor->setUByte(index, flags);
+    for (size_t i = 0; i < targetAccessors.size(); i++) {
+        if (vgtToaReflectances[i] != Constants::FILL_VALUE_DOUBLE) {
+            targetAccessors[i]->setDouble(index, vgtToaReflectances[i]);
+        } else {
+            targetAccessors[i]->setFillValue(index);
+        }
+    }
+}
+
 #endif /* VBM_H_ */
