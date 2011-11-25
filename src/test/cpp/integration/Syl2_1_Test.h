@@ -13,6 +13,7 @@
 class Syl2_1_Test : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(Syl2_1_Test);
     CPPUNIT_TEST(testParseJobOrder_01);
+    CPPUNIT_TEST(testParseJobOrder_02);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -23,6 +24,7 @@ public:
 
 private:
     void testParseJobOrder_01();
+    void testParseJobOrder_02();
 };
 
 #endif	/* SYL2_2_TEST_H */
