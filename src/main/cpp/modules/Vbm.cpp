@@ -28,7 +28,6 @@ void Vbm::start(Context& context) {
 
     prepareAccessors();
     prepareAuxdata(context);
-    prepareTiePointData(context);
 }
 
 void Vbm::prepareAccessors() {
@@ -117,6 +116,8 @@ void Vbm::addVariables(Context& context) {
 }
 
 void Vbm::process(Context& context) {
+    prepareTiePointData(context);
+
     const Grid& collocatedGrid = collocatedSegment->getGrid();
 
     // todo - verify
@@ -178,27 +179,32 @@ double Vbm::getSlnWavelength(size_t channel) {
 }
 
 void Vbm::computeInterpolationIndices(const valarray<double>& channelWavelengths, const valarray<double>& surfaceReflectances) {
-    for (size_t i = 0; i < wavelengths.size(); i++) {
-        size_t x0Index = numeric_limits<size_t>::max();
-        size_t x1Index = numeric_limits<size_t>::max();
+    for (size_t i = 0; i < channelWavelengths.size(); i++) {
         double x0Delta = numeric_limits<size_t>::max();
         double x1Delta = numeric_limits<size_t>::max();
-        for (size_t i = 0; i < channelWavelengths.size(); i++) {
-            if(surfaceReflectances[i] == Constants::FILL_VALUE_DOUBLE) {
-                continue;
-            }
-            double delta = abs(channelWavelengths[i] - wavelengths[i]);
-            if (channelWavelengths[i] <= wavelengths[i]) {
-                if (delta < x0Delta) {
-                    wavelengthIndices_0[i] = x0Index;
+        bool wavelengthIndex0Set = false;
+        bool wavelengthIndex1Set = false;
+        for(size_t h = 0; h < wavelengths.size(); h++) {
+            double delta = abs(channelWavelengths[i] - wavelengths[h]);
+            if (channelWavelengths[i] <= wavelengths[h]) {
+                if(delta < x0Delta) {
+                    wavelengthIndices_0[i] = h;
                     x0Delta = delta;
+                    wavelengthIndex0Set = true;
                 }
             } else {
-                if (delta < x1Delta) {
-                    wavelengthIndices_1[i] = x1Index;
+                if(delta < x1Delta) {
+                    wavelengthIndices_1[i] = h;
                     x1Delta = delta;
+                    wavelengthIndex1Set = true;
                 }
             }
+        }
+        if(!wavelengthIndex0Set) {
+            wavelengthIndices_0[i] = wavelengthIndices_1[i];
+        }
+        if(!wavelengthIndex1Set) {
+            wavelengthIndices_1[i] = wavelengthIndices_0[i];
         }
     }
 }
@@ -206,8 +212,8 @@ void Vbm::computeInterpolationIndices(const valarray<double>& channelWavelengths
 void Vbm::setupPixel(Pixel& p, size_t index) {
     p.aerosolModel = amin;
     for(size_t i = 0; i < 30; i++) {
-        p.radiances = synRadianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synRadianceAccessors[i]->getDouble(index);
-        p.solarIrradiances = synSolarIrradianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synSolarIrradianceAccessors[i]->getDouble(index);
+        p.radiances[i] = synRadianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synRadianceAccessors[i]->getDouble(index);
+        p.solarIrradiances[i] = synSolarIrradianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synSolarIrradianceAccessors[i]->getDouble(index);
     }
     p.lat = synLatitudeAccessor->getDouble(index);
     p.lon = synLongitudeAccessor->getDouble(index);
@@ -303,7 +309,7 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
 
     // only last three channels are used, since wavelengths of channels 18, 19, 20 are already present in OLC
     for(size_t i = 21; i < 24; i++) {
-        surfReflNadirSyn[i] = surfaceReflectance(
+        surfReflNadirSyn[i-3] = surfaceReflectance(
                 p.ozone,
                 p.vzaSln,
                 p.sza,
@@ -388,6 +394,9 @@ void Vbm::performHyperspectralFiltering(const valarray<double>& toaReflectances,
         for(size_t h = 0; h < 914; h++) {
             double solarIrr = vgtSolarIrradiances[h];
             double bSurf = (vgtBSurfaceReflectanceWeights[b])[h];
+            if(std::isnan(toaReflectances[h])) {
+                continue;
+            }
             numerator += solarIrr * bSurf * toaReflectances[h];
             denominator += solarIrr * bSurf;
         }
