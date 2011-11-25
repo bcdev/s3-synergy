@@ -802,7 +802,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='geolocation.nc' />
                 <checksum checksumName='MD5'>
-                    1d8d969992bb1a36126a3567501f6929
+                    ${checksum-geolocation.nc}
                 </checksum>
             </byteStream>
         </metadataObject>
@@ -815,7 +815,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='time.nc' />
                 <checksum checksumName='MD5'>
-                    4697428df587c7ab62c01e9704e9702e
+                    ${checksum-time.nc}
                 </checksum>
             </byteStream>
         </metadataObject>
@@ -828,7 +828,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='tiepoints_meteo.nc' />
                 <checksum checksumName='MD5'>
-                    318a5589356802d56dd51cb60596fa12
+                    ${tiepoints_meteo}
                 </checksum>
             </byteStream>
         </metadataObject>
@@ -841,7 +841,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='tiepoints_olci.nc' />
                 <checksum checksumName='MD5'>
-                    45ff9989ee26a0c9c93729a9f76f5caf
+                    ${tiepoints_olci}
                 </checksum>
             </byteStream>
         </metadataObject>
@@ -854,7 +854,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='tiepoints_slstr_n.nc' />
                 <checksum checksumName='MD5'>
-                    2dc59215f62235b03f43eac72fc5ef11
+                    ${tiepoints_slstr_n}
                 </checksum>
             </byteStream>
         </metadataObject>
@@ -867,7 +867,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='tiepoints_slstr_o.nc' />
                 <checksum checksumName='MD5'>
-                    88a72add71e9e66d3b2cb8090537d1ba
+                    ${tiepoints_slstr_o}
                 </checksum>
             </byteStream>
         </metadataObject>
@@ -945,7 +945,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0400.nc' />
                 <checksum checksumName='MD5'>
-                    fe73184db1ae4e71610b5acd4db09ec8
+                    ${checksum-r0400.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -958,7 +958,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0413.nc' />
                 <checksum checksumName='MD5'>
-                    7fcf02400a0a002ec89e9df56f06a205
+                    ${r0413.n}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -984,7 +984,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0490.nc' />
                 <checksum checksumName='MD5'>
-                    0d07f735d091d242e4d5fe6f3e193e99
+                    ${checksum-r0490.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -997,7 +997,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0510.nc' />
                 <checksum checksumName='MD5'>
-                    f5d751a2f813e7ec6d6693abfcec7671
+                    ${checksum-r0510.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1010,7 +1010,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0560.nc' />
                 <checksum checksumName='MD5'>
-                    2d19e4e4ef123eeba53140db02361186
+                    ${checksum-r0560.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1023,7 +1023,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0620.nc' />
                 <checksum checksumName='MD5'>
-                    7f74a72ec1081232a21a70d41e44231f
+                    ${checksum-r0620.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1036,7 +1036,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0665.nc' />
                 <checksum checksumName='MD5'>
-                    aaa176ee04509aa56de8e55bb0d5c15d
+                    ${checksum-r0665.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1049,7 +1049,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0674.nc' />
                 <checksum checksumName='MD5'>
-                    cea89d896e07a2a327830f6b3713ee03
+                    ${checksum-r0674.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1062,7 +1062,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0681.nc' />
                 <checksum checksumName='MD5'>
-                    147ef2f5aee59dfcbfd31ba63cd659b1
+                    ${checksum-r0681.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1075,7 +1075,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0709.nc' />
                 <checksum checksumName='MD5'>
-                    bc92696b5a6529ff355edddfa716449c
+                    ${checksum-r0709.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1088,7 +1088,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0754.nc' />
                 <checksum checksumName='MD5'>
-                    1ba36a2333c5e358d2c7cde346013841
+                    ${checksum-r0754.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1101,7 +1101,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0761.nc' />
                 <checksum checksumName='MD5'>
-                    0368fc5d9400b075b30a6fb3a77f4087
+                    ${checksum-r0761.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1114,7 +1114,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0779.nc' />
                 <checksum checksumName='MD5'>
-                    10b1709198d813eea2da234f2996106b
+                    ${checksum-r0779.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1127,7 +1127,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0865.nc' />
                 <checksum checksumName='MD5'>
-                    aaf840075aacc318498284e5a0d830f0
+                    ${checksum-r0865.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1140,7 +1140,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0885.nc' />
                 <checksum checksumName='MD5'>
-                    f428ea308ceef53b9afd0bdd9e7a9a9d
+                    ${checksum-r0885.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1153,7 +1153,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0900.nc' />
                 <checksum checksumName='MD5'>
-                    39250ce291bfa63468848f0fe2caddeb
+                    ${checksum-r0900.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1166,7 +1166,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r1020.nc' />
                 <checksum checksumName='MD5'>
-                    b25ad2c7f1eaab426cd29868a6aa6736
+                    ${checksum-r1020.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1179,7 +1179,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0550n.nc' />
                 <checksum checksumName='MD5'>
-                    129a9e94a84d50ba5075d721927dd115
+                    ${checksum-r0550n.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1192,7 +1192,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0665n.nc' />
                 <checksum checksumName='MD5'>
-                    6f7169ca74b207ae0a71e0e9f36247fa
+                    ${checksum-r0665n.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1205,7 +1205,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0865n.nc' />
                 <checksum checksumName='MD5'>
-                    dfa541500d8b7e2371c0e55aa03d5fc9
+                    ${checksum-r0865n.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1218,7 +1218,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r1375n.nc' />
                 <checksum checksumName='MD5'>
-                    c55ce81acf0d29e35fa2fdb12166a395
+                    ${checksum-r1375n.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1231,7 +1231,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r1610n.nc' />
                 <checksum checksumName='MD5'>
-                    3d5b2a56d2bb5213c12278adcf4e36a4
+                    ${checksum-r1610n.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1244,7 +1244,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r2250n.nc' />
                 <checksum checksumName='MD5'>
-                    e62131ed8593cf40a37d6c04bd07deb6
+                    ${checksum-r2250n.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1257,7 +1257,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0550o.nc' />
                 <checksum checksumName='MD5'>
-                    8f546787b9b8b5c50d1a3df637914c30
+                    ${checksum-r0550o.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1270,7 +1270,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0665o.nc' />
                 <checksum checksumName='MD5'>
-                    cccf1f4bbd9e1c613481bb4c64ba8725
+                    ${checksum-r0665o.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1283,7 +1283,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0865o.nc' />
                 <checksum checksumName='MD5'>
-                    e63b99d79dd74d3dc544f71bcc76d43d
+                    ${checksum-r0865o.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1296,7 +1296,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r1375o.nc' />
                 <checksum checksumName='MD5'>
-                    8a226282758e4e34332322edfc13d17b
+                    ${checksum-r1375o.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1309,7 +1309,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r1610o.nc' />
                 <checksum checksumName='MD5'>
-                    8393520871a5b673e78fec62b0f716ab
+                    ${checksum-r1610o.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1322,7 +1322,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r2250o.nc' />
                 <checksum checksumName='MD5'>
-                    46fa6b9e99c172850090c13e8b749c65
+                    ${checksum-r2250o.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1336,7 +1336,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='t550.nc' />
                 <checksum checksumName='MD5'>
-                    68ba000fd2754dd4b92a4935a7ab5656
+                    ${checksum-rt550.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1349,7 +1349,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='a550.nc' />
                 <checksum checksumName='MD5'>
-                    e4dd21213d7ad3f1ca0b518f56165f63
+                    ${checksum-a550.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1362,7 +1362,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='amin.nc' />
                 <checksum checksumName='MD5'>
-                    c9bfe7929bab7c3c50852c2ad4037150
+                    ${checksum-amin.nc}
                 </checksum>
             </byteStream>
         </dataObject>
@@ -1810,7 +1810,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='flags.nc' />
                 <checksum checksumName='MD5'>
-                    1af046f15f95dc3b41f1698f0fa2c4aa
+                    ${checksum-flags.nc}
                 </checksum>
             </byteStream>
         </dataObject>
