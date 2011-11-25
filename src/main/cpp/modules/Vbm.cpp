@@ -206,8 +206,8 @@ void Vbm::computeInterpolationIndices(const valarray<double>& channelWavelengths
 void Vbm::setupPixel(Pixel& p, size_t index) {
     p.aerosolModel = amin;
     for(size_t i = 0; i < 30; i++) {
-        p.radiances = synRadianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synRadianceAccessors[i]->getDouble(index);
-        p.solarIrradiances = synSolarIrradianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synSolarIrradianceAccessors[i]->getDouble(index);
+        p.radiances[i] = synRadianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synRadianceAccessors[i]->getDouble(index);
+        p.solarIrradiances[i] = synSolarIrradianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synSolarIrradianceAccessors[i]->getDouble(index);
     }
     p.lat = synLatitudeAccessor->getDouble(index);
     p.lon = synLongitudeAccessor->getDouble(index);
