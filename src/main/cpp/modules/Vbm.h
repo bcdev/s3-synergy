@@ -141,7 +141,15 @@ inline double Vbm::linearInterpolation(const valarray<double>& x, const valarray
         return f0;
     }
 
-    return f0 + (f[x1Index] - f0) / (x[x1Index] - x0) * (wavelengths[index] - x0);
+    const double f1 = f[x1Index];
+    if(f0 == Constants::FILL_VALUE_DOUBLE) {
+        return f1;
+    }
+    if(f1 == Constants::FILL_VALUE_DOUBLE) {
+        return f0;
+    }
+
+    return f0 + (f1 - f0) / (x[x1Index] - x0) * (wavelengths[index] - x0);
 }
 
 inline void Vbm::setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances) {

@@ -394,7 +394,7 @@ void Vbm::performHyperspectralFiltering(const valarray<double>& toaReflectances,
         for(size_t h = 0; h < 914; h++) {
             double solarIrr = vgtSolarIrradiances[h];
             double bSurf = (vgtBSurfaceReflectanceWeights[b])[h];
-            if(std::isnan(toaReflectances[h])) {
+            if(toaReflectances[h] == Constants::FILL_VALUE_DOUBLE) {
                 continue;
             }
             numerator += solarIrr * bSurf * toaReflectances[h];
