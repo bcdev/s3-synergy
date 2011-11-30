@@ -11,7 +11,7 @@ using std::abs;
 using std::fill;
 
 Vbm::Vbm() :
-        BasicModule("VBM"), vgtBSurfaceReflectanceWeights(4), vgtSolarIrradiances(914), wavelengths(914), synRadianceAccessors(30), synSolarIrradianceAccessors(30),
+        BasicModule("VBM"), vgtBSurfaceReflectanceWeights(4), vgtSolarIrradiances(914), hyperWavelengths(914), synRadianceAccessors(30), synSolarIrradianceAccessors(30),
         szaOlcTiePoints(0), saaOlcTiePoints(0), vzaOlcTiePoints(0), vzaSlnTiePoints(0), waterVapourTiePoints(0), airPressureTiePoints(0),
         ozoneTiePoints(0), coordinates(7), f(8), w(500000), vgtRhoAtm(914), vgtRAtm(914), vgtTSun(914), vgtTView(914), synRhoAtm(30), synRAtmOlc(18), synTSun(30),
         synTViewOlc(30), synRAtmSln(6), synTViewSln(30), wavelengthIndices_0(), wavelengthIndices_1(), targetAccessors(4) {
@@ -79,7 +79,7 @@ void Vbm::prepareAuxdata(Context& context) {
 
     copy(vpsraxAuxdata.getVectorDouble("solar_irradiance"), vgtSolarIrradiances);
 
-    copy(getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("wavelength"), wavelengths);
+    copy(getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("wavelength"), hyperWavelengths);
 }
 
 void Vbm::prepareTiePointData(Context& context) {
@@ -184,17 +184,17 @@ void Vbm::computeInterpolationIndices(const valarray<double>& channelWavelengths
         double x1Delta = numeric_limits<size_t>::max();
         bool wavelengthIndex0Set = false;
         bool wavelengthIndex1Set = false;
-        for(size_t h = 0; h < wavelengths.size(); h++) {
-            double delta = abs(channelWavelengths[i] - wavelengths[h]);
-            if (channelWavelengths[i] <= wavelengths[h]) {
+        for(size_t h = 0; h < hyperWavelengths.size(); h++) {
+            double delta = abs(channelWavelengths[i] - hyperWavelengths[h]);
+            if (channelWavelengths[i] <= hyperWavelengths[h]) {
                 if(delta < x0Delta) {
-                    wavelengthIndices_0[i] = h;
+                    wavelengthIndices_0[h] = i;
                     x0Delta = delta;
                     wavelengthIndex0Set = true;
                 }
             } else {
                 if(delta < x1Delta) {
-                    wavelengthIndices_1[i] = h;
+                    wavelengthIndices_1[h] = i;
                     x1Delta = delta;
                     wavelengthIndex1Set = true;
                 }
@@ -348,7 +348,7 @@ double Vbm::hyperspectralUpscale(double ozone, double M, double hyperSpectralRef
 
 
 void Vbm::performHyperspectralInterpolation(const valarray<double>& channelWavelengths, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances) {
-    for(size_t i = 0; i < wavelengths.size(); i++) {
+    for(size_t i = 0; i < hyperWavelengths.size(); i++) {
         hyperSpectralReflectances[i] = linearInterpolation(channelWavelengths, surfaceReflectances, i);
     }
 }

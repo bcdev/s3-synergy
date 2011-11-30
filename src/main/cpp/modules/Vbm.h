@@ -41,7 +41,7 @@ private:
 	valarray<valarray<double> > vgtBSurfaceReflectanceWeights;
 	valarray<double> vgtSolarIrradiances;
 	const valarray<double>* vgtCo3;
-	valarray<double> wavelengths;
+	valarray<double> hyperWavelengths;
 
     Accessor* synOzoneAccessor;
     Accessor* synLatitudeAccessor;
@@ -149,7 +149,7 @@ inline double Vbm::linearInterpolation(const valarray<double>& x, const valarray
         return f0;
     }
 
-    return f0 + (f1 - f0) / (x[x1Index] - x0) * (wavelengths[index] - x0);
+    return f0 + (f1 - f0) / (x[x1Index] - x0) * (hyperWavelengths[index] - x0);
 }
 
 inline void Vbm::setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances) {
