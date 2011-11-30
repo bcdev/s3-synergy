@@ -348,6 +348,7 @@ double Vbm::hyperspectralUpscale(double ozone, double M, double hyperSpectralRef
 
 
 void Vbm::performHyperspectralInterpolation(const valarray<double>& channelWavelengths, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances) {
+#pragma omp parallel for
     for(size_t i = 0; i < hyperWavelengths.size(); i++) {
         hyperSpectralReflectances[i] = linearInterpolation(channelWavelengths, surfaceReflectances, i);
     }
@@ -382,6 +383,7 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralRef
     vgtLutT->getVector(&coordinates[0], vgtTView, f, w);
 
     const double M = 0.5 * (1 / std::cos(p.sza) + 1 / (std::cos(p.vzaOlc)));
+#pragma omp parallel for
     for(size_t h = 0; h < hyperSpectralReflectances.size(); h++) {
         toaReflectances[h] = hyperspectralUpscale(p.ozone, M, hyperSpectralReflectances[h], (*vgtCo3)[h], vgtRhoAtm[h], vgtRAtm[h], vgtTSun[h], vgtTView[h]);
     }
