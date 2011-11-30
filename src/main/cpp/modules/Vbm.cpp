@@ -179,12 +179,12 @@ double Vbm::getSlnWavelength(size_t channel) {
 }
 
 void Vbm::computeInterpolationIndices(const valarray<double>& channelWavelengths, const valarray<double>& surfaceReflectances) {
-    for (size_t i = 0; i < channelWavelengths.size(); i++) {
+    for(size_t h = 0; h < hyperWavelengths.size(); h++) {
         double x0Delta = numeric_limits<size_t>::max();
         double x1Delta = numeric_limits<size_t>::max();
         bool wavelengthIndex0Set = false;
         bool wavelengthIndex1Set = false;
-        for(size_t h = 0; h < hyperWavelengths.size(); h++) {
+        for (size_t i = 0; i < channelWavelengths.size(); i++) {
             double delta = abs(channelWavelengths[i] - hyperWavelengths[h]);
             if (channelWavelengths[i] <= hyperWavelengths[h]) {
                 if(delta < x0Delta) {
@@ -201,10 +201,10 @@ void Vbm::computeInterpolationIndices(const valarray<double>& channelWavelengths
             }
         }
         if(!wavelengthIndex0Set) {
-            wavelengthIndices_0[i] = wavelengthIndices_1[i];
+            wavelengthIndices_0[h] = wavelengthIndices_1[h];
         }
         if(!wavelengthIndex1Set) {
-            wavelengthIndices_1[i] = wavelengthIndices_0[i];
+            wavelengthIndices_1[h] = wavelengthIndices_0[h];
         }
     }
 }
