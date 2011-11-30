@@ -21,6 +21,15 @@ public:
 private:
 	friend class VflTest;
 	Segment* collocatedSegment;
+
+	Accessor* toa1Accessor;
+	Accessor* toa2Accessor;
+	Accessor* toa4Accessor;
+
+	valarray<double> thresholdsCloud;
+	valarray<double> thresholdsSnowIce;
+
+	uint16_t getValue(const size_t index) const;
 };
 
 
