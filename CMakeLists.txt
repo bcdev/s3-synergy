@@ -33,6 +33,7 @@ file(GLOB_RECURSE COL_TEST_SOURCES src/test/cpp/modules/ColTest.cpp)
 file(GLOB_RECURSE PCL_TEST_SOURCES src/test/cpp/modules/PclTest.cpp)
 file(GLOB_RECURSE VBM_TEST_SOURCES src/test/cpp/modules/VbmTest.cpp)
 file(GLOB_RECURSE VFL_TEST_SOURCES src/test/cpp/modules/VflTest.cpp)
+file(GLOB_RECURSE VPR_TEST_SOURCES src/test/cpp/modules/VprTest.cpp)
 
 file(GLOB_RECURSE SYL2_1_INTEGRATION_TEST_SOURCES src/test/cpp/integration/Syl2_1_Test.cpp)
 file(GLOB_RECURSE SYL2_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/Syl2_2_Test.cpp)
@@ -283,6 +284,26 @@ target_link_libraries(sy_unt_vfl
     boost_filesystem
 )
 set_property(TARGET sy_unt_vfl PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+#
+add_executable(sy_unt_vpr
+    src/test/cpp/SyUntVprRunner.cpp
+    ${CORE_MAIN_SOURCES}
+    ${UTIL_MAIN_SOURCES}
+    ${READER_MAIN_SOURCES}
+    ${WRITER_MAIN_SOURCES}
+    ${MODULES_MAIN_SOURCES}
+    ${VPR_TEST_SOURCES}
+)
+target_link_libraries(sy_unt_vpr
+    cppunit
+    netcdf
+    xerces-c
+    xqilla
+    boost_regex
+    boost_system
+    boost_filesystem
+)
+set_property(TARGET sy_unt_vpr PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
 add_executable(sy_int_syl2_1
     src/test/cpp/SyIntSyl2_1_Runner.cpp
