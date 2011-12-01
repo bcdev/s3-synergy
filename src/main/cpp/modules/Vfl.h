@@ -24,6 +24,7 @@ private:
 
 	Accessor* toa1Accessor;
 	Accessor* toa2Accessor;
+	Accessor* toa3Accessor;
 	Accessor* toa4Accessor;
 
 	valarray<double> thresholdsCloud;

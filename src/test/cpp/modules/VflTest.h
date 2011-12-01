@@ -16,6 +16,7 @@
 
 class VflTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(VflTest);
+    CPPUNIT_TEST(testVflIntegration);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -26,9 +27,10 @@ public:
 
 private:
     shared_ptr<Context> context;
-    shared_ptr<Vfl> vbm;
+    shared_ptr<Vfl> vfl;
 
     void prepareContext();
+    void testVflIntegration();
 };
 
 #endif	/* VFLTEST_H */

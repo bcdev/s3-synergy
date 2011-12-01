@@ -14,6 +14,7 @@
 #include "../../../../src/main/cpp/core/Processor.h"
 #include "../../../../src/main/cpp/reader/SynL1Reader.h"
 #include "../../../../src/main/cpp/modules/Col.h"
+#include "../../../../src/main/cpp/modules/Vbm.h"
 #include "../../../../src/main/cpp/writer/SegmentWriter.h"
 
 
@@ -32,7 +33,7 @@ VflTest::~VflTest() {
 void VflTest::setUp() {
     XPathInitializer init;
     prepareContext();
-    vbm = shared_ptr<Vfl>(new Vfl());
+    vfl = shared_ptr<Vfl>(new Vfl());
 }
 
 void VflTest::prepareContext() {
@@ -45,7 +46,7 @@ void VflTest::prepareContext() {
     shared_ptr<JobOrder> jobOrder = jobOrderParser->parse(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_VFL.xml");
     context->setJobOrder(jobOrder);
 
-    shared_ptr<Logging> logging = jobOrderParser->createLogging("LOG.SY_UNT_VBM");
+    shared_ptr<Logging> logging = jobOrderParser->createLogging("LOG.SY_UNT_VFL");
     context->setLogging(logging);
 
 
@@ -56,4 +57,20 @@ void VflTest::prepareContext() {
 }
 
 void VflTest::tearDown() {
+}
+
+void VflTest::testVflIntegration() {
+    shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
+    shared_ptr<Module> col = shared_ptr<Col>(new Col());
+    shared_ptr<Module> vbm = shared_ptr<Vbm>(new Vbm());
+    shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
+
+    context->addModule(reader);
+    context->addModule(col);
+    context->addModule(vbm);
+    context->addModule(vfl);
+    context->addModule(writer);
+
+    Processor processor;
+    processor.process(*context);
 }
