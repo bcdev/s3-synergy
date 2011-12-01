@@ -120,7 +120,6 @@ void Vbm::process(Context& context) {
 
     const Grid& collocatedGrid = collocatedSegment->getGrid();
 
-    // todo - verify
     long firstL = context.getFirstComputableL(*collocatedSegment, *this);
     long lastL = context.getLastComputableL(*collocatedSegment, *this);
 
@@ -276,7 +275,7 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
                 p.sza,
                 p.solarIrradiances[i],
                 p.radiances[i],
-                (*synCo3)[i],  // todo - verify!
+                (*synCo3)[i],
                 synRhoAtm[i],
                 synRAtmOlc[i],
                 synTSun[i],
@@ -315,7 +314,7 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
                 p.sza,
                 p.solarIrradiances[i],
                 p.radiances[i],
-                (*synCo3)[i],  // todo - verify!
+                (*synCo3)[i],
                 synRhoAtm[i],
                 synRAtmSln[i],
                 synTSun[i],
