@@ -220,7 +220,7 @@ void Vbm::setupPixel(Pixel& p, size_t index) {
     valarray<double> tpiWeights(1);
     valarray<size_t> tpiIndexes(1);
 
-    tiePointInterpolatorOlc->prepare(p.lat, p.lon, tpiWeights, tpiIndexes);
+    tiePointInterpolatorOlc->prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
 
     p.sza = tiePointInterpolatorOlc->interpolate(szaOlcTiePoints, tpiWeights, tpiIndexes);
     p.saa = tiePointInterpolatorOlc->interpolate(saaOlcTiePoints, tpiWeights, tpiIndexes);
@@ -234,7 +234,7 @@ void Vbm::setupPixel(Pixel& p, size_t index) {
         p.waterVapour = 0.2;
     }
 
-    tiePointInterpolatorSln->prepare(p.lat, p.lon, tpiWeights, tpiIndexes);
+    tiePointInterpolatorSln->prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
     p.vzaSln = tiePointInterpolatorSln->interpolate(vzaSlnTiePoints, tpiWeights, tpiIndexes);
     p.aot = computeT550(p.lat);
 }
@@ -324,7 +324,7 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
 
 double Vbm::surfaceReflectance(double ozone, double vza, double sza, double solarIrradiance, double radiance,
         double co3, double rhoAtm, double rAtm, double tSun, double tView) {
-    if(radiance == Constants::FILL_VALUE_DOUBLE) {
+    if(radiance == Constants::FILL_VALUE_DOUBLE || solarIrradiance == Constants::FILL_VALUE_DOUBLE) {
         return Constants::FILL_VALUE_DOUBLE;
     }
 
