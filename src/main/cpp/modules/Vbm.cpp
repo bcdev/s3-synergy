@@ -108,11 +108,11 @@ void Vbm::prepareTiePointData(Context& context) {
 
 void Vbm::addVariables(Context& context) {
     context.getLogging().info("Adding variables to context", getId());
-    vgtFlagsAccessor = &collocatedSegment->addVariable("SM", Constants::TYPE_UBYTE);
-    vgtB0Accessor = &collocatedSegment->addVariable("B0", Constants::TYPE_UBYTE);
-    vgtB2Accessor = &collocatedSegment->addVariable("B2", Constants::TYPE_UBYTE);
-    vgtB3Accessor = &collocatedSegment->addVariable("B3", Constants::TYPE_UBYTE);
-    vgtMirAccessor = &collocatedSegment->addVariable("MIR", Constants::TYPE_UBYTE);
+    vgtFlagsAccessor = &collocatedSegment->addVariable("SM", Constants::TYPE_USHORT);
+    vgtB0Accessor = &collocatedSegment->addVariable("B0", Constants::TYPE_SHORT, 1e-4);
+    vgtB2Accessor = &collocatedSegment->addVariable("B2", Constants::TYPE_SHORT, 1e-4);
+    vgtB3Accessor = &collocatedSegment->addVariable("B3", Constants::TYPE_SHORT, 1e-4);
+    vgtMirAccessor = &collocatedSegment->addVariable("MIR", Constants::TYPE_SHORT, 1e-4);
 }
 
 void Vbm::process(Context& context) {
