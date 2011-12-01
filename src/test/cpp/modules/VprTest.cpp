@@ -59,12 +59,12 @@ void VprTest::tearDown() {
 }
 
 void VprTest::testGetLatitude() {
-    CPPUNIT_ASSERT(std::abs(90 - Vpr::getLatitude(0)) < 0.001);
-    CPPUNIT_ASSERT(std::abs(89.1071 - Vpr::getLatitude(100)) < 0.001);
-    CPPUNIT_ASSERT(std::abs(0 - Vpr::getLatitude(10080)) < 0.001);
-    CPPUNIT_ASSERT(std::abs(-89.991 - Vpr::getLatitude(20159)) < 0.001);
+    CPPUNIT_ASSERT(std::abs(75 - Vpr::getLatitude(0)) < 0.001);
+    CPPUNIT_ASSERT(std::abs(74.1071 - Vpr::getLatitude(100)) < 0.001);
+    CPPUNIT_ASSERT(std::abs(9.5 - Vpr::getLatitude(7336)) < 0.001);
+    CPPUNIT_ASSERT(std::abs(-55.9911 - Vpr::getLatitude(14671)) < 0.001);
 
-    CPPUNIT_ASSERT_THROW(Vpr::getLatitude(20160), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(Vpr::getLatitude(14672), std::invalid_argument);
     CPPUNIT_ASSERT_THROW(Vpr::getLatitude(-1), std::invalid_argument);
 }
 
