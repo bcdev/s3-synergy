@@ -153,7 +153,7 @@ inline double Vbm::linearInterpolation(const valarray<double>& x, const valarray
 }
 
 inline void Vbm::setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances) {
-    vgtFlagsAccessor->setUByte(index, flags);
+    vgtFlagsAccessor->setUShort(index, flags);
     for (size_t i = 0; i < targetAccessors.size(); i++) {
         if (vgtToaReflectances[i] != Constants::FILL_VALUE_DOUBLE) {
             targetAccessors[i]->setDouble(index, vgtToaReflectances[i]);
