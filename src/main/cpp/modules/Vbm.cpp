@@ -33,7 +33,7 @@ void Vbm::start(Context& context) {
 void Vbm::prepareAccessors() {
     synLatitudeAccessor = &collocatedSegment->getAccessor("latitude");
     synLongitudeAccessor = &collocatedSegment->getAccessor("longitude");
-    for(size_t i = 0;i < 30;i++){
+    for(size_t i = 0; i < 30; i++){
         const string index = lexical_cast<string>(i + 1);
         synRadianceAccessors[i] = &collocatedSegment->getAccessor("L_" + index);
         synSolarIrradianceAccessors[i] = &collocatedSegment->getAccessor("solar_irradiance_" + index);
@@ -48,32 +48,34 @@ void Vbm::prepareAuxdata(Context& context) {
     AuxdataProvider& radiativeTransfer = getAuxdataProvider(context, Constants::AUX_ID_VPRTAX);
     amin = radiativeTransfer.getShort("AMIN");
 
-    synLutRhoAtm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "rho_atm");
-    synLutOlcRatm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "OLC_R_atm");
-    synLutSlnRatm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "SLN_R_atm");
-    synLutT = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc", "t");
+    const string synLookupTableFile = "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc";
+    synLutRhoAtm = &getLookupTable(context, synLookupTableFile, "rho_atm");
+    synLutOlcRatm = &getLookupTable(context, synLookupTableFile, "OLC_R_atm");
+    synLutSlnRatm = &getLookupTable(context, synLookupTableFile, "SLN_R_atm");
+    synLutT = &getLookupTable(context, synLookupTableFile, "t");
     synCo3 = &getAuxdataProvider(context, Constants::AUX_ID_SYRTAX).getVectorDouble("C_O3");
 
-    vgtLutRhoAtm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "rho_atm");
-    vgtLutRAtm = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "R_atm");
-    vgtLutT = &getLookupTable(context, "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc", "t");
+    const string vgtLookupTableFile = "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc";
+    vgtLutRhoAtm = &getLookupTable(context, vgtLookupTableFile, "rho_atm");
+    vgtLutRAtm = &getLookupTable(context, vgtLookupTableFile, "R_atm");
+    vgtLutT = &getLookupTable(context, vgtLookupTableFile, "t");
     vgtCo3 = &getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("C_O3");
 
     const AuxdataProvider& vpsraxAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VPSRAX);
 
-    const valarray<double> b0Srf = vpsraxAuxdata.getVectorDouble("B0_SRF");
+    const valarray<double>& b0Srf = vpsraxAuxdata.getVectorDouble("B0_SRF");
     vgtBSurfaceReflectanceWeights[0] = valarray<double>(b0Srf.size());
     copy(b0Srf, vgtBSurfaceReflectanceWeights[0]);
 
-    const valarray<double> b2Srf = vpsraxAuxdata.getVectorDouble("B2_SRF");
+    const valarray<double>& b2Srf = vpsraxAuxdata.getVectorDouble("B2_SRF");
     vgtBSurfaceReflectanceWeights[1] = valarray<double>(b2Srf.size());
     copy(b2Srf, vgtBSurfaceReflectanceWeights[1]);
 
-    const valarray<double> b3Srf = vpsraxAuxdata.getVectorDouble("B3_SRF");
+    const valarray<double>& b3Srf = vpsraxAuxdata.getVectorDouble("B3_SRF");
     vgtBSurfaceReflectanceWeights[2] = valarray<double>(b3Srf.size());
     copy(b3Srf, vgtBSurfaceReflectanceWeights[2]);
 
-    const valarray<double> mirSrf = vpsraxAuxdata.getVectorDouble("MIR_SRF");
+    const valarray<double>& mirSrf = vpsraxAuxdata.getVectorDouble("MIR_SRF");
     vgtBSurfaceReflectanceWeights[3] = valarray<double>(mirSrf.size());
     copy(mirSrf, vgtBSurfaceReflectanceWeights[3]);
 
@@ -107,7 +109,7 @@ void Vbm::prepareTiePointData(Context& context) {
 }
 
 void Vbm::addVariables(Context& context) {
-    context.getLogging().info("Adding variables to context", getId());
+    context.getLogging().info("Adding variables to segment", getId());
     vgtFlagsAccessor = &collocatedSegment->addVariable("SM", Constants::TYPE_USHORT);
     vgtB0Accessor = &collocatedSegment->addVariable("B0", Constants::TYPE_SHORT, 1e-4);
     vgtB2Accessor = &collocatedSegment->addVariable("B2", Constants::TYPE_SHORT, 1e-4);
@@ -135,11 +137,13 @@ void Vbm::process(Context& context) {
     context.getLogging().info("Performing band mapping...", getId());
 
     for (long m = collocatedGrid.getFirstM(); m <= collocatedGrid.getMaxM(); m++) {
-        context.getLogging().info("...for column " + lexical_cast<string>(m + 1) + "/" + lexical_cast<string>(collocatedGrid.getMaxM() + 1), getId());
         for (long k = collocatedGrid.getFirstK(); k <= collocatedGrid.getMaxK(); k++) {
             computeChannelWavelengths(k, m, channelWavelengths);
             computeInterpolationIndices(channelWavelengths, surfaceReflectances);
             for (long l = firstL; l <= lastL; l++) {
+                if(l % 100 == 0) {
+                    context.getLogging().info("...for line " + lexical_cast<string>(l + 1) + "/" + lexical_cast<string>(collocatedGrid.getLastL() + 1), getId());
+                }
                 const size_t index = collocatedGrid.getIndex(k, l, m);
                 setupPixel(p, index);
                 performDownscaling(p, surfaceReflectances);
@@ -184,7 +188,7 @@ void Vbm::computeInterpolationIndices(const valarray<double>& channelWavelengths
         bool wavelengthIndex0Set = false;
         bool wavelengthIndex1Set = false;
         for (size_t i = 0; i < channelWavelengths.size(); i++) {
-            double delta = abs(channelWavelengths[i] - hyperWavelengths[h]);
+            const double delta = abs(channelWavelengths[i] - hyperWavelengths[h]);
             if (channelWavelengths[i] <= hyperWavelengths[h]) {
                 if(delta < x0Delta) {
                     wavelengthIndices_0[h] = i;
@@ -291,12 +295,6 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
     coordinates[6] = p.aerosolModel;
 
     synLutSlnRatm->getVector(&coordinates[0], synRAtmSln, f, w);
-
-    coordinates[0] = p.sza;
-    coordinates[1] = p.airPressure;
-    coordinates[2] = p.waterVapour;
-    coordinates[3] = p.aot;
-    coordinates[4] = p.aerosolModel;
 
     coordinates[0] = p.vzaSln;
     coordinates[1] = p.airPressure;
