@@ -100,10 +100,10 @@ void Vbm::prepareTiePointData(Context& context) {
         copy(olciTiepointSegment.getAccessor("water_vapour").getDoubles(), waterVapourTiePoints);
     }
 
-    const valarray<double> olciLats = olciTiepointSegment.getAccessor("OLC_TP_lat").getDoubles();
     const valarray<double> olciLons = olciTiepointSegment.getAccessor("OLC_TP_lon").getDoubles();
-    const valarray<double> slnLats = slnTiepointSegment.getAccessor("SLN_TP_lat").getDoubles();
+    const valarray<double> olciLats = olciTiepointSegment.getAccessor("OLC_TP_lat").getDoubles();
     const valarray<double> slnLons = slnTiepointSegment.getAccessor("SLN_TP_lon").getDoubles();
+    const valarray<double> slnLats = slnTiepointSegment.getAccessor("SLN_TP_lat").getDoubles();
     tiePointInterpolatorOlc = shared_ptr<TiePointInterpolator<double > >(new TiePointInterpolator<double>(olciLons, olciLats));
     tiePointInterpolatorSln = shared_ptr<TiePointInterpolator<double > >(new TiePointInterpolator<double>(slnLons, slnLats));
 }
@@ -242,7 +242,7 @@ void Vbm::setupPixel(Pixel& p, size_t index) {
     p.aot = computeT550(p.lat);
 }
 
-void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn) {
+void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfaceReflectances) {
     coordinates[0] = p.airPressure;
     coordinates[1] = p.waterVapour;
     coordinates[2] = p.aot;
@@ -272,7 +272,7 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
     synLutT->getVector(&coordinates[0], synTViewOlc, f, w);
 
     for(size_t i = 0; i < 18; i++) {
-        surfReflNadirSyn[i] = surfaceReflectance(
+        surfaceReflectances[i] = surfaceReflectance(
                 p.ozone,
                 p.vzaOlc,
                 p.sza,
@@ -305,7 +305,7 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn)
 
     // only last three channels are used, since wavelengths of channels 18, 19, 20 are already present in OLC
     for(size_t i = 21; i < 24; i++) {
-        surfReflNadirSyn[i-3] = surfaceReflectance(
+        surfaceReflectances[i-3] = surfaceReflectance(
                 p.ozone,
                 p.vzaSln,
                 p.sza,
@@ -325,8 +325,8 @@ double Vbm::surfaceReflectance(double ozone, double vza, double sza, double sola
         return Constants::FILL_VALUE_DOUBLE;
     }
 
-    double rToa = M_PI * radiance / (solarIrradiance * std::cos(sza));
-    double M = 0.5 * (1/std::cos(sza) + 1/std::cos(vza));
+    double rToa = M_PI * radiance / (solarIrradiance * std::cos(sza) * RADIAN);
+    double M = 0.5 * (1 / (std::cos(sza) * RADIAN) + 1 / (std::cos(vza) * RADIAN));
     double t_O3 = std::exp(-M * ozone * co3);
 
     double f = (rToa - t_O3 * rAtm) / (t_O3 * tSun * tView);
@@ -378,7 +378,7 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralRef
     coordinates[0] = p.vzaOlc;
     vgtLutT->getVector(&coordinates[0], vgtTView, f, w);
 
-    const double M = 0.5 * (1 / std::cos(p.sza) + 1 / (std::cos(p.vzaOlc)));
+    const double M = 0.5 * (1 / (std::cos(p.sza) * RADIAN) + 1 / (RADIAN * (std::cos(p.vzaOlc))));
 #pragma omp parallel for
     for(size_t h = 0; h < hyperSpectralReflectances.size(); h++) {
         toaReflectances[h] = hyperspectralUpscale(p.ozone, M, hyperSpectralReflectances[h], (*vgtCo3)[h], vgtRhoAtm[h], vgtRAtm[h], vgtTSun[h], vgtTView[h]);
@@ -387,11 +387,12 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralRef
 
 void Vbm::performHyperspectralFiltering(const valarray<double>& toaReflectances, valarray<double>& filteredRToa) const {
     for(size_t b = 0; b < 4; b++) {
+        const valarray<double>& weights = vgtBSurfaceReflectanceWeights[b];
         double numerator = 0.0;
         double denominator = 0.0;
         for(size_t h = 0; h < 914; h++) {
-            double solarIrr = vgtSolarIrradiances[h];
-            double bSurf = (vgtBSurfaceReflectanceWeights[b])[h];
+            const double solarIrr = vgtSolarIrradiances[h];
+            const double bSurf = weights[h];
             if(toaReflectances[h] == Constants::FILL_VALUE_DOUBLE) {
                 continue;
             }

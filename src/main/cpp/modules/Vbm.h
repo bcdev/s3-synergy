@@ -25,6 +25,8 @@ public:
 private:
 	friend class VbmTest;
 
+	static const double RADIAN = M_PI / 180.0;
+
 	uint16_t amin;
 	Segment* collocatedSegment;
 	Segment* olciInfoSegment;
@@ -102,7 +104,7 @@ private:
     }
 
     static double computeT550(double lat) {
-        return 0.2 * (std::cos(lat) - 0.25) * cube(std::sin(lat + M_PI_2)) + 0.05;
+        return 0.2 * (RADIAN * std::cos(lat) - 0.25) * cube(RADIAN * std::sin(lat + M_PI_2)) + 0.05;
     }
 
 	static double surfaceReflectance(double ozone, double vza, double sza, double solarIrradiance, double radiance,
