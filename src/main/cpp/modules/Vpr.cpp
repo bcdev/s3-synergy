@@ -25,11 +25,11 @@ void Vpr::process(Context& context) {
     /*
      * depending on the current latitude value, move VGT or SYN segment, not both
      *
-     * if latitude of last (or first) valid pixel of current VGT segment is GREATER than the latitude of the
-     * last (or first) valid pixel of the current SYN segment, move only the VGT segment by setting its last computed line
+     * if latitude of last (unsure; or first) valid pixel of current VGT segment is greater than the latitude of the
+     * last (first) valid pixel of the current SYN segment, move only the VGT segment by setting its last computed line
      *
-     * if latitude of last (or first) valid pixel of current VGT segment is LESS than the latitude of the
-     * last (or first) valid pixel of the current SYN segment, move only the SYN segment by setting its first required line
+     * if latitude of last (unsure; or first) valid pixel of current VGT segment is less than the latitude of the
+     * last (first) valid pixel of the current SYN segment, move only the SYN segment by setting its first required line
      */
     valarray<shared_ptr<Pixel> > pixels(5);
     for(size_t i = 0; i < 5; i++) {
@@ -49,14 +49,13 @@ void Vpr::process(Context& context) {
             const double lat = getLatitude(l);
             const double lon = getLongitude(m);
             for(long synK = 0; synK < 5; synK++) {
-                // todo - compute synL and synM
                 getPixelPos(lat, lon, synIndices);
                 const long synL = synIndices[0];
                 const long synM = synIndices[1];
                 if(synGrid.isValidPosition(synK, synL, synM)) {
                     setupPixel(pixels[synK], synK, synL, synM);
                 } else {
-                    // set last computed line and/or first required line and:
+                    // todo - set last computed line and/or first required line and return
                     return;
                 }
             }
