@@ -122,8 +122,8 @@ void Vbm::process(Context& context) {
 
     const Grid& collocatedGrid = collocatedSegment->getGrid();
 
-    long firstL = context.getFirstComputableL(*collocatedSegment, *this);
-    long lastL = context.getLastComputableL(*collocatedSegment, *this);
+    const long firstL = context.getFirstComputableL(*collocatedSegment, *this);
+    const long lastL = context.getLastComputableL(*collocatedSegment, *this);
 
     valarray<double> surfaceReflectances(21);
     valarray<double> hyperSpectralReflectances(914);
@@ -134,16 +134,13 @@ void Vbm::process(Context& context) {
 
     Pixel p;
 
-    context.getLogging().info("Performing band mapping...", getId());
+    context.getLogging().info("Performing band mapping for the lines " + lexical_cast<string>(firstL) + " to " + lexical_cast<string>(lastL), getId());
 
     for (long m = collocatedGrid.getFirstM(); m <= collocatedGrid.getMaxM(); m++) {
         for (long k = collocatedGrid.getFirstK(); k <= collocatedGrid.getMaxK(); k++) {
             computeChannelWavelengths(k, m, channelWavelengths);
             computeInterpolationIndices(channelWavelengths, surfaceReflectances);
             for (long l = firstL; l <= lastL; l++) {
-                if(l % 100 == 0) {
-                    context.getLogging().info("...for line " + lexical_cast<string>(l + 1) + "/" + lexical_cast<string>(collocatedGrid.getLastL() + 1), getId());
-                }
                 const size_t index = collocatedGrid.getIndex(k, l, m);
                 setupPixel(p, index);
                 performDownscaling(p, surfaceReflectances);
@@ -158,10 +155,12 @@ void Vbm::process(Context& context) {
 }
 
 void Vbm::computeChannelWavelengths(long k, long m, valarray<double>& channelWavelengths) const {
+    const Grid& olciInfoGrid = olciInfoSegment->getGrid();
+    const Accessor& wavelengths = olciInfoSegment->getAccessor("wavelength");
     for(size_t channel = 0; channel < channelWavelengths.size(); channel++) {
         if(channel < 18) {
-            const size_t index = olciInfoSegment->getGrid().getIndex(k, channel, m);
-            channelWavelengths[channel] = olciInfoSegment->getAccessor("wavelength").getDouble(index);
+            const size_t index = olciInfoGrid.getIndex(k, channel, m);
+            channelWavelengths[channel] = wavelengths.getDouble(index);
         } else {
             // ignoring channel indices 18, 19, 20
             channelWavelengths[channel] = getSlnWavelength(channel + 3);
