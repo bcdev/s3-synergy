@@ -204,7 +204,7 @@ Pixel& PixelInitializer::getPixel(size_t index, Pixel& p) const {
 	 */
 	valarray<double> tpiWeights(1);
 	valarray<size_t> tpiIndexes(1);
-	tiePointInterpolatorOlc.prepare(p.lat, p.lon, tpiWeights, tpiIndexes);
+	tiePointInterpolatorOlc.prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
 
 	p.sza = tiePointInterpolatorOlc.interpolate(szaTiePointsOlc, tpiWeights, tpiIndexes);
 	p.saa = tiePointInterpolatorOlc.interpolate(saaTiePointsOlc, tpiWeights, tpiIndexes);
@@ -219,11 +219,11 @@ Pixel& PixelInitializer::getPixel(size_t index, Pixel& p) const {
 		p.waterVapour = 0.2;
 	}
 
-	tiePointInterpolatorSln.prepare(p.lat, p.lon, tpiWeights, tpiIndexes);
+	tiePointInterpolatorSln.prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
 	p.vaaSln = tiePointInterpolatorSln.interpolate(vaaTiePointsSln, tpiWeights, tpiIndexes);
 	p.vzaSln = tiePointInterpolatorSln.interpolate(vzaTiePointsSln, tpiWeights, tpiIndexes);
 
-	tiePointInterpolatorSlo.prepare(p.lat, p.lon, tpiWeights, tpiIndexes);
+	tiePointInterpolatorSlo.prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
 	p.vaaSlo = tiePointInterpolatorSlo.interpolate(vaaTiePointsSlo, tpiWeights, tpiIndexes);
 	p.vzaSlo = tiePointInterpolatorSlo.interpolate(vzaTiePointsSlo, tpiWeights, tpiIndexes);
 
