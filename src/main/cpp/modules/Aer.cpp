@@ -57,10 +57,10 @@ private:
 	const TiePointInterpolator<double> tiePointInterpolatorSln;
 	const TiePointInterpolator<double> tiePointInterpolatorSlo;
 
-	vector<Accessor*> radiances;
-	vector<Accessor*> solarIrradiancesOlc;
-	vector<Accessor*> solarIrradiancesSln;
-	vector<Accessor*> solarIrradiancesSlo;
+	vector<Accessor*> radianceAccessors;
+	vector<Accessor*> solarIrradianceOlcAccessors;
+	vector<Accessor*> solarIrradianceSlnAccessors;
+	vector<Accessor*> solarIrradianceSloAccessors;
 
 	const valarray<double>& cO3;
 
@@ -100,16 +100,16 @@ PixelInitializer::PixelInitializer(const Context& context) :
 		tiePointInterpolatorSlo(context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lat").getDoubles()),
 		cO3(((AuxdataProvider&) context.getObject(Constants::AUX_ID_SYRTAX)).getVectorDouble("C_O3")) {
 	for (size_t b = 0; b < 30; b++) {
-		radiances.push_back(&averagedSegment.getAccessor("L_" + lexical_cast<string>(b + 1)));
+		radianceAccessors.push_back(&averagedSegment.getAccessor("L_" + lexical_cast<string>(b + 1)));
 	}
 	for (size_t b = 0; b < 18; b++) {
-		solarIrradiancesOlc.push_back(&averagedSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(b + 1)));
+		solarIrradianceOlcAccessors.push_back(&averagedSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(b + 1)));
 	}
 	for (size_t b = 18; b < 24; b++) {
-		solarIrradiancesSln.push_back(&averagedSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(b + 1)));
+		solarIrradianceSlnAccessors.push_back(&averagedSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(b + 1)));
 	}
 	for (size_t b = 24; b < 30; b++) {
-		solarIrradiancesSlo.push_back(&averagedSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(b + 1)));
+		solarIrradianceSloAccessors.push_back(&averagedSegment.getAccessor("solar_irradiance_" + lexical_cast<string>(b + 1)));
 	}
 
 	const Segment& olciTiepointSegment = context.getSegment(Constants::SEGMENT_OLC_TP);
@@ -150,7 +150,7 @@ Pixel& PixelInitializer::getPixel(size_t index, Pixel& p) const {
 	 * Radiances
 	 */
 	for (size_t b = 0; b < 30; b++) {
-		const Accessor& radiance = *radiances[b];
+		const Accessor& radiance = *radianceAccessors[b];
 		if (!radiance.isFillValue(index)) {
 			p.radiances[b] = radiance.getDouble(index);
 		} else {
@@ -161,7 +161,7 @@ Pixel& PixelInitializer::getPixel(size_t index, Pixel& p) const {
 	 * Solar irradiances
 	 */
 	for (size_t i = 0; i < 18; i++) {
-		const Accessor& accessor = *solarIrradiancesOlc[i];
+		const Accessor& accessor = *solarIrradianceOlcAccessors[i];
 		if (!accessor.isFillValue(index)) {
 			p.solarIrradiances[i] = accessor.getDouble(index);
 		} else {
@@ -169,7 +169,7 @@ Pixel& PixelInitializer::getPixel(size_t index, Pixel& p) const {
 		}
 	}
 	for (size_t i = 0; i < 6; i++) {
-		const Accessor& accessor = *solarIrradiancesSln[i];
+		const Accessor& accessor = *solarIrradianceSlnAccessors[i];
 		if (!accessor.isFillValue(index)) {
 			p.solarIrradiances[i + 18] = accessor.getDouble(index);
 		} else {
@@ -177,7 +177,7 @@ Pixel& PixelInitializer::getPixel(size_t index, Pixel& p) const {
 		}
 	}
 	for (size_t i = 0; i < 6; i++) {
-		const Accessor& accessor = *solarIrradiancesSlo[i];
+		const Accessor& accessor = *solarIrradianceSloAccessors[i];
 		if (!accessor.isFillValue(index)) {
 			p.solarIrradiances[i + 24] = accessor.getDouble(index);
 		} else {
@@ -243,7 +243,7 @@ Aer::~Aer() {
 }
 
 void Aer::start(Context& context) {
-	readAuxdata(context);
+	readAuxiliaryData(context);
 	averagedSegment = &context.getSegment(Constants::SEGMENT_SYN_AVERAGED);
 	SegmentDescriptor& collocatedSegmentDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
 	averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550"));
@@ -289,10 +289,10 @@ void Aer::process(Context& context) {
 		}
 	}
 
-	/*
+	const long n = 30;
 	long lastFillableL;
 	if (lastL < averagedGrid->getMaxL()) {
-		lastFillableL = lastL;
+		lastFillableL = lastL - n;
 	} else {
 		lastFillableL = lastL;
 	}
@@ -305,32 +305,32 @@ void Aer::process(Context& context) {
 				Pixel& p = pixels[targetPixelIndex];
 
 				if (!isSet<int>(p.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG | Constants::SY2_AEROSOL_HIGH_ERROR_FLAG | Constants::SY2_AEROSOL_TOO_LOW_FLAG)) {
-					double w = 1.0e-10;
-					double tau550 = 0.0 * w;
+					double w = 0.00000625;
+					double tau550 = 0.0 * w; // todo - climatology
 					double tau550err = 0.0 * w;
 					double alpha550 = 1.25 * w;
-					//double minPixelDistance = numeric_limits<double>::max();
+					double minPixelDistance = numeric_limits<double>::max();
 
-					 for (long sourceL = targetL - n; sourceL <= targetL + n; sourceL++) {
-					 for (long sourceM = targetM - n; sourceM <= targetM + n; sourceM++) {
-					 if (averagedGrid->isValidPosition(k, sourceL, sourceM)) {
-					 const size_t sourcePixelIndex = averagedGrid->getIndex(k, sourceL, sourceM);
-					 const Pixel& q = pixels[sourcePixelIndex];
-					 if (isSet(q.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)) {
-					 const double d = (sourceL - targetL) * (sourceL - targetL) + (sourceM - targetM) * (sourceM - targetM);
-					 if (d < minPixelDistance) {
-					 minPixelDistance = d;
-					 p.aerosolModel = q.aerosolModel;
-					 }
+					for (long sourceL = targetL - n; sourceL <= targetL + n; sourceL++) {
+						for (long sourceM = targetM - n; sourceM <= targetM + n; sourceM++) {
+							if (averagedGrid->isValidPosition(k, sourceL, sourceM)) {
+								const size_t sourcePixelIndex = averagedGrid->getIndex(k, sourceL, sourceM);
+								const Pixel& q = pixels[sourcePixelIndex];
+								if (isSet(q.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)) {
+									const double d = (sourceL - targetL) * (sourceL - targetL) + (sourceM - targetM) * (sourceM - targetM);
+									if (d < minPixelDistance) {
+										minPixelDistance = d;
+										p.aerosolModel = q.aerosolModel;
+									}
 
-					 tau550 += q.aot / (d * d);
-					 tau550err += q.aotError / (d * d);
-					 alpha550 += q.angstromExponent / (d * d);
-					 w += 1.0 / (d * d);
-					 }
-					 }
-					 }
-					 }
+									tau550 += q.aot / (d * d);
+									tau550err += q.aotError / (d * d);
+									alpha550 += q.angstromExponent / (d * d);
+									w += 1.0 / (d * d);
+								}
+							}
+						}
+					}
 					p.aot = tau550 / w;
 					p.aotError = tau550err / w;
 					p.angstromExponent = alpha550 / w;
@@ -340,6 +340,7 @@ void Aer::process(Context& context) {
 		}
 	}
 
+	/*
 	long lastFilterableL;
 	if (lastL < averagedGrid->getMaxL()) {
 		lastFilterableL = lastFillableL - 1;
@@ -381,7 +382,8 @@ void Aer::process(Context& context) {
 	context.getLogging().info("Putting lines ...", getId());
 	putPixels(pixels, firstL, lastL);
 
-	context.setLastComputedL(*averagedSegment, *this, lastL);
+	context.setLastComputedL(*averagedSegment, *this, lastFillableL);
+	context.setFirstRequiredL(*averagedSegment, *this, lastFillableL + 1 - n);
 }
 
 void Aer::getPixels(Context& context, valarray<Pixel>& pixels) const {
@@ -436,7 +438,7 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 	}
 }
 
-void Aer::readAuxdata(Context& context) {
+void Aer::readAuxiliaryData(Context& context) {
 	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "OLC_R_atm");
 	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLN_R_atm");
 	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLO_R_atm");

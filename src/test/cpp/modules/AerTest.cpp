@@ -68,7 +68,7 @@ void AerTest::tearDown() {
 }
 
 void AerTest::testAer_s() {
-    aer->readAuxdata(*context);
+    aer->readAuxiliaryData(*context);
 
     Pixel p;
     p.aot = 0.5;
@@ -160,7 +160,7 @@ void AerTest::testAer() {
 }
 
 void AerTest::testReadAuxdata() {
-    aer->readAuxdata(*context);
+    aer->readAuxiliaryData(*context);
     const valarray<int16_t>& amins = *(aer->amins);
     CPPUNIT_ASSERT(amins.size() == 3);
     CPPUNIT_ASSERT(amins[0] == 1);

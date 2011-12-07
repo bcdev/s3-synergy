@@ -92,13 +92,12 @@ bool ErrorMetric::findMinimum(Pixel& p) {
 double ErrorMetric::computeErrorSurfaceCurvature(const Pixel& p) {
 	setPixel(p);
 
-	const double x2 = p.aot;
-	const double y2 = p.errorMetric;
-	const double y1 = getValue(0.9 * x2);
-	const double y3 = getValue(1.1 * x2);
+	const double x0 = p.aot;
+	const double y0 = p.errorMetric;
+	const double y1 = getValue(0.9 * x0);
+	const double y2 = getValue(1.1 * x0);
 
-	const double a = (0.1 * y1 - 0.2 * y2 + 0.1 * y3) / (0.002 * x2 * x2);
-//	const double a = (0.2 * y1 - 0.4 * y2 + 0.2 * y3) / (0.016 * x2 * x2);
+	const double a = (0.1 * y1 - 0.2 * y0 + 0.1 * y2) / (0.002 * x0 * x0);
 
 	return a;
 }

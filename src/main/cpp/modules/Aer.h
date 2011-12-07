@@ -28,7 +28,7 @@ private:
 
 	void getPixels(Context& context, valarray<Pixel>& pixels) const;
 	void putPixels(const valarray<Pixel>& pixels, long firstL, long lastL) const;
-	void readAuxdata(Context& context);
+	void readAuxiliaryData(Context& context);
 	void retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em);
 
 	Segment* averagedSegment;
