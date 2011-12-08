@@ -24,8 +24,8 @@ void Vfl::start(Context& context) {
     toa4Accessor = &collocatedSegment->getAccessor("MIR");
 
     AuxdataProvider& thresholdsAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VPCPAX);
-    thresholdsCloud = thresholdsAuxdata.getVectorDouble("tcl");
-    thresholdsSnowIce = thresholdsAuxdata.getVectorDouble("tsn");
+    thresholdsAuxdata.getVectorDouble("tcl", thresholdsCloud);
+    thresholdsAuxdata.getVectorDouble("tsn", thresholdsSnowIce);
 }
 
 void Vfl::process(Context& context) {

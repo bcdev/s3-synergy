@@ -26,30 +26,18 @@ public:
 
 	const string& getId() const;
 
-	uint8_t getUByte(const string& varName) const;
-	double getDouble(const string& varName) const;
-	int16_t getShort(const string& varName) const;
+	void getUByte(const string& varName, uint8_t& data) const;
+	void getDouble(const string& varName, double& data) const;
+	void getShort(const string& varName, int16_t& data) const;
 
-	const valarray<double>& getVectorDouble(const string& varName) const;
-	const valarray<int16_t>& getVectorShort(const string& varName) const;
+	void getVectorDouble(const string& varName, valarray<double>& data) const;
+	void getVectorShort(const string& varName, valarray<int16_t>& data) const;
 
-	const matrix<double>& getMatrixDouble(const string& varName) const;
+	void getMatrixDouble(const string& varName, matrix<double>& data) const;
 
 private:
 	const string id;
 	const int fileId;
-
-	mutable map<string, uint8_t> ubytes;
-	mutable map<string, double> doubles;
-	mutable map<string, int16_t> shorts;
-	mutable map<string, shared_ptr<valarray<double> > > doubleArrays;
-	mutable map<string, shared_ptr<valarray<int16_t> > > shortArrays;
-	mutable map<string, shared_ptr<matrix<double> > > doubleMatrices;
-
-	template<class K, class V>
-	static bool contains(const map<K, V>& map, const K& key) {
-		return map.find(key) != map.end();
-	}
 };
 
 #endif /* AUXDATAPROVIDER_H_ */

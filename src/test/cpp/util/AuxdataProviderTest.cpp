@@ -33,7 +33,8 @@ void AuxdataProviderTest::tearDown() {
 }
 
 void AuxdataProviderTest::testGetAMINs() {
-	const valarray<int16_t> amins = auxdataProvider->getVectorShort("AMIN");
+	valarray<int16_t> amins;
+	auxdataProvider->getVectorShort("AMIN", amins);
 
 	CPPUNIT_ASSERT(amins.size() == 3);
 	CPPUNIT_ASSERT(amins[0] == 1);
@@ -42,13 +43,15 @@ void AuxdataProviderTest::testGetAMINs() {
 }
 
 void AuxdataProviderTest::testGetInitialTau550() {
-	const double initialTau550 = auxdataProvider->getDouble("T550_ini");
+	double initialTau550;
+	auxdataProvider->getDouble("T550_ini", initialTau550);
 
 	CPPUNIT_ASSERT(initialTau550 == (double) 0.1f);
 }
 
 void AuxdataProviderTest::testGetInitialNus() {
-	const valarray<double>& initialNus = auxdataProvider->getVectorDouble("v_ini");
+	valarray<double> initialNus;
+	auxdataProvider->getVectorDouble("v_ini", initialNus);
 
 	CPPUNIT_ASSERT(initialNus.size() == 2);
 
@@ -57,7 +60,8 @@ void AuxdataProviderTest::testGetInitialNus() {
 }
 
 void AuxdataProviderTest::testGetInitialOmegas() {
-	const valarray<double>& initialOmegas = auxdataProvider->getVectorDouble("w_ini");
+	valarray<double> initialOmegas;
+	auxdataProvider->getVectorDouble("w_ini", initialOmegas);
 
 	CPPUNIT_ASSERT(initialOmegas.size() == 6);
 
@@ -67,7 +71,8 @@ void AuxdataProviderTest::testGetInitialOmegas() {
 }
 
 void AuxdataProviderTest::testGetAngularWeights() {
-	const matrix<double>& angWeights = auxdataProvider->getMatrixDouble("weight_ang");
+	matrix<double> angWeights;
+	auxdataProvider->getMatrixDouble("weight_ang", angWeights);
 
 	CPPUNIT_ASSERT(angWeights.size1() == 2);
 	CPPUNIT_ASSERT(angWeights.size2() == 6);

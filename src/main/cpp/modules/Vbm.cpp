@@ -45,25 +45,27 @@ void Vbm::prepareAccessors() {
 }
 
 void Vbm::prepareAuxdata(Context& context) {
+	/*
     AuxdataProvider& radiativeTransfer = getAuxdataProvider(context, Constants::AUX_ID_VPRTAX);
-    amin = radiativeTransfer.getShort("AMIN");
+    radiativeTransfer.getShort("AMIN", amin);
 
     const string synLookupTableFile = "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc";
     synLutRhoAtm = &getLookupTable(context, synLookupTableFile, "rho_atm");
     synLutOlcRatm = &getLookupTable(context, synLookupTableFile, "OLC_R_atm");
     synLutSlnRatm = &getLookupTable(context, synLookupTableFile, "SLN_R_atm");
     synLutT = &getLookupTable(context, synLookupTableFile, "t");
-    synCo3 = &getAuxdataProvider(context, Constants::AUX_ID_SYRTAX).getVectorDouble("C_O3");
+    getAuxdataProvider(context, Constants::AUX_ID_SYRTAX).getVectorDouble("C_O3", synCo3);
 
     const string vgtLookupTableFile = "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc";
     vgtLutRhoAtm = &getLookupTable(context, vgtLookupTableFile, "rho_atm");
     vgtLutRAtm = &getLookupTable(context, vgtLookupTableFile, "R_atm");
     vgtLutT = &getLookupTable(context, vgtLookupTableFile, "t");
-    vgtCo3 = &getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("C_O3");
+    getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("C_O3", vgtCo3);
 
     const AuxdataProvider& vpsraxAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VPSRAX);
 
-    const valarray<double>& b0Srf = vpsraxAuxdata.getVectorDouble("B0_SRF");
+    valarray<double> b0Srf;
+    vpsraxAuxdata.getVectorDouble("B0_SRF", b0Srf);
     vgtBSurfaceReflectanceWeights[0] = valarray<double>(b0Srf.size());
     copy(b0Srf, vgtBSurfaceReflectanceWeights[0]);
 
@@ -82,6 +84,7 @@ void Vbm::prepareAuxdata(Context& context) {
     copy(vpsraxAuxdata.getVectorDouble("solar_irradiance"), vgtSolarIrradiances);
 
     copy(getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("wavelength"), hyperWavelengths);
+    */
 }
 
 void Vbm::prepareTiePointData(Context& context) {
@@ -278,7 +281,7 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfaceReflectanc
                 p.sza,
                 p.solarIrradiances[i],
                 p.radiances[i],
-                (*synCo3)[i],
+                synCo3[i],
                 synRhoAtm[i],
                 synRAtmOlc[i],
                 synTSun[i],
@@ -311,7 +314,7 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& surfaceReflectanc
                 p.sza,
                 p.solarIrradiances[i],
                 p.radiances[i],
-                (*synCo3)[i],
+                synCo3[i],
                 synRhoAtm[i],
                 synRAtmSln[i],
                 synTSun[i],
@@ -381,7 +384,7 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hyperSpectralRef
     const double M = 0.5 * (1 / (std::cos(p.sza) * RADIAN) + 1 / (RADIAN * (std::cos(p.vzaOlc))));
 #pragma omp parallel for
     for(size_t h = 0; h < hyperSpectralReflectances.size(); h++) {
-        toaReflectances[h] = hyperspectralUpscale(p.ozone, M, hyperSpectralReflectances[h], (*vgtCo3)[h], vgtRhoAtm[h], vgtRAtm[h], vgtTSun[h], vgtTView[h]);
+        toaReflectances[h] = hyperspectralUpscale(p.ozone, M, hyperSpectralReflectances[h], vgtCo3[h], vgtRhoAtm[h], vgtRAtm[h], vgtTSun[h], vgtTView[h]);
     }
 }
 

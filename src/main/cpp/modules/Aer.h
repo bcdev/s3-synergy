@@ -8,8 +8,10 @@
 #ifndef AER_H_
 #define AER_H_
 
-#include "../modules/BasicModule.h"
 #include "../core/Pixel.h"
+
+#include "../modules/BasicModule.h"
+
 #include "../util/Min.h"
 #include "../util/MultiMin.h"
 #include "../util/UnivariateFunction.h"
@@ -31,12 +33,16 @@ private:
 	void readAuxiliaryData(Context& context);
 	void retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em);
 
+	static double aerosolOpticalThickness(double lat, double lon);
+
 	Segment* averagedSegment;
 	const Grid* averagedGrid;
 
 	double kappa;
-	const valarray<int16_t>* amins;
-	const valarray<double>* aerosolAngstromExponents;
+	valarray<int16_t> amins;
+	valarray<double> aerosolAngstromExponents;
+
+	static const double D2R = 3.14159265358979323846 / 180.0;
 };
 
 #endif /* AER_H_ */

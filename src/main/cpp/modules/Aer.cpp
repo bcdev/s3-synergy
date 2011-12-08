@@ -16,6 +16,7 @@
 
 #include "Aer.h"
 
+using std::cos;
 using std::min;
 using std::numeric_limits;
 
@@ -62,7 +63,7 @@ private:
 	vector<Accessor*> solarIrradianceSlnAccessors;
 	vector<Accessor*> solarIrradianceSloAccessors;
 
-	const valarray<double>& cO3;
+	valarray<double> cO3;
 
 	valarray<double> szaTiePointsOlc;
 	valarray<double> saaTiePointsOlc;
@@ -97,8 +98,10 @@ PixelInitializer::PixelInitializer(const Context& context) :
 		lon(averagedSegment.getAccessor("longitude")),
 		tiePointInterpolatorOlc(context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("OLC_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("OLC_TP_lat").getDoubles()),
 		tiePointInterpolatorSln(context.getSegment(Constants::SEGMENT_SLN_TP).getAccessor("SLN_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_SLN_TP).getAccessor("SLN_TP_lat").getDoubles()),
-		tiePointInterpolatorSlo(context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lat").getDoubles()),
-		cO3(((AuxdataProvider&) context.getObject(Constants::AUX_ID_SYRTAX)).getVectorDouble("C_O3")) {
+		tiePointInterpolatorSlo(context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lat").getDoubles()) {
+	const AuxdataProvider& rtAuxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUX_ID_SYRTAX);
+	rtAuxdataProvider.getVectorDouble("C_O3", cO3);
+
 	for (size_t b = 0; b < 30; b++) {
 		radianceAccessors.push_back(&averagedSegment.getAccessor("L_" + lexical_cast<string>(b + 1)));
 	}
@@ -306,7 +309,7 @@ void Aer::process(Context& context) {
 
 				if (!isSet<int>(p.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG | Constants::SY2_AEROSOL_HIGH_ERROR_FLAG | Constants::SY2_AEROSOL_TOO_LOW_FLAG)) {
 					double w = 0.00000625;
-					double tau550 = 0.0 * w; // todo - climatology
+					double tau550 = w * aerosolOpticalThickness(p.lat, p.lon);
 					double tau550err = 0.0 * w;
 					double alpha550 = 1.25 * w;
 					double minPixelDistance = numeric_limits<double>::max();
@@ -401,14 +404,14 @@ void Aer::getPixels(Context& context, valarray<Pixel>& pixels) const {
 void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 	using std::sqrt;
 
-	for (size_t i = 0; i < amins->size(); i++) {
-		const int16_t amin = (*amins)[i];
+	for (size_t i = 0; i < amins.size(); i++) {
+		const int16_t amin = amins[i];
 		q.assign(p);
 		q.aerosolModel = amin;
 		bool success = em.findMinimum(q);
 		if (success && q.errorMetric < p.errorMetric) {
 			p.assign(q);
-			p.angstromExponent = (*aerosolAngstromExponents)[amin];
+			p.angstromExponent = aerosolAngstromExponents[amin];
 			p.aerosolModel = amin;
 		}
 	}
@@ -451,17 +454,17 @@ void Aer::readAuxiliaryData(Context& context) {
 	AuxdataProvider& cpAuxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYCPAX);
 	AuxdataProvider& rtAuxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYRTAX);
 
-	amins = &cpAuxdataProvider.getVectorShort("AMIN");
-	kappa = cpAuxdataProvider.getDouble("kappa");
-	aerosolAngstromExponents = &rtAuxdataProvider.getVectorDouble("A550");
+	cpAuxdataProvider.getVectorShort("AMIN", amins);
+	cpAuxdataProvider.getDouble("kappa", kappa);
+	rtAuxdataProvider.getVectorDouble("A550", aerosolAngstromExponents);
 }
 
 void Aer::putPixels(const valarray<Pixel>& pixels, long firstL, long lastL) const {
-	Accessor& amin = averagedSegment->getAccessor("AMIN");
-	Accessor& t550 = averagedSegment->getAccessor("T550");
-	Accessor& t550Err = averagedSegment->getAccessor("T550_er");
-	Accessor& a550 = averagedSegment->getAccessor("A550");
-	Accessor& synFlags = averagedSegment->getAccessor("SYN_flags");
+	Accessor& aotAccessor = averagedSegment->getAccessor("T550");
+	Accessor& aotErrorAccessor = averagedSegment->getAccessor("T550_er");
+	Accessor& angstromExponentAccessor = averagedSegment->getAccessor("A550");
+	Accessor& aerosolModelAccessor = averagedSegment->getAccessor("AMIN");
+	Accessor& flagsAccessor = averagedSegment->getAccessor("SYN_flags");
 
 	for (long l = firstL; l <= lastL; l++) {
 		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
@@ -469,24 +472,30 @@ void Aer::putPixels(const valarray<Pixel>& pixels, long firstL, long lastL) cons
 				const size_t index = averagedGrid->getIndex(k, l, m);
 				const Pixel& p = pixels[index];
 
-				amin.setUByte(index, p.aerosolModel);
+				aerosolModelAccessor.setUByte(index, p.aerosolModel);
+				flagsAccessor.setUShort(index, p.flags);
 				if (p.aot == Constants::FILL_VALUE_DOUBLE) {
-					t550.setFillValue(index);
+					aotAccessor.setFillValue(index);
 				} else {
-					t550.setDouble(index, p.aot);
+					aotAccessor.setDouble(index, p.aot);
 				}
 				if (p.aotError == Constants::FILL_VALUE_DOUBLE) {
-					t550Err.setFillValue(index);
+					aotErrorAccessor.setFillValue(index);
 				} else {
-					t550Err.setDouble(index, p.aotError);
+					aotErrorAccessor.setDouble(index, p.aotError);
 				}
 				if (p.angstromExponent == Constants::FILL_VALUE_DOUBLE) {
-					a550.setFillValue(index);
+					angstromExponentAccessor.setFillValue(index);
 				} else {
-					a550.setDouble(index, p.angstromExponent);
+					angstromExponentAccessor.setDouble(index, p.angstromExponent);
 				}
 			}
 		}
 	}
+}
+
+double Aer::aerosolOpticalThickness(double lat, double lon) {
+	const double c = cos(lat * D2R);
+	return 0.2 * (c - 0.25) * c * c * c + 0.05;
 }
 

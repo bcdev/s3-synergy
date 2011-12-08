@@ -41,8 +41,6 @@ private:
     	return x * x;
     }
 
-	const Context& context;
-
 	const LookupTable<double>& lutOlcRatm;
     const LookupTable<double>& lutSlnRatm;
     const LookupTable<double>& lutSloRatm;
@@ -50,18 +48,17 @@ private:
     const LookupTable<double>& lutRhoAtm;
     const LookupTable<double>& lutTotalAngularWeights;
     const LookupTable<double>& lutD;
-    const valarray<double>& cO3;
 
-    const AuxdataProvider& configurationAuxdata;
-	const double initialAot;
-	const valarray<double>& initialNus;
-	const valarray<double>& initialOmegas;
-    const double gamma;
-    const valarray<int16_t>& ndviIndices;
-    const valarray<double>& vegetationModel;
-    const valarray<double>& soilModel;
-    const valarray<double>& spectralWeights;
-    const matrix<double>& angularWeights;
+    valarray<double> cO3;
+	double initialAot;
+	valarray<double> initialNus;
+	valarray<double> initialOmegas;
+    double gamma;
+    valarray<int16_t> ndviIndices;
+    valarray<double> vegetationModel;
+    valarray<double> soilModel;
+    valarray<double> spectralWeights;
+    matrix<double> angularWeights;
 
 	const Pixel* pixel;
 

@@ -14,7 +14,6 @@ static const double PI = 3.14159265358979323846;
 static const double RADIAN = PI / 180.0;
 
 ErrorMetric::ErrorMetric(const Context& context) :
-		context(context),
 		lutOlcRatm((LookupTable<double>&) context.getObject("OLC_R_atm")),
 		lutSlnRatm((LookupTable<double>&) context.getObject("SLN_R_atm")),
 		lutSloRatm((LookupTable<double>&) context.getObject("SLO_R_atm")),
@@ -22,17 +21,6 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		lutRhoAtm((LookupTable<double>&) context.getObject("rho_atm")),
 		lutTotalAngularWeights((LookupTable<double>&) context.getObject("weight_ang_tot")),
 		lutD((LookupTable<double>&) context.getObject("D")),
-		cO3(((AuxdataProvider&) context.getObject(Constants::AUX_ID_SYRTAX)).getVectorDouble("C_O3")),
-		configurationAuxdata((AuxdataProvider&) context.getObject(Constants::AUX_ID_SYCPAX)),
-		initialAot(configurationAuxdata.getDouble("T550_ini")),
-		initialNus(configurationAuxdata.getVectorDouble("v_ini")),
-		initialOmegas(configurationAuxdata.getVectorDouble("w_ini")),
-		gamma(configurationAuxdata.getDouble("gamma")),
-		ndviIndices(configurationAuxdata.getVectorShort("NDV_channel")),
-		vegetationModel(configurationAuxdata.getVectorDouble("R_veg")),
-		soilModel(configurationAuxdata.getVectorDouble("R_soil")),
-		spectralWeights(configurationAuxdata.getVectorDouble("weight_spec")),
-		angularWeights(configurationAuxdata.getMatrixDouble("weight_ang")),
 		validMask(30),
 		sdrs(30),
 		coordinates(10),
@@ -50,6 +38,19 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		pe(10),
 		u(valarray<double>(10), 10),
 		lineMinimizer(this, &ErrorMetric::computeRss8, pn, u) {
+	const AuxdataProvider cpAuxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUX_ID_SYCPAX);
+	const AuxdataProvider rtAuxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUX_ID_SYRTAX);
+
+	rtAuxdataProvider.getVectorDouble("C_O3", cO3);
+	cpAuxdataProvider.getDouble("T550_ini", initialAot);
+	cpAuxdataProvider.getVectorDouble("v_ini", initialNus);
+	cpAuxdataProvider.getVectorDouble("w_ini", initialOmegas);
+	cpAuxdataProvider.getDouble("gamma", gamma);
+	cpAuxdataProvider.getVectorShort("NDV_channel", ndviIndices);
+	cpAuxdataProvider.getVectorDouble("R_veg", vegetationModel);
+	cpAuxdataProvider.getVectorDouble("R_soil", soilModel);
+	cpAuxdataProvider.getVectorDouble("weight_spec", spectralWeights);
+	cpAuxdataProvider.getMatrixDouble("weight_ang", angularWeights);
 }
 
 ErrorMetric::~ErrorMetric() {

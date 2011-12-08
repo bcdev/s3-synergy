@@ -35,14 +35,14 @@ private:
 	LookupTable<double>* synLutOlcRatm;
 	LookupTable<double>* synLutSlnRatm;
 	LookupTable<double>* synLutT;
-	const valarray<double>* synCo3;
+	valarray<double> synCo3;
 
 	LookupTable<double>* vgtLutRhoAtm;
 	LookupTable<double>* vgtLutRAtm;
 	LookupTable<double>* vgtLutT;
 	valarray<valarray<double> > vgtBSurfaceReflectanceWeights;
 	valarray<double> vgtSolarIrradiances;
-	const valarray<double>* vgtCo3;
+	valarray<double> vgtCo3;
 	valarray<double> hyperWavelengths;
 
     Accessor* synOzoneAccessor;

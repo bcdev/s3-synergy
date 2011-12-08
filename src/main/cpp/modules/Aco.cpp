@@ -131,7 +131,8 @@ void Aco::process(Context& context) {
 	const LookupTable<double>& lutT = (LookupTable<double>&) context.getObject("t");
 	const LookupTable<double>& lutRhoAtm = (LookupTable<double>&) context.getObject("rho_atm");
 	AuxdataProvider& auxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYRTAX);
-	const valarray<double>& cO3 = auxdataProvider.getVectorDouble("C_O3");
+	valarray<double> cO3;
+	auxdataProvider.getVectorDouble("C_O3", cO3);
 
 	context.getLogging().progress("Processing segment '" + collocatedSegment.toString() + "'", getId());
 
@@ -140,7 +141,8 @@ void Aco::process(Context& context) {
 	const long lastL = context.getLastComputableL(collocatedSegment, *this);
 	context.getLogging().debug("Segment [" + collocatedSegment.toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
 
-	const double delta3 = auxdataProvider.getDouble("delta_rt");
+	double delta3;
+	auxdataProvider.getDouble("delta_rt", delta3);
 
 #if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100) > 40100
 #pragma omp parallel for

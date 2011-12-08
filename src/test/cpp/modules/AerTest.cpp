@@ -161,18 +161,18 @@ void AerTest::testAer() {
 
 void AerTest::testReadAuxdata() {
     aer->readAuxiliaryData(*context);
-    const valarray<int16_t>& amins = *(aer->amins);
+    const valarray<int16_t>& amins = aer->amins;
     CPPUNIT_ASSERT(amins.size() == 3);
     CPPUNIT_ASSERT(amins[0] == 1);
     CPPUNIT_ASSERT(amins[1] == 2);
     CPPUNIT_ASSERT(amins[2] == 3);
 
-    double alpha550 = (*aer->aerosolAngstromExponents)[0];
+    double alpha550 = aer->aerosolAngstromExponents[0];
     CPPUNIT_ASSERT(alpha550 == 1.25f);
 
-    alpha550 = (*aer->aerosolAngstromExponents)[10];
+    alpha550 = aer->aerosolAngstromExponents[10];
     CPPUNIT_ASSERT(alpha550 == 1.25f);
 
-    alpha550 = (*aer->aerosolAngstromExponents)[30];
+    alpha550 = aer->aerosolAngstromExponents[30];
     CPPUNIT_ASSERT(alpha550 == 1.25f);
 }
