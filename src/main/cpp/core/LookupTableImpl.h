@@ -125,13 +125,13 @@ W LookupTableImpl<T, W>::getScalar(const W coordinates[], valarray<W>& f, valarr
 	for (size_t i = 0; i < n; ++i) {
 		origin += getIndex(i, coordinates[i], f[i]) * strides[i];
 	}
-//#pragma omp parallel for
+#pragma omp parallel for
 	for (size_t i = 0; i < offsets.size(); ++i) {
 		w[i] = (W) y[origin + offsets[i]];
 	}
 	for (size_t i = n; i-- > 0;) {
 		const size_t m = 1 << i;
-//#pragma omp parallel for
+#pragma omp parallel for
 		for (size_t j = 0; j < m; ++j) {
 			w[j] += f[i] * (w[m + j] - w[j]);
 		}
@@ -157,7 +157,7 @@ valarray<W>& LookupTableImpl<T, W>::getVector(const W coordinates[], valarray<W>
 	for (size_t i = 0; i < r; ++i) {
 		origin += getIndex(i, coordinates[i], f[i]) * strides[i];
 	}
-//#pragma omp parallel for
+#pragma omp parallel for
 	for (size_t i = 0; i < vertexCount; ++i) {
 		const size_t l = i * length;
 		for (size_t j = 0; j < length; ++j) {
@@ -175,7 +175,7 @@ valarray<W>& LookupTableImpl<T, W>::getVector(const W coordinates[], valarray<W>
 			}
 		}
 	}
-//#pragma omp parallel for
+#pragma omp parallel for
 	for (size_t k = 0; k < length; ++k) {
 		vector[k] = w[k] * scaleFactor + addOffset;
 	}
@@ -203,7 +203,7 @@ matrix<W>& LookupTableImpl<T, W>::getMatrix(const W coordinates[], matrix<W>& ma
 	for (size_t i = 0; i < r; ++i) {
 		origin += getIndex(i, coordinates[i], f[i]) * strides[i];
 	}
-//#pragma omp parallel for
+#pragma omp parallel for
 	for (size_t i = 0; i < vertexCount; ++i) {
 		const size_t l = i * elementCount;
 		for (size_t j = 0; j < elementCount; ++j) {
@@ -221,7 +221,7 @@ matrix<W>& LookupTableImpl<T, W>::getMatrix(const W coordinates[], matrix<W>& ma
 			}
 		}
 	}
-//#pragma omp parallel for
+#pragma omp parallel for
 	for (size_t i = 0; i < rowCount; ++i) {
 		const size_t l = i * colCount;
 		for (size_t k = 0; k < colCount; ++k) {
