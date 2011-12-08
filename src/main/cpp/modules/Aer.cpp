@@ -63,8 +63,6 @@ private:
 	vector<Accessor*> solarIrradianceSlnAccessors;
 	vector<Accessor*> solarIrradianceSloAccessors;
 
-	valarray<double> cO3;
-
 	valarray<double> szaTiePointsOlc;
 	valarray<double> saaTiePointsOlc;
 	valarray<double> vzaTiePointsOlc;
@@ -99,8 +97,6 @@ PixelInitializer::PixelInitializer(const Context& context) :
 		tiePointInterpolatorOlc(context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("OLC_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_OLC_TP).getAccessor("OLC_TP_lat").getDoubles()),
 		tiePointInterpolatorSln(context.getSegment(Constants::SEGMENT_SLN_TP).getAccessor("SLN_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_SLN_TP).getAccessor("SLN_TP_lat").getDoubles()),
 		tiePointInterpolatorSlo(context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lon").getDoubles(), context.getSegment(Constants::SEGMENT_SLO_TP).getAccessor("SLO_TP_lat").getDoubles()) {
-	const AuxdataProvider& rtAuxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUX_ID_SYRTAX);
-	rtAuxdataProvider.getVectorDouble("C_O3", cO3);
 
 	for (size_t b = 0; b < 30; b++) {
 		radianceAccessors.push_back(&averagedSegment.getAccessor("L_" + lexical_cast<string>(b + 1)));
@@ -271,6 +267,7 @@ void Aer::process(Context& context) {
 	ErrorMetric em(context);
 	Pixel q;
 
+#pragma omp parallel for
 	for (long l = firstL; l <= lastL; l++) {
 		context.getLogging().progress("Retrieving aerosol properties for line l = " + lexical_cast<string>(l), getId());
 		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
@@ -449,7 +446,6 @@ void Aer::readAuxiliaryData(Context& context) {
 	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "rho_atm");
 	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "D");
 	getLookupTable(context, "S3__SY_2_SYCPAX.nc", "weight_ang_tot");
-	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "C_O3");
 
 	AuxdataProvider& cpAuxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYCPAX);
 	AuxdataProvider& rtAuxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYRTAX);

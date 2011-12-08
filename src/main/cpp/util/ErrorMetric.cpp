@@ -38,8 +38,8 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		pe(10),
 		u(valarray<double>(10), 10),
 		lineMinimizer(this, &ErrorMetric::computeRss8, pn, u) {
-	const AuxdataProvider cpAuxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUX_ID_SYCPAX);
-	const AuxdataProvider rtAuxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUX_ID_SYRTAX);
+	const AuxdataProvider& cpAuxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUX_ID_SYCPAX);
+	const AuxdataProvider& rtAuxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUX_ID_SYRTAX);
 
 	rtAuxdataProvider.getVectorDouble("C_O3", cO3);
 	cpAuxdataProvider.getDouble("T550_ini", initialAot);

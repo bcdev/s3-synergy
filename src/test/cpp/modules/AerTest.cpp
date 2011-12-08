@@ -175,4 +175,10 @@ void AerTest::testReadAuxdata() {
 
     alpha550 = aer->aerosolAngstromExponents[30];
     CPPUNIT_ASSERT(alpha550 == 1.25f);
+
+	const AuxdataProvider& rtAuxdataProvider = (AuxdataProvider&) context->getObject(Constants::AUX_ID_SYRTAX);
+	valarray<double> cO3;
+	rtAuxdataProvider.getVectorDouble("C_O3", cO3);
+    CPPUNIT_ASSERT(cO3.size() == 30);
+    CPPUNIT_ASSERT(cO3[0] == 0.0);
 }
