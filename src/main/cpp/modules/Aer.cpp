@@ -264,11 +264,11 @@ void Aer::process(Context& context) {
 	context.getLogging().info("Getting lines ...", getId());
 	getPixels(context, pixels);
 
-	ErrorMetric em(context);
-	Pixel q;
-
+#pragma omp parallel for
 	for (long l = firstL; l <= lastL; l++) {
 		context.getLogging().progress("Retrieving aerosol properties for line l = " + lexical_cast<string>(l), getId());
+		ErrorMetric em(context);
+		Pixel q;
 		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
 				const size_t pixelIndex = averagedGrid->getIndex(k, l, m);
