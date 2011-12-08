@@ -264,7 +264,7 @@ void Aer::process(Context& context) {
 	context.getLogging().info("Getting lines ...", getId());
 	getPixels(context, pixels);
 
-#pragma omp parallel for
+//#pragma omp parallel for
 	for (long l = firstL; l <= lastL; l++) {
 		context.getLogging().progress("Retrieving aerosol properties for line l = " + lexical_cast<string>(l), getId());
 		ErrorMetric em(context);
