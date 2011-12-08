@@ -33,7 +33,7 @@ private:
 	void readAuxiliaryData(Context& context);
 	void retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em);
 
-	static double aerosolOpticalThickness(double lat, double lon);
+	static double aerosolOpticalThickness(double lat);
 
 	Segment* averagedSegment;
 	const Grid* averagedGrid;

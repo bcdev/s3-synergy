@@ -309,7 +309,7 @@ void Aer::process(Context& context) {
 
 				if (!isSet<int>(p.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG | Constants::SY2_AEROSOL_HIGH_ERROR_FLAG | Constants::SY2_AEROSOL_TOO_LOW_FLAG)) {
 					double w = 0.00000625;
-					double tau550 = w * aerosolOpticalThickness(p.lat, p.lon);
+					double tau550 = w * aerosolOpticalThickness(p.lat);
 					double tau550err = 0.0 * w;
 					double alpha550 = 1.25 * w;
 					double minPixelDistance = numeric_limits<double>::max();
@@ -494,7 +494,7 @@ void Aer::putPixels(const valarray<Pixel>& pixels, long firstL, long lastL) cons
 	}
 }
 
-double Aer::aerosolOpticalThickness(double lat, double lon) {
+double Aer::aerosolOpticalThickness(double lat) {
 	const double c = cos(lat * D2R);
 	return 0.2 * (c - 0.25) * c * c * c + 0.05;
 }
