@@ -46,13 +46,11 @@ public:
 
 	W getScalar(const W coordinates[], valarray<W>& f, valarray<W>& w) const;
 	size_t getScalarWorkspaceSize() const;
-	W getScalar(const W coordinates[], size_t dimIndex, const valarray<W>& tableValues, valarray<W>& w) const;
 
 	matrix<W>& getMatrix(const W coordinates[], matrix<W>& matrix, valarray<W>& f, valarray<W>& w) const;
 	size_t getMatrixColCount() const;
 	size_t getMatrixRowCount() const;
 	size_t getMatrixWorkspaceSize() const;
-	matrix<W>& getMatrix(const W coordinates[], size_t dimIndex, matrix<W>& matrix, const valarray<W>& tableValues, valarray<W>& w) const;
 
 	valarray<W>& getVector(const W coordinates[], valarray<W>& vector, valarray<W>& f, valarray<W>& w) const;
 	size_t getVectorDimensionCount() const;
@@ -123,7 +121,7 @@ W LookupTableImpl<T, W>::getScalar(const W coordinates[], valarray<W>& f, valarr
 	assert(w.size() >= offsets.size());
 
 	size_t origin = 0;
-//#pragma omp parallel for reduction(+ : origin)
+#pragma omp parallel for reduction(+ : origin)
 	for (size_t i = 0; i < n; ++i) {
 		origin += getIndex(i, coordinates[i], f[i]) * strides[i];
 	}
@@ -155,7 +153,7 @@ valarray<W>& LookupTableImpl<T, W>::getVector(const W coordinates[], valarray<W>
 	assert(w.size() >= vertexCount * length);
 
 	size_t origin = 0;
-//#pragma omp parallel for reduction(+ : origin)
+#pragma omp parallel for reduction(+ : origin)
 	for (size_t i = 0; i < r; ++i) {
 		origin += getIndex(i, coordinates[i], f[i]) * strides[i];
 	}
@@ -201,7 +199,7 @@ matrix<W>& LookupTableImpl<T, W>::getMatrix(const W coordinates[], matrix<W>& ma
 	assert(w.size() >= vertexCount * elementCount);
 
 	size_t origin = 0;
-//#pragma omp parallel for reduction(+ : origin)
+#pragma omp parallel for reduction(+ : origin)
 	for (size_t i = 0; i < r; ++i) {
 		origin += getIndex(i, coordinates[i], f[i]) * strides[i];
 	}
@@ -221,98 +219,6 @@ matrix<W>& LookupTableImpl<T, W>::getMatrix(const W coordinates[], matrix<W>& ma
 			for (size_t k = 0; k < elementCount; ++k) {
 				w[l + k] += f[i] * (w[n + l + k] - w[l + k]);
 			}
-		}
-	}
-//#pragma omp parallel for
-	for (size_t i = 0; i < rowCount; ++i) {
-		const size_t l = i * colCount;
-		for (size_t k = 0; k < colCount; ++k) {
-			matrix(i, k) = w[l + k] * scaleFactor + addOffset;
-		}
-	}
-
-	return matrix;
-}
-
-template<class T, class W>
-valarray<W>& LookupTableImpl<T, W>::getTable(const W coordinates[], size_t dimIndex, valarray<W>& tableValues) const {
-	assert(tableValues.size() >= strides[0]);
-
-	W f;
-
-	for (size_t i = 0; i < dimIndex; ++i) {
-		const size_t origin = getIndex(i, coordinates[i], f) * strides[i];
-//#pragma omp parallel for
-		for (size_t k = 0; k < strides[i]; ++k) {
-			W a;
-			W b;
-			if (i == 0) {
-				a = boost::numeric_cast<W>(y[origin + k]);
-				b = boost::numeric_cast<W>(y[origin + k + strides[i]]);
-			} else {
-				a = tableValues[origin + k];
-				b = tableValues[origin + k + strides[i]];
-			}
-			tableValues[k] = a + f * (b - a);
-		}
-	}
-
-	return tableValues;
-}
-
-template<class T, class W>
-W LookupTableImpl<T, W>::getScalar(const W coordinates[], size_t dimIndex, const valarray<W>& tableValues, valarray<W>& w) const {
-	assert(w.size() >= strides[dimIndex]);
-
-	W f;
-
-	for (size_t i = dimIndex; i < n; ++i) {
-		const size_t origin = getIndex(i, coordinates[i], f) * strides[i];
-//#pragma omp parallel for
-		for (size_t k = 0; k < strides[i]; ++k) {
-			W a;
-			W b;
-			if (i == dimIndex) {
-				a = tableValues[origin + k];
-				b = tableValues[origin + k + strides[i]];
-			} else {
-				a = w[origin + k];
-				b = w[origin + k + strides[i]];
-			}
-			w[k] = a + f * (b - a);
-		}
-	}
-
-	return w[0] * scaleFactor + addOffset;
-}
-
-template<class T, class W>
-matrix<W>& LookupTableImpl<T, W>::getMatrix(const W coordinates[], size_t dimIndex, matrix<W>& matrix, const valarray<W>& tableValues, valarray<W>& w) const {
-	assert(n > 2);
-	assert(w.size() >= strides[dimIndex]);
-
-	const size_t rowCount = getMatrixRowCount();
-	const size_t colCount = getMatrixColCount();
-
-	assert(matrix.size1() >= rowCount);
-	assert(matrix.size2() >= colCount);
-
-	W f;
-
-	for (size_t i = dimIndex; i < n - 2; ++i) {
-		const size_t origin = getIndex(i, coordinates[i], f) * strides[i];
-//#pragma omp parallel for
-		for (size_t k = 0; k < strides[i]; ++k) {
-			W a;
-			W b;
-			if (i == dimIndex) {
-				a = tableValues[origin + k];
-				b = tableValues[origin + k + strides[i]];
-			} else {
-				a = w[origin + k];
-				b = w[origin + k + strides[i]];
-			}
-			w[k] = a + f * (b - a);
 		}
 	}
 //#pragma omp parallel for
