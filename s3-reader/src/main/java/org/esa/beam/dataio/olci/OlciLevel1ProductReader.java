@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,6 +32,30 @@ import java.util.logging.Logger;
  * @since 1.0
  */
 class OlciLevel1ProductReader extends AbstractProductReader {
+
+    private static final float[] spectralWavelengths = new float[21];
+    private static final float[] spectralBandwidths = new float[21];
+
+    static {
+        getSpectralBandsProperties(spectralWavelengths, spectralBandwidths);
+    }
+
+    static void getSpectralBandsProperties(float[] wavelengths, float[] bandwidths) {
+        final Properties properties = new Properties();
+
+        try {
+            properties.load(OlciLevel1ProductReader.class.getResourceAsStream("radianceBands.properties"));
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+
+        for (int i = 0; i < wavelengths.length; i++) {
+            wavelengths[i] = Float.parseFloat(properties.getProperty("wavelengths." + i));
+        }
+        for (int i = 0; i < bandwidths.length; i++) {
+            bandwidths[i] = Float.parseFloat(properties.getProperty("bandwidths." + i));
+        }
+    }
 
     private final Logger logger;
     private List<Product> bandProducts;
@@ -66,7 +91,7 @@ class OlciLevel1ProductReader extends AbstractProductReader {
 
     private void attachAnnotationDataToProduct(OlciL1bManifest manifest, Product product) {
         List<DataSetPointer> annotationPointers = manifest.getDataSetPointers(DataSetPointer.Type.A);
-        annotationPointers = removeNotExistingDataSetPointers(annotationPointers);
+        annotationPointers = removeOrphanedDataSetPointers(annotationPointers);
         annotationProducts = createDataSetProducts(annotationPointers);
         attachGeoCodingToProduct(annotationProducts, product);
         attachFlagCodingToProduct(annotationProducts, product);
@@ -105,6 +130,7 @@ class OlciLevel1ProductReader extends AbstractProductReader {
     }
 
     private void attachGeoCodingToProduct(List<Product> annotationProducts, Product product) {
+        // TODO - use tie point geocoding (rq-2011-12-09)
         for (Product annotationProduct : annotationProducts) {
             if(annotationProduct.getGeoCoding() != null) {
                 ProductUtils.copyGeoCoding(annotationProduct, product);
@@ -114,7 +140,7 @@ class OlciLevel1ProductReader extends AbstractProductReader {
 
     private void attachBandsToProduct(OlciL1bManifest manifest, Product product) {
         List<DataSetPointer> measurementPointers = manifest.getDataSetPointers(DataSetPointer.Type.M);
-        measurementPointers = removeNotExistingDataSetPointers(measurementPointers);
+        measurementPointers = removeOrphanedDataSetPointers(measurementPointers);
         bandProducts = createDataSetProducts(measurementPointers);
         addRadianceBands(bandProducts, product);
     }
@@ -141,16 +167,21 @@ class OlciLevel1ProductReader extends AbstractProductReader {
     }
 
     private void addRadianceBands(List<Product> bandProducts, Product product) {
-        for (Product bandProduct : bandProducts) {
-            Band[] bands = bandProduct.getBands();
-            for (Band band : bands) {
-                if(hasSameRasterDimension(product, bandProduct)) {
-                    Band targetBand = ProductUtils.copyBand(band.getName(), bandProduct, product);
-                    targetBand.setSourceImage(band.getSourceImage());
+        for (final Product bandProduct : bandProducts) {
+            for (final Band sourceBand : bandProduct.getBands()) {
+                if (hasSameRasterDimension(product, bandProduct)) {
+                    String bandName = sourceBand.getName();
+                    Band targetBand = ProductUtils.copyBand(bandName, bandProduct, product);
+                    targetBand.setSourceImage(sourceBand.getSourceImage());
+                    if (bandName.matches("TOA_radiances_Oa[0-2][0-9]")) {
+                        final int channel = Integer.parseInt(bandName.substring(16, 18));
+                        targetBand.setSpectralBandIndex(channel - 1);
+                        targetBand.setSpectralWavelength(spectralWavelengths[channel - 1]);
+                        targetBand.setSpectralBandwidth(spectralBandwidths[channel - 1]);
+                    }
                 }
             }
         }
-
     }
 
     private boolean hasSameRasterDimension(Product productOne, Product productTwo) {
@@ -161,7 +192,7 @@ class OlciLevel1ProductReader extends AbstractProductReader {
         return widthOne == widthTwo && heightOne == heightTwo;
     }
 
-    private List<DataSetPointer> removeNotExistingDataSetPointers(List<DataSetPointer> dataSetPointers) {
+    private List<DataSetPointer> removeOrphanedDataSetPointers(List<DataSetPointer> dataSetPointers) {
         File parentFile = getParentInputDirectory();
         List<DataSetPointer> filteredPointers = new ArrayList<DataSetPointer>();
         for (DataSetPointer dataSetPointer : dataSetPointers) {
@@ -179,22 +210,14 @@ class OlciLevel1ProductReader extends AbstractProductReader {
         return filteredPointers;
     }
 
-    private String patchFileName(String fileName) {
-        if(isFileNameValid(fileName)) {
-            return fileName;
+    static String patchFileName(String fileName) {
+        if(fileName.matches("radianceOa[1-9].nc")) {
+            return fileName.substring(0, 8) + "sOa0" + fileName.substring(10);
         }
-
-        int dotIndex = fileName.indexOf('.');
-        char firstDigit = fileName.charAt(dotIndex - 2);
-        if(!Character.isDigit(firstDigit)) {
-            firstDigit = '0';
+        if(fileName.matches("radianceOa[1-2][0-9].nc")) {
+            return fileName.substring(0, 8) + "sOa" + fileName.substring(10);
         }
-        String index = String.format("%s%s", firstDigit, fileName.charAt(dotIndex - 1));
-        return "radiancesOa" + index + ".nc";
-    }
-
-    private boolean isFileNameValid(String fileName) {
-        return fileName.indexOf('.') == 13;
+        return fileName;
     }
 
     private OlciL1bManifest createManifestFile(File inputFile) throws IOException {
@@ -243,6 +266,5 @@ class OlciLevel1ProductReader extends AbstractProductReader {
             annotationProduct.dispose();
         }
         super.close();
-
     }
 }

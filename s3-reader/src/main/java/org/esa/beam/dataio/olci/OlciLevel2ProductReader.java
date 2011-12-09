@@ -8,6 +8,7 @@ import org.esa.beam.framework.datamodel.Band;
 import org.esa.beam.framework.datamodel.MetadataElement;
 import org.esa.beam.framework.datamodel.Product;
 import org.esa.beam.framework.datamodel.ProductData;
+import org.esa.beam.framework.datamodel.TiePointGeoCoding;
 import org.esa.beam.framework.datamodel.TiePointGrid;
 import org.esa.beam.util.ProductUtils;
 import org.esa.beam.util.io.FileUtils;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,15 +35,38 @@ import java.util.logging.Logger;
  */
 public class OlciLevel2ProductReader extends AbstractProductReader {
 
+    private static final float[] spectralWavelengths = new float[21];
+    private static final float[] spectralBandwidths = new float[21];
+
     private final Logger logger;
     private List<Product> measurementProducts;
     private Product geoCoordinatesProduct;
     private Product tiePointsProduct;
 
+    static {
+        getSpectralBandsProperties(spectralWavelengths, spectralBandwidths);
+    }
+
+    static void getSpectralBandsProperties(float[] wavelengths, float[] bandwidths) {
+        final Properties properties = new Properties();
+
+        try {
+            properties.load(OlciLevel1ProductReader.class.getResourceAsStream("radianceBands.properties"));
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+
+        for (int i = 0; i < wavelengths.length; i++) {
+            wavelengths[i] = Float.parseFloat(properties.getProperty("wavelengths." + i));
+        }
+        for (int i = 0; i < bandwidths.length; i++) {
+            bandwidths[i] = Float.parseFloat(properties.getProperty("bandwidths." + i));
+        }
+    }
+
     public OlciLevel2ProductReader(OlciLevel2ProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
         logger = Logger.getLogger(getClass().getSimpleName());
-
     }
 
     @Override
@@ -64,7 +89,8 @@ public class OlciLevel2ProductReader extends AbstractProductReader {
         measurementProducts = loadMeasurementProducts(manifest.getMeasurementFileNames());
         int width = measurementProducts.get(0).getSceneRasterWidth();
         int height = measurementProducts.get(0).getSceneRasterHeight();
-        Product product = new Product(getProductName(), OlciLevel2ProductReaderPlugIn.FORMAT_NAME_OLCI_L2, width, height, this);
+        Product product = new Product(getProductName(), OlciLevel2ProductReaderPlugIn.FORMAT_NAME_OLCI_L2, width,
+                                      height, this);
         product.setStartTime(manifest.getStartTime());
         product.setEndTime(manifest.getStopTime());
         product.setFileLocation(getInputFile());
@@ -81,23 +107,24 @@ public class OlciLevel2ProductReader extends AbstractProductReader {
     private void attachTiePointsToProduct(String tiePointsFileName, Product product) {
         try {
             tiePointsProduct = readProduct(tiePointsFileName);
-            Band[] tiePointBands = tiePointsProduct.getBands();
-            MetadataElement metadataRoot = tiePointsProduct.getMetadataRoot();
-            MetadataElement globalAttributes = metadataRoot.getElement("Global_Attributes");
-            int subsampling = globalAttributes.getAttributeInt("subsampling_factor");
-            for (Band band : tiePointBands) {
-                MultiLevelImage sourceImage = band.getGeophysicalImage();
-
-                int width = sourceImage.getWidth();
-                int height = sourceImage.getHeight();
-                float[] tiePointData = new float[width * height];
+            final MetadataElement metadataRoot = tiePointsProduct.getMetadataRoot();
+            final MetadataElement globalAttributes = metadataRoot.getElement("Global_Attributes");
+            final int subsampling = globalAttributes.getAttributeInt("subsampling_factor");
+            for (final Band band : tiePointsProduct.getBands()) {
+                final MultiLevelImage sourceImage = band.getGeophysicalImage();
+                final int width = sourceImage.getWidth();
+                final int height = sourceImage.getHeight();
+                final float[] tiePointData = new float[width * height];
                 sourceImage.getData().getSamples(0, 0, width, height, 0, tiePointData);
                 TiePointGrid tiePointGrid = new TiePointGrid(band.getName(), band.getRasterWidth(),
                                                              band.getRasterHeight(), 0, 0, subsampling,
                                                              subsampling, tiePointData, true);
                 product.addTiePointGrid(tiePointGrid);
             }
-
+            if (product.getTiePointGrid("TP_latitude") != null && product.getTiePointGrid("TP_longitude") != null) {
+                product.setGeoCoding(new TiePointGeoCoding(product.getTiePointGrid("TP_latitude"),
+                                                           product.getTiePointGrid("TP_longitude")));
+            }
         } catch (IOException e) {
             String msg = String.format("Not able to read file '%s.", tiePointsFileName);
             logger.log(Level.WARNING, msg, e);
@@ -115,11 +142,18 @@ public class OlciLevel2ProductReader extends AbstractProductReader {
     }
 
     private void attachMeasurementBands(List<Product> measurementProducts, Product product) {
-        for (Product bandProduct : measurementProducts) {
-            Band[] bands = bandProduct.getBands();
-            for (Band band : bands) {
-                Band targetBand = ProductUtils.copyBand(band.getName(), bandProduct, product);
-                targetBand.setSourceImage(band.getSourceImage());
+        int k = 0;
+        for (final Product bandProduct : measurementProducts) {
+            for (final Band sourceBand : bandProduct.getBands()) {
+                final String bandName = sourceBand.getName();
+                final Band targetBand = ProductUtils.copyBand(bandName, bandProduct, product);
+                targetBand.setSourceImage(sourceBand.getSourceImage());
+                if (bandName.matches("R[0-9]{3}[0-9]?")) {
+                    targetBand.setSpectralBandIndex(k);
+                    targetBand.setSpectralWavelength(spectralWavelengths[k]);
+                    targetBand.setSpectralBandwidth(spectralBandwidths[k]);
+                    k++;
+                }
             }
         }
     }
@@ -193,6 +227,5 @@ public class OlciLevel2ProductReader extends AbstractProductReader {
             tiePointsProduct.dispose();
         }
         super.close();
-
     }
 }

@@ -18,7 +18,6 @@ class DataSetPointer {
 
 
     DataSetPointer(String fileName, String fileFormat, Type type) {
-
         this.fileName = fileName;
         this.fileFormat = fileFormat;
         this.type = type;
