@@ -8,6 +8,7 @@ import org.esa.beam.framework.datamodel.Band;
 import org.esa.beam.framework.datamodel.MetadataElement;
 import org.esa.beam.framework.datamodel.Product;
 import org.esa.beam.framework.datamodel.ProductData;
+import org.esa.beam.framework.datamodel.TiePointGeoCoding;
 import org.esa.beam.framework.datamodel.TiePointGrid;
 import org.esa.beam.util.ProductUtils;
 import org.w3c.dom.Document;
@@ -99,40 +100,42 @@ class OlciLevel1ProductReader extends AbstractProductReader {
     }
 
     private void attachTiePointsToProduct(List<Product> annotationProducts, Product product) {
-        for (Product annotationProduct : annotationProducts) {
+        for (final Product annotationProduct : annotationProducts) {
             if ("TiePoints".equals(annotationProduct.getName())) {
-                Band[] tiePointBands = annotationProduct.getBands();
-                MetadataElement metadataRoot = annotationProduct.getMetadataRoot();
-                MetadataElement globalAttributes = metadataRoot.getElement("Global_Attributes");
-                int subsampling = globalAttributes.getAttributeInt("subsampling_factor");
-                for (Band band : tiePointBands) {
-                    MultiLevelImage sourceImage = band.getGeophysicalImage();
-
-                    int width = sourceImage.getWidth();
-                    int height = sourceImage.getHeight();
-                    float[] tiePointData = new float[width * height];
-                    sourceImage.getData().getSamples(0,0, width, height, 0, tiePointData);
-                    TiePointGrid tiePointGrid = new TiePointGrid(band.getName(), band.getRasterWidth(),
-                                                                 band.getRasterHeight(), 0, 0, subsampling,
-                                                                 subsampling, tiePointData, true);
+                final Band[] tiePointBands = annotationProduct.getBands();
+                final MetadataElement metadataRoot = annotationProduct.getMetadataRoot();
+                final MetadataElement globalAttributes = metadataRoot.getElement("Global_Attributes");
+                final int subsampling = globalAttributes.getAttributeInt("subsampling_factor");
+                for (final Band band : tiePointBands) {
+                    final MultiLevelImage sourceImage = band.getGeophysicalImage();
+                    final int width = sourceImage.getWidth();
+                    final int height = sourceImage.getHeight();
+                    final float[] tiePointData = new float[width * height];
+                    sourceImage.getData().getSamples(0, 0, width, height, 0, tiePointData);
+                    final TiePointGrid tiePointGrid = new TiePointGrid(band.getName(), band.getRasterWidth(),
+                                                                       band.getRasterHeight(), 0, 0, subsampling,
+                                                                       subsampling, tiePointData, true);
                     product.addTiePointGrid(tiePointGrid);
                 }
+            }
+            if (product.getTiePointGrid("TP_latitude") != null && product.getTiePointGrid("TP_longitude") != null) {
+                product.setGeoCoding(new TiePointGeoCoding(product.getTiePointGrid("TP_latitude"),
+                                                           product.getTiePointGrid("TP_longitude")));
             }
         }
     }
 
     private void attachFlagCodingToProduct(List<Product> annotationProducts, Product product) {
         for (Product annotationProduct : annotationProducts) {
-            if(annotationProduct.getFlagCodingGroup().getNodeCount() > 0) {
+            if (annotationProduct.getFlagCodingGroup().getNodeCount() > 0) {
                 ProductUtils.copyFlagBands(annotationProduct, product);
             }
         }
     }
 
     private void attachGeoCodingToProduct(List<Product> annotationProducts, Product product) {
-        // TODO - use tie point geocoding (rq-2011-12-09)
         for (Product annotationProduct : annotationProducts) {
-            if(annotationProduct.getGeoCoding() != null) {
+            if (annotationProduct.getGeoCoding() != null) {
                 ProductUtils.copyGeoCoding(annotationProduct, product);
             }
         }
@@ -153,7 +156,7 @@ class OlciLevel1ProductReader extends AbstractProductReader {
                 Product product = ProductIO.readProduct(dataSetFile);
                 if (product != null) {
                     dataSetProducts.add(product);
-                }else {
+                } else {
                     String msg = String.format("Could not read file '%s. No appropriate reader found.",
                                                dataSetPointer.getFileName());
                     logger.log(Level.WARNING, msg);
@@ -198,12 +201,12 @@ class OlciLevel1ProductReader extends AbstractProductReader {
         for (DataSetPointer dataSetPointer : dataSetPointers) {
             String fileName = dataSetPointer.getFileName();
             File dataSetFile = new File(parentFile, fileName);
-            if(!dataSetFile.exists()) {
-                String patchedFileName  = patchFileName(fileName);
+            if (!dataSetFile.exists()) {
+                String patchedFileName = patchFileName(fileName);
                 dataSetFile = new File(parentFile, patchedFileName);
                 dataSetPointer.setFileName(patchedFileName);
             }
-            if(dataSetFile.exists()) {
+            if (dataSetFile.exists()) {
                 filteredPointers.add(dataSetPointer);
             }
         }
@@ -211,10 +214,10 @@ class OlciLevel1ProductReader extends AbstractProductReader {
     }
 
     static String patchFileName(String fileName) {
-        if(fileName.matches("radianceOa[1-9].nc")) {
+        if (fileName.matches("radianceOa[1-9].nc")) {
             return fileName.substring(0, 8) + "sOa0" + fileName.substring(10);
         }
-        if(fileName.matches("radianceOa[1-2][0-9].nc")) {
+        if (fileName.matches("radianceOa[1-2][0-9].nc")) {
             return fileName.substring(0, 8) + "sOa" + fileName.substring(10);
         }
         return fileName;
