@@ -55,6 +55,7 @@
     </pluginRepositories>
 
     <modules>
+        <module>s3-bootstrap</module>
         <module>s3-synergy-util</module>
         <module>s3-reader</module>
     </modules>
@@ -148,8 +149,14 @@
             <!-- S3L2PP Libraries ############################################# -->
 
             <dependency>
-                <groupId>org.esa.s3.ol2pp.syn</groupId>
-                <artifactId>s3-syn-util</artifactId>
+                <groupId>org.esa.beam.s3</groupId>
+                <artifactId>s3-reader</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.esa.s3</groupId>
+                <artifactId>s3-synergy-util</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
