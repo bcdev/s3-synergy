@@ -1,6 +1,7 @@
 package org.esa.beam.dataio.olci;
 
 import org.esa.beam.framework.datamodel.ProductData;
+import org.esa.beam.util.XPathHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

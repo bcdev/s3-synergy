@@ -1,5 +1,6 @@
-package org.esa.beam.dataio.olci;
+package org.esa.beam.util;
 
+import org.esa.beam.util.XPathHelper;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;

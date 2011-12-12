@@ -118,10 +118,10 @@ class OlciLevel1ProductReader extends AbstractProductReader {
                     product.addTiePointGrid(tiePointGrid);
                 }
             }
-            if (product.getTiePointGrid("TP_latitude") != null && product.getTiePointGrid("TP_longitude") != null) {
-                product.setGeoCoding(new TiePointGeoCoding(product.getTiePointGrid("TP_latitude"),
-                                                           product.getTiePointGrid("TP_longitude")));
-            }
+        }
+        if (product.getTiePointGrid("TP_latitude") != null && product.getTiePointGrid("TP_longitude") != null) {
+            product.setGeoCoding(new TiePointGeoCoding(product.getTiePointGrid("TP_latitude"),
+                    product.getTiePointGrid("TP_longitude")));
         }
     }
 

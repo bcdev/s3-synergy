@@ -1,19 +1,11 @@
-package org.esa.beam.dataio.olci;
+package org.esa.beam.util;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xmlpull.v1.builder.XmlDoctype;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import java.io.IOException;
-import java.io.StringReader;
 
 /**
  * Provides helper methods which simplify the usage of {@link javax.xml.xpath.XPath}
@@ -21,11 +13,11 @@ import java.io.StringReader;
  * @author Marco Peters
  * @since 1.0
  */
-class XPathHelper {
+public class XPathHelper {
 
     private XPath xPath;
 
-    XPathHelper(XPath xPath) {
+    public XPathHelper(XPath xPath) {
         this.xPath = xPath;
     }
 
