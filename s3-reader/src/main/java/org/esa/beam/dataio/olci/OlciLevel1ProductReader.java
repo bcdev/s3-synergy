@@ -87,6 +87,7 @@ class OlciLevel1ProductReader extends AbstractProductReader {
         root.addElement(manifest.getSpecificProductHeader());
         attachBandsToProduct(manifest, product);
         attachAnnotationDataToProduct(manifest, product);
+        product.setAutoGrouping("TOA_radiances_Oa:error_estimates_Oa:TOA_radiances_Ob:error_estimates_Ob");
         return product;
     }
 
