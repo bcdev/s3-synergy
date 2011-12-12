@@ -51,7 +51,7 @@ public class OlciLevel2ProductReader extends AbstractProductReader {
         final Properties properties = new Properties();
 
         try {
-            properties.load(OlciLevel1ProductReader.class.getResourceAsStream("radianceBands.properties"));
+            properties.load(OlciLevel1ProductReader.class.getResourceAsStream("spectralBands.properties"));
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
