@@ -171,7 +171,6 @@ void Col::process(Context& context) {
 			}
 		}
 
-		// new: collocate solar irradiances
 		const Segment& olcInfo = context.getSegment(Constants::SEGMENT_OLC_INFO);
 		const Segment& slnInfo = context.getSegment(Constants::SEGMENT_SLN_INFO);
 		const Segment& sloInfo = context.getSegment(Constants::SEGMENT_SLO_INFO);
@@ -214,7 +213,7 @@ void Col::process(Context& context) {
 		for (size_t i = 18; i < 30; i++) {
 			Accessor* targetAccessor = solarIrradianceAccessors[i];
 			const Accessor* sourceAccessor = sourceAccessorMap[targetAccessor];
-			const Accessor* yCollocationAccessor = xCollocationAccessorMap[targetAccessor];
+			const Accessor* yCollocationAccessor = yCollocationAccessorMap[targetAccessor];
 
 			for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
 				for (long m = targetGrid.getFirstM(); m < targetGrid.getFirstM() + targetGrid.getSizeM(); m++) {
