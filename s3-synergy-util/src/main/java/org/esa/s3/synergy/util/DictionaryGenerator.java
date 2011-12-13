@@ -28,9 +28,8 @@ import java.util.Properties;
 
 public class DictionaryGenerator {
 
-    private static final String L1C = "L1C";
-    // todo - rq/ts-20110126: name 'L2' also applies to VGT P; use e.g. 'SY2' instead
-    private static final String L2 = "L2";
+    private static final String SY1 = "SY1";
+    private static final String SY2 = "SY2";
     // todo - rq/ts-20110126: use 'VGP' for VGT P
     // todo - rq/ts-20110126: use 'VGS' for VGT S
 
@@ -45,35 +44,35 @@ public class DictionaryGenerator {
 
         loadSegmentNames();
 
-        generateDatasets(L1C, "GEN_INFO_OLC_", 1, 18);
-        generateDatasets(L1C, "GEN_INFO_SLST_ALT_S", 25, 30, 1);
-        generateDatasets(L1C, "GEN_INFO_SLST_NAD_S", 19, 24, 1);
-        generateDataset(L1C, "GEOLOCATION_REF");
-        generateDatasets(L1C, "MISREGIST_OLC_Oref_O", 1, 21, 1, new int[]{14, 15, 20});
-        generateDatasets(L1C, "OLC_RADIANCE_O", 1, 21, 1, new int[]{14, 15, 20});
-        generateDataset(L1C, "PIX_ANNOT_OLC");
-        generateDataset(L1C, "PIX_ANNOT_SLST_ALT_A");
-        generateDataset(L1C, "PIX_ANNOT_SLST_NAD_A");
+        generateDatasets(SY1, "GEN_INFO_OLC_", 1, 18);
+        generateDatasets(SY1, "GEN_INFO_SLST_ALT_S", 25, 30, 1);
+        generateDatasets(SY1, "GEN_INFO_SLST_NAD_S", 19, 24, 1);
+        generateDataset(SY1, "GEOLOCATION_REF");
+        generateDatasets(SY1, "MISREGIST_OLC_Oref_O", 1, 21, 1, new int[]{14, 15, 20});
+        generateDatasets(SY1, "OLC_RADIANCE_O", 1, 21, 1, new int[]{14, 15, 20});
+        generateDataset(SY1, "PIX_ANNOT_OLC");
+        generateDataset(SY1, "PIX_ANNOT_SLST_ALT_A");
+        generateDataset(SY1, "PIX_ANNOT_SLST_NAD_A");
         generateSLSTRadianceDatasets("SLST_ALT_RADIANCE_S", 24);
         generateSLSTRadianceDatasets("SLST_NAD_RADIANCE_S", 18);
-        generateDataset(L1C, "SUBS_ANNOT_GEOM_OLC");
-        generateDataset(L1C, "SUBS_ANNOT_METEO_OLC");
-        generateDataset(L1C, "SUBS_ANNOT_SLST_ALT");
-        generateDataset(L1C, "SUBS_ANNOT_SLST_NAD");
-        generateDataset(L1C, "TIME_STAMP_OLC");
+        generateDataset(SY1, "SUBS_ANNOT_GEOM_OLC");
+        generateDataset(SY1, "SUBS_ANNOT_METEO_OLC");
+        generateDataset(SY1, "SUBS_ANNOT_SLST_ALT");
+        generateDataset(SY1, "SUBS_ANNOT_SLST_NAD");
+        generateDataset(SY1, "TIME_STAMP_OLC");
 
         generateSDRDataset(1, 30);
-        generateDataset(L2, "L2_SYN_aerosol_angstrom_exponent", "a550");
-        generateDataset(L2, "L2_SYN_aerosol_model_index_number", "amin");
-        generateDataset(L2, "L2_SYN_aerosol_optical_thickness", "t550");
-        generateDataset(L2, "L2_SYN_geo-location", "geolocation");
-        generateDataset(L2, "L2_SYN_geophysical_atmospheric_data", "tiepoints_meteo");
-        generateDataset(L2, "L2_SYN_OLCI_sub-sampled_annotations", "tiepoints_olci");
-        generateDataset(L2, "L2_SYN_SLSTR_nadir_sub-sampled_annotations", "tiepoints_slstr_n");
-        generateDataset(L2, "L2_SYN_SLSTR_oblique_sub-sampled_annotations", "tiepoints_slstr_o");
-        generateDataset(L2, "L2_SYN_status_flags", "flags");
-        generateDataset(L2, "L2_SYN_time_stamps", "time");
-        generateDataset(L2, "dimensions");
+        generateDataset(SY2, "L2_SYN_aerosol_angstrom_exponent", "a550");
+        generateDataset(SY2, "L2_SYN_aerosol_model_index_number", "amin");
+        generateDataset(SY2, "L2_SYN_aerosol_optical_thickness", "t550");
+        generateDataset(SY2, "L2_SYN_geo-location", "geolocation");
+        generateDataset(SY2, "L2_SYN_geophysical_atmospheric_data", "tiepoints_meteo");
+        generateDataset(SY2, "L2_SYN_OLCI_sub-sampled_annotations", "tiepoints_olci");
+        generateDataset(SY2, "L2_SYN_SLSTR_nadir_sub-sampled_annotations", "tiepoints_slstr_n");
+        generateDataset(SY2, "L2_SYN_SLSTR_oblique_sub-sampled_annotations", "tiepoints_slstr_o");
+        generateDataset(SY2, "L2_SYN_status_flags", "flags");
+        generateDataset(SY2, "L2_SYN_time_stamps", "time");
+        generateDataset(SY2, "dimensions");
     }
 
     private static void loadSegmentNames() throws IOException {
@@ -82,7 +81,7 @@ public class DictionaryGenerator {
     }
 
     private static void generateSLSTRadianceDatasets(String templateName, int offset) throws Exception {
-        String targetDir = targetBaseDir + File.separator + L1C;
+        String targetDir = targetBaseDir + File.separator + SY1;
         final Properties properties = new Properties();
         setSegmentName(templateName, properties);
         properties.setProperty("target_dir", targetDir);
@@ -95,23 +94,20 @@ public class DictionaryGenerator {
         }
     }
 
-    private static void generateDatasets(String level, String templateName, int minChannel, int maxChannel, int start,
-                                         int[] excludes) throws Exception {
-        String targetDir = targetBaseDir + File.separator + level;
-
+    private static void generateDatasets(String level, String templateFileBasename, int minChannel, int maxChannel, int start, int[] excludes) throws Exception {
+        final String targetDir = targetBaseDir + File.separator + level;
         final Properties properties = new Properties();
-        setSegmentName(templateName, properties);
+        setSegmentName(templateFileBasename, properties);
         properties.setProperty("target_dir", targetDir);
-        properties.setProperty("Template_File_Basename", templateName);
-        int counter = 0;
-        for (int i = minChannel; i <= maxChannel; i++) {
+        properties.setProperty("Template_File_Basename", templateFileBasename);
+        for (int i = minChannel, excludeCount = 0; i <= maxChannel; i++) {
             if (isExcluded(excludes, i)) {
                 start++;
-                counter++;
+                excludeCount++;
                 continue;
             }
-            properties.setProperty("i", String.format("%d", i - counter));
-            properties.setProperty("dataset_name", templateName + start);
+            properties.setProperty("i", String.format("%d", i - excludeCount));
+            properties.setProperty("dataset_name", templateFileBasename + start);
             generateDataset(properties);
             start++;
         }
@@ -126,10 +122,8 @@ public class DictionaryGenerator {
         return false;
     }
 
-    private static void generateDatasets(String level, String templateName, int minChannel, int maxChannel,
-                                         int start) throws Exception {
+    private static void generateDatasets(String level, String templateName, int minChannel, int maxChannel, int start) throws Exception {
         generateDatasets(level, templateName, minChannel, maxChannel, start, new int[0]);
-
     }
 
     private static void generateDataset(String level, String templateName) throws Exception {
@@ -153,8 +147,7 @@ public class DictionaryGenerator {
         }
     }
 
-    private static void generateDatasets(String level, String templateName, int minChannel, int maxChannel) throws
-                                                                                                            Exception {
+    private static void generateDatasets(String level, String templateName, int minChannel, int maxChannel) throws Exception {
         generateDatasets(level, templateName, minChannel, maxChannel, minChannel);
     }
 
@@ -163,7 +156,7 @@ public class DictionaryGenerator {
         final CsvReader csvReader = new CsvReader(new InputStreamReader(csv), new char[]{','});
         final List<String[]> wavelengths = csvReader.readStringRecords();
         final Properties properties = new Properties();
-        String targetDir = targetBaseDir + File.separator + L2;
+        String targetDir = targetBaseDir + File.separator + SY2;
         setSegmentName("L2_SYN_Surface_Directional_Reflectance", properties);
         properties.setProperty("target_dir", targetDir);
         properties.setProperty("Template_File_Basename", "L2_SYN_Surface_Directional_Reflectance");
@@ -195,13 +188,13 @@ public class DictionaryGenerator {
 
     private static void generateDataset(Properties properties) throws Exception {
         final TemplateResolver resolver = new TemplateResolver(properties);
-        String targetDir = properties.getProperty("target_dir");
+        final String targetDir = properties.getProperty("target_dir");
         final File targetFile = new File(targetDir, resolver.resolveProperty("dataset_name") + ".xml");
         BufferedReader reader = null;
         BufferedWriter writer = null;
         try {
-            final String templateName = resolver.resolveProperty("Template_File_Basename");
-            final InputStream is = DictionaryGenerator.class.getResourceAsStream("dictionary/" + templateName + ".xml");
+            final String templateFileBasename = resolver.resolveProperty("Template_File_Basename");
+            final InputStream is = DictionaryGenerator.class.getResourceAsStream("dictionary/" + templateFileBasename + ".xml");
             reader = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
             writer = new BufferedWriter(new FileWriter(targetFile));
             String line = reader.readLine();
@@ -223,5 +216,4 @@ public class DictionaryGenerator {
             }
         }
     }
-
 }
