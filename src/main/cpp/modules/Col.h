@@ -40,13 +40,12 @@ private:
 	void addVariableAlias(Context& context, Segment& targetSegment, const string& targetName, const Segment& sourceSegment, const string& sourceName) const;
 
 	vector<string> targetNames;
-	// TODO - use accessor maps instead of name maps
+	// TODO - improvement: use accessor instead of name mappings
 	map<string, string> collocationNameMapX;
 	map<string, string> collocationNameMapY;
 	map<string, string> sourceNameMap;
 	map<string, const Segment*> sourceSegmentMap;
 
-	// new: fields used for collocating solar irradiances
 	vector<Accessor*> solarIrradianceAccessors;
 	map<Accessor*, const Accessor*> sourceAccessorMap;
 	map<Accessor*, const Accessor*> xCollocationAccessorMap;
