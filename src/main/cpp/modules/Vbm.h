@@ -8,8 +8,6 @@
 #ifndef VBM_H_
 #define VBM_H_
 
-#include <math.h>
-
 #include "../modules/BasicModule.h"
 #include "../core/Pixel.h"
 #include "../core/TiePointInterpolator.h"
@@ -25,25 +23,50 @@ public:
 private:
 	friend class VbmTest;
 
-	static const double RADIAN = M_PI / 180.0;
+	void prepareAccessors(Context& context);
+	void prepareAuxdata(Context& context);
+	void prepareTiePointData(Context& context);
+    void addVariables(Context& context);
+
+	void setPixel(Pixel& p, size_t index);
+	void performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflectances, valarray<double>& coordinates, valarray<double>& f, valarray<double>& w);
+	void performHyperspectralInterpolation(const valarray<double>& synWavelengths, const valarray<double>& synSurfaceReflectances, valarray<double>& hypSurfaceReflectances);
+	void performHyperspectralUpscaling(const valarray<double>& hypSurfaceReflectances, const Pixel& p, valarray<double>& hypToaReflectances, valarray<double>& coordinates, valarray<double>& f, valarray<double>& w);
+	void performHyperspectralFiltering(const valarray<double>& hypToaReflectances, valarray<double>& vgtToaReflectances) const;
+
+	uint8_t performQualityFlagging(Pixel& p, valarray<double>& vgtToaReflectances) const;
+	void setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances);
+
+    template<class T>
+    static void copy(const std::valarray<T>& s, std::valarray<T>& t) {
+        t.resize(s.size());
+        std::copy(&s[0], &s[s.size()], &t[0]);
+    }
+
+    static double aerosolOpticalThickness(double lat);
+
+	static double surfaceReflectance(double nO3, double vza, double sza, double f0, double ltoa,
+	        double cO3, double rho, double ratm, double ts, double tv);
+
+	static double toaReflectance(double nO3, double airMass, double surfaceReflectance,
+	        double cO3, double rho, double ratm, double ts, double tv);
 
 	uint16_t amin;
-	Segment* collocatedSegment;
-	Segment* olciInfoSegment;
 
-	LookupTable<double>* synLutRhoAtm;
-	LookupTable<double>* synLutOlcRatm;
-	LookupTable<double>* synLutSlnRatm;
+	LookupTable<double>* synLutRho;
+	LookupTable<double>* olcLutRatm;
+	LookupTable<double>* slnLutRatm;
 	LookupTable<double>* synLutT;
-	valarray<double> synCo3;
+	valarray<double> synCO3;
 
-	LookupTable<double>* vgtLutRhoAtm;
-	LookupTable<double>* vgtLutRAtm;
-	LookupTable<double>* vgtLutT;
-	valarray<valarray<double> > vgtBSurfaceReflectanceWeights;
-	valarray<double> vgtSolarIrradiances;
-	valarray<double> vgtCo3;
-	valarray<double> hyperWavelengths;
+	LookupTable<double>* hypLutRho;
+	LookupTable<double>* hypLutRatm;
+	LookupTable<double>* hypLutT;
+
+	valarray<valarray<double> > hypSpectralResponses;
+	valarray<double> hypCO3;
+	valarray<double> hypSolarIrradiances;
+	valarray<double> hypWavelengths;
 
     Accessor* synOzoneAccessor;
     Accessor* synLatitudeAccessor;
@@ -52,11 +75,12 @@ private:
     valarray<Accessor*> synRadianceAccessors;
     valarray<Accessor*> synSolarIrradianceAccessors;
 
-    Accessor* vgtFlagsAccessor;
     Accessor* vgtB0Accessor;
     Accessor* vgtB2Accessor;
     Accessor* vgtB3Accessor;
     Accessor* vgtMirAccessor;
+    Accessor* vgtFlagsAccessor;
+    valarray<Accessor*> vgtReflectanceAccessors;
 
     shared_ptr<TiePointInterpolator<double> > tiePointInterpolatorOlc;
     shared_ptr<TiePointInterpolator<double> > tiePointInterpolatorSln;
@@ -70,97 +94,21 @@ private:
     valarray<double> airPressureTiePoints;
     valarray<double> ozoneTiePoints;
 
-    valarray<double> coordinates;
-    valarray<double> f;
-    valarray<double> w;
+    valarray<double> rho;
+    valarray<double> ratm;
+    valarray<double> ts;
+    valarray<double> tv;
 
-    valarray<double> vgtRhoAtm;
-    valarray<double> vgtRAtm;
-    valarray<double> vgtTSun;
-    valarray<double> vgtTView;
-
-    valarray<double> synRhoAtm;
-    valarray<double> synRAtmOlc;
-    valarray<double> synTSun;
-    valarray<double> synTViewOlc;
-
-    valarray<double> synRAtmSln;
-    valarray<double> synTViewSln;
-
-    map<size_t, size_t> wavelengthIndices_0;
-    map<size_t, size_t> wavelengthIndices_1;
-
-    valarray<Accessor*> targetAccessors;
-
-    template<class T>
-    static T cube(T x) {
-        return x * x * x;
-    }
-
-    template<class T>
-    static void copy(const std::valarray<T>& s, std::valarray<T>& t) {
-        t.resize(s.size());
-        std::copy(&s[0], &s[s.size()], &t[0]);
-    }
-
-    static double computeT550(double lat) {
-        return 0.2 * (RADIAN * std::cos(lat) - 0.25) * cube(RADIAN * std::sin(lat + M_PI_2)) + 0.05;
-    }
-
-	static double surfaceReflectance(double ozone, double vza, double sza, double solarIrradiance, double radiance,
-	        double co3, double rhoAtm, double rAtm, double tSun, double tView);
-	static double hyperspectralUpscale(double ozone, double M, double hyperSpectralReflectance,
-	        double co3, double rhoAtm, double rAtm, double tSun, double tView);
-	static double getSlnWavelength(size_t channel);
-
-	void prepareAccessors();
-	void prepareAuxdata(Context& context);
-	void prepareTiePointData(Context& context);
-    void addVariables(Context& context);
-
-	void computeChannelWavelengths(long k, long m, valarray<double>& channelWavelengths) const;
-    void computeInterpolationIndices(const valarray<double>& channelWavelengths, const valarray<double>& surfaceReflectances);
-
-	void setupPixel(Pixel& p, size_t index);
-	void performDownscaling(const Pixel& p, valarray<double>& surfReflNadirSyn);
-	void performHyperspectralInterpolation(const valarray<double>& channelWavelengths, const valarray<double>& surfaceReflectances, valarray<double>& hyperSpectralReflectances);
-	double linearInterpolation(const valarray<double>& x, const valarray<double>& y, const size_t index);
-	void performHyperspectralUpscaling(const valarray<double>& hyperSpectralReflectances, const Pixel& p, valarray<double>& toaReflectances);
-	void performHyperspectralFiltering(const valarray<double>& toaReflectances, valarray<double>& filteredRToa) const;
-
-	uint8_t getFlagsAndFill(Pixel& p, valarray<double>& vgtToaReflectances) const;
-	void setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances);
+	static const double D2R = 3.14159265358979323846 / 180.0;
 };
-
-inline double Vbm::linearInterpolation(const valarray<double>& x, const valarray<double>& f, const size_t index) {
-    size_t x0Index = wavelengthIndices_0[index];
-    size_t x1Index = wavelengthIndices_1[index];
-
-    const double x0 = x[x0Index];
-    const double f0 = f[x0Index];
-
-    if(x0Index == x1Index) {
-        return f0;
-    }
-
-    const double f1 = f[x1Index];
-    if(f0 == Constants::FILL_VALUE_DOUBLE) {
-        return f1;
-    }
-    if(f1 == Constants::FILL_VALUE_DOUBLE) {
-        return f0;
-    }
-
-    return f0 + (f1 - f0) / (x[x1Index] - x0) * (hyperWavelengths[index] - x0);
-}
 
 inline void Vbm::setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances) {
     vgtFlagsAccessor->setUShort(index, flags);
-    for (size_t i = 0; i < targetAccessors.size(); i++) {
+    for (size_t i = 0; i < vgtReflectanceAccessors.size(); i++) {
         if (vgtToaReflectances[i] != Constants::FILL_VALUE_DOUBLE) {
-            targetAccessors[i]->setDouble(index, vgtToaReflectances[i]);
+            vgtReflectanceAccessors[i]->setDouble(index, vgtToaReflectances[i]);
         } else {
-            targetAccessors[i]->setFillValue(index);
+            vgtReflectanceAccessors[i]->setFillValue(index);
         }
     }
 }

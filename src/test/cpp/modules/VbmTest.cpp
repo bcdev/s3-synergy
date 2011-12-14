@@ -60,7 +60,7 @@ void VbmTest::tearDown() {
 
 void VbmTest::testComputeT550() {
     double lat = 53.2;
-    double t550 = Vbm::computeT550(lat);
+    double t550 = Vbm::aerosolOpticalThickness(lat);
     CPPUNIT_ASSERT(std::abs(t550 - 0.05000026692696688018) < 0.0001);
 }
 
@@ -71,7 +71,7 @@ void VbmTest::testSurfaceReflectance() {
 
 void VbmTest::testHyperspectralUpscale() {
     double M = 0.5 * (1 / std::cos(64.3) + 1 / (std::cos(68.2)));
-    const double result = vbm->hyperspectralUpscale(0.3, M, 0.5, 0.2, 0.1, 0.4, 0.8, 0.9);
+    const double result = vbm->toaReflectance(0.3, M, 0.5, 0.2, 0.1, 0.4, 0.8, 0.9);
     CPPUNIT_ASSERT(std::abs(result - 0.85244299269730513062) < 0.0001);
 }
 

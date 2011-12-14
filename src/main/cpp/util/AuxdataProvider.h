@@ -27,6 +27,7 @@ public:
 	const string& getId() const;
 
 	void getUByte(const string& varName, uint8_t& data) const;
+	void getUShort(const string& varName, uint16_t& data) const;
 	void getDouble(const string& varName, double& data) const;
 	void getShort(const string& varName, int16_t& data) const;
 

@@ -43,6 +43,7 @@ void Aco::process(Context& context) {
     const Segment& tpSegmentOlc = context.getSegment(Constants::SEGMENT_OLC_TP);
     const Segment& tpSegmentSln = context.getSegment(Constants::SEGMENT_SLN_TP);
     const Segment& tpSegmentSlo = context.getSegment(Constants::SEGMENT_SLO_TP);
+
 	const Accessor& tpVzaOlc = tpSegmentOlc.getAccessor("OLC_VZA");
 	const Accessor& tpVaaOlc = tpSegmentOlc.getAccessor("OLC_VAA");
 	const Accessor& tpVzaSln = tpSegmentSln.getAccessor("SLN_VZA");
@@ -130,19 +131,18 @@ void Aco::process(Context& context) {
 	const LookupTable<double>& lutSloRatm = (LookupTable<double>&) context.getObject("SLO_R_atm");
 	const LookupTable<double>& lutT = (LookupTable<double>&) context.getObject("t");
 	const LookupTable<double>& lutRhoAtm = (LookupTable<double>&) context.getObject("rho_atm");
-	AuxdataProvider& auxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYRTAX);
+	const AuxdataProvider& auxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYRTAX);
+
 	valarray<double> cO3;
 	auxdataProvider.getVectorDouble("C_O3", cO3);
+	double delta3;
+	auxdataProvider.getDouble("delta_rt", delta3);
 
 	context.getLogging().progress("Processing segment '" + collocatedSegment.toString() + "'", getId());
-
 	const long firstL = context.getFirstComputableL(collocatedSegment, *this);
 	context.getLogging().debug("Segment [" + collocatedSegment.toString() + "]: firstComputableL = " + lexical_cast<string>(firstL), getId());
 	const long lastL = context.getLastComputableL(collocatedSegment, *this);
 	context.getLogging().debug("Segment [" + collocatedSegment.toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
-
-	double delta3;
-	auxdataProvider.getDouble("delta_rt", delta3);
 
 #if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100) > 40100
 #pragma omp parallel for
@@ -187,7 +187,7 @@ void Aco::process(Context& context) {
 					continue;
 				}
 
-				// TODO - read from auxdata when available
+				// TODO - get from auxdata when available
 				const double wv = 2.0;
 
 				tpiOlc.prepare(lonAccessor.getDouble(i), latAccessor.getDouble(i), tpiWeights, tpiIndexes);
@@ -441,3 +441,4 @@ double Aco::surfaceReflectance(double rtoa, double ratm, double ts, double tv, d
 double Aco::toaReflectance(double ltoa, double f0, double sza) {
 	return (PI * ltoa) / (f0 * cos(sza * D2R));
 }
+

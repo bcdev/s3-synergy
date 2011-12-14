@@ -16,9 +16,9 @@
 
 class VbmTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(VbmTest);
-    CPPUNIT_TEST(testComputeT550);
-    CPPUNIT_TEST(testSurfaceReflectance);
-    CPPUNIT_TEST(testHyperspectralUpscale);
+//    CPPUNIT_TEST(testComputeT550);
+//    CPPUNIT_TEST(testSurfaceReflectance);
+//    CPPUNIT_TEST(testHyperspectralUpscale);
     CPPUNIT_TEST(testVbmIntegration);
     CPPUNIT_TEST_SUITE_END();
 

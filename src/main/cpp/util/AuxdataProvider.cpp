@@ -30,6 +30,14 @@ void AuxdataProvider::getUByte(const string& varName, uint8_t& data) const {
 	NetCDF::getVariableData(fileId, varId, origin, shape, &data);
 }
 
+void AuxdataProvider::getUShort(const string& varName, uint16_t& data) const {
+	const int varId = NetCDF::getVariableId(fileId, varName);
+	const valarray<size_t> origin(1);
+	const valarray<size_t> shape(1, 1);
+
+	NetCDF::getVariableData(fileId, varId, origin, shape, &data);
+}
+
 void AuxdataProvider::getDouble(const string& varName, double& data) const {
 	const int varId = NetCDF::getVariableId(fileId, varName);
 	const valarray<size_t> origin(1);

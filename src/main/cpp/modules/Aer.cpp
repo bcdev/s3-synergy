@@ -491,6 +491,6 @@ void Aer::putPixels(const valarray<Pixel>& pixels, long firstL, long lastL) cons
 
 double Aer::aerosolOpticalThickness(double lat) {
 	const double c = cos(lat * D2R);
-	return 0.2 * (c - 0.25) * c * c * c + 0.05;
+	return 0.2 * (c - 0.25) * (c * c * c) + 0.05;
 }
 

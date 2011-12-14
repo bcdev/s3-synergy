@@ -286,7 +286,6 @@ void Col::addOlciVariables(Context& context) {
 	addVariableAlias(context, targetSegment, "latitude", sourceSegment, "latitude");
 	addVariableAlias(context, targetSegment, "altitude", sourceSegment, "altitude");
 
-	// new: add OLC solar irradiances
 	const Segment& olcInfoSegment = context.getSegment(Constants::SEGMENT_OLC_INFO);
 	for (size_t i = 0; i < 18; i++) {
 		const string targetName = "solar_irradiance_" + lexical_cast<string>(i + 1);
@@ -348,7 +347,6 @@ void Col::addSlstrVariables(Context& context) {
 	collocationNameMapX[SLO_CONFIDENCE_FLAG_VARIABLE_NAME] = "x_corr_o";
 	collocationNameMapY[SLO_CONFIDENCE_FLAG_VARIABLE_NAME] = "y_corr_o";
 
-	// new: add SLN & SLO solar irradiances
 	const Segment& olcSegment = context.getSegment(Constants::SEGMENT_OLC);
 	const Segment& slnInfoSegment = context.getSegment(Constants::SEGMENT_SLN_INFO);
 	const Segment& sloInfoSegment = context.getSegment(Constants::SEGMENT_SLN_INFO);
