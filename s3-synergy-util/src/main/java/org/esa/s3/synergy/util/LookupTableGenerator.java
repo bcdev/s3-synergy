@@ -594,8 +594,10 @@ class LookupTableGenerator {
             final double x = wavelengths[i] - center;
             final double s = 0.5 * bandwidth;
             final double v = x / s;
-            response[i] = Math.exp(-0.5 * v * v);
-            sum += response[i];
+            if (v <= 2.0) {
+                response[i] = Math.exp(-0.5 * v * v);
+                sum += response[i];
+            }
         }
         for (int i = 0; i < response.length; i++) {
             response[i] /= sum;
@@ -741,7 +743,7 @@ class LookupTableGenerator {
                             for (int m = 0; m < amin; m++) {
                                 for (int n = 0; n < wav.length; n++) {
                                     final double value = 1.2 * transmission(wav[n], t550[l], sza[i],
-                                                                      AIR_PRESSURE[j]);
+                                                                            AIR_PRESSURE[j]);
                                     //final double value = lut.getValue(T550[o], wav[q], SYN_SZA[j]);
                                     if (r > 0) {
                                         writer.print(", ");
