@@ -7,6 +7,7 @@ import org.esa.beam.framework.datamodel.Band;
 import org.esa.beam.framework.datamodel.Product;
 import org.esa.beam.framework.datamodel.ProductData;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -29,11 +30,22 @@ public class SlstrLevel1ProductReader extends AbstractProductReader {
     @Override
     protected Product readProductNodesImpl() throws IOException {
         // todo
-        return null;
+        File inputDir = getInputDirectory();
+        return createProduct(inputDir);
     }
 
     @Override
     protected void readBandRasterDataImpl(int sourceOffsetX, int sourceOffsetY, int sourceWidth, int sourceHeight, int sourceStepX, int sourceStepY, Band destBand, int destOffsetX, int destOffsetY, int destWidth, int destHeight, ProductData destBuffer, ProgressMonitor pm) throws IOException {
         // todo
     }
+
+    private Product createProduct(File inputDir) {
+        // todo
+        return null;
+    }
+
+    private File getInputDirectory() {
+        return new File(getInput().toString());
+    }
+
 }
