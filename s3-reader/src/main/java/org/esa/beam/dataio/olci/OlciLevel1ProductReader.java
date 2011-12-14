@@ -87,6 +87,7 @@ class OlciLevel1ProductReader extends AbstractProductReader {
         root.addElement(manifest.getSpecificProductHeader());
         attachBandsToProduct(manifest, product);
         attachAnnotationDataToProduct(manifest, product);
+        product.setAutoGrouping("TOA_radiances_Oa:error_estimates_Oa:TOA_radiances_Ob:error_estimates_Ob");
         return product;
     }
 
@@ -118,10 +119,10 @@ class OlciLevel1ProductReader extends AbstractProductReader {
                     product.addTiePointGrid(tiePointGrid);
                 }
             }
-            if (product.getTiePointGrid("TP_latitude") != null && product.getTiePointGrid("TP_longitude") != null) {
-                product.setGeoCoding(new TiePointGeoCoding(product.getTiePointGrid("TP_latitude"),
-                                                           product.getTiePointGrid("TP_longitude")));
-            }
+        }
+        if (product.getTiePointGrid("TP_latitude") != null && product.getTiePointGrid("TP_longitude") != null) {
+            product.setGeoCoding(new TiePointGeoCoding(product.getTiePointGrid("TP_latitude"),
+                    product.getTiePointGrid("TP_longitude")));
         }
     }
 
