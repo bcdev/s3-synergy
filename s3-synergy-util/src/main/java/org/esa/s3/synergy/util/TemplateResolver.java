@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -131,6 +132,7 @@ public class TemplateResolver {
                 if (replacement != null) {
                     writer.write(sb.toString().substring(0, start));
                     final Scanner scanner = new Scanner(new File(replacement), "US-ASCII");
+                    scanner.useLocale(Locale.US);
                     try {
                         while (scanner.hasNextLine()) {
                             writer.write(scanner.nextLine());

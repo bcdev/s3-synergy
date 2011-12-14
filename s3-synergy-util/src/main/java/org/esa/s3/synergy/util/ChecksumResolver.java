@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -62,6 +63,7 @@ public class ChecksumResolver {
     private static Properties readChecksumFile(String filePath) throws IOException {
         final Properties properties = new Properties();
         final Scanner scanner = new Scanner(new File(filePath), "US-ASCII");
+        scanner.useLocale(Locale.US);
         try {
             while (scanner.hasNextLine()) {
                 final String line = scanner.nextLine();

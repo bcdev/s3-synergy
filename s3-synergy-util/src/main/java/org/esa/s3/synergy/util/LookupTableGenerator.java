@@ -33,6 +33,7 @@ import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -819,6 +820,7 @@ class LookupTableGenerator {
     private static double[][] readSpectrum(String name, double toNanometer) {
         final InputStream is = LookupTableGenerator.class.getResourceAsStream(name);
         final Scanner scanner = new Scanner(is, "US-ASCII");
+        scanner.useLocale(Locale.US);
         final List<double[]> pointList = new ArrayList<double[]>();
 
         while (scanner.hasNextLine()) {
@@ -844,6 +846,7 @@ class LookupTableGenerator {
     private static void readIntensities(double[] intensities, String name) {
         final InputStream is = LookupTableGenerator.class.getResourceAsStream(name);
         final Scanner scanner = new Scanner(is, "US-ASCII");
+        scanner.useLocale(Locale.US);
 
         int i = 0;
         while (scanner.hasNextLine()) {
@@ -862,6 +865,7 @@ class LookupTableGenerator {
     private static void readSphericalAlbedos(double[] spherAlbs, String name) {
         final InputStream is = LookupTableGenerator.class.getResourceAsStream(name);
         final Scanner scanner = new Scanner(is, "US-ASCII");
+        scanner.useLocale(Locale.US);
 
         int i = 0;
         while (scanner.hasNextLine()) {
@@ -882,6 +886,7 @@ class LookupTableGenerator {
     private static void readTransmissions(double[] transmissions, String name) {
         final InputStream is = LookupTableGenerator.class.getResourceAsStream(name);
         final Scanner scanner = new Scanner(is, "US-ASCII");
+        scanner.useLocale(Locale.US);
 
         int i = 0;
         while (scanner.hasNextLine()) {
