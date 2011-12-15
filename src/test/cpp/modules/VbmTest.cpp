@@ -75,7 +75,7 @@ void VbmTest::testHyperspectralUpscale() {
     CPPUNIT_ASSERT(std::abs(result - 0.85244299269730513062) < 0.0001);
 }
 
-void VbmTest::testVbmIntegration() {
+void VbmTest::testVbm() {
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
     shared_ptr<Module> col = shared_ptr<Col>(new Col());
     shared_ptr<Module> vbm = shared_ptr<Vbm>(new Vbm());

@@ -101,7 +101,7 @@ void Vbm::prepareTiePointData(Context& context) {
     copy(olcTiePointSegment.getAccessor("OLC_VZA").getDoubles(), vzaOlcTiePoints);
     copy(olcTiePointSegment.getAccessor("OLC_VAA").getDoubles(), vaaOlcTiePoints);
     copy(slnTiePointSegment.getAccessor("SLN_VZA").getDoubles(), vzaSlnTiePoints);
-    copy(olcTiePointSegment.getAccessor("SLN_VAA").getDoubles(), vaaSlnTiePoints);
+    copy(slnTiePointSegment.getAccessor("SLN_VAA").getDoubles(), vaaSlnTiePoints);
 
     copy(olcTiePointSegment.getAccessor("air_pressure").getDoubles(), airPressureTiePoints);
     copy(olcTiePointSegment.getAccessor("ozone").getDoubles(), ozoneTiePoints);
