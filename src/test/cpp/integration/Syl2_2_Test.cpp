@@ -13,6 +13,7 @@
 #include "../../../../src/main/cpp/modules/Pcl.h"
 #include "../../../../src/main/cpp/reader/SynL1Reader.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
+#include "../../../../src/main/cpp/util/BasicTask.h"
 #include "../../../../src/main/cpp/writer/SynL2Writer.h"
 
 #include "Syl2_2_Test.h"

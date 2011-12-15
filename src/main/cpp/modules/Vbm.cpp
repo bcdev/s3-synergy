@@ -18,19 +18,8 @@ using std::fill;
 Vbm::Vbm() :
         BasicModule("VBM"),
         hypSpectralResponses(VGT_CHANNEL_COUNT),
-        hypSolarIrradiances(HYP_CHANNEL_COUNT),
-        hypWavelengths(HYP_CHANNEL_COUNT),
         synRadianceAccessors(SYN_CHANNEL_COUNT),
         synSolarIrradianceAccessors(SYN_CHANNEL_COUNT),
-        szaOlcTiePoints(0),
-        saaOlcTiePoints(0),
-        vzaOlcTiePoints(0),
-        vaaOlcTiePoints(0),
-        vzaSlnTiePoints(0),
-        vaaSlnTiePoints(0),
-        airPressureTiePoints(0),
-        ozoneTiePoints(0),
-        waterVapourTiePoints(0),
         rho(HYP_CHANNEL_COUNT),
         ratm(HYP_CHANNEL_COUNT),
         ts(HYP_CHANNEL_COUNT),
@@ -47,6 +36,18 @@ void Vbm::start(Context& context) {
     prepareAccessors(context);
     prepareAuxdata(context);
     prepareTiePointData(context);
+}
+
+void Vbm::addVariables(Context& context) {
+    context.getLogging().info("Adding variables to segment", getId());
+
+    Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+
+	vgtReflectanceAccessors[0] = &collocatedSegment.addVariable("B0", Constants::TYPE_DOUBLE);
+	vgtReflectanceAccessors[1] = &collocatedSegment.addVariable("B2", Constants::TYPE_DOUBLE);
+	vgtReflectanceAccessors[2] = &collocatedSegment.addVariable("B3", Constants::TYPE_DOUBLE);
+	vgtReflectanceAccessors[3] = &collocatedSegment.addVariable("MIR", Constants::TYPE_DOUBLE);
+    vgtFlagsAccessor = &collocatedSegment.addVariable("SM", Constants::TYPE_UBYTE);
 }
 
 void Vbm::prepareAccessors(Context& context) {
@@ -118,18 +119,6 @@ void Vbm::prepareTiePointData(Context& context) {
     tiePointInterpolatorSln = shared_ptr<TiePointInterpolator<double> >(new TiePointInterpolator<double>(slnLons, slnLats));
 }
 
-void Vbm::addVariables(Context& context) {
-    context.getLogging().info("Adding variables to segment", getId());
-
-    Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-
-	vgtReflectanceAccessors[0] = &collocatedSegment.addVariable("B0", Constants::TYPE_DOUBLE);
-	vgtReflectanceAccessors[1] = &collocatedSegment.addVariable("B2", Constants::TYPE_DOUBLE);
-	vgtReflectanceAccessors[2] = &collocatedSegment.addVariable("B3", Constants::TYPE_DOUBLE);
-	vgtReflectanceAccessors[3] = &collocatedSegment.addVariable("MIR", Constants::TYPE_DOUBLE);
-    vgtFlagsAccessor = &collocatedSegment.addVariable("SM", Constants::TYPE_UBYTE);
-}
-
 void Vbm::process(Context& context) {
     Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
     const Grid& collocatedGrid = collocatedSegment.getGrid();
@@ -188,6 +177,7 @@ void Vbm::process(Context& context) {
             }
         }
     }
+    context.setLastComputedL(collocatedSegment, *this, lastL);
 }
 
 void Vbm::setPixel(Pixel& p, size_t index, valarray<double>& tpiWeights, valarray<size_t>& tpiIndexes) {
@@ -276,7 +266,7 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflect
 #pragma omp parallel for
     for (size_t i = 21; i < 24; i++) {
         if (p.radiances[i - 3] != Constants::FILL_VALUE_DOUBLE) {
-			synSurfaceReflectances[i - 3] = surfaceReflectance(p.ozone, p.vzaSln, p.sza, p.solarIrradiances[i - 3], p.radiances[i], synCO3[i], rho[i], ratm[i - 18], ts[i], tv[i]);
+			synSurfaceReflectances[i - 3] = surfaceReflectance(p.ozone, p.vzaSln, p.sza, p.solarIrradiances[i - 3], p.radiances[i - 3], synCO3[i], rho[i], ratm[i - 18], ts[i], tv[i]);
 		}
 	}
 }
@@ -332,6 +322,7 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hypSurfaceReflec
 
     coordinates[0] = p.vzaOlc;
 	hypLutT->getVector(&coordinates[0], tv, f, w);
+
 	const double airMass = 0.5 * (1.0 / cos(p.sza * D2R) + 1.0 / cos(p.vzaOlc * D2R));
 
 #pragma omp parallel for
@@ -374,7 +365,7 @@ uint8_t Vbm::performQualityFlagging(Pixel& p, valarray<double>& vgtToaReflectanc
     if (vgtToaReflectances[0] != Constants::FILL_VALUE_DOUBLE &&
     		p.radiances[1] != Constants::FILL_VALUE_DOUBLE &&
     		p.radiances[2] != Constants::FILL_VALUE_DOUBLE) {
-        flags |= Constants::VGT_B0_GOOD;
+        flags |= Constants::VGT_B0_GOOD_FLAG;
     }
     if (vgtToaReflectances[1] != Constants::FILL_VALUE_DOUBLE &&
     		p.radiances[5] != Constants::FILL_VALUE_DOUBLE &&
@@ -382,7 +373,7 @@ uint8_t Vbm::performQualityFlagging(Pixel& p, valarray<double>& vgtToaReflectanc
     		p.radiances[7] != Constants::FILL_VALUE_DOUBLE &&
     		p.radiances[8] != Constants::FILL_VALUE_DOUBLE &&
     		p.radiances[9] != Constants::FILL_VALUE_DOUBLE) {
-        flags |= Constants::VGT_B2_GOOD;
+        flags |= Constants::VGT_B2_GOOD_FLAG;
     }
     if (vgtToaReflectances[2] != Constants::FILL_VALUE_DOUBLE &&
     		p.radiances[13] != Constants::FILL_VALUE_DOUBLE &&
@@ -390,12 +381,12 @@ uint8_t Vbm::performQualityFlagging(Pixel& p, valarray<double>& vgtToaReflectanc
     		p.radiances[15] != Constants::FILL_VALUE_DOUBLE &&
     		p.radiances[16] != Constants::FILL_VALUE_DOUBLE &&
     		p.radiances[17] != Constants::FILL_VALUE_DOUBLE) {
-        flags |= Constants::VGT_B3_GOOD;
+        flags |= Constants::VGT_B3_GOOD_FLAG;
     }
     if (vgtToaReflectances[3] != Constants::FILL_VALUE_DOUBLE &&
     		p.radiances[19] != Constants::FILL_VALUE_DOUBLE &&
     		p.radiances[20] != Constants::FILL_VALUE_DOUBLE) {
-        flags |= Constants::VGT_MIR_GOOD;
+        flags |= Constants::VGT_MIR_GOOD_FLAG;
     }
 
     return flags;

@@ -132,7 +132,7 @@ template<class T>
 void Vbm::copy(const std::valarray<T>& s, std::valarray<T>& t) {
 	using std::copy;
 
-	if (t.size() < s.size()) {
+	if (t.size() != s.size()) {
 		t.resize(s.size());
 	}
     copy(&s[0], &s[s.size()], &t[0]);

@@ -10,15 +10,8 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../../src/main/cpp/core/Context.h"
-#include "../../../../src/main/cpp/core/Dictionary.h"
-#include "../../../../src/main/cpp/modules/Vbm.h"
-
 class VbmTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(VbmTest);
-//    CPPUNIT_TEST(testComputeT550);
-//    CPPUNIT_TEST(testSurfaceReflectance);
-//    CPPUNIT_TEST(testHyperspectralUpscale);
     CPPUNIT_TEST(testVbm);
     CPPUNIT_TEST_SUITE_END();
 
@@ -29,13 +22,6 @@ public:
     void tearDown();
 
 private:
-    shared_ptr<Context> context;
-    shared_ptr<Vbm> vbm;
-
-    void prepareContext();
-    void testComputeT550();
-    void testSurfaceReflectance();
-    void testHyperspectralUpscale();
     void testVbm();
 };
 

@@ -6,7 +6,6 @@
  */
 
 #include "../../../../src/main/cpp/core/ExitCode.h"
-
 #include "../../../../src/main/cpp/util/BasicTask.h"
 
 #include "Syl2_1_Test.h"

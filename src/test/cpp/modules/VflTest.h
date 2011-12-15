@@ -10,13 +10,9 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../../src/main/cpp/core/Context.h"
-#include "../../../../src/main/cpp/core/Dictionary.h"
-#include "../../../../src/main/cpp/modules/Vfl.h"
-
 class VflTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(VflTest);
-    CPPUNIT_TEST(testVflIntegration);
+    CPPUNIT_TEST(testVfl);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -26,11 +22,7 @@ public:
     void tearDown();
 
 private:
-    shared_ptr<Context> context;
-    shared_ptr<Vfl> vfl;
-
-    void prepareContext();
-    void testVflIntegration();
+    void testVfl();
 };
 
 #endif	/* VFLTEST_H */

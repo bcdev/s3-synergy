@@ -9,7 +9,8 @@
 #define BASICTASK_H_
 
 #include "../core/Context.h"
-#include "../util/XPathInitializer.h"
+
+#include "XPathInitializer.h"
 
 class BasicTask {
 public:

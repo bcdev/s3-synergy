@@ -140,16 +140,16 @@ const uint16_t SY2_AEROSOL_TOO_LOW_FLAG = 16384U;
 const uint16_t SY2_AEROSOL_HIGH_ERROR_FLAG = 32768U;
 const uint16_t SY2_AVERAGE_FLAG_MASK = SY2_PARTLY_CLOUDY_FLAG | SY2_PARTLY_WATER_FLAG | SY2_BORDER_FLAG | SY2_AEROSOL_FILLED_FLAG | SY2_AEROSOL_HIGH_ERROR_FLAG | SY2_AEROSOL_NEGATIVE_CURVATURE_FLAG | SY2_AEROSOL_SUCCESS_FLAG | SY2_AEROSOL_TOO_LOW_FLAG;
 
-const uint16_t VGT_CLEAR = 0U; // todo - ????
-const uint16_t VGT_SHADOW = 1U;
-const uint16_t VGT_UNCERTAIN = 2U;
-const uint16_t VGT_CLOUD = 3U; // todo - ????
-const uint16_t VGT_ICE_OR_SNOW = 4U;
-const uint16_t VGT_LAND = 8U;
-const uint16_t VGT_MIR_GOOD = 16U;
-const uint16_t VGT_B3_GOOD = 32U;
-const uint16_t VGT_B2_GOOD = 64U;
-const uint16_t VGT_B0_GOOD = 128U;
+const uint8_t VGT_CLEAR_VALUE = 0U;
+const uint8_t VGT_SHADOW_VALUE = 1U;
+const uint8_t VGT_UNCERTAIN_VALUE = 2U;
+const uint8_t VGT_CLOUD_VALUE = 3U;
+const uint8_t VGT_ICE_OR_SNOW_FLAG = 4U;
+const uint8_t VGT_LAND_FLAG = 8U;
+const uint8_t VGT_MIR_GOOD_FLAG = 16U;
+const uint8_t VGT_B3_GOOD_FLAG = 32U;
+const uint8_t VGT_B2_GOOD_FLAG = 64U;
+const uint8_t VGT_B0_GOOD_FLAG = 128U;
 
 
 const double FILL_VALUE_DOUBLE = -numeric_limits<double>::max();
