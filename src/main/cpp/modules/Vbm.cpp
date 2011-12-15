@@ -189,7 +189,7 @@ void Vbm::process(Context& context) {
                 performHyperspectralFiltering(hypToaReflectances, vgtToaReflectances);
                 context.getLogging().progress("Perform quality flagging m = " + lexical_cast<string>(m), getId());
                 const uint8_t flags = performQualityFlagging(p, vgtToaReflectances);
-                context.getLogging().progress("Perform quality flagging m = " + lexical_cast<string>(m), getId());
+                context.getLogging().progress("Set values m = " + lexical_cast<string>(m), getId());
                 setValues(index, flags, vgtToaReflectances);
             }
         }
@@ -198,9 +198,13 @@ void Vbm::process(Context& context) {
 
 void Vbm::setPixel(Pixel& p, size_t index) {
     p.aerosolModel = amin;
-    for(size_t i = 0; i < 24; i++) {
+    for(size_t i = 0; i < 18; i++) {
         p.radiances[i] = synRadianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synRadianceAccessors[i]->getDouble(index);
         p.solarIrradiances[i] = synSolarIrradianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synSolarIrradianceAccessors[i]->getDouble(index);
+    }
+    for(size_t i = 21; i < 24; i++) {
+        p.radiances[i] = synRadianceAccessors[i - 3]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synRadianceAccessors[i - 3]->getDouble(index);
+        p.solarIrradiances[i] = synSolarIrradianceAccessors[i - 3]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synSolarIrradianceAccessors[i - 3]->getDouble(index);
     }
     p.lat = synLatitudeAccessor->getDouble(index);
     p.lon = synLongitudeAccessor->getDouble(index);
