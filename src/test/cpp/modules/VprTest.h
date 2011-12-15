@@ -10,14 +10,11 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../../src/main/cpp/core/Context.h"
-#include "../../../../src/main/cpp/core/Dictionary.h"
-#include "../../../../src/main/cpp/modules/Vpr.h"
-
 class VprTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(VprTest);
     CPPUNIT_TEST(testGetLatitude);
     CPPUNIT_TEST(testGetLongitude);
+    CPPUNIT_TEST(testVpr);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -27,11 +24,9 @@ public:
     void tearDown();
 
 private:
-    shared_ptr<Context> context;
-
-    void prepareContext();
     void testGetLatitude();
     void testGetLongitude();
+    void testVpr();
 };
 
 #endif	/* VPRTEST_H */
