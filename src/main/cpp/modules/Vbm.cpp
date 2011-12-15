@@ -172,24 +172,17 @@ void Vbm::process(Context& context) {
     valarray<double> workspace(hypLutRatm->getVectorWorkspaceSize());
     valarray<double> coordinates(hypLutRatm->getDimensionCount());
 
-    for (long m = collocatedGrid.getFirstM(); m <= collocatedGrid.getMaxM(); m++) {
-        context.getLogging().progress("Processing column m = " + lexical_cast<string>(m), getId());
+    for (long l = firstL; l <= lastL; l++) {
+        context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
         for (long k = collocatedGrid.getFirstK(); k <= collocatedGrid.getMaxK(); k++) {
-            for (long l = firstL; l <= lastL; l++) {
+            for (long m = collocatedGrid.getFirstM(); m <= collocatedGrid.getMaxM(); m++) {
                 const size_t index = collocatedGrid.getIndex(k, l, m);
-                context.getLogging().progress("Set pixel m = " + lexical_cast<string>(m), getId());
                 setPixel(p, index);
-                context.getLogging().progress("Perform downscaling m = " + lexical_cast<string>(m), getId());
                 performDownscaling(p, synSurfaceReflectances, coordinates, f, workspace);
-                context.getLogging().progress("Perform hyperspectral interpolation m = " + lexical_cast<string>(m), getId());
                 performHyperspectralInterpolation(synWavelengths, synSurfaceReflectances, hypSurfaceReflectances);
-                context.getLogging().progress("Perform hyperspectral upscaling m = " + lexical_cast<string>(m), getId());
                 performHyperspectralUpscaling(hypSurfaceReflectances, p, hypToaReflectances, coordinates, f, workspace);
-                context.getLogging().progress("Perform hyperspectral filtering m = " + lexical_cast<string>(m), getId());
                 performHyperspectralFiltering(hypToaReflectances, vgtToaReflectances);
-                context.getLogging().progress("Perform quality flagging m = " + lexical_cast<string>(m), getId());
                 const uint8_t flags = performQualityFlagging(p, vgtToaReflectances);
-                context.getLogging().progress("Set values m = " + lexical_cast<string>(m), getId());
                 setValues(index, flags, vgtToaReflectances);
             }
         }
