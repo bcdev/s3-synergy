@@ -13,7 +13,6 @@
 
 struct Pixel {
 	Pixel();
-    Pixel(const Pixel& q);
     ~Pixel();
 
     void assign(const Pixel& q);
@@ -48,7 +47,6 @@ struct Pixel {
     std::valarray<double> omegas;
 
     double errorMetric;
-    double a;
 };
 
 std::ostream& operator<<(std::ostream& os, const Pixel& p);

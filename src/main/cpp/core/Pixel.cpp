@@ -9,39 +9,7 @@
 
 #include "Pixel.h"
 
-Pixel::Pixel() :
-		radiances(30), solarIrradiances(30), nus(2), omegas(6) {
-}
-
-Pixel::Pixel(const Pixel& q) :
-		radiances(q.radiances), solarIrradiances(q.solarIrradiances), nus(q.nus), omegas(q.omegas) {
-	lon = q.lon;
-	lat = q.lat;
-
-	sza = q.sza;
-	saa = q.saa;
-	vzaOlc = q.vzaOlc;
-	vzaSln = q.vzaSln;
-	vzaSlo = q.vzaSlo;
-	vaaOlc = q.vaaOlc;
-	vaaSln = q.vaaSln;
-	vaaSlo = q.vaaSlo;
-
-	ozone = q.ozone;
-	airPressure = q.airPressure;
-	waterVapour = q.waterVapour;
-
-	angstromExponent = q.angstromExponent;
-	aot = q.aot;
-	aotError = q.aotError;
-	flags = q.flags;
-	aerosolModel = q.aerosolModel;
-
-	c1 = q.c1;
-	c2 = q.c2;
-
-	errorMetric = q.errorMetric;
-	a = q.a;
+Pixel::Pixel() : radiances(30), solarIrradiances(30), nus(2), omegas(6) {
 }
 
 Pixel::~Pixel() {
@@ -81,7 +49,6 @@ void Pixel::assign(const Pixel& q) {
 	copy(&q.omegas[0], &q.omegas[q.omegas.size()], &omegas[0]);
 
 	errorMetric = q.errorMetric;
-	a = q.a;
 }
 
 std::ostream& operator<<(std::ostream& s, const Pixel& p) {
@@ -123,8 +90,7 @@ std::ostream& operator<<(std::ostream& s, const Pixel& p) {
 		s << p.omegas[i] << " ";
 	}
 
-	s << p.errorMetric << " ";
-	s << p.a << std::endl;
+	s << p.errorMetric << std::endl;
 
 	return s;
 }
@@ -171,7 +137,6 @@ std::istream& operator>>(std::istream& s, Pixel& p) {
 	}
 
 	s >> p.errorMetric;
-	s >> p.a;
 
 	return s;
 }

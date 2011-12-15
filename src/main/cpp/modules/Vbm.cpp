@@ -17,23 +17,25 @@ using std::fill;
 
 Vbm::Vbm() :
         BasicModule("VBM"),
-        hypSpectralResponses(4),
-        hypSolarIrradiances(914),
-        hypWavelengths(914),
-        synRadianceAccessors(21),
-        synSolarIrradianceAccessors(21),
+        hypSpectralResponses(VGT_CHANNEL_COUNT),
+        hypSolarIrradiances(HYP_CHANNEL_COUNT),
+        hypWavelengths(HYP_CHANNEL_COUNT),
+        synRadianceAccessors(SYN_CHANNEL_COUNT),
+        synSolarIrradianceAccessors(SYN_CHANNEL_COUNT),
         szaOlcTiePoints(0),
         saaOlcTiePoints(0),
         vzaOlcTiePoints(0),
+        vaaOlcTiePoints(0),
         vzaSlnTiePoints(0),
-        waterVapourTiePoints(0),
+        vaaSlnTiePoints(0),
         airPressureTiePoints(0),
         ozoneTiePoints(0),
-        rho(914),
-        ratm(914),
-        ts(914),
-        tv(914),
-        vgtReflectanceAccessors(4) {
+        waterVapourTiePoints(0),
+        rho(HYP_CHANNEL_COUNT),
+        ratm(HYP_CHANNEL_COUNT),
+        ts(HYP_CHANNEL_COUNT),
+        tv(HYP_CHANNEL_COUNT),
+        vgtReflectanceAccessors(VGT_CHANNEL_COUNT) {
 }
 
 Vbm::~Vbm() {
@@ -48,29 +50,25 @@ void Vbm::start(Context& context) {
 }
 
 void Vbm::prepareAccessors(Context& context) {
-    const Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+	const Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 
-    synLatitudeAccessor = &collocatedSegment.getAccessor("latitude");
-    synLongitudeAccessor = &collocatedSegment.getAccessor("longitude");
-    for(size_t i = 0; i < 18; i++){
-        const string index = lexical_cast<string>(i + 1);
-        synRadianceAccessors[i] = &collocatedSegment.getAccessor("L_" + index);
-        synSolarIrradianceAccessors[i] = &collocatedSegment.getAccessor("solar_irradiance_" + index);
-    }
-    for(size_t i = 21; i < 24; i++){
-        const string index = lexical_cast<string>(i + 1);
-        synRadianceAccessors[i - 3] = &collocatedSegment.getAccessor("L_" + index);
-        synSolarIrradianceAccessors[i - 3] = &collocatedSegment.getAccessor("solar_irradiance_" + index);
-    }
-    vgtReflectanceAccessors[0] = vgtB0Accessor;
-    vgtReflectanceAccessors[1] = vgtB2Accessor;
-    vgtReflectanceAccessors[2] = vgtB3Accessor;
-    vgtReflectanceAccessors[3] = vgtMirAccessor;
+	synLatitudeAccessor = &collocatedSegment.getAccessor("latitude");
+	synLongitudeAccessor = &collocatedSegment.getAccessor("longitude");
+	for (size_t i = 0; i < 18; i++) {
+		const string index = lexical_cast<string>(i + 1);
+		synRadianceAccessors[i] = &collocatedSegment.getAccessor("L_" + index);
+		synSolarIrradianceAccessors[i] = &collocatedSegment.getAccessor("solar_irradiance_" + index);
+	}
+	for (size_t i = 21; i < 24; i++) {
+		const string index = lexical_cast<string>(i + 1);
+		synRadianceAccessors[i - 3] = &collocatedSegment.getAccessor("L_" + index);
+		synSolarIrradianceAccessors[i - 3] = &collocatedSegment.getAccessor("solar_irradiance_" + index);
+	}
 }
 
 void Vbm::prepareAuxdata(Context& context) {
     const AuxdataProvider& vgtRadiativeTransferAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VPRTAX);
-    vgtRadiativeTransferAuxdata.getUShort("AMIN", amin);
+    vgtRadiativeTransferAuxdata.getUShort("AMIN", aerosolModel);
 
     const string synLookupTableFile = "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc";
     synLutRho = &getLookupTable(context, synLookupTableFile, "rho_atm");
@@ -101,11 +99,12 @@ void Vbm::prepareTiePointData(Context& context) {
     copy(olcTiePointSegment.getAccessor("SZA").getDoubles(), szaOlcTiePoints);
     copy(olcTiePointSegment.getAccessor("SAA").getDoubles(), saaOlcTiePoints);
     copy(olcTiePointSegment.getAccessor("OLC_VZA").getDoubles(), vzaOlcTiePoints);
+    copy(olcTiePointSegment.getAccessor("OLC_VAA").getDoubles(), vaaOlcTiePoints);
     copy(slnTiePointSegment.getAccessor("SLN_VZA").getDoubles(), vzaSlnTiePoints);
+    copy(olcTiePointSegment.getAccessor("SLN_VAA").getDoubles(), vaaSlnTiePoints);
 
-    copy(olcTiePointSegment.getAccessor("ozone").getDoubles(), ozoneTiePoints);
     copy(olcTiePointSegment.getAccessor("air_pressure").getDoubles(), airPressureTiePoints);
-
+    copy(olcTiePointSegment.getAccessor("ozone").getDoubles(), ozoneTiePoints);
     if (olcTiePointSegment.hasVariable("water_vapour")) {
         copy(olcTiePointSegment.getAccessor("water_vapour").getDoubles(), waterVapourTiePoints);
     }
@@ -124,11 +123,11 @@ void Vbm::addVariables(Context& context) {
 
     Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 
+	vgtReflectanceAccessors[0] = &collocatedSegment.addVariable("B0", Constants::TYPE_DOUBLE);
+	vgtReflectanceAccessors[1] = &collocatedSegment.addVariable("B2", Constants::TYPE_DOUBLE);
+	vgtReflectanceAccessors[2] = &collocatedSegment.addVariable("B3", Constants::TYPE_DOUBLE);
+	vgtReflectanceAccessors[3] = &collocatedSegment.addVariable("MIR", Constants::TYPE_DOUBLE);
     vgtFlagsAccessor = &collocatedSegment.addVariable("SM", Constants::TYPE_UBYTE);
-    vgtB0Accessor = &collocatedSegment.addVariable("B0", Constants::TYPE_DOUBLE);
-    vgtB2Accessor = &collocatedSegment.addVariable("B2", Constants::TYPE_DOUBLE);
-    vgtB3Accessor = &collocatedSegment.addVariable("B3", Constants::TYPE_DOUBLE);
-    vgtMirAccessor = &collocatedSegment.addVariable("MIR", Constants::TYPE_DOUBLE);
 }
 
 void Vbm::process(Context& context) {
@@ -171,13 +170,15 @@ void Vbm::process(Context& context) {
     valarray<double> f(hypLutRatm->getDimensionCount());
     valarray<double> workspace(hypLutRatm->getVectorWorkspaceSize());
     valarray<double> coordinates(hypLutRatm->getDimensionCount());
+    valarray<double> tpiWeights(1);
+    valarray<size_t> tpiIndexes(1);
 
     for (long l = firstL; l <= lastL; l++) {
         context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
         for (long k = collocatedGrid.getFirstK(); k <= collocatedGrid.getMaxK(); k++) {
             for (long m = collocatedGrid.getFirstM(); m <= collocatedGrid.getMaxM(); m++) {
                 const size_t index = collocatedGrid.getIndex(k, l, m);
-                setPixel(p, index);
+                setPixel(p, index, tpiWeights, tpiIndexes);
                 performDownscaling(p, synSurfaceReflectances, coordinates, f, workspace);
                 performHyperspectralInterpolation(synWavelengths, synSurfaceReflectances, hypSurfaceReflectances);
                 performHyperspectralUpscaling(hypSurfaceReflectances, p, hypToaReflectances, coordinates, f, workspace);
@@ -189,27 +190,20 @@ void Vbm::process(Context& context) {
     }
 }
 
-void Vbm::setPixel(Pixel& p, size_t index) {
-    p.aerosolModel = amin;
-    for(size_t i = 0; i < 18; i++) {
+void Vbm::setPixel(Pixel& p, size_t index, valarray<double>& tpiWeights, valarray<size_t>& tpiIndexes) {
+    for(size_t i = 0; i < 21; i++) {
         p.radiances[i] = synRadianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synRadianceAccessors[i]->getDouble(index);
         p.solarIrradiances[i] = synSolarIrradianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synSolarIrradianceAccessors[i]->getDouble(index);
     }
-    for(size_t i = 21; i < 24; i++) {
-        p.radiances[i] = synRadianceAccessors[i - 3]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synRadianceAccessors[i - 3]->getDouble(index);
-        p.solarIrradiances[i] = synSolarIrradianceAccessors[i - 3]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synSolarIrradianceAccessors[i - 3]->getDouble(index);
-    }
     p.lat = synLatitudeAccessor->getDouble(index);
     p.lon = synLongitudeAccessor->getDouble(index);
-
-    valarray<double> tpiWeights(1);
-    valarray<size_t> tpiIndexes(1);
 
     tiePointInterpolatorOlc->prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
 
     p.sza = tiePointInterpolatorOlc->interpolate(szaOlcTiePoints, tpiWeights, tpiIndexes);
     p.saa = tiePointInterpolatorOlc->interpolate(saaOlcTiePoints, tpiWeights, tpiIndexes);
     p.vzaOlc = tiePointInterpolatorOlc->interpolate(vzaOlcTiePoints, tpiWeights, tpiIndexes);
+    p.vaaOlc = tiePointInterpolatorOlc->interpolate(vaaOlcTiePoints, tpiWeights, tpiIndexes);
 
     p.airPressure = tiePointInterpolatorOlc->interpolate(airPressureTiePoints, tpiWeights, tpiIndexes);
     p.ozone = tiePointInterpolatorOlc->interpolate(ozoneTiePoints, tpiWeights, tpiIndexes);
@@ -221,7 +215,11 @@ void Vbm::setPixel(Pixel& p, size_t index) {
 
     tiePointInterpolatorSln->prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
     p.vzaSln = tiePointInterpolatorSln->interpolate(vzaSlnTiePoints, tpiWeights, tpiIndexes);
+    p.vaaSln = tiePointInterpolatorSln->interpolate(vaaSlnTiePoints, tpiWeights, tpiIndexes);
+
     p.aot = aerosolOpticalThickness(p.lat);
+    p.aerosolModel = aerosolModel;
+    p.flags = 0;
 }
 
 void Vbm::performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflectances, valarray<double>& coordinates, valarray<double>& f, valarray<double>& w) {
@@ -277,8 +275,8 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflect
 
 #pragma omp parallel for
     for (size_t i = 21; i < 24; i++) {
-        if (p.radiances[i] != Constants::FILL_VALUE_DOUBLE) {
-			synSurfaceReflectances[i - 3] = surfaceReflectance(p.ozone, p.vzaSln, p.sza, p.solarIrradiances[i], p.radiances[i], synCO3[i], rho[i], ratm[i - 18], ts[i], tv[i]);
+        if (p.radiances[i - 3] != Constants::FILL_VALUE_DOUBLE) {
+			synSurfaceReflectances[i - 3] = surfaceReflectance(p.ozone, p.vzaSln, p.sza, p.solarIrradiances[i - 3], p.radiances[i], synCO3[i], rho[i], ratm[i - 18], ts[i], tv[i]);
 		}
 	}
 }
@@ -395,12 +393,23 @@ uint8_t Vbm::performQualityFlagging(Pixel& p, valarray<double>& vgtToaReflectanc
         flags |= Constants::VGT_B3_GOOD;
     }
     if (vgtToaReflectances[3] != Constants::FILL_VALUE_DOUBLE &&
-    		p.radiances[22] != Constants::FILL_VALUE_DOUBLE &&
-    		p.radiances[23] != Constants::FILL_VALUE_DOUBLE) {
+    		p.radiances[19] != Constants::FILL_VALUE_DOUBLE &&
+    		p.radiances[20] != Constants::FILL_VALUE_DOUBLE) {
         flags |= Constants::VGT_MIR_GOOD;
     }
 
     return flags;
+}
+
+void Vbm::setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances) {
+    for (size_t i = 0; i < vgtReflectanceAccessors.size(); i++) {
+        if (vgtToaReflectances[i] != Constants::FILL_VALUE_DOUBLE) {
+            vgtReflectanceAccessors[i]->setDouble(index, vgtToaReflectances[i]);
+        } else {
+            vgtReflectanceAccessors[i]->setFillValue(index);
+        }
+    }
+    vgtFlagsAccessor->setUByte(index, flags);
 }
 
 double Vbm::aerosolOpticalThickness(double lat) {

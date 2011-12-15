@@ -414,7 +414,6 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 	if (p.aerosolModel > 0) {
 		if (p.aot > 0.0001) {
 			double a = em.computeErrorSurfaceCurvature(p);
-			p.a = a;
 			if (a > 0.0) {
 				p.aotError = kappa * sqrt(p.errorMetric / a);
 				if (p.aot > 0.1 && p.aotError > 5.0 * p.aot) {

@@ -8,9 +8,9 @@
 #ifndef VBM_H_
 #define VBM_H_
 
-#include "../modules/BasicModule.h"
-#include "../core/Pixel.h"
 #include "../core/TiePointInterpolator.h"
+
+#include "BasicModule.h"
 
 class Vbm: public BasicModule {
 public:
@@ -23,12 +23,40 @@ public:
 private:
 	friend class VbmTest;
 
+	struct Pixel {
+		Pixel() : radiances(21), solarIrradiances(21) {
+		}
+
+		~Pixel() {
+		}
+
+	    valarray<double> radiances;
+	    valarray<double> solarIrradiances;
+
+	    double lon;
+	    double lat;
+	    double sza;
+	    double saa;
+	    double vzaOlc;
+	    double vaaOlc;
+	    double vzaSln;
+	    double vaaSln;
+
+	    double ozone;
+	    double airPressure;
+	    double waterVapour;
+
+	    double aot;
+	    uint8_t aerosolModel;
+	    uint8_t flags;
+	};
+
 	void prepareAccessors(Context& context);
 	void prepareAuxdata(Context& context);
 	void prepareTiePointData(Context& context);
     void addVariables(Context& context);
 
-	void setPixel(Pixel& p, size_t index);
+	void setPixel(Pixel& p, size_t index, valarray<double>& tpiWeights, valarray<size_t>& tpiIndexes);
 	void performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflectances, valarray<double>& coordinates, valarray<double>& f, valarray<double>& w);
 	void performHyperspectralInterpolation(const valarray<double>& synWavelengths, const valarray<double>& synSurfaceReflectances, valarray<double>& hypSurfaceReflectances);
 	void performHyperspectralUpscaling(const valarray<double>& hypSurfaceReflectances, const Pixel& p, valarray<double>& hypToaReflectances, valarray<double>& coordinates, valarray<double>& f, valarray<double>& w);
@@ -38,10 +66,7 @@ private:
 	void setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances);
 
     template<class T>
-    static void copy(const std::valarray<T>& s, std::valarray<T>& t) {
-        t.resize(s.size());
-        std::copy(&s[0], &s[s.size()], &t[0]);
-    }
+    static void copy(const valarray<T>& s, valarray<T>& t);
 
     static double aerosolOpticalThickness(double lat);
 
@@ -51,7 +76,7 @@ private:
 	static double toaReflectance(double nO3, double airMass, double surfaceReflectance,
 	        double cO3, double rho, double ratm, double ts, double tv);
 
-	uint16_t amin;
+	uint16_t aerosolModel;
 
 	LookupTable<double>* synLutRho;
 	LookupTable<double>* olcLutRatm;
@@ -74,13 +99,8 @@ private:
 
     valarray<Accessor*> synRadianceAccessors;
     valarray<Accessor*> synSolarIrradianceAccessors;
-
-    Accessor* vgtB0Accessor;
-    Accessor* vgtB2Accessor;
-    Accessor* vgtB3Accessor;
-    Accessor* vgtMirAccessor;
-    Accessor* vgtFlagsAccessor;
     valarray<Accessor*> vgtReflectanceAccessors;
+    Accessor* vgtFlagsAccessor;
 
     shared_ptr<TiePointInterpolator<double> > tiePointInterpolatorOlc;
     shared_ptr<TiePointInterpolator<double> > tiePointInterpolatorSln;
@@ -88,11 +108,13 @@ private:
     valarray<double> szaOlcTiePoints;
     valarray<double> saaOlcTiePoints;
     valarray<double> vzaOlcTiePoints;
+    valarray<double> vaaOlcTiePoints;
     valarray<double> vzaSlnTiePoints;
+    valarray<double> vaaSlnTiePoints;
 
-    valarray<double> waterVapourTiePoints;
     valarray<double> airPressureTiePoints;
     valarray<double> ozoneTiePoints;
+    valarray<double> waterVapourTiePoints;
 
     valarray<double> rho;
     valarray<double> ratm;
@@ -100,17 +122,20 @@ private:
     valarray<double> tv;
 
 	static const double D2R = 3.14159265358979323846 / 180.0;
+
+	static const size_t HYP_CHANNEL_COUNT = 914;
+	static const size_t SYN_CHANNEL_COUNT = 21;
+	static const size_t VGT_CHANNEL_COUNT = 4;
 };
 
-inline void Vbm::setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances) {
-    vgtFlagsAccessor->setUShort(index, flags);
-    for (size_t i = 0; i < vgtReflectanceAccessors.size(); i++) {
-        if (vgtToaReflectances[i] != Constants::FILL_VALUE_DOUBLE) {
-            vgtReflectanceAccessors[i]->setDouble(index, vgtToaReflectances[i]);
-        } else {
-            vgtReflectanceAccessors[i]->setFillValue(index);
-        }
-    }
+template<class T>
+void Vbm::copy(const std::valarray<T>& s, std::valarray<T>& t) {
+	using std::copy;
+
+	if (t.size() < s.size()) {
+		t.resize(s.size());
+	}
+    copy(&s[0], &s[s.size()], &t[0]);
 }
 
 #endif /* VBM_H_ */
