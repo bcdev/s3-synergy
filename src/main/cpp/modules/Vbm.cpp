@@ -124,11 +124,11 @@ void Vbm::addVariables(Context& context) {
 
     Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 
-    vgtFlagsAccessor = &collocatedSegment.addVariable("SM", Constants::TYPE_USHORT);
-    vgtB0Accessor = &collocatedSegment.addVariable("B0", Constants::TYPE_SHORT, 1e-4);
-    vgtB2Accessor = &collocatedSegment.addVariable("B2", Constants::TYPE_SHORT, 1e-4);
-    vgtB3Accessor = &collocatedSegment.addVariable("B3", Constants::TYPE_SHORT, 1e-4);
-    vgtMirAccessor = &collocatedSegment.addVariable("MIR", Constants::TYPE_SHORT, 1e-4);
+    vgtFlagsAccessor = &collocatedSegment.addVariable("SM", Constants::TYPE_UBYTE);
+    vgtB0Accessor = &collocatedSegment.addVariable("B0", Constants::TYPE_DOUBLE);
+    vgtB2Accessor = &collocatedSegment.addVariable("B2", Constants::TYPE_DOUBLE);
+    vgtB3Accessor = &collocatedSegment.addVariable("B3", Constants::TYPE_DOUBLE);
+    vgtMirAccessor = &collocatedSegment.addVariable("MIR", Constants::TYPE_DOUBLE);
 }
 
 void Vbm::process(Context& context) {
@@ -174,16 +174,22 @@ void Vbm::process(Context& context) {
 
     for (long m = collocatedGrid.getFirstM(); m <= collocatedGrid.getMaxM(); m++) {
         context.getLogging().progress("Processing column m = " + lexical_cast<string>(m), getId());
-
         for (long k = collocatedGrid.getFirstK(); k <= collocatedGrid.getMaxK(); k++) {
             for (long l = firstL; l <= lastL; l++) {
                 const size_t index = collocatedGrid.getIndex(k, l, m);
+                context.getLogging().progress("Set pixel m = " + lexical_cast<string>(m), getId());
                 setPixel(p, index);
+                context.getLogging().progress("Perform downscaling m = " + lexical_cast<string>(m), getId());
                 performDownscaling(p, synSurfaceReflectances, coordinates, f, workspace);
+                context.getLogging().progress("Perform hyperspectral interpolation m = " + lexical_cast<string>(m), getId());
                 performHyperspectralInterpolation(synWavelengths, synSurfaceReflectances, hypSurfaceReflectances);
+                context.getLogging().progress("Perform hyperspectral upscaling m = " + lexical_cast<string>(m), getId());
                 performHyperspectralUpscaling(hypSurfaceReflectances, p, hypToaReflectances, coordinates, f, workspace);
+                context.getLogging().progress("Perform hyperspectral filtering m = " + lexical_cast<string>(m), getId());
                 performHyperspectralFiltering(hypToaReflectances, vgtToaReflectances);
+                context.getLogging().progress("Perform quality flagging m = " + lexical_cast<string>(m), getId());
                 const uint8_t flags = performQualityFlagging(p, vgtToaReflectances);
+                context.getLogging().progress("Perform quality flagging m = " + lexical_cast<string>(m), getId());
                 setValues(index, flags, vgtToaReflectances);
             }
         }
