@@ -62,8 +62,8 @@ private:
 	void performHyperspectralUpscaling(const valarray<double>& hypSurfaceReflectances, const Pixel& p, valarray<double>& hypToaReflectances, valarray<double>& coordinates, valarray<double>& f, valarray<double>& w);
 	void performHyperspectralFiltering(const valarray<double>& hypToaReflectances, valarray<double>& vgtToaReflectances) const;
 
-	uint8_t performQualityFlagging(Pixel& p, valarray<double>& vgtToaReflectances) const;
-	void setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances);
+	uint8_t performQualityFlagging(Pixel& p, const valarray<double>& vgtToaReflectances) const;
+	void setValues(size_t index, uint8_t flags, const valarray<double>& vgtToaReflectances);
 
     template<class T>
     static void copy(const valarray<T>& s, valarray<T>& t);

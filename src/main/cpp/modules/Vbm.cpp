@@ -110,10 +110,10 @@ void Vbm::prepareTiePointData(Context& context) {
         copy(olcTiePointSegment.getAccessor("water_vapour").getDoubles(), waterVapourTiePoints);
     }
 
-    const valarray<double> olcLons = olcTiePointSegment.getAccessor("OLC_TP_lon").getDoubles();
-    const valarray<double> olcLats = olcTiePointSegment.getAccessor("OLC_TP_lat").getDoubles();
-    const valarray<double> slnLons = slnTiePointSegment.getAccessor("SLN_TP_lon").getDoubles();
-    const valarray<double> slnLats = slnTiePointSegment.getAccessor("SLN_TP_lat").getDoubles();
+    const valarray<double>& olcLons = olcTiePointSegment.getAccessor("OLC_TP_lon").getDoubles();
+    const valarray<double>& olcLats = olcTiePointSegment.getAccessor("OLC_TP_lat").getDoubles();
+    const valarray<double>& slnLons = slnTiePointSegment.getAccessor("SLN_TP_lon").getDoubles();
+    const valarray<double>& slnLats = slnTiePointSegment.getAccessor("SLN_TP_lat").getDoubles();
 
     tiePointInterpolatorOlc = shared_ptr<TiePointInterpolator<double> >(new TiePointInterpolator<double>(olcLons, olcLats));
     tiePointInterpolatorSln = shared_ptr<TiePointInterpolator<double> >(new TiePointInterpolator<double>(slnLons, slnLats));
@@ -240,7 +240,6 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflect
 
     fill(&synSurfaceReflectances[0], &synSurfaceReflectances[synSurfaceReflectances.size()], Constants::FILL_VALUE_DOUBLE);
 
-#pragma omp parallel for
     for (size_t i = 0; i < 18; i++) {
     	if (p.radiances[i] != Constants::FILL_VALUE_DOUBLE) {
 			synSurfaceReflectances[i] = surfaceReflectance(p.ozone, p.vzaOlc, p.sza, p.solarIrradiances[i], p.radiances[i], synCO3[i], rho[i], ratm[i], ts[i], tv[i]);
@@ -263,7 +262,6 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflect
     coordinates[4] = p.aerosolModel;
     synLutT->getVector(&coordinates[0], tv, f, w);
 
-#pragma omp parallel for
     for (size_t i = 21; i < 24; i++) {
         if (p.radiances[i - 3] != Constants::FILL_VALUE_DOUBLE) {
 			synSurfaceReflectances[i - 3] = surfaceReflectance(p.ozone, p.vzaSln, p.sza, p.solarIrradiances[i - 3], p.radiances[i - 3], synCO3[i], rho[i], ratm[i - 18], ts[i], tv[i]);
@@ -325,7 +323,6 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hypSurfaceReflec
 
 	const double airMass = 0.5 * (1.0 / cos(p.sza * D2R) + 1.0 / cos(p.vzaOlc * D2R));
 
-#pragma omp parallel for
 	for (size_t h = 0; h < hypSurfaceReflectances.size(); h++) {
 		if (hypSurfaceReflectances[h] != Constants::FILL_VALUE_DOUBLE) {
 			hypToaReflectances[h] = toaReflectance(p.ozone, airMass, hypSurfaceReflectances[h], hypCO3[h], rho[h], ratm[h], ts[h], tv[h]);
@@ -336,7 +333,6 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hypSurfaceReflec
 void Vbm::performHyperspectralFiltering(const valarray<double>& hypToaReflectances, valarray<double>& vgtToaReflectances) const {
 	fill(&vgtToaReflectances[0], &vgtToaReflectances[vgtToaReflectances.size()], Constants::FILL_VALUE_DOUBLE);
 
-#pragma omp parallel for
 	for (size_t b = 0; b < 4; b++) {
 		const valarray<double>& hypSpectralResponse = hypSpectralResponses[b];
 		double a = 0.0;
@@ -360,7 +356,7 @@ void Vbm::performHyperspectralFiltering(const valarray<double>& hypToaReflectanc
 	}
 }
 
-uint8_t Vbm::performQualityFlagging(Pixel& p, valarray<double>& vgtToaReflectances) const {
+uint8_t Vbm::performQualityFlagging(Pixel& p, const valarray<double>& vgtToaReflectances) const {
     uint8_t flags = 0;
     if (vgtToaReflectances[0] != Constants::FILL_VALUE_DOUBLE &&
     		p.radiances[1] != Constants::FILL_VALUE_DOUBLE &&
@@ -392,7 +388,7 @@ uint8_t Vbm::performQualityFlagging(Pixel& p, valarray<double>& vgtToaReflectanc
     return flags;
 }
 
-void Vbm::setValues(const size_t index, const uint8_t flags, const valarray<double>& vgtToaReflectances) {
+void Vbm::setValues(size_t index, uint8_t flags, const valarray<double>& vgtToaReflectances) {
     for (size_t i = 0; i < vgtReflectanceAccessors.size(); i++) {
         if (vgtToaReflectances[i] != Constants::FILL_VALUE_DOUBLE) {
             vgtReflectanceAccessors[i]->setDouble(index, vgtToaReflectances[i]);
