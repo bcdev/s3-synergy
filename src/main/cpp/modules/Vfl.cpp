@@ -48,10 +48,12 @@ void Vfl::process(Context& context) {
 				const double mir = mirAccessor.getDouble(index);
 
 				uint8_t flags = vgtFlags.getUByte(index);
+				flags &= Constants::VGT_CLEAR_VALUE;
+				flags |= Constants::VGT_UNCERTAIN_VALUE;
 
 				if (isSet(flags, Constants::VGT_B0_GOOD_FLAG)) {
 					if (b0 < thresholdsCloud[0]) {
-						flags |= Constants::VGT_CLEAR_VALUE;
+						flags &= Constants::VGT_CLEAR_VALUE;
 					} else if (b0 > thresholdsCloud[1]) {
 						flags |= Constants::VGT_CLOUD_VALUE;
 					}
