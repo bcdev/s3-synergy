@@ -36,6 +36,7 @@ void Vfl::process(Context& context) {
     const long firstL = context.getFirstComputableL(collocatedSegment, *this);
     const long lastL = context.getLastComputableL(collocatedSegment, *this);
 
+#pragma omp parallel for
     for (long l = firstL; l <= lastL; l++) {
 		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
 		for (long k = collocatedGrid.getFirstK(); k <= collocatedGrid.getMaxK(); k++) {
