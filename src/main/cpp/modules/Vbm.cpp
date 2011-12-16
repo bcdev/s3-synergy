@@ -20,11 +20,11 @@ Vbm::Vbm() :
         hypSpectralResponses(VGT_CHANNEL_COUNT),
         synRadianceAccessors(SYN_CHANNEL_COUNT),
         synSolarIrradianceAccessors(SYN_CHANNEL_COUNT),
+        vgtReflectanceAccessors(VGT_CHANNEL_COUNT),
         rho(HYP_CHANNEL_COUNT),
         ratm(HYP_CHANNEL_COUNT),
         ts(HYP_CHANNEL_COUNT),
-        tv(HYP_CHANNEL_COUNT),
-        vgtReflectanceAccessors(VGT_CHANNEL_COUNT) {
+        tv(HYP_CHANNEL_COUNT) {
 }
 
 Vbm::~Vbm() {
