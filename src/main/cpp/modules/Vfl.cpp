@@ -49,14 +49,13 @@ void Vfl::process(Context& context) {
 
 				uint8_t flags = vgtFlags.getUByte(index);
 				flags &= Constants::VGT_CLEAR_VALUE;
-				flags |= Constants::VGT_UNCERTAIN_VALUE;
 
-				if (isSet(flags, Constants::VGT_B0_GOOD_FLAG)) {
-					if (b0 < thresholdsCloud[0]) {
-						flags &= Constants::VGT_CLEAR_VALUE;
-					} else if (b0 > thresholdsCloud[1]) {
-						flags |= Constants::VGT_CLOUD_VALUE;
-					}
+				if (isClear(flags, b0, mir)) {
+					// do nothing, cloud flags are already cleared
+				} else if (isCloud(flags, b0, mir)) {
+					flags |= Constants::VGT_CLOUD_VALUE;
+				} else {
+					flags |= Constants::VGT_UNCERTAIN_VALUE;
 				}
 				if (isSnowIce1(flags, b2) || isSnowIce2(flags, mir) || isSnowIce3(flags, b0, mir, b3) || isSnowIce4(flags, b0, mir) || isSnowIce5(flags, b0, b2, mir)) {
 					flags |= Constants::VGT_ICE_OR_SNOW_FLAG;

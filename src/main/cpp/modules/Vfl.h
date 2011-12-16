@@ -21,6 +21,14 @@ public:
 private:
 	friend class VflTest;
 
+	bool isClear(const uint8_t flags, const double b0, const double mir) {
+		return (isSet(flags, Constants::VGT_B0_GOOD_FLAG) && b0 < thresholdsCloud[0]) || (isSet(flags, Constants::VGT_MIR_GOOD_FLAG) && mir < thresholdsCloud[1]);
+	}
+
+	bool isCloud(const uint8_t flags, const double b0, const double mir) {
+		return isSet(flags, Constants::VGT_B0_GOOD_FLAG) && b0 > thresholdsCloud[2] && isSet(flags, Constants::VGT_MIR_GOOD_FLAG) && mir > thresholdsCloud[3];
+	}
+
 	bool isSnowIce1(const uint8_t flags, const double b2) const {
         return isSet(flags, Constants::VGT_B2_GOOD_FLAG) && b2 > thresholdsSnowIce[0];
     }
