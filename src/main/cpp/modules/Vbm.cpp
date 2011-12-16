@@ -35,7 +35,6 @@ void Vbm::start(Context& context) {
 
     prepareAccessors(context);
     prepareAuxdata(context);
-    prepareTiePointData(context);
 }
 
 void Vbm::addVariables(Context& context) {
@@ -94,32 +93,36 @@ void Vbm::prepareAuxdata(Context& context) {
 }
 
 void Vbm::prepareTiePointData(Context& context) {
-    const Segment& olcTiePointSegment = context.getSegment(Constants::SEGMENT_OLC_TP);
-    const Segment& slnTiePointSegment = context.getSegment(Constants::SEGMENT_SLN_TP);
+	if (tiePointInterpolatorOlc.get() == 0 || tiePointInterpolatorSln.get() == 0) {
+		const Segment& olcTiePointSegment = context.getSegment(Constants::SEGMENT_OLC_TP);
+		const Segment& slnTiePointSegment = context.getSegment(Constants::SEGMENT_SLN_TP);
 
-    copy(olcTiePointSegment.getAccessor("SZA").getDoubles(), szaOlcTiePoints);
-    copy(olcTiePointSegment.getAccessor("SAA").getDoubles(), saaOlcTiePoints);
-    copy(olcTiePointSegment.getAccessor("OLC_VZA").getDoubles(), vzaOlcTiePoints);
-    copy(olcTiePointSegment.getAccessor("OLC_VAA").getDoubles(), vaaOlcTiePoints);
-    copy(slnTiePointSegment.getAccessor("SLN_VZA").getDoubles(), vzaSlnTiePoints);
-    copy(slnTiePointSegment.getAccessor("SLN_VAA").getDoubles(), vaaSlnTiePoints);
+		copy(olcTiePointSegment.getAccessor("SZA").getDoubles(), szaOlcTiePoints);
+		copy(olcTiePointSegment.getAccessor("SAA").getDoubles(), saaOlcTiePoints);
+		copy(olcTiePointSegment.getAccessor("OLC_VZA").getDoubles(), vzaOlcTiePoints);
+		copy(olcTiePointSegment.getAccessor("OLC_VAA").getDoubles(), vaaOlcTiePoints);
+		copy(slnTiePointSegment.getAccessor("SLN_VZA").getDoubles(), vzaSlnTiePoints);
+		copy(slnTiePointSegment.getAccessor("SLN_VAA").getDoubles(), vaaSlnTiePoints);
 
-    copy(olcTiePointSegment.getAccessor("air_pressure").getDoubles(), airPressureTiePoints);
-    copy(olcTiePointSegment.getAccessor("ozone").getDoubles(), ozoneTiePoints);
-    if (olcTiePointSegment.hasVariable("water_vapour")) {
-        copy(olcTiePointSegment.getAccessor("water_vapour").getDoubles(), waterVapourTiePoints);
-    }
+		copy(olcTiePointSegment.getAccessor("air_pressure").getDoubles(), airPressureTiePoints);
+		copy(olcTiePointSegment.getAccessor("ozone").getDoubles(), ozoneTiePoints);
+		if (olcTiePointSegment.hasVariable("water_vapour")) {
+			copy(olcTiePointSegment.getAccessor("water_vapour").getDoubles(), waterVapourTiePoints);
+		}
 
-    const valarray<double>& olcLons = olcTiePointSegment.getAccessor("OLC_TP_lon").getDoubles();
-    const valarray<double>& olcLats = olcTiePointSegment.getAccessor("OLC_TP_lat").getDoubles();
-    const valarray<double>& slnLons = slnTiePointSegment.getAccessor("SLN_TP_lon").getDoubles();
-    const valarray<double>& slnLats = slnTiePointSegment.getAccessor("SLN_TP_lat").getDoubles();
+		const valarray<double>& olcLons = olcTiePointSegment.getAccessor("OLC_TP_lon").getDoubles();
+		const valarray<double>& olcLats = olcTiePointSegment.getAccessor("OLC_TP_lat").getDoubles();
+		const valarray<double>& slnLons = slnTiePointSegment.getAccessor("SLN_TP_lon").getDoubles();
+		const valarray<double>& slnLats = slnTiePointSegment.getAccessor("SLN_TP_lat").getDoubles();
 
-    tiePointInterpolatorOlc = shared_ptr<TiePointInterpolator<double> >(new TiePointInterpolator<double>(olcLons, olcLats));
-    tiePointInterpolatorSln = shared_ptr<TiePointInterpolator<double> >(new TiePointInterpolator<double>(slnLons, slnLats));
+		tiePointInterpolatorOlc = shared_ptr<TiePointInterpolator<double> >(new TiePointInterpolator<double>(olcLons, olcLats));
+		tiePointInterpolatorSln = shared_ptr<TiePointInterpolator<double> >(new TiePointInterpolator<double>(slnLons, slnLats));
+	}
 }
 
 void Vbm::process(Context& context) {
+	prepareTiePointData(context);
+
     Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
     const Grid& collocatedGrid = collocatedSegment.getGrid();
 
@@ -240,6 +243,7 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflect
 
     fill(&synSurfaceReflectances[0], &synSurfaceReflectances[synSurfaceReflectances.size()], Constants::FILL_VALUE_DOUBLE);
 
+#pragma omp parallel for
     for (size_t i = 0; i < 18; i++) {
     	if (p.radiances[i] != Constants::FILL_VALUE_DOUBLE) {
 			synSurfaceReflectances[i] = surfaceReflectance(p.ozone, p.vzaOlc, p.sza, p.solarIrradiances[i], p.radiances[i], synCO3[i], rho[i], ratm[i], ts[i], tv[i]);
@@ -262,6 +266,7 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflect
     coordinates[4] = p.aerosolModel;
     synLutT->getVector(&coordinates[0], tv, f, w);
 
+#pragma omp parallel for
     for (size_t i = 21; i < 24; i++) {
         if (p.radiances[i - 3] != Constants::FILL_VALUE_DOUBLE) {
 			synSurfaceReflectances[i - 3] = surfaceReflectance(p.ozone, p.vzaSln, p.sza, p.solarIrradiances[i - 3], p.radiances[i - 3], synCO3[i], rho[i], ratm[i - 18], ts[i], tv[i]);
@@ -323,6 +328,7 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hypSurfaceReflec
 
 	const double airMass = 0.5 * (1.0 / cos(p.sza * D2R) + 1.0 / cos(p.vzaOlc * D2R));
 
+#pragma omp parallel for
 	for (size_t h = 0; h < hypSurfaceReflectances.size(); h++) {
 		if (hypSurfaceReflectances[h] != Constants::FILL_VALUE_DOUBLE) {
 			hypToaReflectances[h] = toaReflectance(p.ozone, airMass, hypSurfaceReflectances[h], hypCO3[h], rho[h], ratm[h], ts[h], tv[h]);
@@ -333,10 +339,11 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hypSurfaceReflec
 void Vbm::performHyperspectralFiltering(const valarray<double>& hypToaReflectances, valarray<double>& vgtToaReflectances) const {
 	fill(&vgtToaReflectances[0], &vgtToaReflectances[vgtToaReflectances.size()], Constants::FILL_VALUE_DOUBLE);
 
+#pragma omp parallel for
 	for (size_t b = 0; b < 4; b++) {
 		const valarray<double>& hypSpectralResponse = hypSpectralResponses[b];
-		double a = 0.0;
-		double b = 0.0;
+		double rs = 0.0;
+		double ws = 0.0;
 
 		for (size_t h = 0; h < 914; h++) {
 			const double r = hypSpectralResponse[h];
@@ -345,13 +352,13 @@ void Vbm::performHyperspectralFiltering(const valarray<double>& hypToaReflectanc
 				const double hypToaReflectance = hypToaReflectances[h];
 				if (hypToaReflectance != Constants::FILL_VALUE_DOUBLE) {
 					const double w = r * hypSolarIrradiance;
-					a += w * hypToaReflectance;
-					b += w;
+					rs += w * hypToaReflectance;
+					ws += w;
 				}
 			}
 		}
-		if (b != 0.0) {
-			vgtToaReflectances[b] = a / b;
+		if (ws != 0.0) {
+			vgtToaReflectances[b] = rs / ws;
 		}
 	}
 }
