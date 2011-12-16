@@ -33,6 +33,16 @@ SynL1Reader::~SynL1Reader() {
 			}
 }
 
+long SynL1Reader::getSegmentSize(const string& segmentName, const long rowCount) const {
+	if (segmentName.compare(Constants::SEGMENT_GEO) == 0) {
+		return rowCount;
+	}
+	if (rowCount < segmentLineCount) {
+		return rowCount;
+	}
+	return segmentLineCount;
+}
+
 void SynL1Reader::start(Context& context) {
 	segmentLineCount = 400;
 	const string segmentLineCountString = context.getJobOrder().getIpfConfiguration().getDynamicProcessingParameter("Segment_Line_Count");
@@ -98,7 +108,7 @@ void SynL1Reader::start(Context& context) {
 							}
 							// Create a new segment, if necessary
 							if (!context.hasSegment(segmentName)) {
-								const long sizeL = rowCount > 64 ? min(segmentLineCount, rowCount) : rowCount;
+								const long sizeL = getSegmentSize(segmentName, rowCount);
 								context.getLogging().info("Adding segment '" + segmentName + "' to context", getId());
 								context.addSegment(segmentName, sizeL, colCount, camCount, 0, rowCount - 1);
 							}

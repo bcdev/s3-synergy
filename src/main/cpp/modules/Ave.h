@@ -41,6 +41,7 @@ private:
     static void toLatLon(double x, double y, double z, double& lat, double& lon);
     void processLine(const Grid & targetGrid, long  targetL, const Grid & sourceGrid, const Accessor & sourceFlagsAccessor);
 
+    const Segment* geoSegment;
     const Segment* sourceSegment;
     Segment* targetSegment;
     vector<string> variableNames;

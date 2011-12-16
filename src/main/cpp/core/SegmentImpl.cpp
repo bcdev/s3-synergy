@@ -108,82 +108,122 @@ Accessor& SegmentImpl::addVariableAlias(const string& alias, const Segment& segm
 
 Accessor& SegmentImpl::addVariableByte(const string& name, int8_t fillValue, double scaleFactor, double addOffset) throw (logic_error) {
 	unique(name);
-	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new ByteAccessor(grid.getSize(), fillValue, scaleFactor, addOffset));
-	accessorMap[name] = accessor;
-	accessorList.push_back(accessor);
-	return *accessor;
+	try {
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new ByteAccessor(grid.getSize(), fillValue, scaleFactor, addOffset));
+		accessorMap[name] = accessor;
+		accessorList.push_back(accessor);
+		return *accessor;
+	} catch (std::exception& e) {
+		BOOST_THROW_EXCEPTION(e);
+	}
 }
 
 Accessor& SegmentImpl::addVariableDouble(const string& name, double fillValue) throw (logic_error) {
 	unique(name);
-	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new DoubleAccessor(grid.getSize(), fillValue));
-	accessorMap[name] = accessor;
-	accessorList.push_back(accessor);
-	return *accessor;
+	try {
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new DoubleAccessor(grid.getSize(), fillValue));
+		accessorMap[name] = accessor;
+		accessorList.push_back(accessor);
+		return *accessor;
+	} catch (std::exception& e) {
+		BOOST_THROW_EXCEPTION(e);
+	}
 }
 
 Accessor& SegmentImpl::addVariableFloat(const string& name, float fillValue) throw (logic_error) {
 	unique(name);
-	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new FloatAccessor(grid.getSize(), fillValue));
-	accessorMap[name] = accessor;
-	accessorList.push_back(accessor);
-	return *accessor;
+	try {
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new FloatAccessor(grid.getSize(), fillValue));
+		accessorMap[name] = accessor;
+		accessorList.push_back(accessor);
+		return *accessor;
+	} catch (std::exception& e) {
+		BOOST_THROW_EXCEPTION(e);
+	}
 }
 
 Accessor& SegmentImpl::addVariableInt(const string& name, int32_t fillValue, double scaleFactor, double addOffset) throw (logic_error) {
 	unique(name);
-	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new IntAccessor(grid.getSize(), fillValue, scaleFactor, addOffset));
-	accessorMap[name] = accessor;
-	accessorList.push_back(accessor);
-	return *accessor;
+	try {
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new IntAccessor(grid.getSize(), fillValue, scaleFactor, addOffset));
+		accessorMap[name] = accessor;
+		accessorList.push_back(accessor);
+		return *accessor;
+	} catch (std::exception& e) {
+		BOOST_THROW_EXCEPTION(e);
+	}
 }
 
 Accessor& SegmentImpl::addVariableLong(const string& name, int64_t fillValue) throw (logic_error) {
 	unique(name);
-	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new LongAccessor(grid.getSize(), fillValue));
-	accessorMap[name] = accessor;
-	accessorList.push_back(accessor);
-	return *accessor;
+	try {
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new LongAccessor(grid.getSize(), fillValue));
+		accessorMap[name] = accessor;
+		accessorList.push_back(accessor);
+		return *accessor;
+	} catch (std::exception& e) {
+		BOOST_THROW_EXCEPTION(e);
+	}
 }
 
 Accessor& SegmentImpl::addVariableShort(const string& name, int16_t fillValue, double scaleFactor, double addOffset) throw (logic_error) {
 	unique(name);
-	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new ShortAccessor(grid.getSize(), fillValue, scaleFactor, addOffset));
-	accessorMap[name] = accessor;
-	accessorList.push_back(accessor);
-	return *accessor;
+	try {
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new ShortAccessor(grid.getSize(), fillValue, scaleFactor, addOffset));
+		accessorMap[name] = accessor;
+		accessorList.push_back(accessor);
+		return *accessor;
+	} catch (std::exception& e) {
+		BOOST_THROW_EXCEPTION(e);
+	}
 }
 
 Accessor& SegmentImpl::addVariableUByte(const string& name, uint8_t fillValue, double scaleFactor, double addOffset) throw (logic_error) {
 	unique(name);
-	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new UByteAccessor(grid.getSize(), fillValue, scaleFactor, addOffset));
-	accessorMap[name] = accessor;
-	accessorList.push_back(accessor);
-	return *accessor;
+	try {
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new UByteAccessor(grid.getSize(), fillValue, scaleFactor, addOffset));
+		accessorMap[name] = accessor;
+		accessorList.push_back(accessor);
+		return *accessor;
+	} catch (std::exception& e) {
+		BOOST_THROW_EXCEPTION(e);
+	}
 }
 
 Accessor& SegmentImpl::addVariableUInt(const string& name, uint32_t fillValue, double scaleFactor, double addOffset) throw (logic_error) {
 	unique(name);
-	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new UIntAccessor(grid.getSize(), fillValue, scaleFactor, addOffset));
-	accessorMap[name] = accessor;
-	accessorList.push_back(accessor);
-	return *accessor;
+	try {
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new UIntAccessor(grid.getSize(), fillValue, scaleFactor, addOffset));
+		accessorMap[name] = accessor;
+		accessorList.push_back(accessor);
+		return *accessor;
+	} catch (std::exception& e) {
+		BOOST_THROW_EXCEPTION(e);
+	}
 }
 
 Accessor& SegmentImpl::addVariableULong(const string& name, uint64_t fillValue) throw (logic_error) {
 	unique(name);
-	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new ULongAccessor(grid.getSize(), fillValue));
-	accessorMap[name] = accessor;
-	accessorList.push_back(accessor);
-	return *accessor;
+	try {
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new ULongAccessor(grid.getSize(), fillValue));
+		accessorMap[name] = accessor;
+		accessorList.push_back(accessor);
+		return *accessor;
+	} catch (std::exception& e) {
+		BOOST_THROW_EXCEPTION(e);
+	}
 }
 
 Accessor& SegmentImpl::addVariableUShort(const string& name, uint16_t fillValue, double scaleFactor, double addOffset) throw (logic_error) {
 	unique(name);
-	shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new UShortAccessor(grid.getSize(), fillValue, scaleFactor, addOffset));
-	accessorMap[name] = accessor;
-	accessorList.push_back(accessor);
-	return *accessor;
+	try {
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new UShortAccessor(grid.getSize(), fillValue, scaleFactor, addOffset));
+		accessorMap[name] = accessor;
+		accessorList.push_back(accessor);
+		return *accessor;
+	} catch (std::exception& e) {
+		BOOST_THROW_EXCEPTION(e);
+	}
 }
 
 Accessor& SegmentImpl::getAccessor(const string& name) const throw (logic_error) {

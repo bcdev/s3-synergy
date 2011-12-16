@@ -94,8 +94,8 @@ private:
 	valarray<double> hypWavelengths;
 
     Accessor* synOzoneAccessor;
-    Accessor* synLatitudeAccessor;
-    Accessor* synLongitudeAccessor;
+    Accessor* latAccessor;
+    Accessor* lonAccessor;
 
     valarray<Accessor*> synRadianceAccessors;
     valarray<Accessor*> synSolarIrradianceAccessors;

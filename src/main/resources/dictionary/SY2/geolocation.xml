@@ -4,7 +4,7 @@
         <variable>
             <name>latitude</name>
             <type>int</type>
-            <segment_name>SYN_COLLOCATED</segment_name>
+            <segment_name>GEO</segment_name>
             <dimensions>
                 <id>OLC</id>
             </dimensions>
@@ -44,7 +44,7 @@
         <variable>
             <name>longitude</name>
             <type>int</type>
-            <segment_name>SYN_COLLOCATED</segment_name>
+            <segment_name>GEO</segment_name>
             <dimensions>
                 <id>OLC</id>
             </dimensions>

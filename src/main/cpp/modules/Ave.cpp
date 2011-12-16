@@ -20,8 +20,11 @@ Ave::~Ave() {
 void Ave::start(Context& context) {
 	using std::ceil;
 
-	getAuxdataProvider(context, Constants::AUX_ID_SYCPAX).getUByte("ave_square", averagingFactor);
+	geoSegment = &context.getSegment(Constants::SEGMENT_GEO);
 	sourceSegment = &context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+
+	getAuxdataProvider(context, Constants::AUX_ID_SYCPAX).getUByte("ave_square", averagingFactor);
+
 	const Grid& sourceGrid = sourceSegment->getGrid();
 	const size_t sizeL = sourceGrid.getSizeL() / averagingFactor;
 	const size_t sizeM = ceil(sourceGrid.getSizeM() / double(averagingFactor));
@@ -174,11 +177,11 @@ void Ave::averageFlags(long targetL) {
 }
 
 void Ave::averageLatLon(long targetL) {
-	const Grid& sourceGrid = sourceSegment->getGrid();
+	const Grid& sourceGrid = geoSegment->getGrid();
 	const Grid& targetGrid = targetSegment->getGrid();
 
-	const Accessor& sourceLatAccessor = sourceSegment->getAccessor("latitude");
-	const Accessor& sourceLonAccessor = sourceSegment->getAccessor("longitude");
+	const Accessor& sourceLatAccessor = geoSegment->getAccessor("latitude");
+	const Accessor& sourceLonAccessor = geoSegment->getAccessor("longitude");
 
 	Accessor& targetLatAccessor = targetSegment->getAccessor("latitude");
 	Accessor& targetLonAccessor = targetSegment->getAccessor("longitude");

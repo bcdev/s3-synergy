@@ -52,6 +52,7 @@ const string PRODUCT_VGTS = "VGTS";
 /**
  * Segment names.
  */
+const string SEGMENT_GEO = "GEO";
 const string SEGMENT_OLC = "OLC";
 const string SEGMENT_OLC_TP = "OLC_TP";
 const string SEGMENT_OLC_INFO = "OLC_INFO";

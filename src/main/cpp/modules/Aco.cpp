@@ -82,6 +82,7 @@ void Aco::process(Context& context) {
 	const TiePointInterpolator<double> tpiSln = TiePointInterpolator<double>(tpLonsSln, tpLatsSln);
 	const TiePointInterpolator<double> tpiSlo = TiePointInterpolator<double>(tpLonsSlo, tpLatsSlo);
 
+	const Segment& geoSegment = context.getSegment(Constants::SEGMENT_GEO);
 	const Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 	const Segment& olcInfoSegment = context.getSegment(Constants::SEGMENT_OLC_INFO);
 	const Segment& slnInfoSegment = context.getSegment(Constants::SEGMENT_SLN_INFO);
@@ -99,8 +100,8 @@ void Aco::process(Context& context) {
     const Accessor& tau550ErrAccessor = collocatedSegment.getAccessor("T550_er");
     const Accessor& aminAccessor = collocatedSegment.getAccessor("AMIN");
     const Accessor& flagsAccessor = collocatedSegment.getAccessor("SYN_flags");
-	const Accessor& latAccessor = collocatedSegment.getAccessor("latitude");
-	const Accessor& lonAccessor = collocatedSegment.getAccessor("longitude");
+	const Accessor& latAccessor = geoSegment.getAccessor("latitude");
+	const Accessor& lonAccessor = geoSegment.getAccessor("longitude");
 	const Accessor& solarIrrOlcAccessor = olcInfoSegment.getAccessor("solar_irradiance");
 
 	vector<Accessor*> solarIrrSlnAccessors;

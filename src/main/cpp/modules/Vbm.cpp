@@ -50,10 +50,11 @@ void Vbm::addVariables(Context& context) {
 }
 
 void Vbm::prepareAccessors(Context& context) {
+	const Segment& geoSegment = context.getSegment(Constants::SEGMENT_GEO);
 	const Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 
-	synLatitudeAccessor = &collocatedSegment.getAccessor("latitude");
-	synLongitudeAccessor = &collocatedSegment.getAccessor("longitude");
+	latAccessor = &geoSegment.getAccessor("latitude");
+	lonAccessor = &geoSegment.getAccessor("longitude");
 	for (size_t i = 0; i < 18; i++) {
 		const string index = lexical_cast<string>(i + 1);
 		synRadianceAccessors[i] = &collocatedSegment.getAccessor("L_" + index);
@@ -188,8 +189,8 @@ void Vbm::setPixel(Pixel& p, size_t index, valarray<double>& tpiWeights, valarra
         p.radiances[i] = synRadianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synRadianceAccessors[i]->getDouble(index);
         p.solarIrradiances[i] = synSolarIrradianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synSolarIrradianceAccessors[i]->getDouble(index);
     }
-    p.lat = synLatitudeAccessor->getDouble(index);
-    p.lon = synLongitudeAccessor->getDouble(index);
+    p.lat = latAccessor->getDouble(index);
+    p.lon = lonAccessor->getDouble(index);
 
     tiePointInterpolatorOlc->prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
 

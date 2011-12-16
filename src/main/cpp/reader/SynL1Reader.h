@@ -25,6 +25,7 @@ public:
 
 private:
     int getNcFile(const string& ncFileBasename);
+    long getSegmentSize(const string& segmentName, const long rowCount) const;
 
     path sourceDirPath;
     long segmentLineCount;

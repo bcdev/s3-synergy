@@ -4,12 +4,12 @@
         <variable>
             <ncname>latitude</ncname>
             <name>latitude</name>
-            <segment_name>OLC</segment_name>
+            <segment_name>GEO</segment_name>
         </variable>
         <variable>
             <ncname>longitude</ncname>
             <name>longitude</name>
-            <segment_name>OLC</segment_name>
+            <segment_name>GEO</segment_name>
         </variable>
         <variable>
             <ncname>altitude</ncname>

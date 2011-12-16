@@ -59,6 +59,9 @@ void DictionaryParserTest::testL1Data(const string& productDescriptorId) {
     CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_OLC));
     const SegmentDescriptor& olc = p.getSegmentDescriptor(Constants::SEGMENT_OLC);
 
+    CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_GEO));
+    const SegmentDescriptor& geo = p.getSegmentDescriptor(Constants::SEGMENT_GEO);
+
     CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_1"));
     CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_2"));
     CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_3"));
@@ -81,8 +84,8 @@ void DictionaryParserTest::testL1Data(const string& productDescriptorId) {
     CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_20"));
     CPPUNIT_ASSERT(olc.hasVariableDescriptor("L_21"));
 
-    CPPUNIT_ASSERT(olc.hasVariableDescriptor("latitude"));
-    CPPUNIT_ASSERT(olc.hasVariableDescriptor("longitude"));
+    CPPUNIT_ASSERT(geo.hasVariableDescriptor("latitude"));
+    CPPUNIT_ASSERT(geo.hasVariableDescriptor("longitude"));
     CPPUNIT_ASSERT(olc.hasVariableDescriptor("altitude"));
 
     CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_OLC_TIME));
@@ -124,8 +127,13 @@ void DictionaryParserTest::testL1Data(const string& productDescriptorId) {
 void DictionaryParserTest::testL2Data(const string& productDescriptorId) {
     CPPUNIT_ASSERT(dictionary->hasProductDescriptor(productDescriptorId));
     const ProductDescriptor & p = dictionary->getProductDescriptor(productDescriptorId);
+
     CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED));
     const SegmentDescriptor & s = p.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
+
+    CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_GEO));
+    const SegmentDescriptor& g = p.getSegmentDescriptor(Constants::SEGMENT_GEO);
+
     CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_1"));
     CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_2"));
     CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_3"));
@@ -156,18 +164,22 @@ void DictionaryParserTest::testL2Data(const string& productDescriptorId) {
     CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_28"));
     CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_29"));
     CPPUNIT_ASSERT(s.hasVariableDescriptor("SDR_30"));
+
     CPPUNIT_ASSERT(s.hasVariableDescriptor("A550"));
     CPPUNIT_ASSERT(s.hasVariableDescriptor("T550"));
     CPPUNIT_ASSERT(s.hasVariableDescriptor("AMIN"));
-    CPPUNIT_ASSERT(s.hasVariableDescriptor("longitude"));
-    CPPUNIT_ASSERT(s.hasVariableDescriptor("latitude"));
+
+    CPPUNIT_ASSERT(g.hasVariableDescriptor("longitude"));
+    CPPUNIT_ASSERT(g.hasVariableDescriptor("latitude"));
     CPPUNIT_ASSERT(s.hasVariableDescriptor("altitude"));
+
     checkSDRVariable(s.getVariableDescriptor("SDR_1"));
     checkA550Variable(s.getVariableDescriptor("A550"));
     checkT550Variable(s.getVariableDescriptor("T550"));
     ckeckAMINVariable(s.getVariableDescriptor("AMIN"));
-    checkLatitudeVariable(s.getVariableDescriptor("latitude"));
-    checkLongitudeVariable(s.getVariableDescriptor("longitude"));
+
+    checkLatitudeVariable(g.getVariableDescriptor("latitude"));
+    checkLongitudeVariable(g.getVariableDescriptor("longitude"));
 }
 
 void DictionaryParserTest::checkSDRVariable(VariableDescriptor& v) {
