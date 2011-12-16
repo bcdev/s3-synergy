@@ -1,6 +1,6 @@
 netcdf s3__sy_2_vpcpax {
 dimensions:
-	tcl_length = 2 ;
+	tcl_length = 4 ;
 	tsn_length = 5 ;
 	tsh_length = 1 ;
 variables:
@@ -28,7 +28,7 @@ variables:
 
 data:
 
-    tcl = 0.2465f, 0.36f ;
+    tcl = 0.2465f, 0.09f, 0.36f, 0.16f ;
 
     tsn = 0.3075f, 0.2405f, -0.3865f, 0.0435f, 0.0385f ;
 
