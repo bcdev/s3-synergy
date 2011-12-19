@@ -61,7 +61,7 @@
                     <name>flag_meanings</name>
                     <type>string</type>
                     <!-- attention: no carriage return must be used in the following line -->
-                    <value>OLC_saturated OLC_dubious OLC_sun_glint_risk OLC_cosmetic OLC_invalid OLC_bright OLC_tidal_region OLC_fresh_inland_water OLC_coastline OLC_land</value>
+                    <value>OLC_summary_saturated OLC_dubious OLC_sun_glint_risk OLC_cosmetic OLC_invalid OLC_bright OLC_tidal_region OLC_fresh_inland_water OLC_coastline OLC_land</value>
                 </attribute>
             </attributes>
         </variable>
@@ -93,7 +93,7 @@
                     <name>flag_meanings</name>
                     <type>string</type>
                     <!-- attention: no carriage return must be used in the following line -->
-                    <value>SLN_summary_ISP_absent SLN_pixel_absent SLN_not_decompressed SLN_no_signal SLN_saturation SLN_invalid_radiance SLN_no_parameters SLN_unfilled_pixel SLN_coastline SLN_ocean SLN_tidal SLN_land SLN_inland_water SLN_cosmetic SLN_day SLN_twilight SLN_sun_glint SLN_snow SLN_summary_cloud SLN_summary_pointing</value>
+                    <value>SLN_summary_ISP_absent SLN_summary_pixel_absent SLN_summary_not_decompressed SLN_summary_no_signal SLN_summary_saturation SLN_summary_invalid_radiance SLN_summary_no_parameters SLN_summary_unfilled_pixel SLN_coastline SLN_ocean SLN_tidal SLN_land SLN_inland_water SLN_cosmetic SLN_day SLN_twilight SLN_sun_glint SLN_snow SLN_summary_cloud SLN_summary_pointing</value>
                 </attribute>
             </attributes>
         </variable>
@@ -125,7 +125,7 @@
                     <name>flag_meanings</name>
                     <type>string</type>
                     <!-- attention: no carriage return must be used in the following line -->
-                    <value>SLO_summary_ISP_absent SLO_pixel_absent SLO_not_decompressed SLO_no_signal SLO_saturation SLO_invalid_radiance SLO_no_parameters SLO_unfilled_pixel SLO_coastline SLO_ocean SLO_tidal SLO_land SLO_inland_water SLO_cosmetic SLO_day SLO_twilight SLO_sun_glint SLO_snow SLO_summary_cloud SLO_summary_pointing</value>
+                    <value>SLO_summary_ISP_absent SLO_summary_pixel_absent SLO_summary_not_decompressed SLO_summary_no_signal SLO_summary_saturation SLO_summary_invalid_radiance SLO_summary_no_parameters SLO_summary_unfilled_pixel SLO_coastline SLO_ocean SLO_tidal SLO_land SLO_inland_water SLO_cosmetic SLO_day SLO_twilight SLO_sun_glint SLO_snow SLO_summary_cloud SLO_summary_pointing</value>
                 </attribute>
             </attributes>
         </variable>
