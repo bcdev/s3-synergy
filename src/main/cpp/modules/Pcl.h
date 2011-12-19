@@ -26,11 +26,17 @@ private:
     const Accessor* slnFlagsAccessor;
     const Accessor* sloFlagsAccessor;
 	vector<Accessor*> radianceAccessors;
+	vector<Accessor*> slnExceptionAccessors;
+	vector<Accessor*> sloExceptionAccessors;
+
+	static uint16_t computeOlcFlagValue(uint32_t currentOlcFlags);
 
 	void setUpSourceAccessors(Context & context);
     void setUpSegment(Context & context);
 
-	static uint16_t computeFlagValue(uint32_t olcFlags, uint8_t slnFlags, uint8_t sloFlags);
+	uint16_t computeSynFlagValue(uint32_t olcFlags, uint8_t slnFlags, uint8_t sloFlags, size_t index);
+	uint16_t computeSlnFlagValue(uint32_t currentSlnFlags, size_t index);
+	uint16_t computeSloFlagValue(uint32_t currentSloFlags, size_t index);
 };
 
 #endif /* PCL_H_ */

@@ -54,32 +54,6 @@ void PclTest::prepareContext() {
     context->setLogging(logging);
 }
 
-void PclTest::testComputeFlagValue() {
-	long olcFlags = Constants::SY1_OLCI_LAND_FLAG;
-	short slnFlags = Constants::SY1_SLSTR_CLOUD_FLAG;
-	short sloFlags = Constants::SY1_SLSTR_CLOUD_FLAG;
-
-	uint16_t landValue = Constants::SY2_LAND_FLAG;
-	uint16_t cloudValue = Constants::SY2_CLOUD_FLAG;
-	uint16_t value = Pcl::computeFlagValue(olcFlags, slnFlags, sloFlags);
-
-	CPPUNIT_ASSERT((value & landValue) == landValue);
-	CPPUNIT_ASSERT((value & cloudValue) == cloudValue);
-
-	olcFlags = 8;
-	value = Pcl::computeFlagValue(olcFlags, slnFlags, sloFlags);
-
-	CPPUNIT_ASSERT((value & landValue) != landValue);
-	CPPUNIT_ASSERT((value & cloudValue) == cloudValue);
-
-	olcFlags = Constants::SY1_OLCI_LAND_FLAG;
-	sloFlags = 8;
-	value = Pcl::computeFlagValue(olcFlags, slnFlags, sloFlags);
-
-	CPPUNIT_ASSERT((value & landValue) == landValue);
-	CPPUNIT_ASSERT((value & cloudValue) == cloudValue);
-}
-
 void PclTest::testPcl() {
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
     shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
