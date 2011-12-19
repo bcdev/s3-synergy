@@ -53,6 +53,37 @@ void VprTest::testGetLongitude() {
     CPPUNIT_ASSERT_THROW(Vpr::getLongitude(-1), std::invalid_argument);
 }
 
+void VprTest::testFindClosestPixel() {
+    valarray<shared_ptr<Pixel> > pixels(4);
+    shared_ptr<Pixel> p0 = shared_ptr<Pixel>(new Pixel());
+    p0->lat = 53.0;
+    p0->lon = 9.957;
+    pixels[0] = p0;
+
+    shared_ptr<Pixel> p1 = shared_ptr<Pixel>(new Pixel());
+    p1->lat = 55.0;
+    p1->lon = 10.0;
+    pixels[1] = p1;
+
+    shared_ptr<Pixel> p2 = shared_ptr<Pixel>(new Pixel());
+    p2->lat = 54.0;
+    p2->lon = 10.0;
+    pixels[2] = p2;
+
+    shared_ptr<Pixel> p3 = shared_ptr<Pixel>(new Pixel());
+    p3->lat = 55.0;
+    p3->lon = 9.9;
+    pixels[3] = p3;
+
+    double lat = 54.545;
+    double lon = 9.957;
+    Vpr vpr;
+    Pixel& closestPixel = vpr.findClosestPixel(pixels, lat, lon);
+
+    CPPUNIT_ASSERT(closestPixel.lat == 55.0);
+    CPPUNIT_ASSERT(closestPixel.lon == 10.0);
+}
+
 void VprTest::testVpr() {
 	BasicTask task("SY_UNT_VPR");
 

@@ -9,6 +9,7 @@
 
 using std::abs;
 using std::fill;
+using std::invalid_argument;
 
 Vpr::Vpr() : BasicModule("VPR") {
 }
@@ -74,7 +75,21 @@ void Vpr::setupPixel(shared_ptr<Pixel> p, long synK, long synL, long synM) {
 }
 
 Pixel& Vpr::findClosestPixel(const valarray<shared_ptr<Pixel> >& pixels, double lat, double lon) {
-    // todo - implement
+    if(pixels.size() == 0) {
+        BOOST_THROW_EXCEPTION(invalid_argument("No pixels given."));
+    }
+    Pixel& closestPixel = *(pixels[0]);
+    double delta = numeric_limits<double>::max();
+    for(size_t i = 0; i < pixels.size(); i++) {
+        const Pixel& currentPixel = *(pixels[i]);
+        float innerDelta = std::abs(currentPixel.lat - lat) + std::abs(currentPixel.lon - lon);
+        if(innerDelta < delta) {
+            delta = innerDelta;
+            closestPixel = currentPixel;
+        }
+    }
+
+    return closestPixel;
 }
 
 void Vpr::setValues(const Pixel& p, long l, long m) {
