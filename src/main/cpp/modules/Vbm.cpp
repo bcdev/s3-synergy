@@ -65,6 +65,7 @@ void Vbm::prepareAccessors(Context& context) {
 		synRadianceAccessors[i - 3] = &collocatedSegment.getAccessor("L_" + index);
 		synSolarIrradianceAccessors[i - 3] = &collocatedSegment.getAccessor("solar_irradiance_" + index);
 	}
+	synFlagsAccessor = &collocatedSegment.getAccessor("SYN_flags");
 }
 
 void Vbm::prepareAuxdata(Context& context) {
@@ -189,6 +190,7 @@ void Vbm::setPixel(Pixel& p, size_t index, valarray<double>& tpiWeights, valarra
         p.radiances[i] = synRadianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synRadianceAccessors[i]->getDouble(index);
         p.solarIrradiances[i] = synSolarIrradianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synSolarIrradianceAccessors[i]->getDouble(index);
     }
+    p.synFlags = synFlagsAccessor->getUShort(index);
     p.lat = latAccessor->getDouble(index);
     p.lon = lonAccessor->getDouble(index);
 
@@ -213,64 +215,66 @@ void Vbm::setPixel(Pixel& p, size_t index, valarray<double>& tpiWeights, valarra
 
     p.aot = aerosolOpticalThickness(p.lat);
     p.aerosolModel = aerosolModel;
-    p.flags = 0;
+    p.vgtFlags = 0;
 }
 
 void Vbm::performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflectances, valarray<double>& coordinates, valarray<double>& f, valarray<double>& w) {
-    coordinates[0] = p.airPressure;
-    coordinates[1] = p.waterVapour;
-    coordinates[2] = p.aot;
-    coordinates[3] = p.aerosolModel;
-    synLutRho->getVector(&coordinates[0], rho, f, w);
-
-    coordinates[0] = abs(p.vaaOlc - p.saa);
-    coordinates[1] = p.sza;
-    coordinates[2] = p.vzaOlc;
-    coordinates[3] = p.airPressure;
-    coordinates[4] = p.waterVapour;
-    coordinates[5] = p.aot;
-    coordinates[6] = p.aerosolModel;
-    olcLutRatm->getVector(&coordinates[0], ratm, f, w);
-
-    coordinates[0] = p.sza;
-    coordinates[1] = p.airPressure;
-    coordinates[2] = p.waterVapour;
-    coordinates[3] = p.aot;
-    coordinates[4] = p.aerosolModel;
-    synLutT->getVector(&coordinates[0], ts, f, w);
-
-    coordinates[0] = p.vzaOlc;
-    synLutT->getVector(&coordinates[0], tv, f, w);
-
     fill(&synSurfaceReflectances[0], &synSurfaceReflectances[synSurfaceReflectances.size()], Constants::FILL_VALUE_DOUBLE);
 
+    if (isSet(p.synFlags, Constants::SY2_LAND_FLAG)) {
+		coordinates[0] = p.airPressure;
+		coordinates[1] = p.waterVapour;
+		coordinates[2] = p.aot;
+		coordinates[3] = p.aerosolModel;
+		synLutRho->getVector(&coordinates[0], rho, f, w);
+
+		coordinates[0] = abs(p.vaaOlc - p.saa);
+		coordinates[1] = p.sza;
+		coordinates[2] = p.vzaOlc;
+		coordinates[3] = p.airPressure;
+		coordinates[4] = p.waterVapour;
+		coordinates[5] = p.aot;
+		coordinates[6] = p.aerosolModel;
+		olcLutRatm->getVector(&coordinates[0], ratm, f, w);
+
+		coordinates[0] = p.sza;
+		coordinates[1] = p.airPressure;
+		coordinates[2] = p.waterVapour;
+		coordinates[3] = p.aot;
+		coordinates[4] = p.aerosolModel;
+		synLutT->getVector(&coordinates[0], ts, f, w);
+
+		coordinates[0] = p.vzaOlc;
+		synLutT->getVector(&coordinates[0], tv, f, w);
+
 #pragma omp parallel for
-    for (size_t i = 0; i < 18; i++) {
-    	if (p.radiances[i] != Constants::FILL_VALUE_DOUBLE) {
-			synSurfaceReflectances[i] = surfaceReflectance(p.ozone, p.vzaOlc, p.sza, p.solarIrradiances[i], p.radiances[i], synCO3[i], rho[i], ratm[i], ts[i], tv[i]);
+		for (size_t i = 0; i < 18; i++) {
+			if (p.radiances[i] != Constants::FILL_VALUE_DOUBLE) {
+				synSurfaceReflectances[i] = surfaceReflectance(p.ozone, p.vzaOlc, p.sza, p.solarIrradiances[i], p.radiances[i], synCO3[i], rho[i], ratm[i], ts[i], tv[i]);
+			}
 		}
-	}
 
-    coordinates[0] = abs(p.vaaSln - p.saa);
-    coordinates[1] = p.sza;
-    coordinates[2] = p.vzaSln;
-    coordinates[3] = p.airPressure;
-    coordinates[4] = p.waterVapour;
-    coordinates[5] = p.aot;
-    coordinates[6] = p.aerosolModel;
-    slnLutRatm->getVector(&coordinates[0], ratm, f, w);
+		coordinates[0] = abs(p.vaaSln - p.saa);
+		coordinates[1] = p.sza;
+		coordinates[2] = p.vzaSln;
+		coordinates[3] = p.airPressure;
+		coordinates[4] = p.waterVapour;
+		coordinates[5] = p.aot;
+		coordinates[6] = p.aerosolModel;
+		slnLutRatm->getVector(&coordinates[0], ratm, f, w);
 
-    coordinates[0] = p.vzaSln;
-    coordinates[1] = p.airPressure;
-    coordinates[2] = p.waterVapour;
-    coordinates[3] = p.aot;
-    coordinates[4] = p.aerosolModel;
-    synLutT->getVector(&coordinates[0], tv, f, w);
+		coordinates[0] = p.vzaSln;
+		coordinates[1] = p.airPressure;
+		coordinates[2] = p.waterVapour;
+		coordinates[3] = p.aot;
+		coordinates[4] = p.aerosolModel;
+		synLutT->getVector(&coordinates[0], tv, f, w);
 
 #pragma omp parallel for
-    for (size_t i = 21; i < 24; i++) {
-        if (p.radiances[i - 3] != Constants::FILL_VALUE_DOUBLE) {
-			synSurfaceReflectances[i - 3] = surfaceReflectance(p.ozone, p.vzaSln, p.sza, p.solarIrradiances[i - 3], p.radiances[i - 3], synCO3[i], rho[i], ratm[i - 18], ts[i], tv[i]);
+		for (size_t i = 21; i < 24; i++) {
+			if (p.radiances[i - 3] != Constants::FILL_VALUE_DOUBLE) {
+				synSurfaceReflectances[i - 3] = surfaceReflectance(p.ozone, p.vzaSln, p.sza, p.solarIrradiances[i - 3], p.radiances[i - 3], synCO3[i], rho[i], ratm[i - 18], ts[i], tv[i]);
+			}
 		}
 	}
 }
@@ -278,7 +282,7 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflect
 void Vbm::performHyperspectralInterpolation(const valarray<double>& synWavelengths, const valarray<double>& synSurfaceReflectances, valarray<double>& hypSurfaceReflectances) {
 	fill(&hypSurfaceReflectances[0], &hypSurfaceReflectances[hypSurfaceReflectances.size()], Constants::FILL_VALUE_DOUBLE);
 
-	for (size_t i = 0; i < synWavelengths.size() - 1; i++) {
+		for (size_t i = 0; i < synWavelengths.size() - 1; i++) {
 		const double y0 = synSurfaceReflectances[i];
 		const double y1 = synSurfaceReflectances[i + 1];
 		if (y0 != Constants::FILL_VALUE_DOUBLE && y1 != Constants::FILL_VALUE_DOUBLE) {
@@ -302,37 +306,39 @@ void Vbm::performHyperspectralInterpolation(const valarray<double>& synWavelengt
 void Vbm::performHyperspectralUpscaling(const valarray<double>& hypSurfaceReflectances, const Pixel& p, valarray<double>& hypToaReflectances, valarray<double>& coordinates, valarray<double>& f, valarray<double>& w) {
 	fill(&hypToaReflectances[0], &hypToaReflectances[hypToaReflectances.size()], Constants::FILL_VALUE_DOUBLE);
 
-	coordinates[0] = p.airPressure;
-    coordinates[1] = p.waterVapour;
-    coordinates[2] = p.aot;
-    coordinates[3] = p.aerosolModel;
-    hypLutRho->getVector(&coordinates[0], rho, f, w);
+	if (isSet(p.synFlags, Constants::SY2_LAND_FLAG)) {
+		coordinates[0] = p.airPressure;
+		coordinates[1] = p.waterVapour;
+		coordinates[2] = p.aot;
+		coordinates[3] = p.aerosolModel;
+		hypLutRho->getVector(&coordinates[0], rho, f, w);
 
-    coordinates[0] = abs(p.vaaOlc - p.saa);
-    coordinates[1] = p.sza;
-    coordinates[2] = p.vzaOlc;
-    coordinates[3] = p.airPressure;
-    coordinates[4] = p.waterVapour;
-    coordinates[5] = p.aot;
-    coordinates[6] = p.aerosolModel;
-    hypLutRatm->getVector(&coordinates[0], ratm, f, w);
+		coordinates[0] = abs(p.vaaOlc - p.saa);
+		coordinates[1] = p.sza;
+		coordinates[2] = p.vzaOlc;
+		coordinates[3] = p.airPressure;
+		coordinates[4] = p.waterVapour;
+		coordinates[5] = p.aot;
+		coordinates[6] = p.aerosolModel;
+		hypLutRatm->getVector(&coordinates[0], ratm, f, w);
 
-    coordinates[0] = p.sza;
-    coordinates[1] = p.airPressure;
-    coordinates[2] = p.waterVapour;
-    coordinates[3] = p.aot;
-    coordinates[4] = p.aerosolModel;
-    hypLutT->getVector(&coordinates[0], ts, f, w);
+		coordinates[0] = p.sza;
+		coordinates[1] = p.airPressure;
+		coordinates[2] = p.waterVapour;
+		coordinates[3] = p.aot;
+		coordinates[4] = p.aerosolModel;
+		hypLutT->getVector(&coordinates[0], ts, f, w);
 
-    coordinates[0] = p.vzaOlc;
-	hypLutT->getVector(&coordinates[0], tv, f, w);
+		coordinates[0] = p.vzaOlc;
+		hypLutT->getVector(&coordinates[0], tv, f, w);
 
-	const double airMass = 0.5 * (1.0 / cos(p.sza * D2R) + 1.0 / cos(p.vzaOlc * D2R));
+		const double airMass = 0.5 * (1.0 / cos(p.sza * D2R) + 1.0 / cos(p.vzaOlc * D2R));
 
 #pragma omp parallel for
-	for (size_t h = 0; h < hypSurfaceReflectances.size(); h++) {
-		if (hypSurfaceReflectances[h] != Constants::FILL_VALUE_DOUBLE) {
-			hypToaReflectances[h] = toaReflectance(p.ozone, airMass, hypSurfaceReflectances[h], hypCO3[h], rho[h], ratm[h], ts[h], tv[h]);
+		for (size_t h = 0; h < hypSurfaceReflectances.size(); h++) {
+			if (hypSurfaceReflectances[h] != Constants::FILL_VALUE_DOUBLE) {
+				hypToaReflectances[h] = toaReflectance(p.ozone, airMass, hypSurfaceReflectances[h], hypCO3[h], rho[h], ratm[h], ts[h], tv[h]);
+			}
 		}
 	}
 }
@@ -392,7 +398,9 @@ uint8_t Vbm::performQualityFlagging(Pixel& p, const valarray<double>& vgtToaRefl
     		p.radiances[20] != Constants::FILL_VALUE_DOUBLE) {
         flags |= Constants::VGT_MIR_GOOD_FLAG;
     }
-
+    if (isSet(p.synFlags, Constants::SY2_LAND_FLAG)) {
+    	p.vgtFlags |= Constants::VGT_LAND_FLAG;
+    }
     return flags;
 }
 

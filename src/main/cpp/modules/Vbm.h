@@ -32,6 +32,7 @@ private:
 
 	    valarray<double> radiances;
 	    valarray<double> solarIrradiances;
+	    uint16_t synFlags;
 
 	    double lon;
 	    double lat;
@@ -48,7 +49,7 @@ private:
 
 	    double aot;
 	    uint8_t aerosolModel;
-	    uint8_t flags;
+	    uint8_t vgtFlags;
 	};
 
 	void prepareAccessors(Context& context);
@@ -99,6 +100,7 @@ private:
 
     valarray<Accessor*> synRadianceAccessors;
     valarray<Accessor*> synSolarIrradianceAccessors;
+    Accessor* synFlagsAccessor;
     valarray<Accessor*> vgtReflectanceAccessors;
     Accessor* vgtFlagsAccessor;
 
