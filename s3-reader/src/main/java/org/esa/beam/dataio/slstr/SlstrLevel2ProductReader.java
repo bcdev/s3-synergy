@@ -1,6 +1,7 @@
 package org.esa.beam.dataio.slstr;
 
 import com.bc.ceres.core.ProgressMonitor;
+import com.bc.ceres.glevel.MultiLevelImage;
 import org.esa.beam.framework.dataio.AbstractProductReader;
 import org.esa.beam.framework.dataio.ProductIO;
 import org.esa.beam.framework.dataio.ProductReaderPlugIn;
@@ -73,37 +74,37 @@ public class SlstrLevel2ProductReader extends AbstractProductReader {
     }
 
     private void attachAnnotationData(SlstrL2LndManifest manifest, Product product) {
-        attachGeodeticDataCoodinatesToProduct(manifest.getGeodeticDataCoordinatesFileName(), product);
-        attachCartesianDataCoodinatesToProduct(manifest.getCartesianDataCoordinatesFileName(), product);
-//        attachTiePointsToProduct(manifest.getTiePointsFileName(), product);
+//        attachGeodeticDataCoodinatesToProduct(manifest.getGeodeticDataCoordinatesFileName(), product);
+//        attachCartesianDataCoodinatesToProduct(manifest.getCartesianDataCoordinatesFileName(), product);
+        attachTiePointsToProduct(manifest.getGeodeticTiepointCoordinatesFileName(), product);
     }
 
-//    private void attachTiePointsToProduct(String tiePointsFileName, Product product) {
-//        try {
-//            tiePointsProduct = readProduct(tiePointsFileName);
-//            final MetadataElement metadataRoot = tiePointsProduct.getMetadataRoot();
-//            final MetadataElement globalAttributes = metadataRoot.getElement("Global_Attributes");
-//            final int subsampling = globalAttributes.getAttributeInt("subsampling_factor");
-//            for (final Band band : tiePointsProduct.getBands()) {
-//                final MultiLevelImage sourceImage = band.getGeophysicalImage();
-//                final int width = sourceImage.getWidth();
-//                final int height = sourceImage.getHeight();
-//                final float[] tiePointData = new float[width * height];
-//                sourceImage.getData().getSamples(0, 0, width, height, 0, tiePointData);
-//                TiePointGrid tiePointGrid = new TiePointGrid(band.getName(), band.getRasterWidth(),
-//                        band.getRasterHeight(), 0, 0, subsampling,
-//                        subsampling, tiePointData, true);
-//                product.addTiePointGrid(tiePointGrid);
-//            }
-//            if (product.getTiePointGrid("TP_latitude") != null && product.getTiePointGrid("TP_longitude") != null) {
-//                product.setGeoCoding(new TiePointGeoCoding(product.getTiePointGrid("TP_latitude"),
-//                        product.getTiePointGrid("TP_longitude")));
-//            }
-//        } catch (IOException e) {
-//            String msg = String.format("Not able to read file '%s.", tiePointsFileName);
-//            logger.log(Level.WARNING, msg, e);
-//        }
-//    }
+    private void attachTiePointsToProduct(String tiePointsFileName, Product product) {
+        try {
+            geodeticTiePointsProduct = readProduct(tiePointsFileName);
+            final MetadataElement metadataRoot = geodeticTiePointsProduct.getMetadataRoot();
+            final MetadataElement globalAttributes = metadataRoot.getElement("Global_Attributes");
+            final short[] resolutions = (short[]) globalAttributes.getAttribute("resolution").getDataElems();
+            for (final Band band : geodeticTiePointsProduct.getBands()) {
+                final MultiLevelImage sourceImage = band.getGeophysicalImage();
+                final int width = sourceImage.getWidth();
+                final int height = sourceImage.getHeight();
+                final float[] tiePointData = new float[width * height];
+                sourceImage.getData().getSamples(0, 0, width, height, 0, tiePointData);
+                TiePointGrid tiePointGrid = new TiePointGrid(band.getName(), band.getRasterWidth(),
+                        band.getRasterHeight(), 0, 0, resolutions[0]/1000.0f,
+                        resolutions[1]/1000.0f, tiePointData, true);
+                product.addTiePointGrid(tiePointGrid);
+            }
+            if (product.getTiePointGrid("latitude") != null && product.getTiePointGrid("longitude") != null) {
+                product.setGeoCoding(new TiePointGeoCoding(product.getTiePointGrid("latitude"),
+                        product.getTiePointGrid("longitude")));
+            }
+        } catch (IOException e) {
+            String msg = String.format("Not able to read file '%s.", tiePointsFileName);
+            logger.log(Level.WARNING, msg, e);
+        }
+    }
 
     private void attachGeodeticDataCoodinatesToProduct(String geodeticDataCoordinatesFileName, Product product) {
         try {
