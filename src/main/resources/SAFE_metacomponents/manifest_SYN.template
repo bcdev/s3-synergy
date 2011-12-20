@@ -828,7 +828,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='tiepoints_meteo.nc' />
                 <checksum checksumName='MD5'>
-                    ${tiepoints_meteo}
+                    ${checksum-tiepoints_meteo.nc}
                 </checksum>
             </byteStream>
         </metadataObject>
@@ -841,7 +841,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='tiepoints_olci.nc' />
                 <checksum checksumName='MD5'>
-                    ${tiepoints_olci}
+                    ${checksum-tiepoints_olci.nc}
                 </checksum>
             </byteStream>
         </metadataObject>
@@ -854,7 +854,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='tiepoints_slstr_n.nc' />
                 <checksum checksumName='MD5'>
-                    ${tiepoints_slstr_n}
+                    ${checksum-tiepoints_slstr_n.nc}
                 </checksum>
             </byteStream>
         </metadataObject>
@@ -867,7 +867,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='tiepoints_slstr_o.nc' />
                 <checksum checksumName='MD5'>
-                    ${tiepoints_slstr_o}
+                    ${checksum-tiepoints_slstr_o.nc}
                 </checksum>
             </byteStream>
         </metadataObject>
@@ -958,7 +958,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0413.nc' />
                 <checksum checksumName='MD5'>
-                    ${r0413.n}
+                    ${checksum-r0413.nc}
                 </checksum>
             </byteStream>
         </dataObject>
