@@ -42,7 +42,7 @@ public class SlstrLevel2LndProductReaderPlugIn implements ProductReaderPlugIn {
 
     @Override
     public ProductReader createReaderInstance() {
-        return new SlstrLevel2ProductReader(this);
+        return new SlstrLevel2LndProductReader(this);
     }
 
     @Override

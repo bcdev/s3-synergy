@@ -103,13 +103,13 @@ public class SlstrL2LndManifestTest {
 
     @Test
     public void testGetNadirSolarViewGeometryFileName() {
-        final String nadirSolarViewGeometryFileName = manifestTest.getNadirSolarViewGeometryFileName();
+        final String nadirSolarViewGeometryFileName = manifestTest.getGeometryTiepointsFileName();
         assertEquals("geometry_in.nc", nadirSolarViewGeometryFileName);
     }
 
     @Test
     public void testGetMeteorologicalDataFileName() {
-        final String meteorologicalDataFileName = manifestTest.getMeteorologicalDataFileName();
+        final String meteorologicalDataFileName = manifestTest.getMeteorologicalTiePointsFileName();
         assertEquals("met_tx.nc", meteorologicalDataFileName);
     }
 

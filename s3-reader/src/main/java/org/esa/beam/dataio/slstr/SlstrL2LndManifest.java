@@ -156,13 +156,13 @@ public class SlstrL2LndManifest {
         return xPathHelper.getString("./byteStream/fileLocation/@href", geoDataObject);
     }
 
-    public String getNadirSolarViewGeometryFileName() {
+    public String getGeometryTiepointsFileName() {
         Node geoDataObject = xPathHelper.getNode("/XFDU/dataObjectSection/dataObject[@repID='nadirSolarViewGeometrySchema']",
                 doc);
         return xPathHelper.getString("./byteStream/fileLocation/@href", geoDataObject);
     }
 
-    public String getMeteorologicalDataFileName() {
+    public String getMeteorologicalTiePointsFileName() {
         Node geoDataObject = xPathHelper.getNode("/XFDU/dataObjectSection/dataObject[@repID='meteorologicalDataSchema']",
                 doc);
         return xPathHelper.getString("./byteStream/fileLocation/@href", geoDataObject);
