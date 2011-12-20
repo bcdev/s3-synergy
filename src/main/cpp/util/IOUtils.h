@@ -107,6 +107,29 @@ public:
 		return defaultValue;
 	}
 
+	static vector<string> getFileNames(const string& directory) {
+	    vector<string> fileNames;
+	    if (is_directory(directory)) {
+	        for (directory_iterator iter(directory); iter != directory_iterator(); ++iter) {
+	            if (!is_directory(iter->path())) {
+	                fileNames.push_back(iter->path().filename().c_str());
+	            }
+	        }
+	    }
+	    return fileNames;
+	}
+
+	static vector<string> getDirectoryNames(const string& directory) {
+	    vector<string> directoryNames;
+	    if (is_directory(directory)) {
+	        for (directory_iterator iter(directory); iter != directory_iterator(); ++iter) {
+	            if (is_directory(iter->path())) {
+	                directoryNames.push_back(iter->path().filename().c_str());
+	            }
+	        }
+	    }
+	    return directoryNames;
+	}
 };
 
 #endif	/* IOUTILS_H */

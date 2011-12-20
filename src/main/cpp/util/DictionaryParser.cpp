@@ -6,6 +6,7 @@
  */
 
 #include "DictionaryParser.h"
+#include "IOUtils.h"
 
 DictionaryParser::DictionaryParser() : xmlParser(), exclusionSet() {
     exclusionSet.insert("dimensions.xml");
@@ -19,12 +20,12 @@ DictionaryParser::~DictionaryParser() {
 
 shared_ptr<Dictionary> DictionaryParser::parse(const string& dictionaryPath) {
 	shared_ptr<Dictionary> dictionary = shared_ptr<Dictionary>(new Dictionary());
-    vector<string> productDescriptorNames = getDirectoryNames(dictionaryPath);
+    vector<string> productDescriptorNames = IOUtils::getDirectoryNames(dictionaryPath);
 
     foreach(string productDescriptorName, productDescriptorNames) {
         ProductDescriptor& productDescriptor = dictionary->addProductDescriptor(productDescriptorName);
         const string subDirPath = dictionaryPath + "/" + productDescriptorName;
-        vector<string> varDescriptorFileNames = getFileNames(subDirPath);
+        vector<string> varDescriptorFileNames = IOUtils::getFileNames(subDirPath);
         foreach (string varDescriptorFileName, varDescriptorFileNames) {
             if (!contains(exclusionSet, varDescriptorFileName)) {
                 parseVariables(subDirPath, varDescriptorFileName, productDescriptor);
@@ -138,28 +139,4 @@ int DictionaryParser::toType(const string& typeString) const {
         return Constants::TYPE_CHAR;
     }
     return Constants::TYPE_CHAR;
-}
-
-vector<string> DictionaryParser::getDirectoryNames(const string& directory) const {
-    vector<string> directoryNames;
-    if (is_directory(directory)) {
-        for (directory_iterator iter(directory); iter != directory_iterator(); ++iter) {
-            if (is_directory(iter->path())) {
-                directoryNames.push_back(iter->path().filename().c_str());
-            }
-        }
-    }
-    return directoryNames;
-}
-
-vector<string> DictionaryParser::getFileNames(const string& directory) const {
-    vector<string> fileNames;
-    if (is_directory(directory)) {
-        for (directory_iterator iter(directory); iter != directory_iterator(); ++iter) {
-            if (!is_directory(iter->path())) {
-                fileNames.push_back(iter->path().filename().c_str());
-            }
-        }
-    }
-    return fileNames;
 }

@@ -33,8 +33,6 @@ private:
     void parseVariables(const string& variableDefPath, const string& file, ProductDescriptor& prod) const;
     void parseAttributes(const string& file, const string& variableName, VariableDescriptor& var) const;
     void parseDimensions(const string& file, const string& variableName, VariableDescriptor& var) const;
-    vector<string> getDirectoryNames(const string& path) const;
-    vector<string> getFileNames(const string& path) const;
     int toType(const string& typeString) const;
 
     XmlParser xmlParser;

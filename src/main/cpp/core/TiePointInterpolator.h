@@ -100,7 +100,7 @@ void TiePointInterpolator<W>::prepare(W lon, W lat, valarray<W>& weights, valarr
 	const size_t midIndex = lower_bound(&tpLats[0], &tpLats[tpLats.size()], lat) - &tpLats[0];
 	const size_t minIndex = midIndex >= range ? midIndex - range : 0;
 	const size_t maxIndex = midIndex <= tpLats.size() - range ? midIndex + range : tpLats.size();
-	fill(&weights[0], &weights[n], W(-1));
+	fill(&weights[0], &weights[n], W(-1.0));
 
 	for (size_t i = minIndex; i < maxIndex; i++) {
 		const W d = cosineDistance(lon, lat, i);

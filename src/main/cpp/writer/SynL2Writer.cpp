@@ -5,6 +5,7 @@
  * Created on November 17, 2010, 3:40 PM
  */
 
+#include <fstream>
 #include <stdexcept>
 
 #include "../util/IOUtils.h"
@@ -110,12 +111,43 @@ void SynL2Writer::start(Context& context) {
 }
 
 void SynL2Writer::stop(Context& context) {
+	// copy template files to target directory
+	const string sourceDirPath = getInstallationPath() + "/src/main/resources/SAFE_metacomponents";
+	const vector<string> fileNames = IOUtils::getFileNames(sourceDirPath);
+	foreach(string fileName, fileNames) {
+		boost::filesystem::copy_file(sourceDirPath + "/" + fileName, targetDirPath / fileName);
+	}
+	boost::filesystem::create_directory(path(targetDirPath.string() + "/schema"));
+	const vector<string> schemaFileNames = IOUtils::getFileNames(sourceDirPath + "/schema");
+	foreach(string fileName, schemaFileNames) {
+		boost::filesystem::copy_file(sourceDirPath + "/schema/" + fileName, targetDirPath / "schema" / fileName);
+	}
+	context.getLogging().info("reading template ...", getId());
+	std::ifstream ifs(string(targetDirPath.string() + "/manifest_SYN.template").c_str(), std::ifstream::in);
+	std::ostringstream oss;
+	char c;
+	while(ifs.get(c)) {
+		oss.put(c);
+	}
+	string s = oss.str();
+
 	pair<string, int> fileIdPair;
 
 	foreach(fileIdPair, ncFileIdMap)
 			{
+				context.getLogging().info("replacing ..." + fileIdPair.first, getId());
+				s.replace(s.begin(), s.end(), string("${checksum-" + fileIdPair.first + ".nc}").c_str(), "31415");
 				NetCDF::closeFile(fileIdPair.second);
 			}
+	context.getLogging().info("writing ...", getId());
+	std::ofstream ofs(string(targetDirPath.string() + "/manifest_SYN.xml").c_str(), std::ofstream::out);
+	for(size_t i = 0; i < s.size(); i++) {
+		ofs.put(s[i]);
+	}
+	context.getLogging().info("closing ...", getId());
+	ofs.close();
+	ifs.close();
+
 	ncVarIdMap.clear();
 	ncDimIdMap.clear();
 	ncFileIdMap.clear();
