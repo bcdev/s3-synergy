@@ -175,15 +175,14 @@ uint16_t Pcl::computeSlnFlagValue(uint32_t currentSlnFlags, size_t index) {
     bool isSummaryUnfilledPixel = false;
     foreach(const Accessor* slnExceptionAccessor, slnExceptionAccessors) {
         uint8_t currentExceptionFlag = slnExceptionAccessor->getUByte(index);
-        // todo - fill in flag values of exception flags
-//        isSummaryISPAbsent |= isSet(currentExceptionFlag, ???);
-//        isSummaryPixelAbsent |= isSet(currentExceptionFlag, ???);
-//        isSummaryNotDecompressed |= isSet(currentExceptionFlag, ???);
-//        isSummaryNoSignal |= isSet(currentExceptionFlag, ???);
-//        isSummarySaturation |= isSet(currentExceptionFlag, ???);
-//        isSummaryInvalidRadiance |= isSet(currentExceptionFlag, ???);
-//        isSummaryNoParameters |= isSet(currentExceptionFlag, ???);
-//        isSummaryUnfilledPixel |= isSet(currentExceptionFlag, ???);
+        isSummaryISPAbsent |= isSet(currentExceptionFlag, (uint8_t)1);
+        isSummaryPixelAbsent |= isSet(currentExceptionFlag, (uint8_t)2);
+        isSummaryNotDecompressed |= isSet(currentExceptionFlag, (uint8_t)4);
+        isSummaryNoSignal |= isSet(currentExceptionFlag, (uint8_t)8);
+        isSummarySaturation |= isSet(currentExceptionFlag, (uint8_t)16);
+        isSummaryInvalidRadiance |= isSet(currentExceptionFlag, (uint8_t)32);
+        isSummaryNoParameters |= isSet(currentExceptionFlag, (uint8_t)64);
+        isSummaryUnfilledPixel |= isSet(currentExceptionFlag, (uint8_t)128);
     }
 
     slnValue |= isSummaryISPAbsent ? 1 : 0;
@@ -195,16 +194,15 @@ uint16_t Pcl::computeSlnFlagValue(uint32_t currentSlnFlags, size_t index) {
     slnValue |= isSummaryNoParameters ? 64 : 0;
     slnValue |= isSummaryUnfilledPixel ? 128 : 0;
 
-    // todo - clarify coastline, ocean, tidal, land, inland_water
-    // which are not listed within L1c Products Definition
+    // todo - is aligned with L1c Products Definition, but doesn't work with test product
 
-    slnValue |= isSet(currentSlnFlags, 1U) ? 1 << 16 : 0; // cosmetic
-    slnValue |= isSet(currentSlnFlags, 4U) ? 1 << 18 : 0; // day
-    slnValue |= isSet(currentSlnFlags, 8U) ? 1 << 19 : 0; // twilight
-    slnValue |= isSet(currentSlnFlags, 16U) ? 1 << 20 : 0; // sun_glint
-    slnValue |= isSet(currentSlnFlags, 32U) ? 1 << 21 : 0; // snow
-    slnValue |= isSet(currentSlnFlags, 64U) ? 1 << 22 : 0; // summary_cloud
-    slnValue |= isSet(currentSlnFlags, 128U) ? 1 << 23 : 0; // summary_pointing
+//    slnValue |= isSet(currentSlnFlags, 1U) ? 1 << 16 : 0; // cosmetic
+//    slnValue |= isSet(currentSlnFlags, 4U) ? 1 << 18 : 0; // day
+//    slnValue |= isSet(currentSlnFlags, 8U) ? 1 << 19 : 0; // twilight
+//    slnValue |= isSet(currentSlnFlags, 16U) ? 1 << 20 : 0; // sun_glint
+//    slnValue |= isSet(currentSlnFlags, 32U) ? 1 << 21 : 0; // snow
+//    slnValue |= isSet(currentSlnFlags, 64U) ? 1 << 22 : 0; // summary_cloud
+//    slnValue |= isSet(currentSlnFlags, 128U) ? 1 << 23 : 0; // summary_pointing
 
     return slnValue;
 }
@@ -221,15 +219,14 @@ uint16_t Pcl::computeSloFlagValue(uint32_t currentSloFlags, size_t index) {
     bool isSummaryUnfilledPixel = false;
     foreach(const Accessor* sloExceptionAccessor, sloExceptionAccessors) {
         uint8_t currentExceptionFlag = sloExceptionAccessor->getUByte(index);
-        // todo - fill in flag values of exception flags
-//        isSummaryISPAbsent |= isSet(currentExceptionFlag, ???U);
-//        isSummaryPixelAbsent |= isSet(currentExceptionFlag, ???U);
-//        isSummaryNotDecompressed |= isSet(currentExceptionFlag, ???U);
-//        isSummaryNoSignal |= isSet(currentExceptionFlag, ???U);
-//        isSummarySaturation |= isSet(currentExceptionFlag, ???U);
-//        isSummaryInvalidRadiance |= isSet(currentExceptionFlag, ???U);
-//        isSummaryNoParameters |= isSet(currentExceptionFlag, ???U);
-//        isSummaryUnfilledPixel |= isSet(currentExceptionFlag, ???U);
+        isSummaryISPAbsent |= isSet(currentExceptionFlag, (uint8_t)1);
+        isSummaryPixelAbsent |= isSet(currentExceptionFlag, (uint8_t)2);
+        isSummaryNotDecompressed |= isSet(currentExceptionFlag, (uint8_t)4);
+        isSummaryNoSignal |= isSet(currentExceptionFlag, (uint8_t)8);
+        isSummarySaturation |= isSet(currentExceptionFlag, (uint8_t)16);
+        isSummaryInvalidRadiance |= isSet(currentExceptionFlag, (uint8_t)32);
+        isSummaryNoParameters |= isSet(currentExceptionFlag, (uint8_t)64);
+        isSummaryUnfilledPixel |= isSet(currentExceptionFlag, (uint8_t)128);
     }
 
     sloValue |= isSummaryISPAbsent ? 1 : 0;
@@ -241,16 +238,15 @@ uint16_t Pcl::computeSloFlagValue(uint32_t currentSloFlags, size_t index) {
     sloValue |= isSummaryNoParameters ? 64 : 0;
     sloValue |= isSummaryUnfilledPixel ? 128 : 0;
 
-    // todo - clarify coastline, ocean, tidal, land, inland_water
-    // which are not listed within L1c Products Definition
+    // todo - is aligned with L1c Products Definition, but doesn't work with test product
 
-    sloValue |= isSet(currentSloFlags, 1U) ? 1 << 16 : 0; // cosmetic
-    sloValue |= isSet(currentSloFlags, 4U) ? 1 << 18 : 0; // day
-    sloValue |= isSet(currentSloFlags, 8U) ? 1 << 19 : 0; // twilight
-    sloValue |= isSet(currentSloFlags, 16U) ? 1 << 20 : 0; // sun_glint
-    sloValue |= isSet(currentSloFlags, 32U) ? 1 << 21 : 0; // snow
-    sloValue |= isSet(currentSloFlags, 64U) ? 1 << 22 : 0; // summary_cloud
-    sloValue |= isSet(currentSloFlags, 128U) ? 1 << 23 : 0; // summary_pointing
+//    sloValue |= isSet(currentSloFlags, 1U) ? 1 << 16 : 0; // cosmetic
+//    sloValue |= isSet(currentSloFlags, 4U) ? 1 << 18 : 0; // day
+//    sloValue |= isSet(currentSloFlags, 8U) ? 1 << 19 : 0; // twilight
+//    sloValue |= isSet(currentSloFlags, 16U) ? 1 << 20 : 0; // sun_glint
+//    sloValue |= isSet(currentSloFlags, 32U) ? 1 << 21 : 0; // snow
+//    sloValue |= isSet(currentSloFlags, 64U) ? 1 << 22 : 0; // summary_cloud
+//    sloValue |= isSet(currentSloFlags, 128U) ? 1 << 23 : 0; // summary_pointing
 
     return sloValue;
 }
