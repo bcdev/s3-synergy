@@ -162,9 +162,7 @@ void DirectLocator::interpolate(long k, long y0, long x0, double wx, double wy, 
 		}
 		lat = interpolate(wx, wy, lats[0], lats[1], lats[2], lats[3]);
 		lon = interpolate(wx, wy, lons[0], lons[1], lons[2], lons[3]);
-		for (size_t i = 0; i < 4; i++) {
-			r.inverseTransform(lats[i], lons[i]);
-		}
+		r.inverseTransform(lat, lon);
 	}
 }
 

@@ -10,12 +10,11 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../main/cpp/core/DirectLocator.h"
-
 class DirectLocatorTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(DirectLocatorTest);
     CPPUNIT_TEST(testRotation_Identity);
     CPPUNIT_TEST(testRotation_Antipode);
+    CPPUNIT_TEST(testLocation);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -27,6 +26,7 @@ public:
 private:
     void testRotation_Identity();
     void testRotation_Antipode();
+    void testLocation();
 };
 
 #endif /* DIRECTLOCATORTEST_H_ */
