@@ -11,4 +11,8 @@ const string PROCESSOR_VERSION = "@s3-synergy_VERSION_MAJOR@.@s3-synergy_VERSION
  * Path to executable 'md5sum'.
  */
 const string MD5SUM_EXECUTABLE = "@MD5_SUM_EXECUTABLE@";
- 
+
+/**
+ * Path to software installation.
+ */
+const string S3_SYNERGY_HOME = "@S3_SYNERGY_HOME@";

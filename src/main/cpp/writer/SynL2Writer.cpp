@@ -82,7 +82,7 @@ void SynL2Writer::process(Context& context) {
 void SynL2Writer::start(Context& context) {
 	targetDirPath = path(context.getJobOrder().getIpfProcessors().at(0).getOutputList().at(0).getFileName());
 	if (!targetDirPath.has_root_directory()) {
-		targetDirPath = getInstallationPath() / targetDirPath;
+		targetDirPath = Constants::S3_SYNERGY_HOME / targetDirPath;
 	}
 	context.getLogging().info("target product path is '" + targetDirPath.string() + "'", getId());
 
@@ -114,7 +114,7 @@ void SynL2Writer::start(Context& context) {
 
 void SynL2Writer::stop(Context& context) {
 	// copy template files to target directory
-	const string sourceDirPath = getInstallationPath() + "/src/main/resources/SAFE_metacomponents";
+	const string sourceDirPath = Constants::S3_SYNERGY_HOME + "/src/main/resources/SAFE_metacomponents";
 	const vector<string> fileNames = IOUtils::getFileNames(sourceDirPath);
 	foreach(string fileName, fileNames) {
 		boost::filesystem::copy_file(sourceDirPath + "/" + fileName, targetDirPath / fileName);

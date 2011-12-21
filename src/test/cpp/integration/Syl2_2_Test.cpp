@@ -53,6 +53,5 @@ void Syl2_2_Test::testIntegrationOfSynL2Modules() {
 	task.getContext().addModule(aco);
 	task.getContext().addModule(writer);
 
-    const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
-	task.execute(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_INT_SYL2_2.xml");
+	task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_INT_SYL2_2.xml");
 }

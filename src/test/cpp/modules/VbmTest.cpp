@@ -47,7 +47,6 @@ void VbmTest::testVbm() {
 	task.getContext().addModule(vbm);
 	task.getContext().addModule(writer);
 
-    const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
-	task.execute(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_VBM.xml");
+	task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_VBM.xml");
 }
 

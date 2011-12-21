@@ -40,9 +40,7 @@ void JobOrderParserTest::tearDown() {
 
 void JobOrderParserTest::testJobOrderParsing() {
 	XPathInitializer init;
-	shared_ptr<JobOrder> jobOrder = parser->parse(
-			IOUtils::getEnvironment("S3_SYNERGY_HOME")
-					+ "/src/test/resources/jobs/JobOrder.0.xml");
+	shared_ptr<JobOrder> jobOrder = parser->parse(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.0.xml");
 
 	checkConfiguration(jobOrder);
 	checkProcessorConfigurations(jobOrder);

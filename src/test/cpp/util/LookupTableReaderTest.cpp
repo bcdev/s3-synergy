@@ -19,7 +19,7 @@ LookupTableReaderTest::~LookupTableReaderTest() {
 }
 
 void LookupTableReaderTest::setUp() {
-	reader = new LookupTableReader(IOUtils::getEnvironment("S3_SYNERGY_HOME") + "/auxdata/v" + Constants::PROCESSOR_VERSION + "/S3__SY_2_SYRTAX.nc");
+	reader = new LookupTableReader(Constants::S3_SYNERGY_HOME + "/auxdata/v" + Constants::PROCESSOR_VERSION + "/S3__SY_2_SYRTAX.nc");
 }
 
 void LookupTableReaderTest::tearDown() {
