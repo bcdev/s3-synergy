@@ -21,12 +21,6 @@ using std::endl;
 using std::getenv;
 
 int main() {
-	if (getenv("S3_SYNERGY_HOME") == NULL) {
-		cout << "The test runner cannot be executed because the" << endl;
-		cout << "'S3_SYNERGY_HOME' environment variable has not" << endl;
-		cout << "been set." << endl;
-		return 1;
-	}
 	// Create the event manager and test controller
 	CPPUNIT_NS::TestResult controller;
 

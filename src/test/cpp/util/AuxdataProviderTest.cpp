@@ -23,8 +23,7 @@ AuxdataProviderTest::~AuxdataProviderTest() {
 }
 
 void AuxdataProviderTest::setUp() {
-	const char* value = std::getenv("S3_SYNERGY_HOME");
-	const string filePath = string(value) + "/auxdata/v" + Constants::PROCESSOR_VERSION + "/S3__SY_2_SYCPAX.nc";
+	const string filePath = Constants::S3_SYNERGY_HOME + "/auxdata/v" + Constants::PROCESSOR_VERSION + "/S3__SY_2_SYCPAX.nc";
 	auxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider("id", filePath));
 }
 

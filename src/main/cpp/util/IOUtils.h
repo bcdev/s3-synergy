@@ -91,22 +91,6 @@ public:
 		return dimensionSizes;
 	}
 
-	static string getEnvironment(const string& name) {
-		const char* value = std::getenv(name.c_str());
-		if (value != 0) {
-			return string(value);
-		}
-		BOOST_THROW_EXCEPTION(runtime_error("The environment variable '" + name + "' has not been set."));
-	}
-
-	static string getEnvironment(const string& name, const string& defaultValue) {
-		const char* value = std::getenv(name.c_str());
-		if (value != 0) {
-			return string(value);
-		}
-		return defaultValue;
-	}
-
 	static vector<string> getFileNames(const string& directory) {
 	    vector<string> fileNames;
 	    if (is_directory(directory)) {

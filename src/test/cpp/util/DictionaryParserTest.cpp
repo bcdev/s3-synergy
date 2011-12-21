@@ -38,7 +38,7 @@ DictionaryParserTest::~DictionaryParserTest() {
 
 void DictionaryParserTest::setUp() {
 	XPathInitializer init;
-	dictionary = DictionaryParser().parse(IOUtils::getEnvironment("S3_SYNERGY_HOME") + "/src/main/resources/dictionary");
+	dictionary = DictionaryParser().parse(Constants::S3_SYNERGY_HOME + "/src/main/resources/dictionary");
 }
 
 void DictionaryParserTest::tearDown() {

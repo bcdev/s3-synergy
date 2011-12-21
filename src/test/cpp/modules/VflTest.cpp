@@ -51,6 +51,5 @@ void VflTest::testVfl() {
 	task.getContext().addModule(vfl);
 	task.getContext().addModule(writer);
 
-    const string S3_SYNERGY_HOME = getenv("S3_SYNERGY_HOME");
-	task.execute(S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_VFL.xml");
+	task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_VFL.xml");
 }

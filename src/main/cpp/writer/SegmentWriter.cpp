@@ -74,7 +74,7 @@ void SegmentWriter::start(Context& context) {
 	targetDirPath = path(context.getJobOrder().getIpfProcessors().at(0).getOutputList().at(0).getFileName());
 	targetDirPath = targetDirPath.parent_path() / (targetDirPath.stem() + ".BREAKPOINT");
 	if (!targetDirPath.has_root_directory()) {
-		targetDirPath = getInstallationPath() / targetDirPath;
+		targetDirPath = Constants::S3_SYNERGY_HOME / targetDirPath;
 	}
 	context.getLogging().info("target product path is '" + targetDirPath.string() + "'", getId());
 

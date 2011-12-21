@@ -56,7 +56,7 @@ void SynL1Reader::start(Context& context) {
 
 	sourceDirPath = path(context.getJobOrder().getIpfProcessors().at(0).getInputList().at(0).getFileNames().at(0));
 	if (!sourceDirPath.has_root_directory()) {
-		sourceDirPath = getInstallationPath() / sourceDirPath;
+		sourceDirPath = Constants::S3_SYNERGY_HOME / sourceDirPath;
 	}
 	context.getLogging().info("Source product path is '" + sourceDirPath.string() + "'", getId());
 

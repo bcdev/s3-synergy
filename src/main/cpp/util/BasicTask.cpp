@@ -29,14 +29,6 @@ int BasicTask::execute(int argc, char** argv) {
 }
 
 int BasicTask::execute(const string& jobOrderPath) {
-	if (getenv("S3_SYNERGY_HOME") == NULL) {
-		std::cerr << "The task runner cannot be executed because the\n";
-		std::cerr << "'S3_SYNERGY_HOME' environment variable has not\n";
-		std::cerr << "been set." << std::endl;
-
-		return ExitCode::FAILURE;
-	}
-
     JobOrderParser jobOrderParser;
 	try {
 		shared_ptr<JobOrder> jobOrder = jobOrderParser.parse(jobOrderPath);
@@ -64,8 +56,7 @@ int BasicTask::execute(const string& jobOrderPath) {
     context.setErrorHandler(errorHandler);
 
     DictionaryParser dictionaryParser;
-    const string homePath = getenv("S3_SYNERGY_HOME");
-    shared_ptr<Dictionary> dictionary = dictionaryParser.parse(homePath + "/src/main/resources/dictionary");
+    shared_ptr<Dictionary> dictionary = dictionaryParser.parse(Constants::S3_SYNERGY_HOME + "/src/main/resources/dictionary");
     context.setDictionary(dictionary);
 
 	Processor processor;

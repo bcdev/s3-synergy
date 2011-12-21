@@ -49,16 +49,8 @@ public:
 	}
 
 protected:
-	static string getInstallationPath() {
-		const char* value = std::getenv("S3_SYNERGY_HOME");
-		if (value != 0) {
-			return string(value);
-		}
-		throw runtime_error("Unknown software installation path. The environment variable 'S3_SYNERGY_HOME' has not been set.");
-	}
-
 	static string getAuxdataPath() {
-		return getInstallationPath() + "/auxdata/v" + Constants::PROCESSOR_VERSION + "/";
+		return Constants::S3_SYNERGY_HOME + "/auxdata/v" + Constants::PROCESSOR_VERSION + "/";
 	}
 
     template<class K, class V>

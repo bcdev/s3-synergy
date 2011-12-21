@@ -8,6 +8,7 @@
 #include <fstream>
 #include <stdexcept>
 
+#include "../core/Config.h"
 #include "../util/IOUtils.h"
 #include "../util/NetCDF.h"
 
@@ -81,7 +82,7 @@ void SynL2Writer::process(Context& context) {
 void SynL2Writer::start(Context& context) {
 	targetDirPath = path(context.getJobOrder().getIpfProcessors().at(0).getOutputList().at(0).getFileName());
 	if (!targetDirPath.has_root_directory()) {
-		targetDirPath = getInstallationPath() / targetDirPath;
+		targetDirPath = Constants::S3_SYNERGY_HOME / targetDirPath;
 	}
 	context.getLogging().info("target product path is '" + targetDirPath.string() + "'", getId());
 
@@ -113,7 +114,7 @@ void SynL2Writer::start(Context& context) {
 
 void SynL2Writer::stop(Context& context) {
 	// copy template files to target directory
-	const string sourceDirPath = getInstallationPath() + "/src/main/resources/SAFE_metacomponents";
+	const string sourceDirPath = Constants::S3_SYNERGY_HOME + "/src/main/resources/SAFE_metacomponents";
 	const vector<string> fileNames = IOUtils::getFileNames(sourceDirPath);
 	foreach(string fileName, fileNames) {
 		boost::filesystem::copy_file(sourceDirPath + "/" + fileName, targetDirPath / fileName);
@@ -134,18 +135,15 @@ void SynL2Writer::stop(Context& context) {
 	pair<string, int> fileIdPair;
 
 	foreach(fileIdPair, ncFileIdMap) {
-	    context.getLogging().info("replacing ..." + fileIdPair.first, getId());
 	    string checksum = getMd5Sum(targetDirPath.string() + "/" + fileIdPair.first + ".nc");
 	    replaceString("\\s*\\$\\{checksum-" + fileIdPair.first + "\\.nc\\}\\s*", checksum, s);
 	    NetCDF::closeFile(fileIdPair.second);
 	}
 
-	context.getLogging().info("writing ...", getId());
 	std::ofstream ofs(string(targetDirPath.string() + "/manifest_SYN.xml").c_str(), std::ofstream::out);
 	for(size_t i = 0; i < s.size(); i++) {
 		ofs.put(s[i]);
 	}
-	context.getLogging().info("closing ...", getId());
 	ofs.close();
 
 	ifs.close();
@@ -161,7 +159,7 @@ void SynL2Writer::replaceString(const string& toReplace, const string& replaceme
 }
 
 string SynL2Writer::getMd5Sum(const string& file) const {
-    FILE* pipe = popen(string("md5sum " + file).c_str(), "r");
+    FILE* pipe = popen(string(Constants::MD5SUM_EXECUTABLE + " " + file).c_str(), "r");
     if (!pipe || !boost::filesystem::exists(path(file))) {
         BOOST_THROW_EXCEPTION(std::invalid_argument("Could not perform command 'md5sum' on file '" + file + "'."));
     }

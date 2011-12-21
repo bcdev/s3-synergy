@@ -1336,7 +1336,7 @@ This document is a sample manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='t550.nc' />
                 <checksum checksumName='MD5'>
-                    ${checksum-rt550.nc}
+                    ${checksum-t550.nc}
                 </checksum>
             </byteStream>
         </dataObject>
