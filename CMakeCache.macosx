@@ -63,3 +63,9 @@ set(SAFE_LIB_DIR lib/c++/MACOSX
 	FILEPATH
 	"The directory of the SAFE suite libraries within the SAFE_HOME directory."
 )
+
+set(MD5_SUM_EXECUTABLE /usr/local/bin/gmd5sum
+	CACHE
+	FILEPATH
+	"The path to the md5sum executable."
+)
