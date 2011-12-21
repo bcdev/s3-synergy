@@ -63,3 +63,9 @@ set(SAFE_LIB_DIR lib/c++/LINUX
 	FILEPATH
 	"The directory of the SAFE suite libraries within the SAFE_HOME directory."
 )
+
+set(LINUX_EXECUTABLES_HOME /usr/bin
+	CACHE
+	FILEPATH
+	"The directory containing the md5sum executable."
+)

@@ -1,4 +1,13 @@
+#include <string>
+
+using std::string;
+
 /**
  * Processor version.
  */
 const string PROCESSOR_VERSION = "@s3-synergy_VERSION_MAJOR@.@s3-synergy_VERSION_MINOR@";
+
+/**
+ * Path to executable 'md5sum'
+ */
+const string MD5SUM_EXECUTABLE = "@LINUX_EXECUTABLES_HOME@/md5sum";
