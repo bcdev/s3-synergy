@@ -134,18 +134,15 @@ void SynL2Writer::stop(Context& context) {
 	pair<string, int> fileIdPair;
 
 	foreach(fileIdPair, ncFileIdMap) {
-	    context.getLogging().info("replacing ..." + fileIdPair.first, getId());
 	    string checksum = getMd5Sum(targetDirPath.string() + "/" + fileIdPair.first + ".nc");
 	    replaceString("\\s*\\$\\{checksum-" + fileIdPair.first + "\\.nc\\}\\s*", checksum, s);
 	    NetCDF::closeFile(fileIdPair.second);
 	}
 
-	context.getLogging().info("writing ...", getId());
 	std::ofstream ofs(string(targetDirPath.string() + "/manifest_SYN.xml").c_str(), std::ofstream::out);
 	for(size_t i = 0; i < s.size(); i++) {
 		ofs.put(s[i]);
 	}
-	context.getLogging().info("closing ...", getId());
 	ofs.close();
 
 	ifs.close();
