@@ -25,7 +25,9 @@ public:
 	void stop(Context& context);
 
 private:
-
+	friend class SynL2WriterTest;
+	void replaceString(const string& toReplace, const string& replacement, string& input) const;
+	string getMd5Sum(const string& file) const;
 	void createNcVar(const ProductDescriptor& productDescriptor,
 			const SegmentDescriptor& segmentDescriptor,
 			const VariableDescriptor& variable, const Grid& grid);

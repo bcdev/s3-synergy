@@ -15,6 +15,7 @@
 
 class SynL2WriterTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(SynL2WriterTest);
+    CPPUNIT_TEST(testReplacing);
     CPPUNIT_TEST(testWriter);
     CPPUNIT_TEST_SUITE_END();
 
@@ -26,6 +27,7 @@ public:
 
 protected:
     void testWriter();
+    void testReplacing();
     void prepareContext();
     shared_ptr<Context> context;
 };

@@ -31,6 +31,7 @@ SynL2Writer::~SynL2Writer() {
 }
 
 void SynL2Writer::process(Context& context) {
+    return;
 	const Dictionary& dict = context.getDictionary();
 	const vector<SegmentDescriptor*> segmentDescriptors = dict.getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptors();
 
@@ -122,7 +123,6 @@ void SynL2Writer::stop(Context& context) {
 	foreach(string fileName, schemaFileNames) {
 		boost::filesystem::copy_file(sourceDirPath + "/schema/" + fileName, targetDirPath / "schema" / fileName);
 	}
-	context.getLogging().info("reading template ...", getId());
 	std::ifstream ifs(string(targetDirPath.string() + "/manifest_SYN.template").c_str(), std::ifstream::in);
 	std::ostringstream oss;
 	char c;
@@ -133,12 +133,13 @@ void SynL2Writer::stop(Context& context) {
 
 	pair<string, int> fileIdPair;
 
-	foreach(fileIdPair, ncFileIdMap)
-			{
-				context.getLogging().info("replacing ..." + fileIdPair.first, getId());
-				s.replace(s.begin(), s.end(), string("${checksum-" + fileIdPair.first + ".nc}").c_str(), "31415");
-				NetCDF::closeFile(fileIdPair.second);
-			}
+	foreach(fileIdPair, ncFileIdMap) {
+	    context.getLogging().info("replacing ..." + fileIdPair.first, getId());
+	    string checksum = getMd5Sum(targetDirPath.string() + "/" + fileIdPair.first + ".nc");
+	    replaceString("\\s*\\$\\{checksum-" + fileIdPair.first + "\\.nc\\}\\s*", checksum, s);
+	    NetCDF::closeFile(fileIdPair.second);
+	}
+
 	context.getLogging().info("writing ...", getId());
 	std::ofstream ofs(string(targetDirPath.string() + "/manifest_SYN.xml").c_str(), std::ofstream::out);
 	for(size_t i = 0; i < s.size(); i++) {
@@ -146,11 +147,33 @@ void SynL2Writer::stop(Context& context) {
 	}
 	context.getLogging().info("closing ...", getId());
 	ofs.close();
+
 	ifs.close();
 
 	ncVarIdMap.clear();
 	ncDimIdMap.clear();
 	ncFileIdMap.clear();
+}
+
+void SynL2Writer::replaceString(const string& toReplace, const string& replacement, string& input) const {
+    regex expr(toReplace.c_str());
+    input = regex_replace(input, expr, replacement);
+}
+
+string SynL2Writer::getMd5Sum(const string& file) const {
+    FILE* pipe = popen(string("md5sum " + file).c_str(), "r");
+    if (!pipe || !boost::filesystem::exists(path(file))) {
+        BOOST_THROW_EXCEPTION(std::invalid_argument("Could not perform command 'md5sum' on file '" + file + "'."));
+    }
+    char buffer[128];
+    std::string result = "";
+    while(!feof(pipe)) {
+        if(fgets(buffer, 128, pipe) != NULL)
+                result += buffer;
+    }
+    pclose(pipe);
+    replaceString("\\s+.*", "", result);
+    return result;
 }
 
 void SynL2Writer::createNcVar(const ProductDescriptor& productDescriptor, const SegmentDescriptor& segmentDescriptor, const VariableDescriptor& variableDescriptor, const Grid& grid) {

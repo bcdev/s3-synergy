@@ -53,6 +53,19 @@ void SynL2WriterTest::prepareContext() {
 void SynL2WriterTest::tearDown() {
 }
 
+void SynL2WriterTest::testReplacing() {
+    SynL2Writer writer;
+
+    string first = "abcdefg";
+    string toReplace = "b";
+    writer.replaceString(toReplace, "31415", first);
+    CPPUNIT_ASSERT(first.compare("a31415cdefg") == 0);
+
+    string second = "<checksum checksumName=\"MD5\">${checksum-tiepoints_meteo.nc}</checksum>";
+    writer.replaceString("\\$\\{checksum-tiepoints_meteo\\.nc\\}", "someChecksum", second);
+    CPPUNIT_ASSERT(second.compare("<checksum checksumName=\"MD5\">someChecksum</checksum>") == 0);
+}
+
 void SynL2WriterTest::testWriter() {
     shared_ptr<Module> module = shared_ptr<Module>(new SynL2SegmentProvider());
     shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());

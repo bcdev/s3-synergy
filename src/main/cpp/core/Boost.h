@@ -54,6 +54,7 @@ using boost::numeric_cast;
 using boost::numeric::ublas::matrix;
 using boost::regex;
 using boost::regex_match;
+using boost::regex_replace;
 using boost::shared_array;
 using boost::shared_ptr;
 
