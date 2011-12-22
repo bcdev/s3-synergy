@@ -12,7 +12,9 @@ using std::fill;
 using std::invalid_argument;
 using std::min;
 
-Vpr::Vpr() : BasicModule("VPR") {
+Vpr::Vpr() : BasicModule("VPR"),
+        collocatedReflectanceAccessors(4),
+        vgtReflectanceAccessors(4) {
 }
 
 Vpr::~Vpr() {
@@ -25,14 +27,24 @@ void Vpr::start(Context& context) {
     geoGrid = &geoSegment.getGrid();
     latAccessor = &geoSegment.getAccessor("latitude");
     lonAccessor = &geoSegment.getAccessor("longitude");
+    setupAccessors();
+}
+
+void Vpr::setupAccessors() {
+    collocatedReflectanceAccessors[0] = &collocatedSegment->getAccessor("B0");
+    collocatedReflectanceAccessors[1] = &collocatedSegment->getAccessor("B2");
+    collocatedReflectanceAccessors[2] = &collocatedSegment->getAccessor("B3");
+    collocatedReflectanceAccessors[3] = &collocatedSegment->getAccessor("MIR");
+    collocatedFlagsAccessor = &collocatedSegment->getAccessor("SM");
+
+    vgtReflectanceAccessors[0] = &vgtSegment->addVariable("B0", Constants::TYPE_DOUBLE);
+    vgtReflectanceAccessors[1] = &vgtSegment->addVariable("B2", Constants::TYPE_DOUBLE);
+    vgtReflectanceAccessors[2] = &vgtSegment->addVariable("B3", Constants::TYPE_DOUBLE);
+    vgtReflectanceAccessors[3] = &vgtSegment->addVariable("MIR", Constants::TYPE_DOUBLE);
+    vgtFlagsAccessor = &vgtSegment->addVariable("SM", Constants::TYPE_UBYTE);
 }
 
 void Vpr::process(Context& context) {
-    valarray<shared_ptr<Pixel> > pixels(5);
-    for(size_t i = 0; i < 5; i++) {
-        pixels[i] = shared_ptr<Pixel>(new Pixel());
-    }
-
     valarray<long> synIndices(3);
 
     const Grid& vgtGrid = vgtSegment->getGrid();
@@ -46,17 +58,15 @@ void Vpr::process(Context& context) {
             const double lat = getLatitude(l);
             const double lon = getLongitude(m);
             findPixelPos(lat, lon, synIndices);
+            // todo - make somehow use of 'findPixelPosForGivenIndices'
             const long synK = synIndices[0];
             const long synL = synIndices[1];
             const long synM = synIndices[2];
             if (synGrid.isValidPosition(synK, synL, synM)) {
-                setupPixel(pixels[synK], synK, synL, synM);
+                setValues(synK, synL, synM, l, m);
             } else {
-                // todo - set last computed line and/or first required line and return
-                return;
+                continue;
             }
-            const Pixel& pixel = findClosestPixel(pixels, lat, lon);
-            setValues(pixel, l, m);
         }
     }
 }
@@ -102,30 +112,17 @@ void Vpr::findPixelPos(double lat, double lon, long k0, long kMax, long l0, long
     }
 }
 
-void Vpr::setupPixel(shared_ptr<Pixel> p, long synK, long synL, long synM) const {
-    // todo - implement
-}
-
-Pixel& Vpr::findClosestPixel(const valarray<shared_ptr<Pixel> >& pixels, double lat, double lon) const {
-    if(pixels.size() == 0) {
-        BOOST_THROW_EXCEPTION(invalid_argument("No pixels given."));
+void Vpr::setValues(long synK, long synL, long synM, long l, long m) {
+    const Grid& collocatedGrid = collocatedSegment->getGrid();
+    const Grid& vgtGrid = vgtSegment->getGrid();
+    const size_t collocatedIndex = collocatedGrid.getIndex(synK, synL, synM);
+    const size_t vgtIndex = vgtGrid.getIndex(0, l, m);
+    for(size_t i = 0; i < collocatedReflectanceAccessors.size(); i++) {
+        const double value = collocatedReflectanceAccessors[i]->getDouble(collocatedIndex);
+        vgtReflectanceAccessors[i]->setDouble(vgtIndex, value);
     }
-    Pixel& closestPixel = *(pixels[0]);
-    double delta = numeric_limits<double>::max();
-    for(size_t i = 0; i < pixels.size(); i++) {
-        const Pixel& currentPixel = *(pixels[i]);
-        double innerDelta = std::abs(currentPixel.lat - lat) + std::abs(currentPixel.lon - lon);
-        if(innerDelta < delta) {
-            delta = innerDelta;
-            closestPixel = currentPixel;
-        }
-    }
-
-    return closestPixel;
-}
-
-void Vpr::setValues(const Pixel& p, long l, long m) {
-    // todo - implement
+    const uint8_t flags = collocatedFlagsAccessor->getUByte(collocatedIndex);
+    vgtFlagsAccessor->setUByte(vgtIndex, flags);
 }
 
 double Vpr::getLatitude(long l) {
