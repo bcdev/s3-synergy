@@ -160,7 +160,7 @@ void SynL2Writer::setChecksums(string& manifest) const {
     pair<string, int> fileIdPair;
     foreach(fileIdPair, ncFileIdMap) {
         string checksum = getMd5Sum(targetDirPath.string() + "/" + fileIdPair.first + ".nc");
-        replaceString("\\s*\\$\\{checksum-" + fileIdPair.first + "\\.nc\\}\\xml*", checksum, manifest);
+        replaceString("\\s*\\$\\{checksum-" + fileIdPair.first + "\\.nc\\}\\s*", checksum, manifest);
         NetCDF::closeFile(fileIdPair.second);
     }
 }
