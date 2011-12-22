@@ -53,17 +53,23 @@ void Vpr::process(Context& context) {
     const long firstL = context.getFirstComputableL(*vgtSegment, *this);
     const long lastL = context.getLastComputableL(*vgtSegment, *this);
 
+    bool indicesFound = false;
+
     for(long l = firstL; l <= lastL; l++) {
         for(long m = vgtGrid.getFirstM(); m <= vgtGrid.getMaxM(); m++) {
             const double lat = getLatitude(l);
             const double lon = getLongitude(m);
-            findPixelPos(lat, lon, synIndices);
-            // todo - make somehow use of 'findPixelPosForGivenIndices'
+            if(indicesFound) {
+                findPixelPosAroundGivenIndices(lat, lon, synIndices);
+            } else {
+                findPixelPos(lat, lon, synIndices);
+            }
             const long synK = synIndices[0];
             const long synL = synIndices[1];
             const long synM = synIndices[2];
             if (synGrid.isValidPosition(synK, synL, synM)) {
                 setValues(synK, synL, synM, l, m);
+                indicesFound = true;
             } else {
                 continue;
             }
