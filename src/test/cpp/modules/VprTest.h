@@ -16,7 +16,7 @@ class VprTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(testFindPixelPosAroundGivenIndices);
     CPPUNIT_TEST(testGetLatitude);
     CPPUNIT_TEST(testGetLongitude);
-//    CPPUNIT_TEST(testVpr);
+    CPPUNIT_TEST(testVpr);
     CPPUNIT_TEST_SUITE_END();
 
 public:
