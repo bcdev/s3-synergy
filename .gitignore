@@ -19,3 +19,4 @@ CMakeFiles/
 CMakeScripts/
 LOG.*
 Makefile
+Config.h

@@ -9,6 +9,7 @@
 
 #include "DirectLocator.h"
 
+using std::abs;
 using std::asin;
 using std::atan2;
 using std::cos;
@@ -17,26 +18,23 @@ using std::sin;
 Rotation::Rotation(double lat, double lon) {
 	const double u = toRadians(lon);
 	const double v = toRadians(lat);
-	const double w = 0.0;
 
 	const double cu = cos(u);
 	const double cv = cos(v);
-	const double cw = 1.0;
 	const double su = sin(u);
 	const double sv = sin(v);
-	const double sw = 0.0;
 
 	a11 = cu * cv;
 	a12 = su * cv;
 	a13 = sv;
 
-	a21 = sw * (cu * sv) - su * cw;
-	a22 = cw * cu + sw * (su * sv);
-	a23 = -sw * cv;
+	a21 = -su;
+	a22 = cu;
+	a23 = 0.0;
 
-	a31 = sw * -su - cw * (cu * sv);
-	a32 = sw * cu - cw * (su * sv);
-	a33 = cw * cv;
+	a31 = -(cu * sv);
+	a32 = -(su * sv);
+	a33 = cv;
 }
 
 Rotation::~Rotation() {
