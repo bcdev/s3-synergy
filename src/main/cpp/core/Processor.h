@@ -42,7 +42,8 @@ private:
 
 		void start();
 		void stop();
-		string getTime() const;
+		string getDiffTime() const;
+		time_t getStartTime() const;
 
 	private:
 		time_t startTime;

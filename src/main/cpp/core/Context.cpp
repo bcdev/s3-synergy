@@ -145,6 +145,14 @@ void Context::handleError(exception& e) {
 	}
 }
 
+void Context::setStartTime(time_t startTime) {
+    this->startTime = startTime;
+}
+
+time_t Context::getStartTime() const {
+    return startTime;
+}
+
 void Context::moveForward(shared_ptr<Segment> segment) const {
 	long lastComputedL = segment->getGrid().getLastL();
 

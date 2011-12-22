@@ -255,6 +255,10 @@ public:
 
 	void handleError(exception& e);
 
+	void setStartTime(time_t startTime);
+
+	time_t getStartTime() const;
+
 private:
 	/**
 	 * Returns the index of the first row in a segment, which is required for
@@ -328,6 +332,8 @@ private:
 	shared_ptr<Dictionary> dictionary;
 	shared_ptr<JobOrder> jobOrder;
 	shared_ptr<ErrorHandler> errorHandler;
+
+	time_t startTime;
 
 	vector<shared_ptr<Module> > moduleList;
 	map<string, shared_ptr<Identifiable> > objectMap;

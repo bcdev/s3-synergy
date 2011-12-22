@@ -26,6 +26,11 @@ public:
 
 private:
 	friend class SynL2WriterTest;
+	void copyTemplateFiles() const;
+	string readManifest() const;
+	void setStartTime(Context& context, string& xml) const;
+	void setChecksums(string& manifest) const;
+	void writeManifest(string& manifest) const;
 	void replaceString(const string& toReplace, const string& replacement, string& input) const;
 	string getMd5Sum(const string& file) const;
 	void createNcVar(const ProductDescriptor& productDescriptor,

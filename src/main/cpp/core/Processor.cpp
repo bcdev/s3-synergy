@@ -27,6 +27,7 @@ void Processor::process(Context& context) {
 	context.getLogging().progress("Main processing started.", "Processor");
 	try {
 		timer.start();
+		context.setStartTime(timer.getStartTime());
 		vector<shared_ptr<Module> > modules = context.getModules();
 		foreach(shared_ptr<Module> module, modules)
 				{
@@ -71,7 +72,7 @@ void Processor::process(Context& context) {
 	} catch (std::exception& e) {
 		context.handleError(e);
 	}
-	context.getLogging().progress("Main processing completed in " + timer.getTime() + " (HH:MM:SS.mm)", "Processor");
+	context.getLogging().progress("Main processing completed in " + timer.getDiffTime() + " (HH:MM:SS.mm)", "Processor");
 }
 
 Processor::Timer::Timer() {
@@ -88,13 +89,17 @@ void Processor::Timer::stop() {
 	std::time(&stopTime);
 }
 
-string Processor::Timer::getTime() const {
-	const double secs = std::difftime(stopTime, startTime);
-	const int h = secs / 3600.0;
-	const int m = (secs - h * 3600.0) / 60.0;
-	const double s = secs - h * 3600.0 - m * 60.0;
+string Processor::Timer::getDiffTime() const {
+	const double seconds = std::difftime(stopTime, startTime);
+    const int hours = seconds / 3600.0;
+    const int minutes = (seconds - hours * 3600.0) / 60.0;
+    const double secondsFraction = seconds - hours * 3600.0 - minutes * 60.0;
 
-	std::ostringstream oss;
-	oss << std::setfill('0') << std::setw(2) << h << ":" << std::setw(2) << m << ":" << std::fixed << std::setw(5) << std::setprecision(2) << s;
-	return oss.str();
+    std::ostringstream oss;
+    oss << std::setfill('0') << std::setw(2) << hours << ":" << std::setw(2) << minutes << ":" << std::fixed << std::setw(5) << std::setprecision(2) << secondsFraction;
+    return oss.str();
+}
+
+time_t Processor::Timer::getStartTime() const {
+    return startTime;
 }

@@ -727,7 +727,7 @@ This document is a sample manifest file of a SAFE archive. -->
                 <xmlData>
                     <safe:processing
                         name='L2 Processing'
-                        start='2011-11-16T18:06:31'>
+                        start='${processing-start-time}'>
                         <safe:facility
                             country='TBD'
                             name='TBD'
