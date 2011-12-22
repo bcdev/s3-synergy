@@ -12,10 +12,12 @@
 
 class VprTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(VprTest);
+    CPPUNIT_TEST(testGetPixelPosInGrid);
+    CPPUNIT_TEST(testFindPixelPosAroundGivenIndices);
     CPPUNIT_TEST(testGetLatitude);
     CPPUNIT_TEST(testGetLongitude);
     CPPUNIT_TEST(testFindClosestPixel);
-    CPPUNIT_TEST(testVpr);
+//    CPPUNIT_TEST(testVpr);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -25,6 +27,8 @@ public:
     void tearDown();
 
 private:
+    void testGetPixelPosInGrid();
+    void testFindPixelPosAroundGivenIndices();
     void testFindClosestPixel();
     void testGetLatitude();
     void testGetLongitude();
