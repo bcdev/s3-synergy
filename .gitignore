@@ -19,4 +19,4 @@ CMakeFiles/
 CMakeScripts/
 LOG.*
 Makefile
-src/main/cpp/core/Config.h
+Config.h

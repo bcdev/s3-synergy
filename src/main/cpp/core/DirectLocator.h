@@ -22,11 +22,11 @@ public:
 
 private:
 	static double toDegrees(double r) {
-		return r * 180.0 / 3.14159265358979323846;
+		return r * (180.0 / 3.14159265358979323846);
 	}
 
 	static double toRadians(double d) {
-		return d * 3.14159265358979323846 / 180.0;
+		return d * (3.14159265358979323846 / 180.0);
 	}
 
 	double a11;
@@ -51,7 +51,7 @@ private:
 	void interpolate(const long k, const long y0, const long x0, const double wx, const double wy, double& lat, double& lon) const;
 
 	static double interpolate(const double wi, const double wj, const double x00, const double x10, const double x01, const double x11) {
-		return x00 + wi * (x10 - x00) + wj * (x01 - x00) + wi * wj * (x11 + x00 - x01 - x10);
+		return x00 + wi * (x10 - x00) + wj * ((x01 - x00) + wi * (x11 - x10 - x01 + x00));
 	}
 
 	const Accessor& latAccessor;

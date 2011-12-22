@@ -152,7 +152,7 @@ void DirectLocatorTest::testLocation() {
 		}
 
 		long getMinL() const {
-			getFirstL();
+			return getFirstL();
 		}
 
 		long getMaxL() const {
@@ -236,5 +236,21 @@ void DirectLocatorTest::testLocation() {
 	dl.getLocation(0, 2.5, 2.5, lat, lon);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0, lat, 1.0E-15);
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(2.0, lon, 1.0E-15);
+
+	dl.getLocation(0, 1.0, 1.0, lat, lon);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(1.5, lat, 1.0E-4);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(0.5, lon, 1.0E-4);
+
+	dl.getLocation(0, 2.0, 1.0, lat, lon);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(1.5, lat, 1.0E-4);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(1.5, lon, 1.0E-4);
+
+	dl.getLocation(0, 1.0, 2.0, lat, lon);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(0.5, lat, 1.0E-4);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(0.5, lon, 1.0E-4);
+
+	dl.getLocation(0, 2.0, 2.0, lat, lon);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(0.5, lat, 1.0E-4);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(1.5, lon, 1.0E-4);
 }
 
