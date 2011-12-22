@@ -117,6 +117,7 @@ void SynL2Writer::stop(Context& context) {
 	setStartTime(context, manifest);
 	setChecksums(manifest);
 	writeManifest(manifest);
+	removeManifestTemplate();
 
 	ncVarIdMap.clear();
 	ncDimIdMap.clear();
@@ -171,6 +172,11 @@ void SynL2Writer::writeManifest(string& manifest) const {
         ofs.put(manifest[i]);
     }
     ofs.close();
+}
+
+void SynL2Writer::removeManifestTemplate() const {
+    path manifestTemplate = path(targetDirPath.string() + "/manifest_SYN.template");
+    boost::filesystem::remove(manifestTemplate);
 }
 
 void SynL2Writer::replaceString(const string& toReplace, const string& replacement, string& input) const {
