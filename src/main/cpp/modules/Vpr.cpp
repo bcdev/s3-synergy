@@ -22,7 +22,7 @@ Vpr::~Vpr() {
 
 void Vpr::start(Context& context) {
     collocatedSegment = &context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-    vgtSegment = &context.addSegment(Constants::SEGMENT_VGT_PLATE_CARREE, LINE_COUNT, COL_COUNT, 1, 0, LINE_COUNT - 1);
+    vgtSegment = &context.addSegment(Constants::SEGMENT_VGT_PLATE_CARREE, 400, COL_COUNT, 1, 0, LINE_COUNT - 1);
     const Segment& geoSegment = context.getSegment(Constants::SEGMENT_GEO);
     geoGrid = &geoSegment.getGrid();
     latAccessor = &geoSegment.getAccessor("latitude");
