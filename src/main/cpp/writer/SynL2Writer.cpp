@@ -149,11 +149,11 @@ string SynL2Writer::readManifest() const {
 }
 
 void SynL2Writer::setStartTime(Context& context, string& manifest) const {
-    struct tm* ptm = localtime(&context.getStartTime());
-    char buffer[32];
-    strftime(buffer, 32, "%Y-%m-%dT%H:%M:%S", ptm);
-    string startTime = string(buffer);
-    replaceString("\\$\\{processing-start-time\\}", startTime, manifest);
+//    struct tm* ptm = localtime(&context.getStartTime());
+//    char buffer[32];
+//    strftime(buffer, 32, "%Y-%m-%dT%H:%M:%S", ptm);
+//    string startTime = string(buffer);
+//    replaceString("\\$\\{processing-start-time\\}", startTime, manifest);
 }
 
 void SynL2Writer::setChecksums(string& manifest) const {
