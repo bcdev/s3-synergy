@@ -31,6 +31,7 @@ private:
 	void setStartTime(Context& context, string& xml) const;
 	void setChecksums(string& manifest) const;
 	void writeManifest(string& manifest) const;
+	void removeManifestTemplate() const;
 	void replaceString(const string& toReplace, const string& replacement, string& input) const;
 	string getMd5Sum(const string& file) const;
 	void createNcVar(const ProductDescriptor& productDescriptor,

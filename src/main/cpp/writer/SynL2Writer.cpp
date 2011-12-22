@@ -117,6 +117,7 @@ void SynL2Writer::stop(Context& context) {
 	setStartTime(context, manifest);
 	setChecksums(manifest);
 	writeManifest(manifest);
+	removeManifestTemplate();
 
 	ncVarIdMap.clear();
 	ncDimIdMap.clear();
@@ -149,18 +150,18 @@ string SynL2Writer::readManifest() const {
 }
 
 void SynL2Writer::setStartTime(Context& context, string& manifest) const {
-//    struct tm* ptm = localtime(&context.getStartTime());
-//    char buffer[32];
-//    strftime(buffer, 32, "%Y-%m-%dT%H:%M:%S", ptm);
-//    string startTime = string(buffer);
-//    replaceString("\\$\\{processing-start-time\\}", startTime, manifest);
+    struct tm* ptm = localtime(&context.getStartTime());
+    char buffer[32];
+    strftime(buffer, 32, "%Y-%m-%dT%H:%M:%S", ptm);
+    string startTime = string(buffer);
+    replaceString("\\$\\{processing-start-time\\}", startTime, manifest);
 }
 
 void SynL2Writer::setChecksums(string& manifest) const {
     pair<string, int> fileIdPair;
     foreach(fileIdPair, ncFileIdMap) {
         string checksum = getMd5Sum(targetDirPath.string() + "/" + fileIdPair.first + ".nc");
-        replaceString("\\s*\\$\\{checksum-" + fileIdPair.first + "\\.nc\\}\\xml*", checksum, manifest);
+        replaceString("\\s*\\$\\{checksum-" + fileIdPair.first + "\\.nc\\}\\s*", checksum, manifest);
         NetCDF::closeFile(fileIdPair.second);
     }
 }
@@ -171,6 +172,11 @@ void SynL2Writer::writeManifest(string& manifest) const {
         ofs.put(manifest[i]);
     }
     ofs.close();
+}
+
+void SynL2Writer::removeManifestTemplate() const {
+    path manifestTemplate = path(targetDirPath.string() + "/manifest_SYN.template");
+    boost::filesystem::remove(manifestTemplate);
 }
 
 void SynL2Writer::replaceString(const string& toReplace, const string& replacement, string& input) const {
