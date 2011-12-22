@@ -149,7 +149,7 @@ void Context::setStartTime(time_t startTime) {
     this->startTime = startTime;
 }
 
-time_t Context::getStartTime() const {
+const time_t Context::getStartTime() const {
     return startTime;
 }
 

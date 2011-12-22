@@ -257,7 +257,7 @@ public:
 
 	void setStartTime(time_t startTime);
 
-	time_t getStartTime() const;
+	const time_t getStartTime() const;
 
 private:
 	/**
