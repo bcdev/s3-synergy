@@ -10,6 +10,7 @@
 #include "../../../../src/main/cpp/core/SegmentImpl.h"
 #include "../../../../src/main/cpp/reader/SynL1Reader.h"
 #include "../../../../src/main/cpp/modules/Col.h"
+#include "../../../../src/main/cpp/modules/Pcl.h"
 #include "../../../../src/main/cpp/modules/Vbm.h"
 #include "../../../../src/main/cpp/modules/Vfl.h"
 #include "../../../../src/main/cpp/modules/Vpr.h"
@@ -148,6 +149,7 @@ void VprTest::testVpr() {
 
 	shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
 	shared_ptr<Module> col = shared_ptr<Module>(new Col());
+	shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
 	shared_ptr<Module> vbm = shared_ptr<Module>(new Vbm());
 	shared_ptr<Module> vfl = shared_ptr<Module>(new Vfl());
 	shared_ptr<Module> vpr = shared_ptr<Module>(new Vpr());
@@ -155,6 +157,7 @@ void VprTest::testVpr() {
 
 	task.getContext().addModule(reader);
 	task.getContext().addModule(col);
+	task.getContext().addModule(pcl);
 	task.getContext().addModule(vbm);
 	task.getContext().addModule(vfl);
 	task.getContext().addModule(vpr);
