@@ -58,6 +58,24 @@ void VprTest::testMinMaxSynLat() {
     latAccessor.setDouble(geoGrid.getIndex(1, 2, 0), 44);
     latAccessor.setDouble(geoGrid.getIndex(1, 2, 1), 45);
 
+    double minLat = 91;
+    double maxLat = -91;
+    vpr.minMaxSynLat(&minLat, &maxLat);
+    CPPUNIT_ASSERT(std::abs(maxLat - 45) < 0.001);
+    CPPUNIT_ASSERT(std::abs(minLat - 20) < 0.001);
+}
+
+void VprTest::testMinMaxSynLon() {
+    Vpr vpr;
+    const shared_ptr<Segment> geoSegment = shared_ptr<Segment>(new SegmentImpl(Constants::SEGMENT_GEO, 3, 2, 2, 0, 2));
+    Accessor& latAccessor = geoSegment->addVariable("latitude", Constants::TYPE_DOUBLE);
+    Accessor& lonAccessor = geoSegment->addVariable("longitude", Constants::TYPE_DOUBLE);
+    vpr.latAccessor = &latAccessor;
+    vpr.lonAccessor = &lonAccessor;
+
+    const Grid& geoGrid = geoSegment->getGrid();
+    vpr.geoGrid = &geoGrid;
+
     lonAccessor.setDouble(geoGrid.getIndex(0, 0, 0), 10);
     lonAccessor.setDouble(geoGrid.getIndex(0, 0, 1), 11);
     lonAccessor.setDouble(geoGrid.getIndex(0, 1, 0), 12);
@@ -71,11 +89,11 @@ void VprTest::testMinMaxSynLat() {
     lonAccessor.setDouble(geoGrid.getIndex(1, 2, 0), 16);
     lonAccessor.setDouble(geoGrid.getIndex(1, 2, 1), 17);
 
-    double minLat = 91;
-    double maxLat = -91;
-    vpr.minMaxSynLat(&minLat, &maxLat);
-    CPPUNIT_ASSERT(std::abs(maxLat - 45) < 0.001);
-    CPPUNIT_ASSERT(std::abs(minLat - 20) < 0.001);
+    double minLon = 181;
+    double maxLon = -181;
+    vpr.minMaxSynLon(&minLon, &maxLon);
+    CPPUNIT_ASSERT(std::abs(maxLon - 17) < 0.001);
+    CPPUNIT_ASSERT(std::abs(minLon - 10) < 0.001);
 }
 
 void VprTest::testMinMaxVgtLat() {

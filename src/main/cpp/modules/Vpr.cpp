@@ -62,15 +62,25 @@ void Vpr::process(Context& context) {
         return;
     }
 
+    double synMinLon = 180.1;
+    double synMaxLon = -180.1;
+    minMaxSynLon(&synMinLon, &synMaxLon);
+
     const Grid& vgtGrid = vgtSegment->getGrid();
     const Grid& synGrid = collocatedSegment->getGrid();
     valarray<long> synIndices(3);
     bool indicesFound = false;
     for(long l = firstL; l <= lastL; l++) {
-        context.getLogging().info("Projecting vgt line " + lexical_cast<string>(l), getId());
         const double lat = getLatitude(l);
+        if(lat > synMaxLat || lat < synMinLat) {
+            continue;
+        }
+        context.getLogging().info("Projecting vgt line " + lexical_cast<string>(l), getId());
         for(long m = vgtGrid.getFirstM(); m <= vgtGrid.getMaxM(); m++) {
             const double lon = getLongitude(m);
+            if(synMinLon > lon || synMaxLon < lon) {
+                continue;
+            }
             if(indicesFound) {
                 findPixelPosAroundGivenIndices(lat, lon, synIndices);
             } else {
@@ -102,6 +112,23 @@ void Vpr::minMaxSynLat(double* minLat, double* maxLat) const {
                 }
                 if(lat > *maxLat) {
                     *maxLat = lat;
+                }
+            }
+        }
+    }
+}
+
+void Vpr::minMaxSynLon(double* minLon, double* maxLon) const {
+    for(long k = geoGrid->getFirstK(); k <= geoGrid->getMaxK(); k++) {
+        for(long l = geoGrid->getFirstL(); l <= geoGrid->getMaxL(); l++) {
+            for(long m = geoGrid->getFirstM(); m <= geoGrid->getMaxM(); m++) {
+                const size_t index = geoGrid->getIndex(k, l , m);
+                const double lon = lonAccessor->getDouble(index);
+                if(lon < *minLon) {
+                    *minLon = lon;
+                }
+                if(lon > *maxLon) {
+                    *maxLon = lon;
                 }
             }
         }

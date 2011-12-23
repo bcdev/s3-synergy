@@ -15,6 +15,7 @@
 class VprTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(VprTest);
     CPPUNIT_TEST(testMinMaxSynLat);
+    CPPUNIT_TEST(testMinMaxSynLon);
     CPPUNIT_TEST(testMinMaxVgtLat);
     CPPUNIT_TEST(testGetPixelPosInGrid);
     CPPUNIT_TEST(testFindPixelPosAroundGivenIndices);
@@ -31,6 +32,7 @@ public:
 
 private:
     void testMinMaxSynLat();
+    void testMinMaxSynLon();
     void testMinMaxVgtLat();
     void testGetPixelPosInGrid();
     void testFindPixelPosAroundGivenIndices();

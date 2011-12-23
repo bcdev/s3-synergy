@@ -52,6 +52,7 @@ private:
 	void setupAccessors();
 	void minMaxSynLat(double* minLat, double* maxLat) const;
 	void minMaxVgtLat(long firstL, long lastL, double* minLat, double* maxLat) const;
+	void minMaxSynLon(double* minLon, double* maxLon) const;
 	void findPixelPosInWholeGrid(double lat, double lon, valarray<long>& synIndices) const;
 	void findPixelPos(double lat, double lon, long k0, long kMax, long l0, long lMax, long m0, long mMax, valarray<long>& synIndices) const;
 	void findPixelPosAroundGivenIndices(double lat, double lon, valarray<long>& synIndices) const;
