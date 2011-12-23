@@ -22,8 +22,20 @@ public:
 private:
 	friend class VprTest;
 
-	Segment* collocatedSegment;
 	Segment* vgtSegment;
+	const Segment* collocatedSegment;
+	const Segment* geoSegment;
+
+	const Grid* geoGrid;
+	const Accessor* latAccessor;
+	const Accessor* lonAccessor;
+
+    valarray<Accessor*> collocatedReflectanceAccessors;
+    valarray<Accessor*> vgtReflectanceAccessors;
+    Accessor* vgtFlagsAccessor;
+    Accessor* collocatedFlagsAccessor;
+
+    static const size_t PIXEL_SEARCH_RADIUS = 10;
 
 	static const uint16_t PIXELS_PER_DEGREE = 112;
 	static const uint16_t LAT_CELL_COUNT = 131;
@@ -37,10 +49,14 @@ private:
 	static double getLatitude(long l);
 	static double getLongitude(long l);
 
-	void getPixelPos(double lat, double lon, valarray<long>& synIndices);
-	void setupPixel(shared_ptr<Pixel> p, long synK, long synL, long synM);
-	Pixel& findClosestPixel(const valarray<shared_ptr<Pixel> >& pixels, double lat, double lon);
-	void setValues(const Pixel& p, long l, long m);
+	void setupAccessors();
+	void minMaxSynLat(double* minLat, double* maxLat) const;
+	void minMaxVgtLat(long firstL, long lastL, double* minLat, double* maxLat) const;
+	void minMaxSynLon(double* minLon, double* maxLon) const;
+	void findPixelPosInWholeGrid(double lat, double lon, valarray<long>& synIndices) const;
+	void findPixelPos(double lat, double lon, long k0, long kMax, long l0, long lMax, long m0, long mMax, valarray<long>& synIndices) const;
+	void findPixelPosAroundGivenIndices(double lat, double lon, valarray<long>& synIndices) const;
+	void setValues(long synK, long synL, long synM, long l, long m);
 };
 
 #endif /* VPR_H_ */
