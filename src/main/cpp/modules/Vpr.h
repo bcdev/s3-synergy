@@ -24,6 +24,7 @@ private:
 
 	Segment* vgtSegment;
 	const Segment* collocatedSegment;
+	const Segment* geoSegment;
 
 	const Grid* geoGrid;
 	const Accessor* latAccessor;
@@ -33,6 +34,8 @@ private:
     valarray<Accessor*> vgtReflectanceAccessors;
     Accessor* vgtFlagsAccessor;
     Accessor* collocatedFlagsAccessor;
+
+    static const size_t PIXEL_SEARCH_RADIUS = 10;
 
 	static const uint16_t PIXELS_PER_DEGREE = 112;
 	static const uint16_t LAT_CELL_COUNT = 131;
@@ -47,7 +50,9 @@ private:
 	static double getLongitude(long l);
 
 	void setupAccessors();
-	void findPixelPos(double lat, double lon, valarray<long>& synIndices) const;
+	void minMaxSynLat(double* minLat, double* maxLat) const;
+	void minMaxVgtLat(long firstL, long lastL, double* minLat, double* maxLat) const;
+	void findPixelPosInWholeGrid(double lat, double lon, valarray<long>& synIndices) const;
 	void findPixelPos(double lat, double lon, long k0, long kMax, long l0, long lMax, long m0, long mMax, valarray<long>& synIndices) const;
 	void findPixelPosAroundGivenIndices(double lat, double lon, valarray<long>& synIndices) const;
 	void setValues(long synK, long synL, long synM, long l, long m);

@@ -13,7 +13,6 @@
 #include "../../../../src/main/cpp/modules/Pcl.h"
 #include "../../../../src/main/cpp/modules/Vbm.h"
 #include "../../../../src/main/cpp/modules/Vfl.h"
-#include "../../../../src/main/cpp/modules/Vpr.h"
 #include "../../../../src/main/cpp/util/BasicTask.h"
 #include "../../../../src/main/cpp/writer/SegmentWriter.h"
 
@@ -33,6 +32,63 @@ void VprTest::setUp() {
 }
 
 void VprTest::tearDown() {
+}
+
+void VprTest::testMinMaxSynLat() {
+    Vpr vpr;
+    const shared_ptr<Segment> geoSegment = shared_ptr<Segment>(new SegmentImpl(Constants::SEGMENT_GEO, 3, 2, 2, 0, 2));
+    Accessor& latAccessor = geoSegment->addVariable("latitude", Constants::TYPE_DOUBLE);
+    Accessor& lonAccessor = geoSegment->addVariable("longitude", Constants::TYPE_DOUBLE);
+    vpr.latAccessor = &latAccessor;
+    vpr.lonAccessor = &lonAccessor;
+
+    const Grid& geoGrid = geoSegment->getGrid();
+    vpr.geoGrid = &geoGrid;
+
+    latAccessor.setDouble(geoGrid.getIndex(0, 0, 0), 20);
+    latAccessor.setDouble(geoGrid.getIndex(0, 0, 1), 21);
+    latAccessor.setDouble(geoGrid.getIndex(0, 1, 0), 22);
+    latAccessor.setDouble(geoGrid.getIndex(0, 1, 1), 23);
+    latAccessor.setDouble(geoGrid.getIndex(0, 2, 0), 24);
+    latAccessor.setDouble(geoGrid.getIndex(0, 2, 1), 25);
+    latAccessor.setDouble(geoGrid.getIndex(1, 0, 0), 40);
+    latAccessor.setDouble(geoGrid.getIndex(1, 0, 1), 41);
+    latAccessor.setDouble(geoGrid.getIndex(1, 1, 0), 42);
+    latAccessor.setDouble(geoGrid.getIndex(1, 1, 1), 43);
+    latAccessor.setDouble(geoGrid.getIndex(1, 2, 0), 44);
+    latAccessor.setDouble(geoGrid.getIndex(1, 2, 1), 45);
+
+    lonAccessor.setDouble(geoGrid.getIndex(0, 0, 0), 10);
+    lonAccessor.setDouble(geoGrid.getIndex(0, 0, 1), 11);
+    lonAccessor.setDouble(geoGrid.getIndex(0, 1, 0), 12);
+    lonAccessor.setDouble(geoGrid.getIndex(0, 1, 1), 13);
+    lonAccessor.setDouble(geoGrid.getIndex(0, 2, 0), 14);
+    lonAccessor.setDouble(geoGrid.getIndex(0, 2, 1), 15);
+    lonAccessor.setDouble(geoGrid.getIndex(1, 0, 0), 12);
+    lonAccessor.setDouble(geoGrid.getIndex(1, 0, 1), 13);
+    lonAccessor.setDouble(geoGrid.getIndex(1, 1, 0), 14);
+    lonAccessor.setDouble(geoGrid.getIndex(1, 1, 1), 15);
+    lonAccessor.setDouble(geoGrid.getIndex(1, 2, 0), 16);
+    lonAccessor.setDouble(geoGrid.getIndex(1, 2, 1), 17);
+
+    double minLat = 91;
+    double maxLat = -91;
+    vpr.minMaxSynLat(&minLat, &maxLat);
+    CPPUNIT_ASSERT(std::abs(maxLat - 45) < 0.001);
+    CPPUNIT_ASSERT(std::abs(minLat - 20) < 0.001);
+}
+
+void VprTest::testMinMaxVgtLat() {
+    Vpr vpr;
+    Context context;
+    Segment& vgtSegment = context.addSegment(Constants::SEGMENT_VGT_PLATE_CARREE, 1000, vpr.COL_COUNT, 1, 0, vpr.LINE_COUNT - 1);
+    vpr.vgtSegment = &vgtSegment;
+
+    double minLat = 91;
+    double maxLat = -91;
+    vpr.minMaxVgtLat(0, 999, &minLat, &maxLat);
+    CPPUNIT_ASSERT(std::abs(maxLat - 75) < 0.001);
+    CPPUNIT_ASSERT(std::abs(minLat - 66.0804) < 0.001);
 }
 
 void VprTest::testGetPixelPosInGrid() {
@@ -71,15 +127,14 @@ void VprTest::testGetPixelPosInGrid() {
     lonAccessor.setDouble(geoGrid.getIndex(1, 1, 1), 15);
     lonAccessor.setDouble(geoGrid.getIndex(1, 2, 0), 16);
     lonAccessor.setDouble(geoGrid.getIndex(1, 2, 1), 17);
-
     valarray<long> synIndices(3);
 
-    vpr.findPixelPos(20.0, 10.0, synIndices);
+    vpr.findPixelPosInWholeGrid(20.0, 10.0, synIndices);
     CPPUNIT_ASSERT(synIndices[0] == 0);
     CPPUNIT_ASSERT(synIndices[1] == 0);
     CPPUNIT_ASSERT(synIndices[2] == 0);
 
-    vpr.findPixelPos(45.0, 17.0, synIndices);
+    vpr.findPixelPosInWholeGrid(45.0, 17.0, synIndices);
     CPPUNIT_ASSERT(synIndices[0] == 1);
     CPPUNIT_ASSERT(synIndices[1] == 2);
     CPPUNIT_ASSERT(synIndices[2] == 1);
@@ -165,4 +220,3 @@ void VprTest::testVpr() {
 
 	task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_VPR.xml");
 }
-

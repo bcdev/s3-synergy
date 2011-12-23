@@ -8,10 +8,14 @@
 #ifndef VPRTEST_H
 #define	VPRTEST_H
 
+#include "../../../../src/main/cpp/modules/Vpr.h"
+
 #include <cppunit/extensions/HelperMacros.h>
 
 class VprTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(VprTest);
+    CPPUNIT_TEST(testMinMaxSynLat);
+    CPPUNIT_TEST(testMinMaxVgtLat);
     CPPUNIT_TEST(testGetPixelPosInGrid);
     CPPUNIT_TEST(testFindPixelPosAroundGivenIndices);
     CPPUNIT_TEST(testGetLatitude);
@@ -26,6 +30,8 @@ public:
     void tearDown();
 
 private:
+    void testMinMaxSynLat();
+    void testMinMaxVgtLat();
     void testGetPixelPosInGrid();
     void testFindPixelPosAroundGivenIndices();
     void testGetLatitude();

@@ -22,11 +22,14 @@ Vpr::~Vpr() {
 
 void Vpr::start(Context& context) {
     collocatedSegment = &context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+    geoSegment = &context.getSegment(Constants::SEGMENT_GEO);
+    geoGrid = &geoSegment->getGrid();
+    latAccessor = &geoSegment->getAccessor("latitude");
+    lonAccessor = &geoSegment->getAccessor("longitude");
+
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGT_PLATE_CARREE + "' to context.", getId());
     vgtSegment = &context.addSegment(Constants::SEGMENT_VGT_PLATE_CARREE, 400, COL_COUNT, 1, 0, LINE_COUNT - 1);
-    const Segment& geoSegment = context.getSegment(Constants::SEGMENT_GEO);
-    geoGrid = &geoSegment.getGrid();
-    latAccessor = &geoSegment.getAccessor("latitude");
-    lonAccessor = &geoSegment.getAccessor("longitude");
+
     setupAccessors();
 }
 
@@ -45,24 +48,33 @@ void Vpr::setupAccessors() {
 }
 
 void Vpr::process(Context& context) {
-    valarray<long> synIndices(3);
-
-    const Grid& vgtGrid = vgtSegment->getGrid();
-    const Grid& synGrid = collocatedSegment->getGrid();
-
     const long firstL = context.getFirstComputableL(*vgtSegment, *this);
     const long lastL = context.getLastComputableL(*vgtSegment, *this);
 
-    bool indicesFound = false;
+    double synMinLat = 90.1;
+    double synMaxLat = -90.1;
+    minMaxSynLat(&synMinLat, &synMaxLat);
+    double vgtMinLat = 90.1;
+    double vgtMaxLat = -90.1;
+    minMaxVgtLat(firstL, lastL, &vgtMinLat, &vgtMaxLat);
 
+    if(synMaxLat < vgtMinLat || vgtMaxLat < synMinLat) {
+        return;
+    }
+
+    const Grid& vgtGrid = vgtSegment->getGrid();
+    const Grid& synGrid = collocatedSegment->getGrid();
+    valarray<long> synIndices(3);
+    bool indicesFound = false;
     for(long l = firstL; l <= lastL; l++) {
+        context.getLogging().info("Projecting vgt line " + lexical_cast<string>(l), getId());
+        const double lat = getLatitude(l);
         for(long m = vgtGrid.getFirstM(); m <= vgtGrid.getMaxM(); m++) {
-            const double lat = getLatitude(l);
             const double lon = getLongitude(m);
             if(indicesFound) {
                 findPixelPosAroundGivenIndices(lat, lon, synIndices);
             } else {
-                findPixelPos(lat, lon, synIndices);
+                findPixelPosInWholeGrid(lat, lon, synIndices);
             }
             const long synK = synIndices[0];
             const long synL = synIndices[1];
@@ -71,13 +83,45 @@ void Vpr::process(Context& context) {
                 setValues(synK, synL, synM, l, m);
                 indicesFound = true;
             } else {
+                // todo - issue warning here?
+                indicesFound = false;
                 continue;
             }
         }
     }
 }
 
-void Vpr::findPixelPos(double lat, double lon, valarray<long>& synIndices) const {
+void Vpr::minMaxSynLat(double* minLat, double* maxLat) const {
+    for(long k = geoGrid->getFirstK(); k <= geoGrid->getMaxK(); k++) {
+        for(long l = geoGrid->getFirstL(); l <= geoGrid->getMaxL(); l++) {
+            for(long m = geoGrid->getFirstM(); m <= geoGrid->getMaxM(); m++) {
+                const size_t index = geoGrid->getIndex(k, l , m);
+                const double lat = latAccessor->getDouble(index);
+                if(lat < *minLat) {
+                    *minLat = lat;
+                }
+                if(lat > *maxLat) {
+                    *maxLat = lat;
+                }
+            }
+        }
+    }
+}
+
+void Vpr::minMaxVgtLat(long firstL, long lastL, double* minLat, double* maxLat) const {
+    const Grid& vgtGrid = vgtSegment->getGrid();
+    for(long l = firstL; l <= lastL; l++) {
+        const double lat = getLatitude(l);
+        if(lat < *minLat) {
+            *minLat = lat;
+        }
+        if(lat > *maxLat) {
+            *maxLat = lat;
+        }
+    }
+}
+
+void Vpr::findPixelPosInWholeGrid(double lat, double lon, valarray<long>& synIndices) const {
     findPixelPos(lat, lon,
             geoGrid->getFirstK(), geoGrid->getMaxK(),
             geoGrid->getFirstL(), geoGrid->getMaxL(),
@@ -86,13 +130,12 @@ void Vpr::findPixelPos(double lat, double lon, valarray<long>& synIndices) const
 }
 
 void Vpr::findPixelPosAroundGivenIndices(double lat, double lon, valarray<long>& synIndices) const {
-    const size_t radius = 10;
-    const long k0 = max<long>(0, synIndices[0] - radius / 2);
-    const long kMax = min<long>(geoGrid->getMaxK(), synIndices[0] + radius / 2);
-    const long l0 = max<long>(0, synIndices[1] - radius / 2);
-    const long lMax = min<long>(geoGrid->getMaxL(), synIndices[1] + radius / 2);
-    const long m0 = max<long>(0, synIndices[2] - radius / 2);
-    const long mMax = min<long>(geoGrid->getMaxM(), synIndices[2] + radius / 2);
+    const long k0 = max<long>(0, synIndices[0] - PIXEL_SEARCH_RADIUS / 2);
+    const long kMax = min<long>(geoGrid->getMaxK(), synIndices[0] + PIXEL_SEARCH_RADIUS / 2);
+    const long l0 = max<long>(0, synIndices[1] - PIXEL_SEARCH_RADIUS / 2);
+    const long lMax = min<long>(geoGrid->getMaxL(), synIndices[1] + PIXEL_SEARCH_RADIUS / 2);
+    const long m0 = max<long>(0, synIndices[2] - PIXEL_SEARCH_RADIUS / 2);
+    const long mMax = min<long>(geoGrid->getMaxM(), synIndices[2] + PIXEL_SEARCH_RADIUS / 2);
     findPixelPos(lat, lon, k0, kMax, l0, lMax, m0, mMax, synIndices);
 }
 
