@@ -341,8 +341,8 @@ void Col::addSlstrVariables(Context& context) {
 	}
 
 	addVariable(context, t, SLN_CONFIDENCE_FLAG_VARIABLE_NAME, nadir, SLN_CONFIDENCE_FLAG_VARIABLE_NAME, sourceProductDescriptor);
-	collocationNameMapX[SLN_CONFIDENCE_FLAG_VARIABLE_NAME] = "x_corr_" + lexical_cast<string>(1);
-	collocationNameMapY[SLN_CONFIDENCE_FLAG_VARIABLE_NAME] = "y_corr_" + lexical_cast<string>(1);
+	collocationNameMapX[SLN_CONFIDENCE_FLAG_VARIABLE_NAME] = "x_corr_" + lexical_cast<string>(3);
+	collocationNameMapY[SLN_CONFIDENCE_FLAG_VARIABLE_NAME] = "y_corr_" + lexical_cast<string>(3);
 	addVariable(context, t, SLO_CONFIDENCE_FLAG_VARIABLE_NAME, oblique, SLO_CONFIDENCE_FLAG_VARIABLE_NAME, sourceProductDescriptor);
 	collocationNameMapX[SLO_CONFIDENCE_FLAG_VARIABLE_NAME] = "x_corr_o";
 	collocationNameMapY[SLO_CONFIDENCE_FLAG_VARIABLE_NAME] = "y_corr_o";
