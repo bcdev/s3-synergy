@@ -57,10 +57,29 @@ void Vpr::process(Context& context) {
     double vgtMinLat = 90.1;
     double vgtMaxLat = -90.1;
     minMaxVgtLat(firstL, lastL, &vgtMinLat, &vgtMaxLat);
-
-    if(synMaxLat < vgtMinLat || vgtMaxLat < synMinLat) {
+    /*
+     * if the minimum latitude of the current VGT segment is greater than the maximum latitude
+     * of the current SYN segment, move the VGT segment by setting its last computed line
+     * and do not allow moving of the SYN segment by setting its first required line.
+     */
+    if(synMaxLat < vgtMinLat) {
         return;
     }
+    /*
+     * if the maximum latitude of the current VGT segment is less than the minimum latitude
+     * of the current SYN segment, move the SYN segment by setting its first required line
+     * and do not allow moving of the VGT segment by setting its last computed line.
+     */
+    if(vgtMaxLat < synMinLat) {
+        return;
+    }
+
+    /*
+     * if the minimum latitude of the current VGT segment is less than the maximum latitude
+     * of the current SYN segment AND the minimum VGT latitude is greater than the minumum
+     * SYN latitude (i.e. the VGT segment and the SYN segment overlap), perform the reprojection
+     * and set the first required line of the SYN segment.
+     */
 
     double synMinLon = 180.1;
     double synMaxLon = -180.1;
