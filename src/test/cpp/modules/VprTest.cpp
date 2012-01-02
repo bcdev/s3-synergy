@@ -198,23 +198,23 @@ void VprTest::testFindPixelPosAroundGivenIndices() {
 }
 
 void VprTest::testGetLatitude() {
-    CPPUNIT_ASSERT(std::abs(75 - Vpr::getLatitude(0)) < 0.001);
-    CPPUNIT_ASSERT(std::abs(74.1071 - Vpr::getLatitude(100)) < 0.001);
-    CPPUNIT_ASSERT(std::abs(9.5 - Vpr::getLatitude(7336)) < 0.001);
-    CPPUNIT_ASSERT(std::abs(-55.9911 - Vpr::getLatitude(14671)) < 0.001);
+    CPPUNIT_ASSERT(std::abs(75 - Vpr::getVgtLatitude(0)) < 0.001);
+    CPPUNIT_ASSERT(std::abs(74.1071 - Vpr::getVgtLatitude(100)) < 0.001);
+    CPPUNIT_ASSERT(std::abs(9.5 - Vpr::getVgtLatitude(7336)) < 0.001);
+    CPPUNIT_ASSERT(std::abs(-55.9911 - Vpr::getVgtLatitude(14671)) < 0.001);
 
-    CPPUNIT_ASSERT_THROW(Vpr::getLatitude(14672), std::invalid_argument);
-    CPPUNIT_ASSERT_THROW(Vpr::getLatitude(-1), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(Vpr::getVgtLatitude(14672), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(Vpr::getVgtLatitude(-1), std::invalid_argument);
 }
 
 void VprTest::testGetLongitude() {
-    CPPUNIT_ASSERT(std::abs(-180 - Vpr::getLongitude(0)) < 0.001);
-    CPPUNIT_ASSERT(std::abs(-179.1071 - Vpr::getLongitude(100)) < 0.001);
-    CPPUNIT_ASSERT(std::abs(0 - Vpr::getLongitude(20160)) < 0.001);
-    CPPUNIT_ASSERT(std::abs(179.9911 - Vpr::getLongitude(40319)) < 0.001);
+    CPPUNIT_ASSERT(std::abs(-180 - Vpr::getVgtLongitude(0)) < 0.001);
+    CPPUNIT_ASSERT(std::abs(-179.1071 - Vpr::getVgtLongitude(100)) < 0.001);
+    CPPUNIT_ASSERT(std::abs(0 - Vpr::getVgtLongitude(20160)) < 0.001);
+    CPPUNIT_ASSERT(std::abs(179.9911 - Vpr::getVgtLongitude(40319)) < 0.001);
 
-    CPPUNIT_ASSERT_THROW(Vpr::getLongitude(40320), std::invalid_argument);
-    CPPUNIT_ASSERT_THROW(Vpr::getLongitude(-1), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(Vpr::getVgtLongitude(40320), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(Vpr::getVgtLongitude(-1), std::invalid_argument);
 }
 
 void VprTest::testVpr() {

@@ -46,8 +46,8 @@ private:
 
 	static const double PIXEL_SIZE = 1.0 / PIXELS_PER_DEGREE;
 
-	static double getLatitude(long l);
-	static double getLongitude(long l);
+	static double getVgtLatitude(long l);
+	static double getVgtLongitude(long l);
 
 	void setupAccessors();
 	void minMaxSynLat(double* minLat, double* maxLat) const;
@@ -56,6 +56,7 @@ private:
 	void findPixelPosInWholeGrid(double lat, double lon, valarray<long>& synIndices) const;
 	void findPixelPos(double lat, double lon, long k0, long kMax, long l0, long lMax, long m0, long mMax, valarray<long>& synIndices) const;
 	void findPixelPosAroundGivenIndices(double lat, double lon, valarray<long>& synIndices) const;
+	long findLineOfSynSegmentNearestTo(double vgtMaxLat) const;
 	void setValues(long synK, long synL, long synM, long l, long m);
 };
 
