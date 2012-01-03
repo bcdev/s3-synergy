@@ -382,6 +382,25 @@ This document is a sample manifest file of a SAFE archive. -->
             </metadataWrap>
         </metadataObject>
 
+        <!-- Acquisition Period -->
+        <metadataObject
+                ID='acquisitionPeriod'
+                classification='DESCRIPTION'
+                category='DMD'>
+            <metadataWrap
+                    textInfo='Acquisition Period'
+                    vocabularyName='SAFE'
+                    mimeType='text/xml'>
+                <xmlData>
+                    <safe:acquisitionPeriod>
+                        <safe:startTime>2007-09-10T09:51:30.389847Z</safe:startTime>
+                        <safe:stopTime>2007-09-10T09:54:41.864790Z</safe:stopTime>
+                    </safe:acquisitionPeriod>
+                </xmlData>
+            </metadataWrap>
+        </metadataObject>
+
+
         <!-- MEASUREMENT METADATA =============== -->
 
         <!-- None Defined for SLSTR in IODD Part 0 -->
@@ -735,7 +754,7 @@ This document is a sample manifest file of a SAFE archive. -->
         <!-- VIRTUAL DATA COMPONENTS ============ -->
         <dataObject
                 ID='v_N2_SST_data'
-                repID='v_N2_SST_schema'>
+                repID='virtualDataSchema'>
             <byteStream mimeType='application/octetstream'>
                 <fileLocation
                         locatorType='URL'
@@ -748,7 +767,7 @@ This document is a sample manifest file of a SAFE archive. -->
 
         <dataObject
                 ID='v_N3R_SST_data'
-                repID='v_N3R_SST_schema'>
+                repID='virtualDataSchema'>
             <byteStream mimeType='application/octetstream'>
                 <fileLocation
                         locatorType='URL'
@@ -761,7 +780,7 @@ This document is a sample manifest file of a SAFE archive. -->
 
         <dataObject
                 ID='v_N3_SST_data'
-                repID='v_N3_SST_schema'>
+                repID='virtualDataSchema'>
             <byteStream mimeType='application/octetstream'>
                 <fileLocation
                         locatorType='URL'
@@ -774,7 +793,7 @@ This document is a sample manifest file of a SAFE archive. -->
 
         <dataObject
                 ID='v_D2_SST_data'
-                repID='v_D2_SST_schema'>
+                repID='virtualDataSchema'>
             <byteStream mimeType='application/octetstream'>
                 <fileLocation
                         locatorType='URL'
@@ -787,7 +806,7 @@ This document is a sample manifest file of a SAFE archive. -->
 
         <dataObject
                 ID='v_D3_SST_data'
-                repID='v_D3_SST_schema'>
+                repID='virtualDataSchema'>
             <byteStream mimeType='application/octetstream'>
                 <fileLocation
                         locatorType='URL'

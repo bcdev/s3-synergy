@@ -92,7 +92,7 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
         // cartesian_tx.nc
         attachCartesianTiePointsToProduct(manifest.getCartesianTiepointCoordinatesFileName(), product);
         // geometry_tn.nc
-        attachGeometryTiePointsToProduct(manifest.getGeometryTiepointsFileName(), product);
+        attachGeometryTiePointsToProduct(manifest.getNadirSolarViewGeometryTiepointsFileName(), product);
         // met_tx.nc
         attachMeteorologicalTiePointsToProduct(manifest.getMeteorologicalTiePointsFileName(), product);
 

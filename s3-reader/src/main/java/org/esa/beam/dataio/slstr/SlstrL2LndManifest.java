@@ -59,32 +59,6 @@ public class SlstrL2LndManifest {
         }
     }
 
-    public List<String> getLSTMeasurementFileNames() {
-        NodeList dataObjects = xPathHelper.getNodeList(
-                "/XFDU/dataObjectSection/dataObject[@repID='LSTdataSchema']", doc);
-        List<String> fileNames = new ArrayList<String>();
-        for (int i = 0; i < dataObjects.getLength(); i++) {
-            Node item = dataObjects.item(i);
-            String fileName = xPathHelper.getString("./byteStream/fileLocation/@href", item);
-            fileNames.add(fileName);
-        }
-
-        return fileNames;
-    }
-
-    public List<String> getFRPMeasurementFileNames() {
-        NodeList dataObjects = xPathHelper.getNodeList(
-                "/XFDU/dataObjectSection/dataObject[@repID='FRPdataSchema']", doc);
-        List<String> fileNames = new ArrayList<String>();
-        for (int i = 0; i < dataObjects.getLength(); i++) {
-            Node item = dataObjects.item(i);
-            String fileName = xPathHelper.getString("./byteStream/fileLocation/@href", item);
-            fileNames.add(fileName);
-        }
-
-        return fileNames;
-    }
-
     public List<String> getMeasurementFileNames() {
         List<String> fileNames = new ArrayList<String>();
 
@@ -156,7 +130,7 @@ public class SlstrL2LndManifest {
         return xPathHelper.getString("./byteStream/fileLocation/@href", geoDataObject);
     }
 
-    public String getGeometryTiepointsFileName() {
+    public String getNadirSolarViewGeometryTiepointsFileName() {
         Node geoDataObject = xPathHelper.getNode("/XFDU/dataObjectSection/dataObject[@repID='nadirSolarViewGeometrySchema']",
                 doc);
         return xPathHelper.getString("./byteStream/fileLocation/@href", geoDataObject);
