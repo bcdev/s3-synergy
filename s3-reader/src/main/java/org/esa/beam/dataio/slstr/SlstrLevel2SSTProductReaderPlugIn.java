@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  * @author Olaf Danne
  * @since 1.0
  */
-public class SlstrLevel2LndProductReaderPlugIn implements ProductReaderPlugIn {
+public class SlstrLevel2SSTProductReaderPlugIn implements ProductReaderPlugIn {
 
     public static final String FORMAT_NAME_SLSTR_L2 = "SLSTR-L2";
 
@@ -42,7 +42,7 @@ public class SlstrLevel2LndProductReaderPlugIn implements ProductReaderPlugIn {
 
     @Override
     public ProductReader createReaderInstance() {
-        return new SlstrLevel2LndProductReader(this);
+        return new SlstrLevel2SSTProductReader(this);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class SlstrLevel2LndProductReaderPlugIn implements ProductReaderPlugIn {
     }
 
     private boolean isDirectoryNameValid(String parentDirectoryName) {
-        Pattern pattern = Pattern.compile("S3.?_SL_2_LST..._.*.SAFE");
+        Pattern pattern = Pattern.compile("S3.?_SL_2_W..._.*.SAFE");
         return pattern.matcher(parentDirectoryName).matches();
     }
 

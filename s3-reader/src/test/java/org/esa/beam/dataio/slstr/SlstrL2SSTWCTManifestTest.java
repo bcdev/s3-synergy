@@ -48,14 +48,20 @@ public class SlstrL2SSTWCTManifestTest {
     }
 
     @Test
-    public void testGetMeasurementFileNames() {
-        final List<String> measurementFiles = manifestTest.getWCTMeasurementFileNames();
-        assertEquals(5, measurementFiles.size());
+    public void testGetSingleViewMeasurementFileNames() {
+        final List<String> measurementFiles = manifestTest.getWCTNadirViewMeasurementFileNames();
+        assertEquals(3, measurementFiles.size());
         assertEquals("N2_SST_in.nc", measurementFiles.get(0));
         assertEquals("N3R_SST_in.nc", measurementFiles.get(1));
         assertEquals("N3_SST_in.nc", measurementFiles.get(2));
-        assertEquals("D2_SST_in.nc", measurementFiles.get(3));
-        assertEquals("D3_SST_in.nc", measurementFiles.get(4));
+    }
+
+    @Test
+    public void testGetDualViewMeasurementFileNames() {
+        final List<String> measurementFiles = manifestTest.getWCTDualViewMeasurementFileNames();
+        assertEquals(2, measurementFiles.size());
+        assertEquals("D2_SST_io.nc", measurementFiles.get(0));
+        assertEquals("D3_SST_io.nc", measurementFiles.get(1));
     }
 
     @Test
@@ -65,8 +71,8 @@ public class SlstrL2SSTWCTManifestTest {
         assertEquals("N2_SST_in.ncml", virtualDataFileNames.get(0));
         assertEquals("N3R_SST_in.ncml", virtualDataFileNames.get(1));
         assertEquals("N3_SST_in.ncml", virtualDataFileNames.get(2));
-        assertEquals("D2_SST_in.ncml", virtualDataFileNames.get(3));
-        assertEquals("D3_SST_in.ncml", virtualDataFileNames.get(4));
+        assertEquals("D2_SST_io.ncml", virtualDataFileNames.get(3));
+        assertEquals("D3_SST_io.ncml", virtualDataFileNames.get(4));
     }
 
     @Test

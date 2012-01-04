@@ -58,7 +58,7 @@ public class SlstrL2SSTManifest {
         }
     }
 
-    public List<String> getWCTMeasurementFileNames() {
+    public List<String> getWCTNadirViewMeasurementFileNames() {
         List<String> fileNames = new ArrayList<String>();
 
         NodeList n2SSTDataObjects = xPathHelper.getNodeList(
@@ -85,6 +85,12 @@ public class SlstrL2SSTManifest {
             fileNames.add(fileName);
         }
 
+        return fileNames;
+    }
+
+    public List<String> getWCTDualViewMeasurementFileNames() {
+        List<String> fileNames = new ArrayList<String>();
+
         NodeList d2SSTDataObjects = xPathHelper.getNodeList(
                 "/XFDU/dataObjectSection/dataObject[@repID='D2_SST_schema']", doc);
         for (int i = 0; i < d2SSTDataObjects.getLength(); i++) {
@@ -101,9 +107,9 @@ public class SlstrL2SSTManifest {
             fileNames.add(fileName);
         }
 
-
         return fileNames;
     }
+
 
     public List<String> getWSTMeasurementFileNames() {
         List<String> fileNames = new ArrayList<String>();

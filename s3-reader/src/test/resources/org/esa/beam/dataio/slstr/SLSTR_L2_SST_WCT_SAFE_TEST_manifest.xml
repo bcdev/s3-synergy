@@ -730,7 +730,7 @@ This document is a sample manifest file of a SAFE archive. -->
             <byteStream mimeType='application/octetstream'>
                 <fileLocation
                         locatorType='URL'
-                        href='D2_SST_in.nc'/>
+                        href='D2_SST_io.nc'/>
                 <checksum checksumName='MD5'>
                     24396a21013dc67ccfcf6fa564f19313
                 </checksum>
@@ -743,7 +743,7 @@ This document is a sample manifest file of a SAFE archive. -->
             <byteStream mimeType='application/octetstream'>
                 <fileLocation
                         locatorType='URL'
-                        href='D3_SST_in.nc'/>
+                        href='D3_SST_io.nc'/>
                 <checksum checksumName='MD5'>
                     24396a21013dc67ccfcf6fa564f19313
                 </checksum>
@@ -797,7 +797,7 @@ This document is a sample manifest file of a SAFE archive. -->
             <byteStream mimeType='application/octetstream'>
                 <fileLocation
                         locatorType='URL'
-                        href='D2_SST_in.ncml'/>
+                        href='D2_SST_io.ncml'/>
                 <checksum checksumName='MD5'>
                     24396a21013dc67ccfcf6fa564f19313
                 </checksum>
@@ -810,7 +810,7 @@ This document is a sample manifest file of a SAFE archive. -->
             <byteStream mimeType='application/octetstream'>
                 <fileLocation
                         locatorType='URL'
-                        href='D3_SST_in.ncml'/>
+                        href='D3_SST_io.ncml'/>
                 <checksum checksumName='MD5'>
                     24396a21013dc67ccfcf6fa564f19313
                 </checksum>
