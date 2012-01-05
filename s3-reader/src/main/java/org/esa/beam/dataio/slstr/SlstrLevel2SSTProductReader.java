@@ -71,7 +71,7 @@ public class SlstrLevel2SSTProductReader extends AbstractProductReader {
             attachMeasurementBands(wctNadirViewMeasurementProducts, product);
             attachWCTAnnotationData(manifest, product);
 
-            // todo: clarify how to distinguish nadir and oblique data (different grids!!)
+            // todo: clarify how to separate nadir and oblique data (they are given on different grids!!)
 //            List<Product> wctDualViewMeasurementProducts = loadMeasurementProducts(manifest.getWCTDualViewMeasurementFileNames());
 //            if (wctDualViewMeasurementProducts != null && wctDualViewMeasurementProducts.size() > 0) {
 //                width = wctDualViewMeasurementProducts.get(0).getSceneRasterWidth();
@@ -109,7 +109,7 @@ public class SlstrLevel2SSTProductReader extends AbstractProductReader {
         attachCartesianTiePointsToProduct(manifest.getCartesianTiepointCoordinatesFileName(), product);
         // geometry_tn.nc
         attachGeometryTiePointsToProduct(manifest.getNadirSolarViewGeometryTiepointsFileName(), product);
-        // todo: clarify how to distinguish nadir and oblique data (different grids!!)
+        // todo: clarify how to separate nadir and oblique data (they are given on different grids!!)  s.a.
         // geometry_to.nc
 //        attachGeometryTiePointsToProduct(manifest.getObliqueSolarViewGeometryTiepointsFileName(), product);
         // met_tx.nc
@@ -122,7 +122,7 @@ public class SlstrLevel2SSTProductReader extends AbstractProductReader {
         attachGeodeticDataCoodinatesToProduct(manifest.getGeodeticDataCoordinatesFileName(), product);
         // flags_in.nc:
         attachFlagsToProduct(manifest.getNadirFlagsFileName(), product);
-        // todo: clarify how to distinguish nadir and oblique data (different grids!!)
+        // todo: clarify how to separate nadir and oblique data (they are given on different grids!!)  s.a.
         // flags_io.nc:
 //        attachFlagsToProduct(manifest.getObliqueFlagsFileName(), product);
         // indices_in.nc:

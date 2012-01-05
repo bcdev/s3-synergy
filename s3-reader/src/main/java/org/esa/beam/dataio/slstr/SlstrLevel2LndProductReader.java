@@ -32,19 +32,7 @@ import java.util.logging.Logger;
 public class SlstrLevel2LndProductReader extends AbstractProductReader {
 
     private final Logger logger;
-    private List<Product> measurementProducts;         // LST_in.nc, FRP_in.nc
-    private Product cartesianDataCoordinatesProduct;   // cartesian_in.nc
-    private Product cartesianTiePointsProduct;         // cartesian_tx.nc
-    private Product flagsProduct;                      // flags_in.nc
-    private Product geodeticDataCoordinatesProduct;    // geodetic_in.nc
-    private Product geodeticTiePointsProduct;          // geodetic_tx.nc
-    private Product geometryTiePointsProduct;          // geometry_tn.nc
-    private Product indicesProduct;                    // indices_in.nc
-    private Product meteorologicalTiePointsProduct;    // met_tx.nc
-    private Product timeProduct;                       // met_tx.nc
-    private int width;
-    private int height;
-    
+
     private final String[] indicesProductBandNames = {"scan", "pixel", "detector"};
     private final String[] flagsProductBandNames = {"cloud", "bayes", "pointing", "confidence"};
 
@@ -72,9 +60,9 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
     }
 
     private Product createProduct(SlstrL2LndManifest manifest) {
-        measurementProducts = loadMeasurementProducts(manifest.getMeasurementFileNames());
-        width = measurementProducts.get(0).getSceneRasterWidth();
-        height = measurementProducts.get(0).getSceneRasterHeight();
+        final List<Product> measurementProducts = loadMeasurementProducts(manifest.getMeasurementFileNames());
+        final int width = measurementProducts.get(0).getSceneRasterWidth();
+        final int height = measurementProducts.get(0).getSceneRasterHeight();
         Product product = new Product(getProductName(), SlstrLevel2LndProductReaderPlugIn.FORMAT_NAME_SLSTR_L2, width,
                 height, this);
         product.setStartTime(manifest.getStartTime());
@@ -110,7 +98,6 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
     }
 
     private void attachMeasurementBands(List<Product> measurementProducts, Product product) {
-        int k = 0;
         for (final Product bandProduct : measurementProducts) {
             for (final Band sourceBand : bandProduct.getBands()) {
                 final String bandName = sourceBand.getName();
@@ -123,7 +110,7 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
     private void attachGeodeticTiePointsToProduct(String tiePointsFileName, Product product) {
         // file: geodetic_tx.nc
         try {
-            geodeticTiePointsProduct = readProduct(tiePointsFileName);
+            final Product geodeticTiePointsProduct = readProduct(tiePointsFileName);
             final MetadataElement metadataRoot = geodeticTiePointsProduct.getMetadataRoot();
             final MetadataElement globalAttributes = metadataRoot.getElement("Global_Attributes");
             final short[] resolutions = (short[]) globalAttributes.getAttribute("resolution").getDataElems();
@@ -169,7 +156,7 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
     private void attachFlagsToProduct(String flagsFileName, Product product) {
         // file: indices_in.nc
         try {
-            flagsProduct = readProduct(flagsFileName);
+            final Product flagsProduct = readProduct(flagsFileName);
             for (final Band sourceBand : flagsProduct.getBands()) {
                 final String bandName = sourceBand.getName();
                 for (String flagsBandName: flagsProductBandNames) {
@@ -188,7 +175,7 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
     private void attachGeometryTiePointsToProduct(String geometryTiepointsFileName, Product product) {
         // file: geometry_tn.nc
         try {
-            geometryTiePointsProduct = readProduct(geometryTiepointsFileName);
+            final Product geometryTiePointsProduct = readProduct(geometryTiepointsFileName);
             final MetadataElement metadataRoot = geometryTiePointsProduct.getMetadataRoot();
             final MetadataElement globalAttributes = metadataRoot.getElement("Global_Attributes");
             final short[] resolutions = (short[]) globalAttributes.getAttribute("resolution").getDataElems();
@@ -212,7 +199,7 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
     private void attachIndicesToProduct(String indicesFileName, Product product) {
         // file: indices_in.nc
         try {
-            indicesProduct = readProduct(indicesFileName);
+            final Product indicesProduct = readProduct(indicesFileName);
             for (final Band sourceBand : indicesProduct.getBands()) {
                 final String bandName = sourceBand.getName();
                 for (String indicesBandName:indicesProductBandNames) {
@@ -238,7 +225,7 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
         // file: geodetic_tx.nc
         try {
             // todo: this will currently fail because netCDF file contains a 64bit variable 'scan_time'
-            timeProduct = readProduct(timeCoordinatesFileName);
+            final Product timeProduct = readProduct(timeCoordinatesFileName);
         } catch (IOException e) {
             String msg = String.format("Not able to read file '%s.", timeCoordinatesFileName);
             logger.log(Level.WARNING, msg, e);
@@ -252,7 +239,7 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
     private List<Product> loadMeasurementProducts(List<String> measurementFileNames) {
         List<Product> products = new ArrayList<Product>();
         for (String fileName : measurementFileNames) {
-            // todo: FRP_in.nc has empty strings in global attributes, cannot be read by current netCDF reader
+            // todo: FRP_in.nc has empty strings in global attributes, cannot be read by current netCDF reader. Fix there.
             if (!fileName.startsWith("FRP")) {
                 try {
                     products.add(readProduct(fileName));

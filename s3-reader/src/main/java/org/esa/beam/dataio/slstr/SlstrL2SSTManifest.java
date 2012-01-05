@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class encapsulating the manifest file of an SLSTR Level 2 product.
+ * Class encapsulating the manifest file of an SLSTR Level 2 SST (WCT and WST) product.
  *
  * @author Olaf Danne
  * @since 1.0
@@ -204,6 +204,4 @@ public class SlstrL2SSTManifest {
         return xPathHelper.getString("./byteStream/fileLocation/@href", geoDataObject);
     }
 
-
-    // todo continue
 }

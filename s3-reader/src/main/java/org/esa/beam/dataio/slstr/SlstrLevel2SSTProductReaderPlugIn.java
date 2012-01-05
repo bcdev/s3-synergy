@@ -17,11 +17,11 @@ import java.util.regex.Pattern;
  */
 public class SlstrLevel2SSTProductReaderPlugIn implements ProductReaderPlugIn {
 
-    public static final String FORMAT_NAME_SLSTR_L2 = "SLSTR-L2";
+    public static final String FORMAT_NAME_SLSTR_L2 = "SLSTR-L2-SST";
 
     private static final Class[] SUPPORTED_INPUT_TYPES = new Class[]{String.class, File.class};
     private static final String DESCRIPTION = "SLSTR L2b SAFE Format";
-    private static final String MANIFEST_FILE_EXTENSION = ".xml";      // todo discuss
+    private static final String MANIFEST_FILE_EXTENSION = ".xml";      // todo: discuss
     private static final String[] DEFAULT_FILE_EXTENSIONS = new String[]{MANIFEST_FILE_EXTENSION};
     private static final String[] FORMAT_NAMES = new String[]{FORMAT_NAME_SLSTR_L2};
 
@@ -76,8 +76,7 @@ public class SlstrLevel2SSTProductReaderPlugIn implements ProductReaderPlugIn {
 
     private boolean isInputFileNameValid(String name) {
         final String manifestFileName = "manifest".concat(MANIFEST_FILE_EXTENSION);
-        final boolean equalsName = manifestFileName.equals(name);
-        return equalsName;
+        return manifestFileName.equals(name);
     }
 
     private boolean isDirectoryNameValid(String parentDirectoryName) {

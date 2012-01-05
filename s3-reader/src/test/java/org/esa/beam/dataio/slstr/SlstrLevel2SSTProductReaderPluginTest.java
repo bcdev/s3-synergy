@@ -13,23 +13,23 @@ import java.util.Iterator;
 import static org.junit.Assert.*;
 
 
-public class SlstrLevel2LndProductReaderPluginTest {
+public class SlstrLevel2SSTProductReaderPluginTest {
     public static final String SLSTR_SENSOR_ID = "SL";
 
-    private SlstrLevel2LndProductReaderPlugIn plugIn;
+    private SlstrLevel2SSTProductReaderPlugIn plugIn;
 
     @Before
     public void setup() {
-        plugIn = new SlstrLevel2LndProductReaderPlugIn();
+        plugIn = new SlstrLevel2SSTProductReaderPlugIn();
     }
 
     @Test
     public void testIfPlugInIsLoaded() {
         ProductIOPlugInManager ioPlugInManager = ProductIOPlugInManager.getInstance();
         Iterator<ProductReaderPlugIn> readerPlugIns = ioPlugInManager.getReaderPlugIns(
-                SlstrLevel2LndProductReaderPlugIn.FORMAT_NAME_SLSTR_L2);
+                SlstrLevel2SSTProductReaderPlugIn.FORMAT_NAME_SLSTR_L2);
         assertTrue(readerPlugIns.hasNext());
-        assertTrue(readerPlugIns.next() instanceof SlstrLevel2LndProductReaderPlugIn);
+        assertTrue(readerPlugIns.next() instanceof SlstrLevel2SSTProductReaderPlugIn);
 
     }
 
@@ -80,7 +80,7 @@ public class SlstrLevel2LndProductReaderPluginTest {
         assertNotSame(secondInstance, firstInstance);
     }
     private String createManifestFilePath(String sensorId) {
-        String validParentDirectory = String.format("/S3_%s_2_LSTMMM_TTTTTTTTTTTT_instanceID_GGG_CCCC_VV.SAFE/", sensorId);
+        String validParentDirectory = String.format("/S3_%s_2_WMMM_TTTTTTTTTTTT_instanceID_GGG_CCCC_VV.SAFE/", sensorId);
         String manifestFile = "manifest.xml";
         return validParentDirectory + manifestFile;
     }
