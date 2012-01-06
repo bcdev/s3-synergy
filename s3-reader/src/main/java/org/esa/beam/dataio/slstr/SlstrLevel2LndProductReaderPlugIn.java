@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  */
 public class SlstrLevel2LndProductReaderPlugIn implements ProductReaderPlugIn {
 
-    public static final String FORMAT_NAME_SLSTR_L2 = "SLSTR-L2-Lnd";
+    public static final String FORMAT_NAME_SLSTR_L2 = "SLSTR-L2-LST";
 
     private static final Class[] SUPPORTED_INPUT_TYPES = new Class[]{String.class, File.class};
     private static final String DESCRIPTION = "SLSTR L2b SAFE Format";

@@ -45,6 +45,26 @@
             <description>Import a Sentinel 3 OLCI L2 data product or product subset.</description>
             <helpId>importS3OlciL2Product</helpId>
         </action>
+        <action>
+            <id>importS3SlstrL2LSTProduct</id>
+            <class>org.esa.beam.visat.actions.ProductImportAction</class>
+            <formatName>SLSTR-L2-LST</formatName>
+            <text>Import SLSTR L2 LST Product...</text>
+            <mnemonic>S</mnemonic>
+            <shortDescr>Import a SLSTR L2 LST data product or product subset.</shortDescr>
+            <description>Import a Sentinel 3 SLSTR L2 LST data product or product subset.</description>
+            <helpId>importS3SlstrL2LSTProduct</helpId>
+        </action>
+        <action>
+            <id>importS3SlstrL2SSTProduct</id>
+            <class>org.esa.beam.visat.actions.ProductImportAction</class>
+            <formatName>SLSTR-L2-SST</formatName>
+            <text>Import SLSTR L2 SST Product...</text>
+            <mnemonic>S</mnemonic>
+            <shortDescr>Import a SLSTR L2 SST data product or product subset.</shortDescr>
+            <description>Import a Sentinel 3 SLSTR L2 SST data product or product subset.</description>
+            <helpId>importS3SlstrL2SSTProduct</helpId>
+        </action>
     </extension>
 
 </module>
