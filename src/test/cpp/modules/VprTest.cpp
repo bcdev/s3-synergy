@@ -60,7 +60,7 @@ void VprTest::testMinMaxSynLat() {
 
     double minLat = 91;
     double maxLat = -91;
-    vpr.minMaxSynLat(&minLat, &maxLat);
+    vpr.getMinMaxSynLat(&minLat, &maxLat);
     CPPUNIT_ASSERT(std::abs(maxLat - 45) < 0.001);
     CPPUNIT_ASSERT(std::abs(minLat - 20) < 0.001);
 }
@@ -104,7 +104,7 @@ void VprTest::testMinMaxVgtLat() {
 
     double minLat = 91;
     double maxLat = -91;
-    vpr.minMaxVgtLat(0, 999, &minLat, &maxLat);
+    vpr.getMinMaxVgtLat(0, 999, &minLat, &maxLat);
     CPPUNIT_ASSERT(std::abs(maxLat - 75) < 0.001);
     CPPUNIT_ASSERT(std::abs(minLat - 66.0804) < 0.001);
 }

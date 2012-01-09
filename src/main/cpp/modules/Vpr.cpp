@@ -53,26 +53,25 @@ void Vpr::process(Context& context) {
 
     double synMinLat = 90.0;
     double synMaxLat = -90.0;
-    minMaxSynLat(&synMinLat, &synMaxLat);
+    getMinMaxSynLat(&synMinLat, &synMaxLat);
     double vgtMinLat = 90.0;
     double vgtMaxLat = -90.0;
-    minMaxVgtLat(firstL, lastL, &vgtMinLat, &vgtMaxLat);
+    getMinMaxVgtLat(firstL, lastL, &vgtMinLat, &vgtMaxLat);
     /*
      * if the minimum latitude of the current VGT segment is greater than the maximum latitude
-     * of the current SYN segment, move the VGT segment by setting its last computed line
-     * and do not allow moving of the SYN segment by setting its first required line.
+     * of the current SYN segment, move the VGT segment forward and do not allow moving
+     * of the SYN segment.
      */
     if(synMaxLat < vgtMinLat) {
         context.setLastComputedL(*vgtSegment, *this, lastL);
-//        const long currentFirstRequiredLine = context.getFirstRequiredL(*collocatedSegment);
-        const long currentFirstRequiredLine = context.getFirstComputableL(*collocatedSegment, *this);
-        context.setFirstRequiredL(*collocatedSegment, *this, currentFirstRequiredLine);
+        const long firstLine = collocatedSegment->getGrid().getFirstL();
+        context.setFirstRequiredL(*collocatedSegment, *this, firstLine);
         return;
     }
     /*
      * if the maximum latitude of the current VGT segment is less than the minimum latitude
-     * of the current SYN segment, move the SYN segment by setting its first required line
-     * and do not allow moving of the VGT segment by setting its last computed line.
+     * of the current SYN segment, do not allow moving of the VGT segment and move
+     * the SYN segment forward.
      */
     if(vgtMaxLat < synMinLat) {
         context.setLastComputedL(*vgtSegment, *this, firstL);
@@ -90,7 +89,6 @@ void Vpr::process(Context& context) {
      */
 
     long l = findLineOfSynSegmentNearestTo(vgtMaxLat);
-
     context.setFirstRequiredL(*collocatedSegment, *this, l);
 
     double synMinLon = 180.0;
@@ -131,7 +129,7 @@ void Vpr::process(Context& context) {
     }
 }
 
-void Vpr::minMaxSynLat(double* minLat, double* maxLat) const {
+void Vpr::getMinMaxSynLat(double* minLat, double* maxLat) const {
     for(long k = geoGrid->getFirstK(); k <= geoGrid->getMaxK(); k++) {
         for(long l = geoGrid->getFirstL(); l <= geoGrid->getMaxL(); l++) {
             for(long m = geoGrid->getFirstM(); m <= geoGrid->getMaxM(); m++) {
@@ -165,7 +163,7 @@ void Vpr::minMaxSynLon(double* minLon, double* maxLon) const {
     }
 }
 
-void Vpr::minMaxVgtLat(long firstL, long lastL, double* minLat, double* maxLat) const {
+void Vpr::getMinMaxVgtLat(long firstL, long lastL, double* minLat, double* maxLat) const {
     const Grid& vgtGrid = vgtSegment->getGrid();
     for(long l = firstL; l <= lastL; l++) {
         const double lat = getVgtLatitude(l);
