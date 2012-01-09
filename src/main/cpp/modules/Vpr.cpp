@@ -85,17 +85,16 @@ void Vpr::process(Context& context) {
      * if the minimum latitude of the current VGT segment is less than the maximum latitude
      * of the current SYN segment AND the minimum VGT latitude is greater than the minumum
      * SYN latitude (i.e. the VGT segment and the SYN segment overlap), perform the reprojection
-     * and set the first required line of the SYN segment to l:
-     *
-     * l = line of SYN segment nearest to vgtMaxLat
+     * and set the first required line of the SYN segment to the line of the SYN segment nearest
+     * to vgtMaxLat.
      */
 
     long l = findLineOfSynSegmentNearestTo(vgtMaxLat);
 
     context.setFirstRequiredL(*collocatedSegment, *this, l);
 
-    double synMinLon = 180.1;
-    double synMaxLon = -180.1;
+    double synMinLon = 180.0;
+    double synMaxLon = -180.0;
     minMaxSynLon(&synMinLon, &synMaxLon);
 
     const Grid& vgtGrid = vgtSegment->getGrid();
