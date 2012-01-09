@@ -123,6 +123,8 @@ void Vbm::prepareTiePointData(Context& context) {
 }
 
 void Vbm::process(Context& context) {
+    // todo - create tie point segment and fill it with data
+
 	prepareTiePointData(context);
 
     Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
