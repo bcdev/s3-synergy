@@ -51,11 +51,11 @@ void Vpr::process(Context& context) {
     const long firstL = context.getFirstComputableL(*vgtSegment, *this);
     const long lastL = context.getLastComputableL(*vgtSegment, *this);
 
-    double synMinLat = 90.1;
-    double synMaxLat = -90.1;
+    double synMinLat = 90.0;
+    double synMaxLat = -90.0;
     minMaxSynLat(&synMinLat, &synMaxLat);
-    double vgtMinLat = 90.1;
-    double vgtMaxLat = -90.1;
+    double vgtMinLat = 90.0;
+    double vgtMaxLat = -90.0;
     minMaxVgtLat(firstL, lastL, &vgtMinLat, &vgtMaxLat);
     /*
      * if the minimum latitude of the current VGT segment is greater than the maximum latitude
