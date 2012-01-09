@@ -12,19 +12,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-public class SlstrL2LndManifestTest {
-    private SlstrL2LndManifest manifestTest;
+public class SlstrL2SSTWCTManifestTest {
+    private SlstrL2SSTManifest manifestTest;
 
     @Before
     public void before() throws ParserConfigurationException, IOException, SAXException {
-        InputStream stream = getClass().getResourceAsStream("SLSTR_L2_LND_SAFE_TEST_manifest.xml");
+        InputStream stream = getClass().getResourceAsStream("SLSTR_L2_SST_WCT_SAFE_TEST_manifest.xml");
         try {
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(stream);
-            manifestTest = new SlstrL2LndManifest(doc);
+            manifestTest = new SlstrL2SSTManifest(doc);
         } finally {
             stream.close();
         }
@@ -34,7 +32,7 @@ public class SlstrL2LndManifestTest {
     public void testGetDescription() throws Exception {
         assertNotNull(manifestTest);
         final String description = manifestTest.getDescription();
-        assertEquals("Sentinel 3 SLST Level 2 LST", description);
+        assertEquals("Sentinel 3 SLST Level 2 WCT", description);
     }
 
     @Test
@@ -50,25 +48,43 @@ public class SlstrL2LndManifestTest {
     }
 
     @Test
-    public void testGetMeasurementFileNames() {
-        final List<String> measurementFiles = manifestTest.getMeasurementFileNames();
+    public void testGetSingleViewMeasurementFileNames() {
+        final List<String> measurementFiles = manifestTest.getWCTNadirViewMeasurementFileNames();
+        assertEquals(3, measurementFiles.size());
+        assertEquals("N2_SST_in.nc", measurementFiles.get(0));
+        assertEquals("N3R_SST_in.nc", measurementFiles.get(1));
+        assertEquals("N3_SST_in.nc", measurementFiles.get(2));
+    }
+
+    @Test
+    public void testGetDualViewMeasurementFileNames() {
+        final List<String> measurementFiles = manifestTest.getWCTDualViewMeasurementFileNames();
         assertEquals(2, measurementFiles.size());
-        assertEquals("LST_in.nc", measurementFiles.get(0));
-        assertEquals("FRP_in.nc", measurementFiles.get(1));
+        assertEquals("D2_SST_io.nc", measurementFiles.get(0));
+        assertEquals("D3_SST_io.nc", measurementFiles.get(1));
     }
 
     @Test
     public void testGetVirtualDataFileNames() {
         final List<String> virtualDataFileNames = manifestTest.getVirtualDataFileNames();
-        assertEquals(2, virtualDataFileNames.size());
-        assertEquals("LST_in.ncml", virtualDataFileNames.get(0));
-        assertEquals("FRP_in.ncml", virtualDataFileNames.get(1));
+        assertEquals(5, virtualDataFileNames.size());
+        assertEquals("N2_SST_in.ncml", virtualDataFileNames.get(0));
+        assertEquals("N3R_SST_in.ncml", virtualDataFileNames.get(1));
+        assertEquals("N3_SST_in.ncml", virtualDataFileNames.get(2));
+        assertEquals("D2_SST_io.ncml", virtualDataFileNames.get(3));
+        assertEquals("D3_SST_io.ncml", virtualDataFileNames.get(4));
     }
 
     @Test
     public void testGetNadirFlagsFileName() {
         final String nadirFlagsFileName = manifestTest.getNadirFlagsFileName();
         assertEquals("flags_in.nc", nadirFlagsFileName);
+    }
+
+    @Test
+    public void testGetObliqueFlagsFileName() {
+        final String obliqueFlagsFileName = manifestTest.getObliqueFlagsFileName();
+        assertEquals("flags_io.nc", obliqueFlagsFileName);
     }
 
     @Test
@@ -105,6 +121,12 @@ public class SlstrL2LndManifestTest {
     public void testGetNadirSolarViewGeometryFileName() {
         final String nadirSolarViewGeometryFileName = manifestTest.getNadirSolarViewGeometryTiepointsFileName();
         assertEquals("geometry_in.nc", nadirSolarViewGeometryFileName);
+    }
+
+    @Test
+    public void testGetObliqueSolarViewGeometryFileName() {
+        final String obliqueSolarViewGeometryFileName = manifestTest.getObliqueSolarViewGeometryTiepointsFileName();
+        assertEquals("geometry_io.nc", obliqueSolarViewGeometryFileName);
     }
 
     @Test

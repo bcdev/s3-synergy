@@ -13,7 +13,7 @@ import java.util.Iterator;
 import static org.junit.Assert.*;
 
 
-public class SlstrLevel2ProductReaderPluginTest {
+public class SlstrLevel2LndProductReaderPluginTest {
     public static final String SLSTR_SENSOR_ID = "SL";
 
     private SlstrLevel2LndProductReaderPlugIn plugIn;
@@ -80,7 +80,7 @@ public class SlstrLevel2ProductReaderPluginTest {
         assertNotSame(secondInstance, firstInstance);
     }
     private String createManifestFilePath(String sensorId) {
-        String validParentDirectory = String.format("/S3_%s_2_MMM_TTTTTTTTTTTT_instanceID_GGG_CCCC_VV.SAFE/", sensorId);
+        String validParentDirectory = String.format("/S3_%s_2_LSTMMM_TTTTTTTTTTTT_instanceID_GGG_CCCC_VV.SAFE/", sensorId);
         String manifestFile = "manifest.xml";
         return validParentDirectory + manifestFile;
     }

@@ -29,7 +29,7 @@ public class SlstrLevel1ProductReader extends AbstractProductReader {
 
     @Override
     protected Product readProductNodesImpl() throws IOException {
-        // todo
+        // todo: complete
         File inputDir = getInputDirectory();
         return createProduct(inputDir);
     }

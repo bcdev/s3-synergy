@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  * @author Olaf Danne
  * @since 1.0
  */
-public class SlstrLevel2LndProductReader extends AbstractProductReader {
+public class SlstrLevel2SSTProductReader extends AbstractProductReader {
 
     private final Logger logger;
 
@@ -42,7 +42,7 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
      * @param readerPlugIn the reader plug-in which created this reader, can be <code>null</code> for internal reader
      *                     implementations
      */
-    protected SlstrLevel2LndProductReader(ProductReaderPlugIn readerPlugIn) {
+    protected SlstrLevel2SSTProductReader(ProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
         logger = BeamLogManager.getSystemLogger();
     }
@@ -50,7 +50,7 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
     @Override
     protected Product readProductNodesImpl() throws IOException {
         File inputFile = getInputFile();
-        SlstrL2LndManifest manifest = createManifestFile(inputFile);
+        SlstrL2SSTManifest manifest = createManifestFile(inputFile);
         return createProduct(manifest);
     }
 
@@ -59,21 +59,49 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
         throw new IllegalStateException(String.format("No source to read from for band '%s'.", destBand.getName()));
     }
 
-    private Product createProduct(SlstrL2LndManifest manifest) {
-        final List<Product> measurementProducts = loadMeasurementProducts(manifest.getMeasurementFileNames());
-        final int width = measurementProducts.get(0).getSceneRasterWidth();
-        final int height = measurementProducts.get(0).getSceneRasterHeight();
-        Product product = new Product(getProductName(), SlstrLevel2LndProductReaderPlugIn.FORMAT_NAME_SLSTR_L2, width,
-                height, this);
+    private Product createProduct(SlstrL2SSTManifest manifest) {
+        List<Product> wctNadirViewMeasurementProducts = loadMeasurementProducts(manifest.getWCTNadirViewMeasurementFileNames());
+        Product product;
+
+        if (wctNadirViewMeasurementProducts != null && wctNadirViewMeasurementProducts.size() > 0) {
+            int width = wctNadirViewMeasurementProducts.get(0).getSceneRasterWidth();
+            int height = wctNadirViewMeasurementProducts.get(0).getSceneRasterHeight();
+            product = new Product(getProductName(), SlstrLevel2SSTProductReaderPlugIn.FORMAT_NAME_SLSTR_L2, width,
+                    height, this);
+            attachMeasurementBands(wctNadirViewMeasurementProducts, product);
+            attachWCTAnnotationData(manifest, product);
+
+            // todo: clarify how to separate nadir and oblique data (they are given on different grids!!)
+//            List<Product> wctDualViewMeasurementProducts = loadMeasurementProducts(manifest.getWCTDualViewMeasurementFileNames());
+//            if (wctDualViewMeasurementProducts != null && wctDualViewMeasurementProducts.size() > 0) {
+//                width = wctDualViewMeasurementProducts.get(0).getSceneRasterWidth();
+//                height = wctDualViewMeasurementProducts.get(0).getSceneRasterHeight();
+//                product = new Product(getProductName(), SlstrLevel2SSTProductReaderPlugIn.FORMAT_NAME_SLSTR_L2, width,
+//                        height, this);
+//                attachMeasurementBands(wctDualViewMeasurementProducts, product);
+//                attachWCTAnnotationData(manifest, product);
+//            }
+        } else {
+            List<Product> wstMeasurementProducts = loadMeasurementProducts(manifest.getWSTMeasurementFileNames());
+            if (wstMeasurementProducts != null && wstMeasurementProducts.size() > 0) {
+                final int width = wstMeasurementProducts.get(0).getSceneRasterWidth();
+                final int height = wstMeasurementProducts.get(0).getSceneRasterHeight();
+                product = new Product(getProductName(), SlstrLevel2SSTProductReaderPlugIn.FORMAT_NAME_SLSTR_L2, width,
+                        height, this);
+                attachMeasurementBands(wstMeasurementProducts, product);
+                attachWSTAnnotationData(manifest, product);
+            } else {
+                throw new IllegalArgumentException("Input is neither SLSTR WCT nor WST product.");
+            }
+        }
+
         product.setStartTime(manifest.getStartTime());
         product.setEndTime(manifest.getStopTime());
         product.setFileLocation(getInputFile());
-        attachMeasurementBands(measurementProducts, product);
-        attachAnnotationData(manifest, product);
         return product;
     }
 
-    private void attachAnnotationData(SlstrL2LndManifest manifest, Product product) {
+    private void attachWCTAnnotationData(SlstrL2SSTManifest manifest, Product product) {
         // Tie Points (16km grid)
         // geodetic_tx.nc
         attachGeodeticTiePointsToProduct(manifest.getGeodeticTiepointCoordinatesFileName(), product);
@@ -81,6 +109,9 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
         attachCartesianTiePointsToProduct(manifest.getCartesianTiepointCoordinatesFileName(), product);
         // geometry_tn.nc
         attachGeometryTiePointsToProduct(manifest.getNadirSolarViewGeometryTiepointsFileName(), product);
+        // todo: clarify how to separate nadir and oblique data (they are given on different grids!!)  s.a.
+        // geometry_to.nc
+//        attachGeometryTiePointsToProduct(manifest.getObliqueSolarViewGeometryTiepointsFileName(), product);
         // met_tx.nc
         attachMeteorologicalTiePointsToProduct(manifest.getMeteorologicalTiePointsFileName(), product);
 
@@ -91,10 +122,24 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
         attachGeodeticDataCoodinatesToProduct(manifest.getGeodeticDataCoordinatesFileName(), product);
         // flags_in.nc:
         attachFlagsToProduct(manifest.getNadirFlagsFileName(), product);
+        // todo: clarify how to separate nadir and oblique data (they are given on different grids!!)  s.a.
+        // flags_io.nc:
+//        attachFlagsToProduct(manifest.getObliqueFlagsFileName(), product);
         // indices_in.nc:
         attachIndicesToProduct(manifest.getIndicesFileName(), product);
         // time_in.nc
         attachTimeCoodinatesToProduct(manifest.getTimeCoordinatesFileName(), product);
+    }
+
+    private void attachWSTAnnotationData(SlstrL2SSTManifest manifest, Product product) {
+        // Tie Points (16km grid)
+        // todo: these files do not exist in test data set, but specified in product description. activate later.
+        // geodetic_tx.nc
+//        attachGeodeticTiePointsToProduct(manifest.getGeodeticTiepointCoordinatesFileName(), product);
+        // geometry_tn.nc
+//        attachGeometryTiePointsToProduct(manifest.getNadirSolarViewGeometryTiepointsFileName(), product);
+        // geometry_to.nc
+//        attachGeometryTiePointsToProduct(manifest.getObliqueSolarViewGeometryTiepointsFileName(), product);
     }
 
     private void attachMeasurementBands(List<Product> measurementProducts, Product product) {
@@ -102,6 +147,7 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
             for (final Band sourceBand : bandProduct.getBands()) {
                 final String bandName = sourceBand.getName();
                 final Band targetBand = ProductUtils.copyBand(bandName, bandProduct, product);
+                targetBand.setName(bandProduct.getName() + "_" + sourceBand.getName());
                 targetBand.setSourceImage(sourceBand.getSourceImage());
             }
         }
@@ -110,7 +156,7 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
     private void attachGeodeticTiePointsToProduct(String tiePointsFileName, Product product) {
         // file: geodetic_tx.nc
         try {
-            final Product geodeticTiePointsProduct = readProduct(tiePointsFileName);
+            Product geodeticTiePointsProduct = readProduct(tiePointsFileName);
             final MetadataElement metadataRoot = geodeticTiePointsProduct.getMetadataRoot();
             final MetadataElement globalAttributes = metadataRoot.getElement("Global_Attributes");
             final short[] resolutions = (short[]) globalAttributes.getAttribute("resolution").getDataElems();
@@ -154,12 +200,12 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
     }
 
     private void attachFlagsToProduct(String flagsFileName, Product product) {
-        // file: indices_in.nc
+        // files: indices_in.nc, indices_io.nc
         try {
-            final Product flagsProduct = readProduct(flagsFileName);
+            Product flagsProduct = readProduct(flagsFileName);
             for (final Band sourceBand : flagsProduct.getBands()) {
                 final String bandName = sourceBand.getName();
-                for (String flagsBandName: flagsProductBandNames) {
+                for (String flagsBandName : flagsProductBandNames) {
                     if ((bandName.equals(flagsBandName))) {
                         final Band targetBand = ProductUtils.copyBand(bandName, flagsProduct, product);
                         targetBand.setSourceImage(sourceBand.getSourceImage());
@@ -173,9 +219,9 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
     }
 
     private void attachGeometryTiePointsToProduct(String geometryTiepointsFileName, Product product) {
-        // file: geometry_tn.nc
+        // files: geometry_tn.nc, geometry_to.nc
         try {
-            final Product geometryTiePointsProduct = readProduct(geometryTiepointsFileName);
+            Product geometryTiePointsProduct = readProduct(geometryTiepointsFileName);
             final MetadataElement metadataRoot = geometryTiePointsProduct.getMetadataRoot();
             final MetadataElement globalAttributes = metadataRoot.getElement("Global_Attributes");
             final short[] resolutions = (short[]) globalAttributes.getAttribute("resolution").getDataElems();
@@ -199,10 +245,10 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
     private void attachIndicesToProduct(String indicesFileName, Product product) {
         // file: indices_in.nc
         try {
-            final Product indicesProduct = readProduct(indicesFileName);
+            Product indicesProduct = readProduct(indicesFileName);
             for (final Band sourceBand : indicesProduct.getBands()) {
                 final String bandName = sourceBand.getName();
-                for (String indicesBandName:indicesProductBandNames) {
+                for (String indicesBandName : indicesProductBandNames) {
                     if ((bandName.equals(indicesBandName))) {
                         final Band targetBand = ProductUtils.copyBand(bandName, indicesProduct, product);
                         targetBand.setSourceImage(sourceBand.getSourceImage());
@@ -223,13 +269,13 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
 
     private void attachTimeCoodinatesToProduct(String timeCoordinatesFileName, Product product) {
         // file: geodetic_tx.nc
-        try {
-            // todo: this will currently fail because netCDF file contains a 64bit variable 'scan_time'
-            final Product timeProduct = readProduct(timeCoordinatesFileName);
-        } catch (IOException e) {
-            String msg = String.format("Not able to read file '%s.", timeCoordinatesFileName);
-            logger.log(Level.WARNING, msg, e);
-        }
+        // todo: this will currently fail because netCDF file contains a 64bit variable 'scan_time'
+//        try {
+//            Product timeProduct = readProduct(timeCoordinatesFileName);
+//        } catch (IOException e) {
+//            String msg = String.format("Not able to read file '%s.", timeCoordinatesFileName);
+//            logger.log(Level.WARNING, msg, e);
+//        }
     }
 
     private String getProductName() {
@@ -239,7 +285,7 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
     private List<Product> loadMeasurementProducts(List<String> measurementFileNames) {
         List<Product> products = new ArrayList<Product>();
         for (String fileName : measurementFileNames) {
-            // todo: FRP_in.nc has empty strings in global attributes, cannot be read by current netCDF reader. Fix there.
+            // todo: FRP_in.nc has empty strings in global attributes, cannot be read by current netCDF reader
             if (!fileName.startsWith("FRP")) {
                 try {
                     products.add(readProduct(fileName));
@@ -262,10 +308,10 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
         return product;
     }
 
-    private SlstrL2LndManifest createManifestFile(File inputFile) throws IOException {
+    private SlstrL2SSTManifest createManifestFile(File inputFile) throws IOException {
         InputStream manifestInputStream = new FileInputStream(inputFile);
         try {
-            return new SlstrL2LndManifest(createXmlDocument(manifestInputStream));
+            return new SlstrL2SSTManifest(createXmlDocument(manifestInputStream));
         } finally {
             manifestInputStream.close();
         }
