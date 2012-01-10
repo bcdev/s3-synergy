@@ -5,9 +5,13 @@
  *      Author: thomasstorm
  */
 
+#include <cmath>
+
+#include "Aco.h"
 #include "Vac.h"
 
 using std::abs;
+using std::exp;
 using std::fill;
 using std::invalid_argument;
 using std::min;
@@ -106,7 +110,7 @@ void Vac::computeSDR(Pixel& p, valarray<double>& w) {
             // todo - verify vzaOlc
             coordinates[0] = p.vzaOlc;
             const double tView = lutT->getScalar(&coordinates[0], f, w);
-            const double tO3 = exp(-airMass * p.ozone * cO3);;
+            const double tO3 = exp(-airMass * p.ozone * cO3[b]);
             p.radiances[b] = Aco::surfaceReflectance(p.radiances[b], rAtm, tSun, tView, rhoAtm, tO3);
         }
     }
