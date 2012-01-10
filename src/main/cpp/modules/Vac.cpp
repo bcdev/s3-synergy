@@ -44,7 +44,8 @@ void Vac::prepareAuxdata(Context& context) {
 }
 
 void Vac::process(Context& context) {
-    Pixel pixel;
+    Pixel p;
+    p.radiances = valarray<double>(4);
     valarray<double> w(lutRatm->getScalarWorkspaceSize());
     const Grid& collocatedGrid = collocatedSegment->getGrid();
     const long firstK = collocatedGrid.getFirstK();
@@ -57,18 +58,36 @@ void Vac::process(Context& context) {
         for (long l = firstL; l <= lastL; l++) {
             for (long m = firstM; m <= lastM; m++) {
                 const long index = collocatedGrid.getIndex(k, l, m);
-                setupPixel(pixel, index);
-                computeSDR(pixel, w);
+                setupPixel(p, index);
+                computeSDR(p, w);
                 for(size_t b = 0; b < vgtReflectanceAccessors.size(); b++) {
-                    vgtReflectanceAccessors[b]->setDouble(index, pixel.radiances[b]);
+                    vgtReflectanceAccessors[b]->setDouble(index, p.radiances[b]);
                 }
             }
         }
     }
 }
 
-void Vac::setupPixel(Pixel& pixel, long index) {
-    // todo - implement
+void Vac::setupPixel(Pixel& p, long index) {
+    /**
+     * todo
+     * set:
+     * From tie points, which need to be set in a module before:
+     *  - air pressure
+     *  - water vapour
+     *  - vza of olci
+     *  - sza
+     * From unknown source:
+     *  - aot
+     *  - aerosol model
+     * From collocated segment:
+     *  - toa reflectances
+     */
+    for(size_t b = 0; b < vgtReflectanceAccessors.size(); b++) {
+        // storing the reflectances in the 'radiances' array
+        p.radiances[b] = vgtReflectanceAccessors[b]->getDouble(index);
+    }
+
 }
 
 void Vac::computeSDR(Pixel& p, valarray<double>& w) {
