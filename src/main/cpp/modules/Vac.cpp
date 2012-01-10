@@ -15,7 +15,9 @@ Vac::Vac() : BasicModule("VPR"),
         vgtReflectanceAccessors(4),
         cO3(4),
         coordinates(8),
-        f(8) {
+        f(8),
+        tpiWeights(1),
+        tpiIndices(1) {
 }
 
 Vac::~Vac() {
@@ -23,10 +25,14 @@ Vac::~Vac() {
 
 void Vac::start(Context& context) {
     collocatedSegment = &context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-    setupAccessors();
+    setupAccessors(context);
+    prepareAuxdata(context);
 }
 
-void Vac::setupAccessors() {
+void Vac::setupAccessors(Context& context) {
+    const Segment& geoSegment = context.getSegment(Constants::SEGMENT_GEO);
+    latAccessor = &geoSegment.getAccessor("latitude");
+    lonAccessor = &geoSegment.getAccessor("longitude");
     vgtReflectanceAccessors[0] = &collocatedSegment->getAccessor("B0");
     vgtReflectanceAccessors[1] = &collocatedSegment->getAccessor("B2");
     vgtReflectanceAccessors[2] = &collocatedSegment->getAccessor("B3");
@@ -43,7 +49,27 @@ void Vac::prepareAuxdata(Context& context) {
     lutT = &getLookupTable(context, vgtLookupTableFile, "t");
 }
 
+void Vac::prepareTiePointData(Context& context) {
+    if (tiePointInterpolatorOlc.get() == 0) {
+        const Segment& olcTiePointSegment = context.getSegment(Constants::SEGMENT_OLC_TP);
+
+        copy(olcTiePointSegment.getAccessor("SZA").getDoubles(), szaOlcTiePoints);
+        copy(olcTiePointSegment.getAccessor("OLC_VZA").getDoubles(), vzaOlcTiePoints);
+
+        copy(olcTiePointSegment.getAccessor("air_pressure").getDoubles(), airPressureTiePoints);
+        if (olcTiePointSegment.hasVariable("water_vapour")) {
+            copy(olcTiePointSegment.getAccessor("water_vapour").getDoubles(), waterVapourTiePoints);
+        }
+
+        const valarray<double>& olcLons = olcTiePointSegment.getAccessor("OLC_TP_lon").getDoubles();
+        const valarray<double>& olcLats = olcTiePointSegment.getAccessor("OLC_TP_lat").getDoubles();
+
+        tiePointInterpolatorOlc = shared_ptr<TiePointInterpolator<double> >(new TiePointInterpolator<double>(olcLons, olcLats));
+    }
+}
+
 void Vac::process(Context& context) {
+    prepareTiePointData(context);
     Pixel p;
     p.radiances = valarray<double>(4);
     valarray<double> w(lutRatm->getScalarWorkspaceSize());
@@ -71,18 +97,25 @@ void Vac::process(Context& context) {
 void Vac::setupPixel(Pixel& p, long index) {
     /**
      * todo
-     * set:
-     * From tie points, which need to be set in a module before:
-     *  - air pressure
-     *  - water vapour
-     *  - vza of olci
-     *  - sza
-     * From unknown source:
+     * set from unknown source:
      *  - aot
      *  - aerosol model
-     * From collocated segment:
-     *  - toa reflectances
      */
+    p.lat = latAccessor->getDouble(index);
+    p.lon = lonAccessor->getDouble(index);
+
+    tiePointInterpolatorOlc->prepare(p.lon, p.lat, tpiWeights, tpiIndices);
+
+    p.sza = tiePointInterpolatorOlc->interpolate(szaOlcTiePoints, tpiWeights, tpiIndices);
+    p.vzaOlc = tiePointInterpolatorOlc->interpolate(vzaOlcTiePoints, tpiWeights, tpiIndices);
+
+    p.airPressure = tiePointInterpolatorOlc->interpolate(airPressureTiePoints, tpiWeights, tpiIndices);
+    if (waterVapourTiePoints.size() != 0) {
+        p.waterVapour = tiePointInterpolatorOlc->interpolate(waterVapourTiePoints, tpiWeights, tpiIndices);
+    } else {
+        p.waterVapour = 0.2;
+    }
+
     for(size_t b = 0; b < vgtReflectanceAccessors.size(); b++) {
         // storing the reflectances in the 'radiances' array
         p.radiances[b] = vgtReflectanceAccessors[b]->getDouble(index);
