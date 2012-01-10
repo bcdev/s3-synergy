@@ -5,12 +5,11 @@
  *      Author: thomasstorm
  */
 
-#include "Vac.h"
+#include <algorithm>
+#include <cmath>
 
-using std::abs;
-using std::fill;
-using std::invalid_argument;
-using std::min;
+#include "Aco.h"
+#include "Vac.h"
 
 Vac::Vac() : BasicModule("VPR"),
         vgtReflectanceAccessors(4),
@@ -106,7 +105,7 @@ void Vac::computeSDR(Pixel& p, valarray<double>& w) {
             // todo - verify vzaOlc
             coordinates[0] = p.vzaOlc;
             const double tView = lutT->getScalar(&coordinates[0], f, w);
-            const double tO3 = exp(-airMass * p.ozone * cO3);;
+            const double tO3 = exp(-airMass * p.ozone * cO3[b]);
             p.radiances[b] = Aco::surfaceReflectance(p.radiances[b], rAtm, tSun, tView, rhoAtm, tO3);
         }
     }
