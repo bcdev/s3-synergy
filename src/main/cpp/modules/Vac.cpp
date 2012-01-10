@@ -11,7 +11,13 @@
 #include "Aco.h"
 #include "Vac.h"
 
-Vac::Vac() : BasicModule("VPR"),
+using std::abs;
+using std::exp;
+using std::fill;
+using std::invalid_argument;
+using std::min;
+
+Vac::Vac() : BasicModule("VAC"),
         vgtReflectanceAccessors(4),
         cO3(4),
         coordinates(8),
