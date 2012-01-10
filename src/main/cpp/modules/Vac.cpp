@@ -5,6 +5,7 @@
  *      Author: thomasstorm
  */
 
+#include <algorithm>
 #include <cmath>
 
 #include "Aco.h"
@@ -16,7 +17,7 @@ using std::fill;
 using std::invalid_argument;
 using std::min;
 
-Vac::Vac() : BasicModule("VPR"),
+Vac::Vac() : BasicModule("VAC"),
         vgtReflectanceAccessors(4),
         cO3(4),
         coordinates(8),
