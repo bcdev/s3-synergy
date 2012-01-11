@@ -14,13 +14,13 @@
 
 class VprTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(VprTest);
-    CPPUNIT_TEST(testMinMaxSynLat);
-    CPPUNIT_TEST(testMinMaxSynLon);
-    CPPUNIT_TEST(testMinMaxVgtLat);
-    CPPUNIT_TEST(testGetPixelPosInGrid);
-    CPPUNIT_TEST(testFindPixelPosAroundGivenIndices);
-    CPPUNIT_TEST(testGetLatitude);
-    CPPUNIT_TEST(testGetLongitude);
+//    CPPUNIT_TEST(testMinMaxSynLat);
+//    CPPUNIT_TEST(testMinMaxSynLon);
+//    CPPUNIT_TEST(testMinMaxVgtLat);
+//    CPPUNIT_TEST(testGetPixelPosInGrid);
+//    CPPUNIT_TEST(testFindPixelPosAroundGivenIndices);
+//    CPPUNIT_TEST(testGetLatitude);
+//    CPPUNIT_TEST(testGetLongitude);
     CPPUNIT_TEST(testVpr);
     CPPUNIT_TEST_SUITE_END();
 

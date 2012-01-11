@@ -22,18 +22,17 @@ public:
 private:
 	friend class VprTest;
 
-	Segment* vgtSegment;
-	const Segment* collocatedSegment;
+	Segment* vgpSegment;
+	const Segment* synSegment;
 	const Segment* geoSegment;
 
-	const Grid* geoGrid;
 	const Accessor* latAccessor;
 	const Accessor* lonAccessor;
 
-    valarray<Accessor*> collocatedReflectanceAccessors;
+    valarray<Accessor*> synReflectanceAccessors;
     valarray<Accessor*> vgtReflectanceAccessors;
     Accessor* vgtFlagsAccessor;
-    Accessor* collocatedFlagsAccessor;
+    Accessor* synFlagsAccessor;
 
     static const size_t PIXEL_SEARCH_RADIUS = 10;
 
@@ -50,9 +49,9 @@ private:
 	static double getVgtLongitude(long l);
 
 	void setupAccessors();
-	void getMinMaxSynLat(double* minLat, double* maxLat) const;
-	void getMinMaxVgtLat(long firstL, long lastL, double* minLat, double* maxLat) const;
-	void minMaxSynLon(double* minLon, double* maxLon) const;
+	void getMinMaxSynLat(double& minLat, double& maxLat) const;
+	void getMinMaxVgtLat(long firstL, long lastL, double& minLat, double& maxLat) const;
+	void minMaxSynLon(double& minLon, double& maxLon) const;
 	void findPixelPosInWholeGrid(double lat, double lon, valarray<long>& synIndices) const;
 	void findPixelPos(double lat, double lon, long k0, long kMax, long l0, long lMax, long m0, long mMax, valarray<long>& synIndices) const;
 	void findPixelPosAroundGivenIndices(double lat, double lon, valarray<long>& synIndices) const;

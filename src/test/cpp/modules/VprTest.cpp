@@ -43,7 +43,7 @@ void VprTest::testMinMaxSynLat() {
     vpr.lonAccessor = &lonAccessor;
 
     const Grid& geoGrid = geoSegment->getGrid();
-    vpr.geoGrid = &geoGrid;
+    //vpr.geoGrid = &geoGrid;
 
     latAccessor.setDouble(geoGrid.getIndex(0, 0, 0), 20);
     latAccessor.setDouble(geoGrid.getIndex(0, 0, 1), 21);
@@ -60,7 +60,7 @@ void VprTest::testMinMaxSynLat() {
 
     double minLat = 91;
     double maxLat = -91;
-    vpr.getMinMaxSynLat(&minLat, &maxLat);
+    vpr.getMinMaxSynLat(minLat, maxLat);
     CPPUNIT_ASSERT(std::abs(maxLat - 45) < 0.001);
     CPPUNIT_ASSERT(std::abs(minLat - 20) < 0.001);
 }
@@ -74,7 +74,7 @@ void VprTest::testMinMaxSynLon() {
     vpr.lonAccessor = &lonAccessor;
 
     const Grid& geoGrid = geoSegment->getGrid();
-    vpr.geoGrid = &geoGrid;
+    //vpr.geoGrid = &geoGrid;
 
     lonAccessor.setDouble(geoGrid.getIndex(0, 0, 0), 10);
     lonAccessor.setDouble(geoGrid.getIndex(0, 0, 1), 11);
@@ -91,7 +91,7 @@ void VprTest::testMinMaxSynLon() {
 
     double minLon = 181;
     double maxLon = -181;
-    vpr.minMaxSynLon(&minLon, &maxLon);
+    vpr.minMaxSynLon(minLon, maxLon);
     CPPUNIT_ASSERT(std::abs(maxLon - 17) < 0.001);
     CPPUNIT_ASSERT(std::abs(minLon - 10) < 0.001);
 }
@@ -100,11 +100,11 @@ void VprTest::testMinMaxVgtLat() {
     Vpr vpr;
     Context context;
     Segment& vgtSegment = context.addSegment(Constants::SEGMENT_VGP, 1000, vpr.COL_COUNT, 1, 0, vpr.LINE_COUNT - 1);
-    vpr.vgtSegment = &vgtSegment;
+    vpr.vgpSegment = &vgtSegment;
 
     double minLat = 91;
     double maxLat = -91;
-    vpr.getMinMaxVgtLat(0, 999, &minLat, &maxLat);
+    vpr.getMinMaxVgtLat(0, 999, minLat, maxLat);
     CPPUNIT_ASSERT(std::abs(maxLat - 75) < 0.001);
     CPPUNIT_ASSERT(std::abs(minLat - 66.0804) < 0.001);
 }
@@ -118,7 +118,7 @@ void VprTest::testGetPixelPosInGrid() {
     vpr.lonAccessor = &lonAccessor;
 
     const Grid& geoGrid = geoSegment->getGrid();
-    vpr.geoGrid = &geoGrid;
+    //vpr.geoGrid = &geoGrid;
 
     latAccessor.setDouble(geoGrid.getIndex(0, 0, 0), 20);
     latAccessor.setDouble(geoGrid.getIndex(0, 0, 1), 21);
@@ -167,7 +167,7 @@ void VprTest::testFindPixelPosAroundGivenIndices() {
     vpr.lonAccessor = &lonAccessor;
 
     const Grid& geoGrid = geoSegment->getGrid();
-    vpr.geoGrid = &geoGrid;
+    //vpr.geoGrid = &geoGrid;
 
     for(long l = 0; l < 100; l++) {
         for(long m = 0; m < 100; m++) {
