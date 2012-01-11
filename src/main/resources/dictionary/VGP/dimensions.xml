@@ -1,0 +1,27 @@
+
+<dataset>
+    <set name="VGP">
+        <dimensions>
+            <dimension>
+                <name>NX</name>
+                <size>40320</size>
+            </dimension>
+            <dimension>
+                <name>NY</name>
+                <size>14672</size>
+            </dimension>
+        </dimensions>
+    </set>
+    <set name="VGP_TP">
+        <dimensions>
+            <dimension>
+                <name>SX</name>
+                <size>2521</size>
+            </dimension>
+            <dimension>
+                <name>SY</name>
+                <size>918</size>
+            </dimension>
+        </dimensions>
+    </set>
+</dataset>

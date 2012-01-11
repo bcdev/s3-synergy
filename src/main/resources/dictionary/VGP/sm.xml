@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <variables>
+        <variable>
+            <name>SM</name>
+            <type>ubyte</type>
+            <segment_name>VGP</segment_name>
+            <dimensions>
+                <id>VGP</id>
+            </dimensions>
+            <attributes>
+                <attribute>
+                    <name>long_name</name>
+                    <type>string</type>
+                    <value>status map</value>
+                </attribute>
+                <attribute>
+                    <name>_FillValue</name>
+                    <type>ubyte</type>
+                    <value>0</value>
+                </attribute>
+                <attribute>
+                    <name>flag_masks</name>
+                    <type>ubyte</type>
+                    <value>3 3 3 3 4 8 16 32 64 128</value>
+                </attribute>
+                <attribute>
+                    <name>flag_values</name>
+                    <type>ubyte</type>
+                    <value>0 1 2 3 4 8 16 32 64 128</value>
+                </attribute>
+                <attribute>
+                    <name>flag_meanings</name>
+                    <type>string</type>
+                    <value>clear shadow uncertain cloud ice_or_snow land MIR_good B3_good B2_good B0_good</value>
+                </attribute>
+                <attribute>
+                    <name>grid_mapping</name>
+                    <type>string</type>
+                    <value>crs</value>
+                </attribute>
+            </attributes>
+        </variable>
+    </variables>
+    <global_attributes>
+        <attribute>
+            <name>dataset_name</name>
+            <value>sm</value>
+            <type>string</type>
+        </attribute>
+    </global_attributes>
+</dataset>

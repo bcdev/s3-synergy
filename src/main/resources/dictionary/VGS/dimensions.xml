@@ -1,0 +1,15 @@
+
+<dataset>
+    <set name="VGS">
+        <dimensions>
+            <dimension>
+                <name>NX</name>
+                <size>40320</size>
+            </dimension>
+            <dimension>
+                <name>NY</name>
+                <size>14672</size>
+            </dimension>
+        </dimensions>
+    </set>
+</dataset>
