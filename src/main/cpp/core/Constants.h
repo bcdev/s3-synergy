@@ -66,7 +66,8 @@ const string SEGMENT_SLO_INFO = "SLO_INFO";
 const string SEGMENT_SYN_COLLOCATED = "SYN_COLLOCATED";
 const string SEGMENT_SYN_AVERAGED = "SYN_AVERAGED";
 
-const string SEGMENT_VGT_PLATE_CARREE = "SYN_VGT_PLATE_CARREE";
+const string SEGMENT_VGP = "VGP";
+const string SEGMENT_VGP_TP = "VGP_TP";
 
 /**
  * Dimension names.

@@ -27,8 +27,8 @@ void Vpr::start(Context& context) {
     latAccessor = &geoSegment->getAccessor("latitude");
     lonAccessor = &geoSegment->getAccessor("longitude");
 
-    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGT_PLATE_CARREE + "' to context.", getId());
-    vgtSegment = &context.addSegment(Constants::SEGMENT_VGT_PLATE_CARREE, 400, COL_COUNT, 1, 0, LINE_COUNT - 1);
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP + "' to context.", getId());
+    vgtSegment = &context.addSegment(Constants::SEGMENT_VGP, 400, COL_COUNT, 1, 0, LINE_COUNT - 1);
 
     setupAccessors();
 }

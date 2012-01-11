@@ -99,7 +99,7 @@ void VprTest::testMinMaxSynLon() {
 void VprTest::testMinMaxVgtLat() {
     Vpr vpr;
     Context context;
-    Segment& vgtSegment = context.addSegment(Constants::SEGMENT_VGT_PLATE_CARREE, 1000, vpr.COL_COUNT, 1, 0, vpr.LINE_COUNT - 1);
+    Segment& vgtSegment = context.addSegment(Constants::SEGMENT_VGP, 1000, vpr.COL_COUNT, 1, 0, vpr.LINE_COUNT - 1);
     vpr.vgtSegment = &vgtSegment;
 
     double minLat = 91;
