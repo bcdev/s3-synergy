@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2010 by Brockmann Consult (info@brockmann-consult.de)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  * File:   NetCDF.h
  * Author: thomass
  *
@@ -112,6 +112,8 @@ public:
 
 	static void putData(int fileId, int varId, const valarray<size_t>& origin,
 			const valarray<size_t>& shape, const void* dataArray);
+
+	static void putGlobalAttribute(int fileId, const Attribute& attribute);
 
 	static void putAttribute(int fileId, int varId, const Attribute& attribute);
 

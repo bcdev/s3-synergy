@@ -245,6 +245,10 @@ int NetCDF::defineVariable(int fileId, const string& varName, int type, const va
 	return varId;
 }
 
+void NetCDF::putGlobalAttribute(int fileId, const Attribute& attribute) {
+    putAttribute(fileId, NC_GLOBAL, attribute);
+}
+
 void NetCDF::putAttribute(int fileId, int varId, const Attribute& attribute) {
 	switch (attribute.getType()) {
 	case Constants::TYPE_BYTE:
