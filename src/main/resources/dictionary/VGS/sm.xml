@@ -2,47 +2,37 @@
 <dataset>
     <variables>
         <variable>
-            <name>SAA</name>
-            <type>byte</type>
-            <segment_name>VGP_TP</segment_name>
+            <name>SM</name>
+            <type>ubyte</type>
+            <segment_name>VGS</segment_name>
             <dimensions>
-                <id>VGP_TP</id>
+                <id>VGS</id>
             </dimensions>
             <attributes>
                 <attribute>
-                    <name>standard_name</name>
-                    <type>string</type>
-                    <value>solar_azimuth_angle</value>
-                </attribute>            
-                <attribute>
                     <name>long_name</name>
                     <type>string</type>
-                    <value>Solar azimuth angle</value>
-                </attribute>
-                <attribute>
-                    <name>units</name>
-                    <type>string</type>
-                    <value>degrees</value>
-                </attribute>
-                <attribute>
-                    <name>scale_factor</name>
-                    <type>float</type>
-                    <value>1.5</value>
+                    <value>status map</value>
                 </attribute>
                 <attribute>
                     <name>_FillValue</name>
-                    <type>byte</type>
-                    <value>-128</value>
+                    <type>ubyte</type>
+                    <value>0</value>
                 </attribute>
                 <attribute>
-                    <name>valid_min</name>
-                    <type>byte</type>
-                    <value>-120</value>
+                    <name>flag_masks</name>
+                    <type>ubyte</type>
+                    <value>3 3 3 3 4 8 16 32 64 128</value>
                 </attribute>
                 <attribute>
-                    <name>valid_max</name>
-                    <type>byte</type>
-                    <value>120</value>
+                    <name>flag_values</name>
+                    <type>ubyte</type>
+                    <value>0 1 2 3 4 8 16 32 64 128</value>
+                </attribute>
+                <attribute>
+                    <name>flag_meanings</name>
+                    <type>string</type>
+                    <value>clear shadow uncertain cloud ice_or_snow land MIR_good B3_good B2_good B0_good</value>
                 </attribute>
                 <attribute>
                     <name>grid_mapping</name>
@@ -54,9 +44,9 @@
         <variable>
             <name>lat</name>
             <type>double</type>
-            <segment_name>VGP_LAT_TP</segment_name>
+            <segment_name>VGS_LAT</segment_name>
             <dimensions>
-                <id>VGP_LAT_TP</id>
+                <id>VGS_LAT</id>
             </dimensions>
             <attributes>
                 <attribute>
@@ -89,9 +79,9 @@
         <variable>
             <name>lon</name>
             <type>double</type>
-            <segment_name>VGP_LON_TP</segment_name>
+            <segment_name>VGS_LON</segment_name>
             <dimensions>
-                <id>VGP_LON_TP</id>
+                <id>VGS_LON</id>
             </dimensions>
             <attributes>
                 <attribute>
@@ -124,24 +114,24 @@
         <variable>
             <name>lat_bnds</name>
             <type>double</type>
-            <segment_name>VGP_LAT_TP_BNDS</segment_name>
+            <segment_name>VGS_LAT_BNDS</segment_name>
             <dimensions>
-                <id>VGP_LAT_TP_BNDS</id>
+                <id>VGS_LAT_BNDS</id>
             </dimensions>
         </variable>
         <variable>
             <name>lon_bnds</name>
             <type>double</type>
-            <segment_name>VGP_LON_TP_BNDS</segment_name>
+            <segment_name>VGS_LON_BNDS</segment_name>
             <dimensions>
-                <id>VGP_LON_TP_BNDS</id>
+                <id>VGS_LON_BNDS</id>
             </dimensions>
-        </variable>
+        </variable>        
     </variables>
     <global_attributes>
         <attribute>
             <name>dataset_name</name>
-            <value>saa</value>
+            <value>sm</value>
             <type>string</type>
         </attribute>
     </global_attributes>

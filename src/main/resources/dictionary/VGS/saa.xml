@@ -4,9 +4,9 @@
         <variable>
             <name>SAA</name>
             <type>byte</type>
-            <segment_name>VGP_TP</segment_name>
+            <segment_name>VGS</segment_name>
             <dimensions>
-                <id>VGP_TP</id>
+                <id>VGS</id>
             </dimensions>
             <attributes>
                 <attribute>
@@ -54,9 +54,9 @@
         <variable>
             <name>lat</name>
             <type>double</type>
-            <segment_name>VGP_LAT_TP</segment_name>
+            <segment_name>VGS_LAT</segment_name>
             <dimensions>
-                <id>VGP_LAT_TP</id>
+                <id>VGS_LAT</id>
             </dimensions>
             <attributes>
                 <attribute>
@@ -89,9 +89,9 @@
         <variable>
             <name>lon</name>
             <type>double</type>
-            <segment_name>VGP_LON_TP</segment_name>
+            <segment_name>VGS_LON</segment_name>
             <dimensions>
-                <id>VGP_LON_TP</id>
+                <id>VGS_LON</id>
             </dimensions>
             <attributes>
                 <attribute>
@@ -124,17 +124,17 @@
         <variable>
             <name>lat_bnds</name>
             <type>double</type>
-            <segment_name>VGP_LAT_TP_BNDS</segment_name>
+            <segment_name>VGS_LAT_BNDS</segment_name>
             <dimensions>
-                <id>VGP_LAT_TP_BNDS</id>
+                <id>VGS_LAT_BNDS</id>
             </dimensions>
         </variable>
         <variable>
             <name>lon_bnds</name>
             <type>double</type>
-            <segment_name>VGP_LON_TP_BNDS</segment_name>
+            <segment_name>VGS_LON_BNDS</segment_name>
             <dimensions>
-                <id>VGP_LON_TP_BNDS</id>
+                <id>VGS_LON_BNDS</id>
             </dimensions>
         </variable>
     </variables>

@@ -2,22 +2,22 @@
 <dataset>
     <variables>
         <variable>
-            <name>SAA</name>
-            <type>byte</type>
-            <segment_name>VGP_TP</segment_name>
+            <name>SZA</name>
+            <type>ubyte</type>
+            <segment_name>VGS_TP</segment_name>
             <dimensions>
-                <id>VGP_TP</id>
+                <id>VGS_TP</id>
             </dimensions>
             <attributes>
                 <attribute>
                     <name>standard_name</name>
                     <type>string</type>
-                    <value>solar_azimuth_angle</value>
+                    <value>solar_zenith_angle</value>
                 </attribute>            
                 <attribute>
                     <name>long_name</name>
                     <type>string</type>
-                    <value>Solar azimuth angle</value>
+                    <value>Solar zenith angle</value>
                 </attribute>
                 <attribute>
                     <name>units</name>
@@ -27,22 +27,22 @@
                 <attribute>
                     <name>scale_factor</name>
                     <type>float</type>
-                    <value>1.5</value>
+                    <value>0.5</value>
                 </attribute>
                 <attribute>
                     <name>_FillValue</name>
-                    <type>byte</type>
-                    <value>-128</value>
+                    <type>ubyte</type>
+                    <value>255</value>
                 </attribute>
                 <attribute>
                     <name>valid_min</name>
-                    <type>byte</type>
-                    <value>-120</value>
+                    <type>ubyte</type>
+                    <value>0</value>
                 </attribute>
                 <attribute>
                     <name>valid_max</name>
-                    <type>byte</type>
-                    <value>120</value>
+                    <type>ubyte</type>
+                    <value>180</value>
                 </attribute>
                 <attribute>
                     <name>grid_mapping</name>
@@ -54,9 +54,9 @@
         <variable>
             <name>lat</name>
             <type>double</type>
-            <segment_name>VGP_LAT_TP</segment_name>
+            <segment_name>VGS_LAT_TP</segment_name>
             <dimensions>
-                <id>VGP_LAT_TP</id>
+                <id>VGS_LAT_TP</id>
             </dimensions>
             <attributes>
                 <attribute>
@@ -89,9 +89,9 @@
         <variable>
             <name>lon</name>
             <type>double</type>
-            <segment_name>VGP_LON_TP</segment_name>
+            <segment_name>VGS_LON_TP</segment_name>
             <dimensions>
-                <id>VGP_LON_TP</id>
+                <id>VGS_LON_TP</id>
             </dimensions>
             <attributes>
                 <attribute>
@@ -124,24 +124,24 @@
         <variable>
             <name>lat_bnds</name>
             <type>double</type>
-            <segment_name>VGP_LAT_TP_BNDS</segment_name>
+            <segment_name>VGS_LAT_TP_BNDS</segment_name>
             <dimensions>
-                <id>VGP_LAT_TP_BNDS</id>
+                <id>VGS_LAT_TP_BNDS</id>
             </dimensions>
         </variable>
         <variable>
             <name>lon_bnds</name>
             <type>double</type>
-            <segment_name>VGP_LON_TP_BNDS</segment_name>
+            <segment_name>VGS_LON_TP_BNDS</segment_name>
             <dimensions>
-                <id>VGP_LON_TP_BNDS</id>
+                <id>VGS_LON_TP_BNDS</id>
             </dimensions>
-        </variable>
+        </variable>        
     </variables>
     <global_attributes>
         <attribute>
             <name>dataset_name</name>
-            <value>saa</value>
+            <value>sza</value>
             <type>string</type>
         </attribute>
     </global_attributes>

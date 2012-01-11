@@ -1,4 +1,3 @@
-
 <dataset>
     <set name="VGS">
         <dimensions>
@@ -12,4 +11,96 @@
             </dimension>
         </dimensions>
     </set>
+    <set name="VGS_TP">
+        <dimensions>
+            <dimension>
+                <name>SX</name>
+                <size>2521</size>
+            </dimension>
+            <dimension>
+                <name>SY</name>
+                <size>918</size>
+            </dimension>
+        </dimensions>
+    </set>
+    <set name="VGS_LAT">
+        <dimensions>
+            <dimension>
+                <name>NY</name>
+                <size>14672</size>
+            </dimension>
+        </dimensions>
+    </set>
+    <set name="VGS_LON">
+        <dimensions>
+            <dimension>
+                <name>NX</name>
+                <size>40320</size>
+            </dimension>
+        </dimensions>
+    </set>
+    <set name="VGS_LAT_TP">
+        <dimensions>
+            <dimension>
+                <name>SY</name>
+                <size>918</size>
+            </dimension>
+        </dimensions>
+    </set>
+    <set name="VGS_LON_TP">
+        <dimensions>
+            <dimension>
+                <name>SX</name>
+                <size>2521</size>
+            </dimension>
+        </dimensions>
+    </set>    
+    <set name="VGS_LAT_BNDS">
+        <dimensions>
+            <dimension>
+                <name>NY</name>
+                <size>14672</size>
+            </dimension>
+            <dimension>
+                <name>nv</name>
+                <size>2</size>
+            </dimension>            
+        </dimensions>
+    </set>
+    <set name="VGS_LON_BNDS">
+        <dimensions>
+            <dimension>
+                <name>NX</name>
+                <size>40320</size>
+            </dimension>
+            <dimension>
+                <name>nv</name>
+                <size>2</size>
+            </dimension>            
+        </dimensions>
+    </set>
+    <set name="VGS_LAT_TP_BNDS">
+        <dimensions>
+            <dimension>
+                <name>SY</name>
+                <size>918</size>
+            </dimension>
+            <dimension>
+                <name>nv</name>
+                <size>2</size>
+            </dimension>            
+        </dimensions>
+    </set>
+    <set name="VGS_LON_TP_BNDS">
+        <dimensions>
+            <dimension>
+                <name>SX</name>
+                <size>2521</size>
+            </dimension>
+            <dimension>
+                <name>nv</name>
+                <size>2</size>
+            </dimension>            
+        </dimensions>
+    </set>    
 </dataset>
