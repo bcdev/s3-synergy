@@ -174,7 +174,7 @@ void Vbm::process(Context& context) {
         for (long k = collocatedGrid.getFirstK(); k <= collocatedGrid.getMaxK(); k++) {
             for (long m = collocatedGrid.getFirstM(); m <= collocatedGrid.getMaxM(); m++) {
                 const size_t index = collocatedGrid.getIndex(k, l, m);
-                setPixel(p, index, tpiWeights, tpiIndexes);
+                setupPixel(p, index, tpiWeights, tpiIndexes);
                 performDownscaling(p, synSurfaceReflectances, coordinates, f, workspace);
                 performHyperspectralInterpolation(synWavelengths, synSurfaceReflectances, hypSurfaceReflectances);
                 performHyperspectralUpscaling(hypSurfaceReflectances, p, hypToaReflectances, coordinates, f, workspace);
@@ -187,7 +187,7 @@ void Vbm::process(Context& context) {
     context.setLastComputedL(collocatedSegment, *this, lastL);
 }
 
-void Vbm::setPixel(Pixel& p, size_t index, valarray<double>& tpiWeights, valarray<size_t>& tpiIndexes) {
+void Vbm::setupPixel(Pixel& p, size_t index, valarray<double>& tpiWeights, valarray<size_t>& tpiIndexes) {
     for(size_t i = 0; i < 21; i++) {
         p.radiances[i] = synRadianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synRadianceAccessors[i]->getDouble(index);
         p.solarIrradiances[i] = synSolarIrradianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synSolarIrradianceAccessors[i]->getDouble(index);
