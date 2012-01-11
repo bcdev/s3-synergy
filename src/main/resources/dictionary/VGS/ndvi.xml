@@ -2,22 +2,22 @@
 <dataset>
     <variables>
         <variable>
-            <name>OG</name>
-            <type>ubyte</type>
-            <segment_name>VGP_TP</segment_name>
+            <name>NDVI</name>
+            <type>byte</type>
+            <segment_name>VGS</segment_name>
             <dimensions>
-                <id>VGP_TP</id>
+                <id>VGS</id>
             </dimensions>
-            <attributes>          
+            <attributes>
+                <attribute>
+                    <name>standard_name</name>
+                    <type>string</type>
+                    <value>normalized_difference_vegetation_index</value>
+                </attribute>            
                 <attribute>
                     <name>long_name</name>
                     <type>string</type>
-                    <value>Ozone</value>
-                </attribute>
-                <attribute>
-                    <name>units</name>
-                    <type>string</type>
-                    <value>atm cm</value>
+                    <value>Normalized difference vegetation index</value>
                 </attribute>
                 <attribute>
                     <name>scale_factor</name>
@@ -25,19 +25,19 @@
                     <value>0.004</value>
                 </attribute>
                 <attribute>
-                    <name>_FillValue</name>
-                    <type>ubyte</type>
-                    <value>255</value>
-                </attribute>
+                    <name>add_offset</name>
+                    <type>float</type>
+                    <value>-0.1</value>
+                </attribute>                
                 <attribute>
                     <name>valid_min</name>
                     <type>byte</type>
-                    <value>0</value>
+                    <value>-128</value>
                 </attribute>
                 <attribute>
                     <name>valid_max</name>
-                    <type>ubyte</type>
-                    <value>254</value>
+                    <type>byte</type>
+                    <value>127</value>
                 </attribute>
                 <attribute>
                     <name>grid_mapping</name>
@@ -49,9 +49,9 @@
         <variable>
             <name>lat</name>
             <type>double</type>
-            <segment_name>VGP_LAT_TP</segment_name>
+            <segment_name>VGS_LAT</segment_name>
             <dimensions>
-                <id>VGP_LAT_TP</id>
+                <id>VGS_LAT</id>
             </dimensions>
             <attributes>
                 <attribute>
@@ -84,9 +84,9 @@
         <variable>
             <name>lon</name>
             <type>double</type>
-            <segment_name>VGP_LON_TP</segment_name>
+            <segment_name>VGS_LON</segment_name>
             <dimensions>
-                <id>VGP_LON_TP</id>
+                <id>VGS_LON</id>
             </dimensions>
             <attributes>
                 <attribute>
@@ -119,18 +119,18 @@
         <variable>
             <name>lat_bnds</name>
             <type>double</type>
-            <segment_name>VGP_LAT_TP_BNDS</segment_name>
+            <segment_name>VGS_LAT_BNDS</segment_name>
             <dimensions>
-                <id>VGP_LAT_TP_BNDS</id>
+                <id>VGS_LAT_BNDS</id>
             </dimensions>
         </variable>
         <variable>
             <name>lon_bnds</name>
             <type>double</type>
-            <segment_name>VGP_LON_TP_BNDS</segment_name>
+            <segment_name>VGS_LON_BNDS</segment_name>
             <dimensions>
-                <id>VGP_LON_TP_BNDS</id>
+                <id>VGS_LON_BNDS</id>
             </dimensions>
-        </variable>
+        </variable>        
     </variables>
 </dataset>

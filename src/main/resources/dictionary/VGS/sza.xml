@@ -2,27 +2,32 @@
 <dataset>
     <variables>
         <variable>
-            <name>OG</name>
+            <name>SZA</name>
             <type>ubyte</type>
-            <segment_name>VGP_TP</segment_name>
+            <segment_name>VGS_TP</segment_name>
             <dimensions>
-                <id>VGP_TP</id>
+                <id>VGS_TP</id>
             </dimensions>
-            <attributes>          
+            <attributes>
+                <attribute>
+                    <name>standard_name</name>
+                    <type>string</type>
+                    <value>solar_zenith_angle</value>
+                </attribute>            
                 <attribute>
                     <name>long_name</name>
                     <type>string</type>
-                    <value>Ozone</value>
+                    <value>Solar zenith angle</value>
                 </attribute>
                 <attribute>
                     <name>units</name>
                     <type>string</type>
-                    <value>atm cm</value>
+                    <value>degrees</value>
                 </attribute>
                 <attribute>
                     <name>scale_factor</name>
                     <type>float</type>
-                    <value>0.004</value>
+                    <value>0.5</value>
                 </attribute>
                 <attribute>
                     <name>_FillValue</name>
@@ -31,13 +36,13 @@
                 </attribute>
                 <attribute>
                     <name>valid_min</name>
-                    <type>byte</type>
+                    <type>ubyte</type>
                     <value>0</value>
                 </attribute>
                 <attribute>
                     <name>valid_max</name>
                     <type>ubyte</type>
-                    <value>254</value>
+                    <value>180</value>
                 </attribute>
                 <attribute>
                     <name>grid_mapping</name>
@@ -49,9 +54,9 @@
         <variable>
             <name>lat</name>
             <type>double</type>
-            <segment_name>VGP_LAT_TP</segment_name>
+            <segment_name>VGS_LAT_TP</segment_name>
             <dimensions>
-                <id>VGP_LAT_TP</id>
+                <id>VGS_LAT_TP</id>
             </dimensions>
             <attributes>
                 <attribute>
@@ -84,9 +89,9 @@
         <variable>
             <name>lon</name>
             <type>double</type>
-            <segment_name>VGP_LON_TP</segment_name>
+            <segment_name>VGS_LON_TP</segment_name>
             <dimensions>
-                <id>VGP_LON_TP</id>
+                <id>VGS_LON_TP</id>
             </dimensions>
             <attributes>
                 <attribute>
@@ -119,18 +124,18 @@
         <variable>
             <name>lat_bnds</name>
             <type>double</type>
-            <segment_name>VGP_LAT_TP_BNDS</segment_name>
+            <segment_name>VGS_LAT_TP_BNDS</segment_name>
             <dimensions>
-                <id>VGP_LAT_TP_BNDS</id>
+                <id>VGS_LAT_TP_BNDS</id>
             </dimensions>
         </variable>
         <variable>
             <name>lon_bnds</name>
             <type>double</type>
-            <segment_name>VGP_LON_TP_BNDS</segment_name>
+            <segment_name>VGS_LON_TP_BNDS</segment_name>
             <dimensions>
-                <id>VGP_LON_TP_BNDS</id>
+                <id>VGS_LON_TP_BNDS</id>
             </dimensions>
-        </variable>
+        </variable>        
     </variables>
 </dataset>

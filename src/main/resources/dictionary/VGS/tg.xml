@@ -2,42 +2,42 @@
 <dataset>
     <variables>
         <variable>
-            <name>OG</name>
-            <type>ubyte</type>
-            <segment_name>VGP_TP</segment_name>
+            <name>TG</name>
+            <type>short</type>
+            <segment_name>VGS</segment_name>
             <dimensions>
-                <id>VGP_TP</id>
+                <id>VGS</id>
             </dimensions>
-            <attributes>          
+            <attributes>        
+                <attribute>
+                    <name>standard_name</name>
+                    <type>string</type>
+                    <value>time</value>
+                </attribute>            
                 <attribute>
                     <name>long_name</name>
                     <type>string</type>
-                    <value>Ozone</value>
+                    <value>Synthesis time</value>
                 </attribute>
                 <attribute>
                     <name>units</name>
                     <type>string</type>
-                    <value>atm cm</value>
-                </attribute>
-                <attribute>
-                    <name>scale_factor</name>
-                    <type>float</type>
-                    <value>0.004</value>
+                    <value>minutes since start_time</value>
                 </attribute>
                 <attribute>
                     <name>_FillValue</name>
-                    <type>ubyte</type>
-                    <value>255</value>
+                    <type>short</type>
+                    <value>-1</value>
                 </attribute>
                 <attribute>
                     <name>valid_min</name>
-                    <type>byte</type>
+                    <type>short</type>
                     <value>0</value>
                 </attribute>
                 <attribute>
                     <name>valid_max</name>
-                    <type>ubyte</type>
-                    <value>254</value>
+                    <type>short</type>
+                    <value>14400</value>
                 </attribute>
                 <attribute>
                     <name>grid_mapping</name>
@@ -49,9 +49,9 @@
         <variable>
             <name>lat</name>
             <type>double</type>
-            <segment_name>VGP_LAT_TP</segment_name>
+            <segment_name>VGS_LAT</segment_name>
             <dimensions>
-                <id>VGP_LAT_TP</id>
+                <id>VGS_LAT</id>
             </dimensions>
             <attributes>
                 <attribute>
@@ -84,9 +84,9 @@
         <variable>
             <name>lon</name>
             <type>double</type>
-            <segment_name>VGP_LON_TP</segment_name>
+            <segment_name>VGS_LON</segment_name>
             <dimensions>
-                <id>VGP_LON_TP</id>
+                <id>VGS_LON</id>
             </dimensions>
             <attributes>
                 <attribute>
@@ -119,17 +119,17 @@
         <variable>
             <name>lat_bnds</name>
             <type>double</type>
-            <segment_name>VGP_LAT_TP_BNDS</segment_name>
+            <segment_name>VGS_LAT_BNDS</segment_name>
             <dimensions>
-                <id>VGP_LAT_TP_BNDS</id>
+                <id>VGS_LAT_BNDS</id>
             </dimensions>
         </variable>
         <variable>
             <name>lon_bnds</name>
             <type>double</type>
-            <segment_name>VGP_LON_TP_BNDS</segment_name>
+            <segment_name>VGS_LON_BNDS</segment_name>
             <dimensions>
-                <id>VGP_LON_TP_BNDS</id>
+                <id>VGS_LON_BNDS</id>
             </dimensions>
         </variable>
     </variables>
