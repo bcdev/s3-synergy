@@ -138,11 +138,4 @@
             </dimensions>
         </variable>        
     </variables>
-    <global_attributes>
-        <attribute>
-            <name>dataset_name</name>
-            <value>sza</value>
-            <type>string</type>
-        </attribute>
-    </global_attributes>
 </dataset>

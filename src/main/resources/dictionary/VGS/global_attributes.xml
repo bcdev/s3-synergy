@@ -1,0 +1,97 @@
+    <global_attributes>
+        <attribute>
+            <name>Conventions</name>
+            <value>CF-1.4</value>
+            <type>string</type>
+        </attribute>
+        <attribute>
+            <name>title</name>
+            <value>${title}</value> <!-- needs to be set at runtime, e.g. to 'B0 TOA Reflectance' -->
+            <type>string</type>
+        </attribute>
+        <attribute>
+            <name>institution</name>
+            <value>${institution}</value> <!-- needs to be copied from the L1-Product -->
+            <type>string</type>
+        </attribute>
+        <attribute>
+            <name>source</name>
+            <value>${source}</value> <!-- needs to be copied from the L1-Product -->
+            <type>string</type>
+        </attribute>
+        <attribute>
+            <name>history</name>
+            <value>${history}</value> <!-- needs to be copied from the L1-Product and to be extended by current time + processor + version -->
+            <type>string</type>
+        </attribute>        
+        <attribute>
+            <name>comment</name>
+            <value>${comment}</value> <!-- needs to be set at runtime e.g. to 'This dataset contains the B0 TOA reflectance variable.' -->
+            <type>string</type>
+        </attribute>
+        <attribute>
+            <name>references</name>
+            <value>ATBD: S3-L2-SD-03-S2-SU-ATBD, IODD: S3-L2-SD-08-S-BC-IODD</value>
+            <type>string</type>
+        </attribute>
+        <attribute>
+            <name>contact</name>
+            <value>info@brockmann-consult.de</value>
+            <type>string</type>
+        </attribute>        
+        <attribute>
+            <name>netCDF_version</name>
+            <value>netCDF_4</value>
+            <type>string</type>
+        </attribute>        
+        <attribute>
+            <name>processor_version</name>
+            <value>${processor_version}</value>  <!-- needs to be set at runtime -->
+            <type>string</type>
+        </attribute>        
+        <attribute>
+            <name>dataset_name</name>
+            <value>${dataset_name}</value>  <!-- needs to be set at runtime, e.g. to 'b0' -->
+            <type>string</type>
+        </attribute>
+        <attribute>
+            <name>dataset_version</name>
+            <value>${dataset_version}</value>  <!-- needs to be set at runtime, to e.g. '0.1' -->
+            <type>string</type>
+        </attribute>        
+        <attribute>
+            <name>package_name</name>
+            <value>${package_name}</value>  <!-- needs to be set at runtime to the name of the SAFE package -->
+            <type>string</type>
+        </attribute>
+        <attribute>
+            <name>dataset_type</name>
+            <value>test</value>
+            <type>string</type>
+        </attribute>
+        <attribute>
+            <name>absolute_orbit_number</name>
+            <value>${absolute_orbit_number}</value> <!-- needs to be copied from the L1-Product -->
+            <type>string</type>
+        </attribute>
+        <attribute>
+            <name>creation_time</name>
+            <value>${creation_time}</value> <!-- needs to be set at runtime -->
+            <type>string</type>
+        </attribute>        
+        <attribute>
+            <name>start_time</name>
+            <value>${start_time}</value> <!-- needs to be copied from the L1-Product -->
+            <type>string</type>
+        </attribute>        
+        <attribute>
+            <name>stop_time</name>
+            <value>${stop_time}</value> <!-- needs to be copied from the L1-Product -->
+            <type>string</type>
+        </attribute>
+        <attribute>
+            <name>resolution</name>
+            <value>1000</value>
+            <type>ushort</type>
+        </attribute>
+    </global_attributes>
