@@ -11,38 +11,29 @@
 #include <map>
 #include <valarray>
 
-#include "../modules/BasicModule.h"
+#include "../writer/AbstractWriter.h"
 
 using std::map;
 using std::valarray;
 
-class SynL2Writer: public BasicModule {
+class SynL2Writer: public AbstractWriter {
 public:
-	SynL2Writer();
-	virtual ~SynL2Writer();
-	void process(Context& context);
-	void start(Context& context);
-	void stop(Context& context);
+    SynL2Writer();
+
+protected:
+	const string getProductDescriptorIdentifier() const;
+	void createSafeProduct(const Context& context);
 
 private:
 	friend class SynL2WriterTest;
 	void copyTemplateFiles() const;
 	string readManifest() const;
-	void setStartTime(Context& context, string& xml) const;
+	void setStartTime(const Context& context, string& xml) const;
 	void setChecksums(string& manifest) const;
 	void writeManifest(string& manifest) const;
 	void removeManifestTemplate() const;
 	void replaceString(const string& toReplace, const string& replacement, string& input) const;
 	string getMd5Sum(const string& file) const;
-	void createNcVar(const ProductDescriptor& productDescriptor,
-			const SegmentDescriptor& segmentDescriptor,
-			const VariableDescriptor& variable, const Grid& grid);
-
-	path targetDirPath;
-
-	map<string, int> ncFileIdMap;
-	map<string, valarray<int> > ncDimIdMap;
-	map<string, int> ncVarIdMap;
 };
 
 #endif	/* SYNL2WRITER_H */
