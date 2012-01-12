@@ -123,7 +123,6 @@ void AbstractWriter::stop(Context& context) {
 }
 
 void AbstractWriter::createNcVar(const ProductDescriptor& productDescriptor, const SegmentDescriptor& segmentDescriptor, const VariableDescriptor& variableDescriptor, const Grid& grid) {
-	const string varName = variableDescriptor.getName();
 	const string ncFileBasename = variableDescriptor.getNcFileBasename();
 
 	if (!contains(ncFileIdMap, ncFileBasename)) {
@@ -132,15 +131,15 @@ void AbstractWriter::createNcVar(const ProductDescriptor& productDescriptor, con
 				BOOST_THROW_EXCEPTION( runtime_error("Cannot create directory '" + targetDirPath.string() + "'."));
 			}
 		}
-		const path ncFilePath = targetDirPath / (variableDescriptor.getNcFileBasename() + ".nc");
+		const path ncFilePath = targetDirPath / (ncFileBasename + ".nc");
 		const int fileId = NetCDF::createFile(ncFilePath.string());
 
 		foreach(const Attribute* attribute, productDescriptor.getAttributes()) {
-		    NetCDF::putAttribute(fileId, NC_GLOBAL, *attribute);
+		    NetCDF::putGlobalAttribute(fileId, *attribute);
 		}
 
 		foreach(const Attribute* attribute, segmentDescriptor.getAttributes()) {
-		    NetCDF::putAttribute(fileId, NC_GLOBAL, *attribute);
+		    NetCDF::putGlobalAttribute(fileId, *attribute);
 		}
 
 		const long sizeK = grid.getSizeK();
@@ -174,7 +173,7 @@ void AbstractWriter::createNcVar(const ProductDescriptor& productDescriptor, con
 	const int fileId = ncFileIdMap[ncFileBasename];
 	const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
 	const int varId = NetCDF::defineVariable(fileId, variableDescriptor.getNcVarName(), variableDescriptor.getType(), dimIds);
-	ncVarIdMap[varName] = varId;
+	ncVarIdMap[variableDescriptor.getName()] = varId;
 
 	foreach(const Attribute* attribute, variableDescriptor.getAttributes()) {
 	    NetCDF::putAttribute(fileId, varId, *attribute);
