@@ -73,8 +73,8 @@
         </attribute>
         <attribute>
             <name>absolute_orbit_number</name>
-            <value>2US</value>
-            <type>string</type>
+            <value>2</value>
+            <type>ushort</type>
         </attribute>
         <attribute>
             <name>creation_time</name>
@@ -93,8 +93,8 @@
         </attribute>
         <attribute>
             <name>resolution</name>
-            <value>1000</value>
-            <type>ushort</type>
+            <value>OLCI_FR</value>
+            <type>string</type>
         </attribute>
     </global_attributes>
 </dataset>

@@ -153,8 +153,12 @@ const uint8_t VGT_B3_GOOD_FLAG = 32U;
 const uint8_t VGT_B2_GOOD_FLAG = 64U;
 const uint8_t VGT_B0_GOOD_FLAG = 128U;
 
+/**
+ * Misc
+ */
 
 const double FILL_VALUE_DOUBLE = -numeric_limits<double>::max();
+const string GLOBAL_ATTRIBUTES_FILENAME = "global_attributes.xml";
 }
 
 #endif	/* CONSTANTS_H */

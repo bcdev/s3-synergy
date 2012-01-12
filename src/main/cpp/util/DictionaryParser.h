@@ -30,6 +30,7 @@ private:
         return list.find(key) != list.end();
     }
 
+    void parseGlobalAttributes(const string& dirPath, ProductDescriptor& productDescriptor) const;
     void parseVariables(const string& variableDefPath, const string& file, ProductDescriptor& prod) const;
     void parseAttributes(const string& file, const string& variableName, VariableDescriptor& var) const;
     void parseDimensions(const string& file, const string& variableName, VariableDescriptor& var) const;

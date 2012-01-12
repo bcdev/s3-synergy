@@ -180,6 +180,37 @@ void DictionaryParserTest::testL2Data(const string& productDescriptorId) {
 
     checkLatitudeVariable(g.getVariableDescriptor("latitude"));
     checkLongitudeVariable(g.getVariableDescriptor("longitude"));
+
+    string expected;
+    expected = "CF-1.4";
+    CPPUNIT_ASSERT(expected.compare(p.getAttribute("Conventions").getValue()) == 0);
+
+    expected = "TBD";
+    CPPUNIT_ASSERT(expected.compare(p.getAttribute("institution").getValue()) == 0);
+
+    expected = "Sentinel-3A SY";
+    CPPUNIT_ASSERT(expected.compare(p.getAttribute("source").getValue()) == 0);
+
+    expected = "ATBD: S3-L2-SD-03-S2-SU-ATBD, IODD: S3-L2-SD-08-S-BC-IODD";
+    CPPUNIT_ASSERT(expected.compare(p.getAttribute("references").getValue()) == 0);
+
+    expected = "info@brockmann-consult.de";
+    CPPUNIT_ASSERT(expected.compare(p.getAttribute("contact").getValue()) == 0);
+
+    expected = "netCDF_4";
+    CPPUNIT_ASSERT(expected.compare(p.getAttribute("netCDF_version").getValue()) == 0);
+
+    expected = "test";
+    CPPUNIT_ASSERT(expected.compare(p.getAttribute("dataset_type").getValue()) == 0);
+
+    expected = "2";
+    CPPUNIT_ASSERT(lexical_cast<uint16_t>(expected) == lexical_cast<uint16_t>(p.getAttribute("absolute_orbit_number").getValue()));
+
+    expected = "UTC=2013-06-21T10:09:20.655099";
+    CPPUNIT_ASSERT(expected.compare(p.getAttribute("start_time").getValue()) == 0);
+
+    expected = "UTC=2013-06-21T10:14:13.783099";
+    CPPUNIT_ASSERT(expected.compare(p.getAttribute("stop_time").getValue()) == 0);
 }
 
 void DictionaryParserTest::checkSDRVariable(VariableDescriptor& v) {

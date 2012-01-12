@@ -10,6 +10,7 @@
 
 DictionaryParser::DictionaryParser() : xmlParser(), exclusionSet() {
     exclusionSet.insert("dimensions.xml");
+    exclusionSet.insert("global_attributes.xml");
 }
 
 DictionaryParser::DictionaryParser(const DictionaryParser& orig) {
@@ -31,9 +32,26 @@ shared_ptr<Dictionary> DictionaryParser::parse(const string& dictionaryPath) {
                 parseVariables(subDirPath, varDescriptorFileName, productDescriptor);
             }
         }
+        if(productDescriptorName.compare(Constants::PRODUCT_SY1) != 0) {
+            parseGlobalAttributes(subDirPath, productDescriptor);
+        }
     }
     
     return dictionary;
+}
+
+void DictionaryParser::parseGlobalAttributes(const string& dirPath, ProductDescriptor& productDescriptor) const {
+    const string descriptorFilePath = dirPath + "/" + Constants::GLOBAL_ATTRIBUTES_FILENAME;
+    const vector<string> attributeNames = xmlParser.evaluateToStringList(descriptorFilePath, "/dataset/global_attributes/attribute/name/child::text()");
+    foreach(string attributeName, attributeNames) {
+        string valueQuery = "/dataset/global_attributes/attribute[name=\"" + attributeName + "\"]/value";
+        string typeQuery = "/dataset/global_attributes/attribute[name=\"" + attributeName + "\"]/type";
+
+        string value = xmlParser.evaluateToString(descriptorFilePath, valueQuery);
+        string type = xmlParser.evaluateToString(descriptorFilePath, typeQuery);
+
+        productDescriptor.addAttribute(toType(type), attributeName, value);
+    }
 }
 
 void DictionaryParser::parseVariables(const string& dirPath, const string& descriptorFileName, ProductDescriptor& productDescriptor) const {
@@ -41,11 +59,8 @@ void DictionaryParser::parseVariables(const string& dirPath, const string& descr
     const vector<string> variableNames = xmlParser.evaluateToStringList(descriptorFilePath, "/dataset/variables/variable/name/child::text()");
 
     foreach (string name, variableNames) {
-        string query;
-        string ncName;
-
-        query = "/dataset/variables/variable[name=\"" + name + "\"]/ncname";
-        ncName = xmlParser.evaluateToString(descriptorFilePath, query);
+        string query = "/dataset/variables/variable[name=\"" + name + "\"]/ncname";
+        string ncName = xmlParser.evaluateToString(descriptorFilePath, query);
         if (ncName.empty()) {
             ncName = name;
         }

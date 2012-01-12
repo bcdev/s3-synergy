@@ -13,17 +13,17 @@
         </attribute>
         <attribute>
             <name>institution</name>
-            <value>${institution}</value> <!-- needs to be copied from the L1-Product -->
+            <value>TBD</value>
             <type>string</type>
         </attribute>
         <attribute>
             <name>source</name>
-            <value>${source}</value> <!-- needs to be copied from the L1-Product -->
+            <value>Sentinel-3A SY</value>
             <type>string</type>
         </attribute>
         <attribute>
             <name>history</name>
-            <value>${history}</value> <!-- needs to be copied from the L1-Product and to be extended by current time + processor + version -->
+            <value>TBD;${history}</value> <!-- needs to be copied from the L1-Product and to be extended by current time + processor + version -->
             <type>string</type>
         </attribute>        
         <attribute>
@@ -73,7 +73,7 @@
         </attribute>
         <attribute>
             <name>absolute_orbit_number</name>
-            <value>${absolute_orbit_number}</value> <!-- needs to be copied from the L1-Product -->
+            <value>2US</value>
             <type>string</type>
         </attribute>
         <attribute>
@@ -83,12 +83,12 @@
         </attribute>        
         <attribute>
             <name>start_time</name>
-            <value>${start_time}</value> <!-- needs to be copied from the L1-Product -->
+            <value>UTC=2013-06-21T10:09:20.655099</value>
             <type>string</type>
         </attribute>        
         <attribute>
             <name>stop_time</name>
-            <value>${stop_time}</value> <!-- needs to be copied from the L1-Product -->
+            <value>UTC=2013-06-21T10:14:13.783099</value>
             <type>string</type>
         </attribute>
         <attribute>
