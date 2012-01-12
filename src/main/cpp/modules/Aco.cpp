@@ -99,6 +99,7 @@ void Aco::process(Context& context) {
     const Accessor& tau550Accessor = collocatedSegment.getAccessor("T550");
     const Accessor& tau550ErrAccessor = collocatedSegment.getAccessor("T550_er");
     const Accessor& aminAccessor = collocatedSegment.getAccessor("AMIN");
+    // TODO - consider flags
     const Accessor& flagsAccessor = collocatedSegment.getAccessor("SYN_flags");
 	const Accessor& latAccessor = geoSegment.getAccessor("latitude");
 	const Accessor& lonAccessor = geoSegment.getAccessor("longitude");
