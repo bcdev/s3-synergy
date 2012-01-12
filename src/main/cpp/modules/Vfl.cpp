@@ -36,7 +36,9 @@ void Vfl::process(Context& context) {
     const long firstL = context.getFirstComputableL(collocatedSegment, *this);
     const long lastL = context.getLastComputableL(collocatedSegment, *this);
 
+#if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100) > 40100
 #pragma omp parallel for
+#endif
     for (long l = firstL; l <= lastL; l++) {
 		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
 		for (long k = collocatedGrid.getFirstK(); k <= collocatedGrid.getMaxK(); k++) {
