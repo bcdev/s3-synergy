@@ -134,13 +134,8 @@ void AbstractWriter::createNcVar(const ProductDescriptor& productDescriptor, con
 		const path ncFilePath = targetDirPath / (ncFileBasename + ".nc");
 		const int fileId = NetCDF::createFile(ncFilePath.string());
 
-		foreach(const Attribute* attribute, productDescriptor.getAttributes()) {
-		    NetCDF::putGlobalAttribute(fileId, *attribute);
-		}
-
-		foreach(const Attribute* attribute, segmentDescriptor.getAttributes()) {
-		    NetCDF::putGlobalAttribute(fileId, *attribute);
-		}
+		putAttributes(fileId, variableDescriptor, productDescriptor.getAttributes());
+		putAttributes(fileId, variableDescriptor, segmentDescriptor.getAttributes());
 
 		const long sizeK = grid.getSizeK();
 		const long sizeL = grid.getMaxL() - grid.getMinL() + 1;
@@ -178,4 +173,44 @@ void AbstractWriter::createNcVar(const ProductDescriptor& productDescriptor, con
 	foreach(const Attribute* attribute, variableDescriptor.getAttributes()) {
 	    NetCDF::putAttribute(fileId, varId, *attribute);
 	}
+}
+
+void AbstractWriter::putAttributes(int fileId, const VariableDescriptor& variableDescriptor, const vector<Attribute*>& attributes) const {
+    foreach(Attribute* attribute, attributes) {
+        if(attribute->getName().compare("title") == 0) {
+            string title;
+            if(variableDescriptor.hasAttribute("long_name")) {
+                title = variableDescriptor.getAttribute("long_name").getValue();
+            } else {
+                title = variableDescriptor.getName();
+            }
+            attribute->setValue(title);
+        } else if(attribute->getName().compare("comment") == 0) {
+            string comment = "This dataset contains the '";
+            if(variableDescriptor.hasAttribute("long_name")) {
+                comment.append(variableDescriptor.getAttribute("long_name").getValue().c_str());
+            } else {
+                comment.append(variableDescriptor.getName().c_str());
+            }
+            comment.append(" 'variable.");
+            attribute->setValue(comment);
+        } else if(attribute->getName().compare("processor_version") == 0) {
+            attribute->setValue(Constants::PROCESSOR_VERSION);
+        } else if(attribute->getName().compare("dataset_name") == 0) {
+            attribute->setValue(variableDescriptor.getName());
+        } else if(attribute->getName().compare("dataset_version") == 0) {
+            attribute->setValue(Constants::DATASET_VERSION);
+        } else if(attribute->getName().compare("package_name") == 0) {
+            attribute->setValue(targetDirPath.filename());
+        } else if(attribute->getName().compare("creation_time") == 0) {
+            time_t currentTime;
+            time(&currentTime);
+            struct tm* currentTimeStructure = gmtime(&currentTime);
+            char buffer[80];
+            strftime(buffer, 80, "UTC=%Y-%m-%dT%H:%M:%S.000000", currentTimeStructure);
+            attribute->setValue(string(buffer));
+        }
+
+        NetCDF::putGlobalAttribute(fileId, *attribute);
+    }
 }

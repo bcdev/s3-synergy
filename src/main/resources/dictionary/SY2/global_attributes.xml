@@ -23,7 +23,7 @@
         </attribute>
         <attribute>
             <name>history</name>
-            <value>TBD;${history}</value> <!-- needs to be copied from the L1-Product and to be extended by current time + processor + version -->
+            <value>TBD</value>
             <type>string</type>
         </attribute>        
         <attribute>
