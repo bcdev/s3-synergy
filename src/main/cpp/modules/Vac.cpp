@@ -30,6 +30,7 @@ Vac::~Vac() {
 }
 
 void Vac::start(Context& context) {
+    // todo - use vgt grid
     collocatedSegment = &context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
     setupAccessors(context);
     prepareAuxdata(context);
