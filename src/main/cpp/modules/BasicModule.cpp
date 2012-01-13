@@ -25,7 +25,7 @@ AuxdataProvider& BasicModule::getAuxdataProvider(Context& context, const string&
 
     if (!context.hasObject(id)) {
     	// TODO - resolve relative paths properly
-        shared_ptr<AuxdataProvider> auxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider(id, Constants::S3_SYNERGY_HOME + idMap.at(id)));
+        shared_ptr<AuxdataProvider> auxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider(id, Constants::S3_SYNERGY_HOME + "/" + idMap.at(id)));
         context.getLogging().info("Preparing auxiliary data '" + id + "'", getId());
         context.addObject(auxdataProvider);
     }
