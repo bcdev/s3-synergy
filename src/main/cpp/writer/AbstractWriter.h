@@ -32,7 +32,7 @@ protected:
     map<string, int> ncVarIdMap;
 
 	virtual const string getProductDescriptorIdentifier() const = 0;
-	virtual void createSafeProduct(const Context& context) = 0;
+	virtual const string getSafeManifestName() const = 0;
 
 private:
 	friend class AbstractWriterTest;
@@ -42,6 +42,16 @@ private:
 			const SegmentDescriptor& segmentDescriptor,
 			const VariableDescriptor& variable, const Grid& grid);
 	void putAttributes(int fileId, const VariableDescriptor& variableDescriptor, const vector<Attribute*>& attributes) const;
+	void createSafeProduct(const Context& context);
+
+	void copyTemplateFiles() const;
+	string readManifest() const;
+	void setStartTime(const Context& context, string& manifest) const;
+	void setChecksums(string& manifest) const;
+	void writeManifest(string& manifest) const;
+	void removeManifestTemplate() const;
+	void replaceString(const string& toReplace, const string& replacement, string& input) const;
+	string getMd5Sum(const string& file) const;
 };
 
 #endif	/* ABSTRACTWRITER_H */

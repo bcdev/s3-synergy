@@ -22,18 +22,10 @@ public:
 
 protected:
 	const string getProductDescriptorIdentifier() const;
-	void createSafeProduct(const Context& context);
+	const string getSafeManifestName() const;
 
 private:
 	friend class SynL2WriterTest;
-	void copyTemplateFiles() const;
-	string readManifest() const;
-	void setStartTime(const Context& context, string& xml) const;
-	void setChecksums(string& manifest) const;
-	void writeManifest(string& manifest) const;
-	void removeManifestTemplate() const;
-	void replaceString(const string& toReplace, const string& replacement, string& input) const;
-	string getMd5Sum(const string& file) const;
 };
 
 #endif	/* SYNL2WRITER_H */

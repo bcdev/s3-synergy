@@ -22,13 +22,12 @@ AbstractWriter::AbstractWriter(const string& name) :
 
 AbstractWriter::~AbstractWriter() {
 	pair<string, int> fileIdPair;
-	foreach(fileIdPair, ncFileIdMap)
-			{
-				try {
-					NetCDF::closeFile(fileIdPair.second);
-				} catch (exception& ignored) {
-				}
-			}
+	foreach(fileIdPair, ncFileIdMap) {
+	    try {
+	        NetCDF::closeFile(fileIdPair.second);
+	    } catch (exception& ignored) {
+	    }
+	}
 }
 
 const ProductDescriptor& AbstractWriter::getProductDescriptor(const Context& context) const {
@@ -197,7 +196,7 @@ void AbstractWriter::putAttributes(int fileId, const VariableDescriptor& variabl
         } else if(attribute->getName().compare("processor_version") == 0) {
             attribute->setValue(Constants::PROCESSOR_VERSION);
         } else if(attribute->getName().compare("dataset_name") == 0) {
-            attribute->setValue(variableDescriptor.getName());
+            attribute->setValue(variableDescriptor.getNcFileBasename());
         } else if(attribute->getName().compare("dataset_version") == 0) {
             attribute->setValue(Constants::DATASET_VERSION);
         } else if(attribute->getName().compare("package_name") == 0) {
@@ -213,4 +212,87 @@ void AbstractWriter::putAttributes(int fileId, const VariableDescriptor& variabl
 
         NetCDF::putGlobalAttribute(fileId, *attribute);
     }
+}
+void AbstractWriter::createSafeProduct(const Context& context) {
+    copyTemplateFiles();
+    string manifest = readManifest();
+    setStartTime(context, manifest);
+    setChecksums(manifest);
+    writeManifest(manifest);
+    removeManifestTemplate();
+}
+
+void AbstractWriter::copyTemplateFiles() const {
+    const string sourceDirPath = Constants::S3_SYNERGY_HOME + "/src/main/resources/" + getProductDescriptorIdentifier() + "/SAFE_metacomponents";
+    const vector<string> fileNames = IOUtils::getFileNames(sourceDirPath);
+    foreach(string fileName, fileNames) {
+        boost::filesystem::copy_file(sourceDirPath + "/" + fileName, targetDirPath / fileName);
+    }
+    boost::filesystem::create_directory(path(targetDirPath.string() + "/schema"));
+    const vector<string> schemaFileNames = IOUtils::getFileNames(sourceDirPath + "/schema");
+    foreach(string fileName, schemaFileNames) {
+        boost::filesystem::copy_file(sourceDirPath + "/schema/" + fileName, targetDirPath / "schema" / fileName);
+    }
+}
+
+string AbstractWriter::readManifest() const {
+    std::ifstream ifs(string(targetDirPath.string() + "/" + getSafeManifestName() + ".template").c_str(), std::ifstream::in);
+    std::ostringstream oss;
+    char c;
+    while (ifs.get(c)) {
+        oss.put(c);
+    }
+    ifs.close();
+    return oss.str();
+}
+
+void AbstractWriter::setStartTime(const Context& context, string& manifest) const {
+    struct tm* ptm = localtime(&context.getStartTime());
+    char buffer[32];
+    strftime(buffer, 32, "%Y-%m-%dT%H:%M:%S", ptm);
+    string startTime = string(buffer);
+    replaceString("\\$\\{processing-start-time\\}", startTime, manifest);
+}
+
+void AbstractWriter::setChecksums(string& manifest) const {
+    pair<string, int> fileIdPair;
+    foreach(fileIdPair, ncFileIdMap) {
+        string checksum = getMd5Sum(targetDirPath.string() + "/" + fileIdPair.first + ".nc");
+        replaceString("\\s*\\$\\{checksum-" + fileIdPair.first + "\\.nc\\}\\s*", checksum, manifest);
+        NetCDF::closeFile(fileIdPair.second);
+    }
+}
+
+void AbstractWriter::writeManifest(string& manifest) const {
+    std::ofstream ofs(string(targetDirPath.string() + "/" + getSafeManifestName() + ".xml").c_str(), std::ofstream::out);
+    for(size_t i = 0; i < manifest.size(); i++) {
+        ofs.put(manifest[i]);
+    }
+    ofs.close();
+}
+
+void AbstractWriter::removeManifestTemplate() const {
+    path manifestTemplate = path(targetDirPath.string() + "/" + getSafeManifestName() + ".template");
+    boost::filesystem::remove(manifestTemplate);
+}
+
+void AbstractWriter::replaceString(const string& toReplace, const string& replacement, string& input) const {
+    regex expr(toReplace.c_str());
+    input = regex_replace(input, expr, replacement);
+}
+
+string AbstractWriter::getMd5Sum(const string& file) const {
+    FILE* pipe = popen(string(Constants::MD5SUM_EXECUTABLE + " " + file).c_str(), "r");
+    if (!pipe || !boost::filesystem::exists(path(file))) {
+        BOOST_THROW_EXCEPTION(std::invalid_argument("Could not perform command 'md5sum' on file '" + file + "'."));
+    }
+    char buffer[128];
+    std::string result = "";
+    while(!feof(pipe)) {
+        if(fgets(buffer, 128, pipe) != NULL)
+                result += buffer;
+    }
+    pclose(pipe);
+    replaceString("\\s+.*", "", result);
+    return result;
 }

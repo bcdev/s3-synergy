@@ -13,11 +13,11 @@
 class VgtPWriter: public AbstractWriter {
 public:
     VgtPWriter();
+    virtual ~VgtPWriter();
 
 protected:
     const string getProductDescriptorIdentifier() const;
-	const string getName() const;
-	void createSafeProduct(const Context& context);
+    const string getSafeManifestName() const;
 
 private:
 	friend class VgtPWriterTest;

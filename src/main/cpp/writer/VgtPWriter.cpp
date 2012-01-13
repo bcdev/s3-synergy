@@ -5,19 +5,18 @@
  * Created on January 11, 2012, 16:30
  */
 
-#include <fstream>
-#include <stdexcept>
-
 #include "VgtPWriter.h"
 
 VgtPWriter::VgtPWriter() : AbstractWriter("VGP_WRITER") {
 
 }
 
+VgtPWriter::~VgtPWriter() {}
+
 const string VgtPWriter::getProductDescriptorIdentifier() const {
     return Constants::PRODUCT_VGTP;
 }
 
-void VgtPWriter::createSafeProduct(const Context& context) {
-	// don't create a SAFE product from VGT
+const string VgtPWriter::getSafeManifestName() const {
+    return Constants::SAFE_MANIFEST_NAME_VGT_P;
 }

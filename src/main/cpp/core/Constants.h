@@ -159,6 +159,9 @@ const uint8_t VGT_B0_GOOD_FLAG = 128U;
 
 const double FILL_VALUE_DOUBLE = -numeric_limits<double>::max();
 const string GLOBAL_ATTRIBUTES_FILENAME = "global_attributes.xml";
+const string SAFE_MANIFEST_NAME_SYN = "manifest_SYN";
+const string SAFE_MANIFEST_NAME_VGT_P = "manifest_VGP";
+const string SAFE_MANIFEST_NAME_VGT_S = "manifest_VGS";
 }
 
 #endif	/* CONSTANTS_H */

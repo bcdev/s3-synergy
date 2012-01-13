@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- SENTINEL 3 SYN Level 2 archive
-This document is a sample manifest file of a SAFE archive. -->
+This document is a manifest file of a SAFE archive. -->
 
 <xfdu:XFDU  xmlns:xfdu     ='urn:ccsds:schema:xfdu:1'
             xmlns:safe     ='http://www.esa.int/safe/1.2'
