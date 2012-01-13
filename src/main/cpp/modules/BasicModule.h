@@ -77,7 +77,7 @@ protected:
 
     AuxdataProvider& getAuxdataProvider(Context& context, const string& id) const;
 
-    LookupTable<double>& getLookupTable(Context& context, const string& fileName, const string& varName) const;
+    LookupTable<double>& getLookupTable(Context& context, const string& id, const string& varName) const;
 };
 
 #endif	/* BASICMODULE_H */

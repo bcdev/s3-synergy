@@ -437,13 +437,13 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 }
 
 void Aer::readAuxiliaryData(Context& context) {
-	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "OLC_R_atm");
-	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLN_R_atm");
-	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLO_R_atm");
-	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "t");
-	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "rho_atm");
-	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "D");
-	getLookupTable(context, "S3__SY_2_SYCPAX.nc", "weight_ang_tot");
+	getLookupTable(context, "SYRTAX", "OLC_R_atm");
+	getLookupTable(context, "SYRTAX", "SLN_R_atm");
+	getLookupTable(context, "SYRTAX", "SLO_R_atm");
+	getLookupTable(context, "SYRTAX", "t");
+	getLookupTable(context, "SYRTAX", "rho_atm");
+	getLookupTable(context, "SYRTAX", "D");
+	getLookupTable(context, "SYCPAX", "weight_ang_tot");
 
 	AuxdataProvider& cpAuxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYCPAX);
 	AuxdataProvider& rtAuxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYRTAX);

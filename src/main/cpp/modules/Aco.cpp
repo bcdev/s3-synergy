@@ -24,11 +24,11 @@ Aco::~Aco() {
 }
 
 void Aco::start(Context& context) {
-	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "OLC_R_atm");
-	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLN_R_atm");
-	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "SLO_R_atm");
-	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "t");
-	getLookupTable(context, "S3__SY_2_SYRTAX.nc", "rho_atm");
+	getLookupTable(context, "SYRTAX", "OLC_R_atm");
+	getLookupTable(context, "SYRTAX", "SLN_R_atm");
+	getLookupTable(context, "SYRTAX", "SLO_R_atm");
+	getLookupTable(context, "SYRTAX", "t");
+	getLookupTable(context, "SYRTAX", "rho_atm");
 	getAuxdataProvider(context, Constants::AUX_ID_SYRTAX);
 
 	Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
