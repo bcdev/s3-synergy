@@ -22,8 +22,8 @@ public:
     virtual ~SynL2Writer();
 
 protected:
-	const string getProductDescriptorIdentifier() const;
-	const string getSafeManifestName() const;
+	const string& getProductDescriptorIdentifier() const;
+	const string& getSafeManifestName() const;
 
 private:
 	friend class SynL2WriterTest;

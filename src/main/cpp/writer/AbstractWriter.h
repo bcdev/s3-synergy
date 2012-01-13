@@ -31,8 +31,8 @@ protected:
     map<string, valarray<int> > ncDimIdMap;
     map<string, int> ncVarIdMap;
 
-	virtual const string getProductDescriptorIdentifier() const = 0;
-	virtual const string getSafeManifestName() const = 0;
+	virtual const string& getProductDescriptorIdentifier() const = 0;
+	virtual const string& getSafeManifestName() const = 0;
 
 private:
 	friend class AbstractWriterTest;

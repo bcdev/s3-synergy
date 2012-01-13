@@ -22,10 +22,10 @@ SynL2Writer::SynL2Writer() : AbstractWriter("SY2_WRITER") {
 
 SynL2Writer::~SynL2Writer() {}
 
-const string SynL2Writer::getProductDescriptorIdentifier() const {
+const string& SynL2Writer::getProductDescriptorIdentifier() const {
     return Constants::PRODUCT_SY2;
 }
 
-const string SynL2Writer::getSafeManifestName() const {
+const string& SynL2Writer::getSafeManifestName() const {
     return Constants::SAFE_MANIFEST_NAME_SYN;
 }

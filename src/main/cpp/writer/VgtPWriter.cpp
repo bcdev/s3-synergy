@@ -13,10 +13,10 @@ VgtPWriter::VgtPWriter() : AbstractWriter("VGP_WRITER") {
 
 VgtPWriter::~VgtPWriter() {}
 
-const string VgtPWriter::getProductDescriptorIdentifier() const {
+const string& VgtPWriter::getProductDescriptorIdentifier() const {
     return Constants::PRODUCT_VGTP;
 }
 
-const string VgtPWriter::getSafeManifestName() const {
+const string& VgtPWriter::getSafeManifestName() const {
     return Constants::SAFE_MANIFEST_NAME_VGT_P;
 }

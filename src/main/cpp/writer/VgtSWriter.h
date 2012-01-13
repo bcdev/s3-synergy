@@ -16,8 +16,8 @@ public:
     virtual ~VgtSWriter();
 
 protected:
-    const string getProductDescriptorIdentifier() const;
-    const string getSafeManifestName() const;
+    const string& getProductDescriptorIdentifier() const;
+    const string& getSafeManifestName() const;
 
 private:
 	friend class VgtSWriterTest;

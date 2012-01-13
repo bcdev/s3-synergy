@@ -13,10 +13,10 @@ VgtSWriter::VgtSWriter() : AbstractWriter("VGS_WRITER") {
 
 VgtSWriter::~VgtSWriter() {}
 
-const string VgtSWriter::getProductDescriptorIdentifier() const {
+const string& VgtSWriter::getProductDescriptorIdentifier() const {
     return Constants::PRODUCT_VGTS;
 }
 
-const string VgtSWriter::getSafeManifestName() const {
+const string& VgtSWriter::getSafeManifestName() const {
     return Constants::SAFE_MANIFEST_NAME_VGT_S;
 }
