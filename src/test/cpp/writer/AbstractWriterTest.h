@@ -1,33 +1,33 @@
 /*
- * SynL2WriterTest.h
+ * AbstractWriterTest.h
  *
  *  Created on: Sep 2, 2011
  *      Author: ralf
  */
 
-#ifndef SYNL2WRITERTEST_H_
-#define SYNL2WRITERTEST_H_
+#ifndef ABSTRACTWRITERTEST_H_
+#define ABSTRACTWRITERTEST_H_
 
 #include <cppunit/extensions/HelperMacros.h>
 
 #include "../../../../src/main/cpp/core/Context.h"
 #include "../../../../src/main/cpp/core/Dictionary.h"
 
-class SynL2WriterTest : public CPPUNIT_NS::TestFixture {
-    CPPUNIT_TEST_SUITE(SynL2WriterTest);
-    CPPUNIT_TEST(testWriter);
+class AbstractWriterTest : public CPPUNIT_NS::TestFixture {
+    CPPUNIT_TEST_SUITE(AbstractWriterTest);
+    CPPUNIT_TEST(testReplacing);
     CPPUNIT_TEST_SUITE_END();
 
 public:
-    SynL2WriterTest();
-    virtual ~SynL2WriterTest();
+    AbstractWriterTest();
+    virtual ~AbstractWriterTest();
     void setUp();
     void tearDown();
 
 protected:
-    void testWriter();
+    void testReplacing();
     void prepareContext();
     shared_ptr<Context> context;
 };
 
-#endif /* SYNL2WRITERTEST_H_ */
+#endif /* ABSTRACTWRITERTEST_H_ */

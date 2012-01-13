@@ -8,31 +8,32 @@
 #include <cstdlib>
 
 #include "../../../../src/main/cpp/core/Processor.h"
+#include "../../../../src/main/cpp/writer/AbstractWriter.h"
 #include "../../../../src/main/cpp/writer/SynL2Writer.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
 
 #include "SynL2SegmentProvider.h"
-#include "SynL2WriterTest.h"
+#include "AbstractWriterTest.h"
 
 using std::getenv;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(SynL2WriterTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(AbstractWriterTest);
 
-SynL2WriterTest::SynL2WriterTest() {
+AbstractWriterTest::AbstractWriterTest() {
 }
 
-SynL2WriterTest::~SynL2WriterTest() {
+AbstractWriterTest::~AbstractWriterTest() {
 }
 
-void SynL2WriterTest::setUp() {
+void AbstractWriterTest::setUp() {
 	XPathInitializer init;
 
 	prepareContext();
 }
 
 
-void SynL2WriterTest::prepareContext() {
+void AbstractWriterTest::prepareContext() {
     context = shared_ptr<Context>(new Context());
     shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
     context->setErrorHandler(errorHandler);
@@ -48,15 +49,19 @@ void SynL2WriterTest::prepareContext() {
     context->setLogging(logging);
 }
 
-void SynL2WriterTest::tearDown() {
+void AbstractWriterTest::tearDown() {
 }
 
-void SynL2WriterTest::testWriter() {
-    shared_ptr<Module> module = shared_ptr<Module>(new SynL2SegmentProvider());
-    shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
-    context->addModule(module);
-    context->addModule(writer);
+void AbstractWriterTest::testReplacing() {
+    shared_ptr<AbstractWriter> writer = shared_ptr<AbstractWriter>(new SynL2Writer());
 
-    Processor processor;
-	processor.process(*context);
+    string first = "abcdefg";
+    string toReplace = "b";
+    writer->replaceString(toReplace, "31415", first);
+    CPPUNIT_ASSERT(first.compare("a31415cdefg") == 0);
+
+    string second = "<checksum checksumName=\"MD5\">${checksum-tiepoints_meteo.nc}</checksum>";
+    writer->replaceString("\\$\\{checksum-tiepoints_meteo\\.nc\\}", "someChecksum", second);
+    CPPUNIT_ASSERT(second.compare("<checksum checksumName=\"MD5\">someChecksum</checksum>") == 0);
 }
+

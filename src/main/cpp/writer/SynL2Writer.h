@@ -19,21 +19,18 @@ using std::valarray;
 class SynL2Writer: public AbstractWriter {
 public:
     SynL2Writer();
+    virtual ~SynL2Writer();
 
 protected:
-	const string getProductDescriptorIdentifier() const;
-	void createSafeProduct(const Context& context);
+	const string& getProductDescriptorIdentifier() const;
+	const vector<SegmentDescriptor*> getSegmentDescriptors(const Context& context) const;
+	const string& getSafeManifestName() const;
+	void writeCommonVariables(const Context& context);
+    void defineCommonDimensions(int fileId, bool isSubsampled);
+    void defineCommonVariables(int fileId, bool isSubsampled);
 
 private:
 	friend class SynL2WriterTest;
-	void copyTemplateFiles() const;
-	string readManifest() const;
-	void setStartTime(const Context& context, string& xml) const;
-	void setChecksums(string& manifest) const;
-	void writeManifest(string& manifest) const;
-	void removeManifestTemplate() const;
-	void replaceString(const string& toReplace, const string& replacement, string& input) const;
-	string getMd5Sum(const string& file) const;
 };
 
 #endif	/* SYNL2WRITER_H */
