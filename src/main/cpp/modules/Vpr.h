@@ -25,6 +25,11 @@ private:
 	Segment* vgpSegment;
 	const Segment* synSegment;
 	const Segment* geoSegment;
+	// TODO - do this somewhere else
+	const Segment* olcSegment;
+	const Segment* slnSegment;
+	const Segment* sloSegment;
+	const Segment* aveSegment;
 
 	const Accessor* latAccessor;
 	const Accessor* lonAccessor;
