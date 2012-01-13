@@ -23,12 +23,11 @@ AuxdataProviderTest::~AuxdataProviderTest() {
 }
 
 void AuxdataProviderTest::setUp() {
-	const string filePath = Constants::S3_SYNERGY_HOME + "/auxdata/v" + Constants::PROCESSOR_VERSION + "/S3__SY_2_SYCPAX.nc";
+	const string filePath = Constants::S3_SYNERGY_HOME + "/files/S3__SY_2_SYCPAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc";
 	auxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider("id", filePath));
 }
 
 void AuxdataProviderTest::tearDown() {
-
 }
 
 void AuxdataProviderTest::testGetAMINs() {

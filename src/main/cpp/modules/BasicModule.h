@@ -50,7 +50,7 @@ public:
 
 protected:
 	static string getAuxdataPath() {
-		return Constants::S3_SYNERGY_HOME + "/auxdata/v" + Constants::PROCESSOR_VERSION + "/";
+		return Constants::S3_SYNERGY_HOME + "/files/";
 	}
 
     template<class K, class V>

@@ -20,4 +20,4 @@ const string MD5SUM_EXECUTABLE = "@MD5_SUM_EXECUTABLE@";
 /**
  * Path to software installation.
  */
-const string S3_SYNERGY_HOME = "@S3_SYNERGY_HOME@";
+const string S3_SYNERGY_HOME = "@CMAKE_INSTALL_PREFIX@";

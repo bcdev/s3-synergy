@@ -40,12 +40,6 @@ set(NETCDF_HOME /usr/local
     "The path to the netCDF installation."
 )
 
-set(S3_SYNERGY_HOME /usr/local/s3-synergy
-    CACHE 
-    FILEPATH 
-    "The path to the S3 SYNERGY installation."
-)
-
 set(SAFE_HOME /usr/local/safe-suite
 	CACHE
 	FILEPATH

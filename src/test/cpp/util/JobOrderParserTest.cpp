@@ -112,7 +112,7 @@ void JobOrderParserTest::checkProcessorConfigurations(
 	CPPUNIT_ASSERT(
 			processorConfigurations.at(0).getInputList().at(0).getFileNames().size() == 1);
 	CPPUNIT_ASSERT(
-			processorConfigurations.at(0).getInputList().at(0).getFileNames().at(0).compare("data/SY1/S3A_SY_1_SYN________2013621T10920_2013621T101413_2_00293_2_DMS_TD04_00") == 0);
+			processorConfigurations.at(0).getInputList().at(0).getFileNames().at(0).compare("testdata/SY1/S3A_SY_1_SYN________2013621T10920_2013621T101413_2_00293_2_DMS_TD04_00") == 0);
 
 	CPPUNIT_ASSERT(processorConfigurations.at(0).getOutputList().size() == 1);
 	CPPUNIT_ASSERT(
@@ -120,7 +120,7 @@ void JobOrderParserTest::checkProcessorConfigurations(
 	CPPUNIT_ASSERT(
 			processorConfigurations.at(0).getOutputList().at(0).getFileNameType().compare("Physical") == 0);
 	CPPUNIT_ASSERT(
-			processorConfigurations.at(0).getOutputList().at(0).getFileName().compare("data/SY2/test/some_file_name") == 0);
+			processorConfigurations.at(0).getOutputList().at(0).getFileName().compare("testdata/SY2/test/some_file_name") == 0);
 
 	CPPUNIT_ASSERT(
 			processorConfigurations.at(0).getBreakpointFiles().size() == 0);

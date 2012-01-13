@@ -388,13 +388,36 @@ set_property(TARGET syl2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 ##
 # Project installation
 #
-#install(TARGETS syl2
-#  RUNTIME DESTINATION bin
-#  CONFIGURATIONS Release
-#  PERMISSIONS OWNER_EXECUTE OWNER_READ GROUP_EXECUTE GROUP_READ
-#)
+install(TARGETS syl2
+  sy_unt_gen
+  sy_unt_sre
+  sy_unt_swr
+  sy_unt_col
+  sy_unt_pcl
+  sy_unt_ave
+  sy_unt_aer
+  sy_unt_aei
+  sy_unt_aco
+  sy_unt_vbm
+  sy_unt_vfl
+  sy_unt_vpr
+  RUNTIME DESTINATION bin
+  CONFIGURATIONS Release
+)
 
-#install(DIRECTORY src/main/resources DESTINATION src/main/resources
-#  FILES_MATCHING PATTERN "*.*"
-#  PERMISSIONS OWNER_READ GROUP_READ
-#)
+install(DIRECTORY src/main/resources DESTINATION src/main
+  PATTERN ".DS_Store" EXCLUDE
+)
+
+install(DIRECTORY src/test/resources DESTINATION src/test
+  PATTERN ".DS_Store" EXCLUDE
+)
+
+install(DIRECTORY testdata/SY1 DESTINATION testdata
+  PATTERN ".DS_Store" EXCLUDE
+)
+
+file(GLOB AUX_FILES files/*.nc)
+
+install(FILES ${AUX_FILES} DESTINATION files
+)
