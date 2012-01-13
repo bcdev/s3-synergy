@@ -8,9 +8,9 @@
 *.cmake
 *.xcodeproj/
 *.build/
+target/
 /bin/
 /files/
-/target/
 /testdata/
 /modules/
 CMakeCache.txt
