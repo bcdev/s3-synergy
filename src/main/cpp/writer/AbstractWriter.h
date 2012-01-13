@@ -41,7 +41,7 @@ private:
 	void createNcVar(const ProductDescriptor& productDescriptor,
 			const SegmentDescriptor& segmentDescriptor,
 			const VariableDescriptor& variable, const Grid& grid);
-	void putAttributes(int fileId, const VariableDescriptor& variableDescriptor, const vector<Attribute*>& attributes) const;
+	void putGlobalAttributes(int fileId, const VariableDescriptor& variableDescriptor, const vector<Attribute*>& attributes) const;
 	void createSafeProduct(const Context& context);
 
 	void copyTemplateFiles() const;

@@ -36,8 +36,8 @@ const ProductDescriptor& AbstractWriter::getProductDescriptor(const Context& con
 }
 
 const vector<SegmentDescriptor*> AbstractWriter::getSegmentDescriptors(const Context& context) const {
-    const ProductDescriptor& sy2ProductDescriptor = getProductDescriptor(context);
-    return sy2ProductDescriptor.getSegmentDescriptors();
+    const ProductDescriptor& productDescriptor = getProductDescriptor(context);
+    return productDescriptor.getSegmentDescriptors();
 }
 
 void AbstractWriter::process(Context& context) {
@@ -133,8 +133,8 @@ void AbstractWriter::createNcVar(const ProductDescriptor& productDescriptor, con
 		const path ncFilePath = targetDirPath / (ncFileBasename + ".nc");
 		const int fileId = NetCDF::createFile(ncFilePath.string());
 
-		putAttributes(fileId, variableDescriptor, productDescriptor.getAttributes());
-		putAttributes(fileId, variableDescriptor, segmentDescriptor.getAttributes());
+		putGlobalAttributes(fileId, variableDescriptor, productDescriptor.getAttributes());
+		putGlobalAttributes(fileId, variableDescriptor, segmentDescriptor.getAttributes());
 
 		const long sizeK = grid.getSizeK();
 		const long sizeL = grid.getMaxL() - grid.getMinL() + 1;
@@ -157,7 +157,7 @@ void AbstractWriter::createNcVar(const ProductDescriptor& productDescriptor, con
 			dimIds[0] = NetCDF::defineDimension(fileId, dimensions[0]->getName(), sizeM);
 			break;
 		default:
-			BOOST_THROW_EXCEPTION( logic_error("AbstractWriter::createNcVar(): invalid number of dimensions (" + variableDescriptor.getName() + ")"));
+			BOOST_THROW_EXCEPTION(logic_error("AbstractWriter::createNcVar(): invalid number of dimensions (" + variableDescriptor.getName() + ")"));
 			break;
 		}
 
@@ -174,9 +174,10 @@ void AbstractWriter::createNcVar(const ProductDescriptor& productDescriptor, con
 	}
 }
 
-void AbstractWriter::putAttributes(int fileId, const VariableDescriptor& variableDescriptor, const vector<Attribute*>& attributes) const {
+void AbstractWriter::putGlobalAttributes(int fileId, const VariableDescriptor& variableDescriptor, const vector<Attribute*>& attributes) const {
     foreach(Attribute* attribute, attributes) {
-        if(attribute->getName().compare("title") == 0) {
+        const string& attributeName = attribute->getName();
+        if(attributeName.compare("title") == 0) {
             string title;
             if(variableDescriptor.hasAttribute("long_name")) {
                 title = variableDescriptor.getAttribute("long_name").getValue();
@@ -184,7 +185,7 @@ void AbstractWriter::putAttributes(int fileId, const VariableDescriptor& variabl
                 title = variableDescriptor.getName();
             }
             attribute->setValue(title);
-        } else if(attribute->getName().compare("comment") == 0) {
+        } else if(attributeName.compare("comment") == 0) {
             string comment = "This dataset contains the '";
             if(variableDescriptor.hasAttribute("long_name")) {
                 comment.append(variableDescriptor.getAttribute("long_name").getValue().c_str());
@@ -193,15 +194,15 @@ void AbstractWriter::putAttributes(int fileId, const VariableDescriptor& variabl
             }
             comment.append(" 'variable.");
             attribute->setValue(comment);
-        } else if(attribute->getName().compare("processor_version") == 0) {
+        } else if(attributeName.compare("processor_version") == 0) {
             attribute->setValue(Constants::PROCESSOR_VERSION);
-        } else if(attribute->getName().compare("dataset_name") == 0) {
+        } else if(attributeName.compare("dataset_name") == 0) {
             attribute->setValue(variableDescriptor.getNcFileBasename());
-        } else if(attribute->getName().compare("dataset_version") == 0) {
+        } else if(attributeName.compare("dataset_version") == 0) {
             attribute->setValue(Constants::DATASET_VERSION);
-        } else if(attribute->getName().compare("package_name") == 0) {
+        } else if(attributeName.compare("package_name") == 0) {
             attribute->setValue(targetDirPath.filename());
-        } else if(attribute->getName().compare("creation_time") == 0) {
+        } else if(attributeName.compare("creation_time") == 0) {
             time_t currentTime;
             time(&currentTime);
             struct tm* currentTimeStructure = gmtime(&currentTime);
@@ -223,7 +224,7 @@ void AbstractWriter::createSafeProduct(const Context& context) {
 }
 
 void AbstractWriter::copyTemplateFiles() const {
-    const string sourceDirPath = Constants::S3_SYNERGY_HOME + "/src/main/resources/" + getProductDescriptorIdentifier() + "/SAFE_metacomponents";
+    const string sourceDirPath = Constants::S3_SYNERGY_HOME + "/src/main/resources/SAFE_metacomponents/" + getProductDescriptorIdentifier();
     const vector<string> fileNames = IOUtils::getFileNames(sourceDirPath);
     foreach(string fileName, fileNames) {
         boost::filesystem::copy_file(sourceDirPath + "/" + fileName, targetDirPath / fileName);
