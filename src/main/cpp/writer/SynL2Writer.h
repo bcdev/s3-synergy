@@ -19,6 +19,7 @@ using std::valarray;
 class SynL2Writer: public AbstractWriter {
 public:
     SynL2Writer();
+    virtual ~SynL2Writer();
 
 protected:
 	const string getProductDescriptorIdentifier() const;
