@@ -417,7 +417,6 @@ install(DIRECTORY testdata/SY1 DESTINATION testdata
   PATTERN ".DS_Store" EXCLUDE
 )
 
-file(GLOB AUX_FILES files/*.nc)
-
-install(FILES ${AUX_FILES} DESTINATION files
+install(DIRECTORY files/ DESTINATION files
+  PATTERN ".DS_Store" EXCLUDE
 )
