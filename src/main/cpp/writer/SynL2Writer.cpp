@@ -29,3 +29,19 @@ const string& SynL2Writer::getProductDescriptorIdentifier() const {
 const string& SynL2Writer::getSafeManifestName() const {
     return Constants::SAFE_MANIFEST_NAME_SYN;
 }
+
+const vector<SegmentDescriptor*> SynL2Writer::getSegmentDescriptors(const Context& context) const {
+    const ProductDescriptor& productDescriptor = getProductDescriptor(context);
+    return productDescriptor.getSegmentDescriptors();
+}
+
+void SynL2Writer::writeCommonVariables(const Context& context) {
+    // for SYN, we don't need to write common variables
+}
+
+void SynL2Writer::defineCommonDimensions(int fileId, bool isSubsampled) {
+    // for SYN, we don't need to define common dimensions
+}
+void SynL2Writer::defineCommonVariables(int fileId, bool isSubsampled) {
+    // for SYN, we don't need to define common variables
+}

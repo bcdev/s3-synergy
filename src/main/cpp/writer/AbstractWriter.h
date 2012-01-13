@@ -33,17 +33,19 @@ protected:
 
 	virtual const string& getProductDescriptorIdentifier() const = 0;
 	virtual const string& getSafeManifestName() const = 0;
+	virtual const vector<SegmentDescriptor*> getSegmentDescriptors(const Context& context) const = 0;
+	virtual void writeCommonVariables(const Context& context) = 0;
+	virtual void defineCommonDimensions(int fileId, bool isSubsampled) = 0;
+	virtual void defineCommonVariables(int fileId, bool isSubsampled) = 0;
 
+	const ProductDescriptor& getProductDescriptor(const Context& context) const;
 private:
 	friend class AbstractWriterTest;
-	const ProductDescriptor& getProductDescriptor(const Context& context) const;
-	const vector<SegmentDescriptor*> getSegmentDescriptors(const Context& context) const;
-	void createNcVar(const ProductDescriptor& productDescriptor,
-			const SegmentDescriptor& segmentDescriptor,
-			const VariableDescriptor& variable, const Grid& grid);
+	void defineNcVar(const ProductDescriptor& productDescriptor, const SegmentDescriptor& segmentDescriptor, const VariableDescriptor& variable,
+	        const Grid& grid, bool isSubsampled);
+	void defineDimensions(const int fileId, const string& name, const vector<Dimension*>& dimensions, const Grid& grid, valarray<int>& dimIds);
 	void putGlobalAttributes(int fileId, const VariableDescriptor& variableDescriptor, const vector<Attribute*>& attributes) const;
 	void createSafeProduct(const Context& context);
-
 	void copyTemplateFiles() const;
 	string readManifest() const;
 	void setStartTime(const Context& context, string& manifest) const;
@@ -52,6 +54,7 @@ private:
 	void removeManifestTemplate() const;
 	void replaceString(const string& toReplace, const string& replacement, string& input) const;
 	string getMd5Sum(const string& file) const;
+	bool isSubsampled(const string& segmentName);
 };
 
 #endif	/* ABSTRACTWRITER_H */

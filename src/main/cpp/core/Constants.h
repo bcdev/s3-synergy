@@ -68,6 +68,26 @@ const string SEGMENT_SYN_AVERAGED = "SYN_AVERAGED";
 
 const string SEGMENT_VGP = "VGP";
 const string SEGMENT_VGP_TP = "VGP_TP";
+const string SEGMENT_VGS = "VGS";
+const string SEGMENT_VGS_TP = "VGS_TP";
+
+const string SEGMENT_VGP_LAT = "VGP_LAT";
+const string SEGMENT_VGS_LAT = "VGS_LAT";
+const string SEGMENT_VGP_LAT_TP = "VGP_LAT_TP";
+const string SEGMENT_VGS_LAT_TP = "VGS_LAT_TP";
+const string SEGMENT_VGP_LON = "VGP_LON";
+const string SEGMENT_VGS_LON = "VGS_LON";
+const string SEGMENT_VGP_LON_TP = "VGP_LON_TP";
+const string SEGMENT_VGS_LON_TP = "VGS_LON_TP";
+
+const string SEGMENT_VGP_LAT_BNDS = "VGP_LAT_BNDS";
+const string SEGMENT_VGS_LAT_BNDS = "VGS_LAT_BNDS";
+const string SEGMENT_VGP_LAT_TP_BNDS = "VGP_LAT_TP_BNDS";
+const string SEGMENT_VGS_LAT_TP_BNDS = "VGS_LAT_TP_BNDS";
+const string SEGMENT_VGP_LON_BNDS = "VGP_LON_BNDS";
+const string SEGMENT_VGS_LON_BNDS = "VGS_LON_BNDS";
+const string SEGMENT_VGP_LON_TP_BNDS = "VGP_LON_TP_BNDS";
+const string SEGMENT_VGS_LON_TP_BNDS = "VGS_LON_TP_BNDS";
 
 /**
  * Dimension names.
