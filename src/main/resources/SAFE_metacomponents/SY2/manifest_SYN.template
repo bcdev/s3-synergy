@@ -971,7 +971,7 @@ This document is a manifest file of a SAFE archive. -->
                     locatorType='URL'
                     href='r0443.nc' />
                 <checksum checksumName='MD5'>
-                    fe2cc25c37591e504351cb451af7d7ba
+                    ${checksum-r0443.nc}
                 </checksum>
             </byteStream>
         </dataObject>
