@@ -8,10 +8,9 @@
 *.cmake
 *.xcodeproj/
 *.build/
-files/
-target/
-/config/
-/jobs/
+/bin/
+/files/
+/target/
 /testdata/
 /modules/
 CMakeCache.txt
