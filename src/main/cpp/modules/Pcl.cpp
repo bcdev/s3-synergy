@@ -80,7 +80,9 @@ void Pcl::process(Context& context) {
 
 	const Grid& collocatedGrid = collocatedSegment->getGrid();
 
+#if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100) > 40100
 #pragma omp parallel for
+#endif
 	for (long l = firstL; l <= lastL; l++) {
 		context.getLogging().progress("Setting flags for line l = " + lexical_cast<string>(l), getId());
 		for (long k = collocatedGrid.getFirstK(); k < collocatedGrid.getFirstK() + collocatedGrid.getSizeK(); k++) {

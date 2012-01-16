@@ -49,10 +49,9 @@ void Vac::prepareAuxdata(Context& context) {
     const AuxdataProvider& vgtRadiativeTransferAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VSRTAX);
     vgtRadiativeTransferAuxdata.getVectorDouble("C_O3", cO3);
 
-    const string vgtLookupTableFile = "S3__SY_2_" + Constants::AUX_ID_VSRTAX + ".nc";
-    lutRhoAtm = &getLookupTable(context, vgtLookupTableFile, "rho_atm");
-    lutRatm = &getLookupTable(context, vgtLookupTableFile, "VGT_R_atm");
-    lutT = &getLookupTable(context, vgtLookupTableFile, "t");
+    lutRhoAtm = &getLookupTable(context, Constants::AUX_ID_VSRTAX, "rho_atm");
+    lutRatm = &getLookupTable(context, Constants::AUX_ID_VSRTAX, "VGT_R_atm");
+    lutT = &getLookupTable(context, Constants::AUX_ID_VSRTAX, "t");
 }
 
 void Vac::prepareTiePointData(Context& context) {

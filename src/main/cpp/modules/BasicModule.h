@@ -50,7 +50,7 @@ public:
 
 protected:
 	static string getAuxdataPath() {
-		return Constants::S3_SYNERGY_HOME + "/auxdata/v" + Constants::PROCESSOR_VERSION + "/";
+		return Constants::S3_SYNERGY_HOME + "/files/";
 	}
 
     template<class K, class V>
@@ -77,7 +77,7 @@ protected:
 
     AuxdataProvider& getAuxdataProvider(Context& context, const string& id) const;
 
-    LookupTable<double>& getLookupTable(Context& context, const string& fileName, const string& varName) const;
+    LookupTable<double>& getLookupTable(Context& context, const string& id, const string& varName) const;
 };
 
 #endif	/* BASICMODULE_H */

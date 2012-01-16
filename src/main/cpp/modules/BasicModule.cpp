@@ -13,17 +13,40 @@ void BasicModule::addAccessor(Context& context, Segment& s, const VariableDescri
 }
 
 AuxdataProvider& BasicModule::getAuxdataProvider(Context& context, const string& id) const {
+	// TODO - use mapping from configuration
+	map<string, string> idMap;
+	idMap["SYCPAX"] = "files/S3__SY_2_SYCPAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc";
+	idMap["SYRTAX"] = "files/S3__SY_2_SYRTAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc";
+	idMap["VPCPAX"] = "files/S3__SY_2_VPCPAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc";
+	idMap["VPRTAX"] = "files/S3__SY_2_VPRTAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc";
+	idMap["VPSRAX"] = "files/S3__SY_2_VPSRAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc";
+	idMap["VSCPAX"] = "files/S3__SY_2_VSCPAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc";
+	idMap["VSRTAX"] = "files/S3__SY_2_VPRTAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc";
+
     if (!context.hasObject(id)) {
-        shared_ptr<AuxdataProvider> auxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider(id, getAuxdataPath() + "S3__SY_2_" + id + ".nc"));
+    	// TODO - resolve relative paths properly
+        shared_ptr<AuxdataProvider> auxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider(id, Constants::S3_SYNERGY_HOME + "/" + idMap.at(id)));
         context.getLogging().info("Preparing auxiliary data '" + id + "'", getId());
         context.addObject(auxdataProvider);
     }
+
     return (AuxdataProvider&) context.getObject(id);
 }
 
-LookupTable<double>& BasicModule::getLookupTable(Context& context, const string& fileName, const string& varName) const {
-    if (!context.hasObject(varName)) {
-        const LookupTableReader reader(getAuxdataPath() + fileName);
+LookupTable<double>& BasicModule::getLookupTable(Context& context, const string& id, const string& varName) const {
+	// TODO - use mapping from configuration
+	map<string, string> idMap;
+	idMap["SYCPAX"] = "files/S3__SY_2_SYCPAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc";
+	idMap["SYRTAX"] = "files/S3__SY_2_SYRTAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc";
+	idMap["VPCPAX"] = "files/S3__SY_2_VPCPAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc";
+	idMap["VPRTAX"] = "files/S3__SY_2_VPRTAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc";
+	idMap["VPSRAX"] = "files/S3__SY_2_VPSRAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc";
+	idMap["VSCPAX"] = "files/S3__SY_2_VSCPAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc";
+	idMap["VSRTAX"] = "files/S3__SY_2_VPRTAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc";
+
+	if (!context.hasObject(varName)) {
+    	// TODO - resolve relative paths properly
+        const LookupTableReader reader(Constants::S3_SYNERGY_HOME + "/" + idMap.at(id));
         context.getLogging().info("Reading LUT '" + varName + "'", getId());
         context.addObject(reader.readLookupTable<double>(varName));
     }

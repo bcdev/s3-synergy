@@ -22,8 +22,11 @@ Vpr::~Vpr() {
 
 void Vpr::start(Context& context) {
     synSegment = &context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-    const Grid& synGrid = synSegment->getGrid();
     geoSegment = &context.getSegment(Constants::SEGMENT_GEO);
+    olcSegment = &context.getSegment(Constants::SEGMENT_OLC);
+    slnSegment = &context.getSegment(Constants::SEGMENT_SLN);
+    sloSegment = &context.getSegment(Constants::SEGMENT_SLO);
+
     latAccessor = &geoSegment->getAccessor("latitude");
     lonAccessor = &geoSegment->getAccessor("longitude");
 
@@ -66,6 +69,10 @@ void Vpr::process(Context& context) {
     if (synMaxLat < vgtMinLat) {
 		context.setLastComputedL(*vgpSegment, *this, lastL);
 		context.setFirstRequiredL(*synSegment, *this, synSegment->getGrid().getFirstL());
+		// TODO - do this somewhere else
+		context.setFirstRequiredL(*olcSegment, *this, olcSegment->getGrid().getFirstL());
+		context.setFirstRequiredL(*slnSegment, *this, slnSegment->getGrid().getFirstL());
+		context.setFirstRequiredL(*sloSegment, *this, sloSegment->getGrid().getFirstL());
 		return;
 	}
 
@@ -89,6 +96,10 @@ void Vpr::process(Context& context) {
     context.setLastComputedL(*vgpSegment, *this, lastL);
     context.setFirstRequiredL(*vgpSegment, *this, -1); // no particular requirement on VGP line
     context.setFirstRequiredL(*synSegment, *this, -1); // no particular requirement on SYN line
+	// TODO - do this somewhere else
+	context.setFirstRequiredL(*olcSegment, *this, -1);
+	context.setFirstRequiredL(*slnSegment, *this, -1);
+	context.setFirstRequiredL(*sloSegment, *this, -1);
 
     /*
     long l = findLineOfSynSegmentNearestTo(vgtMaxLat);

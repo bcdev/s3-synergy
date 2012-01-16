@@ -8,11 +8,10 @@
 *.cmake
 *.xcodeproj/
 *.build/
-auxdata/
 target/
-/config/
-/jobs/
-/data/
+/bin/
+/files/
+/testdata/
 /modules/
 CMakeCache.txt
 CMakeFiles/
@@ -20,3 +19,4 @@ CMakeScripts/
 LOG.*
 Makefile
 Config.h
+install_manifest.txt

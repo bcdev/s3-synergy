@@ -72,17 +72,15 @@ void Vbm::prepareAuxdata(Context& context) {
     const AuxdataProvider& vgtRadiativeTransferAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VPRTAX);
     vgtRadiativeTransferAuxdata.getUShort("AMIN", aerosolModel);
 
-    const string synLookupTableFile = "S3__SY_2_" + Constants::AUX_ID_SYRTAX + ".nc";
-    synLutRho = &getLookupTable(context, synLookupTableFile, "rho_atm");
-    olcLutRatm = &getLookupTable(context, synLookupTableFile, "OLC_R_atm");
-    slnLutRatm = &getLookupTable(context, synLookupTableFile, "SLN_R_atm");
-    synLutT = &getLookupTable(context, synLookupTableFile, "t");
+    synLutRho = &getLookupTable(context, Constants::AUX_ID_SYRTAX, "rho_atm");
+    olcLutRatm = &getLookupTable(context, Constants::AUX_ID_SYRTAX, "OLC_R_atm");
+    slnLutRatm = &getLookupTable(context, Constants::AUX_ID_SYRTAX, "SLN_R_atm");
+    synLutT = &getLookupTable(context, Constants::AUX_ID_SYRTAX, "t");
     getAuxdataProvider(context, Constants::AUX_ID_SYRTAX).getVectorDouble("C_O3", synCO3);
 
-    const string vgtLookupTableFile = "S3__SY_2_" + Constants::AUX_ID_VPRTAX + ".nc";
-    hypLutRho = &getLookupTable(context, vgtLookupTableFile, "rho_atm");
-    hypLutRatm = &getLookupTable(context, vgtLookupTableFile, "R_atm");
-    hypLutT = &getLookupTable(context, vgtLookupTableFile, "t");
+    hypLutRho = &getLookupTable(context, Constants::AUX_ID_VPRTAX, "rho_atm");
+    hypLutRatm = &getLookupTable(context, Constants::AUX_ID_VPRTAX, "R_atm");
+    hypLutT = &getLookupTable(context, Constants::AUX_ID_VPRTAX, "t");
     getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("C_O3", hypCO3);
 
     const AuxdataProvider& vgtSpectralResponseAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VPSRAX);
