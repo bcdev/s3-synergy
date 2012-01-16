@@ -26,7 +26,7 @@
                 </attribute>
                 <attribute>
                     <name>_FillValue</name>
-                    <type>ubyte</type>
+                    <type>ushort</type>
                     <value>255</value>
                 </attribute>
                 <attribute>
