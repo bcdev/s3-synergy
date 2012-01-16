@@ -66,7 +66,7 @@ void Vpr::process(Context& context) {
      * of the current SYN segment, move the VGT segment forward and do not allow moving
      * of the SYN segment.
      */
-    if (synMaxLat < vgtMinLat) {
+    if (synMaxLat < vgtMinLat && context.getLastComputableL(*vgpSegment, *this) < vgpSegment->getGrid().getMaxL()) {
 		context.setLastComputedL(*vgpSegment, *this, lastL);
 		context.setFirstRequiredL(*synSegment, *this, synSegment->getGrid().getFirstL());
 		// TODO - do this somewhere else
@@ -79,9 +79,9 @@ void Vpr::process(Context& context) {
     /*
      * if the maximum latitude of the current VGT segment is less than the minimum latitude
      * of the current SYN segment, do not allow moving of the VGT segment and move
-     * the SYN segment forward.
+     * the SYN segment forward, if possible.
      */
-    if (vgtMaxLat < synMinLat) {
+    if (vgtMaxLat < synMinLat && context.getLastComputableL(*synSegment, *this) < synSegment->getGrid().getMaxL()) {
 		context.setFirstRequiredL(*vgpSegment, *this, firstL);
 		return;
 	}
