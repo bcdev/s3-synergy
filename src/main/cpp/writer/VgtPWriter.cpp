@@ -14,7 +14,7 @@ VgtPWriter::VgtPWriter() : AbstractWriter("VGP_WRITER"), fileSubsampledMap() {
 VgtPWriter::~VgtPWriter() {}
 
 const string& VgtPWriter::getProductDescriptorIdentifier() const {
-    return Constants::PRODUCT_VGTP;
+    return Constants::PRODUCT_VGP;
 }
 
 const string& VgtPWriter::getSafeManifestName() const {

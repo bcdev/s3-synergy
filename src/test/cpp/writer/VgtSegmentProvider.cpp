@@ -65,8 +65,8 @@ void VgtSegmentProvider::stop(Context& context) {
 }
 
 void VgtSegmentProvider::process(Context& context) {
-    setLastComputedLines(context, Constants::PRODUCT_VGTP);
-    setLastComputedLines(context, Constants::PRODUCT_VGTS);
+    setLastComputedLines(context, Constants::PRODUCT_VGP);
+    setLastComputedLines(context, Constants::PRODUCT_VGS);
 }
 
 void VgtSegmentProvider::setLastComputedLines(Context& context, const string& identifier) {
@@ -80,10 +80,10 @@ void VgtSegmentProvider::setLastComputedLines(Context& context, const string& id
 vector<SegmentDescriptor*> VgtSegmentProvider::getSegmentDescriptors(Context& context) {
     vector<SegmentDescriptor*> result;
     const Dictionary& dict = context.getDictionary();
-    foreach(SegmentDescriptor* sd, dict.getProductDescriptor(Constants::PRODUCT_VGTP).getSegmentDescriptors()) {
+    foreach(SegmentDescriptor* sd, dict.getProductDescriptor(Constants::PRODUCT_VGP).getSegmentDescriptors()) {
         result.push_back(sd);
     }
-    foreach(SegmentDescriptor* sd, dict.getProductDescriptor(Constants::PRODUCT_VGTS).getSegmentDescriptors()) {
+    foreach(SegmentDescriptor* sd, dict.getProductDescriptor(Constants::PRODUCT_VGS).getSegmentDescriptors()) {
         result.push_back(sd);
     }
     return result;
