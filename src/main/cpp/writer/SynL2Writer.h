@@ -23,11 +23,12 @@ public:
 
 protected:
 	const string& getProductDescriptorIdentifier() const;
-	const vector<SegmentDescriptor*> getSegmentDescriptors(const Context& context) const;
+	const vector<SegmentDescriptor*> getSegmentDescriptors(const Dictionary& dict) const;
 	const string& getSafeManifestName() const;
 	void writeCommonVariables(const Context& context);
-    void defineCommonDimensions(int fileId, bool isSubsampled);
-    void defineCommonVariables(int fileId, bool isSubsampled);
+    void defineCommonDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, int>& commonDimIds);
+    void defineCommonVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, int>& commonDimIds);
+    void resolveSubsampling(int fileId, const string& segmentName);
 
 private:
 	friend class SynL2WriterTest;
