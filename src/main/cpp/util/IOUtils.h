@@ -43,8 +43,9 @@ public:
 			shape[1] = colCount;
 		} else if (dimCount == 1) {
 			shape[0] = colCount;
+		} else {
+		    BOOST_THROW_EXCEPTION( std::invalid_argument("Wrong number of dimensions."));
 		}
-		BOOST_THROW_EXCEPTION( std::invalid_argument("Wrong number of dimensions."));
 	}
 
 	static void createStartVector(size_t dimCount, size_t startLine, valarray<size_t>& origin) {
@@ -58,8 +59,9 @@ public:
 			origin[1] = 0;
 		} else if (dimCount == 1) {
 			origin[0] = 0;
+		} else {
+		    BOOST_THROW_EXCEPTION( std::invalid_argument("Wrong number of dimensions."));
 		}
-		BOOST_THROW_EXCEPTION( std::invalid_argument("Wrong number of dimensions."));
 	}
 
 	static valarray<size_t> getDimensionSizes(VariableDescriptor* varDesc) {
