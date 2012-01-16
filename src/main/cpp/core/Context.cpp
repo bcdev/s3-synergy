@@ -168,6 +168,7 @@ void Context::moveForward(shared_ptr<Segment> segment) const {
 	if (l + segment->getGrid().getSizeL() - 1 > segment->getGrid().getMaxL()) {
 		l = segment->getGrid().getMaxL() - segment->getGrid().getSizeL() + 1;
 	}
+	// TODO - get the requirements of modules and segments that use this segment as source
 	if (l > segment->getGrid().getFirstL()) {
 		getLogging().debug("Moving segment [" + segment->toString() + "] forward to line " + lexical_cast<string>(l), "Context");
 		segment->moveForward(l);
@@ -249,7 +250,6 @@ long Context::getFirstComputableL(const Segment& segment, const Module& module) 
 }
 
 long Context::getFirstRequiredL(const Segment& segment) const {
-//	long firstRequiredL = getLastComputableL(segment) + 1;
 	long firstRequiredL = min(segment.getGrid().getLastL() + 1, segment.getGrid().getMaxL());
 	foreach (shared_ptr<Module> module, moduleList)
 			{
