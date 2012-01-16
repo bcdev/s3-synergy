@@ -12,7 +12,7 @@
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
 
-#include "SynL2SegmentProvider.h"
+#include "VgtSegmentProvider.h"
 #include "VgtPWriterTest.h"
 
 using std::getenv;
@@ -52,7 +52,7 @@ void VgtPWriterTest::tearDown() {
 }
 
 void VgtPWriterTest::testWriter() {
-    shared_ptr<Module> module = shared_ptr<Module>(new SynL2SegmentProvider());
+    shared_ptr<Module> module = shared_ptr<Module>(new VgtSegmentProvider());
     shared_ptr<Module> writer = shared_ptr<Module>(new VgtPWriter());
     context->addModule(module);
     context->addModule(writer);
