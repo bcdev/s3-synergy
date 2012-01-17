@@ -3,7 +3,7 @@
     <variables>
         <variable>
             <name>AG</name>
-            <type>byte</type>
+            <type>ubyte</type>
             <segment_name>VGP_TP</segment_name>
             <dimensions>
                 <id>VGP_TP</id>
@@ -26,17 +26,17 @@
                 </attribute>
                 <attribute>
                     <name>_FillValue</name>
-                    <type>byte</type>
+                    <type>ubyte</type>
                     <value>255</value>
                 </attribute>
                 <attribute>
                     <name>valid_min</name>
-                    <type>byte</type>
+                    <type>ubyte</type>
                     <value>0</value>
                 </attribute>
                 <attribute>
                     <name>valid_max</name>
-                    <type>byte</type>
+                    <type>ubyte</type>
                     <value>254</value>
                 </attribute>
                 <attribute>
