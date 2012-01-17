@@ -46,8 +46,8 @@ namespace Constants {
  */
 const string PRODUCT_SY1 = "SY1";
 const string PRODUCT_SY2 = "SY2";
-const string PRODUCT_VGTP = "VGTP";
-const string PRODUCT_VGTS = "VGTS";
+const string PRODUCT_VGP = "VGP";
+const string PRODUCT_VGS = "VGS";
 
 /**
  * Segment names.

@@ -32,40 +32,36 @@
 
 class IOUtils {
 public:
-	static valarray<size_t> createCountVector(size_t dimCount, size_t camCount, size_t lineCount, size_t colCount) {
-		valarray<size_t> count(dimCount);
+	static void createCountVector(size_t dimCount, size_t camCount, size_t lineCount, size_t colCount, valarray<size_t>& shape) {
+	    shape.resize(dimCount);
 		if (dimCount == 3) {
-			count[0] = camCount;
-			count[1] = lineCount;
-			count[2] = colCount;
-			return count;
+			shape[0] = camCount;
+			shape[1] = lineCount;
+			shape[2] = colCount;
 		} else if (dimCount == 2) {
-			count[0] = lineCount;
-			count[1] = colCount;
-			return count;
+			shape[0] = lineCount;
+			shape[1] = colCount;
 		} else if (dimCount == 1) {
-			count[0] = colCount;
-			return count;
+			shape[0] = colCount;
+		} else {
+		    BOOST_THROW_EXCEPTION( std::invalid_argument("Wrong number of dimensions."));
 		}
-		BOOST_THROW_EXCEPTION( std::invalid_argument("Wrong number of dimensions."));
 	}
 
-	static valarray<size_t> createStartVector(size_t dimCount, size_t startLine) {
-		valarray<size_t> start(dimCount);
+	static void createStartVector(size_t dimCount, size_t startLine, valarray<size_t>& origin) {
+	    origin.resize(dimCount);
 		if (dimCount == 3) {
-			start[0] = 0;
-			start[1] = startLine;
-			start[2] = 0;
-			return start;
+			origin[0] = 0;
+			origin[1] = startLine;
+			origin[2] = 0;
 		} else if (dimCount == 2) {
-			start[0] = startLine;
-			start[1] = 0;
-			return start;
+			origin[0] = startLine;
+			origin[1] = 0;
 		} else if (dimCount == 1) {
-			start[0] = 0;
-			return start;
+			origin[0] = 0;
+		} else {
+		    BOOST_THROW_EXCEPTION( std::invalid_argument("Wrong number of dimensions."));
 		}
-		BOOST_THROW_EXCEPTION( std::invalid_argument("Wrong number of dimensions."));
 	}
 
 	static valarray<size_t> getDimensionSizes(VariableDescriptor* varDesc) {

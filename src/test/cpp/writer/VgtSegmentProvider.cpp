@@ -12,28 +12,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
- * File:   SynL2SegmentProvider.cpp
- * Author: ralf
+ * File:   VgtSegmentProvider.cpp
+ * Author: thomasstorm
  *
- * Created on January 19, 2011, 5:07 PM
+ * Created on January 16, 2012
  */
 
 #include <algorithm>
 
 #include "../../../main/cpp/util/IOUtils.h"
 
-#include "SynL2SegmentProvider.h"
+#include "VgtSegmentProvider.h"
 
 using std::min;
 
-SynL2SegmentProvider::SynL2SegmentProvider() :
+VgtSegmentProvider::VgtSegmentProvider() :
 		AbstractModule("SYN_L2_SEGMENT_PROVIDER") {
 }
 
-SynL2SegmentProvider::~SynL2SegmentProvider() {
+VgtSegmentProvider::~VgtSegmentProvider() {
 }
 
-void SynL2SegmentProvider::start(Context& context) {
+void VgtSegmentProvider::start(Context& context) {
 	size_t segmentLineCount = 400;
 	const string segmentLineCountString = context.getJobOrder().getIpfConfiguration().getDynamicProcessingParameter("Segment_Line_Count");
 	if (!segmentLineCountString.empty()) {
@@ -41,8 +41,7 @@ void SynL2SegmentProvider::start(Context& context) {
 	}
 	context.getLogging().info("segment line count is " + lexical_cast<string>(segmentLineCount), getId());
 
-	vector<SegmentDescriptor*> segmentDescriptors = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptors();
-
+	vector<SegmentDescriptor*> segmentDescriptors = getSegmentDescriptors(context);
 	foreach(SegmentDescriptor* segDesc, segmentDescriptors) {
 	    vector<VariableDescriptor*> variableDescriptors = segDesc->getVariableDescriptors();
 	    foreach(VariableDescriptor* varDesc, variableDescriptors) {
@@ -59,16 +58,33 @@ void SynL2SegmentProvider::start(Context& context) {
 	}
 }
 
-void SynL2SegmentProvider::stop(Context& context) {
+void VgtSegmentProvider::stop(Context& context) {
 	reverse_foreach(const string id, context.getSegmentIds()) {
 	    context.removeSegment(id);
 	}
 }
 
-void SynL2SegmentProvider::process(Context& context) {
-	vector<SegmentDescriptor*> segmentDescriptors = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptors();
-	foreach(SegmentDescriptor* segDesc, segmentDescriptors) {
-	    Segment& segment = context.getSegment(segDesc->getName());
-	    context.setLastComputedL(segment, *this, segment.getGrid().getLastL());
-	}
+void VgtSegmentProvider::process(Context& context) {
+    setLastComputedLines(context, Constants::PRODUCT_VGP);
+    setLastComputedLines(context, Constants::PRODUCT_VGS);
+}
+
+void VgtSegmentProvider::setLastComputedLines(Context& context, const string& identifier) {
+    vector<SegmentDescriptor*> segmentDescriptors = context.getDictionary().getProductDescriptor(identifier).getSegmentDescriptors();
+    foreach(SegmentDescriptor* segDesc, segmentDescriptors) {
+        Segment& segment = context.getSegment(segDesc->getName());
+        context.setLastComputedL(segment, *this, segment.getGrid().getLastL());
+    }
+}
+
+vector<SegmentDescriptor*> VgtSegmentProvider::getSegmentDescriptors(Context& context) {
+    vector<SegmentDescriptor*> result;
+    const Dictionary& dict = context.getDictionary();
+    foreach(SegmentDescriptor* sd, dict.getProductDescriptor(Constants::PRODUCT_VGP).getSegmentDescriptors()) {
+        result.push_back(sd);
+    }
+    foreach(SegmentDescriptor* sd, dict.getProductDescriptor(Constants::PRODUCT_VGS).getSegmentDescriptors()) {
+        result.push_back(sd);
+    }
+    return result;
 }

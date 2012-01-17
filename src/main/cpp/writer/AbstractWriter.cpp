@@ -30,56 +30,6 @@ AbstractWriter::~AbstractWriter() {
 	}
 }
 
-const ProductDescriptor& AbstractWriter::getProductDescriptor(const Context& context) const {
-    const Dictionary& dict = context.getDictionary();
-    return dict.getProductDescriptor(getProductDescriptorIdentifier());
-}
-
-void AbstractWriter::process(Context& context) {
-	const vector<SegmentDescriptor*> segmentDescriptors = getSegmentDescriptors(context);
-
-	foreach(const SegmentDescriptor* segmentDescriptor, segmentDescriptors) {
-	    const string segmentName = segmentDescriptor->getName();
-	    if (context.hasSegment(segmentName)) {
-	        const Segment& segment = context.getSegment(segmentName);
-	        const Grid& grid = segment.getGrid();
-	        const long firstL = segment.getGrid().getFirstL();
-	        context.getLogging().debug("Segment [" + segment.toString() + "]: firstL = " + lexical_cast<string>(firstL), getId());
-	        const long lastL = segment.getGrid().getLastL();
-	        context.getLogging().debug("Segment [" + segment.toString() + "]: lastL = " + lexical_cast<string>(lastL), getId());
-
-	        if (firstL <= lastL) {
-	            const vector<VariableDescriptor*> variableDescriptors = segmentDescriptor->getVariableDescriptors();
-	            foreach(const VariableDescriptor* variableDescriptor, variableDescriptors) {
-	                const string varName = variableDescriptor->getName();
-	                if (segment.hasVariable(varName)) {
-	                    const string ncFileBasename = variableDescriptor->getNcFileBasename();
-	                    if (!contains(ncVarIdMap, varName)) {
-	                        BOOST_THROW_EXCEPTION( logic_error("Unknown variable '" + varName + "'."));
-	                    }
-	                    if (!contains(ncFileIdMap, ncFileBasename)) {
-	                        BOOST_THROW_EXCEPTION( logic_error("Unknown netCDF file '" + ncFileBasename + "'."));
-	                    }
-	                    if (!contains(ncDimIdMap, ncFileBasename)) {
-	                        BOOST_THROW_EXCEPTION( logic_error("Unknown netCDF file '" + ncFileBasename + "'."));
-	                    }
-	                    const int varId = ncVarIdMap[varName];
-	                    const int ncId = ncFileIdMap[ncFileBasename];
-	                    const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
-	                    const valarray<size_t> starts = IOUtils::createStartVector(dimIds.size(), firstL);
-	                    const valarray<size_t> sizes = IOUtils::createCountVector(dimIds.size(), grid.getSizeK(), lastL - firstL + 1, grid.getSizeM());
-	                    context.getLogging().progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
-	                    const Accessor& accessor = segment.getAccessor(varName);
-	                    NetCDF::putData(ncId, varId, starts, sizes, accessor.getUntypedData());
-	                }
-	            }
-	            context.setLastComputedL(segment, *this, lastL);
-	        }
-	    }
-	}
-	writeCommonVariables(context);
-}
-
 void AbstractWriter::start(Context& context) {
 	targetDirPath = path(context.getJobOrder().getIpfProcessors().at(0).getOutputList().at(0).getFileName());
 	if (!targetDirPath.has_root_directory()) {
@@ -87,8 +37,9 @@ void AbstractWriter::start(Context& context) {
 	}
 	context.getLogging().info("target product path is '" + targetDirPath.string() + "'", getId());
 
-	const ProductDescriptor& productDescriptor = getProductDescriptor(context);
-	const vector<SegmentDescriptor*> segmentDescriptors = getSegmentDescriptors(context);
+	const Dictionary& dict = context.getDictionary();
+	const ProductDescriptor& productDescriptor = dict.getProductDescriptor(getProductDescriptorIdentifier());
+	const vector<SegmentDescriptor*> segmentDescriptors = getSegmentDescriptors(dict);
 
 	foreach(SegmentDescriptor* segmentDescriptor, segmentDescriptors) {
 	    const string segmentName = segmentDescriptor->getName();
@@ -97,16 +48,62 @@ void AbstractWriter::start(Context& context) {
 	        const vector<VariableDescriptor*> variableDescriptors = segmentDescriptor->getVariableDescriptors();
 	        foreach(VariableDescriptor* variableDescriptor, variableDescriptors) {
 	            context.getLogging().info("Defining variable for " + variableDescriptor->toString(), getId());
-	            defineNcVar(productDescriptor, *segmentDescriptor, *variableDescriptor, segment.getGrid(), isSubsampled(segmentDescriptor->getName()));
+	            defineNcVar(context, productDescriptor, *segmentDescriptor, *variableDescriptor, segment.getGrid());
 	        }
 	    }
 	}
 
 	pair<string, int> fileIdPair;
-
 	foreach(fileIdPair, ncFileIdMap) {
 	    NetCDF::terminateFile(fileIdPair.second);
 	}
+}
+
+void AbstractWriter::process(Context& context) {
+    const vector<SegmentDescriptor*> segmentDescriptors = getSegmentDescriptors(context.getDictionary());
+
+    valarray<size_t> origin;
+    valarray<size_t> shape;
+    foreach(const SegmentDescriptor* segmentDescriptor, segmentDescriptors) {
+        const string segmentName = segmentDescriptor->getName();
+        if (context.hasSegment(segmentName)) {
+            const Segment& segment = context.getSegment(segmentName);
+            const Grid& grid = segment.getGrid();
+            const long firstL = segment.getGrid().getFirstL();
+            context.getLogging().debug("Segment [" + segment.toString() + "]: firstL = " + lexical_cast<string>(firstL), getId());
+            const long lastL = segment.getGrid().getLastL();
+            context.getLogging().debug("Segment [" + segment.toString() + "]: lastL = " + lexical_cast<string>(lastL), getId());
+
+            if (firstL <= lastL) {
+                const vector<VariableDescriptor*> variableDescriptors = segmentDescriptor->getVariableDescriptors();
+                foreach(const VariableDescriptor* variableDescriptor, variableDescriptors) {
+                    const string varName = variableDescriptor->getName();
+                    if (segment.hasVariable(varName)) {
+                        const string ncFileBasename = variableDescriptor->getNcFileBasename();
+                        if (!contains(ncVarIdMap, varName)) {
+                            BOOST_THROW_EXCEPTION( logic_error("Unknown variable '" + varName + "'."));
+                        }
+                        if (!contains(ncFileIdMap, ncFileBasename)) {
+                            BOOST_THROW_EXCEPTION( logic_error("Unknown netCDF file '" + ncFileBasename + "'."));
+                        }
+                        if (!contains(ncDimIdMap, ncFileBasename)) {
+                            BOOST_THROW_EXCEPTION( logic_error("Unknown netCDF file '" + ncFileBasename + "'."));
+                        }
+                        const int varId = ncVarIdMap[varName];
+                        const int ncId = ncFileIdMap[ncFileBasename];
+                        const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
+                        IOUtils::createStartVector(dimIds.size(), firstL, origin);
+                        IOUtils::createCountVector(dimIds.size(), grid.getSizeK(), lastL - firstL + 1, grid.getSizeM(), shape);
+                        context.getLogging().progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
+                        const Accessor& accessor = segment.getAccessor(varName);
+                        NetCDF::putData(ncId, varId, origin, shape, accessor.getUntypedData());
+                    }
+                }
+                context.setLastComputedL(segment, *this, lastL);
+            }
+        }
+    }
+    writeCommonVariables(context);
 }
 
 void AbstractWriter::stop(Context& context) {
@@ -117,7 +114,7 @@ void AbstractWriter::stop(Context& context) {
 	ncFileIdMap.clear();
 }
 
-void AbstractWriter::defineNcVar(const ProductDescriptor& productDescriptor, const SegmentDescriptor& segmentDescriptor, const VariableDescriptor& variableDescriptor, const Grid& grid, bool isSubsampled) {
+void AbstractWriter::defineNcVar(const Context& context, const ProductDescriptor& productDescriptor, const SegmentDescriptor& segmentDescriptor, const VariableDescriptor& variableDescriptor, const Grid& grid) {
 	const string ncFileBasename = variableDescriptor.getNcFileBasename();
 
 	const bool fileForVariableExists = contains(ncFileIdMap, ncFileBasename);
@@ -131,19 +128,20 @@ void AbstractWriter::defineNcVar(const ProductDescriptor& productDescriptor, con
 		const int fileId = NetCDF::createFile(ncFilePath.string());
 
 		putGlobalAttributes(fileId, variableDescriptor, productDescriptor.getAttributes());
-		putGlobalAttributes(fileId, variableDescriptor, segmentDescriptor.getAttributes());
 
 		const string& variableName = variableDescriptor.getName();
 
 		valarray<int> dimIds;
 		defineDimensions(fileId, variableName, variableDescriptor.getDimensions(), grid, dimIds);
-		defineCommonDimensions(fileId, isSubsampled);
-		defineCommonVariables(fileId, isSubsampled);
+		map<const VariableDescriptor*, int> commonDimIds;
+		defineCommonDimensions(fileId, segmentDescriptor.getName(), context.getDictionary(), commonDimIds);
+		defineCommonVariables(fileId, segmentDescriptor.getName(), context.getDictionary(), commonDimIds);
 
 		ncFileIdMap[ncFileBasename] = fileId;
 		ncDimIdMap.insert(make_pair(ncFileBasename, dimIds));
 	}
 	const int fileId = ncFileIdMap[ncFileBasename];
+	resolveSubsampling(fileId, segmentDescriptor.getName());
 	const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
 	const int varId = NetCDF::defineVariable(fileId, variableDescriptor.getNcVarName(), variableDescriptor.getType(), dimIds);
 	ncVarIdMap[variableDescriptor.getName()] = varId;
@@ -215,20 +213,8 @@ void AbstractWriter::putGlobalAttributes(int fileId, const VariableDescriptor& v
             strftime(buffer, 80, "UTC=%Y-%m-%dT%H:%M:%S.000000", currentTimeStructure);
             attribute->setValue(string(buffer));
         }
-
         NetCDF::putGlobalAttribute(fileId, *attribute);
     }
-}
-
-bool AbstractWriter::isSubsampled(const string& segmentName) {
-    return segmentName.compare(Constants::SEGMENT_VGP_LAT_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_LON_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_LAT_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_LON_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LAT_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LON_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LAT_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LON_BNDS) == 0;
 }
 
 void AbstractWriter::createSafeProduct(const Context& context) {

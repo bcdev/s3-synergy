@@ -17,16 +17,24 @@ public:
 
 protected:
     const string& getProductDescriptorIdentifier() const;
-    const vector<SegmentDescriptor*> getSegmentDescriptors(const Context& context) const;
+    const vector<SegmentDescriptor*> getSegmentDescriptors(const Dictionary& dict) const;
     const string& getSafeManifestName() const;
     void writeCommonVariables(const Context& context);
-    void defineCommonDimensions(int fileId, bool isSubsampled);
-    void defineCommonVariables(int fileId, bool isSubsampled);
+    void defineCommonDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, int>& commonDimIds);
+    void defineCommonVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, int>& commonDimIds);
+    void resolveSubsampling(int fileId, const string& segmentName);
 
 private:
 	friend class VgtPWriterTest;
-	const vector<SegmentDescriptor*> getCommonSegments(const Context& context) const;
+	map<int, bool> fileSubsampledMap;
+
+	const vector<SegmentDescriptor*> getCommonSegments(const Dictionary& dict) const;
+	const vector<VariableDescriptor*> getSubsampledCommonVariables(const Dictionary& dict) const;
+	const vector<VariableDescriptor*> getNonSubsampledCommonVariables(const Dictionary& dict) const;
 	bool isCommonDescriptor(const SegmentDescriptor& segmentDescriptor) const;
+	bool isSubsampledCommonSegment(const string& segmentName) const;
+	bool isSubsampledSegment(const string& segmentName) const;
+	valarray<int> getFileIds();
 };
 
 #endif	/* VGTPWRITER_H */
