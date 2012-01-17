@@ -101,3 +101,10 @@ void MapAccessorTest::testGetOtherTypeData() {
     CPPUNIT_ASSERT_THROW(accessor->getULongData(), logic_error);
     CPPUNIT_ASSERT_THROW(accessor->getUShortData(), logic_error);
 }
+
+void MapAccessorTest::testGetUntypedValue() {
+	accessor->setByte(0, 7);
+
+	const int8_t* p = (int8_t*) accessor->getUntypedValue(0);
+	CPPUNIT_ASSERT(*p == 7);
+}

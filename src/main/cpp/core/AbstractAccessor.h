@@ -128,6 +128,10 @@ public:
 		data[at(i)] = boost::numeric_cast<T>(value);
 	}
 
+	const void* getUntypedValue(size_t i) const throw (bad_cast, out_of_range) {
+		return &data[at(i)];
+	}
+
 	const size_t getSampleCount() const {
 		return data.size();
 	}
@@ -237,6 +241,10 @@ public:
 			copy(&data[k + n * strideL], &data[k + strideK], &data[k]);
 			fill(&data[k + strideK - n * strideL], &data[k + strideK], T(0));
 		}
+	}
+
+	bool canReturnDataPointer() const {
+		return true;
 	}
 
 protected:

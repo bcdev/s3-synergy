@@ -96,7 +96,19 @@ void AbstractWriter::process(Context& context) {
                         IOUtils::createCountVector(dimIds.size(), grid.getSizeK(), lastL - firstL + 1, grid.getSizeM(), shape);
                         context.getLogging().progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
                         const Accessor& accessor = segment.getAccessor(varName);
-                        NetCDF::putData(ncId, varId, origin, shape, accessor.getUntypedData());
+                        if (accessor.canReturnDataPointer()) {
+                        	NetCDF::putData(ncId, varId, origin, shape, accessor.getUntypedData());
+                        } else {
+                        	valarray<size_t> indices(2);
+                        	for (long l = firstL; l <= lastL; l++) {
+                        		for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
+                        			const size_t index = grid.getIndex(0, l, m);
+                        			indices[0] = l;
+                        			indices[1] = m;
+                        			NetCDF::putValue(ncId, varId, indices, accessor.getUntypedValue(index));
+                        		}
+                        	}
+                        }
                     }
                 }
                 context.setLastComputedL(segment, *this, lastL);

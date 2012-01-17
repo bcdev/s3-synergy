@@ -22,6 +22,7 @@ class MapAccessorTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(testSetUByteGetByte);
     CPPUNIT_TEST(testGetByteData);
     CPPUNIT_TEST(testGetOtherTypeData);
+    CPPUNIT_TEST(testGetUntypedValue);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -40,6 +41,7 @@ private:
     void testSetUByteGetByte();
     void testGetByteData();
     void testGetOtherTypeData();
+    void testGetUntypedValue();
 };
 
 #endif /* MAPACCESSORTEST_H_ */
