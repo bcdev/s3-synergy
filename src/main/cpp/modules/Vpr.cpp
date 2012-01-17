@@ -31,7 +31,7 @@ void Vpr::start(Context& context) {
     lonAccessor = &geoSegment->getAccessor("longitude");
 
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP + "' to context.", getId());
-    vgpSegment = &context.addSegment(Constants::SEGMENT_VGP, 400, COL_COUNT, 1, 0, LINE_COUNT - 1);
+    vgpSegment = &context.addSwathSegment(Constants::SEGMENT_VGP, 400, COL_COUNT, 1, 0, LINE_COUNT - 1);
 
     setupAccessors();
 }

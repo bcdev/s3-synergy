@@ -83,7 +83,16 @@ public:
 	 * @param maxL The maximum valid row index.
 	 * @return a reference to the segment added.
 	 */
-	Segment& addSegment(const string& id, long sizeL, long sizeM, long sizeK, long minL, long maxL) throw (logic_error);
+	Segment& addSwathSegment(const string& id, long sizeL, long sizeM, long sizeK, long minL, long maxL) throw (logic_error);
+
+	/**
+	 * Adds a map-segment to the context.
+	 * @param id The segment ID.
+	 * @param sizeL The size of the segment's row index dimension.
+	 * @param sizeM The size of the segment's column index dimension.
+	 * @return a reference to the segment added.
+	 */
+	Segment& addMapSegment(const string& id, long sizeL, long sizeM) throw (logic_error);
 
 	bool removeSegment(const string& id);
 

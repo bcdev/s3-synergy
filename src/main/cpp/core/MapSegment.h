@@ -22,7 +22,7 @@ using std::vector;
 
 class MapSegment: public virtual Segment {
 public:
-	MapSegment(const string& s, long l, long m, long k, long minL, long maxL);
+	MapSegment(const string& s, long l, long m);
 	~MapSegment();
 
 	Accessor& addVariable(const VariableDescriptor& variableDescriptor) throw (logic_error);

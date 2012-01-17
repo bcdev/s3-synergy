@@ -110,7 +110,7 @@ void SynL1Reader::start(Context& context) {
 							if (!context.hasSegment(segmentName)) {
 								const long sizeL = getSegmentSize(segmentName, rowCount);
 								context.getLogging().info("Adding segment '" + segmentName + "' to context", getId());
-								context.addSegment(segmentName, sizeL, colCount, camCount, 0, rowCount - 1);
+								context.addSwathSegment(segmentName, sizeL, colCount, camCount, 0, rowCount - 1);
 							}
 
 							// Copy variable attributes to dictionary

@@ -67,12 +67,12 @@ void ContextTest::testAddObject() {
 
 void ContextTest::testAddSegment() {
 	CPPUNIT_ASSERT(context->hasSegment("S") == false);
-	Segment& segment = context->addSegment("S", 2000, Constants::N_DET_CAM,
+	Segment& segment = context->addSwathSegment("S", 2000, Constants::N_DET_CAM,
 			Constants::N_CAM, 0, 9999);
 	CPPUNIT_ASSERT(context->hasSegment("S"));
 	CPPUNIT_ASSERT(context->getSegment("S") == segment);
 	CPPUNIT_ASSERT_THROW(
-			context->addSegment("S", 1000, Constants::N_DET_CAM, Constants::N_CAM, 0, 9999),
+			context->addSwathSegment("S", 1000, Constants::N_DET_CAM, Constants::N_CAM, 0, 9999),
 			logic_error);
 }
 
@@ -100,7 +100,7 @@ void ContextTest::testGetUnknownSegment() {
 }
 
 void ContextTest::testSetGetLastLComputed() {
-	Segment& s = context->addSegment("S", 100, 1, 1, 0, 199);
+	Segment& s = context->addSwathSegment("S", 100, 1, 1, 0, 199);
 	shared_ptr<Module> m = shared_ptr<Module>(new AbstractModule("M"));
 	CPPUNIT_ASSERT_THROW(context->setLastComputedL(s, *m, 10), logic_error);
 

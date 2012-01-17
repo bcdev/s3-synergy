@@ -24,7 +24,7 @@ const size_t Col::OLC_TO_SYN_CHANNEL_MAPPING[18] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 
 void Col::start(Context& context) {
 	const Grid& sourceGrid = context.getSegment(Constants::SEGMENT_OLC).getGrid();
 
-	context.addSegment(Constants::SEGMENT_SYN_COLLOCATED, sourceGrid.getSizeL(), sourceGrid.getSizeM(), sourceGrid.getSizeK(), sourceGrid.getMinL(), sourceGrid.getMaxL());
+	context.addSwathSegment(Constants::SEGMENT_SYN_COLLOCATED, sourceGrid.getSizeL(), sourceGrid.getSizeM(), sourceGrid.getSizeK(), sourceGrid.getMinL(), sourceGrid.getMaxL());
 
 	addOlciVariables(context);
 	addSlstrVariables(context);

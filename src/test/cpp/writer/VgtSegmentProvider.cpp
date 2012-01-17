@@ -48,7 +48,7 @@ void VgtSegmentProvider::start(Context& context) {
 	        const string& segmentName = segDesc->getName();
 	        if (!context.hasSegment(segmentName)) {
 	            valarray<size_t> dimensionSizes = IOUtils::getDimensionSizes(varDesc);
-	            context.addSegment(segmentName, min(segmentLineCount, dimensionSizes[1]), dimensionSizes[2], dimensionSizes[0], 0, dimensionSizes[1] - 1);
+	            context.addSwathSegment(segmentName, min(segmentLineCount, dimensionSizes[1]), dimensionSizes[2], dimensionSizes[0], 0, dimensionSizes[1] - 1);
 	        }
 	        Segment& segment = context.getSegment(segmentName);
 	        if (!segment.hasVariable(varDesc->getName())) {
