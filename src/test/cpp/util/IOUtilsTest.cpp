@@ -22,7 +22,7 @@
 #include <string>
 
 #include "../../../main/cpp/util/IOUtils.h"
-#include "../../../main/cpp/core/SegmentImpl.h"
+#include "../../../main/cpp/core/SwathSegment.h"
 
 #include "IOUtilsTest.h"
 
@@ -43,35 +43,41 @@ void IOUtilsTest::tearDown() {
 }
 
 void IOUtilsTest::testCreateCountVector() {
-    CPPUNIT_ASSERT_THROW(IOUtils::createCountVector(0, 5, 2, 10), std::invalid_argument);
-    CPPUNIT_ASSERT_THROW(IOUtils::createCountVector(4, 5, 2, 10), std::invalid_argument);
+    valarray<size_t> countVector3Dims;
+    CPPUNIT_ASSERT_THROW(IOUtils::createCountVector(0, 5, 2, 10, countVector3Dims), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(IOUtils::createCountVector(4, 5, 2, 10, countVector3Dims), std::invalid_argument);
 
-    const valarray<size_t> countVector3Dims = IOUtils::createCountVector(3, 5, 2, 10);
+    IOUtils::createCountVector(3, 5, 2, 10, countVector3Dims);
     CPPUNIT_ASSERT(countVector3Dims[0] == 5);
     CPPUNIT_ASSERT(countVector3Dims[1] == 2);
     CPPUNIT_ASSERT(countVector3Dims[2] == 10);
 
-    const valarray<size_t> countVector2Dims = IOUtils::createCountVector(2, 5, 2, 10);
+    valarray<size_t> countVector2Dims;
+    IOUtils::createCountVector(2, 5, 2, 10, countVector2Dims);
     CPPUNIT_ASSERT(countVector2Dims[0] == 2);
     CPPUNIT_ASSERT(countVector2Dims[1] == 10);
 
-    const valarray<size_t> countVector1Dim = IOUtils::createCountVector(1, 5, 2, 10);
+    valarray<size_t> countVector1Dim;
+    IOUtils::createCountVector(1, 5, 2, 10, countVector1Dim);
     CPPUNIT_ASSERT(countVector1Dim[0] == 10);
 }
 
 void IOUtilsTest::testCreateStartVector() {
-    CPPUNIT_ASSERT_THROW(IOUtils::createStartVector(0, 5), std::invalid_argument);
-    CPPUNIT_ASSERT_THROW(IOUtils::createStartVector(4, 5), std::invalid_argument);
+	valarray<size_t> startVector3Dims;
+	CPPUNIT_ASSERT_THROW(IOUtils::createStartVector(0, 5, startVector3Dims), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(IOUtils::createStartVector(4, 5, startVector3Dims), std::invalid_argument);
 
-    const valarray<size_t> startVector3Dims = IOUtils::createStartVector(3, 60000);
+    IOUtils::createStartVector(3, 60000, startVector3Dims);
     CPPUNIT_ASSERT(startVector3Dims[0] == 0);
     CPPUNIT_ASSERT(startVector3Dims[1] == 60000);
     CPPUNIT_ASSERT(startVector3Dims[2] == 0);
 
-    const valarray<size_t> startVector2Dims = IOUtils::createStartVector(2, 60000);
+    valarray<size_t> startVector2Dims;
+    IOUtils::createStartVector(2, 60000, startVector2Dims);
     CPPUNIT_ASSERT(startVector2Dims[0] == 60000);
     CPPUNIT_ASSERT(startVector2Dims[1] == 00);
 
-    const valarray<size_t> startVector1Dim = IOUtils::createStartVector(1, 60000);
+    valarray<size_t> startVector1Dim;
+    IOUtils::createStartVector(1, 60000, startVector1Dim);
     CPPUNIT_ASSERT(startVector1Dim[0] == 0);
 }
