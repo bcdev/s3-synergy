@@ -27,7 +27,7 @@
 using std::min;
 
 VgtSegmentProvider::VgtSegmentProvider() :
-		AbstractModule("SYN_L2_SEGMENT_PROVIDER") {
+		AbstractModule("VGT_SEGMENT_PROVIDER") {
 }
 
 VgtSegmentProvider::~VgtSegmentProvider() {
@@ -36,15 +36,12 @@ VgtSegmentProvider::~VgtSegmentProvider() {
 void VgtSegmentProvider::start(Context& context) {
 	vector<SegmentDescriptor*> segmentDescriptors = getSegmentDescriptors(context);
 	foreach(SegmentDescriptor* segDesc, segmentDescriptors) {
-	    if(strstr(segDesc->getName().c_str(), "TP") != 0) {
-	        continue;
-	    }
 	    vector<VariableDescriptor*> variableDescriptors = segDesc->getVariableDescriptors();
 	    foreach(VariableDescriptor* varDesc, variableDescriptors) {
 	        const string& segmentName = segDesc->getName();
 	        if (!context.hasSegment(segmentName)) {
 	            valarray<size_t> dimensionSizes = IOUtils::getDimensionSizes(varDesc);
-	            context.addMapSegment(segmentName, 6000, 2000);
+	            context.addMapSegment(segmentName, dimensionSizes[1], dimensionSizes[2]);
 	        }
 	        Segment& segment = context.getSegment(segmentName);
 	        if (!segment.hasVariable(varDesc->getName())) {
