@@ -8,7 +8,7 @@
 #include <cstdlib>
 
 #include "../../../../src/main/cpp/core/Processor.h"
-#include "../../../../src/main/cpp/core/SegmentImpl.h"
+#include "../../../../src/main/cpp/core/SwathSegment.h"
 #include "../../../../src/main/cpp/reader/SynL1Reader.h"
 #include "../../../../src/main/cpp/modules/Col.h"
 #include "../../../../src/main/cpp/writer/SegmentWriter.h"

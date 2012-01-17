@@ -26,7 +26,7 @@
 #include "Context.h"
 #include "Module.h"
 #include "NullLogging.h"
-#include "SegmentImpl.h"
+#include "SwathSegment.h"
 
 using std::invalid_argument;
 using std::find;
@@ -68,7 +68,7 @@ Segment& Context::addSegment(const string& id, long sizeL, long sizeM, long size
 	if (hasSegment(id)) {
 		BOOST_THROW_EXCEPTION( invalid_argument("A segment with ID '" + id + "' already exists in the context."));
 	}
-	shared_ptr<Segment> segment = shared_ptr<Segment>(new SegmentImpl(id, sizeL, sizeM, sizeK, minL, maxL));
+	shared_ptr<Segment> segment = shared_ptr<Segment>(new SwathSegment(id, sizeL, sizeM, sizeK, minL, maxL));
 	segmentMap[id] = segment;
 	segmentList.push_back(segment);
 

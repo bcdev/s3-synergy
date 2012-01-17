@@ -12,14 +12,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
- * File:   SegmentImpl.h
+ * File:   SwathSegment.h
  * Author: ralf
  *
  * Created on December 15, 2010, 5:28 PM
  */
 
-#ifndef SEGMENTIMPL_H
-#define	SEGMENTIMPL_H
+#ifndef SWATHSEGMENT_H
+#define	SWATHSEGMENT_H
 
 #include <limits>
 #include <map>
@@ -33,10 +33,10 @@ using std::map;
 using std::numeric_limits;
 using std::vector;
 
-class SegmentImpl: public virtual Segment {
+class SwathSegment: public virtual Segment {
 public:
-	SegmentImpl(const string& id, long sizeL, long sizeM, long sizeK, long minL, long maxL);
-	virtual ~SegmentImpl();
+	SwathSegment(const string& id, long sizeL, long sizeM, long sizeK, long minL, long maxL);
+	virtual ~SwathSegment();
 
 	Accessor& addVariable(const VariableDescriptor& variableDescriptor) throw (logic_error);
 	Accessor& addVariable(const VariableDescriptor& variableDescriptor, const string& targetName) throw (logic_error);
@@ -96,5 +96,5 @@ private:
 	static const string className;
 };
 
-#endif	/* SEGMENTIMPL_H */
+#endif	/* SWATHSEGMENT_H */
 

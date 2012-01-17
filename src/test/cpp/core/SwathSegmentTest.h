@@ -12,21 +12,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
- * File:   SegmentImplTest.h
+ * File:   SwathSegmentTest.h
  * Author: ralf
  *
  * Created on December 20, 2010, 11:17 AM
  */
 
-#ifndef SEGMENTIMPLTEST_H
-#define	SEGMENTIMPLTEST_H
+#ifndef SWATHSEGMENTTEST_H
+#define	SWATHSEGMENTTEST_H
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../main/cpp/core/SegmentImpl.h"
+#include "../../../main/cpp/core/SwathSegment.h"
 
-class SegmentImplTest : public CPPUNIT_NS::TestFixture {
-    CPPUNIT_TEST_SUITE(SegmentImplTest);
+class SwathSegmentTest : public CPPUNIT_NS::TestFixture {
+    CPPUNIT_TEST_SUITE(SwathSegmentTest);
     CPPUNIT_TEST(testAddVariable);
     CPPUNIT_TEST(testGetId);
     CPPUNIT_TEST(testGetGrid);
@@ -35,8 +35,8 @@ class SegmentImplTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE_END();
 
 public:
-    SegmentImplTest();
-    virtual ~SegmentImplTest();
+    SwathSegmentTest();
+    virtual ~SwathSegmentTest();
     void setUp();
     void tearDown();
 
@@ -47,8 +47,8 @@ private:
     void testGetAccessor();
     void testMoveForward();
 
-    SegmentImpl* segment;
+    SwathSegment* segment;
 };
 
-#endif	/* SEGMENTIMPLTEST_H */
+#endif	/* SWATHSEGMENTTEST_H */
 

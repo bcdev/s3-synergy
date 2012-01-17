@@ -12,7 +12,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
- * File:   SegmentImplTest.cpp
+ * File:   SwathSegmentTest.cpp
  * Author: ralf
  *
  * Created on December 20, 2010, 11:17 AM
@@ -20,28 +20,28 @@
 
 #include <stdexcept>
 
-#include "SegmentImplTest.h"
+#include "SwathSegmentTest.h"
 
 using std::invalid_argument;
 using std::logic_error;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(SegmentImplTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(SwathSegmentTest);
 
-SegmentImplTest::SegmentImplTest() {
+SwathSegmentTest::SwathSegmentTest() {
 }
 
-SegmentImplTest::~SegmentImplTest() {
+SwathSegmentTest::~SwathSegmentTest() {
 }
 
-void SegmentImplTest::setUp() {
-    segment = new SegmentImpl("TEST", 2000, Constants::N_DET_CAM, Constants::N_CAM, 0, 9999);
+void SwathSegmentTest::setUp() {
+    segment = new SwathSegment("TEST", 2000, Constants::N_DET_CAM, Constants::N_CAM, 0, 9999);
 }
 
-void SegmentImplTest::tearDown() {
+void SwathSegmentTest::tearDown() {
     delete segment;
 }
 
-void SegmentImplTest::testAddVariable() {
+void SwathSegmentTest::testAddVariable() {
     CPPUNIT_ASSERT(segment->hasVariable("V") == false);
     segment->addVariableByte("V");
     CPPUNIT_ASSERT(segment->hasVariable("V") == true);
@@ -58,11 +58,11 @@ void SegmentImplTest::testAddVariable() {
     CPPUNIT_ASSERT_THROW(segment->addVariableUShort("V"), logic_error);
 }
 
-void SegmentImplTest::testGetId() {
+void SwathSegmentTest::testGetId() {
     CPPUNIT_ASSERT(segment->getId() == "TEST");
 }
 
-void SegmentImplTest::testGetGrid() {
+void SwathSegmentTest::testGetGrid() {
     const Grid& grid = segment->getGrid();
 
     CPPUNIT_ASSERT(grid.getFirstK() == 0);
@@ -73,7 +73,7 @@ void SegmentImplTest::testGetGrid() {
     CPPUNIT_ASSERT(grid.getSizeM() == Constants::N_DET_CAM);
 }
 
-void SegmentImplTest::testGetAccessor() {
+void SwathSegmentTest::testGetAccessor() {
     CPPUNIT_ASSERT_THROW(segment->getAccessor("B"), logic_error);
     segment->addVariableByte("B");
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("B").getByteData());
@@ -116,7 +116,7 @@ void SegmentImplTest::testGetAccessor() {
     CPPUNIT_ASSERT_NO_THROW(segment->getAccessor("US").getUShortData());
 }
 
-void SegmentImplTest::testMoveForward() {
+void SwathSegmentTest::testMoveForward() {
     segment->addVariableUInt("U");
     valarray<uint32_t>& data = segment->getAccessor("U").getUIntData();
 

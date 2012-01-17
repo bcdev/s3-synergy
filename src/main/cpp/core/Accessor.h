@@ -29,6 +29,7 @@
 #include <boost/cstdint.hpp>
 
 using std::bad_cast;
+using std::exception;
 using std::out_of_range;
 using std::string;
 using std::valarray;
@@ -206,70 +207,70 @@ public:
 	 * of type {@code int8_t} a {@code bad_cast} exception is thrown.
 	 * @return the container of sample values.
 	 */
-	virtual valarray<int8_t>& getByteData() const throw (bad_cast) = 0;
+	virtual valarray<int8_t>& getByteData() const throw (exception) = 0;
 
 	/**
 	 * Returns the container of samples values. If the samples are not
 	 * of type {@code uint8_t} a {@code bad_cast} exception is thrown.
 	 * @return the container of sample values.
 	 */
-	virtual valarray<uint8_t>& getUByteData() const throw (bad_cast) = 0;
+	virtual valarray<uint8_t>& getUByteData() const throw (exception) = 0;
 
 	/**
 	 * Returns the container of samples values. If the samples are not
 	 * of type {@code int16_t} a {@code bad_cast} exception is thrown.
 	 * @return the container of sample values.
 	 */
-	virtual valarray<int16_t>& getShortData() const throw (bad_cast) = 0;
+	virtual valarray<int16_t>& getShortData() const throw (exception) = 0;
 
 	/**
 	 * Returns the container of samples values. If the samples are not
 	 * of type {@code uint16_t} a {@code bad_cast} exception is thrown.
 	 * @return the container of sample values.
 	 */
-	virtual valarray<uint16_t>& getUShortData() const throw (bad_cast) = 0;
+	virtual valarray<uint16_t>& getUShortData() const throw (exception) = 0;
 
 	/**
 	 * Returns the container of samples values. If the samples are not
 	 * of type {@code int32_t} a {@code bad_cast} exception is thrown.
 	 * @return the container of sample values.
 	 */
-	virtual valarray<int32_t>& getIntData() const throw (bad_cast) = 0;
+	virtual valarray<int32_t>& getIntData() const throw (exception) = 0;
 
 	/**
 	 * Returns the container of samples values. If the samples are not
 	 * of type {@code uint32_t} a {@code bad_cast} exception is thrown.
 	 * @return the container of sample values.
 	 */
-	virtual valarray<uint32_t>& getUIntData() const throw (bad_cast) = 0;
+	virtual valarray<uint32_t>& getUIntData() const throw (exception) = 0;
 
 	/**
 	 * Returns the container of samples values. If the samples are not
 	 * of type {@code int64_t} a {@code bad_cast} exception is thrown.
 	 * @return the container of sample values.
 	 */
-	virtual valarray<int64_t>& getLongData() const throw (bad_cast) = 0;
+	virtual valarray<int64_t>& getLongData() const throw (exception) = 0;
 
 	/**
 	 * Returns the container of samples values. If the samples are not
 	 * of type {@code uint64_t} a {@code bad_cast} exception is thrown.
 	 * @return the container of sample values.
 	 */
-	virtual valarray<uint64_t>& getULongData() const throw (bad_cast) = 0;
+	virtual valarray<uint64_t>& getULongData() const throw (exception) = 0;
 
 	/**
 	 * Returns the container of samples values. If the samples are not
 	 * of type {@code float} a {@code bad_cast} exception is thrown.
 	 * @return the container of sample values.
 	 */
-	virtual valarray<float>& getFloatData() const throw (bad_cast) = 0;
+	virtual valarray<float>& getFloatData() const throw (exception) = 0;
 
 	/**
 	 * Returns the container of samples values. If the samples are not
 	 * of type {@code double} a {@code bad_cast} exception is thrown.
 	 * @return the container of sample values.
 	 */
-	virtual valarray<double>& getDoubleData() const throw (bad_cast) = 0;
+	virtual valarray<double>& getDoubleData() const throw (exception) = 0;
 
 	virtual valarray<double> getDoubles() const = 0;
 

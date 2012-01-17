@@ -7,7 +7,7 @@
 
 #include <cstdlib>
 
-#include "../../../../src/main/cpp/core/SegmentImpl.h"
+#include "../../../../src/main/cpp/core/SwathSegment.h"
 #include "../../../../src/main/cpp/reader/SynL1Reader.h"
 #include "../../../../src/main/cpp/modules/Col.h"
 #include "../../../../src/main/cpp/modules/Pcl.h"
@@ -36,7 +36,7 @@ void VprTest::tearDown() {
 
 void VprTest::testMinMaxSynLat() {
     Vpr vpr;
-    const shared_ptr<Segment> geoSegment = shared_ptr<Segment>(new SegmentImpl(Constants::SEGMENT_GEO, 3, 2, 2, 0, 2));
+    const shared_ptr<Segment> geoSegment = shared_ptr<Segment>(new SwathSegment(Constants::SEGMENT_GEO, 3, 2, 2, 0, 2));
     Accessor& latAccessor = geoSegment->addVariable("latitude", Constants::TYPE_DOUBLE);
     Accessor& lonAccessor = geoSegment->addVariable("longitude", Constants::TYPE_DOUBLE);
     vpr.latAccessor = &latAccessor;
@@ -67,7 +67,7 @@ void VprTest::testMinMaxSynLat() {
 
 void VprTest::testMinMaxSynLon() {
     Vpr vpr;
-    const shared_ptr<Segment> geoSegment = shared_ptr<Segment>(new SegmentImpl(Constants::SEGMENT_GEO, 3, 2, 2, 0, 2));
+    const shared_ptr<Segment> geoSegment = shared_ptr<Segment>(new SwathSegment(Constants::SEGMENT_GEO, 3, 2, 2, 0, 2));
     Accessor& latAccessor = geoSegment->addVariable("latitude", Constants::TYPE_DOUBLE);
     Accessor& lonAccessor = geoSegment->addVariable("longitude", Constants::TYPE_DOUBLE);
     vpr.latAccessor = &latAccessor;
@@ -111,7 +111,7 @@ void VprTest::testMinMaxVgtLat() {
 
 void VprTest::testGetPixelPosInGrid() {
     Vpr vpr;
-    const shared_ptr<Segment> geoSegment = shared_ptr<Segment>(new SegmentImpl(Constants::SEGMENT_GEO, 3, 2, 2, 0, 2));
+    const shared_ptr<Segment> geoSegment = shared_ptr<Segment>(new SwathSegment(Constants::SEGMENT_GEO, 3, 2, 2, 0, 2));
     Accessor& latAccessor = geoSegment->addVariable("latitude", Constants::TYPE_DOUBLE);
     Accessor& lonAccessor = geoSegment->addVariable("longitude", Constants::TYPE_DOUBLE);
     vpr.latAccessor = &latAccessor;
@@ -160,7 +160,7 @@ void VprTest::testGetPixelPosInGrid() {
 
 void VprTest::testFindPixelPosAroundGivenIndices() {
     Vpr vpr;
-    const shared_ptr<Segment> geoSegment = shared_ptr<Segment>(new SegmentImpl(Constants::SEGMENT_GEO, 100, 100, 1, 0, 99));
+    const shared_ptr<Segment> geoSegment = shared_ptr<Segment>(new SwathSegment(Constants::SEGMENT_GEO, 100, 100, 1, 0, 99));
     Accessor& latAccessor = geoSegment->addVariable("latitude", Constants::TYPE_DOUBLE);
     Accessor& lonAccessor = geoSegment->addVariable("longitude", Constants::TYPE_DOUBLE);
     vpr.latAccessor = &latAccessor;
