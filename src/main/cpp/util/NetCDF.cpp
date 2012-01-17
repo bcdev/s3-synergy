@@ -214,6 +214,17 @@ void NetCDF::getVariableData(int fileId, int varId, const valarray<size_t>& orig
 	checkStatus(status, "reading data from file");
 }
 
+int NetCDF::findDimension(int fileId, const string& dimName) {
+    int dimId;
+    const int status = nc_inq_dimid(fileId, dimName.c_str(), &dimId);
+    const int dimensionNotFoundErrorCode = -46;
+    if(status == dimensionNotFoundErrorCode) {
+        return -1;
+    }
+    checkStatus(status, "finding dimension '" + dimName + "'");
+    return dimId;
+}
+
 void NetCDF::putValue(int fileId, int varId, const valarray<size_t>& indices, const void* value) {
 	const int status = nc_put_var1(fileId, varId, &indices[0], value);
 	checkStatus(status, "putting data into file");

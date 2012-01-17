@@ -96,6 +96,8 @@ public:
 			const valarray<size_t>& origin, const valarray<size_t>& shape,
 			double* dataArray);
 
+	static int findDimension(int fileId, const string& dimName);
+
 	static size_t getDimensionCount(int fileId, int varId);
 
 	static valarray<int> getDimensionIds(int fileId, int varId);
