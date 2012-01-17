@@ -43,9 +43,9 @@ Accessor& SegmentImpl::addVariable(const VariableDescriptor& d) throw (logic_err
 Accessor& SegmentImpl::addVariable(const VariableDescriptor& d, const string& targetName) throw (logic_error) {
 	switch (d.getType()) {
 	case Constants::TYPE_BYTE:
-		return addVariableByte(targetName, d.getFillValue<int8_t>(), d.getScaleFactor(), d.getAddOffset());
+		return addVariableByte(targetName, numeric_cast<int8_t>(d.getFillValue<int16_t>()), d.getScaleFactor(), d.getAddOffset());
 	case Constants::TYPE_UBYTE:
-		return addVariableUByte(targetName, d.getFillValue<uint8_t>(), d.getScaleFactor(), d.getAddOffset());
+		return addVariableUByte(targetName, numeric_cast<uint8_t>(d.getFillValue<uint16_t>()), d.getScaleFactor(), d.getAddOffset());
 	case Constants::TYPE_SHORT:
 		return addVariableShort(targetName, d.getFillValue<int16_t>(), d.getScaleFactor(), d.getAddOffset());
 	case Constants::TYPE_USHORT:
