@@ -148,6 +148,9 @@ void SynL1Reader::process(Context& context) {
 	const Dictionary& dict = context.getDictionary();
 	const vector<SegmentDescriptor*> segmentDescriptors = dict.getProductDescriptor(Constants::PRODUCT_SY1).getSegmentDescriptors();
 
+	valarray<size_t> starts;
+	valarray<size_t> counts;
+
 	foreach(SegmentDescriptor* segmentDescriptor, segmentDescriptors)
 			{
 				const Segment& segment = context.getSegment(segmentDescriptor->getName());
@@ -173,8 +176,8 @@ void SynL1Reader::process(Context& context) {
 								const int varId = ncVarIdMap[varName];
 								const int fileId = ncFileIdMap[ncFileName];
 								const size_t dimCount = variableDescriptor->getDimensions().size();
-								const valarray<size_t> starts = IOUtils::createStartVector(dimCount, firstL);
-								const valarray<size_t> counts = IOUtils::createCountVector(dimCount, grid.getSizeK(), lastL - firstL + 1, grid.getSizeM());
+								IOUtils::createStartVector(dimCount, firstL, starts);
+								IOUtils::createCountVector(dimCount, grid.getSizeK(), lastL - firstL + 1, grid.getSizeM(), counts);
 								context.getLogging().progress("Reading variable '" + varName + "' into segment " + segment.toString(), getId());
 								const Accessor& accessor = segment.getAccessor(varName);
 								NetCDF::getVariableData(fileId, varId, starts, counts, accessor.getUntypedData());
