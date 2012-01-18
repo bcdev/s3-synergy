@@ -92,11 +92,11 @@ void AbstractWriter::process(Context& context) {
                         const int varId = ncVarIdMap[varName];
                         const int ncId = ncFileIdMap[ncFileBasename];
                         const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
-                        IOUtils::createStartVector(dimIds.size(), firstL, origin);
-                        IOUtils::createCountVector(dimIds.size(), grid.getSizeK(), lastL - firstL + 1, grid.getSizeM(), shape);
                         context.getLogging().progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
                         const Accessor& accessor = segment.getAccessor(varName);
                         if (accessor.canReturnDataPointer()) {
+                            IOUtils::createStartVector(dimIds.size(), firstL, origin);
+                            IOUtils::createCountVector(dimIds.size(), grid.getSizeK(), lastL - firstL + 1, grid.getSizeM(), shape);
                         	NetCDF::putData(ncId, varId, origin, shape, accessor.getUntypedData());
                         } else {
                         	valarray<size_t> indices(2);
