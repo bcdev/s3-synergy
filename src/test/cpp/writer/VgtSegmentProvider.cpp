@@ -19,28 +19,21 @@
  */
 
 #include <algorithm>
-
+#include <stdio.h>
+#include <string.h>
 #include "../../../main/cpp/util/IOUtils.h"
-
 #include "VgtSegmentProvider.h"
 
 using std::min;
 
 VgtSegmentProvider::VgtSegmentProvider() :
-		AbstractModule("SYN_L2_SEGMENT_PROVIDER") {
+		AbstractModule("VGT_SEGMENT_PROVIDER") {
 }
 
 VgtSegmentProvider::~VgtSegmentProvider() {
 }
 
 void VgtSegmentProvider::start(Context& context) {
-	size_t segmentLineCount = 400;
-	const string segmentLineCountString = context.getJobOrder().getIpfConfiguration().getDynamicProcessingParameter("Segment_Line_Count");
-	if (!segmentLineCountString.empty()) {
-		segmentLineCount = lexical_cast<size_t>(segmentLineCountString);
-	}
-	context.getLogging().info("segment line count is " + lexical_cast<string>(segmentLineCount), getId());
-
 	vector<SegmentDescriptor*> segmentDescriptors = getSegmentDescriptors(context);
 	foreach(SegmentDescriptor* segDesc, segmentDescriptors) {
 	    vector<VariableDescriptor*> variableDescriptors = segDesc->getVariableDescriptors();
@@ -48,7 +41,7 @@ void VgtSegmentProvider::start(Context& context) {
 	        const string& segmentName = segDesc->getName();
 	        if (!context.hasSegment(segmentName)) {
 	            valarray<size_t> dimensionSizes = IOUtils::getDimensionSizes(varDesc);
-	            context.addSwathSegment(segmentName, min(segmentLineCount, dimensionSizes[1]), dimensionSizes[2], dimensionSizes[0], 0, dimensionSizes[1] - 1);
+	            context.addMapSegment(segmentName, dimensionSizes[1], dimensionSizes[2]);
 	        }
 	        Segment& segment = context.getSegment(segmentName);
 	        if (!segment.hasVariable(varDesc->getName())) {
