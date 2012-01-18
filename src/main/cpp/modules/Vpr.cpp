@@ -18,9 +18,6 @@ Vpr::~Vpr() {
 void Vpr::start(Context& context) {
     synSegment = &context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
     geoSegment = &context.getSegment(Constants::SEGMENT_GEO);
-    olcSegment = &context.getSegment(Constants::SEGMENT_OLC);
-    slnSegment = &context.getSegment(Constants::SEGMENT_SLN);
-    sloSegment = &context.getSegment(Constants::SEGMENT_SLO);
 
     latAccessor = &geoSegment->getAccessor("latitude");
     lonAccessor = &geoSegment->getAccessor("longitude");
@@ -86,6 +83,8 @@ void Vpr::process(Context& context) {
 	long sourceL = 0;
 	long sourceM = 0;
 
+	PixelFinder pixelFinder(*this, TARGET_PIXEL_SIZE);
+
 	for (long l = firstTargetL; l <= lastTargetL; l++) {
 		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
 
@@ -103,7 +102,7 @@ void Vpr::process(Context& context) {
 
 				const double targetLon = getTargetLon(m);
 
-				const bool sourcePixelFound = findSourcePixel(targetLat, targetLon, sourceK, sourceL, sourceM);
+				const bool sourcePixelFound = pixelFinder.findSourcePixel(targetLat, targetLon, sourceK, sourceL, sourceM);
 				// 1. Is there a source pixel for the target pixel?
 				if (!sourcePixelFound) {
 					// No.
@@ -314,79 +313,6 @@ void Vpr::getMinMaxSourceLon(double& minLon, double& maxLon) const {
 void Vpr::getMinMaxTargetLat(double& minLat, double& maxLat, long firstL, long lastL) const {
 	maxLat = getTargetLat(firstL);
 	minLat = getTargetLat(lastL);
-}
-
-bool Vpr::findSourcePixel(double targetLat, double targetLon, long& sourceK, long& sourceL, long& sourceM) const {
-	using std::abs;
-	using std::max;
-	using std::min;
-
-	const Grid& geoGrid = geoSegment->getGrid();
-	const long minK = geoGrid.getMinK();
-	const long maxK = geoGrid.getMaxK();
-	const long minL = geoGrid.getMinL();
-	const long maxL = geoGrid.getMaxL();
-	const long minM = geoGrid.getMinM();
-	const long maxM = geoGrid.getMaxM();
-
-	const long centerK = sourceK;
-	const long centerL = sourceL;
-	const long centerM = sourceM;
-
-	double minDelta = 2.0 * TARGET_PIXEL_SIZE;
-	bool found = false;
-
-	for (long b = 0; b < max(maxL, maxM); b++) {
-		const long minBoundaryL = max(centerL - b, minL);
-		const long maxBoundaryL = min(centerL + b, maxL);
-		const long minBoundaryM = max(centerM - b, minM);
-		const long maxBoundaryM = min(centerM + b, maxM);
-
-		bool boundaryFound = false;
-
-		for (long k = minK; k <= maxK; k++) {
-			for (long l = minBoundaryL; l <= maxBoundaryL; l++) {
-				boundaryFound |= isNearestPixel(targetLat, targetLon, k, l, minBoundaryM, sourceK, sourceL, sourceM, minDelta);
-				boundaryFound |= isNearestPixel(targetLat, targetLon, k, l, maxBoundaryM, sourceK, sourceL, sourceM, minDelta);
-			}
-			for (long m = minBoundaryM; m <= maxBoundaryM; m++) {
-				boundaryFound |= isNearestPixel(targetLat, targetLon, k, minBoundaryL, m, sourceK, sourceL, sourceM, minDelta);
-				boundaryFound |= isNearestPixel(targetLat, targetLon, k, maxBoundaryL, m, sourceK, sourceL, sourceM, minDelta);
-			}
-		}
-		found |= boundaryFound;
-		if (found && !boundaryFound) {
-			break;
-		}
-	}
-
-    return found;
-}
-
-bool Vpr::isNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& sourceK, long& sourceL, long& sourceM, double& minDelta) const {
-	const Grid& geoGrid = geoSegment->getGrid();
-
-	const size_t index = geoGrid.getIndex(k, l, m);
-	const double sourceLat = latAccessor->getDouble(index);
-	const double sourceLon = lonAccessor->getDouble(index);
-	const double latDelta = abs(targetLat - sourceLat);
-	if (latDelta > 0.5 * TARGET_PIXEL_SIZE) {
-		return false;
-	}
-	// TODO - anti-meridian
-	const double lonDelta = abs(targetLon - sourceLon);
-	if (lonDelta > 0.5 * TARGET_PIXEL_SIZE) {
-		return false;
-	}
-	const double delta = latDelta + lonDelta;
-	if (delta < minDelta) {
-		sourceK = k;
-		sourceL = l;
-		sourceM = m;
-		minDelta = delta;
-		return true;
-	}
-	return false;
 }
 
 void Vpr::setValues(long synK, long synL, long synM, long l, long m) {

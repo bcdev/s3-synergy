@@ -10,8 +10,9 @@
 
 #include "../core/Pixel.h"
 #include "../modules/BasicModule.h"
+#include "../util/PixelFinder.h"
 
-class Vpr : public BasicModule {
+class Vpr : public BasicModule, private GeoLocation {
 public:
 	Vpr();
 	virtual ~Vpr();
@@ -23,13 +24,21 @@ public:
 private:
 	friend class VprTest;
 
+	double getLat(size_t index) const {
+		return latAccessor->getDouble(index);
+	}
+
+	double getLon(size_t index) const {
+		return lonAccessor->getDouble(index);
+	}
+
+	const Grid& getGrid() const {
+		return geoSegment->getGrid();
+	}
+
 	Segment* vgpSegment;
 	const Segment* synSegment;
 	const Segment* geoSegment;
-	// TODO - do this somewhere else
-	const Segment* olcSegment;
-	const Segment* slnSegment;
-	const Segment* sloSegment;
 
 	const Accessor* latAccessor;
 	const Accessor* lonAccessor;
@@ -57,10 +66,8 @@ private:
 	void getMinMaxSourceLat(double& minLat, double& maxLat) const;
 	void getMinMaxTargetLat(double& minLat, double& maxLat, long firstL, long lastL) const;
 	void getMinMaxSourceLon(double& minLon, double& maxLon) const;
-	bool findSourcePixel(double targetLat, double targetLon, long& sourceK, long& sourceL, long& sourceM) const;
 	long findLineOfSynSegmentNearestTo(double vgtMaxLat) const;
 	void setValues(long synK, long synL, long synM, long l, long m);
-	bool isNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& sourceK, long& sourceL, long& sourceM, double& minDelta) const;
 };
 
 #endif /* VPR_H_ */
