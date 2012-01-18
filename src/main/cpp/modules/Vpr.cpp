@@ -272,6 +272,7 @@ void Vpr::process2(Context& context) {
 void Vpr::getMinMaxSourceLat(double& minLat, double& maxLat) const {
 	const Grid& geoGrid = geoSegment->getGrid();
 	const Grid& synGrid = synSegment->getGrid();
+
 	for (long k = synGrid.getFirstK(); k <= synGrid.getMaxK(); k++) {
 		for (long l = synGrid.getFirstL(); l <= synGrid.getMaxL(); l++) {
 			for (long m = synGrid.getFirstM(); m <= synGrid.getMaxM(); m++) {
@@ -293,6 +294,7 @@ void Vpr::getMinMaxSourceLat(double& minLat, double& maxLat) const {
 void Vpr::getMinMaxSourceLon(double& minLon, double& maxLon) const {
 	const Grid& geoGrid = geoSegment->getGrid();
 	const Grid& synGrid = synSegment->getGrid();
+
     for(long k = synGrid.getFirstK(); k <= synGrid.getMaxK(); k++) {
         for(long l = synGrid.getFirstL(); l <= synGrid.getMaxL(); l++) {
             for(long m = synGrid.getFirstM(); m <= synGrid.getMaxM(); m++) {
@@ -315,59 +317,76 @@ void Vpr::getMinMaxTargetLat(double& minLat, double& maxLat, long firstL, long l
 }
 
 bool Vpr::findSourcePixel(double targetLat, double targetLon, long& sourceK, long& sourceL, long& sourceM) const {
+	using std::abs;
 	using std::max;
 	using std::min;
 
 	const Grid& geoGrid = geoSegment->getGrid();
-    const long minK = max<long>(geoGrid.getMinK(), sourceK - 1);
-    const long maxK = min<long>(geoGrid.getMaxK(), sourceK + 1);
-    const long minL = max<long>(geoGrid.getMinL(), sourceL - PIXEL_SEARCH_RADIUS / 2);
-    const long maxL = min<long>(geoGrid.getMaxL(), sourceL + PIXEL_SEARCH_RADIUS / 2);
-    const long minM = max<long>(geoGrid.getMinL(), sourceM - PIXEL_SEARCH_RADIUS / 2);
-    const long maxM = min<long>(geoGrid.getMaxM(), sourceM + PIXEL_SEARCH_RADIUS / 2);
+	const long minK = geoGrid.getMinK();
+	const long maxK = geoGrid.getMaxK();
+	const long minL = geoGrid.getMinL();
+	const long maxL = geoGrid.getMaxL();
+	const long minM = geoGrid.getMinM();
+	const long maxM = geoGrid.getMaxM();
 
-    if (findSourcePixel(targetLat, targetLon, minK, maxK, minL, maxL, minM, maxM, sourceK, sourceL, sourceM)) {
-    	return true;
-    }
+	const long centerK = sourceK;
+	const long centerL = sourceL;
+	const long centerM = sourceM;
 
-	return findSourcePixel(targetLat, targetLon, geoGrid.getMinK(), geoGrid.getMaxK(), geoGrid.getMinL(), geoGrid.getMaxL(), geoGrid.getMinM(), geoGrid.getMaxM(), sourceK, sourceL, sourceM);
-}
-
-bool Vpr::findSourcePixel(double targetLat, double targetLon, long firstK, long lastK, long firstL, long lastL, long firstM, long lastM, long& sourceK, long& sourceL, long& sourceM) const {
-	using std::abs;
-
-	const Grid& geoGrid = geoSegment->getGrid();
-
-	double minDelta = TARGET_PIXEL_SIZE;
+	double minDelta = 2.0 * TARGET_PIXEL_SIZE;
 	bool found = false;
 
-    for (long k = firstK; sourceK <= lastK; k++) {
-        for (long l = firstL; sourceL <= lastL; l++) {
-            for (long m = firstM; sourceM <= lastM; m++) {
-                const size_t index = geoGrid.getIndex(k, l, m);
-                const double sourceLat = latAccessor->getDouble(index);
-                const double sourceLon = lonAccessor->getDouble(index);
-                const double latDelta = abs(targetLat - sourceLat);
-                if (latDelta > 0.5 * TARGET_PIXEL_SIZE) {
-                	continue;
-                }
-                const double lonDelta = abs(targetLon - sourceLon);
-                // TODO - anti-meridian
-                if (lonDelta > 0.5 * TARGET_PIXEL_SIZE) {
-                	continue;
-                }
-                const double delta = latDelta + lonDelta;
-                if (!found || delta < minDelta) {
-                    sourceK = k;
-                    sourceL = l;
-                    sourceM = m;
-                    minDelta = delta;
-                }
-            }
-        }
-    }
+	for (long b = 0; b < max(maxL, maxM); b++) {
+		const long minBoundaryL = max(centerL - b, minL);
+		const long maxBoundaryL = min(centerL + b, maxL);
+		const long minBoundaryM = max(centerM - b, minM);
+		const long maxBoundaryM = min(centerM + b, maxM);
+
+		bool boundaryFound = false;
+
+		for (long k = minK; k <= maxK; k++) {
+			for (long l = minBoundaryL; l <= maxBoundaryL; l++) {
+				boundaryFound |= isNearestPixel(targetLat, targetLon, k, l, minBoundaryM, sourceK, sourceL, sourceM, minDelta);
+				boundaryFound |= isNearestPixel(targetLat, targetLon, k, l, maxBoundaryM, sourceK, sourceL, sourceM, minDelta);
+			}
+			for (long m = minBoundaryM; m <= maxBoundaryM; m++) {
+				boundaryFound |= isNearestPixel(targetLat, targetLon, k, minBoundaryL, m, sourceK, sourceL, sourceM, minDelta);
+				boundaryFound |= isNearestPixel(targetLat, targetLon, k, maxBoundaryL, m, sourceK, sourceL, sourceM, minDelta);
+			}
+		}
+		found |= boundaryFound;
+		if (found && !boundaryFound) {
+			break;
+		}
+	}
 
     return found;
+}
+
+bool Vpr::isNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& sourceK, long& sourceL, long& sourceM, double& minDelta) const {
+	const Grid& geoGrid = geoSegment->getGrid();
+
+	const size_t index = geoGrid.getIndex(k, l, m);
+	const double sourceLat = latAccessor->getDouble(index);
+	const double sourceLon = lonAccessor->getDouble(index);
+	const double latDelta = abs(targetLat - sourceLat);
+	if (latDelta > 0.5 * TARGET_PIXEL_SIZE) {
+		return false;
+	}
+	// TODO - anti-meridian
+	const double lonDelta = abs(targetLon - sourceLon);
+	if (lonDelta > 0.5 * TARGET_PIXEL_SIZE) {
+		return false;
+	}
+	const double delta = latDelta + lonDelta;
+	if (delta < minDelta) {
+		sourceK = k;
+		sourceL = l;
+		sourceM = m;
+		minDelta = delta;
+		return true;
+	}
+	return false;
 }
 
 void Vpr::setValues(long synK, long synL, long synM, long l, long m) {

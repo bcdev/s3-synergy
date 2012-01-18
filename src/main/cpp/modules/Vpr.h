@@ -58,9 +58,9 @@ private:
 	void getMinMaxTargetLat(double& minLat, double& maxLat, long firstL, long lastL) const;
 	void getMinMaxSourceLon(double& minLon, double& maxLon) const;
 	bool findSourcePixel(double targetLat, double targetLon, long& sourceK, long& sourceL, long& sourceM) const;
-	bool findSourcePixel(double targetLat, double targetLon, long firstK, long lastK, long firstL, long lastL, long firstM, long lastM, long& sourceK, long& sourceL, long& sourceM) const;
 	long findLineOfSynSegmentNearestTo(double vgtMaxLat) const;
 	void setValues(long synK, long synL, long synM, long l, long m);
+	bool isNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& sourceK, long& sourceL, long& sourceM, double& minDelta) const;
 };
 
 #endif /* VPR_H_ */
