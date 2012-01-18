@@ -60,7 +60,7 @@ void VprTest::testMinMaxSynLat() {
 
     double minLat = 91;
     double maxLat = -91;
-    vpr.getMinMaxSynLat(minLat, maxLat);
+    vpr.getMinMaxSourceLat(minLat, maxLat);
     CPPUNIT_ASSERT(std::abs(maxLat - 45) < 0.001);
     CPPUNIT_ASSERT(std::abs(minLat - 20) < 0.001);
 }
@@ -91,7 +91,7 @@ void VprTest::testMinMaxSynLon() {
 
     double minLon = 181;
     double maxLon = -181;
-    vpr.minMaxSynLon(minLon, maxLon);
+    vpr.getMinMaxSourceLon(minLon, maxLon);
     CPPUNIT_ASSERT(std::abs(maxLon - 17) < 0.001);
     CPPUNIT_ASSERT(std::abs(minLon - 10) < 0.001);
 }
@@ -104,7 +104,7 @@ void VprTest::testMinMaxVgtLat() {
 
     double minLat = 91;
     double maxLat = -91;
-    vpr.getMinMaxVgtLat(0, 999, minLat, maxLat);
+    //vpr.getMinMaxTargetLat(0, 999, minLat, maxLat);
     CPPUNIT_ASSERT(std::abs(maxLat - 75) < 0.001);
     CPPUNIT_ASSERT(std::abs(minLat - 66.0804) < 0.001);
 }
@@ -147,12 +147,12 @@ void VprTest::testGetPixelPosInGrid() {
     lonAccessor.setDouble(geoGrid.getIndex(1, 2, 1), 17);
     valarray<long> synIndices(3);
 
-    vpr.findPixelPosInWholeGrid(20.0, 10.0, synIndices);
+    //vpr.findPixelPosInWholeGrid(20.0, 10.0, synIndices);
     CPPUNIT_ASSERT(synIndices[0] == 0);
     CPPUNIT_ASSERT(synIndices[1] == 0);
     CPPUNIT_ASSERT(synIndices[2] == 0);
 
-    vpr.findPixelPosInWholeGrid(45.0, 17.0, synIndices);
+    //vpr.findPixelPosInWholeGrid(45.0, 17.0, synIndices);
     CPPUNIT_ASSERT(synIndices[0] == 1);
     CPPUNIT_ASSERT(synIndices[1] == 2);
     CPPUNIT_ASSERT(synIndices[2] == 1);
@@ -182,7 +182,7 @@ void VprTest::testFindPixelPosAroundGivenIndices() {
     synIndices[1] = 10;
     synIndices[2] = 49;
 
-    vpr.findPixelPosAroundGivenIndices(1050.0, 8950.0, synIndices);
+    //vpr.findPixelPosAroundGivenIndices(1050.0, 8950.0, synIndices);
     CPPUNIT_ASSERT(synIndices[0] == 0);
     CPPUNIT_ASSERT(synIndices[1] == 10);
     CPPUNIT_ASSERT(synIndices[2] == 50);
@@ -191,30 +191,30 @@ void VprTest::testFindPixelPosAroundGivenIndices() {
     synIndices[1] = 20;
     synIndices[2] = 70;
 
-    vpr.findPixelPosAroundGivenIndices(1464.0, 8636.0, synIndices);
+    //vpr.findPixelPosAroundGivenIndices(1464.0, 8636.0, synIndices);
     CPPUNIT_ASSERT(synIndices[0] == 0);
     CPPUNIT_ASSERT(synIndices[1] == 15);
     CPPUNIT_ASSERT(synIndices[2] == 65);
 }
 
 void VprTest::testGetLatitude() {
-    CPPUNIT_ASSERT(std::abs(75 - Vpr::getVgtLatitude(0)) < 0.001);
-    CPPUNIT_ASSERT(std::abs(74.1071 - Vpr::getVgtLatitude(100)) < 0.001);
-    CPPUNIT_ASSERT(std::abs(9.5 - Vpr::getVgtLatitude(7336)) < 0.001);
-    CPPUNIT_ASSERT(std::abs(-55.9911 - Vpr::getVgtLatitude(14671)) < 0.001);
+    CPPUNIT_ASSERT(std::abs(75 - Vpr::getTargetLat(0)) < 0.001);
+    CPPUNIT_ASSERT(std::abs(74.1071 - Vpr::getTargetLat(100)) < 0.001);
+    CPPUNIT_ASSERT(std::abs(9.5 - Vpr::getTargetLat(7336)) < 0.001);
+    CPPUNIT_ASSERT(std::abs(-55.9911 - Vpr::getTargetLat(14671)) < 0.001);
 
-    CPPUNIT_ASSERT_THROW(Vpr::getVgtLatitude(14672), std::invalid_argument);
-    CPPUNIT_ASSERT_THROW(Vpr::getVgtLatitude(-1), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(Vpr::getTargetLat(14672), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(Vpr::getTargetLat(-1), std::invalid_argument);
 }
 
 void VprTest::testGetLongitude() {
-    CPPUNIT_ASSERT(std::abs(-180 - Vpr::getVgtLongitude(0)) < 0.001);
-    CPPUNIT_ASSERT(std::abs(-179.1071 - Vpr::getVgtLongitude(100)) < 0.001);
-    CPPUNIT_ASSERT(std::abs(0 - Vpr::getVgtLongitude(20160)) < 0.001);
-    CPPUNIT_ASSERT(std::abs(179.9911 - Vpr::getVgtLongitude(40319)) < 0.001);
+    CPPUNIT_ASSERT(std::abs(-180 - Vpr::getTargetLon(0)) < 0.001);
+    CPPUNIT_ASSERT(std::abs(-179.1071 - Vpr::getTargetLon(100)) < 0.001);
+    CPPUNIT_ASSERT(std::abs(0 - Vpr::getTargetLon(20160)) < 0.001);
+    CPPUNIT_ASSERT(std::abs(179.9911 - Vpr::getTargetLon(40319)) < 0.001);
 
-    CPPUNIT_ASSERT_THROW(Vpr::getVgtLongitude(40320), std::invalid_argument);
-    CPPUNIT_ASSERT_THROW(Vpr::getVgtLongitude(-1), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(Vpr::getTargetLon(40320), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(Vpr::getTargetLon(-1), std::invalid_argument);
 }
 
 void VprTest::testVpr() {

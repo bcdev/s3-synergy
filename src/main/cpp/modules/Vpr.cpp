@@ -7,11 +7,6 @@
 
 #include "Vpr.h"
 
-using std::abs;
-using std::fill;
-using std::invalid_argument;
-using std::min;
-
 Vpr::Vpr() : BasicModule("VPR"),
         synReflectanceAccessors(4),
         vgtReflectanceAccessors(4) {
@@ -51,15 +46,150 @@ void Vpr::setupAccessors() {
 }
 
 void Vpr::process(Context& context) {
+	using std::floor;
+	using std::min;
+
+	const Segment& s = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+	const Segment& t = context.getSegment(Constants::SEGMENT_VGP);
+	const Grid& sourceGrid = s.getGrid();
+	const Grid& targetGrid = t.getGrid();
+
+	const long firstTargetL = context.getFirstComputableL(t, *this);
+	context.getLogging().debug("Segment [" + t.toString() + "]: firstComputableL = " + lexical_cast<string>(firstTargetL), getId());
+	long lastTargetL = context.getLastComputableL(t, *this);
+	context.getLogging().debug("Segment [" + t.toString() + "]: lastComputableL = " + lexical_cast<string>(lastTargetL), getId());
+
+    double minSourceLat = 90.0;
+    double maxSourceLat = -90.0;
+    double minTargetLat = 90.0;
+    double maxTargetLat = -90.0;
+    getMinMaxSourceLat(minSourceLat, maxSourceLat);
+    getMinMaxTargetLat(minTargetLat, maxTargetLat, firstTargetL, lastTargetL);
+
+    // Is the target region north of the source region, without overlap?
+    if (minTargetLat > maxSourceLat) {
+    	// Yes. Processing is completed.
+		context.setLastComputedL(t, *this, lastTargetL);
+		return;
+	}
+
+    // Is the target region south of the source region, without overlap?
+    if (maxTargetLat < minSourceLat && context.getLastComputableL(s, *this) < sourceGrid.getMaxL()) {
+    	// Yes. Processing will be completed later.
+    	return;
+	}
+
+	const long lastComputedSourceL = context.getLastComputableL(s, *this);
+	long firstRequiredSourceL = sourceGrid.getLastL() + 1;
+
+	long sourceK = 0;
+	long sourceL = 0;
+	long sourceM = 0;
+
+	for (long l = firstTargetL; l <= lastTargetL; l++) {
+		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
+
+		const double targetLat = getTargetLat(l);
+		if (targetLat > maxSourceLat) {
+			continue;
+		}
+		if (targetLat < minSourceLat) {
+			continue;
+		}
+
+		for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
+			for (long m = targetGrid.getFirstM(); m < targetGrid.getFirstM() + targetGrid.getSizeM(); m++) {
+				const size_t targetIndex = targetGrid.getIndex(k, l, m);
+
+				const double targetLon = getTargetLon(m);
+
+				const bool sourcePixelFound = findSourcePixel(targetLat, targetLon, sourceK, sourceL, sourceM);
+				// 1. Is there a source pixel for the target pixel?
+				if (!sourcePixelFound) {
+					// No.
+					continue;
+				}
+
+				// 2. Update first required sourceL
+				firstRequiredSourceL = min(sourceL, firstRequiredSourceL);
+
+				// 3. Is the current source line beyond the last computed source line?
+				if (sourceL > lastComputedSourceL) {
+					// Yes.
+					lastTargetL = min(l - 1, lastTargetL);
+					continue;
+				}
+
+				Accessor& sourceAccessor = *(synReflectanceAccessors[0]);
+				Accessor& targetAccessor = *(vgtReflectanceAccessors[0]);
+
+				const size_t sourceIndex = sourceGrid.getIndex(sourceK, sourceL, sourceM);
+				if (sourceAccessor.isFillValue(sourceIndex)) {
+					continue;
+				}
+
+				switch (sourceAccessor.getType()) {
+				case Constants::TYPE_BYTE: {
+					targetAccessor.setByte(targetIndex, sourceAccessor.getByte(sourceIndex));
+					break;
+				}
+				case Constants::TYPE_UBYTE: {
+					targetAccessor.setUByte(targetIndex, sourceAccessor.getUByte(sourceIndex));
+					break;
+				}
+				case Constants::TYPE_SHORT: {
+					targetAccessor.setShort(targetIndex, sourceAccessor.getShort(sourceIndex));
+					break;
+				}
+				case Constants::TYPE_USHORT: {
+					targetAccessor.setUShort(targetIndex, sourceAccessor.getUShort(sourceIndex));
+					break;
+				}
+				case Constants::TYPE_INT: {
+					targetAccessor.setInt(targetIndex, sourceAccessor.getInt(sourceIndex));
+					break;
+				}
+				case Constants::TYPE_UINT: {
+					targetAccessor.setUInt(targetIndex, sourceAccessor.getUInt(sourceIndex));
+					break;
+				}
+				case Constants::TYPE_LONG: {
+					targetAccessor.setLong(targetIndex, sourceAccessor.getLong(sourceIndex));
+					break;
+				}
+				case Constants::TYPE_ULONG: {
+					targetAccessor.setULong(targetIndex, sourceAccessor.getULong(sourceIndex));
+					break;
+				}
+				case Constants::TYPE_FLOAT: {
+					targetAccessor.setFloat(targetIndex, sourceAccessor.getFloat(sourceIndex));
+					break;
+				}
+				case Constants::TYPE_DOUBLE: {
+					targetAccessor.setDouble(targetIndex, sourceAccessor.getDouble(sourceIndex));
+					break;
+				}
+				default:
+					break;
+				}
+			}
+		}
+
+		context.setFirstRequiredL(s, *this, firstRequiredSourceL);
+		context.setLastComputedL(t, *this, lastTargetL);
+	}
+}
+
+void Vpr::process2(Context& context) {
     const long firstL = context.getFirstComputableL(*vgpSegment, *this);
     const long lastL = context.getLastComputableL(*vgpSegment, *this);
 
     double synMinLat = 90.0;
     double synMaxLat = -90.0;
-    getMinMaxSynLat(synMinLat, synMaxLat);
+    getMinMaxSourceLat(synMinLat, synMaxLat);
     double vgtMinLat = 90.0;
     double vgtMaxLat = -90.0;
-    getMinMaxVgtLat(firstL, lastL, vgtMinLat, vgtMaxLat);
+    //getMinMaxTargetLat(firstL, lastL, vgtMinLat, vgtMaxLat);
 
     /*
      * if the minimum latitude of the current VGT segment is greater than the maximum latitude
@@ -92,70 +222,75 @@ void Vpr::process(Context& context) {
      * and set the first required line of the SYN segment to the line of the SYN segment nearest
      * to vgtMaxLat.
      */
-    context.setLastComputedL(*vgpSegment, *this, lastL);
 	// TODO - do we need this?
 	//context.setFirstRequiredL(*olcSegment, *this, -1);
 	//context.setFirstRequiredL(*slnSegment, *this, -1);
 	//context.setFirstRequiredL(*sloSegment, *this, -1);
 
     double synMinLon = 180.0;
-    double synMaxLon = -180.0;
-    minMaxSynLon(synMinLon, synMaxLon);
+	double synMaxLon = -180.0;
+	getMinMaxSourceLon(synMinLon, synMaxLon);
 
-    const Grid& vgtGrid = vgpSegment->getGrid();
-    const Grid& synGrid = synSegment->getGrid();
-    valarray<long> synIndices(3);
-    bool indicesFound = false;
-    for(long l = firstL; l <= lastL; l++) {
-        const double lat = getVgtLatitude(l);
-        if(lat > synMaxLat || lat < synMinLat) {
-            continue;
-        }
-        context.getLogging().info("Projecting vgt line " + lexical_cast<string>(l), getId());
-        for(long m = vgtGrid.getFirstM(); m <= vgtGrid.getMaxM(); m++) {
-            const double lon = getVgtLongitude(m);
-            if(synMinLon > lon || synMaxLon < lon) {
-                continue;
-            }
-            if(indicesFound) {
-                findPixelPosAroundGivenIndices(lat, lon, synIndices);
-            } else {
-                findPixelPosInWholeGrid(lat, lon, synIndices);
-            }
-            const long synK = synIndices[0];
-            const long synL = synIndices[1];
-            const long synM = synIndices[2];
-            if (synGrid.isValidPosition(synK, synL, synM)) {
-                setValues(synK, synL, synM, l, m);
-                indicesFound = true;
-            } else {
-                indicesFound = false;
-                continue;
-            }
-        }
-    }
+	const Grid& vgpGrid = vgpSegment->getGrid();
+	const Grid& synGrid = synSegment->getGrid();
+	valarray<long> synIndices(3);
+	bool indicesFound = false;
+	for (long l = firstL; l <= lastL; l++) {
+		const double lat = getTargetLat(l);
+		if (lat > synMaxLat) {
+			continue;
+		}
+		if (lat < synMinLat) {
+			continue;
+		}
+		context.getLogging().info("Projecting vgt line " + lexical_cast<string>(l), getId());
+		for (long m = vgpGrid.getFirstM(); m <= vgpGrid.getMaxM(); m++) {
+			const double lon = getTargetLon(m);
+			if (synMinLon > lon || synMaxLon < lon) {
+				continue;
+			}
+			if (indicesFound) {
+				//findPixelPosAroundGivenIndices(lat, lon, synIndices);
+			} else {
+				//findPixelPosInWholeGrid(lat, lon, synIndices);
+			}
+			const long synK = synIndices[0];
+			const long synL = synIndices[1];
+			const long synM = synIndices[2];
+			if (synGrid.isValidPosition(synK, synL, synM)) {
+				setValues(synK, synL, synM, l, m);
+				indicesFound = true;
+			} else {
+				indicesFound = false;
+				continue;
+			}
+		}
+	}
+	context.setLastComputedL(*vgpSegment, *this, lastL);
 }
 
-void Vpr::getMinMaxSynLat(double& minLat, double& maxLat) const {
+void Vpr::getMinMaxSourceLat(double& minLat, double& maxLat) const {
 	const Grid& geoGrid = geoSegment->getGrid();
 	const Grid& synGrid = synSegment->getGrid();
 	for (long k = synGrid.getFirstK(); k <= synGrid.getMaxK(); k++) {
 		for (long l = synGrid.getFirstL(); l <= synGrid.getMaxL(); l++) {
 			for (long m = synGrid.getFirstM(); m <= synGrid.getMaxM(); m++) {
 				const size_t index = geoGrid.getIndex(k, l, m);
-				const double lat = latAccessor->getDouble(index);
-				if (lat < minLat) {
-					minLat = lat;
-				}
-				if (lat > maxLat) {
-					maxLat = lat;
+				if (!latAccessor->isFillValue(index)) {
+					const double lat = latAccessor->getDouble(index);
+					if (lat < minLat) {
+						minLat = lat;
+					}
+					if (lat > maxLat) {
+						maxLat = lat;
+					}
 				}
 			}
 		}
 	}
 }
 
-void Vpr::minMaxSynLon(double& minLon, double& maxLon) const {
+void Vpr::getMinMaxSourceLon(double& minLon, double& maxLon) const {
 	const Grid& geoGrid = geoSegment->getGrid();
 	const Grid& synGrid = synSegment->getGrid();
     for(long k = synGrid.getFirstK(); k <= synGrid.getMaxK(); k++) {
@@ -174,60 +309,65 @@ void Vpr::minMaxSynLon(double& minLon, double& maxLon) const {
     }
 }
 
-void Vpr::getMinMaxVgtLat(long firstL, long lastL, double& minLat, double& maxLat) const {
-    for(long l = firstL; l <= lastL; l++) {
-        const double lat = getVgtLatitude(l);
-        if(lat < minLat) {
-            minLat = lat;
-        }
-        if(lat > maxLat) {
-            maxLat = lat;
-        }
+void Vpr::getMinMaxTargetLat(double& minLat, double& maxLat, long firstL, long lastL) const {
+	maxLat = getTargetLat(firstL);
+	minLat = getTargetLat(lastL);
+}
+
+bool Vpr::findSourcePixel(double targetLat, double targetLon, long& sourceK, long& sourceL, long& sourceM) const {
+	using std::max;
+	using std::min;
+
+	const Grid& geoGrid = geoSegment->getGrid();
+    const long minK = max<long>(geoGrid.getMinK(), sourceK - 1);
+    const long maxK = min<long>(geoGrid.getMaxK(), sourceK + 1);
+    const long minL = max<long>(geoGrid.getMinL(), sourceL - PIXEL_SEARCH_RADIUS / 2);
+    const long maxL = min<long>(geoGrid.getMaxL(), sourceL + PIXEL_SEARCH_RADIUS / 2);
+    const long minM = max<long>(geoGrid.getMinL(), sourceM - PIXEL_SEARCH_RADIUS / 2);
+    const long maxM = min<long>(geoGrid.getMaxM(), sourceM + PIXEL_SEARCH_RADIUS / 2);
+
+    if (findSourcePixel(targetLat, targetLon, minK, maxK, minL, maxL, minM, maxM, sourceK, sourceL, sourceM)) {
+    	return true;
     }
+
+	return findSourcePixel(targetLat, targetLon, geoGrid.getMinK(), geoGrid.getMaxK(), geoGrid.getMinL(), geoGrid.getMaxL(), geoGrid.getMinM(), geoGrid.getMaxM(), sourceK, sourceL, sourceM);
 }
 
-void Vpr::findPixelPosInWholeGrid(double lat, double lon, valarray<long>& synIndices) const {
+bool Vpr::findSourcePixel(double targetLat, double targetLon, long firstK, long lastK, long firstL, long lastL, long firstM, long lastM, long& sourceK, long& sourceL, long& sourceM) const {
+	using std::abs;
+
 	const Grid& geoGrid = geoSegment->getGrid();
 
-    findPixelPos(lat, lon,
-            geoGrid.getFirstK(), geoGrid.getMaxK(),
-            geoGrid.getFirstL(), geoGrid.getMaxL(),
-            geoGrid.getFirstM(), geoGrid.getMaxM(),
-            synIndices);
-}
+	double minDelta = TARGET_PIXEL_SIZE;
+	bool found = false;
 
-void Vpr::findPixelPosAroundGivenIndices(double lat, double lon, valarray<long>& synIndices) const {
-	const Grid& geoGrid = geoSegment->getGrid();
-    const long k0 = max<long>(0, synIndices[0] - PIXEL_SEARCH_RADIUS / 2);
-    const long kMax = min<long>(geoGrid.getMaxK(), synIndices[0] + PIXEL_SEARCH_RADIUS / 2);
-    const long l0 = max<long>(0, synIndices[1] - PIXEL_SEARCH_RADIUS / 2);
-    const long lMax = min<long>(geoGrid.getMaxL(), synIndices[1] + PIXEL_SEARCH_RADIUS / 2);
-    const long m0 = max<long>(0, synIndices[2] - PIXEL_SEARCH_RADIUS / 2);
-    const long mMax = min<long>(geoGrid.getMaxM(), synIndices[2] + PIXEL_SEARCH_RADIUS / 2);
-    findPixelPos(lat, lon, k0, kMax, l0, lMax, m0, mMax, synIndices);
-}
-
-void Vpr::findPixelPos(double lat, double lon, long k0, long kMax, long l0, long lMax, long m0, long mMax, valarray<long>& synIndices) const {
-	const Grid& geoGrid = geoSegment->getGrid();
-    double synLat;
-    double synLon;
-    double delta = numeric_limits<double>::max();
-    for (long k = k0; k <= kMax; k++) {
-        for (long l = l0; l <= lMax; l++) {
-            for (long m = m0; m <= mMax; m++) {
+    for (long k = firstK; sourceK <= lastK; k++) {
+        for (long l = firstL; sourceL <= lastL; l++) {
+            for (long m = firstM; sourceM <= lastM; m++) {
                 const size_t index = geoGrid.getIndex(k, l, m);
-                synLat = latAccessor->getDouble(index);
-                synLon = lonAccessor->getDouble(index);
-                double innerDelta = std::abs(lat - synLat) + std::abs(lon - synLon);
-                if(innerDelta < delta) {
-                    delta = innerDelta;
-                    synIndices[0] = k;
-                    synIndices[1] = l;
-                    synIndices[2] = m;
+                const double sourceLat = latAccessor->getDouble(index);
+                const double sourceLon = lonAccessor->getDouble(index);
+                const double latDelta = abs(targetLat - sourceLat);
+                if (latDelta > 0.5 * TARGET_PIXEL_SIZE) {
+                	continue;
+                }
+                const double lonDelta = abs(targetLon - sourceLon);
+                // TODO - anti-meridian
+                if (lonDelta > 0.5 * TARGET_PIXEL_SIZE) {
+                	continue;
+                }
+                const double delta = latDelta + lonDelta;
+                if (!found || delta < minDelta) {
+                    sourceK = k;
+                    sourceL = l;
+                    sourceM = m;
+                    minDelta = delta;
                 }
             }
         }
     }
+
+    return found;
 }
 
 void Vpr::setValues(long synK, long synL, long synM, long l, long m) {
@@ -243,20 +383,12 @@ void Vpr::setValues(long synK, long synL, long synM, long l, long m) {
     vgtFlagsAccessor->setUByte(vgtIndex, flags);
 }
 
-double Vpr::getVgtLatitude(long l) {
-    if(l < 0 || l >= LINE_COUNT) {
-        BOOST_THROW_EXCEPTION(std::invalid_argument("l < 0 || l >= LINE_COUNT, l = " + lexical_cast<string>(l)));
-    }
-    const double unnormalisedResult = l * PIXEL_SIZE;
-    return 75 - unnormalisedResult;
+double Vpr::getTargetLat(long l) {
+    return 75.0 - l * TARGET_PIXEL_SIZE;
 }
 
-double Vpr::getVgtLongitude(long m) {
-    if(m < 0 || m >= COL_COUNT) {
-        BOOST_THROW_EXCEPTION(std::invalid_argument("m < 0 || m >= COL_COUNT, m = " + lexical_cast<string>(m)));
-    }
-    const double unnormalisedResult = m * PIXEL_SIZE;
-    return -180 + unnormalisedResult;
+double Vpr::getTargetLon(long m) {
+    return m * TARGET_PIXEL_SIZE - 180.0;
 }
 
 long Vpr::findLineOfSynSegmentNearestTo(double vgtMaxLat) const {
