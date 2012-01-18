@@ -20,7 +20,6 @@ MapSegment::MapSegment(const string& s, long l, long m) :
 }
 
 MapSegment::~MapSegment() {
-	// TODO Auto-generated destructor stub
 }
 
 Accessor& MapSegment::addVariable(const VariableDescriptor& d) throw (logic_error) {
