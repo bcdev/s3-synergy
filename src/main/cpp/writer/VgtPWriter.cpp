@@ -47,19 +47,21 @@ void VgtPWriter::writeCommonVariables(const Context& context) {
         valarray<size_t> origin;
         valarray<size_t> shape;
         foreach(VariableDescriptor* commonVariable, commonVariables) {
+            context.getLogging().debug("Writing common variable '" + commonVariable->getName() + "'.", getId());
             const int varId = NetCDF::getVariableId(fileId, commonVariable->getName());
             const Segment& segment = context.getSegment(commonVariable->getSegmentName());
             const Grid& grid = segment.getGrid();
             const Accessor& accessor = segment.getAccessor(commonVariable->getName());
             const size_t dimCount = commonVariable->getDimensions().size();
-            IOUtils::createStartVector(dimCount, grid.getFirstL(), origin);
-            IOUtils::createCountVector(dimCount, grid.getSizeK(), grid.getLastL() - grid.getFirstL() + 1, grid.getSizeM(), shape);
             if (accessor.canReturnDataPointer()) {
+                IOUtils::createStartVector(dimCount, grid.getFirstL(), origin);
+                IOUtils::createCountVector(dimCount, grid.getSizeK(), grid.getLastL() - grid.getFirstL() + 1, grid.getSizeM(), shape);
                 NetCDF::putData(fileId, varId, origin, shape, accessor.getUntypedData());
             } else {
                 valarray<size_t> indices(2);
                 const long firstL = segment.getGrid().getFirstL();
                 const long lastL = segment.getGrid().getLastL();
+                context.getLogging().debug("firstL=" + lexical_cast<string>(firstL) + ", lastL=" + lexical_cast<string>(lastL) + ".", getId());
                 for (long l = firstL; l <= lastL; l++) {
                     for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
                         const size_t index = grid.getIndex(0, l, m);
