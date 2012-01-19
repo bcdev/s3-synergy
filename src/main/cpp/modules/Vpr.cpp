@@ -25,6 +25,9 @@ void Vpr::start(Context& context) {
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP + "' to context.", getId());
     vgpSegment = &context.addMapSegment(Constants::SEGMENT_VGP, LINE_COUNT, COL_COUNT);
 
+    // context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_TP + "' to context.", getId());
+    // vgpSegment = &context.addMapSegment(Constants::SEGMENT_VGP_TP, LINE_COUNT, COL_COUNT);
+
     setupAccessors();
 }
 
@@ -98,6 +101,7 @@ void Vpr::process(Context& context) {
 
 		for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
 			for (long m = targetGrid.getFirstM(); m < targetGrid.getFirstM() + targetGrid.getSizeM(); m++) {
+				context.getLogging().progress("Getting column k, m = " + lexical_cast<string>(k) + ", " + lexical_cast<string>(m), getId());
 				const size_t targetIndex = targetGrid.getIndex(k, l, m);
 
 				const double targetLon = getTargetLon(m);
@@ -126,6 +130,8 @@ void Vpr::process(Context& context) {
 				if (sourceAccessor.isFillValue(sourceIndex)) {
 					continue;
 				}
+
+				context.getLogging().progress("Setting column k, m = " + lexical_cast<string>(k) + ", " + lexical_cast<string>(m), getId());
 
 				switch (sourceAccessor.getType()) {
 				case Constants::TYPE_BYTE: {
