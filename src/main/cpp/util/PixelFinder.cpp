@@ -37,7 +37,7 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& sour
 	double minDelta = numeric_limits<double>::max();
 	bool found = false;
 
-	for (long b = 0; b < max(maxL, maxM); b++) {
+	for (long b = 0; b <= max(maxL, maxM); b++) {
 		const long minBoundaryL = max(centerL - b, minL);
 		const long maxBoundaryL = min(centerL + b, maxL);
 		const long minBoundaryM = max(centerM - b, minM);

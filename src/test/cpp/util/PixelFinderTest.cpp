@@ -76,19 +76,23 @@ void PixelFinderTest::testFindPixel() {
 	double lat;
 	double lon;
 
-	lat = geoLocation.lat(0);
-	lon = geoLocation.lon(0, 0);
-	pixelFinder.findSourcePixel(lat, lon, k, l, m);
+	lat = geoLocation.lat(0L);
+	lon = geoLocation.lon(0L, 0L);
+	CPPUNIT_ASSERT(pixelFinder.findSourcePixel(lat, lon, k, l, m));
 
-	CPPUNIT_ASSERT(k == 0);
-	CPPUNIT_ASSERT(l == 0);
-	CPPUNIT_ASSERT(m == 0);
+	CPPUNIT_ASSERT_EQUAL(0L, k);
+	CPPUNIT_ASSERT_EQUAL(0L, l);
+	CPPUNIT_ASSERT_EQUAL(0L, m);
 
-	lat = geoLocation.lat(5999);
-	lon = geoLocation.lon(4, 739);
-	pixelFinder.findSourcePixel(lat, lon, k, l, m);
+	lat = geoLocation.lat(5999L);
+	lon = geoLocation.lon(3L, 739L);
+	CPPUNIT_ASSERT(pixelFinder.findSourcePixel(lat, lon, k, l, m));
 
-	CPPUNIT_ASSERT_EQUAL(4L, k);
+	CPPUNIT_ASSERT_EQUAL(3L, k);
 	CPPUNIT_ASSERT_EQUAL(5999L, l);
 	CPPUNIT_ASSERT_EQUAL(739L, m);
+
+	lat = geoLocation.lat(5999L);
+	lon = geoLocation.lon(4L, 739L);
+	CPPUNIT_ASSERT(!pixelFinder.findSourcePixel(lat, lon, k, l, m));
 }
