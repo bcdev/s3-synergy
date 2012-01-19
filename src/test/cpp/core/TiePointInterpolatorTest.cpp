@@ -141,11 +141,11 @@ void TiePointInterpolatorTest::setUp() {
 			14813512, 15093098, 15371775, 15649539, 15926385, 16202308,
 			16477305, 16751372, 17024504, 17296700, 17567952, 17838264 };
 
-	valarray<double> latArray(60000 * 5 * 740);
-	valarray<double> lonArray(60000 * 5 * 740);
-	for (size_t i = 0; i < 60000 * 5 * 740; i++) {
-		latArray[i] = lats[i % 385] * 1.0e-6;
-		lonArray[i] = lons[i % 385] * 1.0e-6;
+	valarray<double> latArray(385);
+	valarray<double> lonArray(385);
+	for (size_t i = 0; i < 385; i++) {
+		latArray[i] = lats[i] * 1.0e-6;
+		lonArray[i] = lons[i] * 1.0e-6;
 	}
 
 	tpi = new TiePointInterpolator<double>(lonArray, latArray);
