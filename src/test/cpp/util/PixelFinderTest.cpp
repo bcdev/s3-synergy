@@ -12,13 +12,13 @@
 
 CPPUNIT_TEST_SUITE_REGISTRATION(PixelFinderTest);
 
-class GeoLocationProvider : public GeoLocation {
+class TestGeoLocation : public GeoLocation {
 public:
 
-	GeoLocationProvider() : grid(4, 6000, 740, 0, 5999) {
+	TestGeoLocation() : grid(4, 6000, 740, 0, 5999) {
 	}
 
-	~GeoLocationProvider() {
+	~TestGeoLocation() {
 
 	}
 
@@ -26,16 +26,24 @@ public:
 		return grid;
 	}
 
+	double lat(long l) const {
+		return 90.0 - l * (180.0 / grid.getMaxL());
+	}
+
+	double lon(long k, long m) const {
+		return m * (22.2 / grid.getMaxM()) - 44.4 + k * 22.2;
+	}
+
 	double getLat(size_t index) const {
 		long k = index / grid.getStrideK();
 		long l = (index - k * grid.getStrideK()) / grid.getStrideL();
-		return 90.0 - l * (180.0/grid.getMaxL());
+		return lat(l);
 	}
 
 	double getLon(size_t index) const {
 		long k = index / grid.getStrideK();
 		long m = index % grid.getSizeM();
-		return m * (22.2/grid.getMaxM()) - 44.4 + k * 22.2;
+		return lon(k, m);
 	}
 
 private:
@@ -56,22 +64,31 @@ void PixelFinderTest::tearDown() {
 }
 
 void PixelFinderTest::testFindPixel() {
-	GeoLocationProvider geoLocation;
+	using std::string;
+
+	TestGeoLocation geoLocation;
 	PixelFinder pixelFinder(geoLocation, 0.12);
 
 	long k = 0;
 	long l = 0;
 	long m = 0;
 
-	pixelFinder.findSourcePixel(90.0, -44.4, k, l, m);
+	double lat;
+	double lon;
+
+	lat = geoLocation.lat(0);
+	lon = geoLocation.lon(0, 0);
+	pixelFinder.findSourcePixel(lat, lon, k, l, m);
 
 	CPPUNIT_ASSERT(k == 0);
 	CPPUNIT_ASSERT(l == 0);
 	CPPUNIT_ASSERT(m == 0);
 
-	pixelFinder.findSourcePixel(90.0, -44.4, k, l, m);
+	lat = geoLocation.lat(5999);
+	lon = geoLocation.lon(4, 739);
+	pixelFinder.findSourcePixel(lat, lon, k, l, m);
 
-	CPPUNIT_ASSERT(k == 0);
-	CPPUNIT_ASSERT(l == 0);
-	CPPUNIT_ASSERT(m == 0);
+	CPPUNIT_ASSERT_EQUAL(4L, k);
+	CPPUNIT_ASSERT_EQUAL(5999L, l);
+	CPPUNIT_ASSERT_EQUAL(739L, m);
 }
