@@ -25,8 +25,8 @@ void Vpr::start(Context& context) {
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP + "' to context.", getId());
     vgpSegment = &context.addMapSegment(Constants::SEGMENT_VGP, LINE_COUNT, COL_COUNT);
 
-    // context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_TP + "' to context.", getId());
-    // vgpSegment = &context.addMapSegment(Constants::SEGMENT_VGP_TP, LINE_COUNT, COL_COUNT);
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LAT + "' to context.", getId());
+    vgpSegment = &context.addMapSegment(Constants::SEGMENT_VGP_TP, LINE_COUNT, COL_COUNT);
 
     setupAccessors();
 }
@@ -63,8 +63,12 @@ void Vpr::process(Context& context) {
     double maxSourceLat = -90.0;
     double minTargetLat = 90.0;
     double maxTargetLat = -90.0;
+    double maxSourceLon = -180.0;
     getMinMaxSourceLat(minSourceLat, maxSourceLat);
     getMinMaxTargetLat(minTargetLat, maxTargetLat, firstTargetL, lastTargetL);
+
+    double minSourceLon = 180.0;
+    getMinMaxSourceLon(minSourceLon, maxSourceLon);
 
     // Is the target region north of the source region, without overlap?
     if (minTargetLat > maxSourceLat) {
@@ -105,6 +109,9 @@ void Vpr::process(Context& context) {
 				const size_t targetIndex = targetGrid.getIndex(k, l, m);
 
 				const double targetLon = getTargetLon(m);
+				if (targetLon < minSourceLon || targetLon > maxSourceLon) {
+					continue;
+				}
 
 				const bool sourcePixelFound = pixelFinder.findSourcePixel(targetLat, targetLon, sourceK, sourceL, sourceM);
 				// 1. Is there a source pixel for the target pixel?
