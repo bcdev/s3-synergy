@@ -10,9 +10,14 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
+#include "../../../main/cpp/util/PixelFinder.h"
+
+class TestGeoLocation;
+
 class PixelFinderTest: public CPPUNIT_NS::TestFixture {
 CPPUNIT_TEST_SUITE(PixelFinderTest);
-		CPPUNIT_TEST(testFindPixel);
+		CPPUNIT_TEST(testFindSinglePixels);
+		CPPUNIT_TEST(testFindPixelsInLine);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -22,7 +27,11 @@ public:
 	void tearDown();
 
 private:
-	void testFindPixel();
+	void testFindSinglePixels();
+	void testFindPixelsInLine();
+
+	TestGeoLocation* geoLocation;
+	PixelFinder* pixelFinder;
 };
 
 #endif /* PIXELFINDERTEST_H_ */

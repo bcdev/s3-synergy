@@ -23,37 +23,48 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& sour
 	using std::numeric_limits;
 
 	const Grid& geoGrid = geoLocation.getGrid();
+	const long sizeK = geoGrid.getSizeK();
+	const long sizeM = geoGrid.getSizeM();
+
 	const long minK = geoGrid.getMinK();
 	const long maxK = geoGrid.getMaxK();
 	const long minL = geoGrid.getMinL();
 	const long maxL = geoGrid.getMaxL();
 	const long minM = geoGrid.getMinM();
 	const long maxM = geoGrid.getMaxM();
+	const long minN = minM;
+	const long maxN = sizeK * sizeM - 1;
 
 	const long centerK = sourceK;
 	const long centerL = sourceL;
 	const long centerM = sourceM;
+	const long centerN = sourceM + sourceK * sizeM;
 
 	double minDelta = numeric_limits<double>::max();
 	bool found = false;
 
-	for (long b = 0; b <= max(maxL, maxM); b++) {
+	for (long b = 0; b <= max(maxL, maxN); b++) {
 		const long minBoundaryL = max(centerL - b, minL);
 		const long maxBoundaryL = min(centerL + b, maxL);
-		const long minBoundaryM = max(centerM - b, minM);
-		const long maxBoundaryM = min(centerM + b, maxM);
+		const long minBoundaryN = max(centerN - b, minN);
+		const long maxBoundaryN = min(centerN + b, maxN);
+		const long minBoundaryM = minBoundaryN % sizeM;
+		const long maxBoundaryM = maxBoundaryN % sizeM;
+		const long minBoundaryK = minBoundaryN / sizeM;
+		const long maxBoundaryK = maxBoundaryN / sizeM;
 
 		bool boundaryFound = false;
 
-		for (long k = minK; k <= maxK; k++) {
-			for (long l = minBoundaryL; l <= maxBoundaryL; l++) {
-				boundaryFound |= isNearestPixel(targetLat, targetLon, k, l, minBoundaryM, sourceK, sourceL, sourceM, minDelta);
-				boundaryFound |= isNearestPixel(targetLat, targetLon, k, l, maxBoundaryM, sourceK, sourceL, sourceM, minDelta);
-			}
-			for (long m = minBoundaryM; m <= maxBoundaryM; m++) {
-				boundaryFound |= isNearestPixel(targetLat, targetLon, k, minBoundaryL, m, sourceK, sourceL, sourceM, minDelta);
-				boundaryFound |= isNearestPixel(targetLat, targetLon, k, maxBoundaryL, m, sourceK, sourceL, sourceM, minDelta);
-			}
+		for (long l = minBoundaryL; l <= maxBoundaryL; l++) {
+			boundaryFound |= isNearestPixel(targetLat, targetLon, minBoundaryK, l, minBoundaryM, sourceK, sourceL, sourceM, minDelta);
+			boundaryFound |= isNearestPixel(targetLat, targetLon, maxBoundaryK, l, maxBoundaryM, sourceK, sourceL, sourceM, minDelta);
+		}
+		for (long n = minBoundaryN; n <= maxBoundaryN; n++) {
+			boundaryFound |= isNearestPixel(targetLat, targetLon, n / sizeM, minBoundaryL, n % sizeM, sourceK, sourceL, sourceM, minDelta);
+			boundaryFound |= isNearestPixel(targetLat, targetLon, n / sizeM, maxBoundaryL, n % sizeM, sourceK, sourceL, sourceM, minDelta);
+		}
+		if (boundaryFound) {
+			;
 		}
 		found |= boundaryFound;
 		if (found && !boundaryFound) {
