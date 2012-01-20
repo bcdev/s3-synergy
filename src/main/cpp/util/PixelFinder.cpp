@@ -53,8 +53,16 @@ PixelFinder::~PixelFinder() {
 
 bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& sourceK, long& sourceL, long& sourceM) const {
 	const Grid& grid = geoLocation.getGrid();
-	const size_t index = grid.getIndex(sourceK, sourceL, sourceM);
-
+	//const size_t index = grid.getIndex(sourceK, sourceL, sourceM);
+	valarray<double> w(1);
+	valarray<size_t> i(1);
+	tpi->prepare(targetLon, targetLat, w, i);
+	const size_t index = tpi->interpolate(tpIndices, w, i);
+	sourceK = index / grid.getStrideK();
+	sourceL = (index - sourceK * grid.getStrideK()) / grid.getStrideL();
+	sourceM = index % grid.getSizeM();
+	return true;
+/*
 	if (findSourcePixel(targetLat, targetLon, index, sourceK, sourceL, sourceM)) {
 		return true;
 	} else {
@@ -64,7 +72,7 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& sour
 		const size_t index = tpi->interpolate(tpIndices, w, i);
 		return findSourcePixel(targetLat, targetLon, index, sourceK, sourceL, sourceM);
 	}
-
+*/
 }
 
 bool PixelFinder::findSourcePixel(double targetLat, double targetLon, size_t index, long& sourceK, long& sourceL, long& sourceM) const {
