@@ -9,6 +9,7 @@
 #define PIXELFINDER_H_
 
 #include "../core/Grid.h"
+#include "../core/TiePointInterpolator.h"
 
 class GeoLocation {
 public:
@@ -32,6 +33,10 @@ private:
 
 	const GeoLocation& geoLocation;
 	const double pixelSize;
+
+	valarray<double> tpIndices;
+
+	TiePointInterpolator<double>* tpi;
 };
 
 #endif /* PIXELFINDER_H_ */

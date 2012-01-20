@@ -29,7 +29,7 @@ public:
 	}
 
 	double lat(long l) const {
-		return 90.0 - l * (180.0 / grid.getMaxL());
+		return 80.0 - l * (160.0 / grid.getMaxL());
 	}
 
 	double lon(long k, long m) const {

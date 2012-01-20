@@ -8,13 +8,47 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <iostream>
 
 #include "PixelFinder.h"
 
-PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) : geoLocation(geoLocation), pixelSize(pixelSize) {
+PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) : geoLocation(geoLocation), pixelSize(pixelSize), tpIndices() {
+	const Grid& grid = geoLocation.getGrid();
+
+	const long sizeK = grid.getSizeK();
+	const long sizeL = grid.getSizeL();
+	const long sizeM = grid.getSizeM();
+
+	size_t tpCount = 0;
+
+	for (long k = 0; k < sizeK; k++) {
+		for (long l = 0; l < sizeL; l += 64) {
+			for (long m = 0; m < sizeM; m += 64) {
+				tpCount++;
+			}
+		}
+	}
+
+	tpIndices.resize(tpCount);
+	valarray<double> tpLats(tpCount);
+	valarray<double> tpLons(tpCount);
+
+	for (long i = 0, k = 0; k < sizeK; k++) {
+		for (long l = 0; l < sizeL; l += 64) {
+			for (long m = 0; m < sizeM; i++, m += 64) {
+				const size_t index = grid.getIndex(k, l, m);
+				tpLats[i] = geoLocation.getLat(index);
+				tpLons[i] = geoLocation.getLon(index);
+				tpIndices[i] = index;
+			}
+		}
+	}
+
+	tpi = new TiePointInterpolator<double>(tpLons, tpLats);
 }
 
 PixelFinder::~PixelFinder() {
+	delete tpi;
 }
 
 bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& sourceK, long& sourceL, long& sourceM) const {
@@ -22,23 +56,31 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& sour
 	using std::min;
 	using std::numeric_limits;
 
-	const Grid& geoGrid = geoLocation.getGrid();
-	const long sizeK = geoGrid.getSizeK();
-	const long sizeM = geoGrid.getSizeM();
+	valarray<double> w(1);
+	valarray<size_t> i(1);
+	tpi->prepare(targetLon, targetLat, w, i);
+	const size_t index = tpi->interpolate(tpIndices, w, i);
 
-	const long minK = geoGrid.getMinK();
-	const long maxK = geoGrid.getMaxK();
-	const long minL = geoGrid.getMinL();
-	const long maxL = geoGrid.getMaxL();
-	const long minM = geoGrid.getMinM();
-	const long maxM = geoGrid.getMaxM();
-	const long minN = minM;
-	const long maxN = sizeK * sizeM - 1;
+	const Grid& grid = geoLocation.getGrid();
+	const long sizeK = grid.getSizeK();
+	const long sizeM = grid.getSizeM();
 
+	/*
 	const long centerK = sourceK;
 	const long centerL = sourceL;
 	const long centerM = sourceM;
 	const long centerN = sourceM + sourceK * sizeM;
+	*/
+
+	const long centerK = index / grid.getStrideK();;
+	const long centerL = (index - centerK * grid.getStrideK()) / grid.getStrideL();
+	const long centerM = index % grid.getSizeM();
+	const long centerN = centerM + centerK * sizeM;
+
+	const long minL = max(grid.getMinL(), centerL - 64);
+	const long maxL = min(grid.getMaxL(), centerL + 64);
+	const long minN = max(0L, centerN - 64);
+	const long maxN = min(sizeK * sizeM - 1, centerN + 64);
 
 	double minDelta = numeric_limits<double>::max();
 	bool found = false;
@@ -62,9 +104,6 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& sour
 		for (long n = minBoundaryN; n <= maxBoundaryN; n++) {
 			boundaryFound |= isNearestPixel(targetLat, targetLon, n / sizeM, minBoundaryL, n % sizeM, sourceK, sourceL, sourceM, minDelta);
 			boundaryFound |= isNearestPixel(targetLat, targetLon, n / sizeM, maxBoundaryL, n % sizeM, sourceK, sourceL, sourceM, minDelta);
-		}
-		if (boundaryFound) {
-			;
 		}
 		found |= boundaryFound;
 		if (found && !boundaryFound) {
