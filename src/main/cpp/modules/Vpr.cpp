@@ -25,9 +25,6 @@ void Vpr::start(Context& context) {
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP + "' to context.", getId());
     vgpSegment = &context.addMapSegment(Constants::SEGMENT_VGP, LINE_COUNT, COL_COUNT);
 
-    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LAT + "' to context.", getId());
-    vgpSegment = &context.addMapSegment(Constants::SEGMENT_VGP_TP, LINE_COUNT, COL_COUNT);
-
     setupAccessors();
 }
 
