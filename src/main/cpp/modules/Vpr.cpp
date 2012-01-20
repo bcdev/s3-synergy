@@ -185,7 +185,7 @@ void Vpr::process(Context& context) {
 		}
 
 		context.setFirstRequiredL(s, *this, firstRequiredSourceL);
-		context.setLastComputedL(t, *this, lastTargetL);
+		//context.setLastComputedL(t, *this, lastTargetL);
 	}
 }
 
