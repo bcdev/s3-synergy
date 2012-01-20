@@ -180,10 +180,10 @@ void Vpr::process(Context& context) {
 				}
 			}
 		}
-
-		context.setFirstRequiredL(s, *this, firstRequiredSourceL);
-		//context.setLastComputedL(t, *this, lastTargetL);
 	}
+
+	context.setFirstRequiredL(s, *this, firstRequiredSourceL);
+	context.setLastComputedL(t, *this, lastTargetL);
 }
 
 void Vpr::process2(Context& context) {
