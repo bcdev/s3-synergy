@@ -137,8 +137,6 @@ void Vpr::process(Context& context) {
 					continue;
 				}
 
-				context.getLogging().progress("Setting column k, m = " + lexical_cast<string>(k) + ", " + lexical_cast<string>(m), getId());
-
 				switch (sourceAccessor.getType()) {
 				case Constants::TYPE_BYTE: {
 					targetAccessor.setByte(targetIndex, sourceAccessor.getByte(sourceIndex));
