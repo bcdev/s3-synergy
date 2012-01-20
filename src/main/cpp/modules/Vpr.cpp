@@ -105,7 +105,6 @@ void Vpr::process(Context& context) {
 
 		for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
 			for (long m = targetGrid.getFirstM(); m < targetGrid.getFirstM() + targetGrid.getSizeM(); m++) {
-				context.getLogging().progress("Getting column k, m = " + lexical_cast<string>(k) + ", " + lexical_cast<string>(m), getId());
 				const size_t targetIndex = targetGrid.getIndex(k, l, m);
 
 				const double targetLon = getTargetLon(m);

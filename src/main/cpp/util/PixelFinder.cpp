@@ -52,27 +52,31 @@ PixelFinder::~PixelFinder() {
 }
 
 bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& sourceK, long& sourceL, long& sourceM) const {
+	const Grid& grid = geoLocation.getGrid();
+	const size_t index = grid.getIndex(sourceK, sourceL, sourceM);
+
+	if (findSourcePixel(targetLat, targetLon, index, sourceK, sourceL, sourceM)) {
+		return true;
+	} else {
+		valarray<double> w(1);
+		valarray<size_t> i(1);
+		tpi->prepare(targetLon, targetLat, w, i);
+		const size_t index = tpi->interpolate(tpIndices, w, i);
+		return findSourcePixel(targetLat, targetLon, index, sourceK, sourceL, sourceM);
+	}
+
+}
+
+bool PixelFinder::findSourcePixel(double targetLat, double targetLon, size_t index, long& sourceK, long& sourceL, long& sourceM) const {
 	using std::max;
 	using std::min;
 	using std::numeric_limits;
-
-	valarray<double> w(1);
-	valarray<size_t> i(1);
-	tpi->prepare(targetLon, targetLat, w, i);
-	const size_t index = tpi->interpolate(tpIndices, w, i);
 
 	const Grid& grid = geoLocation.getGrid();
 	const long sizeK = grid.getSizeK();
 	const long sizeM = grid.getSizeM();
 
-	/*
-	const long centerK = sourceK;
-	const long centerL = sourceL;
-	const long centerM = sourceM;
-	const long centerN = sourceM + sourceK * sizeM;
-	*/
-
-	const long centerK = index / grid.getStrideK();;
+	const long centerK = index / grid.getStrideK();
 	const long centerL = (index - centerK * grid.getStrideK()) / grid.getStrideL();
 	const long centerM = index % grid.getSizeM();
 	const long centerN = centerM + centerK * sizeM;
