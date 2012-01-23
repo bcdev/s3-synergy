@@ -20,13 +20,12 @@ SegmentWriter::SegmentWriter() :
 
 SegmentWriter::~SegmentWriter() {
 	pair<string, int> fileIdPair;
-	foreach(fileIdPair, ncFileIdMap)
-			{
-				try {
-					NetCDF::closeFile(fileIdPair.second);
-				} catch (exception& ignored) {
-				}
-			}
+	foreach(fileIdPair, ncFileIdMap) {
+	    try {
+	        NetCDF::closeFile(fileIdPair.second);
+	    } catch (exception& ignored) {
+	    }
+	}
 }
 
 void SegmentWriter::process(Context& context) {
@@ -34,54 +33,52 @@ void SegmentWriter::process(Context& context) {
 	const vector<string> segmentIds = context.getSegmentIds();
 	valarray<size_t> origin;
 	valarray<size_t> shape;
-	foreach(const string& segmentName, segmentIds)
-			{
-				const Segment& segment = context.getSegment(segmentName);
-				const Grid& grid = segment.getGrid();
-				const long firstL = segment.getGrid().getFirstL();
-				context.getLogging().debug("Segment [" + segment.toString() + "]: firstL = " + lexical_cast<string>(firstL), getId());
-				const long lastL = segment.getGrid().getLastL();
-				context.getLogging().debug("Segment [" + segment.toString() + "]: lastL = " + lexical_cast<string>(lastL), getId());
+	foreach(const string& segmentName, segmentIds) {
+	    const Segment& segment = context.getSegment(segmentName);
+	    const Grid& grid = segment.getGrid();
+	    const long firstL = segment.getGrid().getFirstL();
+	    context.getLogging().debug("Segment [" + segment.toString() + "]: firstL = " + lexical_cast<string>(firstL), getId());
+	    const long lastL = segment.getGrid().getLastL();
+	    context.getLogging().debug("Segment [" + segment.toString() + "]: lastL = " + lexical_cast<string>(lastL), getId());
 
-				if (firstL <= lastL) {
-					const vector<string> variableNames = segment.getVariableNames();
-					foreach(const string varName, variableNames)
-							{
-								const string ncFileBasename = segment.getId();
-								const string variableKey = segmentName + varName;
-								if (!contains(ncVarIdMap, variableKey)) {
-									continue;
-								}
-								if (!contains(ncFileIdMap, ncFileBasename)) {
-									continue;
-								}
-								if (!contains(ncDimIdMap, ncFileBasename)) {
-									continue;
-								}
-								const int varId = ncVarIdMap[segmentName + varName];
-								const int ncId = ncFileIdMap[ncFileBasename];
-								const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
-								IOUtils::createStartVector(dimIds.size(), firstL, origin);
-								IOUtils::createCountVector(dimIds.size(), grid.getSizeK(), lastL - firstL + 1, grid.getSizeM(), shape);
-								context.getLogging().progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
-								const Accessor& accessor = segment.getAccessor(varName);
-		                        if (accessor.canReturnDataPointer()) {
-		                        	NetCDF::putData(ncId, varId, origin, shape, accessor.getUntypedData());
-		                        } else {
-		                        	valarray<size_t> indices(2);
-		                        	for (long l = firstL; l <= lastL; l++) {
-		                        		for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
-		                        			const size_t index = grid.getIndex(0, l, m);
-		                        			indices[0] = l;
-		                        			indices[1] = m;
-		                        			NetCDF::putValue(ncId, varId, indices, accessor.getUntypedValue(index));
-		                        		}
-		                        	}
-		                        }
-							}
-					context.setLastComputedL(segment, *this, lastL);
-				}
-			}
+	    if (firstL <= lastL) {
+	        const vector<string> variableNames = segment.getVariableNames();
+	        foreach(const string varName, variableNames) {
+	            const string ncFileBasename = segment.getId();
+	            const string variableKey = segmentName + varName;
+	            if (!contains(ncVarIdMap, variableKey)) {
+	                continue;
+	            }
+	            if (!contains(ncFileIdMap, ncFileBasename)) {
+	                continue;
+	            }
+	            if (!contains(ncDimIdMap, ncFileBasename)) {
+	                continue;
+	            }
+	            const int varId = ncVarIdMap[segmentName + varName];
+	            const int ncId = ncFileIdMap[ncFileBasename];
+	            const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
+	            IOUtils::createStartVector(dimIds.size(), firstL, origin);
+	            IOUtils::createCountVector(dimIds.size(), grid.getSizeK(), lastL - firstL + 1, grid.getSizeM(), shape);
+	            context.getLogging().progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
+	            const Accessor& accessor = segment.getAccessor(varName);
+	            if (accessor.canReturnDataPointer()) {
+	                NetCDF::putData(ncId, varId, origin, shape, accessor.getUntypedData());
+	            } else {
+	                valarray<size_t> indices(2);
+	                for (long l = firstL; l <= lastL; l++) {
+	                    for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
+	                        const size_t index = grid.getIndex(0, l, m);
+	                        indices[0] = l;
+	                        indices[1] = m;
+	                        NetCDF::putValue(ncId, varId, indices, accessor.getUntypedValue(index));
+	                    }
+	                }
+	            }
+	        }
+	        context.setLastComputedL(segment, *this, lastL);
+	    }
+	}
 }
 
 void SegmentWriter::start(Context& context) {
@@ -94,33 +91,29 @@ void SegmentWriter::start(Context& context) {
 
 	const vector<string> segmentIds = context.getSegmentIds();
 
-	foreach(string segmentId, segmentIds)
-			{
-				const Segment& segment = context.getSegment(segmentId);
-				const vector<string> variableNames = segment.getVariableNames();
+	foreach(string segmentId, segmentIds) {
+	    const Segment& segment = context.getSegment(segmentId);
+	    const vector<string> variableNames = segment.getVariableNames();
 
-				foreach(string variableName, variableNames)
-						{
-							context.getLogging().info("Defining variable for " + variableName, getId());
-							createNcVar(segment, variableName);
-						}
-			}
+	    foreach(string variableName, variableNames) {
+	        context.getLogging().info("Defining variable for " + variableName, getId());
+	        createNcVar(segment, variableName);
+	    }
+	}
 
 	pair<string, int> fileIdPair;
 
-	foreach(fileIdPair, ncFileIdMap)
-			{
-				NetCDF::terminateFile(fileIdPair.second);
-			}
+	foreach(fileIdPair, ncFileIdMap) {
+	    NetCDF::terminateFile(fileIdPair.second);
+	}
 }
 
 void SegmentWriter::stop(Context& context) {
 	pair<string, int> fileIdPair;
 
-	foreach(fileIdPair, ncFileIdMap)
-			{
-				NetCDF::closeFile(fileIdPair.second);
-			}
+	foreach(fileIdPair, ncFileIdMap) {
+	    NetCDF::closeFile(fileIdPair.second);
+	}
 	ncVarIdMap.clear();
 	ncDimIdMap.clear();
 	ncFileIdMap.clear();
