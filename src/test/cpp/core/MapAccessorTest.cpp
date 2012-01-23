@@ -103,8 +103,8 @@ void MapAccessorTest::testGetOtherTypeData() {
 }
 
 void MapAccessorTest::testGetUntypedValue() {
-	accessor->setByte(0, 7);
+	accessor->setByte(0, 17);
 
-	const int8_t* p = (int8_t*) accessor->getUntypedValue(0);
-	CPPUNIT_ASSERT(*p == 7);
+	const double* p = (double*) accessor->getUntypedValue(0);
+	CPPUNIT_ASSERT(*p == 17);
 }
