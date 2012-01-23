@@ -109,7 +109,7 @@ void Vpr::process(Context& context) {
 					continue;
 				}
 
-				const bool sourcePixelFound = pixelFinder.findSourcePixelIndex(targetLat, targetLon, sourceK, sourceL, sourceM);
+				const bool sourcePixelFound = pixelFinder.findSourcePixel(targetLat, targetLon, sourceK, sourceL, sourceM);
 				// 1. Is there a source pixel for the target pixel?
 				if (!sourcePixelFound) {
 					// No.
