@@ -66,8 +66,6 @@ private:
 	void getMinMaxSourceLat(double& minLat, double& maxLat) const;
 	void getMinMaxTargetLat(double& minLat, double& maxLat, long firstL, long lastL) const;
 	void getMinMaxSourceLon(double& minLon, double& maxLon) const;
-	long findLineOfSynSegmentNearestTo(double vgtMaxLat) const;
-	void setValues(long synK, long synL, long synM, long l, long m);
 };
 
 #endif /* VPR_H_ */

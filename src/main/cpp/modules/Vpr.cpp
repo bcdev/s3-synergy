@@ -43,6 +43,8 @@ void Vpr::setupAccessors() {
 }
 
 void Vpr::process(Context& context) {
+	return;
+
 	using std::floor;
 	using std::min;
 
@@ -186,95 +188,6 @@ void Vpr::process(Context& context) {
 	context.setLastComputedL(t, *this, lastTargetL);
 }
 
-void Vpr::process2(Context& context) {
-    const long firstL = context.getFirstComputableL(*vgpSegment, *this);
-    const long lastL = context.getLastComputableL(*vgpSegment, *this);
-
-    double synMinLat = 90.0;
-    double synMaxLat = -90.0;
-    getMinMaxSourceLat(synMinLat, synMaxLat);
-    double vgtMinLat = 90.0;
-    double vgtMaxLat = -90.0;
-    //getMinMaxTargetLat(firstL, lastL, vgtMinLat, vgtMaxLat);
-
-    /*
-     * if the minimum latitude of the current VGT segment is greater than the maximum latitude
-     * of the current SYN segment, move the VGT segment forward and do not allow moving
-     * of the SYN segment.
-     */
-    if (synMaxLat < vgtMinLat && context.getLastComputableL(*vgpSegment, *this) < vgpSegment->getGrid().getMaxL()) {
-		context.setLastComputedL(*vgpSegment, *this, lastL);
-		context.setFirstRequiredL(*synSegment, *this, synSegment->getGrid().getFirstL());
-		// TODO - do we need this?
-		//context.setFirstRequiredL(*olcSegment, *this, olcSegment->getGrid().getFirstL());
-		//context.setFirstRequiredL(*slnSegment, *this, slnSegment->getGrid().getFirstL());
-		//context.setFirstRequiredL(*sloSegment, *this, sloSegment->getGrid().getFirstL());
-		return;
-	}
-
-    /*
-     * if the maximum latitude of the current VGT segment is less than the minimum latitude
-     * of the current SYN segment, do not allow moving of the VGT segment and move
-     * the SYN segment forward, if possible.
-     */
-    if (vgtMaxLat < synMinLat && context.getLastComputableL(*synSegment, *this) < synSegment->getGrid().getMaxL()) {
-		return;
-	}
-
-    /*
-     * if the minimum latitude of the current VGT segment is less than the maximum latitude
-     * of the current SYN segment AND the minimum VGT latitude is greater than the minumum
-     * SYN latitude (i.e. the VGT segment and the SYN segment overlap), perform the projection
-     * and set the first required line of the SYN segment to the line of the SYN segment nearest
-     * to vgtMaxLat.
-     */
-	// TODO - do we need this?
-	//context.setFirstRequiredL(*olcSegment, *this, -1);
-	//context.setFirstRequiredL(*slnSegment, *this, -1);
-	//context.setFirstRequiredL(*sloSegment, *this, -1);
-
-    double synMinLon = 180.0;
-	double synMaxLon = -180.0;
-	getMinMaxSourceLon(synMinLon, synMaxLon);
-
-	const Grid& vgpGrid = vgpSegment->getGrid();
-	const Grid& synGrid = synSegment->getGrid();
-	valarray<long> synIndices(3);
-	bool indicesFound = false;
-	for (long l = firstL; l <= lastL; l++) {
-		const double lat = getTargetLat(l);
-		if (lat > synMaxLat) {
-			continue;
-		}
-		if (lat < synMinLat) {
-			continue;
-		}
-		context.getLogging().info("Projecting vgt line " + lexical_cast<string>(l), getId());
-		for (long m = vgpGrid.getFirstM(); m <= vgpGrid.getMaxM(); m++) {
-			const double lon = getTargetLon(m);
-			if (synMinLon > lon || synMaxLon < lon) {
-				continue;
-			}
-			if (indicesFound) {
-				//findPixelPosAroundGivenIndices(lat, lon, synIndices);
-			} else {
-				//findPixelPosInWholeGrid(lat, lon, synIndices);
-			}
-			const long synK = synIndices[0];
-			const long synL = synIndices[1];
-			const long synM = synIndices[2];
-			if (synGrid.isValidPosition(synK, synL, synM)) {
-				setValues(synK, synL, synM, l, m);
-				indicesFound = true;
-			} else {
-				indicesFound = false;
-				continue;
-			}
-		}
-	}
-	context.setLastComputedL(*vgpSegment, *this, lastL);
-}
-
 void Vpr::getMinMaxSourceLat(double& minLat, double& maxLat) const {
 	const Grid& geoGrid = geoSegment->getGrid();
 	const Grid& synGrid = synSegment->getGrid();
@@ -322,43 +235,10 @@ void Vpr::getMinMaxTargetLat(double& minLat, double& maxLat, long firstL, long l
 	minLat = getTargetLat(lastL);
 }
 
-void Vpr::setValues(long synK, long synL, long synM, long l, long m) {
-    const Grid& collocatedGrid = synSegment->getGrid();
-    const Grid& vgtGrid = vgpSegment->getGrid();
-    const size_t collocatedIndex = collocatedGrid.getIndex(synK, synL, synM);
-    const size_t vgtIndex = vgtGrid.getIndex(0, l, m);
-    for(size_t i = 0; i < synReflectanceAccessors.size(); i++) {
-        const double value = synReflectanceAccessors[i]->getDouble(collocatedIndex);
-        vgtReflectanceAccessors[i]->setDouble(vgtIndex, value);
-    }
-    const uint8_t flags = synFlagsAccessor->getUByte(collocatedIndex);
-    vgtFlagsAccessor->setUByte(vgtIndex, flags);
-}
-
 double Vpr::getTargetLat(long l) {
     return 75.0 - l * TARGET_PIXEL_SIZE;
 }
 
 double Vpr::getTargetLon(long m) {
     return m * TARGET_PIXEL_SIZE - 180.0;
-}
-
-long Vpr::findLineOfSynSegmentNearestTo(double vgtMaxLat) const {
-	const Grid& geoGrid = geoSegment->getGrid();
-    long result;
-    double delta = numeric_limits<double>::max();
-    for (long k = geoGrid.getFirstK(); k <= geoGrid.getMaxK(); k++) {
-        for (long l = geoGrid.getFirstL(); l <= geoGrid.getMaxL(); l++) {
-            for (long m = geoGrid.getFirstM(); m <= geoGrid.getMaxM(); m++) {
-                const size_t index = geoGrid.getIndex(k, l, m);
-                double synLat = latAccessor->getDouble(index);
-                double innerDelta = std::abs(vgtMaxLat - synLat);
-                if(innerDelta < delta) {
-                    delta = innerDelta;
-                    result = l;
-                }
-            }
-        }
-    }
-    return result;
 }
