@@ -29,15 +29,34 @@ public:
 	bool findSourcePixel(double targetLat, double targetLon, long& sourceK, long& sourceL, long& sourceM) const;
 
 private:
-	bool findSourcePixel(double targetLat, double targetLon, size_t index, long& sourceK, long& sourceL, long& sourceM) const;
-	bool isNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& sourceK, long& sourceL, long& sourceM, double& minDelta) const;
+	void updateNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& sourceK, long& sourceL, long& sourceM, double& minDelta) const;
+
+	long getK(size_t index) const {
+		return index / geoLocation.getGrid().getStrideK();
+	}
+	long getL(size_t index) const {
+		return (index - getK(index) * geoLocation.getGrid().getStrideK()) / geoLocation.getGrid().getStrideL();
+	}
+	long getM(size_t index) const {
+		return index % geoLocation.getGrid().getSizeM();
+	}
+	long getN(long k, long m) const {
+		return m + k * geoLocation.getGrid().getSizeM();
+	}
+	long getK(long n) const {
+		return n / geoLocation.getGrid().getSizeM();
+	}
+	long getM(long n) const {
+		return n % geoLocation.getGrid().getSizeM();
+	}
 
 	const GeoLocation& geoLocation;
 	const double pixelSize;
+	const TiePointInterpolator<double>* tpi;
 
 	valarray<double> tpIndices;
 
-	TiePointInterpolator<double>* tpi;
+	static const double DEG = 180.0 / 3.14159265358979323846;
 };
 
 #endif /* PIXELFINDER_H_ */

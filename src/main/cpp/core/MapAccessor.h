@@ -128,7 +128,7 @@ public:
 		if (isFillValue(i)) {
 			return &fillValue;
 		}
-		return &data.at(i);
+		return &(data.at(i));
 	}
 
 	const size_t getSampleCount() const {
@@ -200,10 +200,10 @@ public:
 	}
 
 	bool isFillValue(size_t i) const throw (out_of_range) {
-		if(data.find(i) == data.end()) {
+		if (data.find(i) == data.end()) {
 			return true;
 		}
-		return fillValue == data.at(i);
+		return data.at(i) == fillValue;
 	}
 
 	void setFillValue(size_t i) throw (out_of_range) {

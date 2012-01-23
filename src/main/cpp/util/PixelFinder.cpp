@@ -7,7 +7,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <limits>
 #include <iostream>
 
 #include "PixelFinder.h"
@@ -51,105 +50,69 @@ PixelFinder::~PixelFinder() {
 	delete tpi;
 }
 
-bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& sourceK, long& sourceL, long& sourceM) const {
+bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, long& l, long& m) const {
+	using std::acos;
+	using std::max;
+	using std::min;
+
 	const Grid& grid = geoLocation.getGrid();
-	//const size_t index = grid.getIndex(sourceK, sourceL, sourceM);
+
 	valarray<double> w(1);
 	valarray<size_t> i(1);
 	tpi->prepare(targetLon, targetLat, w, i);
+
 	const size_t index = tpi->interpolate(tpIndices, w, i);
-	sourceK = index / grid.getStrideK();
-	sourceL = (index - sourceK * grid.getStrideK()) / grid.getStrideL();
-	sourceM = index % grid.getSizeM();
-	return true;
-/*
-	if (findSourcePixel(targetLat, targetLon, index, sourceK, sourceL, sourceM)) {
-		return true;
-	} else {
-		valarray<double> w(1);
-		valarray<size_t> i(1);
-		tpi->prepare(targetLon, targetLat, w, i);
-		const size_t index = tpi->interpolate(tpIndices, w, i);
-		return findSourcePixel(targetLat, targetLon, index, sourceK, sourceL, sourceM);
-	}
-*/
-}
+	k = getK(index);
+	l = getL(index);
+	m = getM(index);
 
-bool PixelFinder::findSourcePixel(double targetLat, double targetLon, size_t index, long& sourceK, long& sourceL, long& sourceM) const {
-	using std::max;
-	using std::min;
-	using std::numeric_limits;
+	double delta = -1.0;
+	updateNearestPixel(targetLat, targetLon, k, l, m, k, l, m, delta);
 
-	const Grid& grid = geoLocation.getGrid();
-	const long sizeK = grid.getSizeK();
-	const long sizeM = grid.getSizeM();
+	for (long b = 32; b > 0; b >>= 1) {
+		const long n = getN(k, m);
 
-	const long centerK = index / grid.getStrideK();
-	const long centerL = (index - centerK * grid.getStrideK()) / grid.getStrideL();
-	const long centerM = index % grid.getSizeM();
-	const long centerN = centerM + centerK * sizeM;
+		const long minL = max(grid.getMinL(), l - b);
+		const long maxL = min(grid.getMaxL(), l + b);
+		const long minN = max(getN(grid.getMinK(), grid.getMinM()), n - b);
+		const long maxN = min(getN(grid.getMaxK(), grid.getMaxM()), n + b);
 
-	const long minL = max(grid.getMinL(), centerL - 64);
-	const long maxL = min(grid.getMaxL(), centerL + 64);
-	const long minN = max(0L, centerN - 64);
-	const long maxN = min(sizeK * sizeM - 1, centerN + 64);
+		const long minK = getK(minN);
+		const long maxK = getK(maxN);
+		const long minM = getM(minN);
+		const long maxM = getM(maxN);
 
-	double minDelta = numeric_limits<double>::max();
-	bool found = false;
+		if (true) { // consider points in the N, S, E, and W
+			const long midK = k;
+			const long midL = l;
+			const long midM = m;
 
-	for (long b = 0; b <= max(maxL, maxN); b++) {
-		const long minBoundaryL = max(centerL - b, minL);
-		const long maxBoundaryL = min(centerL + b, maxL);
-		const long minBoundaryN = max(centerN - b, minN);
-		const long maxBoundaryN = min(centerN + b, maxN);
-		const long minBoundaryM = minBoundaryN % sizeM;
-		const long maxBoundaryM = maxBoundaryN % sizeM;
-		const long minBoundaryK = minBoundaryN / sizeM;
-		const long maxBoundaryK = maxBoundaryN / sizeM;
-
-		bool boundaryFound = false;
-
-		for (long l = minBoundaryL; l <= maxBoundaryL; l++) {
-			boundaryFound |= isNearestPixel(targetLat, targetLon, minBoundaryK, l, minBoundaryM, sourceK, sourceL, sourceM, minDelta);
-			boundaryFound |= isNearestPixel(targetLat, targetLon, maxBoundaryK, l, maxBoundaryM, sourceK, sourceL, sourceM, minDelta);
+			updateNearestPixel(targetLat, targetLon, minK, midL, minM, k, l, m, delta);
+			updateNearestPixel(targetLat, targetLon, maxK, midL, maxM, k, l, m, delta);
+			updateNearestPixel(targetLat, targetLon, midK, maxL, midM, k, l, m, delta);
+			updateNearestPixel(targetLat, targetLon, midK, minL, midM, k, l, m, delta);
 		}
-		for (long n = minBoundaryN; n <= maxBoundaryN; n++) {
-			boundaryFound |= isNearestPixel(targetLat, targetLon, n / sizeM, minBoundaryL, n % sizeM, sourceK, sourceL, sourceM, minDelta);
-			boundaryFound |= isNearestPixel(targetLat, targetLon, n / sizeM, maxBoundaryL, n % sizeM, sourceK, sourceL, sourceM, minDelta);
-		}
-		found |= boundaryFound;
-		if (found && !boundaryFound) {
-			break;
+		if (true) { // consider points in the NW, SW, SE, and NE
+			updateNearestPixel(targetLat, targetLon, minK, minL, minM, k, l, m, delta);
+			updateNearestPixel(targetLat, targetLon, minK, maxL, minM, k, l, m, delta);
+			updateNearestPixel(targetLat, targetLon, maxK, maxL, maxM, k, l, m, delta);
+			updateNearestPixel(targetLat, targetLon, maxK, minL, maxM, k, l, m, delta);
 		}
 	}
 
-    return found;
+    return acos(delta) * DEG < 1.4 * pixelSize;
 }
 
-bool PixelFinder::isNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& resultK, long& resultL, long& resultM, double& minDelta) const {
-	using std::abs;
-
-	const Grid& geoGrid = geoLocation.getGrid();
-
-	const size_t index = geoGrid.getIndex(k, l, m);
+void PixelFinder::updateNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& resultK, long& resultL, long& resultM, double& maxDelta) const {
+	const size_t index = geoLocation.getGrid().getIndex(k, l, m);
 	const double sourceLat = geoLocation.getLat(index);
 	const double sourceLon = geoLocation.getLon(index);
-	const double latDelta = abs(targetLat - sourceLat);
-	if (latDelta > 0.5 * pixelSize) {
-		return false;
-	}
-	// TODO - anti-meridian
-	const double lonDelta = abs(targetLon - sourceLon);
-	if (lonDelta > 0.5 * pixelSize) {
-		return false;
-	}
-	const double delta = latDelta + lonDelta;
-	if (delta < minDelta) {
+	const double delta = TiePointInterpolator<double>::cosineDistance(targetLon, targetLat, sourceLon, sourceLat);
+
+	if (delta > maxDelta) {
 		resultK = k;
 		resultL = l;
 		resultM = m;
-		minDelta = delta;
-		return true;
+		maxDelta = delta;
 	}
-	return false;
 }
