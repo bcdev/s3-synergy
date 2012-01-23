@@ -7,7 +7,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <limits>
 #include <iostream>
 
 #include "PixelFinder.h"
@@ -53,102 +52,80 @@ PixelFinder::~PixelFinder() {
 
 bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& sourceK, long& sourceL, long& sourceM) const {
 	const Grid& grid = geoLocation.getGrid();
-	//const size_t index = grid.getIndex(sourceK, sourceL, sourceM);
+
 	valarray<double> w(1);
 	valarray<size_t> i(1);
 	tpi->prepare(targetLon, targetLat, w, i);
+
+	const long strideK = grid.getStrideK();
+	const long strideL = grid.getStrideL();
+
 	const size_t index = tpi->interpolate(tpIndices, w, i);
-	sourceK = index / grid.getStrideK();
-	sourceL = (index - sourceK * grid.getStrideK()) / grid.getStrideL();
+	sourceK = index / strideK;
+	sourceL = (index - sourceK * strideK) / strideL;
 	sourceM = index % grid.getSizeM();
-	return true;
-/*
-	if (findSourcePixel(targetLat, targetLon, index, sourceK, sourceL, sourceM)) {
-		return true;
-	} else {
-		valarray<double> w(1);
-		valarray<size_t> i(1);
-		tpi->prepare(targetLon, targetLat, w, i);
-		const size_t index = tpi->interpolate(tpIndices, w, i);
-		return findSourcePixel(targetLat, targetLon, index, sourceK, sourceL, sourceM);
-	}
-*/
+
+	return findSourcePixel(targetLat, targetLon, index, sourceK, sourceL, sourceM);
 }
 
 bool PixelFinder::findSourcePixel(double targetLat, double targetLon, size_t index, long& sourceK, long& sourceL, long& sourceM) const {
+	using std::acos;
 	using std::max;
 	using std::min;
-	using std::numeric_limits;
 
 	const Grid& grid = geoLocation.getGrid();
 	const long sizeK = grid.getSizeK();
 	const long sizeM = grid.getSizeM();
 
-	const long centerK = index / grid.getStrideK();
-	const long centerL = (index - centerK * grid.getStrideK()) / grid.getStrideL();
-	const long centerM = index % grid.getSizeM();
-	const long centerN = centerM + centerK * sizeM;
+	double delta = -1.0;
 
-	const long minL = max(grid.getMinL(), centerL - 64);
-	const long maxL = min(grid.getMaxL(), centerL + 64);
-	const long minN = max(0L, centerN - 64);
-	const long maxN = min(sizeK * sizeM - 1, centerN + 64);
+	isNearestPixel(targetLat, targetLon, sourceK, sourceL, sourceM, sourceK, sourceL, sourceM, delta);
 
-	double minDelta = numeric_limits<double>::max();
-	bool found = false;
+	for (long b = 32; b > 0; b >>= 1) {
+		const long sourceN = sourceM + sourceK * sizeM;
 
-	for (long b = 0; b <= max(maxL, maxN); b++) {
-		const long minBoundaryL = max(centerL - b, minL);
-		const long maxBoundaryL = min(centerL + b, maxL);
-		const long minBoundaryN = max(centerN - b, minN);
-		const long maxBoundaryN = min(centerN + b, maxN);
-		const long minBoundaryM = minBoundaryN % sizeM;
-		const long maxBoundaryM = maxBoundaryN % sizeM;
-		const long minBoundaryK = minBoundaryN / sizeM;
-		const long maxBoundaryK = maxBoundaryN / sizeM;
+		const long minL = max(0L, sourceL - b);
+		const long maxL = min(grid.getMaxL(), sourceL + b);
+		const long minN = max(0L, sourceN - b);
+		const long maxN = min(sizeK * sizeM - 1, sourceN + b);
+		const long minK = minN / sizeM;
+		const long maxK = maxN / sizeM;
+		const long minM = minN % sizeM;
+		const long maxM = maxN % sizeM;
 
-		bool boundaryFound = false;
+		if (true) {
+			const long centerK = sourceK;
+			const long centerL = sourceL;
+			const long centerM = sourceM;
 
-		for (long l = minBoundaryL; l <= maxBoundaryL; l++) {
-			boundaryFound |= isNearestPixel(targetLat, targetLon, minBoundaryK, l, minBoundaryM, sourceK, sourceL, sourceM, minDelta);
-			boundaryFound |= isNearestPixel(targetLat, targetLon, maxBoundaryK, l, maxBoundaryM, sourceK, sourceL, sourceM, minDelta);
+			isNearestPixel(targetLat, targetLon, minK, centerL, minM, sourceK, sourceL, sourceM, delta);
+			isNearestPixel(targetLat, targetLon, maxK, centerL, maxM, sourceK, sourceL, sourceM, delta);
+			isNearestPixel(targetLat, targetLon, centerK, maxL, centerM, sourceK, sourceL, sourceM, delta);
+			isNearestPixel(targetLat, targetLon, centerK, minL, centerM, sourceK, sourceL, sourceM, delta);
 		}
-		for (long n = minBoundaryN; n <= maxBoundaryN; n++) {
-			boundaryFound |= isNearestPixel(targetLat, targetLon, n / sizeM, minBoundaryL, n % sizeM, sourceK, sourceL, sourceM, minDelta);
-			boundaryFound |= isNearestPixel(targetLat, targetLon, n / sizeM, maxBoundaryL, n % sizeM, sourceK, sourceL, sourceM, minDelta);
-		}
-		found |= boundaryFound;
-		if (found && !boundaryFound) {
-			break;
-		}
+
+		isNearestPixel(targetLat, targetLon, minK, minL, minM, sourceK, sourceL, sourceM, delta);
+		isNearestPixel(targetLat, targetLon, minK, maxL, minM, sourceK, sourceL, sourceM, delta);
+		isNearestPixel(targetLat, targetLon, maxK, maxL, maxM, sourceK, sourceL, sourceM, delta);
+		isNearestPixel(targetLat, targetLon, maxK, minL, maxM, sourceK, sourceL, sourceM, delta);
 	}
 
-    return found;
+    return acos(delta) * DEG < 1.41 * pixelSize;
 }
 
-bool PixelFinder::isNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& resultK, long& resultL, long& resultM, double& minDelta) const {
+bool PixelFinder::isNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& resultK, long& resultL, long& resultM, double& maxDelta) const {
 	using std::abs;
 
-	const Grid& geoGrid = geoLocation.getGrid();
-
-	const size_t index = geoGrid.getIndex(k, l, m);
+	const size_t index = geoLocation.getGrid().getIndex(k, l, m);
 	const double sourceLat = geoLocation.getLat(index);
 	const double sourceLon = geoLocation.getLon(index);
-	const double latDelta = abs(targetLat - sourceLat);
-	if (latDelta > 0.5 * pixelSize) {
-		return false;
-	}
-	// TODO - anti-meridian
-	const double lonDelta = abs(targetLon - sourceLon);
-	if (lonDelta > 0.5 * pixelSize) {
-		return false;
-	}
-	const double delta = latDelta + lonDelta;
-	if (delta < minDelta) {
+
+	const double delta = TiePointInterpolator<double>::cosineDistance(targetLon, targetLat, sourceLon, sourceLat);
+	if (delta > maxDelta) {
 		resultK = k;
 		resultL = l;
 		resultM = m;
-		minDelta = delta;
+		maxDelta = delta;
 		return true;
 	}
 	return false;

@@ -38,6 +38,8 @@ private:
 	valarray<double> tpIndices;
 
 	TiePointInterpolator<double>* tpi;
+
+	static const double DEG = 180.0 / 3.14159265358979323846;
 };
 
 #endif /* PIXELFINDER_H_ */

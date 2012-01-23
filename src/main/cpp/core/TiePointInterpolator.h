@@ -32,6 +32,7 @@ public:
 
 	void prepare(W lon, W lat, valarray<W>& weights, valarray<size_t>& indexes) const;
 	W interpolate(const valarray<W>& field, const valarray<W>& weights, const valarray<size_t>& indexes) const;
+	static W cosineDistance(W targetLon, W targetLat, W sourceLon, W sourceLat);
 
 private:
 	class TiePointIndexComparator {
@@ -148,11 +149,16 @@ W TiePointInterpolator<W>::interpolate(const valarray<W>& field, const valarray<
 }
 
 template<class W>
-inline W TiePointInterpolator<W>::cosineDistance(W lon, W lat, size_t i) const {
+W TiePointInterpolator<W>::cosineDistance(W targetLon, W targetLat, W sourceLon, W sourceLat) {
 	using std::cos;
 	using std::sin;
 	// http://www.movable-type.co.uk/scripts/latlong.html
-	return sin(lat * RAD) * sin(tpLats[i] * RAD) + cos(lat * RAD) * cos(tpLats[i] * RAD) * cos((lon - tpLons[i]) * RAD);
+	return sin(targetLat * RAD) * sin(sourceLat * RAD) + cos(targetLat * RAD) * cos(sourceLat * RAD) * cos((targetLon - sourceLon) * RAD);
+}
+
+template<class W>
+inline W TiePointInterpolator<W>::cosineDistance(W lon, W lat, size_t i) const {
+	return cosineDistance(lon, lat, tpLons[i], tpLats[i]);
 }
 
 #endif /* TIEPOINTINTERPOLATOR_H_ */
