@@ -68,9 +68,9 @@ void SegmentWriter::process(Context& context) {
 	                valarray<size_t> indices(2);
 	                for (long l = firstL; l <= lastL; l++) {
 	                    for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
-	                        const size_t index = grid.getIndex(0, l, m);
 	                        indices[0] = l;
 	                        indices[1] = m;
+	                        const size_t index = grid.getIndex(0, l, m);
 	                        NetCDF::putValue(ncId, varId, indices, accessor.getUntypedValue(index));
 	                    }
 	                }
