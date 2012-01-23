@@ -43,8 +43,6 @@ void Vpr::setupAccessors() {
 }
 
 void Vpr::process(Context& context) {
-	return;
-
 	using std::floor;
 	using std::min;
 
