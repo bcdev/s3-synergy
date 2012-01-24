@@ -424,6 +424,24 @@ target_link_libraries(syl2
     boost_filesystem
 )
 set_property(TARGET syl2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+#
+add_executable(vgtp
+	src/main/cpp/tasks/vgtp.cpp
+    ${CORE_MAIN_SOURCES}
+    ${UTIL_MAIN_SOURCES}
+	${READER_MAIN_SOURCES}
+	${WRITER_MAIN_SOURCES}
+    ${MODULES_MAIN_SOURCES}
+)
+target_link_libraries(vgtp
+    netcdf
+    xerces-c
+    xqilla
+    boost_regex
+    boost_system
+    boost_filesystem
+)
+set_property(TARGET vgtp PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 
 ##
 # Project installation
