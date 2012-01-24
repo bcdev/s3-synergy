@@ -1,8 +1,8 @@
 /*
- * SyUntSwrRunner.cpp
+ * SyIntVgtP_1_Runner.cpp
  *
- *  Created on: Sep 1, 2011
- *      Author: ralf
+ *  Created on: Jan 24, 2012
+ *      Author: thomasstorm
  */
 
 // CppUnit site http://sourceforge.net/projects/cppunit/files
