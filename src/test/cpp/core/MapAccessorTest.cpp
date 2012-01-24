@@ -31,13 +31,13 @@ void MapAccessorTest::testGetSampleCount() {
 }
 
 void MapAccessorTest::testSetByteGetByte() {
-    accessor->setByte(0, 127.0);
+    accessor->setByte(0, 127);
     CPPUNIT_ASSERT(accessor->getByte(0) == 127);
 
-    accessor->setByte(0, -128.0);
+    accessor->setByte(0, -128);
     CPPUNIT_ASSERT(accessor->getByte(0) == -128);
 
-    accessor->setByte(1, 20.0);
+    accessor->setByte(1, 20);
     CPPUNIT_ASSERT(accessor->getByte(1) == 20);
     CPPUNIT_ASSERT(accessor->getSampleCount() == 2);
 }

@@ -36,36 +36,37 @@ private:
 		return geoSegment->getGrid();
 	}
 
-	Segment* vgpSegment;
+	void setupAccessors(Context& context);
+	void getMinMaxSourceLat(double& minLat, double& maxLat) const;
+	void getMinMaxTargetLat(double& minLat, double& maxLat, long firstL, long lastL) const;
+	void getMinMaxSourceLon(double& minLon, double& maxLon) const;
+
+	double getTargetLat(long l) const ;
+	double getTargetLon(long m) const;
+
+	double getSubsampledTargetLat(long l) const ;
+	double getSubsampledTargetLon(long m) const;
+
+	int maxTargetLat;
+	int minTargetLat;
+	int maxTargetLon;
+	int minTargetLon;
+
 	const Segment* synSegment;
 	const Segment* geoSegment;
 
 	const Accessor* latAccessor;
 	const Accessor* lonAccessor;
 
-    valarray<Accessor*> synReflectanceAccessors;
-    valarray<Accessor*> vgtReflectanceAccessors;
-    Accessor* vgtFlagsAccessor;
-    Accessor* synFlagsAccessor;
+    valarray<Accessor*> sourceReflectanceAccessors;
+    valarray<Accessor*> targetReflectanceAccessors;
+    Accessor* targetFlagsAccessor;
+    Accessor* sourceFlagsAccessor;
 
-    static const size_t PIXEL_SEARCH_RADIUS = 10;
-
-	static const uint16_t PIXELS_PER_DEGREE = 112;
-	static const uint16_t LAT_CELL_COUNT = 131;
-	static const uint16_t LON_CELL_COUNT = 360;
-
-	static const long LINE_COUNT = LAT_CELL_COUNT * PIXELS_PER_DEGREE;
-	static const long COL_COUNT = LON_CELL_COUNT * PIXELS_PER_DEGREE;
-
-	static const double TARGET_PIXEL_SIZE = 1.0 / PIXELS_PER_DEGREE;
-
-	static double getTargetLat(long l);
-	static double getTargetLon(long l);
-
-	void setupAccessors();
-	void getMinMaxSourceLat(double& minLat, double& maxLat) const;
-	void getMinMaxTargetLat(double& minLat, double& maxLat, long firstL, long lastL) const;
-	void getMinMaxSourceLon(double& minLon, double& maxLon) const;
+    static const int TARGET_PIXELS_PER_DEGREE = 112;
+    static const int SUBSAMPLED_TARGET_PIXELS_PER_DEGREE = 14;
+	static const double DEGREES_PER_TARGET_PIXEL = 1.0 / TARGET_PIXELS_PER_DEGREE;
+	static const double DEGREES_PER_SUBSAMPLED_TARGET_PIXEL = 1.0 / SUBSAMPLED_TARGET_PIXELS_PER_DEGREE;
 };
 
 #endif /* VPR_H_ */

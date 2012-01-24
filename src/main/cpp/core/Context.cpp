@@ -65,22 +65,44 @@ void Context::addObject(shared_ptr<Identifiable> object) throw (logic_error) {
 	objectMap[object->getId()] = object;
 }
 
-Segment& Context::addSwathSegment(const string& id, long sizeL, long sizeM, long sizeK, long minL, long maxL) throw (logic_error) {
+Segment& Context::addMapSegment(const string& id, long sizeL, long sizeM) throw (logic_error) {
 	if (hasSegment(id)) {
 		BOOST_THROW_EXCEPTION( invalid_argument("A segment with ID '" + id + "' already exists in the context."));
 	}
-	shared_ptr<Segment> segment = shared_ptr<Segment>(new SwathSegment(id, sizeL, sizeM, sizeK, minL, maxL));
+	shared_ptr<Segment> segment = shared_ptr<Segment>(new MapSegment(id, sizeL, sizeM));
 	segmentMap[id] = segment;
 	segmentList.push_back(segment);
 
 	return *segment;
 }
 
-Segment& Context::addMapSegment(const string& id, long sizeL, long sizeM) throw (logic_error) {
+Segment& Context::addSingleLineSegment(const string& id, long sizeM) throw (logic_error) {
 	if (hasSegment(id)) {
 		BOOST_THROW_EXCEPTION( invalid_argument("A segment with ID '" + id + "' already exists in the context."));
 	}
-	shared_ptr<Segment> segment = shared_ptr<Segment>(new MapSegment(id, sizeL, sizeM));
+	shared_ptr<Segment> segment = shared_ptr<Segment>(new SwathSegment(id, 1, sizeM, 1, 0, 0));
+	segmentMap[id] = segment;
+	segmentList.push_back(segment);
+
+	return *segment;
+}
+
+Segment& Context::addSegment(const string& id, long sizeL, long sizeM) throw (logic_error) {
+	if (hasSegment(id)) {
+		BOOST_THROW_EXCEPTION( invalid_argument("A segment with ID '" + id + "' already exists in the context."));
+	}
+	shared_ptr<Segment> segment = shared_ptr<Segment>(new SwathSegment(id, sizeL, sizeM, 1, 0, sizeL - 1));
+	segmentMap[id] = segment;
+	segmentList.push_back(segment);
+
+	return *segment;
+}
+
+Segment& Context::addSwathSegment(const string& id, long sizeL, long sizeM, long sizeK, long minL, long maxL) throw (logic_error) {
+	if (hasSegment(id)) {
+		BOOST_THROW_EXCEPTION( invalid_argument("A segment with ID '" + id + "' already exists in the context."));
+	}
+	shared_ptr<Segment> segment = shared_ptr<Segment>(new SwathSegment(id, sizeL, sizeM, sizeK, minL, maxL));
 	segmentMap[id] = segment;
 	segmentList.push_back(segment);
 
