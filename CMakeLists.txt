@@ -39,6 +39,9 @@ file(GLOB_RECURSE VPR_TEST_SOURCES src/test/cpp/modules/VprTest.cpp)
 file(GLOB_RECURSE SYL2_1_INTEGRATION_TEST_SOURCES src/test/cpp/integration/Syl2_1_Test.cpp)
 file(GLOB_RECURSE SYL2_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/Syl2_2_Test.cpp)
 
+file(GLOB_RECURSE VGTP_1_INTEGRATION_TEST_SOURCES src/test/cpp/integration/VgtP_1_Test.cpp)
+file(GLOB_RECURSE VGTP_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/VgtP_2_Test.cpp)
+
 ##
 # Project include directories
 #
@@ -363,6 +366,43 @@ target_link_libraries(sy_int_syl2_2
 )
 set_property(TARGET sy_int_syl2_2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
+add_executable(sy_int_vgtp_1
+    src/test/cpp/SyIntVgtP_1_Runner.cpp
+    ${CORE_MAIN_SOURCES}
+    ${UTIL_MAIN_SOURCES}
+    ${VGTP_1_INTEGRATION_TEST_SOURCES}
+)
+target_link_libraries(sy_int_vgtp_1
+    cppunit
+    netcdf
+    xerces-c
+    xqilla
+    boost_regex
+    boost_system
+    boost_filesystem
+)
+set_property(TARGET sy_int_vgtp_1 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+#
+add_executable(sy_int_vgtp_2
+    src/test/cpp/SyIntVgtP_2_Runner.cpp
+    ${CORE_MAIN_SOURCES}
+    ${UTIL_MAIN_SOURCES}
+    ${READER_MAIN_SOURCES}
+	${WRITER_MAIN_SOURCES}
+    ${MODULES_MAIN_SOURCES}
+    ${VGTP_2_INTEGRATION_TEST_SOURCES}
+)
+target_link_libraries(sy_int_vgtp_2
+    cppunit
+    netcdf
+    xerces-c
+    xqilla
+    boost_regex
+    boost_system
+    boost_filesystem
+)
+set_property(TARGET sy_int_vgtp_2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+#
 
 ##
 # Project main targets
@@ -384,6 +424,24 @@ target_link_libraries(syl2
     boost_filesystem
 )
 set_property(TARGET syl2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+#
+add_executable(vgtp
+	src/main/cpp/tasks/vgtp.cpp
+    ${CORE_MAIN_SOURCES}
+    ${UTIL_MAIN_SOURCES}
+	${READER_MAIN_SOURCES}
+	${WRITER_MAIN_SOURCES}
+    ${MODULES_MAIN_SOURCES}
+)
+target_link_libraries(vgtp
+    netcdf
+    xerces-c
+    xqilla
+    boost_regex
+    boost_system
+    boost_filesystem
+)
+set_property(TARGET vgtp PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 
 ##
 # Project installation
