@@ -19,10 +19,11 @@ public:
 
 	void start(Context& context);
 	void process(Context& context);
-	void process2(Context& context);
 
 private:
 	friend class VprTest;
+
+	void addTargetVariables(Context& context);
 
 	double getLat(size_t index) const {
 		return latAccessor->getDouble(index);
@@ -36,7 +37,6 @@ private:
 		return geoSegment->getGrid();
 	}
 
-	void setupAccessors(Context& context);
 	void getMinMaxSourceLat(double& minLat, double& maxLat) const;
 	void getMinMaxTargetLat(double& minLat, double& maxLat, long firstL, long lastL) const;
 	void getMinMaxSourceLon(double& minLon, double& maxLon) const;
@@ -46,6 +46,7 @@ private:
 
 	double getSubsampledTargetLat(long l) const ;
 	double getSubsampledTargetLon(long m) const;
+    void setValue(Accessor* sourceAccessor, Accessor* targetAccessor, size_t sourceIndex, size_t targetIndex) const;
 
 	int maxTargetLat;
 	int minTargetLat;
@@ -57,11 +58,6 @@ private:
 
 	const Accessor* latAccessor;
 	const Accessor* lonAccessor;
-
-    valarray<Accessor*> sourceReflectanceAccessors;
-    valarray<Accessor*> targetReflectanceAccessors;
-    Accessor* targetFlagsAccessor;
-    Accessor* sourceFlagsAccessor;
 
     static const int TARGET_PIXELS_PER_DEGREE = 112;
     static const int SUBSAMPLED_TARGET_PIXELS_PER_DEGREE = 14;

@@ -7,9 +7,7 @@
 
 #include "Vpr.h"
 
-Vpr::Vpr() : BasicModule("VPR"),
-        sourceReflectanceAccessors(4),
-        targetReflectanceAccessors(4) {
+Vpr::Vpr() : BasicModule("VPR") {
 }
 
 Vpr::~Vpr() {
@@ -66,18 +64,10 @@ void Vpr::start(Context& context) {
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_TP + "' to context.", getId());
     context.addMapSegment(Constants::SEGMENT_VGP_TP, subsampledRowCount, subsampledColCount);
 
-    setupAccessors(context);
+    addTargetVariables(context);
 }
 
-void Vpr::setupAccessors(Context& context) {
-	const Segment& s = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-
-	sourceReflectanceAccessors[0] = &s.getAccessor("B0");
-    sourceReflectanceAccessors[1] = &s.getAccessor("B2");
-    sourceReflectanceAccessors[2] = &s.getAccessor("B3");
-    sourceReflectanceAccessors[3] = &s.getAccessor("MIR");
-    sourceFlagsAccessor = &s.getAccessor("SM");
-
+void Vpr::addTargetVariables(Context& context) {
     const ProductDescriptor& pd = context.getDictionary().getProductDescriptor(Constants::PRODUCT_VGP);
 
 	context.getSegment(Constants::SEGMENT_VGP_LAT).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LAT).getVariableDescriptor("lat"));
@@ -86,24 +76,25 @@ void Vpr::setupAccessors(Context& context) {
 	context.getSegment(Constants::SEGMENT_VGP_LON_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LON_BNDS).getVariableDescriptor("lon_bnds"));
 
 	Segment& t = context.getSegment(Constants::SEGMENT_VGP);
-	targetReflectanceAccessors[0] = &t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("B0"));
-    targetReflectanceAccessors[1] = &t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("B2"));
-    targetReflectanceAccessors[2] = &t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("B3"));
-    targetReflectanceAccessors[3] = &t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("MIR"));
-    targetFlagsAccessor = &t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("SM"));
+	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("B0"));
+    t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("B2"));
+    t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("B3"));
+    t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("MIR"));
+    t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("SM"));
 
 	context.getSegment(Constants::SEGMENT_VGP_LAT_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LAT_TP).getVariableDescriptor("lat"));
 	context.getSegment(Constants::SEGMENT_VGP_LON_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LON_TP).getVariableDescriptor("lon"));
 	context.getSegment(Constants::SEGMENT_VGP_LAT_TP_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LAT_TP_BNDS).getVariableDescriptor("lat_bnds"));
 	context.getSegment(Constants::SEGMENT_VGP_LON_TP_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LON_TP_BNDS).getVariableDescriptor("lon_bnds"));
 
-	context.getSegment(Constants::SEGMENT_VGP_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("ag"));
-	context.getSegment(Constants::SEGMENT_VGP_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("og"));
-	context.getSegment(Constants::SEGMENT_VGP_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("saa"));
-	context.getSegment(Constants::SEGMENT_VGP_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("sza"));
-	context.getSegment(Constants::SEGMENT_VGP_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("vaa"));
-	context.getSegment(Constants::SEGMENT_VGP_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("vza"));
-	context.getSegment(Constants::SEGMENT_VGP_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("wvg"));
+	t = context.getSegment(Constants::SEGMENT_VGP_TP);
+	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("AG"));
+	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("OG"));
+	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("SAA"));
+	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("SZA"));
+	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("VAA"));
+	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("VZA"));
+	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("WVG"));
 }
 
 void Vpr::process(Context& context) {
@@ -112,8 +103,26 @@ void Vpr::process(Context& context) {
 
 	const Segment& s = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 	const Segment& t = context.getSegment(Constants::SEGMENT_VGP);
+	const Segment& u = context.getSegment(Constants::SEGMENT_VGP_TP);
+
 	const Grid& sourceGrid = s.getGrid();
 	const Grid& targetGrid = t.getGrid();
+	const Grid& subsampledGrid = u.getGrid();
+
+    valarray<Accessor*> sourceAccessors(5);
+    valarray<Accessor*> targetAccessors(5);
+
+	sourceAccessors[0] = &s.getAccessor("B0");
+    sourceAccessors[1] = &s.getAccessor("B2");
+    sourceAccessors[2] = &s.getAccessor("B3");
+    sourceAccessors[3] = &s.getAccessor("MIR");
+    sourceAccessors[4] = &s.getAccessor("SM");
+
+	targetAccessors[0] = &t.getAccessor("B0");
+	targetAccessors[1] = &t.getAccessor("B2");
+	targetAccessors[2] = &t.getAccessor("B3");
+	targetAccessors[3] = &t.getAccessor("MIR");
+	targetAccessors[4] = &t.getAccessor("SM");
 
 	const long firstTargetL = context.getFirstComputableL(t, *this);
 	context.getLogging().debug("Segment [" + t.toString() + "]: firstComputableL = " + lexical_cast<string>(firstTargetL), getId());
@@ -166,8 +175,6 @@ void Vpr::process(Context& context) {
 
 		for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
 			for (long m = targetGrid.getFirstM(); m < targetGrid.getFirstM() + targetGrid.getSizeM(); m++) {
-				const size_t targetIndex = targetGrid.getIndex(k, l, m);
-
 				const double targetLon = getTargetLon(m);
 				if (targetLon < minSourceLon || targetLon > maxSourceLon) {
 					continue;
@@ -190,57 +197,33 @@ void Vpr::process(Context& context) {
 					continue;
 				}
 
-				Accessor& sourceAccessor = *(sourceReflectanceAccessors[0]);
-				Accessor& targetAccessor = *(targetReflectanceAccessors[0]);
-
 				const size_t sourceIndex = sourceGrid.getIndex(sourceK, sourceL, sourceM);
-				if (sourceAccessor.isFillValue(sourceIndex)) {
-					continue;
-				}
 
-				switch (sourceAccessor.getType()) {
-				case Constants::TYPE_BYTE: {
-					targetAccessor.setByte(targetIndex, sourceAccessor.getByte(sourceIndex));
-					break;
+				// 4. Set the samples of the target pixel
+				for (size_t i = 0; i < 5; i++) {
+					Accessor* sourceAccessor = sourceAccessors[i];
+					Accessor* targetAccessor = targetAccessors[i];
+
+					if (!sourceAccessor->isFillValue(sourceIndex)) {
+						setValue(sourceAccessor, targetAccessor, sourceIndex, targetGrid.getIndex(k, l, m));
+					}
 				}
-				case Constants::TYPE_UBYTE: {
-					targetAccessor.setUByte(targetIndex, sourceAccessor.getUByte(sourceIndex));
-					break;
-				}
-				case Constants::TYPE_SHORT: {
-					targetAccessor.setShort(targetIndex, sourceAccessor.getShort(sourceIndex));
-					break;
-				}
-				case Constants::TYPE_USHORT: {
-					targetAccessor.setUShort(targetIndex, sourceAccessor.getUShort(sourceIndex));
-					break;
-				}
-				case Constants::TYPE_INT: {
-					targetAccessor.setInt(targetIndex, sourceAccessor.getInt(sourceIndex));
-					break;
-				}
-				case Constants::TYPE_UINT: {
-					targetAccessor.setUInt(targetIndex, sourceAccessor.getUInt(sourceIndex));
-					break;
-				}
-				case Constants::TYPE_LONG: {
-					targetAccessor.setLong(targetIndex, sourceAccessor.getLong(sourceIndex));
-					break;
-				}
-				case Constants::TYPE_ULONG: {
-					targetAccessor.setULong(targetIndex, sourceAccessor.getULong(sourceIndex));
-					break;
-				}
-				case Constants::TYPE_FLOAT: {
-					targetAccessor.setFloat(targetIndex, sourceAccessor.getFloat(sourceIndex));
-					break;
-				}
-				case Constants::TYPE_DOUBLE: {
-					targetAccessor.setDouble(targetIndex, sourceAccessor.getDouble(sourceIndex));
-					break;
-				}
-				default:
-					break;
+				// 5. Is the target pixel in the sub-sampled grid?
+				if (l % 8 != 0 || m % 8 != 0) {
+					// Yes, set the samples of the sub-sampled target pixel
+					for (size_t i = 5; i < targetAccessors.size(); i++) {
+						// TODO - use data from tie point grids
+						const size_t targetIndex = subsampledGrid.getIndex(k, l / 8, m / 8);
+
+						Accessor* sourceAccessor = sourceAccessors[i];
+						Accessor* targetAccessor = targetAccessors[i];
+
+						if (!sourceAccessor->isFillValue(sourceIndex)) {
+							setValue(sourceAccessor, targetAccessor, sourceIndex, targetIndex);
+						} else {
+							targetAccessor->setFillValue(targetIndex);
+						}
+					}
 				}
 			}
 		}
@@ -312,3 +295,51 @@ double Vpr::getSubsampledTargetLat(long l) const {
 double Vpr::getSubsampledTargetLon(long m) const {
     return minTargetLon + m * DEGREES_PER_SUBSAMPLED_TARGET_PIXEL;
 }
+
+void Vpr::setValue(Accessor* sourceAccessor, Accessor* targetAccessor, size_t sourceIndex, size_t targetIndex) const {
+	switch (sourceAccessor->getType()) {
+	case Constants::TYPE_BYTE: {
+		targetAccessor->setByte(targetIndex, sourceAccessor->getByte(sourceIndex));
+		break;
+	}
+	case Constants::TYPE_UBYTE: {
+		targetAccessor->setUByte(targetIndex, sourceAccessor->getUByte(sourceIndex));
+		break;
+	}
+	case Constants::TYPE_SHORT: {
+		targetAccessor->setShort(targetIndex, sourceAccessor->getShort(sourceIndex));
+		break;
+	}
+	case Constants::TYPE_USHORT: {
+		targetAccessor->setUShort(targetIndex, sourceAccessor->getUShort(sourceIndex));
+		break;
+	}
+	case Constants::TYPE_INT: {
+		targetAccessor->setInt(targetIndex, sourceAccessor->getInt(sourceIndex));
+		break;
+	}
+	case Constants::TYPE_UINT: {
+		targetAccessor->setUInt(targetIndex, sourceAccessor->getUInt(sourceIndex));
+		break;
+	}
+	case Constants::TYPE_LONG: {
+		targetAccessor->setLong(targetIndex, sourceAccessor->getLong(sourceIndex));
+		break;
+	}
+	case Constants::TYPE_ULONG: {
+		targetAccessor->setULong(targetIndex, sourceAccessor->getULong(sourceIndex));
+		break;
+	}
+	case Constants::TYPE_FLOAT: {
+		targetAccessor->setFloat(targetIndex, sourceAccessor->getFloat(sourceIndex));
+		break;
+	}
+	case Constants::TYPE_DOUBLE: {
+		targetAccessor->setDouble(targetIndex, sourceAccessor->getDouble(sourceIndex));
+		break;
+	}
+	default:
+		break;
+	}
+}
+
