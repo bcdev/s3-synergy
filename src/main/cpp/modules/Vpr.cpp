@@ -8,8 +8,8 @@
 #include "Vpr.h"
 
 Vpr::Vpr() : BasicModule("VPR"),
-        synReflectanceAccessors(4),
-        vgtReflectanceAccessors(4) {
+        sourceReflectanceAccessors(4),
+        targetReflectanceAccessors(4) {
 }
 
 Vpr::~Vpr() {
@@ -22,24 +22,88 @@ void Vpr::start(Context& context) {
     latAccessor = &geoSegment->getAccessor("latitude");
     lonAccessor = &geoSegment->getAccessor("longitude");
 
-    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP + "' to context.", getId());
-    vgpSegment = &context.addMapSegment(Constants::SEGMENT_VGP, LINE_COUNT, COL_COUNT);
+	// TODO - predefined coordinates for Europe; read from job order file
+	maxTargetLat = 75;
+	minTargetLat = 25;
+	maxTargetLon = 62;
+	minTargetLon = -11;
 
-    setupAccessors();
+	const int latCellCount = maxTargetLat - minTargetLat;
+	const int lonCellCount = maxTargetLon - minTargetLon;
+	const int rowCount = latCellCount * TARGET_PIXELS_PER_DEGREE;
+	const int colCount = lonCellCount * TARGET_PIXELS_PER_DEGREE;
+
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LAT + "' to context.", getId());
+    context.addSingleLineSegment(Constants::SEGMENT_VGP_LAT, rowCount);
+
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LON + "' to context.", getId());
+    context.addSingleLineSegment(Constants::SEGMENT_VGP_LON, colCount);
+
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LAT_BNDS + "' to context.", getId());
+    context.addSegment(Constants::SEGMENT_VGP_LAT_BNDS, rowCount, 2);
+
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LON_BNDS + "' to context.", getId());
+    context.addSegment(Constants::SEGMENT_VGP_LON_BNDS, colCount, 2);
+
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP + "' to context.", getId());
+    context.addMapSegment(Constants::SEGMENT_VGP, rowCount, colCount);
+
+	const int subsampledRowCount = latCellCount * SUBSAMPLED_TARGET_PIXELS_PER_DEGREE;
+	const int subsampledColCount = lonCellCount * SUBSAMPLED_TARGET_PIXELS_PER_DEGREE;
+
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LAT_TP + "' to context.", getId());
+    context.addSingleLineSegment(Constants::SEGMENT_VGP_LAT_TP, subsampledRowCount);
+
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LON_TP + "' to context.", getId());
+    context.addSingleLineSegment(Constants::SEGMENT_VGP_LON_TP, subsampledColCount);
+
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LAT_TP_BNDS + "' to context.", getId());
+    context.addSegment(Constants::SEGMENT_VGP_LAT_TP_BNDS, subsampledRowCount, 2);
+
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LON_TP_BNDS + "' to context.", getId());
+    context.addSegment(Constants::SEGMENT_VGP_LON_TP_BNDS, subsampledColCount, 2);
+
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_TP + "' to context.", getId());
+    context.addMapSegment(Constants::SEGMENT_VGP_TP, subsampledRowCount, subsampledColCount);
+
+    setupAccessors(context);
 }
 
-void Vpr::setupAccessors() {
-    synReflectanceAccessors[0] = &synSegment->getAccessor("B0");
-    synReflectanceAccessors[1] = &synSegment->getAccessor("B2");
-    synReflectanceAccessors[2] = &synSegment->getAccessor("B3");
-    synReflectanceAccessors[3] = &synSegment->getAccessor("MIR");
-    synFlagsAccessor = &synSegment->getAccessor("SM");
+void Vpr::setupAccessors(Context& context) {
+	const Segment& s = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 
-    vgtReflectanceAccessors[0] = &vgpSegment->addVariable("B0", Constants::TYPE_DOUBLE);
-    vgtReflectanceAccessors[1] = &vgpSegment->addVariable("B2", Constants::TYPE_DOUBLE);
-    vgtReflectanceAccessors[2] = &vgpSegment->addVariable("B3", Constants::TYPE_DOUBLE);
-    vgtReflectanceAccessors[3] = &vgpSegment->addVariable("MIR", Constants::TYPE_DOUBLE);
-    vgtFlagsAccessor = &vgpSegment->addVariable("SM", Constants::TYPE_UBYTE);
+	sourceReflectanceAccessors[0] = &s.getAccessor("B0");
+    sourceReflectanceAccessors[1] = &s.getAccessor("B2");
+    sourceReflectanceAccessors[2] = &s.getAccessor("B3");
+    sourceReflectanceAccessors[3] = &s.getAccessor("MIR");
+    sourceFlagsAccessor = &s.getAccessor("SM");
+
+    const ProductDescriptor& pd = context.getDictionary().getProductDescriptor(Constants::PRODUCT_VGP);
+
+	context.getSegment(Constants::SEGMENT_VGP_LAT).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LAT).getVariableDescriptor("lat"));
+	context.getSegment(Constants::SEGMENT_VGP_LON).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LON).getVariableDescriptor("lon"));
+	context.getSegment(Constants::SEGMENT_VGP_LAT_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LAT_BNDS).getVariableDescriptor("lat_bnds"));
+	context.getSegment(Constants::SEGMENT_VGP_LON_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LON_BNDS).getVariableDescriptor("lon_bnds"));
+
+	Segment& t = context.getSegment(Constants::SEGMENT_VGP);
+	targetReflectanceAccessors[0] = &t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("B0"));
+    targetReflectanceAccessors[1] = &t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("B2"));
+    targetReflectanceAccessors[2] = &t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("B3"));
+    targetReflectanceAccessors[3] = &t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("MIR"));
+    targetFlagsAccessor = &t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("SM"));
+
+	context.getSegment(Constants::SEGMENT_VGP_LAT_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LAT_TP).getVariableDescriptor("lat"));
+	context.getSegment(Constants::SEGMENT_VGP_LON_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LON_TP).getVariableDescriptor("lon"));
+	context.getSegment(Constants::SEGMENT_VGP_LAT_TP_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LAT_TP_BNDS).getVariableDescriptor("lat_bnds"));
+	context.getSegment(Constants::SEGMENT_VGP_LON_TP_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LON_TP_BNDS).getVariableDescriptor("lon_bnds"));
+
+	context.getSegment(Constants::SEGMENT_VGP_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("ag"));
+	context.getSegment(Constants::SEGMENT_VGP_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("og"));
+	context.getSegment(Constants::SEGMENT_VGP_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("saa"));
+	context.getSegment(Constants::SEGMENT_VGP_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("sza"));
+	context.getSegment(Constants::SEGMENT_VGP_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("vaa"));
+	context.getSegment(Constants::SEGMENT_VGP_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("vza"));
+	context.getSegment(Constants::SEGMENT_VGP_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("wvg"));
 }
 
 void Vpr::process(Context& context) {
@@ -87,7 +151,7 @@ void Vpr::process(Context& context) {
 	long sourceL = 0;
 	long sourceM = 0;
 
-	PixelFinder pixelFinder(*this, TARGET_PIXEL_SIZE);
+	PixelFinder pixelFinder(*this, DEGREES_PER_TARGET_PIXEL);
 
 	for (long l = firstTargetL; l <= lastTargetL; l++) {
 		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
@@ -126,8 +190,8 @@ void Vpr::process(Context& context) {
 					continue;
 				}
 
-				Accessor& sourceAccessor = *(synReflectanceAccessors[0]);
-				Accessor& targetAccessor = *(vgtReflectanceAccessors[0]);
+				Accessor& sourceAccessor = *(sourceReflectanceAccessors[0]);
+				Accessor& targetAccessor = *(targetReflectanceAccessors[0]);
 
 				const size_t sourceIndex = sourceGrid.getIndex(sourceK, sourceL, sourceM);
 				if (sourceAccessor.isFillValue(sourceIndex)) {
@@ -233,10 +297,18 @@ void Vpr::getMinMaxTargetLat(double& minLat, double& maxLat, long firstL, long l
 	minLat = getTargetLat(lastL);
 }
 
-double Vpr::getTargetLat(long l) {
-    return 75.0 - l * TARGET_PIXEL_SIZE;
+double Vpr::getTargetLat(long l) const {
+    return maxTargetLat - l * DEGREES_PER_TARGET_PIXEL;
 }
 
-double Vpr::getTargetLon(long m) {
-    return m * TARGET_PIXEL_SIZE - 180.0;
+double Vpr::getTargetLon(long m) const {
+    return minTargetLon + m * DEGREES_PER_TARGET_PIXEL;
+}
+
+double Vpr::getSubsampledTargetLat(long l) const {
+    return maxTargetLat - l * DEGREES_PER_SUBSAMPLED_TARGET_PIXEL;
+}
+
+double Vpr::getSubsampledTargetLon(long m) const {
+    return minTargetLon + m * DEGREES_PER_SUBSAMPLED_TARGET_PIXEL;
 }

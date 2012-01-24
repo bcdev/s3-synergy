@@ -67,36 +67,52 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, l
 	m = getM(index);
 
 	double delta = -1.0;
+
 	updateNearestPixel(targetLat, targetLon, k, l, m, k, l, m, delta);
 
 	for (long b = 32; b > 0; b >>= 1) {
-		const long n = getN(k, m);
+		const long midK = k;
+		const long midL = l;
+		const long midM = m;
+		const long midN = getN(k, m);
 
-		const long minL = max(grid.getMinL(), l - b);
-		const long maxL = min(grid.getMaxL(), l + b);
-		const long minN = max(getN(grid.getMinK(), grid.getMinM()), n - b);
-		const long maxN = min(getN(grid.getMaxK(), grid.getMaxM()), n + b);
+		const long outerMinL = max(grid.getMinL(), midL - b);
+		const long outerMaxL = min(grid.getMaxL(), midL + b);
+		const long outerMinN = max(getN(grid.getMinK(), grid.getMinM()), midN - b);
+		const long outerMaxN = min(getN(grid.getMaxK(), grid.getMaxM()), midN + b);
 
-		const long minK = getK(minN);
-		const long maxK = getK(maxN);
-		const long minM = getM(minN);
-		const long maxM = getM(maxN);
+		const long outerMinK = getK(outerMinN);
+		const long outerMaxK = getK(outerMaxN);
+		const long outerMinM = getM(outerMinN);
+		const long outerMaxM = getM(outerMaxN);
 
-		if (true) { // consider points in the N, S, E, and W
-			const long midK = k;
-			const long midL = l;
-			const long midM = m;
-
-			updateNearestPixel(targetLat, targetLon, minK, midL, minM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, maxK, midL, maxM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, midK, maxL, midM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, midK, minL, midM, k, l, m, delta);
+		if (true) { // consider outer points in the N, S, E, and W
+			updateNearestPixel(targetLat, targetLon, outerMinK, midL, outerMinM, k, l, m, delta);
+			updateNearestPixel(targetLat, targetLon, outerMaxK, midL, outerMaxM, k, l, m, delta);
+			updateNearestPixel(targetLat, targetLon, midK, outerMaxL, midM, k, l, m, delta);
+			updateNearestPixel(targetLat, targetLon, midK, outerMinL, midM, k, l, m, delta);
 		}
-		if (true) { // consider points in the NW, SW, SE, and NE
-			updateNearestPixel(targetLat, targetLon, minK, minL, minM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, minK, maxL, minM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, maxK, maxL, maxM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, maxK, minL, maxM, k, l, m, delta);
+		if (true) { // consider outer points in the NW, SW, SE, and NE
+			updateNearestPixel(targetLat, targetLon, outerMinK, outerMinL, outerMinM, k, l, m, delta);
+			updateNearestPixel(targetLat, targetLon, outerMinK, outerMaxL, outerMinM, k, l, m, delta);
+			updateNearestPixel(targetLat, targetLon, outerMaxK, outerMaxL, outerMaxM, k, l, m, delta);
+			updateNearestPixel(targetLat, targetLon, outerMaxK, outerMinL, outerMaxM, k, l, m, delta);
+		}
+		if (true) { // consider inner points in the NW, SW, SE, and NE
+			const long innerMinL = max(outerMinL, midL - b / 2);
+			const long innerMaxL = min(outerMaxL, midL + b / 2);
+			const long innerMinN = max(outerMinN, midN - b / 2);
+			const long innerMaxN = min(outerMaxN, midN + b / 2);
+
+			const long innerMinK = getK(innerMinN);
+			const long innerMaxK = getK(innerMaxN);
+			const long innerMinM = getM(innerMinN);
+			const long innerMaxM = getM(innerMaxN);
+
+			updateNearestPixel(targetLat, targetLon, innerMinK, innerMinL, innerMinM, k, l, m, delta);
+			updateNearestPixel(targetLat, targetLon, innerMinK, innerMaxL, innerMinM, k, l, m, delta);
+			updateNearestPixel(targetLat, targetLon, innerMaxK, innerMaxL, innerMaxM, k, l, m, delta);
+			updateNearestPixel(targetLat, targetLon, innerMaxK, innerMinL, innerMaxM, k, l, m, delta);
 		}
 	}
 

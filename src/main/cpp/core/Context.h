@@ -78,6 +78,23 @@ public:
 	 * @param id The segment ID.
 	 * @param sizeL The size of the segment's row index dimension.
 	 * @param sizeM The size of the segment's column index dimension.
+	 * @return a reference to the segment added.
+	 */
+	Segment& addSegment(const string& id, long sizeL, long sizeM) throw (logic_error);
+
+	/**
+	 * Adds a single-line segment to the context.
+	 * @param id The segment ID.
+	 * @param sizeM The size of the segment's column index dimension.
+	 * @return a reference to the segment added.
+	 */
+	Segment& addSingleLineSegment(const string& id, long sizeM) throw (logic_error);
+
+	/**
+	 * Adds a swath segment to the context.
+	 * @param id The segment ID.
+	 * @param sizeL The size of the segment's row index dimension.
+	 * @param sizeM The size of the segment's column index dimension.
 	 * @param sizeK The size of the segment's camera index dimension.
 	 * @param minL The minimum valid row index.
 	 * @param maxL The maximum valid row index.
@@ -86,7 +103,7 @@ public:
 	Segment& addSwathSegment(const string& id, long sizeL, long sizeM, long sizeK, long minL, long maxL) throw (logic_error);
 
 	/**
-	 * Adds a map-segment to the context.
+	 * Adds a map segment to the context.
 	 * @param id The segment ID.
 	 * @param sizeL The size of the segment's row index dimension.
 	 * @param sizeM The size of the segment's column index dimension.
