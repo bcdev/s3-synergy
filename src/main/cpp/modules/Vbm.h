@@ -55,16 +55,16 @@ private:
 	void prepareAccessors(Context& context);
 	void prepareAuxdata(Context& context);
 	void prepareTiePointData(Context& context);
-    void addVariables(Context& context);
+    void addTargetVariables(Context& context);
 
-	void setupPixel(Pixel& p, size_t index, valarray<double>& tpiWeights, valarray<size_t>& tpiIndexes);
+	void initPixel(Pixel& p, size_t index, valarray<double>& tpiWeights, valarray<size_t>& tpiIndexes);
 	void performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflectances, valarray<double>& coordinates, valarray<double>& f, valarray<double>& w);
 	void performHyperspectralInterpolation(const valarray<double>& synWavelengths, const valarray<double>& synSurfaceReflectances, valarray<double>& hypSurfaceReflectances);
 	void performHyperspectralUpscaling(const valarray<double>& hypSurfaceReflectances, const Pixel& p, valarray<double>& hypToaReflectances, valarray<double>& coordinates, valarray<double>& f, valarray<double>& w);
 	void performHyperspectralFiltering(const valarray<double>& hypToaReflectances, valarray<double>& vgtToaReflectances) const;
 
 	uint8_t performQualityFlagging(Pixel& p, const valarray<double>& vgtToaReflectances) const;
-	void setValues(size_t index, uint8_t flags, const valarray<double>& vgtToaReflectances);
+	void setValues(size_t index, Pixel& p, uint8_t flags, const valarray<double>& vgtToaReflectances);
 
     template<class T>
     static void copy(const valarray<T>& s, valarray<T>& t);
@@ -103,6 +103,13 @@ private:
     Accessor* synFlagsAccessor;
     valarray<Accessor*> vgtReflectanceAccessors;
     Accessor* vgtFlagsAccessor;
+    Accessor* vgtAgAccessor;
+    Accessor* vgtOgAccessor;
+    Accessor* vgtWvgAccessor;
+    Accessor* vgtSaaAccessor;
+    Accessor* vgtSzaAccessor;
+    Accessor* vgtVaaAccessor;
+    Accessor* vgtVzaAccessor;
 
     shared_ptr<TiePointInterpolator<double> > tiePointInterpolatorOlc;
     shared_ptr<TiePointInterpolator<double> > tiePointInterpolatorSln;

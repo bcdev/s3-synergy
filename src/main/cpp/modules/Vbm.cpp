@@ -31,13 +31,13 @@ Vbm::~Vbm() {
 }
 
 void Vbm::start(Context& context) {
-    addVariables(context);
+    addTargetVariables(context);
 
     prepareAccessors(context);
     prepareAuxdata(context);
 }
 
-void Vbm::addVariables(Context& context) {
+void Vbm::addTargetVariables(Context& context) {
     context.getLogging().info("Adding variables to segment", getId());
 
     Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
@@ -47,6 +47,14 @@ void Vbm::addVariables(Context& context) {
 	vgtReflectanceAccessors[2] = &collocatedSegment.addVariable("B3", Constants::TYPE_DOUBLE);
 	vgtReflectanceAccessors[3] = &collocatedSegment.addVariable("MIR", Constants::TYPE_DOUBLE);
     vgtFlagsAccessor = &collocatedSegment.addVariable("SM", Constants::TYPE_UBYTE);
+
+    vgtAgAccessor = &collocatedSegment.addVariable("AG", Constants::TYPE_DOUBLE);
+    vgtOgAccessor = &collocatedSegment.addVariable("OG", Constants::TYPE_DOUBLE);
+    vgtWvgAccessor = &collocatedSegment.addVariable("WVG", Constants::TYPE_DOUBLE);
+    vgtSaaAccessor = &collocatedSegment.addVariable("SAA", Constants::TYPE_DOUBLE);
+    vgtSzaAccessor = &collocatedSegment.addVariable("SZA", Constants::TYPE_DOUBLE);
+    vgtVaaAccessor = &collocatedSegment.addVariable("VAA", Constants::TYPE_DOUBLE);
+    vgtVzaAccessor = &collocatedSegment.addVariable("VZA", Constants::TYPE_DOUBLE);
 }
 
 void Vbm::prepareAccessors(Context& context) {
@@ -121,8 +129,6 @@ void Vbm::prepareTiePointData(Context& context) {
 }
 
 void Vbm::process(Context& context) {
-    // todo - create tie point segment and fill it with data
-
 	prepareTiePointData(context);
 
     Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
@@ -172,20 +178,20 @@ void Vbm::process(Context& context) {
         for (long k = collocatedGrid.getFirstK(); k <= collocatedGrid.getMaxK(); k++) {
             for (long m = collocatedGrid.getFirstM(); m <= collocatedGrid.getMaxM(); m++) {
                 const size_t index = collocatedGrid.getIndex(k, l, m);
-                setupPixel(p, index, tpiWeights, tpiIndexes);
+                initPixel(p, index, tpiWeights, tpiIndexes);
                 performDownscaling(p, synSurfaceReflectances, coordinates, f, workspace);
                 performHyperspectralInterpolation(synWavelengths, synSurfaceReflectances, hypSurfaceReflectances);
                 performHyperspectralUpscaling(hypSurfaceReflectances, p, hypToaReflectances, coordinates, f, workspace);
                 performHyperspectralFiltering(hypToaReflectances, vgtToaReflectances);
                 const uint8_t flags = performQualityFlagging(p, vgtToaReflectances);
-                setValues(index, flags, vgtToaReflectances);
+                setValues(index, p, flags, vgtToaReflectances);
             }
         }
     }
     context.setLastComputedL(collocatedSegment, *this, lastL);
 }
 
-void Vbm::setupPixel(Pixel& p, size_t index, valarray<double>& tpiWeights, valarray<size_t>& tpiIndexes) {
+void Vbm::initPixel(Pixel& p, size_t index, valarray<double>& tpiWeights, valarray<size_t>& tpiIndexes) {
     for(size_t i = 0; i < 21; i++) {
         p.radiances[i] = synRadianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synRadianceAccessors[i]->getDouble(index);
         p.solarIrradiances[i] = synSolarIrradianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synSolarIrradianceAccessors[i]->getDouble(index);
@@ -404,7 +410,7 @@ uint8_t Vbm::performQualityFlagging(Pixel& p, const valarray<double>& vgtToaRefl
     return flags;
 }
 
-void Vbm::setValues(size_t index, uint8_t flags, const valarray<double>& vgtToaReflectances) {
+void Vbm::setValues(size_t index, Pixel& p, uint8_t flags, const valarray<double>& vgtToaReflectances) {
     for (size_t i = 0; i < vgtReflectanceAccessors.size(); i++) {
         if (vgtToaReflectances[i] != Constants::FILL_VALUE_DOUBLE) {
             vgtReflectanceAccessors[i]->setDouble(index, vgtToaReflectances[i]);
@@ -413,6 +419,15 @@ void Vbm::setValues(size_t index, uint8_t flags, const valarray<double>& vgtToaR
         }
     }
     vgtFlagsAccessor->setUByte(index, flags);
+
+    vgtAgAccessor->setDouble(index, p.aot);
+    vgtOgAccessor->setDouble(index, p.ozone * 0.001); // conversion from DU into atm cm
+    vgtWvgAccessor->setDouble(index, p.waterVapour);
+
+    vgtSaaAccessor->setDouble(index, p.saa);
+    vgtSzaAccessor->setDouble(index, p.sza);
+    vgtVaaAccessor->setDouble(index, p.vaaOlc);
+    vgtVzaAccessor->setDouble(index, p.vzaOlc);
 }
 
 double Vbm::aerosolOpticalThickness(double lat) {

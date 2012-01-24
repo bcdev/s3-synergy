@@ -104,25 +104,40 @@ void Vpr::process(Context& context) {
 	const Segment& s = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 	const Segment& t = context.getSegment(Constants::SEGMENT_VGP);
 	const Segment& u = context.getSegment(Constants::SEGMENT_VGP_TP);
+	const Segment& v = context.getSegment(Constants::SEGMENT_OLC_TP);
 
 	const Grid& sourceGrid = s.getGrid();
 	const Grid& targetGrid = t.getGrid();
 	const Grid& subsampledGrid = u.getGrid();
 
-    valarray<Accessor*> sourceAccessors(5);
-    valarray<Accessor*> targetAccessors(5);
+    valarray<Accessor*> sourceAccessors(12);
+    valarray<Accessor*> targetAccessors(12);
 
 	sourceAccessors[0] = &s.getAccessor("B0");
     sourceAccessors[1] = &s.getAccessor("B2");
     sourceAccessors[2] = &s.getAccessor("B3");
     sourceAccessors[3] = &s.getAccessor("MIR");
     sourceAccessors[4] = &s.getAccessor("SM");
+    sourceAccessors[5] = &s.getAccessor("AG");
+    sourceAccessors[6] = &s.getAccessor("OG");
+    sourceAccessors[7] = &s.getAccessor("WVG");
+    sourceAccessors[8] = &s.getAccessor("SAA");
+    sourceAccessors[9] = &s.getAccessor("SZA");
+    sourceAccessors[10] = &s.getAccessor("VAA");
+    sourceAccessors[11] = &s.getAccessor("VZA");
 
 	targetAccessors[0] = &t.getAccessor("B0");
 	targetAccessors[1] = &t.getAccessor("B2");
 	targetAccessors[2] = &t.getAccessor("B3");
 	targetAccessors[3] = &t.getAccessor("MIR");
 	targetAccessors[4] = &t.getAccessor("SM");
+	targetAccessors[5] = &u.getAccessor("AG");
+	targetAccessors[6] = &u.getAccessor("OG");
+	targetAccessors[7] = &u.getAccessor("WVG");
+	targetAccessors[8] = &u.getAccessor("SAA");
+	targetAccessors[9] = &u.getAccessor("SZA");
+	targetAccessors[10] = &u.getAccessor("VAA");
+	targetAccessors[11] = &u.getAccessor("VZA");
 
 	const long firstTargetL = context.getFirstComputableL(t, *this);
 	context.getLogging().debug("Segment [" + t.toString() + "]: firstComputableL = " + lexical_cast<string>(firstTargetL), getId());
@@ -134,6 +149,7 @@ void Vpr::process(Context& context) {
     double minTargetLat = 90.0;
     double maxTargetLat = -90.0;
     double maxSourceLon = -180.0;
+
     getMinMaxSourceLat(minSourceLat, maxSourceLat);
     getMinMaxTargetLat(minTargetLat, maxTargetLat, firstTargetL, lastTargetL);
 
@@ -212,7 +228,6 @@ void Vpr::process(Context& context) {
 				if (l % 8 != 0 || m % 8 != 0) {
 					// Yes, set the samples of the sub-sampled target pixel
 					for (size_t i = 5; i < targetAccessors.size(); i++) {
-						// TODO - use data from tie point grids
 						const size_t targetIndex = subsampledGrid.getIndex(k, l / 8, m / 8);
 
 						Accessor* sourceAccessor = sourceAccessors[i];
