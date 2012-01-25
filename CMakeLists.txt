@@ -21,7 +21,9 @@ file(GLOB_RECURSE READER_MAIN_SOURCES src/main/cpp/reader/*.cpp)
 file(GLOB_RECURSE READER_TEST_SOURCES src/test/cpp/reader/*.cpp)
 file(GLOB_RECURSE MODULES_MAIN_SOURCES src/main/cpp/modules/*.cpp)
 file(GLOB_RECURSE WRITER_MAIN_SOURCES src/main/cpp/writer/*.cpp)
-file(GLOB_RECURSE WRITER_TEST_SOURCES src/test/cpp/writer/*.cpp)
+file(GLOB_RECURSE SYN_WRITER_TEST_SOURCES src/test/cpp/writer/SynL2WriterTest.cpp  src/test/cpp/writer/SynL2SegmentProvider.cpp)
+file(GLOB_RECURSE VGTP_WRITER_TEST_SOURCES src/test/cpp/writer/VgtPWriterTest.cpp src/test/cpp/writer/VgtSegmentProvider.cpp)
+file(GLOB_RECURSE SEGMENT_WRITER_TEST_SOURCES src/test/cpp/writer/SegmentWriterTest.cpp src/test/cpp/writer/MapSegmentProvider.cpp)
 file(GLOB_RECURSE UTIL_MAIN_SOURCES src/main/cpp/util/*.cpp)
 file(GLOB_RECURSE UTIL_TEST_SOURCES src/test/cpp/util/*.cpp)
 
@@ -80,6 +82,8 @@ add_executable(sy_unt_gen
 	${CORE_MAIN_SOURCES}
 	${UTIL_TEST_SOURCES}
 	${UTIL_MAIN_SOURCES}
+	${WRITER_MAIN_SOURCES}
+	${SEGMENT_WRITER_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_gen
 	cppunit
@@ -116,7 +120,7 @@ add_executable(sy_unt_swr
 	${CORE_MAIN_SOURCES}
 	${UTIL_MAIN_SOURCES}
 	${WRITER_MAIN_SOURCES}
-	${WRITER_TEST_SOURCES}
+	${SYN_WRITER_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_swr
 	cppunit
@@ -345,6 +349,25 @@ target_link_libraries(sy_int_syl2_1
     boost_filesystem
 )
 set_property(TARGET sy_int_syl2_1 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+#
+
+add_executable(sy_unt_vpw
+    src/test/cpp/SyUntVpwRunner.cpp
+	${CORE_MAIN_SOURCES}
+	${UTIL_MAIN_SOURCES}
+	${WRITER_MAIN_SOURCES}
+	${VGTP_WRITER_TEST_SOURCES}
+)
+target_link_libraries(sy_unt_vpw
+	cppunit
+	netcdf
+	xerces-c
+	xqilla
+	boost_regex
+	boost_system
+	boost_filesystem
+)
+set_property(TARGET sy_unt_vpw PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
 add_executable(sy_int_syl2_2
     src/test/cpp/SyIntSyl2_2_Runner.cpp
