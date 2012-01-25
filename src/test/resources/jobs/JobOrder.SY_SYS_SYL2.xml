@@ -39,7 +39,7 @@
                 <Output>
                     <File_Type>SY2</File_Type>
                     <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
-                    <File_Name>testdata/SY2/SY_SYS_SYL2_2/S3A_SY_2_SYN____2013621T10920_2013621T101413_0270_001_002_0001_ARG_D_NT_TDS_01.SAFE</File_Name>
+                    <File_Name>testdata/SY2/SY_SYS_SYL2/S3A_SY_2_SYN____2013621T10920_2013621T101413_0270_001_002_0001_ARG_D_NT_TDS_01.SAFE</File_Name>
                 </Output>
             </List_of_Outputs>
         </Ipf_Proc>
