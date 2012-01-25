@@ -74,15 +74,6 @@ public:
 	void addObject(shared_ptr<Identifiable> object) throw (logic_error);
 
 	/**
-	 * Adds a segment to the context.
-	 * @param id The segment ID.
-	 * @param sizeL The size of the segment's row index dimension.
-	 * @param sizeM The size of the segment's column index dimension.
-	 * @return a reference to the segment added.
-	 */
-	Segment& addSegment(const string& id, long sizeL, long sizeM) throw (logic_error);
-
-	/**
 	 * Adds a single-line segment to the context.
 	 * @param id The segment ID.
 	 * @param sizeM The size of the segment's column index dimension.

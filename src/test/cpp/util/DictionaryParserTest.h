@@ -40,7 +40,7 @@ public:
 private:
     void testSy1ProductDescriptor();
     void testSy2ProductDescriptor();
-    void testBreakpointProductDescriptor();
+    void testVgpProductDescriptor();
     void checkSDRVariable(VariableDescriptor & v);
     void checkT550Variable(VariableDescriptor & v);
     void checkA550Variable(VariableDescriptor & v);
@@ -48,8 +48,6 @@ private:
     void checkLatitudeVariable(VariableDescriptor & v);
     void checkLongitudeVariable(VariableDescriptor & v);
     void checkAirPressureVariable(VariableDescriptor & v);
-    void testL1Data(const string& productDescriptorId);
-    void testL2Data(const string& productDescriptorId);
 
     shared_ptr<Dictionary> dictionary;
 }

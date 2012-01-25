@@ -87,17 +87,6 @@ Segment& Context::addSingleLineSegment(const string& id, long sizeM) throw (logi
 	return *segment;
 }
 
-Segment& Context::addSegment(const string& id, long sizeL, long sizeM) throw (logic_error) {
-	if (hasSegment(id)) {
-		BOOST_THROW_EXCEPTION( invalid_argument("A segment with ID '" + id + "' already exists in the context."));
-	}
-	shared_ptr<Segment> segment = shared_ptr<Segment>(new SwathSegment(id, sizeL, sizeM, 1, 0, sizeL - 1));
-	segmentMap[id] = segment;
-	segmentList.push_back(segment);
-
-	return *segment;
-}
-
 Segment& Context::addSwathSegment(const string& id, long sizeL, long sizeM, long sizeK, long minL, long maxL) throw (logic_error) {
 	if (hasSegment(id)) {
 		BOOST_THROW_EXCEPTION( invalid_argument("A segment with ID '" + id + "' already exists in the context."));

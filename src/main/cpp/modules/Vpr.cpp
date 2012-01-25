@@ -43,10 +43,10 @@ void Vpr::addTargetSegments(Context& context) {
     context.addSingleLineSegment(Constants::SEGMENT_VGP_LON, colCount);
 
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LAT_BNDS + "' to context.", getId());
-    context.addSegment(Constants::SEGMENT_VGP_LAT_BNDS, rowCount, 2);
+    context.addSingleLineSegment(Constants::SEGMENT_VGP_LAT_BNDS, rowCount * 2);
 
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LON_BNDS + "' to context.", getId());
-    context.addSegment(Constants::SEGMENT_VGP_LON_BNDS, colCount, 2);
+    context.addSingleLineSegment(Constants::SEGMENT_VGP_LON_BNDS, colCount * 2);
 
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP + "' to context.", getId());
     context.addMapSegment(Constants::SEGMENT_VGP, rowCount, colCount);
@@ -61,10 +61,10 @@ void Vpr::addTargetSegments(Context& context) {
     context.addSingleLineSegment(Constants::SEGMENT_VGP_LON_TP, subsampledColCount);
 
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LAT_TP_BNDS + "' to context.", getId());
-    context.addSegment(Constants::SEGMENT_VGP_LAT_TP_BNDS, subsampledRowCount, 2);
+    context.addSingleLineSegment(Constants::SEGMENT_VGP_LAT_TP_BNDS, subsampledRowCount * 2);
 
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LON_TP_BNDS + "' to context.", getId());
-    context.addSegment(Constants::SEGMENT_VGP_LON_TP_BNDS, subsampledColCount, 2);
+    context.addSingleLineSegment(Constants::SEGMENT_VGP_LON_TP_BNDS, subsampledColCount * 2);
 
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_TP + "' to context.", getId());
     context.addMapSegment(Constants::SEGMENT_VGP_TP, subsampledRowCount, subsampledColCount);
@@ -107,6 +107,11 @@ void Vpr::process(Context& context) {
 	const Segment& synCollocated = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 	const Segment& vgp = context.getSegment(Constants::SEGMENT_VGP);
 	const Segment& vgpTiePoint = context.getSegment(Constants::SEGMENT_VGP_TP);
+
+	setMapLats(context);
+	setMapLats(context);
+	setTpLats(context);
+	setTpLons(context);
 
 	const Grid& sourceGrid = synCollocated.getGrid();
 	const Grid& targetGrid = vgp.getGrid();
@@ -361,3 +366,46 @@ void Vpr::setValue(Accessor* sourceAccessor, Accessor* targetAccessor, size_t so
 	}
 }
 
+void Vpr::setMapLats(Context& context) const {
+	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LAT);
+	const Grid& g = s.getGrid();
+
+	Accessor& a = s.getAccessor("lat");
+
+	for (int m = 0; m < g.getSizeM(); m++) {
+		a.setDouble(g.getIndex(0, 0, m), getTargetLat(m));
+	}
+}
+
+void Vpr::setMapLons(Context& context) const {
+	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LON);
+	const Grid& g = s.getGrid();
+
+	Accessor& a = s.getAccessor("lon");
+
+	for (int m = 0; m < g.getSizeM(); m++) {
+		a.setDouble(g.getIndex(0, 0, m), getTargetLon(m));
+	}
+}
+
+void Vpr::setTpLats(Context& context) const {
+	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LAT_TP);
+	const Grid& g = s.getGrid();
+
+	Accessor& a = s.getAccessor("lat");
+
+	for (int m = 0; m < g.getSizeM(); m++) {
+		a.setDouble(g.getIndex(0, 0, m), getSubsampledTargetLat(m));
+	}
+}
+
+void Vpr::setTpLons(Context& context) const {
+	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LON_TP);
+	const Grid& g = s.getGrid();
+
+	Accessor& a = s.getAccessor("lon");
+
+	for (int m = 0; m < g.getSizeM(); m++) {
+		a.setDouble(g.getIndex(0, 0, m), getSubsampledTargetLon(m));
+	}
+}
