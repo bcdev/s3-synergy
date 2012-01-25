@@ -41,7 +41,6 @@ private:
 	void putFloatData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
 	void putDoubleData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
 
-
 	path targetDirPath;
 
 	map<string, int> ncFileIdMap;
