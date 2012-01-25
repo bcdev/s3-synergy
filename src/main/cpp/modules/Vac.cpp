@@ -21,9 +21,9 @@ Vac::Vac() : BasicModule("VAC"),
         vgtReflectanceAccessors(4),
         cO3(4),
         coordinates(8),
-        f(8),
         tpiWeights(1),
-        tpiIndices(1) {
+        tpiIndices(1),
+        f(8) {
 }
 
 Vac::~Vac() {

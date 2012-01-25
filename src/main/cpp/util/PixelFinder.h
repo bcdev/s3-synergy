@@ -29,6 +29,7 @@ public:
 	bool findSourcePixel(double targetLat, double targetLon, long& sourceK, long& sourceL, long& sourceM) const;
 
 private:
+	size_t computeTiePointCount(long sizeK, long sizeL, long sizeM) const;
 	void updateNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& sourceK, long& sourceL, long& sourceM, double& minDelta) const;
 
 	long getK(size_t index) const {
