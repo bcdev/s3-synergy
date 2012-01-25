@@ -373,7 +373,7 @@ void Vpr::setMapLats(Context& context) const {
 	}
 }
 
-void Vpr::setMapLats(Context& context) const {
+void Vpr::setMapLons(Context& context) const {
 	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LON);
 	const Grid& g = s.getGrid();
 
@@ -395,7 +395,7 @@ void Vpr::setTpLats(Context& context) const {
 	}
 }
 
-void Vpr::setTpLats(Context& context) const {
+void Vpr::setTpLons(Context& context) const {
 	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LON_TP);
 	const Grid& g = s.getGrid();
 
