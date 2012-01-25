@@ -26,10 +26,15 @@ void Vpr::start(Context& context) {
 	maxTargetLon = 62;
 	minTargetLon = -11;
 
-	const int latCellCount = maxTargetLat - minTargetLat;
-	const int lonCellCount = maxTargetLon - minTargetLon;
-	const int rowCount = latCellCount * TARGET_PIXELS_PER_DEGREE;
-	const int colCount = lonCellCount * TARGET_PIXELS_PER_DEGREE;
+	addTargetSegments(context);
+    addTargetVariables(context);
+}
+
+void Vpr::addTargetSegments(Context& context) {
+    const int latCellCount = maxTargetLat - minTargetLat;
+    const int lonCellCount = maxTargetLon - minTargetLon;
+    const int rowCount = latCellCount * TARGET_PIXELS_PER_DEGREE;
+    const int colCount = lonCellCount * TARGET_PIXELS_PER_DEGREE;
 
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LAT + "' to context.", getId());
     context.addSingleLineSegment(Constants::SEGMENT_VGP_LAT, rowCount);
@@ -46,8 +51,8 @@ void Vpr::start(Context& context) {
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP + "' to context.", getId());
     context.addMapSegment(Constants::SEGMENT_VGP, rowCount, colCount);
 
-	const int subsampledRowCount = latCellCount * SUBSAMPLED_TARGET_PIXELS_PER_DEGREE;
-	const int subsampledColCount = lonCellCount * SUBSAMPLED_TARGET_PIXELS_PER_DEGREE;
+    const int subsampledRowCount = latCellCount * SUBSAMPLED_TARGET_PIXELS_PER_DEGREE;
+    const int subsampledColCount = lonCellCount * SUBSAMPLED_TARGET_PIXELS_PER_DEGREE;
 
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LAT_TP + "' to context.", getId());
     context.addSingleLineSegment(Constants::SEGMENT_VGP_LAT_TP, subsampledRowCount);
@@ -63,8 +68,6 @@ void Vpr::start(Context& context) {
 
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_TP + "' to context.", getId());
     context.addMapSegment(Constants::SEGMENT_VGP_TP, subsampledRowCount, subsampledColCount);
-
-    addTargetVariables(context);
 }
 
 void Vpr::addTargetVariables(Context& context) {
@@ -75,74 +78,73 @@ void Vpr::addTargetVariables(Context& context) {
 	context.getSegment(Constants::SEGMENT_VGP_LAT_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LAT_BNDS).getVariableDescriptor("lat_bnds"));
 	context.getSegment(Constants::SEGMENT_VGP_LON_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LON_BNDS).getVariableDescriptor("lon_bnds"));
 
-	Segment& t = context.getSegment(Constants::SEGMENT_VGP);
-	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("B0"));
-    t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("B2"));
-    t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("B3"));
-    t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("MIR"));
-    t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("SM"));
+	Segment& vgtSegment = context.getSegment(Constants::SEGMENT_VGP);
+	vgtSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("B0"));
+    vgtSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("B2"));
+    vgtSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("B3"));
+    vgtSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("MIR"));
+    vgtSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("SM"));
 
 	context.getSegment(Constants::SEGMENT_VGP_LAT_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LAT_TP).getVariableDescriptor("lat"));
 	context.getSegment(Constants::SEGMENT_VGP_LON_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LON_TP).getVariableDescriptor("lon"));
 	context.getSegment(Constants::SEGMENT_VGP_LAT_TP_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LAT_TP_BNDS).getVariableDescriptor("lat_bnds"));
 	context.getSegment(Constants::SEGMENT_VGP_LON_TP_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LON_TP_BNDS).getVariableDescriptor("lon_bnds"));
 
-	t = context.getSegment(Constants::SEGMENT_VGP_TP);
-	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("AG"));
-	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("OG"));
-	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("SAA"));
-	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("SZA"));
-	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("VAA"));
-	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("VZA"));
-	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("WVG"));
+	Segment& vgtTiePointSegment = context.getSegment(Constants::SEGMENT_VGP_TP);
+	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("AG"));
+	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("OG"));
+	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("SAA"));
+	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("SZA"));
+	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("VAA"));
+	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("VZA"));
+	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("WVG"));
 }
 
 void Vpr::process(Context& context) {
 	using std::floor;
 	using std::min;
 
-	const Segment& s = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-	const Segment& t = context.getSegment(Constants::SEGMENT_VGP);
-	const Segment& u = context.getSegment(Constants::SEGMENT_VGP_TP);
-	const Segment& v = context.getSegment(Constants::SEGMENT_OLC_TP);
+	const Segment& synCollocated = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+	const Segment& vgp = context.getSegment(Constants::SEGMENT_VGP);
+	const Segment& vgpTiePoint = context.getSegment(Constants::SEGMENT_VGP_TP);
 
-	const Grid& sourceGrid = s.getGrid();
-	const Grid& targetGrid = t.getGrid();
-	const Grid& subsampledGrid = u.getGrid();
+	const Grid& sourceGrid = synCollocated.getGrid();
+	const Grid& targetGrid = vgp.getGrid();
+	const Grid& subsampledTargetGrid = vgpTiePoint.getGrid();
 
     valarray<Accessor*> sourceAccessors(12);
     valarray<Accessor*> targetAccessors(12);
 
-	sourceAccessors[0] = &s.getAccessor("B0");
-    sourceAccessors[1] = &s.getAccessor("B2");
-    sourceAccessors[2] = &s.getAccessor("B3");
-    sourceAccessors[3] = &s.getAccessor("MIR");
-    sourceAccessors[4] = &s.getAccessor("SM");
-    sourceAccessors[5] = &s.getAccessor("AG");
-    sourceAccessors[6] = &s.getAccessor("OG");
-    sourceAccessors[7] = &s.getAccessor("WVG");
-    sourceAccessors[8] = &s.getAccessor("SAA");
-    sourceAccessors[9] = &s.getAccessor("SZA");
-    sourceAccessors[10] = &s.getAccessor("VAA");
-    sourceAccessors[11] = &s.getAccessor("VZA");
+	sourceAccessors[0] = &synCollocated.getAccessor("B0");
+    sourceAccessors[1] = &synCollocated.getAccessor("B2");
+    sourceAccessors[2] = &synCollocated.getAccessor("B3");
+    sourceAccessors[3] = &synCollocated.getAccessor("MIR");
+    sourceAccessors[4] = &synCollocated.getAccessor("SM");
+    sourceAccessors[5] = &synCollocated.getAccessor("AG");
+    sourceAccessors[6] = &synCollocated.getAccessor("OG");
+    sourceAccessors[7] = &synCollocated.getAccessor("WVG");
+    sourceAccessors[8] = &synCollocated.getAccessor("SAA");
+    sourceAccessors[9] = &synCollocated.getAccessor("SZA");
+    sourceAccessors[10] = &synCollocated.getAccessor("VAA");
+    sourceAccessors[11] = &synCollocated.getAccessor("VZA");
 
-	targetAccessors[0] = &t.getAccessor("B0");
-	targetAccessors[1] = &t.getAccessor("B2");
-	targetAccessors[2] = &t.getAccessor("B3");
-	targetAccessors[3] = &t.getAccessor("MIR");
-	targetAccessors[4] = &t.getAccessor("SM");
-	targetAccessors[5] = &u.getAccessor("AG");
-	targetAccessors[6] = &u.getAccessor("OG");
-	targetAccessors[7] = &u.getAccessor("WVG");
-	targetAccessors[8] = &u.getAccessor("SAA");
-	targetAccessors[9] = &u.getAccessor("SZA");
-	targetAccessors[10] = &u.getAccessor("VAA");
-	targetAccessors[11] = &u.getAccessor("VZA");
+	targetAccessors[0] = &vgp.getAccessor("B0");
+	targetAccessors[1] = &vgp.getAccessor("B2");
+	targetAccessors[2] = &vgp.getAccessor("B3");
+	targetAccessors[3] = &vgp.getAccessor("MIR");
+	targetAccessors[4] = &vgp.getAccessor("SM");
+	targetAccessors[5] = &vgpTiePoint.getAccessor("AG");
+	targetAccessors[6] = &vgpTiePoint.getAccessor("OG");
+	targetAccessors[7] = &vgpTiePoint.getAccessor("WVG");
+	targetAccessors[8] = &vgpTiePoint.getAccessor("SAA");
+	targetAccessors[9] = &vgpTiePoint.getAccessor("SZA");
+	targetAccessors[10] = &vgpTiePoint.getAccessor("VAA");
+	targetAccessors[11] = &vgpTiePoint.getAccessor("VZA");
 
-	const long firstTargetL = context.getFirstComputableL(t, *this);
-	context.getLogging().debug("Segment [" + t.toString() + "]: firstComputableL = " + lexical_cast<string>(firstTargetL), getId());
-	long lastTargetL = context.getLastComputableL(t, *this);
-	context.getLogging().debug("Segment [" + t.toString() + "]: lastComputableL = " + lexical_cast<string>(lastTargetL), getId());
+	const long firstTargetL = context.getFirstComputableL(vgp, *this);
+	context.getLogging().debug("Segment [" + vgp.toString() + "]: firstComputableL = " + lexical_cast<string>(firstTargetL), getId());
+	long lastTargetL = context.getLastComputableL(vgp, *this);
+	context.getLogging().debug("Segment [" + vgp.toString() + "]: lastComputableL = " + lexical_cast<string>(lastTargetL), getId());
 
     double minSourceLat = 90.0;
     double maxSourceLat = -90.0;
@@ -159,17 +161,17 @@ void Vpr::process(Context& context) {
     // Is the target region north of the source region, without overlap?
     if (minTargetLat > maxSourceLat) {
     	// Yes. Processing is completed.
-		context.setLastComputedL(t, *this, lastTargetL);
+		context.setLastComputedL(vgp, *this, lastTargetL);
 		return;
 	}
 
     // Is the target region south of the source region, without overlap?
-    if (maxTargetLat < minSourceLat && context.getLastComputableL(s, *this) < sourceGrid.getMaxL()) {
+    if (maxTargetLat < minSourceLat && context.getLastComputableL(synCollocated, *this) < sourceGrid.getMaxL()) {
     	// Yes. Processing will be completed later.
     	return;
 	}
 
-	const long lastComputedSourceL = context.getLastComputableL(s, *this);
+	const long lastComputedSourceL = context.getLastComputableL(synCollocated, *this);
 	long firstRequiredSourceL = sourceGrid.getLastL() + 1;
 
 	long sourceK = 0;
@@ -225,10 +227,10 @@ void Vpr::process(Context& context) {
 					}
 				}
 				// 5. Is the target pixel in the sub-sampled grid?
-				if (l % 8 != 0 || m % 8 != 0) {
+				if (l % 8 != 0 || m % 8 != 0) { // todo - why not '&&' instead of '||' ?
 					// Yes, set the samples of the sub-sampled target pixel
 					for (size_t i = 5; i < targetAccessors.size(); i++) {
-						const size_t targetIndex = subsampledGrid.getIndex(k, l / 8, m / 8);
+						const size_t targetIndex = subsampledTargetGrid.getIndex(k, l / 8, m / 8);
 
 						Accessor* sourceAccessor = sourceAccessors[i];
 						Accessor* targetAccessor = targetAccessors[i];
@@ -244,8 +246,8 @@ void Vpr::process(Context& context) {
 		}
 	}
 
-	context.setFirstRequiredL(s, *this, firstRequiredSourceL);
-	context.setLastComputedL(t, *this, lastTargetL);
+	context.setFirstRequiredL(synCollocated, *this, firstRequiredSourceL);
+	context.setLastComputedL(vgp, *this, lastTargetL);
 }
 
 void Vpr::getMinMaxSourceLat(double& minLat, double& maxLat) const {
@@ -354,7 +356,8 @@ void Vpr::setValue(Accessor* sourceAccessor, Accessor* targetAccessor, size_t so
 		break;
 	}
 	default:
-		break;
+	    BOOST_THROW_EXCEPTION(runtime_error("Unsupported variable type."));
+	    break;
 	}
 }
 

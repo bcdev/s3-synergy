@@ -18,15 +18,7 @@ PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) : geoLocati
 	const long sizeL = grid.getSizeL();
 	const long sizeM = grid.getSizeM();
 
-	size_t tpCount = 0;
-
-	for (long k = 0; k < sizeK; k++) {
-		for (long l = 0; l < sizeL; l += 64) {
-			for (long m = 0; m < sizeM; m += 64) {
-				tpCount++;
-			}
-		}
-	}
+	size_t tpCount = computeTiePointCount(sizeK, sizeL, sizeM);
 
 	tpIndices.resize(tpCount);
 	valarray<double> tpLats(tpCount);
@@ -86,19 +78,19 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, l
 		const long outerMinM = getM(outerMinN);
 		const long outerMaxM = getM(outerMaxN);
 
-		if (true) { // consider outer points in the N, S, E, and W
+		{ // consider outer points in the N, S, E, and W
 			updateNearestPixel(targetLat, targetLon, outerMinK, midL, outerMinM, k, l, m, delta);
 			updateNearestPixel(targetLat, targetLon, outerMaxK, midL, outerMaxM, k, l, m, delta);
 			updateNearestPixel(targetLat, targetLon, midK, outerMaxL, midM, k, l, m, delta);
 			updateNearestPixel(targetLat, targetLon, midK, outerMinL, midM, k, l, m, delta);
 		}
-		if (true) { // consider outer points in the NW, SW, SE, and NE
+		{ // consider outer points in the NW, SW, SE, and NE
 			updateNearestPixel(targetLat, targetLon, outerMinK, outerMinL, outerMinM, k, l, m, delta);
 			updateNearestPixel(targetLat, targetLon, outerMinK, outerMaxL, outerMinM, k, l, m, delta);
 			updateNearestPixel(targetLat, targetLon, outerMaxK, outerMaxL, outerMaxM, k, l, m, delta);
 			updateNearestPixel(targetLat, targetLon, outerMaxK, outerMinL, outerMaxM, k, l, m, delta);
 		}
-		if (true) { // consider inner points in the NW, SW, SE, and NE
+		{ // consider inner points in the NW, SW, SE, and NE
 			const long innerMinL = max(outerMinL, midL - b / 2);
 			const long innerMaxL = min(outerMaxL, midL + b / 2);
 			const long innerMinN = max(outerMinN, midN - b / 2);
@@ -120,9 +112,9 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, l
 }
 
 void PixelFinder::updateNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& resultK, long& resultL, long& resultM, double& maxDelta) const {
-	const size_t index = geoLocation.getGrid().getIndex(k, l, m);
-	const double sourceLat = geoLocation.getLat(index);
-	const double sourceLon = geoLocation.getLon(index);
+	const size_t sourceIndex = geoLocation.getGrid().getIndex(k, l, m);
+	const double sourceLat = geoLocation.getLat(sourceIndex);
+	const double sourceLon = geoLocation.getLon(sourceIndex);
 	const double delta = TiePointInterpolator<double>::cosineDistance(targetLon, targetLat, sourceLon, sourceLat);
 
 	if (delta > maxDelta) {
@@ -131,4 +123,16 @@ void PixelFinder::updateNearestPixel(double targetLat, double targetLon, long k,
 		resultM = m;
 		maxDelta = delta;
 	}
+}
+
+size_t PixelFinder::computeTiePointCount(long sizeK, long sizeL, long sizeM) const {
+    size_t tpCount = 0;
+    for (long k = 0; k < sizeK; k++) {
+        for (long l = 0; l < sizeL; l += 64) {
+            for (long m = 0; m < sizeM; m += 64) {
+                tpCount++;
+            }
+        }
+    }
+    return tpCount;
 }

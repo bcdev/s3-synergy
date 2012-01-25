@@ -23,6 +23,7 @@ public:
 private:
 	friend class VprTest;
 
+	void addTargetSegments(Context& context);
 	void addTargetVariables(Context& context);
 
 	double getLat(size_t index) const {
