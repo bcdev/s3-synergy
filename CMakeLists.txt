@@ -446,7 +446,7 @@ set_property(TARGET vgtp PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 ##
 # Project installation
 #
-install(TARGETS syl2
+install(TARGETS syl2 vgtp
   sy_unt_gen
   sy_unt_sre
   sy_unt_swr
