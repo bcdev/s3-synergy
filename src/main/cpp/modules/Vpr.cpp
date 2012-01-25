@@ -104,7 +104,7 @@ void Vpr::process(Context& context) {
 	using std::floor;
 	using std::min;
 
-	const Segment& synCollocated = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+	const Segment& syn = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 	const Segment& vgp = context.getSegment(Constants::SEGMENT_VGP);
 	const Segment& vgpTiePoint = context.getSegment(Constants::SEGMENT_VGP_TP);
 
@@ -117,25 +117,25 @@ void Vpr::process(Context& context) {
 	setTpLatBounds(context);
 	setTpLonBounds(context);
 
-	const Grid& sourceGrid = synCollocated.getGrid();
+	const Grid& sourceGrid = syn.getGrid();
 	const Grid& targetGrid = vgp.getGrid();
 	const Grid& subsampledTargetGrid = vgpTiePoint.getGrid();
 
     valarray<Accessor*> sourceAccessors(12);
     valarray<Accessor*> targetAccessors(12);
 
-	sourceAccessors[0] = &synCollocated.getAccessor("B0");
-    sourceAccessors[1] = &synCollocated.getAccessor("B2");
-    sourceAccessors[2] = &synCollocated.getAccessor("B3");
-    sourceAccessors[3] = &synCollocated.getAccessor("MIR");
-    sourceAccessors[4] = &synCollocated.getAccessor("SM");
-    sourceAccessors[5] = &synCollocated.getAccessor("AG");
-    sourceAccessors[6] = &synCollocated.getAccessor("OG");
-    sourceAccessors[7] = &synCollocated.getAccessor("WVG");
-    sourceAccessors[8] = &synCollocated.getAccessor("SAA");
-    sourceAccessors[9] = &synCollocated.getAccessor("SZA");
-    sourceAccessors[10] = &synCollocated.getAccessor("VAA");
-    sourceAccessors[11] = &synCollocated.getAccessor("VZA");
+	sourceAccessors[0] = &syn.getAccessor("B0");
+    sourceAccessors[1] = &syn.getAccessor("B2");
+    sourceAccessors[2] = &syn.getAccessor("B3");
+    sourceAccessors[3] = &syn.getAccessor("MIR");
+    sourceAccessors[4] = &syn.getAccessor("SM");
+    sourceAccessors[5] = &syn.getAccessor("AG");
+    sourceAccessors[6] = &syn.getAccessor("OG");
+    sourceAccessors[7] = &syn.getAccessor("WVG");
+    sourceAccessors[8] = &syn.getAccessor("SAA");
+    sourceAccessors[9] = &syn.getAccessor("SZA");
+    sourceAccessors[10] = &syn.getAccessor("VAA");
+    sourceAccessors[11] = &syn.getAccessor("VZA");
 
 	targetAccessors[0] = &vgp.getAccessor("B0");
 	targetAccessors[1] = &vgp.getAccessor("B2");
@@ -175,17 +175,17 @@ void Vpr::process(Context& context) {
 	}
 
     // Is the target region south of the source region, without overlap?
-    if (maxTargetLat < minSourceLat && context.getLastComputableL(synCollocated, *this) < sourceGrid.getMaxL()) {
+    if (maxTargetLat < minSourceLat && context.getLastComputableL(syn, *this) < sourceGrid.getMaxL()) {
     	// Yes. Processing will be completed later.
     	return;
 	}
 
-	const long lastComputedSourceL = context.getLastComputableL(synCollocated, *this);
-	long firstRequiredSourceL = sourceGrid.getLastL() + 1;
+	const long lastComputedSourceL = context.getLastComputableL(syn, *this);
 
 	long sourceK = 0;
 	long sourceL = 0;
 	long sourceM = 0;
+	long firstRequiredSourceL = 0;
 
 	PixelFinder pixelFinder(*this, DEGREES_PER_TARGET_PIXEL);
 
@@ -200,12 +200,11 @@ void Vpr::process(Context& context) {
 			continue;
 		}
 
+		firstRequiredSourceL = sourceGrid.getLastL() + 1;
+
 		for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
 			for (long m = targetGrid.getFirstM(); m < targetGrid.getFirstM() + targetGrid.getSizeM(); m++) {
 				const double targetLon = getTargetLon(m);
-				if (targetLon < minSourceLon || targetLon > maxSourceLon) {
-					continue;
-				}
 
 				const bool sourcePixelFound = pixelFinder.findSourcePixel(targetLat, targetLon, sourceK, sourceL, sourceM);
 				// 1. Is there a source pixel for the target pixel?
@@ -255,7 +254,7 @@ void Vpr::process(Context& context) {
 		}
 	}
 
-	context.setFirstRequiredL(synCollocated, *this, firstRequiredSourceL);
+	context.setFirstRequiredL(syn, *this, firstRequiredSourceL);
 	context.setLastComputedL(vgp, *this, lastTargetL);
 }
 
