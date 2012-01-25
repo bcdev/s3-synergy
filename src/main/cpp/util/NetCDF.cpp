@@ -230,6 +230,11 @@ void NetCDF::putValue(int fileId, int varId, const valarray<size_t>& indices, co
 	checkStatus(status, "putting data into file");
 }
 
+void NetCDF::putData(int fileId, int varId, const void* dataArray) {
+	const int status = nc_put_var(fileId, varId, dataArray);
+	checkStatus(status, "putting data into file");
+}
+
 void NetCDF::putData(int fileId, int varId, const valarray<size_t>& origin, const valarray<size_t>& shape, const void* dataArray) {
 	const valarray<ptrdiff_t> strides(1, origin.size());
 	const int status = nc_put_vars(fileId, varId, &origin[0], &shape[0], &strides[0], dataArray);

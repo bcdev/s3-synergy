@@ -114,6 +114,8 @@ public:
 
 	static void putValue(int fileId, int varId, const valarray<size_t>& indices, const void* value);
 
+	static void putData(int fileId, int varId, const void* dataArray);
+
 	static void putData(int fileId, int varId, const valarray<size_t>& origin,
 			const valarray<size_t>& shape, const void* dataArray);
 

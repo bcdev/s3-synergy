@@ -35,76 +35,58 @@ const vector<SegmentDescriptor*> VgtPWriter::getSegmentDescriptors(const Diction
 
 void VgtPWriter::writeCommonVariables(const Context& context) {
     valarray<int> fileIds = getFileIds();
-    for(size_t i = 0; i < fileIds.size(); i++) {
+    for (size_t i = 0; i < fileIds.size(); i++) {
         const int fileId = fileIds[i];
         bool fileContainsSubsampledSegments = fileSubsampledMap[fileId];
         vector<VariableDescriptor*> commonVariables;
-        if(fileContainsSubsampledSegments) {
+        if (fileContainsSubsampledSegments) {
             commonVariables = getSubsampledCommonVariables(context.getDictionary());
         } else {
             commonVariables = getNonSubsampledCommonVariables(context.getDictionary());
         }
         valarray<size_t> origin;
         valarray<size_t> shape;
-        foreach(VariableDescriptor* commonVariable, commonVariables) {
+        foreach (VariableDescriptor* commonVariable, commonVariables) {
             context.getLogging().debug("Writing common variable '" + commonVariable->getName() + "'.", getId());
             const int varId = NetCDF::getVariableId(fileId, commonVariable->getName());
             const Segment& segment = context.getSegment(commonVariable->getSegmentName());
-            const Grid& grid = segment.getGrid();
             const Accessor& accessor = segment.getAccessor(commonVariable->getName());
-            const size_t dimCount = commonVariable->getDimensions().size();
-            if (accessor.canReturnDataPointer()) {
-                IOUtils::createStartVector(dimCount, grid.getFirstL(), origin);
-                IOUtils::createCountVector(dimCount, grid.getSizeK(), grid.getLastL() - grid.getFirstL() + 1, grid.getSizeM(), shape);
-                NetCDF::putData(fileId, varId, origin, shape, accessor.getUntypedData());
-            } else {
-                valarray<size_t> indices(2);
-                const long firstL = segment.getGrid().getFirstL();
-                const long lastL = segment.getGrid().getLastL();
-                context.getLogging().debug("firstL=" + lexical_cast<string>(firstL) + ", lastL=" + lexical_cast<string>(lastL) + ".", getId());
-                for (long l = firstL; l <= lastL; l++) {
-                    for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
-                        const size_t index = grid.getIndex(0, l, m);
-                        indices[0] = l;
-                        indices[1] = m;
-                        NetCDF::putValue(fileId, varId, indices, accessor.getUntypedValue(index));
-                    }
-                }
-            }
+            NetCDF::putData(fileId, varId, accessor.getUntypedData());
         }
     }
 }
 
-void VgtPWriter::defineCommonDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, int>& commonDimIds) {
+void VgtPWriter::defineCommonDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, valarray<int> >& commonDimIds) {
     vector<VariableDescriptor*> variables;
     if(isSubsampledSegment(segmentName)) {
         variables = getSubsampledCommonVariables(dict);
     } else {
         variables = getNonSubsampledCommonVariables(dict);
     }
-    // utilize that there is exactly one dimension for each variable and vice versa
     for(size_t i = 0; i < variables.size(); i++) {
         const VariableDescriptor* variableDescriptor = variables[i];
-        const Dimension* dim = variableDescriptor->getDimensions()[0];
-        int dimId = NetCDF::findDimension(fileId, dim->getName());
-        if(dimId == -1) {
-            dimId = NetCDF::defineDimension(fileId, dim->getName(), dim->getSize());
+        valarray<int> dimIds(variableDescriptor->getDimensions().size());
+        for(size_t j = 0; j < variableDescriptor->getDimensions(); j++) {
+        	const Dimension* dim = variableDescriptor->getDimensions()[j];
+        	int dimId = NetCDF::findDimension(fileId, dim->getName());
+        	if(dimId == -1) {
+        		dimId = NetCDF::defineDimension(fileId, dim->getName(), dim->getSize());
+        	}
+        	dimIds[j] = dimId;
         }
-        commonDimIds[variableDescriptor] = dimId;
+        commonDimIds[variableDescriptor] = dimIds;
     }
 }
 
-void VgtPWriter::defineCommonVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, int>& commonDimIds) {
+void VgtPWriter::defineCommonVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, valarray<int> >& commonDimIds) {
     vector<VariableDescriptor*> variables;
     if(isSubsampledSegment(segmentName)) {
         variables = getSubsampledCommonVariables(dict);
     } else {
         variables = getNonSubsampledCommonVariables(dict);
     }
-    valarray<int> dimIds(1);
     foreach(VariableDescriptor* variableDescriptor, variables) {
-        dimIds[0] = commonDimIds.at(variableDescriptor);
-        NetCDF::defineVariable(fileId, variableDescriptor->getName(), variableDescriptor->getType(), dimIds);
+        NetCDF::defineVariable(fileId, variableDescriptor->getName(), variableDescriptor->getType(), commonDimIds.at(variableDescriptor));
     }
 }
 

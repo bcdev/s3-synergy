@@ -35,8 +35,8 @@ protected:
 	virtual const string& getSafeManifestName() const = 0;
 	virtual const vector<SegmentDescriptor*> getSegmentDescriptors(const Dictionary& dict) const = 0;
 	virtual void writeCommonVariables(const Context& context) = 0;
-	virtual void defineCommonDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, int>& commonDimIds) = 0;
-	virtual void defineCommonVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, int>& commonDimIds) = 0;
+	virtual void defineCommonDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, valarray<int> >& commonDimIds) = 0;
+	virtual void defineCommonVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, valarray<int> >& commonDimIds) = 0;
 	virtual void resolveSubsampling(int fileId, const string& segmentName) = 0;
 private:
 	friend class AbstractWriterTest;

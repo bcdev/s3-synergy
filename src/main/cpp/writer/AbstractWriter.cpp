@@ -145,7 +145,7 @@ void AbstractWriter::defineNcVar(const Context& context, const ProductDescriptor
 
 		valarray<int> dimIds;
 		defineDimensions(fileId, variableName, variableDescriptor.getDimensions(), grid, dimIds);
-		map<const VariableDescriptor*, int> commonDimIds;
+		map<const VariableDescriptor*, valarray<int> > commonDimIds;
 		defineCommonDimensions(fileId, segmentDescriptor.getName(), context.getDictionary(), commonDimIds);
 		defineCommonVariables(fileId, segmentDescriptor.getName(), context.getDictionary(), commonDimIds);
 
