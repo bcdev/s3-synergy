@@ -20,6 +20,22 @@
                 <Name>Segment_Line_Count</Name>
                 <Value>2000</Value> <!-- Value range: [8, 2000], Default: 2000 -->
             </Processing_Parameter>
+            <Processing_Parameter>
+                <Name>VGT_Northernmost_Latitude</Name>
+                <Value>75</Value> <!-- Value range: [-56, 75], Default: 75 -->
+            </Processing_Parameter>
+            <Processing_Parameter>
+                <Name>VGT_Southernmost_Latitude</Name>
+                <Value>25</Value> <!-- Value range: [-56, 75], Default: -56 -->
+            </Processing_Parameter>
+            <Processing_Parameter>
+                <Name>VGT_Westernmost_Longitude</Name>
+                <Value>-11</Value> <!-- Value range: [-180, 180], Default: -180 -->
+            </Processing_Parameter>
+            <Processing_Parameter>
+                <Name>VGT_Easternmost_Longitude</Name>
+                <Value>62</Value> <!-- Value range: [-180, 180], Default: 180 -->
+            </Processing_Parameter>
         </Dynamic_Processing_Parameters>
     </Ipf_Conf>
     <List_of_Ipf_Procs>

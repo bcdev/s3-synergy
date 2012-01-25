@@ -10,7 +10,9 @@
 *.build/
 target/
 /bin/
+/config/
 /files/
+/jobs/
 /testdata/
 /modules/
 CMakeCache.txt
