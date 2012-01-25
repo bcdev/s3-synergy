@@ -28,6 +28,18 @@ public:
 private:
 
 	void createNcVar(const Segment& segment, const string& varName);
+	void* getData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+
+	void* getByteData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+	void* getShortData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+	void* getIntData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+	void* getLongData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+	void* getUByteData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+	void* getUShortData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+	void* getUIntData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+	void* getULongData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+	void* getFloatData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+	void* getDoubleData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
 
 	path targetDirPath;
 
