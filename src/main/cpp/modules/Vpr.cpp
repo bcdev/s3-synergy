@@ -192,24 +192,25 @@ void Vpr::process(Context& context) {
 	for (long l = firstTargetL; l <= lastTargetL; l++) {
 		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
 
-		const double targetLat = getTargetLat(l);
-		if (targetLat > maxSourceLat) {
-			continue;
-		}
-		if (targetLat < minSourceLat) {
-			continue;
-		}
-
 		firstRequiredSourceL = sourceGrid.getLastL() + 1;
 
 		for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
 			for (long m = targetGrid.getFirstM(); m < targetGrid.getFirstM() + targetGrid.getSizeM(); m++) {
+				const double targetLat = getTargetLat(l);
 				const double targetLon = getTargetLon(m);
-
 				const bool sourcePixelFound = pixelFinder.findSourcePixel(targetLat, targetLon, sourceK, sourceL, sourceM);
+
 				// 1. Is there a source pixel for the target pixel?
 				if (!sourcePixelFound) {
-					// No.
+					// No. Set fill values and continue
+					for (size_t i = 0; i < 5; i++) {
+						targetAccessors[i]->setFillValue(targetGrid.getIndex(k, l, m));
+					}
+					if (l % 8 == 0 && m % 8 == 0) {
+						for (size_t i = 5; i < targetAccessors.size(); i++) {
+							targetAccessors[i]->setFillValue(subsampledTargetGrid.getIndex(k, l / 8, m / 8));
+						}
+					}
 					continue;
 				}
 
