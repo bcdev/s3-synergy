@@ -101,10 +101,14 @@ void Vpr::process(Context& context) {
 	using std::floor;
 	using std::min;
 
+	setMapLats(context);
+	setMapLats(context);
+	setTpLats(context);
+	setTpLons(context);
+
 	const Segment& s = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 	const Segment& t = context.getSegment(Constants::SEGMENT_VGP);
 	const Segment& u = context.getSegment(Constants::SEGMENT_VGP_TP);
-	const Segment& v = context.getSegment(Constants::SEGMENT_OLC_TP);
 
 	const Grid& sourceGrid = s.getGrid();
 	const Grid& targetGrid = t.getGrid();
@@ -358,3 +362,46 @@ void Vpr::setValue(Accessor* sourceAccessor, Accessor* targetAccessor, size_t so
 	}
 }
 
+void Vpr::setMapLats(Context& context) const {
+	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LAT);
+	const Grid& g = s.getGrid();
+
+	Accessor& a = s.getAccessor("lat");
+
+	for (int m = 0; m < g.getSizeM(); m++) {
+		a.setDouble(g.getIndex(0, 0, m), getTargetLat(m));
+	}
+}
+
+void Vpr::setMapLats(Context& context) const {
+	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LON);
+	const Grid& g = s.getGrid();
+
+	Accessor& a = s.getAccessor("lon");
+
+	for (int m = 0; m < g.getSizeM(); m++) {
+		a.setDouble(g.getIndex(0, 0, m), getTargetLon(m));
+	}
+}
+
+void Vpr::setTpLats(Context& context) const {
+	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LAT_TP);
+	const Grid& g = s.getGrid();
+
+	Accessor& a = s.getAccessor("lat");
+
+	for (int m = 0; m < g.getSizeM(); m++) {
+		a.setDouble(g.getIndex(0, 0, m), getSubsampledTargetLat(m));
+	}
+}
+
+void Vpr::setTpLats(Context& context) const {
+	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LON_TP);
+	const Grid& g = s.getGrid();
+
+	Accessor& a = s.getAccessor("lon");
+
+	for (int m = 0; m < g.getSizeM(); m++) {
+		a.setDouble(g.getIndex(0, 0, m), getSubsampledTargetLon(m));
+	}
+}
