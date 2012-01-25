@@ -185,7 +185,6 @@ void* SegmentWriter::getData(const Accessor& accessor, long firstL, long lastL, 
 
 void* SegmentWriter::getByteData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     size_t counter = 0;
-    valarray<size_t> indices(2);
     valarray<int8_t> data(accessor.getSampleCount());
     for (long l = firstL; l <= lastL; l++) {
         for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
@@ -199,7 +198,6 @@ void* SegmentWriter::getByteData(const Accessor& accessor, long firstL, long las
 
 void* SegmentWriter::getShortData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     size_t counter = 0;
-    valarray<size_t> indices(2);
     valarray<int16_t> data(accessor.getSampleCount());
     for (long l = firstL; l <= lastL; l++) {
         for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
@@ -213,7 +211,6 @@ void* SegmentWriter::getShortData(const Accessor& accessor, long firstL, long la
 
 void* SegmentWriter::getIntData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     size_t counter = 0;
-    valarray<size_t> indices(2);
     valarray<int32_t> data(accessor.getSampleCount());
     for (long l = firstL; l <= lastL; l++) {
         for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
@@ -227,7 +224,6 @@ void* SegmentWriter::getIntData(const Accessor& accessor, long firstL, long last
 
 void* SegmentWriter::getLongData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     size_t counter = 0;
-    valarray<size_t> indices(2);
     valarray<int64_t> data(accessor.getSampleCount());
     for (long l = firstL; l <= lastL; l++) {
         for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
@@ -241,7 +237,6 @@ void* SegmentWriter::getLongData(const Accessor& accessor, long firstL, long las
 
 void* SegmentWriter::getUByteData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     size_t counter = 0;
-    valarray<size_t> indices(2);
     valarray<uint8_t> data(accessor.getSampleCount());
     for (long l = firstL; l <= lastL; l++) {
         for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
@@ -255,7 +250,6 @@ void* SegmentWriter::getUByteData(const Accessor& accessor, long firstL, long la
 
 void* SegmentWriter::getUShortData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     size_t counter = 0;
-    valarray<size_t> indices(2);
     valarray<uint16_t> data(accessor.getSampleCount());
     for (long l = firstL; l <= lastL; l++) {
         for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
@@ -269,7 +263,6 @@ void* SegmentWriter::getUShortData(const Accessor& accessor, long firstL, long l
 
 void* SegmentWriter::getUIntData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     size_t counter = 0;
-    valarray<size_t> indices(2);
     valarray<uint32_t> data(accessor.getSampleCount());
     for (long l = firstL; l <= lastL; l++) {
         for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
@@ -283,7 +276,6 @@ void* SegmentWriter::getUIntData(const Accessor& accessor, long firstL, long las
 
 void* SegmentWriter::getULongData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     size_t counter = 0;
-    valarray<size_t> indices(2);
     valarray<uint64_t> data(accessor.getSampleCount());
     for (long l = firstL; l <= lastL; l++) {
         for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
@@ -297,7 +289,6 @@ void* SegmentWriter::getULongData(const Accessor& accessor, long firstL, long la
 
 void* SegmentWriter::getFloatData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     size_t counter = 0;
-    valarray<size_t> indices(2);
     valarray<float> data(accessor.getSampleCount());
     for (long l = firstL; l <= lastL; l++) {
         for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
@@ -311,7 +302,6 @@ void* SegmentWriter::getFloatData(const Accessor& accessor, long firstL, long la
 
 void* SegmentWriter::getDoubleData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     size_t counter = 0;
-    valarray<size_t> indices(2);
     valarray<double> data(accessor.getSampleCount());
     for (long l = firstL; l <= lastL; l++) {
         for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
