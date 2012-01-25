@@ -103,8 +103,12 @@ void Vpr::process(Context& context) {
 
 	setMapLats(context);
 	setMapLats(context);
+	setMapLatBounds(context);
+	setMapLonBounds(context);
 	setTpLats(context);
 	setTpLons(context);
+	setTpLatBounds(context);
+	setTpLonBounds(context);
 
 	const Segment& s = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 	const Segment& t = context.getSegment(Constants::SEGMENT_VGP);
@@ -229,7 +233,7 @@ void Vpr::process(Context& context) {
 					}
 				}
 				// 5. Is the target pixel in the sub-sampled grid?
-				if (l % 8 != 0 || m % 8 != 0) {
+				if (l % 8 == 0 && m % 8 == 0) {
 					// Yes, set the samples of the sub-sampled target pixel
 					for (size_t i = 5; i < targetAccessors.size(); i++) {
 						const size_t targetIndex = subsampledGrid.getIndex(k, l / 8, m / 8);
@@ -384,6 +388,36 @@ void Vpr::setMapLons(Context& context) const {
 	}
 }
 
+void Vpr::setMapLatBounds(Context& context) const {
+	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LAT_BNDS);
+	const Grid& g = s.getGrid();
+
+	Accessor& a = s.getAccessor("lat_bnds");
+
+	for (int m = 0; m < g.getSizeM(); m += 2) {
+		const size_t index = g.getIndex(0, 0, m);
+		const double lat = getTargetLat(m / 2);
+
+		a.setDouble(index + 0, lat - DEGREES_PER_TARGET_PIXEL * 0.5);
+		a.setDouble(index + 1, lat + DEGREES_PER_TARGET_PIXEL * 0.5);
+	}
+}
+
+void Vpr::setMapLonBounds(Context& context) const {
+	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LON_BNDS);
+	const Grid& g = s.getGrid();
+
+	Accessor& a = s.getAccessor("lon_bnds");
+
+	for (int m = 0; m < g.getSizeM(); m += 2) {
+		const size_t index = g.getIndex(0, 0, m);
+		const double lon = getTargetLon(m / 2);
+
+		a.setDouble(index + 0, lon - DEGREES_PER_TARGET_PIXEL * 0.5);
+		a.setDouble(index + 1, lon + DEGREES_PER_TARGET_PIXEL * 0.5);
+	}
+}
+
 void Vpr::setTpLats(Context& context) const {
 	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LAT_TP);
 	const Grid& g = s.getGrid();
@@ -405,3 +439,35 @@ void Vpr::setTpLons(Context& context) const {
 		a.setDouble(g.getIndex(0, 0, m), getSubsampledTargetLon(m));
 	}
 }
+
+void Vpr::setTpLatBounds(Context& context) const {
+	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LAT_TP_BNDS);
+	const Grid& g = s.getGrid();
+
+	Accessor& a = s.getAccessor("lat_bnds");
+
+	for (int m = 0; m < g.getSizeM(); m += 2) {
+		const size_t index = g.getIndex(0, 0, m);
+		const double lat = getTargetLat(m / 2);
+
+		a.setDouble(index + 0, lat - DEGREES_PER_SUBSAMPLED_TARGET_PIXEL * 0.5);
+		a.setDouble(index + 1, lat + DEGREES_PER_SUBSAMPLED_TARGET_PIXEL * 0.5);
+	}
+}
+
+void Vpr::setTpLonBounds(Context& context) const {
+	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LON_TP_BNDS);
+	const Grid& g = s.getGrid();
+
+	Accessor& a = s.getAccessor("lon_bnds");
+
+	for (int m = 0; m < g.getSizeM(); m += 2) {
+		const size_t index = g.getIndex(0, 0, m);
+		const double lon = getTargetLon(m / 2);
+
+		a.setDouble(index + 0, lon - DEGREES_PER_SUBSAMPLED_TARGET_PIXEL * 0.5);
+		a.setDouble(index + 1, lon + DEGREES_PER_SUBSAMPLED_TARGET_PIXEL * 0.5);
+	}
+}
+
+

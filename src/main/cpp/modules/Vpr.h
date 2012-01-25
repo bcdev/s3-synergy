@@ -48,10 +48,15 @@ private:
 	double getSubsampledTargetLon(long m) const;
 
 	void setValue(Accessor* sourceAccessor, Accessor* targetAccessor, size_t sourceIndex, size_t targetIndex) const;
-    void setMapLats(Context& context) const;
+
+	void setMapLats(Context& context) const;
     void setMapLons(Context& context) const;
+    void setMapLatBounds(Context& context) const;
+    void setMapLonBounds(Context& context) const;
     void setTpLats(Context& context) const;
     void setTpLons(Context& context) const;
+    void setTpLatBounds(Context& context) const;
+    void setTpLonBounds(Context& context) const;
 
 	int maxTargetLat;
 	int minTargetLat;
