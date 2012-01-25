@@ -227,7 +227,7 @@ Accessor& SwathSegment::addVariableUShort(const string& name, uint16_t fillValue
 
 Accessor& SwathSegment::getAccessor(const string& name) const throw (logic_error) {
 	if (!hasVariable(name)) {
-		BOOST_THROW_EXCEPTION( logic_error("No accessor for variable " + name + "."));
+		BOOST_THROW_EXCEPTION( logic_error("No accessor for variable '" + name + "'."));
 	}
 	return *accessorMap.at(name);
 }

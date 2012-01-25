@@ -38,10 +38,10 @@ void Vpr::start(Context& context) {
     context.addSingleLineSegment(Constants::SEGMENT_VGP_LON, colCount);
 
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LAT_BNDS + "' to context.", getId());
-    context.addSegment(Constants::SEGMENT_VGP_LAT_BNDS, rowCount, 2);
+    context.addSingleLineSegment(Constants::SEGMENT_VGP_LAT_BNDS, rowCount * 2);
 
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LON_BNDS + "' to context.", getId());
-    context.addSegment(Constants::SEGMENT_VGP_LON_BNDS, colCount, 2);
+    context.addSingleLineSegment(Constants::SEGMENT_VGP_LON_BNDS, colCount * 2);
 
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP + "' to context.", getId());
     context.addMapSegment(Constants::SEGMENT_VGP, rowCount, colCount);
@@ -56,10 +56,10 @@ void Vpr::start(Context& context) {
     context.addSingleLineSegment(Constants::SEGMENT_VGP_LON_TP, subsampledColCount);
 
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LAT_TP_BNDS + "' to context.", getId());
-    context.addSegment(Constants::SEGMENT_VGP_LAT_TP_BNDS, subsampledRowCount, 2);
+    context.addSingleLineSegment(Constants::SEGMENT_VGP_LAT_TP_BNDS, subsampledRowCount * 2);
 
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LON_TP_BNDS + "' to context.", getId());
-    context.addSegment(Constants::SEGMENT_VGP_LON_TP_BNDS, subsampledColCount, 2);
+    context.addSingleLineSegment(Constants::SEGMENT_VGP_LON_TP_BNDS, subsampledColCount * 2);
 
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_TP + "' to context.", getId());
     context.addMapSegment(Constants::SEGMENT_VGP_TP, subsampledRowCount, subsampledColCount);
@@ -87,14 +87,14 @@ void Vpr::addTargetVariables(Context& context) {
 	context.getSegment(Constants::SEGMENT_VGP_LAT_TP_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LAT_TP_BNDS).getVariableDescriptor("lat_bnds"));
 	context.getSegment(Constants::SEGMENT_VGP_LON_TP_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LON_TP_BNDS).getVariableDescriptor("lon_bnds"));
 
-	t = context.getSegment(Constants::SEGMENT_VGP_TP);
-	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("AG"));
-	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("OG"));
-	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("SAA"));
-	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("SZA"));
-	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("VAA"));
-	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("VZA"));
-	t.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("WVG"));
+	Segment& u = context.getSegment(Constants::SEGMENT_VGP_TP);
+	u.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("AG"));
+	u.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("OG"));
+	u.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("SAA"));
+	u.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("SZA"));
+	u.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("VAA"));
+	u.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("VZA"));
+	u.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("WVG"));
 }
 
 void Vpr::process(Context& context) {
