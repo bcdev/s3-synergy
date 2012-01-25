@@ -66,7 +66,7 @@ void VgtPWriter::defineCommonDimensions(int fileId, const string& segmentName, c
     for(size_t i = 0; i < variables.size(); i++) {
         const VariableDescriptor* variableDescriptor = variables[i];
         valarray<int> dimIds(variableDescriptor->getDimensions().size());
-        for(size_t j = 0; j < variableDescriptor->getDimensions(); j++) {
+        for(size_t j = 0; j < variableDescriptor->getDimensions().size(); j++) {
         	const Dimension* dim = variableDescriptor->getDimensions()[j];
         	int dimId = NetCDF::findDimension(fileId, dim->getName());
         	if(dimId == -1) {
