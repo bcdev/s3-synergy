@@ -65,8 +65,7 @@ void SegmentWriter::process(Context& context) {
 	            if (accessor.canReturnDataPointer()) {
 	                NetCDF::putData(ncId, varId, origin, shape, accessor.getUntypedData());
 	            } else {
-	                const void* data = getData(accessor, firstL, lastL, grid);
-	                NetCDF::putData(ncId, varId, origin, shape, data);
+	                putData(ncId, varId, accessor, firstL, lastL, grid);
 	            }
 	        }
 	        context.setLastComputedL(segment, *this, lastL);
@@ -155,170 +154,210 @@ void SegmentWriter::createNcVar(const Segment& segment, const string& varName) {
 	NetCDF::putAttribute(fileId, varId, addOffset);
 }
 
-void* SegmentWriter::getData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
+void SegmentWriter::putData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     switch (accessor.getType()) {
     case Constants::TYPE_BYTE:
-        return getByteData(accessor, firstL, lastL, grid);
+        putByteData(ncId, varId, accessor, firstL, lastL, grid);
+        break;
     case Constants::TYPE_SHORT:
-        return getShortData(accessor, firstL, lastL, grid);
+        putShortData(ncId, varId, accessor, firstL, lastL, grid);
+        break;
     case Constants::TYPE_INT:
-        return getIntData(accessor, firstL, lastL, grid);
+        putIntData(ncId, varId, accessor, firstL, lastL, grid);
+        break;
     case Constants::TYPE_LONG:
-        return getLongData(accessor, firstL, lastL, grid);
+        putLongData(ncId, varId, accessor, firstL, lastL, grid);
+        break;
     case Constants::TYPE_UBYTE:
-        return getUByteData(accessor, firstL, lastL, grid);
+        putUByteData(ncId, varId, accessor, firstL, lastL, grid);
+        break;
     case Constants::TYPE_USHORT:
-        return getUShortData(accessor, firstL, lastL, grid);
+        putUShortData(ncId, varId, accessor, firstL, lastL, grid);
+        break;
     case Constants::TYPE_UINT:
-        return getUIntData(accessor, firstL, lastL, grid);
+        putUIntData(ncId, varId, accessor, firstL, lastL, grid);
+        break;
     case Constants::TYPE_ULONG:
-        return getULongData(accessor, firstL, lastL, grid);
+        putULongData(ncId, varId, accessor, firstL, lastL, grid);
+        break;
     case Constants::TYPE_FLOAT:
-        return getFloatData(accessor, firstL, lastL, grid);
+        putFloatData(ncId, varId, accessor, firstL, lastL, grid);
+        break;
     case Constants::TYPE_DOUBLE:
-        return getDoubleData(accessor, firstL, lastL, grid);
+        putDoubleData(ncId, varId, accessor, firstL, lastL, grid);
+        break;
     default:
         BOOST_THROW_EXCEPTION(runtime_error("Unsupported variable type."));
         break;
     }
 }
 
-void* SegmentWriter::getByteData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
-    size_t counter = 0;
-    valarray<size_t> indices(2);
+void SegmentWriter::putByteData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     valarray<int8_t> data(accessor.getSampleCount());
+    valarray<size_t> origin;
+    valarray<size_t> shape;
+    IOUtils::createCountVector(3, grid.getSizeK(), 1, grid.getSizeM(), shape);
     for (long l = firstL; l <= lastL; l++) {
+        IOUtils::createStartVector(3, l, origin);
+        size_t counter = 0;
         for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
             const size_t index = grid.getIndex(0, l, m);
             data[counter] = accessor.getByte(index);
             counter++;
         }
+        NetCDF::putData(ncId, varId, origin, shape, &data[0]);
     }
-    return &data[0];
 }
 
-void* SegmentWriter::getShortData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
-    size_t counter = 0;
-    valarray<size_t> indices(2);
-    valarray<int16_t> data(accessor.getSampleCount());
-    for (long l = firstL; l <= lastL; l++) {
-        for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
-            const size_t index = grid.getIndex(0, l, m);
-            data[counter] = accessor.getShort(index);
-            counter++;
-        }
-    }
-    return &data[0];
-}
-
-void* SegmentWriter::getIntData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
-    size_t counter = 0;
-    valarray<size_t> indices(2);
-    valarray<int32_t> data(accessor.getSampleCount());
-    for (long l = firstL; l <= lastL; l++) {
-        for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
-            const size_t index = grid.getIndex(0, l, m);
-            data[counter] = accessor.getInt(index);
-            counter++;
-        }
-    }
-    return &data[0];
-}
-
-void* SegmentWriter::getLongData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
-    size_t counter = 0;
-    valarray<size_t> indices(2);
-    valarray<int64_t> data(accessor.getSampleCount());
-    for (long l = firstL; l <= lastL; l++) {
-        for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
-            const size_t index = grid.getIndex(0, l, m);
-            data[counter] = accessor.getLong(index);
-            counter++;
-        }
-    }
-    return &data[0];
-}
-
-void* SegmentWriter::getUByteData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
-    size_t counter = 0;
-    valarray<size_t> indices(2);
+void SegmentWriter::putUByteData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     valarray<uint8_t> data(accessor.getSampleCount());
+    valarray<size_t> origin;
+    valarray<size_t> shape;
+    IOUtils::createCountVector(3, grid.getSizeK(), 1, grid.getSizeM(), shape);
     for (long l = firstL; l <= lastL; l++) {
+        IOUtils::createStartVector(3, l, origin);
+        size_t counter = 0;
         for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
             const size_t index = grid.getIndex(0, l, m);
             data[counter] = accessor.getUByte(index);
             counter++;
         }
+        NetCDF::putData(ncId, varId, origin, shape, &data[0]);
     }
-    return &data[0];
 }
 
-void* SegmentWriter::getUShortData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
-    size_t counter = 0;
-    valarray<size_t> indices(2);
-    valarray<uint16_t> data(accessor.getSampleCount());
+void SegmentWriter::putShortData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
+    valarray<int16_t> data(accessor.getSampleCount());
+    valarray<size_t> origin;
+    valarray<size_t> shape;
+    IOUtils::createCountVector(3, grid.getSizeK(), 1, grid.getSizeM(), shape);
     for (long l = firstL; l <= lastL; l++) {
+        IOUtils::createStartVector(3, l, origin);
+        size_t counter = 0;
+        for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
+            const size_t index = grid.getIndex(0, l, m);
+            data[counter] = accessor.getShort(index);
+            counter++;
+        }
+        NetCDF::putData(ncId, varId, origin, shape, &data[0]);
+    }
+}
+
+void SegmentWriter::putUShortData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
+    valarray<uint16_t> data(accessor.getSampleCount());
+    valarray<size_t> origin;
+    valarray<size_t> shape;
+    IOUtils::createCountVector(3, grid.getSizeK(), 1, grid.getSizeM(), shape);
+    for (long l = firstL; l <= lastL; l++) {
+        IOUtils::createStartVector(3, l, origin);
+        size_t counter = 0;
         for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
             const size_t index = grid.getIndex(0, l, m);
             data[counter] = accessor.getUShort(index);
             counter++;
         }
+        NetCDF::putData(ncId, varId, origin, shape, &data[0]);
     }
-    return &data[0];
 }
 
-void* SegmentWriter::getUIntData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
-    size_t counter = 0;
-    valarray<size_t> indices(2);
-    valarray<uint32_t> data(accessor.getSampleCount());
+void SegmentWriter::putIntData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
+    valarray<int32_t> data(accessor.getSampleCount());
+    valarray<size_t> origin;
+    valarray<size_t> shape;
+    IOUtils::createCountVector(3, grid.getSizeK(), 1, grid.getSizeM(), shape);
     for (long l = firstL; l <= lastL; l++) {
+        IOUtils::createStartVector(3, l, origin);
+        size_t counter = 0;
+        for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
+            const size_t index = grid.getIndex(0, l, m);
+            data[counter] = accessor.getInt(index);
+            counter++;
+        }
+        NetCDF::putData(ncId, varId, origin, shape, &data[0]);
+    }
+}
+
+void SegmentWriter::putUIntData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
+    valarray<uint32_t> data(accessor.getSampleCount());
+    valarray<size_t> origin;
+    valarray<size_t> shape;
+    IOUtils::createCountVector(3, grid.getSizeK(), 1, grid.getSizeM(), shape);
+    for (long l = firstL; l <= lastL; l++) {
+        IOUtils::createStartVector(3, l, origin);
+        size_t counter = 0;
         for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
             const size_t index = grid.getIndex(0, l, m);
             data[counter] = accessor.getUInt(index);
             counter++;
         }
+        NetCDF::putData(ncId, varId, origin, shape, &data[0]);
     }
-    return &data[0];
 }
 
-void* SegmentWriter::getULongData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
-    size_t counter = 0;
-    valarray<size_t> indices(2);
-    valarray<uint64_t> data(accessor.getSampleCount());
+void SegmentWriter::putLongData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
+    valarray<int64_t> data(accessor.getSampleCount());
+    valarray<size_t> origin;
+    valarray<size_t> shape;
+    IOUtils::createCountVector(3, grid.getSizeK(), 1, grid.getSizeM(), shape);
     for (long l = firstL; l <= lastL; l++) {
+        IOUtils::createStartVector(3, l, origin);
+        size_t counter = 0;
+        for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
+            const size_t index = grid.getIndex(0, l, m);
+            data[counter] = accessor.getLong(index);
+            counter++;
+        }
+        NetCDF::putData(ncId, varId, origin, shape, &data[0]);
+    }
+}
+
+void SegmentWriter::putULongData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
+    valarray<uint64_t> data(accessor.getSampleCount());
+    valarray<size_t> origin;
+    valarray<size_t> shape;
+    IOUtils::createCountVector(3, grid.getSizeK(), 1, grid.getSizeM(), shape);
+    for (long l = firstL; l <= lastL; l++) {
+        IOUtils::createStartVector(3, l, origin);
+        size_t counter = 0;
         for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
             const size_t index = grid.getIndex(0, l, m);
             data[counter] = accessor.getULong(index);
             counter++;
         }
+        NetCDF::putData(ncId, varId, origin, shape, &data[0]);
     }
-    return &data[0];
 }
 
-void* SegmentWriter::getFloatData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
-    size_t counter = 0;
-    valarray<size_t> indices(2);
+void SegmentWriter::putFloatData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     valarray<float> data(accessor.getSampleCount());
+    valarray<size_t> origin;
+    valarray<size_t> shape;
+    IOUtils::createCountVector(3, grid.getSizeK(), 1, grid.getSizeM(), shape);
     for (long l = firstL; l <= lastL; l++) {
+        IOUtils::createStartVector(3, l, origin);
+        size_t counter = 0;
         for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
             const size_t index = grid.getIndex(0, l, m);
             data[counter] = accessor.getFloat(index);
             counter++;
         }
+        NetCDF::putData(ncId, varId, origin, shape, &data[0]);
     }
-    return &data[0];
 }
 
-void* SegmentWriter::getDoubleData(const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
-    size_t counter = 0;
-    valarray<size_t> indices(2);
+void SegmentWriter::putDoubleData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     valarray<double> data(accessor.getSampleCount());
+    valarray<size_t> origin;
+    valarray<size_t> shape;
+    IOUtils::createCountVector(3, grid.getSizeK(), 1, grid.getSizeM(), shape);
     for (long l = firstL; l <= lastL; l++) {
+        IOUtils::createStartVector(3, l, origin);
+        size_t counter = 0;
         for (long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
             const size_t index = grid.getIndex(0, l, m);
             data[counter] = accessor.getDouble(index);
             counter++;
         }
+        NetCDF::putData(ncId, varId, origin, shape, &data[0]);
     }
-    return &data[0];
 }
