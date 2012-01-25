@@ -12,6 +12,7 @@
 #include "../../../../src/main/cpp/writer/SynL2Writer.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
+#include "../../../../src/main/cpp/core/NullLogging.h"
 
 #include "SynL2SegmentProvider.h"
 #include "AbstractWriterTest.h"
@@ -39,13 +40,13 @@ void AbstractWriterTest::prepareContext() {
     context->setErrorHandler(errorHandler);
 
     JobOrderParser jobOrderParser;
-    shared_ptr<JobOrder> jobOrder = jobOrderParser.parse(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_SWR.xml");
+    shared_ptr<JobOrder> jobOrder = jobOrderParser.parse(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_GEN.xml");
     context->setJobOrder(jobOrder);
 
     shared_ptr<Dictionary> dictionary = DictionaryParser().parse(Constants::S3_SYNERGY_HOME + "/src/main/resources/dictionary");
     context->setDictionary(dictionary);
 
-    shared_ptr<Logging> logging = jobOrderParser.createLogging("LOG.SY_UNT_SWR");
+    shared_ptr<Logging> logging = shared_ptr<Logging>(new NullLogging());
     context->setLogging(logging);
 }
 

@@ -23,7 +23,7 @@ file(GLOB_RECURSE MODULES_MAIN_SOURCES src/main/cpp/modules/*.cpp)
 file(GLOB_RECURSE WRITER_MAIN_SOURCES src/main/cpp/writer/*.cpp)
 file(GLOB_RECURSE SYN_WRITER_TEST_SOURCES src/test/cpp/writer/SynL2WriterTest.cpp  src/test/cpp/writer/SynL2SegmentProvider.cpp)
 file(GLOB_RECURSE VGTP_WRITER_TEST_SOURCES src/test/cpp/writer/VgtPWriterTest.cpp src/test/cpp/writer/VgtSegmentProvider.cpp)
-file(GLOB_RECURSE SEGMENT_WRITER_TEST_SOURCES src/test/cpp/writer/SegmentWriterTest.cpp src/test/cpp/writer/MapSegmentProvider.cpp)
+file(GLOB_RECURSE SEGMENT_WRITER_TEST_SOURCES src/test/cpp/writer/SegmentWriterTest.cpp src/test/cpp/writer/MapSegmentProvider.cpp src/test/cpp/writer/AbstractWriterTest.cpp)
 file(GLOB_RECURSE UTIL_MAIN_SOURCES src/main/cpp/util/*.cpp)
 file(GLOB_RECURSE UTIL_TEST_SOURCES src/test/cpp/util/*.cpp)
 
