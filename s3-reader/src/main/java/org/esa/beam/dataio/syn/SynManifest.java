@@ -1,4 +1,4 @@
-package org.esa.beam.dataio.olci;
+package org.esa.beam.dataio.syn;
 
 import org.esa.beam.framework.datamodel.ProductData;
 import org.esa.beam.util.XPathHelper;
@@ -13,17 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class encapsulating the manifest file of an Olci Level 2 product.
+ * Class encapsulating the manifest file of a SYN product.
  *
- * @author Marco Peters
+ * @author Olaf Danne
  * @since 1.0
  */
-class OlciL2Manifest {
+class SynManifest {
 
     private Document doc;
     private XPathHelper xPathHelper;
 
-    OlciL2Manifest(Document manifestDocument) {
+    SynManifest(Document manifestDocument) {
         doc = manifestDocument;
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPathHelper = new XPathHelper(xPath);
@@ -76,15 +76,30 @@ class OlciL2Manifest {
         return fileNames;
     }
 
+    public List<String> getTiepointsFileNames() {
+        NodeList dataObjects = xPathHelper.getNodeList(
+                "/XFDU/metadataSection/metadataObject[@repID='tiepointsSchema']", doc);
+        List<String> fileNames = new ArrayList<String>();
+        for (int i = 0; i < dataObjects.getLength(); i++) {
+            Node item = dataObjects.item(i);
+            String fileName = xPathHelper.getString("./byteStream/fileLocation/@href", item);
+            fileNames.add(fileName);
+        }
+
+        return fileNames;
+    }
+
     public String getGeoCoordinatesFileName() {
-        Node geoDataObject = xPathHelper.getNode("/XFDU/dataObjectSection/dataObject[@repID='geoCoordinatesSchema']",
+        Node geoDataObject = xPathHelper.getNode("/XFDU/metadataSection/metadataObject[@repID='geocoordinatesSchema']",
                 doc);
         return xPathHelper.getString("./byteStream/fileLocation/@href", geoDataObject);
     }
 
-    public String getTiePointsFileName() {
-        Node geoDataObject = xPathHelper.getNode("/XFDU/dataObjectSection/dataObject[@repID='tiepointsDataSchema']",
+    public String getTimeFileName() {
+        Node timeObject = xPathHelper.getNode("/XFDU/metadataSection/metadataObject[@repID='timeCoordinatesSchema']",
                 doc);
-        return xPathHelper.getString("./byteStream/fileLocation/@href", geoDataObject);
+        return xPathHelper.getString("./byteStream/fileLocation/@href", timeObject);
     }
+
+
 }

@@ -35,7 +35,9 @@ public class SlstrL2SSTManifest {
     public ProductData.UTC getStartTime() {
         Node periodNode = xPathHelper.getNode("/XFDU/metadataSection/metadataObject[@ID='acquisitionPeriod']", doc);
         String utcString = xPathHelper.getString("//metadataWrap/xmlData/acquisitionPeriod/startTime", periodNode);
-        utcString = removeTimeZoneCharacter(utcString);
+        if (!Character.isDigit(utcString.charAt(utcString.length() - 1))) {
+            utcString = removeTimeZoneCharacter(utcString);
+        }
         try {
             return ProductData.UTC.parse(utcString, "yyyy-MM-dd'T'HH:mm:ss");
         } catch (ParseException ignored) {
@@ -50,7 +52,9 @@ public class SlstrL2SSTManifest {
     public ProductData.UTC getStopTime() {
         Node periodNode = xPathHelper.getNode("/XFDU/metadataSection/metadataObject[@ID='acquisitionPeriod']", doc);
         String utcString = xPathHelper.getString("//metadataWrap/xmlData/acquisitionPeriod/stopTime", periodNode);
-        utcString = removeTimeZoneCharacter(utcString);
+        if (!Character.isDigit(utcString.charAt(utcString.length() - 1))) {
+            utcString = removeTimeZoneCharacter(utcString);
+        }
         try {
             return ProductData.UTC.parse(utcString, "yyyy-MM-dd'T'HH:mm:ss");
         } catch (ParseException ignored) {
