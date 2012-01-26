@@ -34,8 +34,7 @@ MapSegmentProvider::~MapSegmentProvider() {
 }
 
 void MapSegmentProvider::start(Context& context) {
-	testSegment = &context.addMapSegment("TEST", 6000, 6000);
-	testSegment->addVariable("shorts", Constants::TYPE_SHORT);
+	context.addMapSegment("TEST", 6000, 6000).addVariable("shorts", Constants::TYPE_SHORT);
 }
 
 void MapSegmentProvider::stop(Context& context) {
@@ -45,13 +44,16 @@ void MapSegmentProvider::stop(Context& context) {
 }
 
 void MapSegmentProvider::process(Context& context) {
-    const Grid& grid = testSegment->getGrid();
+	const Segment& s = context.getSegment("TEST");
+    const Grid& g = s.getGrid();
 
-    for(long k = grid.getMinK(); k <= grid.getMaxK(); k++) {
-        for(long l = grid.getMinL(); l <= grid.getMaxL(); l++) {
-            for(long m = grid.getMinM(); m <= grid.getMaxM(); m++) {
-                const size_t index = grid.getIndex(k, l, m);
-                testSegment->getAccessor("testVariable").setInt(index, index % 10000);
+    Accessor& a = s.getAccessor("shorts");
+
+    for (long k = g.getMinK(); k <= g.getMaxK(); k++) {
+        for (long l = g.getMinL(); l <= g.getMaxL(); l++) {
+            for (long m = g.getMinM(); m <= g.getMaxM(); m++) {
+                const size_t index = g.getIndex(k, l, m);
+                a.setInt(index, index % 10000);
             }
         }
     }

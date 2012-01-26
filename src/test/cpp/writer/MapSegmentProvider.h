@@ -32,8 +32,6 @@ public:
     void stop(Context& context);
     void process(Context& context);
 private:
-    Segment* testSegment;
-    size_t count;
 };
 
 #endif	/* MAPSEGMENTPROVIDER_H */
