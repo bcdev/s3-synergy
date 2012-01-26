@@ -65,8 +65,9 @@ private:
 	void setChecksums(string& manifest) const;
 	void writeManifest(string& manifest) const;
 	void removeManifestTemplate() const;
+
 	static void replaceString(const string& toReplace, const string& replacement, string& input);
-	string getMd5Sum(const string& file) const;
+	static string getMd5Sum(const string& file);
 };
 
 #endif	/* ABSTRACTWRITER_H */

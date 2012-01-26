@@ -183,43 +183,44 @@ void AbstractWriter::defineDimensions(const int fileId, const string& name, cons
 }
 
 void AbstractWriter::putGlobalAttributes(int fileId, const VariableDescriptor& variableDescriptor, const vector<Attribute*>& attributes) const {
-    foreach(Attribute* attribute, attributes) {
-        const string& attributeName = attribute->getName();
-        if(attributeName.compare("title") == 0) {
-            string title;
-            if(variableDescriptor.hasAttribute("long_name")) {
-                title = variableDescriptor.getAttribute("long_name").getValue();
-            } else {
-                title = variableDescriptor.getName();
-            }
-            attribute->setValue(title);
-        } else if(attributeName.compare("comment") == 0) {
-            string comment = "This dataset contains the '";
-            if(variableDescriptor.hasAttribute("long_name")) {
-                comment.append(variableDescriptor.getAttribute("long_name").getValue().c_str());
-            } else {
-                comment.append(variableDescriptor.getName().c_str());
-            }
-            comment.append(" 'variable.");
-            attribute->setValue(comment);
-        } else if(attributeName.compare("processor_version") == 0) {
-            attribute->setValue(Constants::PROCESSOR_VERSION);
-        } else if(attributeName.compare("dataset_name") == 0) {
-            attribute->setValue(variableDescriptor.getNcFileBasename());
-        } else if(attributeName.compare("dataset_version") == 0) {
-            attribute->setValue(Constants::DATASET_VERSION);
-        } else if(attributeName.compare("package_name") == 0) {
-            attribute->setValue(targetDirPath.filename());
-        } else if(attributeName.compare("creation_time") == 0) {
-            time_t currentTime;
-            time(&currentTime);
-            struct tm* currentTimeStructure = gmtime(&currentTime);
-            char buffer[80];
-            strftime(buffer, 80, "UTC=%Y-%m-%dT%H:%M:%S.000000", currentTimeStructure);
-            attribute->setValue(string(buffer));
-        }
-        NetCDF::putGlobalAttribute(fileId, *attribute);
-    }
+	foreach (Attribute* attribute, attributes)
+			{
+				const string& attributeName = attribute->getName();
+				if (attributeName.compare("title") == 0) {
+					string title;
+					if (variableDescriptor.hasAttribute("long_name")) {
+						title = variableDescriptor.getAttribute("long_name").getValue();
+					} else {
+						title = variableDescriptor.getName();
+					}
+					attribute->setValue(title);
+				} else if (attributeName.compare("comment") == 0) {
+					string comment = "This dataset contains the '";
+					if (variableDescriptor.hasAttribute("long_name")) {
+						comment.append(variableDescriptor.getAttribute("long_name").getValue().c_str());
+					} else {
+						comment.append(variableDescriptor.getName().c_str());
+					}
+					comment.append(" 'variable.");
+					attribute->setValue(comment);
+				} else if (attributeName.compare("processor_version") == 0) {
+					attribute->setValue(Constants::PROCESSOR_VERSION);
+				} else if (attributeName.compare("dataset_name") == 0) {
+					attribute->setValue(variableDescriptor.getNcFileBasename());
+				} else if (attributeName.compare("dataset_version") == 0) {
+					attribute->setValue(Constants::DATASET_VERSION);
+				} else if (attributeName.compare("package_name") == 0) {
+					attribute->setValue(targetDirPath.filename());
+				} else if (attributeName.compare("creation_time") == 0) {
+					time_t currentTime;
+					time(&currentTime);
+					struct tm* currentTimeStructure = gmtime(&currentTime);
+					char buffer[80];
+					strftime(buffer, 80, "UTC=%Y-%m-%dT%H:%M:%S.000000", currentTimeStructure);
+					attribute->setValue(string(buffer));
+				}
+				NetCDF::putGlobalAttribute(fileId, *attribute);
+			}
 }
 
 void AbstractWriter::putData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
@@ -468,7 +469,7 @@ void AbstractWriter::replaceString(const string& toReplace, const string& replac
     input = regex_replace(input, expr, replacement);
 }
 
-string AbstractWriter::getMd5Sum(const string& file) const {
+string AbstractWriter::getMd5Sum(const string& file) {
     FILE* pipe = popen(string(Constants::MD5SUM_EXECUTABLE + " " + file).c_str(), "r");
     if (!pipe || !boost::filesystem::exists(path(file))) {
         BOOST_THROW_EXCEPTION(std::invalid_argument("Could not perform command 'md5sum' on file '" + file + "'."));
