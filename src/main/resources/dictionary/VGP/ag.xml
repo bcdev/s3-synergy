@@ -46,6 +46,7 @@
                 </attribute>
             </attributes>
         </variable>
+	</variables>
     <global_attributes>
         <attribute>
             <name>dataset_name</name>
