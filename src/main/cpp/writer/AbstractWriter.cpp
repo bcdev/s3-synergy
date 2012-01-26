@@ -100,7 +100,7 @@ void AbstractWriter::process(Context& context) {
                             IOUtils::createCountVector(dimIds.size(), grid.getSizeK(), lastL - firstL + 1, grid.getSizeM(), shape);
                         	NetCDF::putData(ncId, varId, origin, shape, accessor.getUntypedData());
                         } else {
-                            putData(ncId, varId, accessor, firstL, lastL, grid);
+                            putData(ncId, varId, dimIds.size(), accessor, firstL, lastL, grid);
                         }
                     }
                 }
@@ -223,37 +223,37 @@ void AbstractWriter::putGlobalAttributes(int fileId, const VariableDescriptor& v
 			}
 }
 
-void AbstractWriter::putData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
+void AbstractWriter::putData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     switch (accessor.getType()) {
     case Constants::TYPE_BYTE:
-        putByteData(ncId, varId, accessor, firstL, lastL, grid);
+        putByteData(ncId, varId, dimCount, accessor, firstL, lastL, grid);
         break;
     case Constants::TYPE_SHORT:
-        putShortData(ncId, varId, accessor, firstL, lastL, grid);
+        putShortData(ncId, varId, dimCount, accessor, firstL, lastL, grid);
         break;
     case Constants::TYPE_INT:
-        putIntData(ncId, varId, accessor, firstL, lastL, grid);
+        putIntData(ncId, varId, dimCount, accessor, firstL, lastL, grid);
         break;
     case Constants::TYPE_LONG:
-        putLongData(ncId, varId, accessor, firstL, lastL, grid);
+        putLongData(ncId, varId, dimCount, accessor, firstL, lastL, grid);
         break;
     case Constants::TYPE_UBYTE:
-        putUByteData(ncId, varId, accessor, firstL, lastL, grid);
+        putUByteData(ncId, varId, dimCount, accessor, firstL, lastL, grid);
         break;
     case Constants::TYPE_USHORT:
-        putUShortData(ncId, varId, accessor, firstL, lastL, grid);
+        putUShortData(ncId, varId, dimCount, accessor, firstL, lastL, grid);
         break;
     case Constants::TYPE_UINT:
-        putUIntData(ncId, varId, accessor, firstL, lastL, grid);
+        putUIntData(ncId, varId, dimCount, accessor, firstL, lastL, grid);
         break;
     case Constants::TYPE_ULONG:
-        putULongData(ncId, varId, accessor, firstL, lastL, grid);
+        putULongData(ncId, varId, dimCount, accessor, firstL, lastL, grid);
         break;
     case Constants::TYPE_FLOAT:
-        putFloatData(ncId, varId, accessor, firstL, lastL, grid);
+        putFloatData(ncId, varId, dimCount, accessor, firstL, lastL, grid);
         break;
     case Constants::TYPE_DOUBLE:
-        putDoubleData(ncId, varId, accessor, firstL, lastL, grid);
+        putDoubleData(ncId, varId, dimCount, accessor, firstL, lastL, grid);
         break;
     default:
         BOOST_THROW_EXCEPTION(runtime_error("Unsupported variable type."));
@@ -261,13 +261,13 @@ void AbstractWriter::putData(int ncId, int varId, const Accessor& accessor, long
     }
 }
 
-void AbstractWriter::putByteData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
+void AbstractWriter::putByteData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     valarray<int8_t> data(grid.getSizeM());
     valarray<size_t> origin;
     valarray<size_t> shape;
-    IOUtils::createCountVector(3, 1, 1, grid.getSizeM(), shape);
+    IOUtils::createCountVector(dimCount, 1, 1, grid.getSizeM(), shape);
     for (long l = firstL; l <= lastL; l++) {
-        IOUtils::createStartVector(3, l, origin);
+        IOUtils::createStartVector(dimCount, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
             data[m] = accessor.getByte(grid.getIndex(0, l, m));
         }
@@ -275,13 +275,13 @@ void AbstractWriter::putByteData(int ncId, int varId, const Accessor& accessor, 
     }
 }
 
-void AbstractWriter::putUByteData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
+void AbstractWriter::putUByteData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     valarray<uint8_t> data(grid.getSizeM());
     valarray<size_t> origin;
     valarray<size_t> shape;
-    IOUtils::createCountVector(3, 1, 1, grid.getSizeM(), shape);
+    IOUtils::createCountVector(dimCount, 1, 1, grid.getSizeM(), shape);
     for (long l = firstL; l <= lastL; l++) {
-        IOUtils::createStartVector(3, l, origin);
+        IOUtils::createStartVector(dimCount, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
             data[m] = accessor.getUByte(grid.getIndex(0, l, m));
         }
@@ -289,13 +289,13 @@ void AbstractWriter::putUByteData(int ncId, int varId, const Accessor& accessor,
     }
 }
 
-void AbstractWriter::putShortData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
+void AbstractWriter::putShortData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     valarray<int16_t> data(grid.getSizeM());
     valarray<size_t> origin;
     valarray<size_t> shape;
-    IOUtils::createCountVector(3, 1, 1, grid.getSizeM(), shape);
+    IOUtils::createCountVector(dimCount, 1, 1, grid.getSizeM(), shape);
     for (long l = firstL; l <= lastL; l++) {
-        IOUtils::createStartVector(3, l, origin);
+        IOUtils::createStartVector(dimCount, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
             data[m] = accessor.getShort(grid.getIndex(0, l, m));
         }
@@ -303,13 +303,13 @@ void AbstractWriter::putShortData(int ncId, int varId, const Accessor& accessor,
     }
 }
 
-void AbstractWriter::putUShortData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
+void AbstractWriter::putUShortData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     valarray<uint16_t> data(grid.getSizeM());
     valarray<size_t> origin;
     valarray<size_t> shape;
-    IOUtils::createCountVector(3, 1, 1, grid.getSizeM(), shape);
+    IOUtils::createCountVector(dimCount, 1, 1, grid.getSizeM(), shape);
     for (long l = firstL; l <= lastL; l++) {
-        IOUtils::createStartVector(3, l, origin);
+        IOUtils::createStartVector(dimCount, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
             data[m] = accessor.getUShort(grid.getIndex(0, l, m));
         }
@@ -317,13 +317,13 @@ void AbstractWriter::putUShortData(int ncId, int varId, const Accessor& accessor
     }
 }
 
-void AbstractWriter::putIntData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
+void AbstractWriter::putIntData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     valarray<int32_t> data(grid.getSizeM());
     valarray<size_t> origin;
     valarray<size_t> shape;
-    IOUtils::createCountVector(3, 1, 1, grid.getSizeM(), shape);
+    IOUtils::createCountVector(dimCount, 1, 1, grid.getSizeM(), shape);
     for (long l = firstL; l <= lastL; l++) {
-        IOUtils::createStartVector(3, l, origin);
+        IOUtils::createStartVector(dimCount, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
             data[m] = accessor.getInt(grid.getIndex(0, l, m));
         }
@@ -331,13 +331,13 @@ void AbstractWriter::putIntData(int ncId, int varId, const Accessor& accessor, l
     }
 }
 
-void AbstractWriter::putUIntData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
+void AbstractWriter::putUIntData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     valarray<uint32_t> data(grid.getSizeM());
     valarray<size_t> origin;
     valarray<size_t> shape;
-    IOUtils::createCountVector(3, 1, 1, grid.getSizeM(), shape);
+    IOUtils::createCountVector(dimCount, 1, 1, grid.getSizeM(), shape);
     for (long l = firstL; l <= lastL; l++) {
-        IOUtils::createStartVector(3, l, origin);
+        IOUtils::createStartVector(dimCount, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
             data[m] = accessor.getUInt(grid.getIndex(0, l, m));
         }
@@ -345,13 +345,13 @@ void AbstractWriter::putUIntData(int ncId, int varId, const Accessor& accessor, 
     }
 }
 
-void AbstractWriter::putLongData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
+void AbstractWriter::putLongData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     valarray<int64_t> data(grid.getSizeM());
     valarray<size_t> origin;
     valarray<size_t> shape;
-    IOUtils::createCountVector(3, 1, 1, grid.getSizeM(), shape);
+    IOUtils::createCountVector(dimCount, 1, 1, grid.getSizeM(), shape);
     for (long l = firstL; l <= lastL; l++) {
-        IOUtils::createStartVector(3, l, origin);
+        IOUtils::createStartVector(dimCount, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
             data[m] = accessor.getLong(grid.getIndex(0, l, m));
         }
@@ -359,13 +359,13 @@ void AbstractWriter::putLongData(int ncId, int varId, const Accessor& accessor, 
     }
 }
 
-void AbstractWriter::putULongData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
+void AbstractWriter::putULongData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     valarray<uint64_t> data(grid.getSizeM());
     valarray<size_t> origin;
     valarray<size_t> shape;
-    IOUtils::createCountVector(3, 1, 1, grid.getSizeM(), shape);
+    IOUtils::createCountVector(dimCount, 1, 1, grid.getSizeM(), shape);
     for (long l = firstL; l <= lastL; l++) {
-        IOUtils::createStartVector(3, l, origin);
+        IOUtils::createStartVector(dimCount, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
             data[m] = accessor.getULong(grid.getIndex(0, l, m));
         }
@@ -373,13 +373,13 @@ void AbstractWriter::putULongData(int ncId, int varId, const Accessor& accessor,
     }
 }
 
-void AbstractWriter::putFloatData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
+void AbstractWriter::putFloatData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     valarray<float> data(grid.getSizeM());
     valarray<size_t> origin;
     valarray<size_t> shape;
-    IOUtils::createCountVector(3, 1, 1, grid.getSizeM(), shape);
+    IOUtils::createCountVector(dimCount, 1, 1, grid.getSizeM(), shape);
     for (long l = firstL; l <= lastL; l++) {
-        IOUtils::createStartVector(3, l, origin);
+        IOUtils::createStartVector(dimCount, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
             data[m] = accessor.getFloat(grid.getIndex(0, l, m));
         }
@@ -387,13 +387,13 @@ void AbstractWriter::putFloatData(int ncId, int varId, const Accessor& accessor,
     }
 }
 
-void AbstractWriter::putDoubleData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
+void AbstractWriter::putDoubleData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const {
     valarray<double> data(grid.getSizeM());
     valarray<size_t> origin;
     valarray<size_t> shape;
-    IOUtils::createCountVector(3, 1, 1, grid.getSizeM(), shape);
+    IOUtils::createCountVector(dimCount, 1, 1, grid.getSizeM(), shape);
     for (long l = firstL; l <= lastL; l++) {
-        IOUtils::createStartVector(3, l, origin);
+        IOUtils::createStartVector(dimCount, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
             data[m] = accessor.getDouble(grid.getIndex(0, l, m));
         }

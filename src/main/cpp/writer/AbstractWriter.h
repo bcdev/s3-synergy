@@ -45,18 +45,18 @@ private:
 	void defineDimensions(const int fileId, const string& name, const vector<Dimension*>& dimensions, const Grid& grid, valarray<int>& dimIds);
 	void putGlobalAttributes(int fileId, const VariableDescriptor& variableDescriptor, const vector<Attribute*>& attributes) const;
 
-	void putData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+	void putData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
 
-    void putByteData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
-    void putUByteData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
-    void putShortData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
-    void putUShortData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
-    void putIntData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
-    void putUIntData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
-    void putLongData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
-    void putULongData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
-    void putFloatData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
-    void putDoubleData(int ncId, int varId, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+    void putByteData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+    void putUByteData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+    void putShortData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+    void putUShortData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+    void putIntData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+    void putUIntData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+    void putLongData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+    void putULongData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+    void putFloatData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
+    void putDoubleData(int ncId, int varId, size_t dimCount, const Accessor& accessor, long firstL, long lastL, const Grid& grid) const;
 
 	void createSafeProduct(const Context& context);
 	void copyTemplateFiles() const;
