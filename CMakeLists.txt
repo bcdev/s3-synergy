@@ -502,10 +502,10 @@ install(DIRECTORY files/ DESTINATION files
   PATTERN ".DS_Store" EXCLUDE
 )
 
-install(DIRECTORY src/test/resources/config DESTINATION config
+install(DIRECTORY src/test/resources/config/ DESTINATION config
   PATTERN ".DS_Store" EXCLUDE
 )
 
-install(DIRECTORY src/test/resources/jobs DESTINATION jobs
+install(DIRECTORY src/test/resources/jobs/ DESTINATION jobs
   FILES_MATCHING PATTERN "JobOrder.SY_SYS_*.xml"
 )
