@@ -26,8 +26,6 @@ public:
 
 protected:
     void testReplacing();
-    void prepareContext();
-    shared_ptr<Context> context;
 };
 
 #endif /* ABSTRACTWRITERTEST_H_ */
