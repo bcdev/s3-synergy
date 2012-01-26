@@ -351,14 +351,14 @@ target_link_libraries(sy_int_syl2_1
 set_property(TARGET sy_int_syl2_1 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
 
-add_executable(sy_unt_vpw
-    src/test/cpp/SyUntVpwRunner.cpp
+add_executable(sy_unt_vwr
+    src/test/cpp/SyUntVwrRunner.cpp
 	${CORE_MAIN_SOURCES}
 	${UTIL_MAIN_SOURCES}
 	${WRITER_MAIN_SOURCES}
 	${VGTP_WRITER_TEST_SOURCES}
 )
-target_link_libraries(sy_unt_vpw
+target_link_libraries(sy_unt_vwr
 	cppunit
 	netcdf
 	xerces-c
@@ -367,7 +367,7 @@ target_link_libraries(sy_unt_vpw
 	boost_system
 	boost_filesystem
 )
-set_property(TARGET sy_unt_vpw PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+set_property(TARGET sy_unt_vwr PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
 add_executable(sy_int_syl2_2
     src/test/cpp/SyIntSyl2_2_Runner.cpp
