@@ -241,12 +241,12 @@ public:
         return result;
     }
 
-    valarray<int32_t> getShorts() const {
-        return getComponents<int32_t>();
+    valarray<int16_t> getShorts() const {
+        return getComponents<int16_t>();
     }
 
-    valarray<uint32_t> getUShorts() const {
-        return getComponents<uint32_t>();
+    valarray<uint16_t> getUShorts() const {
+        return getComponents<uint16_t>();
     }
 
     valarray<int32_t> getInts() const {
