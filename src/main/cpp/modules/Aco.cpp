@@ -118,6 +118,7 @@ void Aco::process(Context& context) {
 	const Grid& olcInfoGrid = olcInfoSegment.getGrid();
 	const Grid& slnInfoGrid = slnInfoSegment.getGrid();
 	const Grid& sloInfoGrid = sloInfoSegment.getGrid();
+	const Grid& geoGrid = geoSegment.getGrid();
 
 	vector<Accessor*> sdrAccessors;
 	for (size_t i = 1; i <= 30; i++) {
@@ -175,6 +176,7 @@ void Aco::process(Context& context) {
 
 		for (long k = collocatedGrid.getFirstK(); k < collocatedGrid.getFirstK() + collocatedGrid.getSizeK(); k++) {
 			for (long m = collocatedGrid.getFirstM(); m < collocatedGrid.getFirstM() + collocatedGrid.getSizeM(); m++) {
+				const size_t geoIndex = geoGrid.getIndex(k, l, m);
 				const size_t i = collocatedGrid.getIndex(k, l, m);
 
 			    for(size_t b = 0; b < sdrAccessors.size(); b++) {
@@ -192,7 +194,7 @@ void Aco::process(Context& context) {
 				// TODO - get from auxdata when available
 				const double wv = 2.0;
 
-				tpiOlc.prepare(lonAccessor.getDouble(i), latAccessor.getDouble(i), tpiWeights, tpiIndexes);
+				tpiOlc.prepare(lonAccessor.getDouble(geoIndex), latAccessor.getDouble(geoIndex), tpiWeights, tpiIndexes);
 				const double nO3 = tpiOlc.interpolate(tpOzones, tpiWeights, tpiIndexes);
 				const double p = tpiOlc.interpolate(tpAirPressures, tpiWeights, tpiIndexes);
 
@@ -247,7 +249,7 @@ void Aco::process(Context& context) {
 				/*
 				 * Surface reflectance for SLN channels
 				 */
-				tpiSln.prepare(lonAccessor.getDouble(i), latAccessor.getDouble(i), tpiWeights, tpiIndexes);
+				tpiSln.prepare(lonAccessor.getDouble(geoIndex), latAccessor.getDouble(geoIndex), tpiWeights, tpiIndexes);
 
 				const double vzaSln = tpiSln.interpolate(tpVzasSln, tpiWeights, tpiIndexes);
 				const double vaaSln = tpiSln.interpolate(tpVaasSln, tpiWeights, tpiIndexes);
@@ -288,7 +290,7 @@ void Aco::process(Context& context) {
 				/*
 				 * Surface reflectance for SLO channels
 				 */
-				tpiSlo.prepare(lonAccessor.getDouble(i), latAccessor.getDouble(i), tpiWeights, tpiIndexes);
+				tpiSlo.prepare(lonAccessor.getDouble(geoIndex), latAccessor.getDouble(geoIndex), tpiWeights, tpiIndexes);
 
 				const double vzaSlo = tpiSlo.interpolate(tpVzasSlo, tpiWeights, tpiIndexes);
 				const double vaaSlo = tpiSlo.interpolate(tpVaasSlo, tpiWeights, tpiIndexes);

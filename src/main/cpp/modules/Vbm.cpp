@@ -134,6 +134,9 @@ void Vbm::process(Context& context) {
     Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
     const Grid& collocatedGrid = collocatedSegment.getGrid();
 
+    const Segment& geoSegment = context.getSegment(Constants::SEGMENT_GEO);
+    const Grid& geoGrid = geoSegment.getGrid();
+
     const long firstL = context.getFirstComputableL(collocatedSegment, *this);
     const long lastL = context.getLastComputableL(collocatedSegment, *this);
 
@@ -178,7 +181,8 @@ void Vbm::process(Context& context) {
         for (long k = collocatedGrid.getFirstK(); k <= collocatedGrid.getMaxK(); k++) {
             for (long m = collocatedGrid.getFirstM(); m <= collocatedGrid.getMaxM(); m++) {
                 const size_t index = collocatedGrid.getIndex(k, l, m);
-                initPixel(p, index, tpiWeights, tpiIndexes);
+                const size_t geoIndex = geoGrid.getIndex(k, l, m);
+                initPixel(p, index, geoIndex, tpiWeights, tpiIndexes);
                 performDownscaling(p, synSurfaceReflectances, coordinates, f, workspace);
                 performHyperspectralInterpolation(synWavelengths, synSurfaceReflectances, hypSurfaceReflectances);
                 performHyperspectralUpscaling(hypSurfaceReflectances, p, hypToaReflectances, coordinates, f, workspace);
@@ -191,14 +195,15 @@ void Vbm::process(Context& context) {
     context.setLastComputedL(collocatedSegment, *this, lastL);
 }
 
-void Vbm::initPixel(Pixel& p, size_t index, valarray<double>& tpiWeights, valarray<size_t>& tpiIndexes) {
+void Vbm::initPixel(Pixel& p, size_t index, size_t geoIndex, valarray<double>& tpiWeights, valarray<size_t>& tpiIndexes) {
     for(size_t i = 0; i < 21; i++) {
         p.radiances[i] = synRadianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synRadianceAccessors[i]->getDouble(index);
         p.solarIrradiances[i] = synSolarIrradianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synSolarIrradianceAccessors[i]->getDouble(index);
     }
     p.synFlags = synFlagsAccessor->getUShort(index);
-    p.lat = latAccessor->getDouble(index);
-    p.lon = lonAccessor->getDouble(index);
+
+    p.lat = latAccessor->getDouble(geoIndex);
+    p.lon = lonAccessor->getDouble(geoIndex);
 
     tiePointInterpolatorOlc->prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
 
