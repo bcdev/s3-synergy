@@ -200,7 +200,12 @@ void SegmentWriter::putByteData(int ncId, int varId, const Accessor& accessor, l
     for (long l = firstL; l <= lastL; l++) {
         IOUtils::createStartVector(3, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
-            data[m] = accessor.getByte(grid.getIndex(0, l, m));
+            const size_t index = grid.getIndex(0, l, m);
+            if(accessor.isFillValue(index)) {
+                data[m] = lexical_cast<int8_t>(accessor.getFillValue());
+            } else {
+                data[m] = accessor.getByte(grid.getIndex(0, l, m));
+            }
         }
         NetCDF::putData(ncId, varId, origin, shape, &data[0]);
     }
@@ -214,7 +219,12 @@ void SegmentWriter::putUByteData(int ncId, int varId, const Accessor& accessor, 
     for (long l = firstL; l <= lastL; l++) {
         IOUtils::createStartVector(3, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
-            data[m] = accessor.getUByte(grid.getIndex(0, l, m));
+            const size_t index = grid.getIndex(0, l, m);
+            if(accessor.isFillValue(index)) {
+                data[m] = lexical_cast<uint8_t>(accessor.getFillValue());
+            } else {
+                data[m] = accessor.getUByte(grid.getIndex(0, l, m));
+            }
         }
         NetCDF::putData(ncId, varId, origin, shape, &data[0]);
     }
@@ -228,7 +238,12 @@ void SegmentWriter::putShortData(int ncId, int varId, const Accessor& accessor, 
     for (long l = firstL; l <= lastL; l++) {
         IOUtils::createStartVector(3, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
-            data[m] = accessor.getShort(grid.getIndex(0, l, m));
+            const size_t index = grid.getIndex(0, l, m);
+            if(accessor.isFillValue(index)) {
+                data[m] = lexical_cast<int16_t>(accessor.getFillValue());
+            } else {
+                data[m] = accessor.getShort(grid.getIndex(0, l, m));
+            }
         }
         NetCDF::putData(ncId, varId, origin, shape, &data[0]);
     }
@@ -242,7 +257,12 @@ void SegmentWriter::putUShortData(int ncId, int varId, const Accessor& accessor,
     for (long l = firstL; l <= lastL; l++) {
         IOUtils::createStartVector(3, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
-            data[m] = accessor.getUShort(grid.getIndex(0, l, m));
+            const size_t index = grid.getIndex(0, l, m);
+            if(accessor.isFillValue(index)) {
+                data[m] = lexical_cast<uint16_t>(accessor.getFillValue());
+            } else {
+                data[m] = accessor.getUShort(grid.getIndex(0, l, m));
+            }
         }
         NetCDF::putData(ncId, varId, origin, shape, &data[0]);
     }
@@ -256,7 +276,12 @@ void SegmentWriter::putIntData(int ncId, int varId, const Accessor& accessor, lo
     for (long l = firstL; l <= lastL; l++) {
         IOUtils::createStartVector(3, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
-            data[m] = accessor.getInt(grid.getIndex(0, l, m));
+            const size_t index = grid.getIndex(0, l, m);
+            if(accessor.isFillValue(index)) {
+                data[m] = lexical_cast<int32_t>(accessor.getFillValue());
+            } else {
+                data[m] = accessor.getInt(grid.getIndex(0, l, m));
+            }
         }
         NetCDF::putData(ncId, varId, origin, shape, &data[0]);
     }
@@ -270,7 +295,12 @@ void SegmentWriter::putUIntData(int ncId, int varId, const Accessor& accessor, l
     for (long l = firstL; l <= lastL; l++) {
         IOUtils::createStartVector(3, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
-            data[m] = accessor.getUInt(grid.getIndex(0, l, m));
+            const size_t index = grid.getIndex(0, l, m);
+            if(accessor.isFillValue(index)) {
+                data[m] = lexical_cast<uint32_t>(accessor.getFillValue());
+            } else {
+                data[m] = accessor.getUInt(grid.getIndex(0, l, m));
+            }
         }
         NetCDF::putData(ncId, varId, origin, shape, &data[0]);
     }
@@ -284,7 +314,12 @@ void SegmentWriter::putLongData(int ncId, int varId, const Accessor& accessor, l
     for (long l = firstL; l <= lastL; l++) {
         IOUtils::createStartVector(3, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
-            data[m] = accessor.getLong(grid.getIndex(0, l, m));
+            const size_t index = grid.getIndex(0, l, m);
+            if(accessor.isFillValue(index)) {
+                data[m] = lexical_cast<int64_t>(accessor.getFillValue());
+            } else {
+                data[m] = accessor.getLong(grid.getIndex(0, l, m));
+            }
         }
         NetCDF::putData(ncId, varId, origin, shape, &data[0]);
     }
@@ -298,7 +333,12 @@ void SegmentWriter::putULongData(int ncId, int varId, const Accessor& accessor, 
     for (long l = firstL; l <= lastL; l++) {
         IOUtils::createStartVector(3, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
-            data[m] = accessor.getULong(grid.getIndex(0, l, m));
+            const size_t index = grid.getIndex(0, l, m);
+            if(accessor.isFillValue(index)) {
+                data[m] = lexical_cast<uint64_t>(accessor.getFillValue());
+            } else {
+                data[m] = accessor.getULong(grid.getIndex(0, l, m));
+            }
         }
         NetCDF::putData(ncId, varId, origin, shape, &data[0]);
     }
@@ -312,7 +352,12 @@ void SegmentWriter::putFloatData(int ncId, int varId, const Accessor& accessor, 
     for (long l = firstL; l <= lastL; l++) {
         IOUtils::createStartVector(3, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
-            data[m] = accessor.getFloat(grid.getIndex(0, l, m));
+            const size_t index = grid.getIndex(0, l, m);
+            if(accessor.isFillValue(index)) {
+                data[m] = lexical_cast<float>(accessor.getFillValue());
+            } else {
+                data[m] = accessor.getFloat(grid.getIndex(0, l, m));
+            }
         }
         NetCDF::putData(ncId, varId, origin, shape, &data[0]);
     }
@@ -326,7 +371,12 @@ void SegmentWriter::putDoubleData(int ncId, int varId, const Accessor& accessor,
     for (long l = firstL; l <= lastL; l++) {
         IOUtils::createStartVector(3, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
-            data[m] = accessor.getDouble(grid.getIndex(0, l, m));
+            const size_t index = grid.getIndex(0, l, m);
+            if(accessor.isFillValue(index)) {
+                data[m] = lexical_cast<double>(accessor.getFillValue());
+            } else {
+                data[m] = accessor.getDouble(grid.getIndex(0, l, m));
+            }
         }
         NetCDF::putData(ncId, varId, origin, shape, &data[0]);
     }
