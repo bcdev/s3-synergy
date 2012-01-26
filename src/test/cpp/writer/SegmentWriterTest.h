@@ -10,9 +10,6 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../../src/main/cpp/core/Context.h"
-#include "../../../../src/main/cpp/core/Dictionary.h"
-
 class SegmentWriterTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(SegmentWriterTest);
     CPPUNIT_TEST(testWriter);
@@ -25,8 +22,6 @@ public:
     void tearDown();
 
 private:
-    shared_ptr<Context> context;
-    void prepareContext();
     void testWriter();
 };
 

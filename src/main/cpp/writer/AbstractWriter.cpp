@@ -463,7 +463,7 @@ void AbstractWriter::removeManifestTemplate() const {
     boost::filesystem::remove(manifestTemplate);
 }
 
-void AbstractWriter::replaceString(const string& toReplace, const string& replacement, string& input) const {
+void AbstractWriter::replaceString(const string& toReplace, const string& replacement, string& input) {
     regex expr(toReplace.c_str());
     input = regex_replace(input, expr, replacement);
 }
