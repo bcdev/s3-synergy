@@ -32,7 +32,7 @@ public:
     void stop(Context& context);
     void process(Context& context);
 private:
-    Segment* testMapSegment;
+    Segment* testSegment;
     size_t count;
 };
 

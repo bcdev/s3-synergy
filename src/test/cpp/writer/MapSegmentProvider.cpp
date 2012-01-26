@@ -34,15 +34,8 @@ MapSegmentProvider::~MapSegmentProvider() {
 }
 
 void MapSegmentProvider::start(Context& context) {
-	size_t segmentLineCount = 400;
-	const string segmentLineCountString = context.getJobOrder().getIpfConfiguration().getDynamicProcessingParameter("Segment_Line_Count");
-	if (!segmentLineCountString.empty()) {
-		segmentLineCount = lexical_cast<size_t>(segmentLineCountString);
-	}
-	context.getLogging().info("segment line count is " + lexical_cast<string>(segmentLineCount), getId());
-	testMapSegment = &context.addMapSegment("testMapSegment", 6000, 740);
-	testMapSegment->addVariable("testVariable", Constants::TYPE_INT);
-	count = 0;
+	testSegment = &context.addMapSegment("TEST", 6000, 6000);
+	testSegment->addVariable("shorts", Constants::TYPE_SHORT);
 }
 
 void MapSegmentProvider::stop(Context& context) {
@@ -52,15 +45,14 @@ void MapSegmentProvider::stop(Context& context) {
 }
 
 void MapSegmentProvider::process(Context& context) {
-    const Grid& grid = testMapSegment->getGrid();
-    for(long k = grid.getFirstK(); k <= grid.getMaxK(); k++) {
-        for(long l = grid.getFirstL(); l <= grid.getLastL(); l++) {
-            for(long m = grid.getFirstM(); m <= grid.getMaxM(); m++) {
+    const Grid& grid = testSegment->getGrid();
+
+    for(long k = grid.getMinK(); k <= grid.getMaxK(); k++) {
+        for(long l = grid.getMinL(); l <= grid.getMaxL(); l++) {
+            for(long m = grid.getMinM(); m <= grid.getMaxM(); m++) {
                 const size_t index = grid.getIndex(k, l, m);
-                testMapSegment->getAccessor("testVariable").setInt(index, count);
-                count++;
+                testSegment->getAccessor("testVariable").setInt(index, index % 10000);
             }
         }
     }
-    context.setLastComputedL(*testMapSegment, *this, testMapSegment->getGrid().getLastL());
 }
