@@ -29,6 +29,7 @@ SegmentWriter::~SegmentWriter() {
 }
 
 void SegmentWriter::process(Context& context) {
+
 	const vector<string> segmentIds = context.getSegmentIds();
 	valarray<size_t> origin;
 	valarray<size_t> shape;
