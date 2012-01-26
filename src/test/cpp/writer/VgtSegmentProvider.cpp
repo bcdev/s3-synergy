@@ -108,13 +108,13 @@ const vector<SegmentDescriptor*> VgtSegmentProvider::getCommonSegmentDescriptors
 const vector<SegmentDescriptor*> VgtSegmentProvider::getNonCommonSegmentDescriptors(const Dictionary& dict) const {
     const ProductDescriptor& productDescriptor = dict.getProductDescriptor(Constants::PRODUCT_VGP);
     vector<SegmentDescriptor*> allSegmentDescriptors = productDescriptor.getSegmentDescriptors();
-    vector<SegmentDescriptor*> commonSegmentDescriptors;
+    vector<SegmentDescriptor*> nonCommonSegmentDescriptors;
     foreach(SegmentDescriptor* segmentDescriptor, allSegmentDescriptors) {
-        if(isCommonDescriptor(*segmentDescriptor)) {
-            commonSegmentDescriptors.push_back(segmentDescriptor);
+        if(!isCommonDescriptor(*segmentDescriptor)) {
+            nonCommonSegmentDescriptors.push_back(segmentDescriptor);
         }
     }
-    return commonSegmentDescriptors;
+    return nonCommonSegmentDescriptors;
 }
 
 bool VgtSegmentProvider::isCommonDescriptor(const SegmentDescriptor& segmentDescriptor) const {
