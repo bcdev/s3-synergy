@@ -55,7 +55,7 @@
                 <Output>
                     <File_Type>SY2</File_Type>
                     <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
-                    <File_Name>testdata/VGP/SY_INT_VGTP/S3__SY_2_VGP____2013621T10920_2013621T101413_0270_001_002_0001_ARG_D_NT_TDS_01.SAFE</File_Name>
+                    <File_Name>testdata/VGP/SY_SYS_VGTP_1/S3__SY_2_VGP____2013621T10920_2013621T101413_0270_001_002_0001_ARG_D_NT_TDS_01.SAFE</File_Name>
                 </Output>
             </List_of_Outputs>
         </Ipf_Proc>
