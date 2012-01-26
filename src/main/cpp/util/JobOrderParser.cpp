@@ -281,21 +281,17 @@ Output JobOrderParser::parseOutput(const string& path,
 }
 
 const shared_ptr<Logging> JobOrderParser::createLogging(const string& logFileName) const {
-    if(standardLogLevel.empty()) {
-        BOOST_THROW_EXCEPTION(logic_error("The IPF configuration needs to be parsed first."));
-    }
-    if(standardLogLevel.compare("DEBUG") == 0) {
-        return shared_ptr<Logging>(new DebugLogging(logFileName));
-    } else if(standardLogLevel.compare("INFO") == 0) {
-        return shared_ptr<Logging>(new InfoLogging(logFileName));
-    }  else if(standardLogLevel.compare("PROGRESS") == 0) {
-        return shared_ptr<Logging>(new ProgressLogging(logFileName));
-    } else if(standardLogLevel.compare("WARNING") == 0) {
-        return shared_ptr<Logging>(new WarningLogging(logFileName));
-    } else if(standardLogLevel.compare("ERROR") == 0) {
-        return shared_ptr<Logging>(new ErrorLogging(logFileName));
-    } else if(standardLogLevel.compare("NULL") == 0) {
-        return shared_ptr<Logging>(new NullLogging());
-    }
-    BOOST_THROW_EXCEPTION(logic_error("invalid standard log level '" + standardLogLevel + "'."));
+	if (standardLogLevel.compare("DEBUG") == 0) {
+		return shared_ptr<Logging>(new DebugLogging(logFileName));
+	} else if (standardLogLevel.compare("INFO") == 0) {
+		return shared_ptr<Logging>(new InfoLogging(logFileName));
+	} else if (standardLogLevel.compare("PROGRESS") == 0) {
+		return shared_ptr<Logging>(new ProgressLogging(logFileName));
+	} else if (standardLogLevel.compare("WARNING") == 0) {
+		return shared_ptr<Logging>(new WarningLogging(logFileName));
+	} else if (standardLogLevel.compare("ERROR") == 0) {
+		return shared_ptr<Logging>(new ErrorLogging(logFileName));
+	} else {
+		return shared_ptr<Logging>(new NullLogging());
+	}
 }
