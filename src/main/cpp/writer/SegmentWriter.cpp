@@ -227,7 +227,7 @@ void SegmentWriter::putShortData(int ncId, int varId, const Accessor& accessor, 
     for (long l = firstL; l <= lastL; l++) {
         IOUtils::createStartVector(3, l, origin);
         for (long m = 0; m < grid.getSizeM(); m++) {
-            data[m] = accessor.getShort(grid.getIndex(0, l, m));
+            data[m] = 0; //accessor.getShort(grid.getIndex(0, l, m));
         }
         NetCDF::putData(ncId, varId, origin, shape, &data[0]);
     }
