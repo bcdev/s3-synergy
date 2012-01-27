@@ -202,15 +202,6 @@ void Vpr::process(Context& context) {
 
 				// 1. Is there a source pixel for the target pixel?
 				if (!sourcePixelFound) {
-					// No. Set fill values and continue
-					for (size_t i = 0; i < 5; i++) {
-						targetAccessors[i]->setFillValue(targetGrid.getIndex(k, l, m));
-					}
-					if (l % 8 == 0 && m % 8 == 0) {
-						for (size_t i = 5; i < targetAccessors.size(); i++) {
-							targetAccessors[i]->setFillValue(subsampledTargetGrid.getIndex(k, l / 8, m / 8));
-						}
-					}
 					continue;
 				}
 
