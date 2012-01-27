@@ -1,3 +1,5 @@
+#! /bin/sh
+
 LD_LIBRARY_PATH="@BOOST_HOME@/lib:@NETCDF_HOME@/lib:@XERCES_HOME@/lib:@XQILLA_HOME@/lib:$LD_LIBRARY_PATH"
 
 @CMAKE_INSTALL_PREFIX@/bin/sy_unt_col
