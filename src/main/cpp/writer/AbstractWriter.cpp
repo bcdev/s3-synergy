@@ -93,7 +93,7 @@ void AbstractWriter::process(Context& context) {
                         const int varId = ncVarIdMap[varName];
                         const int ncId = ncFileIdMap[ncFileBasename];
                         const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
-                        context.getLogging().progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
+                        context.getLogging().progress("Writing variable '" + varName + "' of segment [" + segment.toString() + "]", getId());
                         const Accessor& accessor = segment.getAccessor(varName);
                         if (accessor.canReturnDataPointer()) {
                             IOUtils::createStartVector(dimIds.size(), firstL, origin);
