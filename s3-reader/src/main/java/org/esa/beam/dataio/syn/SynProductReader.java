@@ -24,20 +24,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Product reader responsible for reading OLCI L2 data products in SAFE format.
+ * Product reader responsible for reading OLCI/SLSTR L2 SYN data products in SAFE format.
  *
- * @author Marco Peters
+ * @author Olaf Danne
  * @since 1.0
  */
 public class SynProductReader extends AbstractProductReader {
 
-    private static final float[] spectralWavelengths = new float[21];
-    private static final float[] spectralBandwidths = new float[21];
-
     private final Logger logger;
     private List<Product> measurementProducts;
     private Product geoCoordinatesProduct;
-    private Product tiePointsProduct;
 
     public SynProductReader(SynProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
@@ -58,6 +54,17 @@ public class SynProductReader extends AbstractProductReader {
                                           int destOffsetY, int destWidth, int destHeight, ProductData destBuffer,
                                           ProgressMonitor pm) throws IOException {
         throw new IllegalStateException(String.format("No source to read from for band '%s'.", destBand.getName()));
+    }
+
+    @Override
+    public void close() throws IOException {
+        for (Product product : measurementProducts) {
+            product.dispose();
+        }
+        if (geoCoordinatesProduct != null) {
+            geoCoordinatesProduct.dispose();
+        }
+        super.close();
     }
 
     private Product createProduct(SynManifest manifest) {
@@ -94,7 +101,6 @@ public class SynProductReader extends AbstractProductReader {
     }
 
     private void attachMeasurementBands(List<Product> measurementProducts, Product product) {
-        int k = 0;
         for (final Product bandProduct : measurementProducts) {
             for (final Band sourceBand : bandProduct.getBands()) {
                 final String bandName = sourceBand.getName();
@@ -112,7 +118,7 @@ public class SynProductReader extends AbstractProductReader {
                     targetBand.setSampleCoding(slnFlagCoding);
                     product.getFlagCodingGroup().add(slnFlagCoding);
                 } else if (sourceBand.getName().endsWith(SynFlagCodings.SLSTR_OBLIQUE_FLAG_BAND_NAME)) {
-                    final FlagCoding sloFlagCoding = SynFlagCodings.createSlstrObliqueCoding();
+                    final FlagCoding sloFlagCoding = SynFlagCodings.createSlstrObliqueFlagCoding();
                     targetBand.setSampleCoding(sloFlagCoding);
                     product.getFlagCodingGroup().add(sloFlagCoding);
                 }
@@ -120,24 +126,6 @@ public class SynProductReader extends AbstractProductReader {
             }
         }
     }
-
-//    private void attachAlbedoDataToProduct(Product product, Product albedoInputProduct) {
-//        if (hasSameRasterDimension(product, albedoInputProduct)) {
-//            for (final Band sourceBand : albedoInputProduct.getBands()) {
-//                String bandName = sourceBand.getName();
-//                Band targetBand = ProductUtils.copyBand(bandName, albedoInputProduct, product);
-//                if (sourceBand.getName().startsWith(ALBEDO_BAND_NAME_PREFIX)) {
-//                    targetBand.setScalingFactor(0.0001);
-//                } else if(sourceBand.getName().equals(QUALITY_FLAG_BAND_NAME)) {
-//                    final FlagCoding qualityFlagCoding = createQualityFlagCoding(QUALITY_FLAG_BAND_NAME);
-//                    targetBand.setSampleCoding(qualityFlagCoding);
-//                    product.getFlagCodingGroup().add(qualityFlagCoding);
-//                }
-//                targetBand.setSourceImage(sourceBand.getSourceImage());
-//            }
-//        }
-//    }
-
 
     private String getProductName() {
         return FileUtils.getFilenameWithoutExtension(getParentInputDirectory());
@@ -181,9 +169,11 @@ public class SynProductReader extends AbstractProductReader {
         try {
             doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
         } catch (SAXException e) {
-            e.printStackTrace();
+            String msg = "Not able to read manifest XML file.";
+            logger.log(Level.WARNING, msg, e);
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            String msg = "Not able to read manifest XML file.";
+            logger.log(Level.WARNING, msg, e);
         }
         return doc;
     }
@@ -196,17 +186,4 @@ public class SynProductReader extends AbstractProductReader {
         return new File(getInput().toString());
     }
 
-    @Override
-    public void close() throws IOException {
-        for (Product product : measurementProducts) {
-            product.dispose();
-        }
-        if (geoCoordinatesProduct != null) {
-            geoCoordinatesProduct.dispose();
-        }
-        if (tiePointsProduct != null) {
-            tiePointsProduct.dispose();
-        }
-        super.close();
-    }
 }

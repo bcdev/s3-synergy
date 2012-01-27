@@ -4,11 +4,10 @@ import org.esa.beam.framework.datamodel.FlagCoding;
 import org.esa.beam.util.BitSetter;
 
 /**
- * Created by IntelliJ IDEA.
- * User: olafd
- * Date: 26.01.12
- * Time: 17:35
- * To change this template use File | Settings | File Templates.
+ * Class providing the flag codings in an OLCI/SLSTR L2 SYN data product.
+ *
+ * @author Olaf Danne
+ * @since 1.0
  */
 public class SynFlagCodings {
 
@@ -153,7 +152,7 @@ public class SynFlagCodings {
         return flagCoding;
     }
 
-    protected static FlagCoding createSlstrObliqueCoding() {
+    protected static FlagCoding createSlstrObliqueFlagCoding() {
         FlagCoding flagCoding = new FlagCoding(SLSTR_OBLIQUE_FLAG_BAND_NAME);
         flagCoding.addFlag("SLO_SUMMARY_ISP_ABSENT", BitSetter.setFlag(0, SLO_SUMMARY_ISP_ABSENT), null);
         flagCoding.addFlag("SLO_SUMMARY_PIXEL_ABSENT", BitSetter.setFlag(0, SLO_SUMMARY_PIXEL_ABSENT), null);

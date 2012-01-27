@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class encapsulating the manifest file of a SYN product.
+ * Class encapsulating the manifest file of an OLCI/SLSTR L2 SYN product.
  *
  * @author Olaf Danne
  * @since 1.0
@@ -44,10 +44,6 @@ class SynManifest {
         } catch (ParseException ignored) {
             return null;
         }
-    }
-
-    private String removeTimeZoneCharacter(String utcString) {
-        return utcString.substring(0, utcString.length() - 1);
     }
 
     public ProductData.UTC getStopTime() {
@@ -101,5 +97,7 @@ class SynManifest {
         return xPathHelper.getString("./byteStream/fileLocation/@href", timeObject);
     }
 
-
+    private String removeTimeZoneCharacter(String utcString) {
+        return utcString.substring(0, utcString.length() - 1);
+    }
 }
