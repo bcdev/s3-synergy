@@ -5,6 +5,7 @@
  * Created on January 24, 2012
  */
 
+#include "../../../../src/main/cpp/core/ExitCode.h"
 #include "../../../../src/main/cpp/modules/Col.h"
 #include "../../../../src/main/cpp/modules/Pcl.h"
 #include "../../../../src/main/cpp/modules/Vbm.h"
@@ -50,5 +51,7 @@ void VgtP_2_Test::testIntegrationOfVgtPModules() {
 	task.getContext().addModule(vpr);
 	task.getContext().addModule(writer);
 
-	task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_INT_VGTP_2.xml");
+	const int exitCode = task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_INT_VGTP_2.xml");
+
+	CPPUNIT_ASSERT(exitCode == ExitCode::OK);
 }

@@ -5,6 +5,7 @@
  * Created on August 16, 2011, 1:36 PM
  */
 
+#include "../../../../src/main/cpp/core/ExitCode.h"
 #include "../../../../src/main/cpp/modules/Aer.h"
 #include "../../../../src/main/cpp/modules/Aei.h"
 #include "../../../../src/main/cpp/modules/Ave.h"
@@ -53,5 +54,7 @@ void Syl2_2_Test::testIntegrationOfSynL2Modules() {
 	task.getContext().addModule(aco);
 	task.getContext().addModule(writer);
 
-	task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_INT_SYL2_2.xml");
+	const int exitCode = task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_INT_SYL2_2.xml");
+
+	CPPUNIT_ASSERT(exitCode == ExitCode::OK);
 }
