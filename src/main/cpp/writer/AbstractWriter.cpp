@@ -108,7 +108,7 @@ void AbstractWriter::process(Context& context) {
             }
         }
     }
-    writeCommonVariables(context, segmentDescriptors);
+    writeCommonVariables(context);
 }
 
 void AbstractWriter::stop(Context& context) {
