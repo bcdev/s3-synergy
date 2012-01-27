@@ -72,9 +72,19 @@ void VgtSegmentProvider::addCommonSegments(Context& context) {
         vector<VariableDescriptor*> variableDescriptors = segDesc->getVariableDescriptors();
         foreach(VariableDescriptor* varDesc, variableDescriptors) {
             const string& segmentName = segDesc->getName();
-            if (!context.hasSegment(segmentName)) {
+            if (!context.hasSegment(segmentName) &&
+                    segmentName.compare("LAT_BNDS") != 0 &&
+                    segmentName.compare("LON_BNDS") != 0 &&
+                    segmentName.compare("LAT_BNDS_TP") != 0 &&
+                    segmentName.compare("LON_BNDS_TP") != 0) {
                 valarray<size_t> dimensionSizes = IOUtils::getDimensionSizes(varDesc);
                 context.addSwathSegment(segmentName, dimensionSizes[0], dimensionSizes[1], dimensionSizes[2], 0, dimensionSizes[1] - 1);
+            } else if(segmentName.compare("LAT_BNDS") == 0 ||
+                    segmentName.compare("LON_BNDS") == 0 ||
+                    segmentName.compare("LAT_BNDS_TP") == 0 ||
+                    segmentName.compare("LON_BNDS_TP") == 0) {
+                valarray<size_t> dimensionSizes = IOUtils::getDimensionSizes(varDesc);
+                context.addSingleLineSegment(segmentName, dimensionSizes[2]);
             }
             Segment& segment = context.getSegment(segmentName);
             if (!segment.hasVariable(varDesc->getName())) {

@@ -41,15 +41,14 @@ void VgtPWriter::writeCommonVariables(Context& context) {
             Segment& segment = context.getSegment(sd->getName());
             const vector<string> varNames = segment.getVariableNames();
             foreach(string var, varNames) {
-                context.getLogging().debug("Writing common variable '" + var + "'.", getId());
                 const int varId = NetCDF::getVariableId(fileId, var);
                 if(varId == -1) {
                     continue;
                 }
+                context.getLogging().progress("Writing common variable '" + var + "'.", getId());
                 const Accessor& accessor = segment.getAccessor(var);
                 NetCDF::putData(fileId, varId, accessor.getUntypedData());
             }
-            context.getLogging().progress("segment, *this, segment.getGrid().getMaxL()", "");
             context.setLastComputedL(segment, *this, segment.getGrid().getMaxL());
         }
     }
