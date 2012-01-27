@@ -8,8 +8,8 @@ configure_file (
 )
 
 configure_file (
-  "src/main/bin/runalltests.sh.in"
-  "src/main/bin/runalltests.sh"
+  "src/test/bin/runalltests.sh.in"
+  "src/test/bin/runalltests.sh"
 )
 
 set(CMAKE_CXX_FLAGS "-fopenmp -O3 -std=c++98 -DBOOST_FILESYSTEM_VERSION=2")
