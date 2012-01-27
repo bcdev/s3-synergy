@@ -46,7 +46,6 @@ void VgtSegmentProvider::stop(Context& context) {
 
 void VgtSegmentProvider::process(Context& context) {
     setLastComputedLines(context, Constants::PRODUCT_VGP);
-    setLastComputedLines(context, Constants::PRODUCT_VGS);
 }
 
 void VgtSegmentProvider::addNonCommonSegments(Context& context) {
@@ -96,15 +95,8 @@ void VgtSegmentProvider::setLastComputedLines(Context& context, const string& id
 const vector<SegmentDescriptor*> VgtSegmentProvider::getCommonSegmentDescriptors(const Dictionary& dict) const {
     const ProductDescriptor& vgtPProductDescriptor = dict.getProductDescriptor(Constants::PRODUCT_VGP);
     vector<SegmentDescriptor*> allVgtPSegmentDescriptors = vgtPProductDescriptor.getSegmentDescriptors();
-    const ProductDescriptor& vgtSProductDescriptor = dict.getProductDescriptor(Constants::PRODUCT_VGS);
-    vector<SegmentDescriptor*> allVgtSSegmentDescriptors = vgtSProductDescriptor.getSegmentDescriptors();
     vector<SegmentDescriptor*> commonSegmentDescriptors;
     foreach(SegmentDescriptor* segmentDescriptor, allVgtPSegmentDescriptors) {
-        if(isCommonDescriptor(*segmentDescriptor)) {
-            commonSegmentDescriptors.push_back(segmentDescriptor);
-        }
-    }
-    foreach(SegmentDescriptor* segmentDescriptor, allVgtSSegmentDescriptors) {
         if(isCommonDescriptor(*segmentDescriptor)) {
             commonSegmentDescriptors.push_back(segmentDescriptor);
         }
@@ -115,15 +107,8 @@ const vector<SegmentDescriptor*> VgtSegmentProvider::getCommonSegmentDescriptors
 const vector<SegmentDescriptor*> VgtSegmentProvider::getNonCommonSegmentDescriptors(const Dictionary& dict) const {
     const ProductDescriptor& vgtPProductDescriptor = dict.getProductDescriptor(Constants::PRODUCT_VGP);
     vector<SegmentDescriptor*> allVgtPSegmentDescriptors = vgtPProductDescriptor.getSegmentDescriptors();
-    const ProductDescriptor& vgtSProductDescriptor = dict.getProductDescriptor(Constants::PRODUCT_VGS);
-    vector<SegmentDescriptor*> allVgtSSegmentDescriptors = vgtSProductDescriptor.getSegmentDescriptors();
     vector<SegmentDescriptor*> nonCommonSegmentDescriptors;
     foreach(SegmentDescriptor* segmentDescriptor, allVgtPSegmentDescriptors) {
-        if(!isCommonDescriptor(*segmentDescriptor)) {
-            nonCommonSegmentDescriptors.push_back(segmentDescriptor);
-        }
-    }
-    foreach(SegmentDescriptor* segmentDescriptor, allVgtSSegmentDescriptors) {
         if(!isCommonDescriptor(*segmentDescriptor)) {
             nonCommonSegmentDescriptors.push_back(segmentDescriptor);
         }

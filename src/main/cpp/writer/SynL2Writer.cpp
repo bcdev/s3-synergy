@@ -35,7 +35,7 @@ const vector<SegmentDescriptor*> SynL2Writer::getSegmentDescriptors(const Dictio
     return productDescriptor.getSegmentDescriptors();
 }
 
-void SynL2Writer::writeCommonVariables(const Context& context) {
+void SynL2Writer::writeCommonVariables(Context& context) {
     // for SYN, we don't need to write common variables
 }
 

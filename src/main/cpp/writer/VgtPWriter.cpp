@@ -33,27 +33,47 @@ const vector<SegmentDescriptor*> VgtPWriter::getSegmentDescriptors(const Diction
     return nonCommonSegmentDescriptors;
 }
 
-void VgtPWriter::writeCommonVariables(const Context& context) {
+void VgtPWriter::writeCommonVariables(Context& context) {
+
     valarray<int> fileIds = getFileIds();
     for (size_t i = 0; i < fileIds.size(); i++) {
         const int fileId = fileIds[i];
-        bool fileContainsSubsampledSegments = fileSubsampledMap[fileId];
-        vector<VariableDescriptor*> commonVariables;
-        if (fileContainsSubsampledSegments) {
-            commonVariables = getSubsampledCommonVariables(context.getDictionary());
-        } else {
-            commonVariables = getNonSubsampledCommonVariables(context.getDictionary());
-        }
-        valarray<size_t> origin;
-        valarray<size_t> shape;
-        foreach (VariableDescriptor* commonVariable, commonVariables) {
-            context.getLogging().debug("Writing common variable '" + commonVariable->getName() + "'.", getId());
-            const int varId = NetCDF::getVariableId(fileId, commonVariable->getName());
-            const Segment& segment = context.getSegment(commonVariable->getSegmentName());
-            const Accessor& accessor = segment.getAccessor(commonVariable->getName());
-            NetCDF::putData(fileId, varId, accessor.getUntypedData());
+        foreach(SegmentDescriptor* sd, getCommonSegments(context.getDictionary())) {
+            Segment& segment = context.getSegment(sd->getName());
+            const vector<string> varNames = segment.getVariableNames();
+            foreach(string var, varNames) {
+                context.getLogging().debug("Writing common variable '" + var + "'.", getId());
+                const int varId = NetCDF::getVariableId(fileId, var);
+                if(varId == -1) {
+                    continue;
+                }
+                const Accessor& accessor = segment.getAccessor(var);
+                NetCDF::putData(fileId, varId, accessor.getUntypedData());
+            }
+            context.setLastComputedL(segment, *this, segment.getGrid().getMaxL());
         }
     }
+
+//    valarray<int> fileIds = getFileIds();
+//    for (size_t i = 0; i < fileIds.size(); i++) {
+//        const int fileId = fileIds[i];
+//        bool fileContainsSubsampledSegments = fileSubsampledMap[fileId];
+//        vector<VariableDescriptor*> commonVariables;
+//        if (fileContainsSubsampledSegments) {
+//            commonVariables = getSubsampledCommonVariables(context.getDictionary());
+//        } else {
+//            commonVariables = getNonSubsampledCommonVariables(context.getDictionary());
+//        }
+//        valarray<size_t> origin;
+//        valarray<size_t> shape;
+//        foreach (VariableDescriptor* commonVariable, commonVariables) {
+//            context.getLogging().debug("Writing common variable '" + commonVariable->getName() + "'.", getId());
+//            const int varId = NetCDF::getVariableId(fileId, commonVariable->getName());
+//            const Segment& segment = context.getSegment(commonVariable->getSegmentName());
+//            const Accessor& accessor = segment.getAccessor(commonVariable->getName());
+//            NetCDF::putData(fileId, varId, accessor.getUntypedData());
+//        }
+//    }
 }
 
 void VgtPWriter::defineCommonDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, valarray<int> >& commonDimIds) {
