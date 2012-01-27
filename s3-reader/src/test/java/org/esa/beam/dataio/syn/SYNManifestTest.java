@@ -76,7 +76,6 @@ public class SynManifestTest {
         assertEquals("tiepoints_slstr_o.nc", tiepointsFiles.get(3));
     }
 
-
     @Test
     public void testGetTimeFileName() {
         assertEquals("time.nc", manifestTest.getTimeFileName());

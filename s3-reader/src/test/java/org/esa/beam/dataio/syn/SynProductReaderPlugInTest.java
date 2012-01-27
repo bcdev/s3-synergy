@@ -1,6 +1,5 @@
 package org.esa.beam.dataio.syn;
 
-import org.esa.beam.dataio.olci.OlciLevel2ProductReaderPlugIn;
 import org.esa.beam.framework.dataio.DecodeQualification;
 import org.esa.beam.framework.dataio.ProductIOPlugInManager;
 import org.esa.beam.framework.dataio.ProductReader;
