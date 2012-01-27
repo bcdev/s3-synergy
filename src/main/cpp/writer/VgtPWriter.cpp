@@ -45,7 +45,6 @@ void VgtPWriter::writeCommonVariables(Context& context) {
                 if(varId == -1) {
                     continue;
                 }
-                context.getLogging().progress("Writing common variable '" + var + "'.", getId());
                 const Accessor& accessor = segment.getAccessor(var);
                 NetCDF::putData(fileId, varId, accessor.getUntypedData());
             }
