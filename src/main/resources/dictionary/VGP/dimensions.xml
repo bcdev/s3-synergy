@@ -4,11 +4,11 @@
         <dimensions>
             <dimension>
                 <name>NX</name>
-                <size>40320</size>
+                <size>8176</size>
             </dimension>
             <dimension>
                 <name>NY</name>
-                <size>14672</size>
+                <size>5600</size>
             </dimension>
         </dimensions>
     </set>
@@ -16,11 +16,11 @@
         <dimensions>
             <dimension>
                 <name>SX</name>
-                <size>2521</size>
+                <size>1022</size>
             </dimension>
             <dimension>
                 <name>SY</name>
-                <size>918</size>
+                <size>700</size>
             </dimension>
         </dimensions>
     </set>
@@ -28,7 +28,7 @@
         <dimensions>
             <dimension>
                 <name>NY</name>
-                <size>14672</size>
+                <size>5600</size>
             </dimension>
         </dimensions>
     </set>
@@ -36,7 +36,7 @@
         <dimensions>
             <dimension>
                 <name>NX</name>
-                <size>40320</size>
+                <size>8176</size>
             </dimension>
         </dimensions>
     </set>
@@ -44,7 +44,7 @@
         <dimensions>
             <dimension>
                 <name>SY</name>
-                <size>918</size>
+                <size>700</size>
             </dimension>
         </dimensions>
     </set>
@@ -52,7 +52,7 @@
         <dimensions>
             <dimension>
                 <name>SX</name>
-                <size>2521</size>
+                <size>1022</size>
             </dimension>
         </dimensions>
     </set>    
@@ -60,7 +60,7 @@
         <dimensions>
             <dimension>
                 <name>NY</name>
-                <size>14672</size>
+                <size>5600</size>
             </dimension>
             <dimension>
                 <name>nv</name>
@@ -72,7 +72,7 @@
         <dimensions>
             <dimension>
                 <name>NX</name>
-                <size>40320</size>
+                <size>8176</size>
             </dimension>
             <dimension>
                 <name>nv</name>
@@ -84,7 +84,7 @@
         <dimensions>
             <dimension>
                 <name>SY</name>
-                <size>918</size>
+                <size>700</size>
             </dimension>
             <dimension>
                 <name>nv</name>
@@ -96,7 +96,7 @@
         <dimensions>
             <dimension>
                 <name>SX</name>
-                <size>2521</size>
+                <size>1022</size>
             </dimension>
             <dimension>
                 <name>nv</name>
