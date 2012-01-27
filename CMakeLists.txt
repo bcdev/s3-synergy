@@ -491,6 +491,7 @@ install(TARGETS syl2 vgtp
   sy_unt_vbm
   sy_unt_vfl
   sy_unt_vpr
+  sy_unt_vwr
   RUNTIME DESTINATION bin
   CONFIGURATIONS Release
 )
