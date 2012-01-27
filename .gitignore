@@ -21,4 +21,5 @@ CMakeScripts/
 LOG.*
 Makefile
 Config.h
+runalltests.sh
 install_manifest.txt

@@ -6,7 +6,12 @@ configure_file (
   "src/main/cpp/core/Config.h.in"
   "src/main/cpp/core/Config.h"
 )
-  
+
+configure_file (
+  "src/main/bin/runalltests.sh.in"
+  "src/main/bin/runalltests.sh"
+)
+
 set(CMAKE_CXX_FLAGS "-fopenmp -O3 -std=c++98 -DBOOST_FILESYSTEM_VERSION=2")
 set(CMAKE_CXX_FLAGS_DEBUG "-fopenmp -g -O0 -std=c++98 -Wall -DBOOST_FILESYSTEM_VERSION=2")
 
@@ -488,6 +493,10 @@ install(TARGETS syl2 vgtp
   sy_unt_vpr
   RUNTIME DESTINATION bin
   CONFIGURATIONS Release
+)
+
+install(DIRECTORY src/main/bin/ DESTINATION bin
+  FILES_MATCHING PATTERN "*.sh"
 )
 
 install(DIRECTORY src/main/resources DESTINATION src/main
