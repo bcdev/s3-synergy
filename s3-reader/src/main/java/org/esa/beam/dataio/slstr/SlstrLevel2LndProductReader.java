@@ -34,7 +34,6 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
     private final Logger logger;
 
     private final String[] indicesProductBandNames = {"scan", "pixel", "detector"};
-    private final String[] flagsProductBandNames = {"cloud", "bayes", "pointing", "confidence"};
 
     /**
      * Constructs a new abstract product reader.
@@ -154,17 +153,30 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
     }
 
     private void attachFlagsToProduct(String flagsFileName, Product product) {
-        // file: indices_in.nc
+        // file: flags_in.nc
         try {
             final Product flagsProduct = readProduct(flagsFileName);
             for (final Band sourceBand : flagsProduct.getBands()) {
                 final String bandName = sourceBand.getName();
-                for (String flagsBandName: flagsProductBandNames) {
-                    if ((bandName.equals(flagsBandName))) {
-                        final Band targetBand = ProductUtils.copyBand(bandName, flagsProduct, product);
-                        targetBand.setSourceImage(sourceBand.getSourceImage());
-                    }
+                final Band targetBand = ProductUtils.copyBand(bandName, flagsProduct, product);
+                if (sourceBand.getName().equals(SlstrFlagCodings.CLOUD_FLAG_BAND_NAME)) {
+                    final FlagCoding cloudFlagCoding = SlstrFlagCodings.createCloudFlagCoding();
+                    targetBand.setSampleCoding(cloudFlagCoding);
+                    product.getFlagCodingGroup().add(cloudFlagCoding);
+                } else if (sourceBand.getName().equals(SlstrFlagCodings.BAYES_FLAG_BAND_NAME)) {
+                    final FlagCoding bayesFlagCoding = SlstrFlagCodings.createBayesFlagCoding();
+                    targetBand.setSampleCoding(bayesFlagCoding);
+                    product.getFlagCodingGroup().add(bayesFlagCoding);
+                } else if (sourceBand.getName().equals(SlstrFlagCodings.POINTING_FLAG_BAND_NAME)) {
+                    final FlagCoding pointingFlagCoding = SlstrFlagCodings.createPointingFlagCoding();
+                    targetBand.setSampleCoding(pointingFlagCoding);
+                    product.getFlagCodingGroup().add(pointingFlagCoding);
+                } else if (sourceBand.getName().equals(SlstrFlagCodings.CONFIDENCE_FLAG_BAND_NAME)) {
+                    final FlagCoding confidenceFlagCoding = SlstrFlagCodings.createConfidenceFlagCoding();
+                    targetBand.setSampleCoding(confidenceFlagCoding);
+                    product.getFlagCodingGroup().add(confidenceFlagCoding);
                 }
+                targetBand.setSourceImage(sourceBand.getSourceImage());
             }
         } catch (IOException e) {
             String msg = String.format("Not able to read file '%s.", flagsFileName);
@@ -202,7 +214,7 @@ public class SlstrLevel2LndProductReader extends AbstractProductReader {
             final Product indicesProduct = readProduct(indicesFileName);
             for (final Band sourceBand : indicesProduct.getBands()) {
                 final String bandName = sourceBand.getName();
-                for (String indicesBandName:indicesProductBandNames) {
+                for (String indicesBandName : indicesProductBandNames) {
                     if ((bandName.equals(indicesBandName))) {
                         final Band targetBand = ProductUtils.copyBand(bandName, indicesProduct, product);
                         targetBand.setSourceImage(sourceBand.getSourceImage());
