@@ -73,16 +73,16 @@ void VgtSegmentProvider::addCommonSegments(Context& context) {
         foreach(VariableDescriptor* varDesc, variableDescriptors) {
             const string& segmentName = segDesc->getName();
             if (!context.hasSegment(segmentName) &&
-                    segmentName.compare("LAT_BNDS") != 0 &&
-                    segmentName.compare("LON_BNDS") != 0 &&
-                    segmentName.compare("LAT_BNDS_TP") != 0 &&
-                    segmentName.compare("LON_BNDS_TP") != 0) {
+                    segmentName.compare(Constants::SEGMENT_VGP_LAT_BNDS) != 0 &&
+                    segmentName.compare(Constants::SEGMENT_VGP_LON_BNDS) != 0 &&
+                    segmentName.compare(Constants::SEGMENT_VGP_LAT_TP_BNDS) != 0 &&
+                    segmentName.compare(Constants::SEGMENT_VGP_LON_TP_BNDS) != 0) {
                 valarray<size_t> dimensionSizes = IOUtils::getDimensionSizes(varDesc);
                 context.addSwathSegment(segmentName, dimensionSizes[0], dimensionSizes[1], dimensionSizes[2], 0, dimensionSizes[1] - 1);
-            } else if(segmentName.compare("LAT_BNDS") == 0 ||
-                    segmentName.compare("LON_BNDS") == 0 ||
-                    segmentName.compare("LAT_BNDS_TP") == 0 ||
-                    segmentName.compare("LON_BNDS_TP") == 0) {
+            } else if(segmentName.compare(Constants::SEGMENT_VGP_LAT_BNDS) == 0 ||
+                    segmentName.compare(Constants::SEGMENT_VGP_LON_BNDS) == 0 ||
+                    segmentName.compare(Constants::SEGMENT_VGP_LAT_TP_BNDS) == 0 ||
+                    segmentName.compare(Constants::SEGMENT_VGP_LON_TP_BNDS) == 0) {
                 valarray<size_t> dimensionSizes = IOUtils::getDimensionSizes(varDesc);
                 context.addSingleLineSegment(segmentName, dimensionSizes[2]);
             }
