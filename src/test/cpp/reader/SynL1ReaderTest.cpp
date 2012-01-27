@@ -41,7 +41,7 @@ void SynL1ReaderTest::prepareContext() {
     shared_ptr<JobOrder> jobOrder = jobOrderParser.parse(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_SRE.xml");
     context->setJobOrder(jobOrder);
 
-    shared_ptr<Logging> logging = jobOrderParser.createLogging("LOG.SY_UNT_ACO");
+    shared_ptr<Logging> logging = jobOrderParser.createLogging("LOG.SY_UNT_SRE");
     context->setLogging(logging);
 }
 
