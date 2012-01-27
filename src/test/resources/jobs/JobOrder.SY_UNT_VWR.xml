@@ -39,7 +39,7 @@
                 <Output>
                     <File_Type>SY2</File_Type>
                     <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
-                    <File_Name>testdata/SY2/SY_UNT_VPW.SAFE</File_Name>
+                    <File_Name>testdata/VGP/SY_UNT_VWR.SAFE</File_Name>
                 </Output>
             </List_of_Outputs>
         </Ipf_Proc>
