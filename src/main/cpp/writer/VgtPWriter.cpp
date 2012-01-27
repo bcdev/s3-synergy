@@ -34,7 +34,6 @@ const vector<SegmentDescriptor*> VgtPWriter::getSegmentDescriptors(const Diction
 }
 
 void VgtPWriter::writeCommonVariables(Context& context) {
-
     valarray<int> fileIds = getFileIds();
     for (size_t i = 0; i < fileIds.size(); i++) {
         const int fileId = fileIds[i];
@@ -50,6 +49,7 @@ void VgtPWriter::writeCommonVariables(Context& context) {
                 const Accessor& accessor = segment.getAccessor(var);
                 NetCDF::putData(fileId, varId, accessor.getUntypedData());
             }
+            context.getLogging().progress("segment, *this, segment.getGrid().getMaxL()", "");
             context.setLastComputedL(segment, *this, segment.getGrid().getMaxL());
         }
     }
