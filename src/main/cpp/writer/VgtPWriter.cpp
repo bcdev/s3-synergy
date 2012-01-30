@@ -39,6 +39,9 @@ void VgtPWriter::writeCommonVariables(Context& context) {
         const int fileId = fileIds[i];
         foreach(SegmentDescriptor* sd, getCommonSegments(context.getDictionary())) {
             Segment& segment = context.getSegment(sd->getName());
+            if(context.getLastComputedL(segment, *this) == segment.getGrid().getMaxL()) {
+                continue;
+            }
             const vector<string> varNames = segment.getVariableNames();
             foreach(string var, varNames) {
                 const int varId = NetCDF::getVariableId(fileId, var);
