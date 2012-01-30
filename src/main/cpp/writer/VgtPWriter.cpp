@@ -154,9 +154,9 @@ bool VgtPWriter::isSubsampledCommonSegment(const string& segmentName) const {
 
 bool VgtPWriter::isSubsampledSegment(const string& segmentName) const {
     return segmentName.compare(Constants::SEGMENT_OLC_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_OLC_TP) == 0
             || segmentName.compare(Constants::SEGMENT_SLN_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_SLO_TP) == 0;
+            || segmentName.compare(Constants::SEGMENT_SLO_TP) == 0
+            || segmentName.compare(Constants::SEGMENT_VGP_TP) == 0;
 }
 
 bool VgtPWriter::isCommonDescriptor(const SegmentDescriptor& segmentDescriptor) const {
