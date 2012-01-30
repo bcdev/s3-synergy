@@ -75,7 +75,7 @@ void SegmentWriter::process(Context& context) {
 
 void SegmentWriter::start(Context& context) {
 	targetDirPath = path(context.getJobOrder().getIpfProcessors().at(0).getOutputList().at(0).getFileName());
-	targetDirPath = targetDirPath.parent_path() / (targetDirPath.stem() + ".BREAKPOINT");
+	targetDirPath = targetDirPath.parent_path() / (targetDirPath.stem().string() + ".BREAKPOINT");
 	if (!targetDirPath.has_root_directory()) {
 		targetDirPath = Constants::S3_SYNERGY_HOME / targetDirPath;
 	}
