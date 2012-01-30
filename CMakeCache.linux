@@ -1,71 +1,77 @@
 set(BOOST_HOME /usr/local 
     CACHE 
-    FILEPATH 
+    PATH 
     "The path to the Boost installation."
 )
+
+set(BOOST_MT OFF 
+    CACHE 
+    BOOL 
+    "Use Boost MT libs?"
+)    
     
 set(JAVA_HOME /usr/lib/jvm/java-6-sun 
 	CACHE 
-	FILEPATH 
+	PATH 
 	"The path to the Java JDK."
 )
 	
 set(JAVA_INC_DIR include
 	CACHE 
-	FILEPATH
+	PATH
 	"The directory of the Java include files within the JAVA_HOME directory."
 )
 
 set(JAVA_LIB_DIR jre/lib/amd64
 	CACHE 
-	FILEPATH
+	PATH
 	"The directory of the Java library within the JAVA_HOME directory."
 )
 
 set(JAVA_JVM_DIR jre/lib/amd64/server
 	CACHE 
-	FILEPATH
+	PATH
 	"The directory of the JVM library within the JAVA_HOME directory."
 )
 
 set(MD5_SUM_EXECUTABLE /usr/bin/md5sum
 	CACHE
-	FILEPATH
+	PATH
 	"The path to the md5sum executable."
 )
 
 set(NETCDF_HOME /usr/local 
     CACHE 
-    FILEPATH 
+    PATH 
     "The path to the netCDF installation."
 )
 
 set(SAFE_HOME /usr/local/safe-suite
 	CACHE
-	FILEPATH
+	PATH
 	"The path to the SAFE suite."
 )
 
 set(SAFE_INC_DIR include
 	CACHE
-	FILEPATH
+	PATH
 	"The directory of the SAFE suite include files within the SAFE_HOME directory."
 )
 
 set(SAFE_LIB_DIR lib/c++/LINUX
 	CACHE
-	FILEPATH
+	PATH
 	"The directory of the SAFE suite libraries within the SAFE_HOME directory."
 )
 
 set(XERCES_HOME /usr/local 
     CACHE 
-    FILEPATH 
+    PATH 
     "The path to the Apache Xerces-C installation."
 )
     
 set(XQILLA_HOME /usr/local 
     CACHE 
-    FILEPATH 
+    PATH 
     "The path to the XQilla installation."
 )
