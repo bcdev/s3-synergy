@@ -14,8 +14,8 @@ configure_file (
   "src/test/bin/runalltests.sh"
 )
 
-set(CMAKE_CXX_FLAGS "-fopenmp -O3 -std=c++98")
-set(CMAKE_CXX_FLAGS_DEBUG "-fopenmp -g -O0 -std=c++98 -Wall")
+set(CMAKE_CXX_FLAGS "-fopenmp -O3 -std=c++98 -DBOOST_FILESYSTEM_VERSION=3")
+set(CMAKE_CXX_FLAGS_DEBUG "-fopenmp -g -O0 -std=c++98 -Wall -DBOOST_FILESYSTEM_VERSION=3")
 
 ##
 # Project source files
@@ -50,13 +50,13 @@ file(GLOB_RECURSE VGTP_1_INTEGRATION_TEST_SOURCES src/test/cpp/integration/VgtP_
 file(GLOB_RECURSE VGTP_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/VgtP_2_Test.cpp)
 
 if(${BOOST_MT})
-   set(LIB${BOOST_REGEX} boost_regex-mt) 
-   set(LIB${BOOST_SYSTEM} boost_system-mt) 
-   set(LIB${BOOST_FILESYSTEM} boost_filesystem-mt)
+   set(BOOST_REGEX boost_regex-mt) 
+   set(BOOST_SYSTEM boost_system-mt) 
+   set(BOOST_FILESYSTEM boost_filesystem-mt)
 else(${BOOST_MT})
-   set(LIB${BOOST_REGEX} boost_regex) 
-   set(LIB${BOOST_SYSTEM} boost_system) 
-   set(LIB${BOOST_FILESYSTEM} boost_filesystem)
+   set(BOOST_REGEX boost_regex) 
+   set(BOOST_SYSTEM boost_system) 
+   set(BOOST_FILESYSTEM boost_filesystem)
 endif(${BOOST_MT})
  
 ##
@@ -363,9 +363,9 @@ target_link_libraries(sy_unt_vwr
 	netcdf
 	xerces-c
 	xqilla
-	${BOOST_REGEX}
-	${BOOST_SYSTEM}
-	${BOOST_FILESYSTEM}
+	boost_regex
+	boost_system
+	boost_filesystem
 )
 set_property(TARGET sy_unt_vwr PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
