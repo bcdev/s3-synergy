@@ -209,7 +209,7 @@ void AbstractWriter::putGlobalAttributes(int fileId, const VariableDescriptor& v
 				} else if (attributeName.compare("dataset_version") == 0) {
 					attribute->setValue(Constants::DATASET_VERSION);
 				} else if (attributeName.compare("package_name") == 0) {
-					attribute->setValue(targetDirPath.filename());
+					attribute->setValue(targetDirPath.filename().string());
 				} else if (attributeName.compare("creation_time") == 0) {
 					time_t currentTime;
 					time(&currentTime);
