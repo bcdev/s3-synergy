@@ -14,8 +14,8 @@ configure_file (
   "src/test/bin/runalltests.sh"
 )
 
-set(CMAKE_CXX_FLAGS "-fopenmp -O3 -std=c++98 -DBOOST_FILESYSTEM_VERSION=3")
-set(CMAKE_CXX_FLAGS_DEBUG "-fopenmp -g -O0 -std=c++98 -Wall -DBOOST_FILESYSTEM_VERSION=3")
+set(CMAKE_CXX_FLAGS "-fopenmp -O3 -std=c++98")
+set(CMAKE_CXX_FLAGS_DEBUG "-fopenmp -g -O0 -std=c++98 -Wall")
 
 ##
 # Project source files
@@ -363,9 +363,9 @@ target_link_libraries(sy_unt_vwr
 	netcdf
 	xerces-c
 	xqilla
-	boost_regex
-	boost_system
-	boost_filesystem
+    ${BOOST_REGEX}
+    ${BOOST_SYSTEM}
+    ${BOOST_FILESYSTEM}
 )
 set_property(TARGET sy_unt_vwr PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
