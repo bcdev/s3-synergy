@@ -37,7 +37,6 @@ protected:
 	virtual void writeCommonVariables(Context& context) = 0;
 	virtual void defineCommonDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, valarray<int> >& commonDimIds) = 0;
 	virtual void defineCommonVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, valarray<int> >& commonDimIds) = 0;
-	virtual void resolveSubsampling(int fileId, const string& segmentName) = 0;
 private:
 	friend class AbstractWriterTest;
 	void defineNcVar(const Context& context, const ProductDescriptor& productDescriptor, const SegmentDescriptor& segmentDescriptor,

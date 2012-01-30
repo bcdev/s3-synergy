@@ -28,7 +28,6 @@ protected:
 	void writeCommonVariables(Context& context);
     void defineCommonDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, valarray<int> >& commonDimIds);
     void defineCommonVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, valarray<int> >& commonDimIds);
-    void resolveSubsampling(int fileId, const string& segmentName);
 
 private:
 	friend class SynL2WriterTest;

@@ -146,7 +146,6 @@ void AbstractWriter::defineNcVar(const Context& context, const ProductDescriptor
 		ncDimIdMap.insert(make_pair(ncFileBasename, dimIds));
 	}
 	const int fileId = ncFileIdMap[ncFileBasename];
-	resolveSubsampling(fileId, segmentDescriptor.getName());
 	const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
 	const int varId = NetCDF::defineVariable(fileId, variableDescriptor.getNcVarName(), variableDescriptor.getType(), dimIds);
 	ncVarIdMap[variableDescriptor.getName()] = varId;

@@ -45,7 +45,3 @@ void SynL2Writer::defineCommonDimensions(int fileId, const string& segmentName, 
 void SynL2Writer::defineCommonVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, valarray<int> >& commonDimIds) {
     // for SYN, we don't need to define common variables
 }
-
-void SynL2Writer::resolveSubsampling(int fileId, const string& segmentName) {
-    // for SYN, we don't need to care about subsampling
-}

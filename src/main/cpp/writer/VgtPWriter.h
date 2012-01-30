@@ -22,11 +22,9 @@ protected:
     void writeCommonVariables(Context& context);
     void defineCommonDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, valarray<int> >& commonDimIds);
     void defineCommonVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, valarray<int> >& commonDimIds);
-    void resolveSubsampling(int fileId, const string& segmentName);
 
 private:
 	friend class VgtPWriterTest;
-	map<int, bool> fileSubsampledMap;
 
 	const vector<SegmentDescriptor*> getCommonSegments(const Dictionary& dict) const;
 	const vector<VariableDescriptor*> getSubsampledCommonVariables(const Dictionary& dict) const;

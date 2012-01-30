@@ -8,7 +8,7 @@
 #include "VgtPWriter.h"
 #include "../util/IOUtils.h"
 
-VgtPWriter::VgtPWriter() : AbstractWriter("VGP_WRITER"), fileSubsampledMap() {
+VgtPWriter::VgtPWriter() : AbstractWriter("VGP_WRITER") {
 }
 
 VgtPWriter::~VgtPWriter() {}
@@ -51,27 +51,6 @@ void VgtPWriter::writeCommonVariables(Context& context) {
             context.setLastComputedL(segment, *this, segment.getGrid().getMaxL());
         }
     }
-
-//    valarray<int> fileIds = getFileIds();
-//    for (size_t i = 0; i < fileIds.size(); i++) {
-//        const int fileId = fileIds[i];
-//        bool fileContainsSubsampledSegments = fileSubsampledMap[fileId];
-//        vector<VariableDescriptor*> commonVariables;
-//        if (fileContainsSubsampledSegments) {
-//            commonVariables = getSubsampledCommonVariables(context.getDictionary());
-//        } else {
-//            commonVariables = getNonSubsampledCommonVariables(context.getDictionary());
-//        }
-//        valarray<size_t> origin;
-//        valarray<size_t> shape;
-//        foreach (VariableDescriptor* commonVariable, commonVariables) {
-//            context.getLogging().debug("Writing common variable '" + commonVariable->getName() + "'.", getId());
-//            const int varId = NetCDF::getVariableId(fileId, commonVariable->getName());
-//            const Segment& segment = context.getSegment(commonVariable->getSegmentName());
-//            const Accessor& accessor = segment.getAccessor(commonVariable->getName());
-//            NetCDF::putData(fileId, varId, accessor.getUntypedData());
-//        }
-//    }
 }
 
 void VgtPWriter::defineCommonDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, valarray<int> >& commonDimIds) {
@@ -108,16 +87,12 @@ void VgtPWriter::defineCommonVariables(int fileId, const string& segmentName, co
     }
 }
 
-void VgtPWriter::resolveSubsampling(int fileId, const string& segmentName) {
-    fileSubsampledMap[fileId] = isSubsampledSegment(segmentName);
-}
-
 valarray<int> VgtPWriter::getFileIds() {
-    valarray<int> fileIds(fileSubsampledMap.size());
-    typedef pair<int, bool> MapInput;
+    valarray<int> fileIds(ncFileIdMap.size());
+    typedef pair<string, int> MapInput;
     int i = 0;
-    foreach(MapInput mapInput, fileSubsampledMap) {
-        fileIds[i] = mapInput.first;
+    foreach(MapInput mapInput, ncFileIdMap) {
+        fileIds[i] = mapInput.second;
         i++;
     }
     return fileIds;
