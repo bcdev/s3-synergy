@@ -1,5 +1,5 @@
 /*
- * VgtPWriterTest.cpp
+ * VgtWriterTest.cpp
  *
  *  Created on: Jan 16, 2012
  *      Author: thomasstorm
@@ -8,31 +8,31 @@
 #include <cstdlib>
 
 #include "../../../../src/main/cpp/core/Processor.h"
-#include "../../../../src/main/cpp/writer/VgtPWriter.h"
+#include "../../../../src/main/cpp/writer/VgtWriter.h"
 #include "../../../../src/main/cpp/util/DictionaryParser.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
 
 #include "VgtSegmentProvider.h"
-#include "VgtPWriterTest.h"
+#include "VgtWriterTest.h"
 
 using std::getenv;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(VgtPWriterTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(VgtWriterTest);
 
-VgtPWriterTest::VgtPWriterTest() {
+VgtWriterTest::VgtWriterTest() {
 }
 
-VgtPWriterTest::~VgtPWriterTest() {
+VgtWriterTest::~VgtWriterTest() {
 }
 
-void VgtPWriterTest::setUp() {
+void VgtWriterTest::setUp() {
 	XPathInitializer init;
 
 	prepareContext();
 }
 
 
-void VgtPWriterTest::prepareContext() {
+void VgtWriterTest::prepareContext() {
     context = shared_ptr<Context>(new Context());
     shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
     context->setErrorHandler(errorHandler);
@@ -48,12 +48,12 @@ void VgtPWriterTest::prepareContext() {
     context->setLogging(logging);
 }
 
-void VgtPWriterTest::tearDown() {
+void VgtWriterTest::tearDown() {
 }
 
-void VgtPWriterTest::testWriter() {
+void VgtWriterTest::testWriter() {
     shared_ptr<Module> module = shared_ptr<Module>(new VgtSegmentProvider());
-    shared_ptr<Module> writer = shared_ptr<Module>(new VgtPWriter());
+    shared_ptr<Module> writer = shared_ptr<Module>(new VgtWriter());
     context->addModule(module);
     context->addModule(writer);
 

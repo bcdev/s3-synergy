@@ -40,7 +40,6 @@ private:
 
 	void getMinMaxSourceLat(double& minLat, double& maxLat) const;
 	void getMinMaxTargetLat(double& minLat, double& maxLat, long firstL, long lastL) const;
-	void getMinMaxSourceLon(double& minLon, double& maxLon) const;
 
 	double getTargetLat(long l) const ;
 	double getTargetLon(long m) const;

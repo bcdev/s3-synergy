@@ -78,19 +78,19 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, l
 		const long outerMinM = getM(outerMinN);
 		const long outerMaxM = getM(outerMaxN);
 
-		{ // consider outer points in the N, S, E, and W
+		if (true) { // consider outer points in the N, S, E, and W
 			updateNearestPixel(targetLat, targetLon, outerMinK, midL, outerMinM, k, l, m, delta);
 			updateNearestPixel(targetLat, targetLon, outerMaxK, midL, outerMaxM, k, l, m, delta);
 			updateNearestPixel(targetLat, targetLon, midK, outerMaxL, midM, k, l, m, delta);
 			updateNearestPixel(targetLat, targetLon, midK, outerMinL, midM, k, l, m, delta);
 		}
-		{ // consider outer points in the NW, SW, SE, and NE
+		if (true) { // consider outer points in the NW, SW, SE, and NE
 			updateNearestPixel(targetLat, targetLon, outerMinK, outerMinL, outerMinM, k, l, m, delta);
 			updateNearestPixel(targetLat, targetLon, outerMinK, outerMaxL, outerMinM, k, l, m, delta);
 			updateNearestPixel(targetLat, targetLon, outerMaxK, outerMaxL, outerMaxM, k, l, m, delta);
 			updateNearestPixel(targetLat, targetLon, outerMaxK, outerMinL, outerMaxM, k, l, m, delta);
 		}
-		{ // consider inner points in the NW, SW, SE, and NE
+		if (true) { // consider inner points in the NW, SW, SE, and NE
 			const long innerMinL = max(outerMinL, midL - b / 2);
 			const long innerMaxL = min(outerMaxL, midL + b / 2);
 			const long innerMinN = max(outerMinN, midN - b / 2);

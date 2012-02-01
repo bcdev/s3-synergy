@@ -11,7 +11,7 @@
 #include "../modules/Vfl.h"
 #include "../modules/Vpr.h"
 #include "../reader/SynL1Reader.h"
-#include "../writer/VgtPWriter.h"
+#include "../writer/VgtWriter.h"
 
 #include "../util/BasicTask.h"
 
@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
 	shared_ptr<Module> vbm = shared_ptr<Module>(new Vbm());
 	shared_ptr<Module> vfl = shared_ptr<Module>(new Vfl());
 	shared_ptr<Module> vpr = shared_ptr<Module>(new Vpr());
-	shared_ptr<Module> writer = shared_ptr<Module>(new VgtPWriter());
+	shared_ptr<Module> writer = shared_ptr<Module>(new VgtWriter());
 
 	task.getContext().addModule(reader);
 	task.getContext().addModule(col);

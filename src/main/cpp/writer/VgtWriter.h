@@ -1,19 +1,19 @@
 /*
- * File:   VgtPWriter.h
+ * File:   VgtWriter.h
  * Author: thomass
  *
 * Created on January 11, 2012, 16:30
  */
 
-#ifndef VGTPWRITER_H
-#define	VGTPWRITER_H
+#ifndef VGTWRITER_H
+#define	VGTWRITER_H
 
 #include "../writer/AbstractWriter.h"
 
-class VgtPWriter: public AbstractWriter {
+class VgtWriter: public AbstractWriter {
 public:
-    VgtPWriter();
-    virtual ~VgtPWriter();
+    VgtWriter();
+    virtual ~VgtWriter();
 
 protected:
     const string& getProductDescriptorIdentifier() const;
@@ -24,7 +24,7 @@ protected:
     void defineCommonVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, valarray<int> >& commonDimIds);
 
 private:
-	friend class VgtPWriterTest;
+	friend class VgtWriterTest;
 
 	const vector<SegmentDescriptor*> getCommonSegments(const Dictionary& dict) const;
 	const vector<VariableDescriptor*> getSubsampledCommonVariables(const Dictionary& dict) const;
@@ -35,5 +35,5 @@ private:
 	valarray<int> getFileIds();
 };
 
-#endif	/* VGTPWRITER_H */
+#endif	/* VGTWRITER_H */
 

@@ -1,26 +1,26 @@
 /*
- * VgtPWriterTest.h
+ * VgtWriterTest.h
  *
  *  Created on: Jan 16, 2012
  *      Author: thomasstorm
  */
 
-#ifndef VGTPWRITERTEST_H_
-#define VGTPWRITERTEST_H_
+#ifndef VGTWRITERTEST_H_
+#define VGTWRITERTEST_H_
 
 #include <cppunit/extensions/HelperMacros.h>
 
 #include "../../../../src/main/cpp/core/Context.h"
 #include "../../../../src/main/cpp/core/Dictionary.h"
 
-class VgtPWriterTest : public CPPUNIT_NS::TestFixture {
-    CPPUNIT_TEST_SUITE(VgtPWriterTest);
+class VgtWriterTest : public CPPUNIT_NS::TestFixture {
+    CPPUNIT_TEST_SUITE(VgtWriterTest);
     CPPUNIT_TEST(testWriter);
     CPPUNIT_TEST_SUITE_END();
 
 public:
-    VgtPWriterTest();
-    virtual ~VgtPWriterTest();
+    VgtWriterTest();
+    virtual ~VgtWriterTest();
     void setUp();
     void tearDown();
 
@@ -30,4 +30,4 @@ protected:
     shared_ptr<Context> context;
 };
 
-#endif /* VGTPWRITERTEST_H_ */
+#endif /* VGTWRITERTEST_H_ */

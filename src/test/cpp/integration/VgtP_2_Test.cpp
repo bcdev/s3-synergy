@@ -14,7 +14,7 @@
 #include "../../../../src/main/cpp/reader/SynL1Reader.h"
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
 #include "../../../../src/main/cpp/util/BasicTask.h"
-#include "../../../../src/main/cpp/writer/VgtPWriter.h"
+#include "../../../../src/main/cpp/writer/VgtWriter.h"
 
 #include "VgtP_2_Test.h"
 
@@ -41,7 +41,7 @@ void VgtP_2_Test::testIntegrationOfVgtPModules() {
 	shared_ptr<Module> vbm = shared_ptr<Module>(new Vbm());
 	shared_ptr<Module> vfl = shared_ptr<Module>(new Vfl());
 	shared_ptr<Module> vpr = shared_ptr<Module>(new Vpr());
-	shared_ptr<Module> writer = shared_ptr<Module>(new VgtPWriter());
+	shared_ptr<Module> writer = shared_ptr<Module>(new VgtWriter());
 
 	task.getContext().addModule(reader);
 	task.getContext().addModule(col);

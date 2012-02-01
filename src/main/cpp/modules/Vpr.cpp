@@ -159,23 +159,19 @@ void Vpr::process(Context& context) {
     double maxSourceLat = -90.0;
     double minTargetLat = 90.0;
     double maxTargetLat = -90.0;
-    double maxSourceLon = -180.0;
 
     getMinMaxSourceLat(minSourceLat, maxSourceLat);
     getMinMaxTargetLat(minTargetLat, maxTargetLat, firstTargetL, lastTargetL);
 
-    double minSourceLon = 180.0;
-    getMinMaxSourceLon(minSourceLon, maxSourceLon);
-
     // Is the target region north of the source region, without overlap?
-    if (minTargetLat > maxSourceLat) {
+    if (minTargetLat - DEGREES_PER_TARGET_PIXEL * 0.5 > maxSourceLat) {
     	// Yes. Processing is completed.
 		context.setLastComputedL(vgp, *this, lastTargetL);
 		return;
 	}
 
     // Is the target region south of the source region, without overlap?
-    if (maxTargetLat < minSourceLat && context.getLastComputableL(syn, *this) < sourceGrid.getMaxL()) {
+    if (maxTargetLat + DEGREES_PER_TARGET_PIXEL * 0.5 < minSourceLat && context.getLastComputableL(syn, *this) < sourceGrid.getMaxL()) {
     	// Yes. Processing will be completed later.
     	return;
 	}
@@ -270,26 +266,6 @@ void Vpr::getMinMaxSourceLat(double& minLat, double& maxLat) const {
 			}
 		}
 	}
-}
-
-void Vpr::getMinMaxSourceLon(double& minLon, double& maxLon) const {
-	const Grid& geoGrid = geoSegment->getGrid();
-	const Grid& synGrid = synSegment->getGrid();
-
-    for(long k = synGrid.getFirstK(); k <= synGrid.getMaxK(); k++) {
-        for(long l = synGrid.getFirstL(); l <= synGrid.getMaxL(); l++) {
-            for(long m = synGrid.getFirstM(); m <= synGrid.getMaxM(); m++) {
-                const size_t index = geoGrid.getIndex(k, l , m);
-                const double lon = lonAccessor->getDouble(index);
-                if(lon < minLon) {
-                    minLon = lon;
-                }
-                if(lon > maxLon) {
-                    maxLon = lon;
-                }
-            }
-        }
-    }
 }
 
 void Vpr::getMinMaxTargetLat(double& minLat, double& maxLat, long firstL, long lastL) const {

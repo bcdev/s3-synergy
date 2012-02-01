@@ -1,27 +1,27 @@
 /*
- * File:   VgtPWriter.cpp
+ * File:   VgtWriter.cpp
  * Author: thomass
  *
  * Created on January 11, 2012, 16:30
  */
 
-#include "VgtPWriter.h"
+#include "VgtWriter.h"
 #include "../util/IOUtils.h"
 
-VgtPWriter::VgtPWriter() : AbstractWriter("VGP_WRITER") {
+VgtWriter::VgtWriter() : AbstractWriter("VGP_WRITER") {
 }
 
-VgtPWriter::~VgtPWriter() {}
+VgtWriter::~VgtWriter() {}
 
-const string& VgtPWriter::getProductDescriptorIdentifier() const {
+const string& VgtWriter::getProductDescriptorIdentifier() const {
     return Constants::PRODUCT_VGP;
 }
 
-const string& VgtPWriter::getSafeManifestName() const {
+const string& VgtWriter::getSafeManifestName() const {
     return Constants::SAFE_MANIFEST_NAME_VGT_P;
 }
 
-const vector<SegmentDescriptor*> VgtPWriter::getSegmentDescriptors(const Dictionary& dict) const {
+const vector<SegmentDescriptor*> VgtWriter::getSegmentDescriptors(const Dictionary& dict) const {
     const ProductDescriptor& productDescriptor = dict.getProductDescriptor(getProductDescriptorIdentifier());
     vector<SegmentDescriptor*> allSegmentDescriptors = productDescriptor.getSegmentDescriptors();
     vector<SegmentDescriptor*> nonCommonSegmentDescriptors;
@@ -33,7 +33,7 @@ const vector<SegmentDescriptor*> VgtPWriter::getSegmentDescriptors(const Diction
     return nonCommonSegmentDescriptors;
 }
 
-void VgtPWriter::writeCommonVariables(Context& context) {
+void VgtWriter::writeCommonVariables(Context& context) {
     valarray<int> fileIds = getFileIds();
     for (size_t i = 0; i < fileIds.size(); i++) {
         const int fileId = fileIds[i];
@@ -56,7 +56,7 @@ void VgtPWriter::writeCommonVariables(Context& context) {
     }
 }
 
-void VgtPWriter::defineCommonDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, valarray<int> >& commonDimIds) {
+void VgtWriter::defineCommonDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, valarray<int> >& commonDimIds) {
     vector<VariableDescriptor*> variables;
     if(isSubsampledSegment(segmentName)) {
         variables = getSubsampledCommonVariables(dict);
@@ -79,7 +79,7 @@ void VgtPWriter::defineCommonDimensions(int fileId, const string& segmentName, c
     }
 }
 
-void VgtPWriter::defineCommonVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, valarray<int> >& commonDimIds) {
+void VgtWriter::defineCommonVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, valarray<int> >& commonDimIds) {
     vector<VariableDescriptor*> variables;
     if(isSubsampledSegment(segmentName)) {
         variables = getSubsampledCommonVariables(dict);
@@ -91,7 +91,7 @@ void VgtPWriter::defineCommonVariables(int fileId, const string& segmentName, co
     }
 }
 
-valarray<int> VgtPWriter::getFileIds() {
+valarray<int> VgtWriter::getFileIds() {
     valarray<int> fileIds(ncFileIdMap.size());
     typedef pair<string, int> MapInput;
     int i = 0;
@@ -102,7 +102,7 @@ valarray<int> VgtPWriter::getFileIds() {
     return fileIds;
 }
 
-const vector<VariableDescriptor*> VgtPWriter::getSubsampledCommonVariables(const Dictionary& dict) const {
+const vector<VariableDescriptor*> VgtWriter::getSubsampledCommonVariables(const Dictionary& dict) const {
     vector<SegmentDescriptor*> commonSegments = getCommonSegments(dict);
     vector<VariableDescriptor*> commonVariablesResult;
     foreach(SegmentDescriptor* commonSegment, commonSegments) {
@@ -116,7 +116,7 @@ const vector<VariableDescriptor*> VgtPWriter::getSubsampledCommonVariables(const
     return commonVariablesResult;
 }
 
-const vector<VariableDescriptor*> VgtPWriter::getNonSubsampledCommonVariables(const Dictionary& dict) const {
+const vector<VariableDescriptor*> VgtWriter::getNonSubsampledCommonVariables(const Dictionary& dict) const {
     vector<SegmentDescriptor*> commonSegments = getCommonSegments(dict);
     vector<VariableDescriptor*> nonSubsampledCommonVariables;
     foreach(SegmentDescriptor* commonSegment, commonSegments) {
@@ -130,7 +130,7 @@ const vector<VariableDescriptor*> VgtPWriter::getNonSubsampledCommonVariables(co
     return nonSubsampledCommonVariables;
 }
 
-const vector<SegmentDescriptor*> VgtPWriter::getCommonSegments(const Dictionary& dict) const {
+const vector<SegmentDescriptor*> VgtWriter::getCommonSegments(const Dictionary& dict) const {
     const ProductDescriptor& productDescriptor = dict.getProductDescriptor(getProductDescriptorIdentifier());
     vector<SegmentDescriptor*> allSegmentDescriptors = productDescriptor.getSegmentDescriptors();
     vector<SegmentDescriptor*> commonSegmentDescriptors;
@@ -142,7 +142,7 @@ const vector<SegmentDescriptor*> VgtPWriter::getCommonSegments(const Dictionary&
     return commonSegmentDescriptors;
 }
 
-bool VgtPWriter::isSubsampledCommonSegment(const string& segmentName) const {
+bool VgtWriter::isSubsampledCommonSegment(const string& segmentName) const {
     return segmentName.compare(Constants::SEGMENT_VGP_LAT_TP) == 0
             || segmentName.compare(Constants::SEGMENT_VGP_LON_TP) == 0
             || segmentName.compare(Constants::SEGMENT_VGP_LAT_BNDS) == 0
@@ -153,14 +153,14 @@ bool VgtPWriter::isSubsampledCommonSegment(const string& segmentName) const {
             || segmentName.compare(Constants::SEGMENT_VGS_LON_BNDS) == 0;
 }
 
-bool VgtPWriter::isSubsampledSegment(const string& segmentName) const {
+bool VgtWriter::isSubsampledSegment(const string& segmentName) const {
     return segmentName.compare(Constants::SEGMENT_OLC_TP) == 0
             || segmentName.compare(Constants::SEGMENT_SLN_TP) == 0
             || segmentName.compare(Constants::SEGMENT_SLO_TP) == 0
             || segmentName.compare(Constants::SEGMENT_VGP_TP) == 0;
 }
 
-bool VgtPWriter::isCommonDescriptor(const SegmentDescriptor& segmentDescriptor) const {
+bool VgtWriter::isCommonDescriptor(const SegmentDescriptor& segmentDescriptor) const {
     const string& segmentName = segmentDescriptor.getName();
     return segmentName.compare(Constants::SEGMENT_VGP_LAT) == 0
             || segmentName.compare(Constants::SEGMENT_VGP_LAT_TP) == 0
