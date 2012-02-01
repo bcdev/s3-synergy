@@ -20,7 +20,7 @@ using std::vector;
 
 class NetcdfSegment: public virtual Segment {
 public:
-	NetcdfSegment(const string& name, long k, long l, long m);
+    NetcdfSegment(const string& name, const string& targetDirPath, long l, long m);
 	~NetcdfSegment();
 
 	Accessor& addVariable(const VariableDescriptor& variableDescriptor) throw (logic_error);
@@ -28,16 +28,16 @@ public:
 	Accessor& addVariable(const string& name, int type, double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
 	Accessor& addVariableAlias(const string& alias, const Segment& segment, const string& name) throw (logic_error);
 
-	Accessor& addVariableByte(const string& name, int8_t fillValue = numeric_limits<int8_t>::min(), double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
-	Accessor& addVariableDouble(const string& name, double fillValue = -numeric_limits<double>::max()) throw (logic_error);
-	Accessor& addVariableFloat(const string& name, float fillValue = -numeric_limits<float>::max()) throw (logic_error);
-	Accessor& addVariableInt(const string& name, int32_t fillValue = numeric_limits<int32_t>::min(), double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
-	Accessor& addVariableLong(const string& name, int64_t fillValue = numeric_limits<int64_t>::min()) throw (logic_error);
-	Accessor& addVariableShort(const string& name, int16_t fillValue = numeric_limits<int16_t>::min(), double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
-	Accessor& addVariableUByte(const string& name, uint8_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
-	Accessor& addVariableUInt(const string& name, uint32_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
-	Accessor& addVariableULong(const string& name, uint64_t fillValue = 0) throw (logic_error);
-	Accessor& addVariableUShort(const string& name, uint16_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) throw (logic_error);
+	Accessor& addVariableByte(const VariableDescriptor& d) throw (logic_error);
+	Accessor& addVariableDouble(const VariableDescriptor& d) throw (logic_error);
+	Accessor& addVariableFloat(const VariableDescriptor& d) throw (logic_error);
+	Accessor& addVariableInt(const VariableDescriptor& d) throw (logic_error);
+	Accessor& addVariableLong(const VariableDescriptor& d) throw (logic_error);
+	Accessor& addVariableShort(const VariableDescriptor& d) throw (logic_error);
+	Accessor& addVariableUByte(const VariableDescriptor& d) throw (logic_error);
+	Accessor& addVariableUInt(const VariableDescriptor& d) throw (logic_error);
+	Accessor& addVariableULong(const VariableDescriptor& d) throw (logic_error);
+	Accessor& addVariableUShort(const VariableDescriptor& d) throw (logic_error);
 
 	bool hasVariable(const string& name) const {
 		return accessorMap.find(name) != accessorMap.end();
@@ -74,6 +74,7 @@ private:
 	void unique(const string& varName) const throw (logic_error);
 
 	const string id;
+	const string targetDirPath;
 	mutable GridImpl grid;
 	map<string, shared_ptr<Accessor> > accessorMap;
 	vector<shared_ptr<Accessor> > accessorList;

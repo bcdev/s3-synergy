@@ -100,6 +100,12 @@ public:
 		return firstM + sizeM - 1;
 	}
 
+	long getK(size_t index) const;
+
+	long getL(size_t index) const;
+
+	long getM(size_t index) const;
+
 	void setFirstL(long l);
 
 	bool isValidPosition(long k, long l, long m) const;

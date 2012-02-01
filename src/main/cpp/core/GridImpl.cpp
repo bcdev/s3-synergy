@@ -94,3 +94,13 @@ bool GridImpl::isValidPosition(long k, long l, long m) const {
             getFirstM() <= m &&
             getMaxM() >= m);
 }
+
+long GridImpl::getK(size_t index) const {
+    return index / getStrideK();
+}
+long GridImpl::getL(size_t index) const {
+    return (index - getK(index) * getStrideK()) / getStrideL();
+}
+long GridImpl::getM(size_t index) const {
+    return index % getSizeM();
+}

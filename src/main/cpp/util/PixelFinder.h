@@ -32,16 +32,17 @@ private:
 	size_t computeTiePointCount(long sizeK, long sizeL, long sizeM) const;
 	void updateNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& sourceK, long& sourceL, long& sourceM, double& minDelta) const;
 
-	long getK(size_t index) const {
-		return index / geoLocation.getGrid().getStrideK();
-	}
-	long getL(size_t index) const {
-		return (index - getK(index) * geoLocation.getGrid().getStrideK()) / geoLocation.getGrid().getStrideL();
-	}
-	long getM(size_t index) const {
-		return index % geoLocation.getGrid().getSizeM();
-	}
-	long getN(long k, long m) const {
+    long getK(size_t index) const {
+        return geoLocation.getGrid().getK(index);
+    }
+    long getL(size_t index) const {
+        return geoLocation.getGrid().getL(index);
+    }
+    long getM(size_t index) const {
+        return geoLocation.getGrid().getM(index);
+    }
+
+    long getN(long k, long m) const {
 		return m + k * geoLocation.getGrid().getSizeM();
 	}
 	long getK(long n) const {

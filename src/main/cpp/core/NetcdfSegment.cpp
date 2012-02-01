@@ -1,22 +1,22 @@
 /*
  * NetcdfSegment.cpp
  *
- *  Created on: Jan 17, 2012
- *      Author: ralf
+ *  Created on: Feb 01, 2012
+ *      Author: thomasstorm
  */
 
 #include <sstream>
 #include <stdexcept>
 
-#include "MapAccessor.h"
+#include "NetcdfAccessor.h"
 #include "NetcdfSegment.h"
 
 using std::invalid_argument;
 using std::logic_error;
 using std::ostringstream;
 
-NetcdfSegment::NetcdfSegment(const string& name, long k, long l, long m) :
-		id(name), grid(k, l, m, 0, l - 1), accessorMap() {
+NetcdfSegment::NetcdfSegment(const string& name, const string& targetDirPath, long l, long m) :
+		id(name), targetDirPath(targetDirPath), grid(1, l, m, 0, l - 1), accessorMap() {
 }
 
 NetcdfSegment::~NetcdfSegment() {
@@ -29,55 +29,32 @@ Accessor& NetcdfSegment::addVariable(const VariableDescriptor& d) throw (logic_e
 Accessor& NetcdfSegment::addVariable(const VariableDescriptor& d, const string& targetName) throw (logic_error) {
 	switch (d.getType()) {
 	case Constants::TYPE_BYTE:
-		return addVariableByte(targetName, numeric_cast<int8_t>(d.getFillValue<int16_t>()), d.getScaleFactor(), d.getAddOffset());
+		return addVariableByte(d);
 	case Constants::TYPE_UBYTE:
-		return addVariableUByte(targetName, numeric_cast<uint8_t>(d.getFillValue<uint16_t>()), d.getScaleFactor(), d.getAddOffset());
+		return addVariableUByte(d);
 	case Constants::TYPE_SHORT:
-		return addVariableShort(targetName, d.getFillValue<int16_t>(), d.getScaleFactor(), d.getAddOffset());
+		return addVariableShort(d);
 	case Constants::TYPE_USHORT:
-		return addVariableUShort(targetName, d.getFillValue<uint16_t>(), d.getScaleFactor(), d.getAddOffset());
+		return addVariableUShort(d);
 	case Constants::TYPE_INT:
-		return addVariableInt(targetName, d.getFillValue<int32_t>(), d.getScaleFactor(), d.getAddOffset());
+		return addVariableInt(d);
 	case Constants::TYPE_UINT:
-		return addVariableUInt(targetName, d.getFillValue<uint32_t>(), d.getScaleFactor(), d.getAddOffset());
+		return addVariableUInt(d);
 	case Constants::TYPE_LONG:
-		return addVariableLong(targetName, d.getFillValue<int64_t>());
+		return addVariableLong(d);
 	case Constants::TYPE_ULONG:
-		return addVariableULong(targetName, d.getFillValue<uint64_t>());
+		return addVariableULong(d);
 	case Constants::TYPE_FLOAT:
-		return addVariableFloat(targetName, d.getFillValue<float>());
+		return addVariableFloat(d);
 	case Constants::TYPE_DOUBLE:
-		return addVariableDouble(targetName, d.getFillValue<double>());
+		return addVariableDouble(d);
 	default:
 		BOOST_THROW_EXCEPTION( std::invalid_argument("Cannot add variable '" + targetName + "' to segment '" + getId() + "'. Unsupported data type."));
 	}
 }
 
 Accessor& NetcdfSegment::addVariable(const string& name, int type, double scaleFactor, double addOffset) throw (logic_error) {
-	switch (type) {
-	case Constants::TYPE_BYTE:
-		return addVariableByte(name, numeric_limits<int8_t>::min(), scaleFactor, addOffset);
-	case Constants::TYPE_UBYTE:
-		return addVariableUByte(name, 0, scaleFactor, addOffset);
-	case Constants::TYPE_SHORT:
-		return addVariableShort(name, numeric_limits<int16_t>::min(), scaleFactor, addOffset);
-	case Constants::TYPE_USHORT:
-		return addVariableUShort(name, 0, scaleFactor, addOffset);
-	case Constants::TYPE_INT:
-		return addVariableInt(name, numeric_limits<int32_t>::min(), scaleFactor, addOffset);
-	case Constants::TYPE_UINT:
-		return addVariableUInt(name, 0, scaleFactor, addOffset);
-	case Constants::TYPE_LONG:
-		return addVariableLong(name);
-	case Constants::TYPE_ULONG:
-		return addVariableULong(name);
-	case Constants::TYPE_FLOAT:
-		return addVariableFloat(name);
-	case Constants::TYPE_DOUBLE:
-		return addVariableDouble(name);
-	default:
-		BOOST_THROW_EXCEPTION( std::invalid_argument("Cannot add variable '" + name + "' to segment '" + getId() + "'. Unsupported data type."));
-	}
+    BOOST_THROW_EXCEPTION(logic_error("not implemented."));
 }
 
 Accessor& NetcdfSegment::addVariableAlias(const string& alias, const Segment& segment, const string& name) throw (logic_error) {
@@ -92,10 +69,11 @@ Accessor& NetcdfSegment::addVariableAlias(const string& alias, const Segment& se
 	BOOST_THROW_EXCEPTION( logic_error("Alias for variable '" + name + "' from segment '" + segment.getId() + "' cannot be added to segment '" + segment.getId() + "'."));
 }
 
-Accessor& NetcdfSegment::addVariableByte(const string& name, int8_t fillValue, double scaleFactor, double addOffset) throw (logic_error) {
+Accessor& NetcdfSegment::addVariableByte(const VariableDescriptor& d) throw (logic_error) {
+    const string& name = d.getName();
 	unique(name);
 	try {
-		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<int8_t, Constants::TYPE_BYTE>(fillValue, scaleFactor, addOffset));
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new NetcdfAccessor<int8_t, Constants::TYPE_BYTE>(d, grid, targetDirPath));
 		accessorMap[name] = accessor;
 		accessorList.push_back(accessor);
 		return *accessor;
@@ -104,10 +82,11 @@ Accessor& NetcdfSegment::addVariableByte(const string& name, int8_t fillValue, d
 	}
 }
 
-Accessor& NetcdfSegment::addVariableDouble(const string& name, double fillValue) throw (logic_error) {
+Accessor& NetcdfSegment::addVariableDouble(const VariableDescriptor& d) throw (logic_error) {
+    const string& name = d.getName();
 	unique(name);
 	try {
-		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<double, Constants::TYPE_DOUBLE>(fillValue));
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new NetcdfAccessor<double, Constants::TYPE_DOUBLE>(d, grid, targetDirPath));
 		accessorMap[name] = accessor;
 		accessorList.push_back(accessor);
 		return *accessor;
@@ -116,10 +95,11 @@ Accessor& NetcdfSegment::addVariableDouble(const string& name, double fillValue)
 	}
 }
 
-Accessor& NetcdfSegment::addVariableFloat(const string& name, float fillValue) throw (logic_error) {
+Accessor& NetcdfSegment::addVariableFloat(const VariableDescriptor& d) throw (logic_error) {
+    const string& name = d.getName();
 	unique(name);
 	try {
-		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<float, Constants::TYPE_FLOAT>(fillValue));
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new NetcdfAccessor<float, Constants::TYPE_FLOAT>(d, grid, targetDirPath));
 		accessorMap[name] = accessor;
 		accessorList.push_back(accessor);
 		return *accessor;
@@ -128,10 +108,11 @@ Accessor& NetcdfSegment::addVariableFloat(const string& name, float fillValue) t
 	}
 }
 
-Accessor& NetcdfSegment::addVariableInt(const string& name, int32_t fillValue, double scaleFactor, double addOffset) throw (logic_error) {
+Accessor& NetcdfSegment::addVariableInt(const VariableDescriptor& d) throw (logic_error) {
+    const string& name = d.getName();
 	unique(name);
 	try {
-		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<int32_t, Constants::TYPE_INT>(fillValue, scaleFactor, addOffset));
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new NetcdfAccessor<int32_t, Constants::TYPE_INT>(d, grid, targetDirPath));
 		accessorMap[name] = accessor;
 		accessorList.push_back(accessor);
 		return *accessor;
@@ -140,10 +121,11 @@ Accessor& NetcdfSegment::addVariableInt(const string& name, int32_t fillValue, d
 	}
 }
 
-Accessor& NetcdfSegment::addVariableLong(const string& name, int64_t fillValue) throw (logic_error) {
+Accessor& NetcdfSegment::addVariableLong(const VariableDescriptor& d) throw (logic_error) {
+    const string& name = d.getName();
 	unique(name);
 	try {
-		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<int64_t, Constants::TYPE_LONG>(fillValue));
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new NetcdfAccessor<int64_t, Constants::TYPE_LONG>(d, grid, targetDirPath));
 		accessorMap[name] = accessor;
 		accessorList.push_back(accessor);
 		return *accessor;
@@ -152,10 +134,11 @@ Accessor& NetcdfSegment::addVariableLong(const string& name, int64_t fillValue) 
 	}
 }
 
-Accessor& NetcdfSegment::addVariableShort(const string& name, int16_t fillValue, double scaleFactor, double addOffset) throw (logic_error) {
-	unique(name);
+Accessor& NetcdfSegment::addVariableShort(const VariableDescriptor& d) throw (logic_error) {
+    const string& name = d.getName();
+    unique(name);
 	try {
-		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<int16_t, Constants::TYPE_SHORT>(fillValue, scaleFactor, addOffset));
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new NetcdfAccessor<int16_t, Constants::TYPE_SHORT>(d, grid, targetDirPath));
 		accessorMap[name] = accessor;
 		accessorList.push_back(accessor);
 		return *accessor;
@@ -164,10 +147,11 @@ Accessor& NetcdfSegment::addVariableShort(const string& name, int16_t fillValue,
 	}
 }
 
-Accessor& NetcdfSegment::addVariableUByte(const string& name, uint8_t fillValue, double scaleFactor, double addOffset) throw (logic_error) {
-	unique(name);
+Accessor& NetcdfSegment::addVariableUByte(const VariableDescriptor& d) throw (logic_error) {
+    const string& name = d.getName();
+    unique(name);
 	try {
-		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<uint8_t, Constants::TYPE_UBYTE>(fillValue, scaleFactor, addOffset));
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new NetcdfAccessor<uint8_t, Constants::TYPE_UBYTE>(d, grid, targetDirPath));
 		accessorMap[name] = accessor;
 		accessorList.push_back(accessor);
 		return *accessor;
@@ -176,10 +160,11 @@ Accessor& NetcdfSegment::addVariableUByte(const string& name, uint8_t fillValue,
 	}
 }
 
-Accessor& NetcdfSegment::addVariableUInt(const string& name, uint32_t fillValue, double scaleFactor, double addOffset) throw (logic_error) {
-	unique(name);
+Accessor& NetcdfSegment::addVariableUInt(const VariableDescriptor& d) throw (logic_error) {
+    const string& name = d.getName();
+    unique(name);
 	try {
-		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<uint32_t, Constants::TYPE_UINT>(fillValue, scaleFactor, addOffset));
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new NetcdfAccessor<uint32_t, Constants::TYPE_UINT>(d, grid, targetDirPath));
 		accessorMap[name] = accessor;
 		accessorList.push_back(accessor);
 		return *accessor;
@@ -188,10 +173,11 @@ Accessor& NetcdfSegment::addVariableUInt(const string& name, uint32_t fillValue,
 	}
 }
 
-Accessor& NetcdfSegment::addVariableULong(const string& name, uint64_t fillValue) throw (logic_error) {
-	unique(name);
+Accessor& NetcdfSegment::addVariableULong(const VariableDescriptor& d) throw (logic_error) {
+    const string& name = d.getName();
+    unique(name);
 	try {
-		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<uint64_t, Constants::TYPE_ULONG>(fillValue));
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new NetcdfAccessor<uint64_t, Constants::TYPE_ULONG>(d, grid, targetDirPath));
 		accessorMap[name] = accessor;
 		accessorList.push_back(accessor);
 		return *accessor;
@@ -200,10 +186,11 @@ Accessor& NetcdfSegment::addVariableULong(const string& name, uint64_t fillValue
 	}
 }
 
-Accessor& NetcdfSegment::addVariableUShort(const string& name, uint16_t fillValue, double scaleFactor, double addOffset) throw (logic_error) {
+Accessor& NetcdfSegment::addVariableUShort(const VariableDescriptor& d) throw (logic_error) {
+	const string& name = d.getName();
 	unique(name);
 	try {
-		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<uint16_t, Constants::TYPE_USHORT>(fillValue, scaleFactor, addOffset));
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new NetcdfAccessor<uint16_t, Constants::TYPE_USHORT>(d, grid, targetDirPath));
 		accessorMap[name] = accessor;
 		accessorList.push_back(accessor);
 		return *accessor;

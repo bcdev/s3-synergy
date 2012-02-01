@@ -170,6 +170,18 @@ void DirectLocatorTest::testLocation() {
 		bool isValidPosition(long k, long l, long m) const {
 			return true;
 		}
+
+		long getK(size_t i) const {
+		    return 0;
+		}
+
+		long getM(size_t i) const {
+		    return 0;
+		}
+
+		long getL(size_t i) const {
+		    return 0;
+		}
 	};
 
 	TestGrid grid;

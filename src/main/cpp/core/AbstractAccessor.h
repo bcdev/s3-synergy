@@ -217,10 +217,10 @@ public:
 	}
 
 	string getFillValue() const {
-		if (getType() == Constants::TYPE_BYTE) {
+		if (N == Constants::TYPE_BYTE) {
 			return lexical_cast<string>(numeric_cast<int16_t>(fillValue));
 		}
-		if (getType() == Constants::TYPE_UBYTE) {
+		if (N == Constants::TYPE_UBYTE) {
 			return lexical_cast<string>(numeric_cast<uint16_t>(fillValue));
 		}
 		return lexical_cast<string>(fillValue);

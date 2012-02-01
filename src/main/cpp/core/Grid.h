@@ -154,6 +154,12 @@ public:
 	 */
 	virtual long getMaxM() const = 0;
 
+    virtual long getK(size_t index) const = 0;
+
+    virtual long getL(size_t index) const = 0;
+
+    virtual long getM(size_t index) const = 0;
+
 	/**
 	 * Returns if the position indicated by the given indices is valid for this grid.
 	 * @return true, if the position is valid, false otherwise.
