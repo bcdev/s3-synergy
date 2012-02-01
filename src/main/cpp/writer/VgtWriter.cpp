@@ -65,6 +65,7 @@ void VgtWriter::defineCommonDimensions(int fileId, const string& segmentName, co
     }
     for(size_t i = 0; i < variables.size(); i++) {
         const VariableDescriptor* variableDescriptor = variables[i];
+        // Removing the next line causes a segmentation fault!
         std::cout << "";
         valarray<int> dimIds(variableDescriptor->getDimensions().size());
         for(size_t j = 0; j < variableDescriptor->getDimensions().size(); j++) {
