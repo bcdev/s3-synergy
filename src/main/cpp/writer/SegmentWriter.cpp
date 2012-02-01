@@ -8,7 +8,7 @@
 #include <stdexcept>
 
 #include "../util/IOUtils.h"
-#include "../util/NetCDF.h"
+#include "../core/NetCDF.h"
 
 #include "SegmentWriter.h"
 

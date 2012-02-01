@@ -14,8 +14,7 @@
 
 #include "../core/Constants.h"
 #include "../core/LookupTable.h"
-
-#include "NetCDF.h"
+#include "../core/NetCDF.h"
 
 class LookupTableReader {
 public:

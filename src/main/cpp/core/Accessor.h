@@ -127,13 +127,6 @@ public:
 	virtual double getDouble(size_t i) const throw (bad_cast, out_of_range) = 0;
 
 	/**
-	 * Returns the value of the sample at a given index {@code i}.
-	 * @param i The index.
-	 * @return the value of the sample at {@code i}.
-	 */
-	virtual const void* getUntypedValue(size_t i) const throw (bad_cast, out_of_range) = 0;
-
-	/**
 	 * Sets the value of the sample at index {@code i} to a given value.
 	 * @param i The index.
 	 * @param value The value.

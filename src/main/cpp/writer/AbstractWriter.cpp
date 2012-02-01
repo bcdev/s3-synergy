@@ -11,7 +11,7 @@
 
 #include "../core/Config.h"
 #include "../util/IOUtils.h"
-#include "../util/NetCDF.h"
+#include "../core/NetCDF.h"
 
 #include "AbstractWriter.h"
 
@@ -137,7 +137,7 @@ void AbstractWriter::defineNcVar(const Context& context, const ProductDescriptor
 		const string& variableName = variableDescriptor.getName();
 
 		valarray<int> dimIds;
-		defineDimensions(fileId, variableName, variableDescriptor.getDimensions(), grid, dimIds);
+		NetCDF::defineDimensions(fileId, variableName, variableDescriptor.getDimensions(), grid, dimIds);
 		map<const VariableDescriptor*, valarray<int> > commonDimIds;
 		defineCommonDimensions(fileId, segmentDescriptor.getName(), context.getDictionary(), commonDimIds);
 		defineCommonVariables(fileId, segmentDescriptor.getName(), context.getDictionary(), commonDimIds);
@@ -153,32 +153,6 @@ void AbstractWriter::defineNcVar(const Context& context, const ProductDescriptor
 	foreach(const Attribute* attribute, variableDescriptor.getAttributes()) {
 	    NetCDF::putAttribute(fileId, varId, *attribute);
 	}
-}
-
-void AbstractWriter::defineDimensions(const int fileId, const string& name, const vector<Dimension*>& dimensions, const Grid& grid, valarray<int>& dimIds) {
-    const long sizeK = grid.getSizeK();
-    const long sizeL = grid.getMaxL() - grid.getMinL() + 1;
-    const long sizeM = grid.getSizeM();
-    const size_t dimCount = dimensions.size();
-
-    dimIds.resize(dimCount, 0);
-    switch (dimCount) {
-    case 3:
-        dimIds[0] = NetCDF::defineDimension(fileId, dimensions[0]->getName(), sizeK);
-        dimIds[1] = NetCDF::defineDimension(fileId, dimensions[1]->getName(), sizeL);
-        dimIds[2] = NetCDF::defineDimension(fileId, dimensions[2]->getName(), sizeM);
-        break;
-    case 2:
-        dimIds[0] = NetCDF::defineDimension(fileId, dimensions[0]->getName(), sizeL);
-        dimIds[1] = NetCDF::defineDimension(fileId, dimensions[1]->getName(), sizeM);
-        break;
-    case 1:
-        dimIds[0] = NetCDF::defineDimension(fileId, dimensions[0]->getName(), sizeM);
-        break;
-    default:
-        BOOST_THROW_EXCEPTION(logic_error("AbstractWriter::createNcVar(): invalid number of dimensions (" + name + ")"));
-        break;
-    }
 }
 
 void AbstractWriter::putGlobalAttributes(int fileId, const VariableDescriptor& variableDescriptor, const vector<Attribute*>& attributes) const {

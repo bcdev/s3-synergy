@@ -8,7 +8,7 @@
 #include <cstdlib>
 
 #include "../util/IOUtils.h"
-#include "../util/NetCDF.h"
+#include "../core/NetCDF.h"
 #include "../core/JobOrder.h"
 
 #include "SynL1Reader.h"
@@ -192,7 +192,7 @@ int SynL1Reader::getNcFile(const string& ncFileBasename) {
 		return ncFileIdMap[ncFileBasename];
 	}
 	const path ncFilePath = sourceDirPath / (ncFileBasename + ".nc");
-	const int fileId = NetCDF::openFile(ncFilePath.string());
+	const int fileId = NetCDF::openFileReadOnly(ncFilePath.string());
 	ncFileIdMap[ncFileBasename] = fileId;
 
 	return fileId;

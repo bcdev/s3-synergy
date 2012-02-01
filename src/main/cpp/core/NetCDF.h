@@ -24,7 +24,8 @@
 #include <string>
 #include <valarray>
 
-#include "../core/Dictionary.h"
+#include "Dictionary.h"
+#include "Grid.h"
 
 using std::string;
 using std::runtime_error;
@@ -110,7 +111,9 @@ public:
 
 	static int getVariableType(int fileId, int varId);
 
-	static int openFile(const string& path);
+	static int openFileReadOnly(const string& path);
+
+	static int openFileWritable(const string& path);
 
 	static void putValue(int fileId, int varId, const valarray<size_t>& indices, const void* value);
 
@@ -124,6 +127,8 @@ public:
 	static void putAttribute(int fileId, int varId, const Attribute& attribute);
 
 	static void terminateFile(int ncId);
+
+	static void defineDimensions(const int fileId, const string& name, const vector<Dimension*>& dimensions, const Grid& grid, valarray<int>& dimIds);
 
 private:
 	NetCDF();

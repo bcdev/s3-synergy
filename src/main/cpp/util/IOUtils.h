@@ -27,7 +27,7 @@
 
 #include "../core/Boost.h"
 #include "../core/Dictionary.h"
-#include "../util/NetCDF.h"
+#include "../core/NetCDF.h"
 #include "../core/Segment.h"
 
 class IOUtils {

@@ -6,12 +6,12 @@
  */
 
 #include "../core/Boost.h"
+#include "../core/NetCDF.h"
 
 #include "AuxdataProvider.h"
-#include "NetCDF.h"
 
 AuxdataProvider::AuxdataProvider(const string& id, string filePath) :
-		id(id), fileId(NetCDF::openFile(filePath)) {
+		id(id), fileId(NetCDF::openFileReadOnly(filePath)) {
 }
 
 AuxdataProvider::~AuxdataProvider() {

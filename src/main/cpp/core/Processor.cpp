@@ -29,6 +29,7 @@ void Processor::process(Context& context) {
 		timer.start();
 		context.setStartTime(timer.getStartTime());
 		vector<shared_ptr<Module> > modules = context.getModules();
+
 		foreach(shared_ptr<Module> module, modules)
 				{
 					try {
@@ -68,6 +69,7 @@ void Processor::process(Context& context) {
 						BOOST_THROW_EXCEPTION(e);
 					}
 				}
+
 		timer.stop();
 	} catch (std::exception& e) {
 		context.handleError(e);
