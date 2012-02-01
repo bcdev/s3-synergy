@@ -10,9 +10,6 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../main/cpp/core/Dictionary.h"
-#include "../../../main/cpp/core/NetcdfSegment.h"
-
 class NetcdfSegmentTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(NetcdfSegmentTest);
     CPPUNIT_TEST(testSomething);
@@ -21,6 +18,8 @@ class NetcdfSegmentTest : public CPPUNIT_NS::TestFixture {
 public:
     NetcdfSegmentTest();
     virtual ~NetcdfSegmentTest();
+
+    void tearDown();
 
 private:
     void testSomething();

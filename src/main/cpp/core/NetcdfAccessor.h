@@ -148,7 +148,7 @@ T NetcdfAccessor<T, N>::getValue(size_t i) const {
 }
 
 template<class T, int N>
-NetcdfAccessor<T, N>::NetcdfAccessor(const VariableDescriptor& variableDescriptor, const Grid& grid, const string& directoryPath) : scaleFactor(variableDescriptor.getScaleFactor()), addOffset(variableDescriptor.getAddOffset()), grid(grid), origin(2), shape(2, 1) {
+NetcdfAccessor<T, N>::NetcdfAccessor(const VariableDescriptor& variableDescriptor, const Grid& grid, const string& directoryPath) : scaleFactor(variableDescriptor.getScaleFactor()), addOffset(variableDescriptor.getAddOffset()), grid(grid), origin(2), shape(1, 2) {
     switch(N) {
     case Constants::TYPE_BYTE:
         fillValue = numeric_cast<T>(variableDescriptor.getFillValue<int16_t>());
@@ -164,8 +164,8 @@ NetcdfAccessor<T, N>::NetcdfAccessor(const VariableDescriptor& variableDescripto
         BOOST_THROW_EXCEPTION(logic_error("variableDescriptor.getDimensions().size() != 2"));
     }
     const path targetPath = path(directoryPath + "/" + variableDescriptor.getNcFileBasename() + ".nc");
-    if (!boost::filesystem::exists(targetPath.parent_path())) {
-        if (!boost::filesystem::create_directories(targetPath.parent_path())) {
+    if (!boost::filesystem::exists(targetPath)) {
+        if (!boost::filesystem::exists(targetPath.parent_path()) && !boost::filesystem::create_directories(targetPath.parent_path())) {
             BOOST_THROW_EXCEPTION( runtime_error("Cannot create directory '" + targetPath.parent_path().string() + "'."));
         }
         fileId = NetCDF::createFile(targetPath.string());
