@@ -19,7 +19,7 @@ MapAccessorTest::~MapAccessorTest() {
 }
 
 void MapAccessorTest::setUp() {
-    accessor = new MapAccessor<int8_t, Constants::TYPE_BYTE>();
+    accessor = new MapAccessor<int8_t, Constants::TYPE_BYTE>(2);
 }
 
 void MapAccessorTest::tearDown() {
@@ -27,7 +27,7 @@ void MapAccessorTest::tearDown() {
 }
 
 void MapAccessorTest::testGetSampleCount() {
-    CPPUNIT_ASSERT(accessor->getSampleCount() == 0);
+    CPPUNIT_ASSERT(accessor->getSampleCount() == 2);
 }
 
 void MapAccessorTest::testSetByteGetByte() {

@@ -95,7 +95,7 @@ Accessor& MapSegment::addVariableAlias(const string& alias, const Segment& segme
 Accessor& MapSegment::addVariableByte(const string& name, int8_t fillValue, double scaleFactor, double addOffset) throw (logic_error) {
 	unique(name);
 	try {
-		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<int8_t, Constants::TYPE_BYTE>(fillValue, scaleFactor, addOffset));
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<int8_t, Constants::TYPE_BYTE>(grid.getSize(), fillValue, scaleFactor, addOffset));
 		accessorMap[name] = accessor;
 		accessorList.push_back(accessor);
 		return *accessor;
@@ -107,7 +107,7 @@ Accessor& MapSegment::addVariableByte(const string& name, int8_t fillValue, doub
 Accessor& MapSegment::addVariableDouble(const string& name, double fillValue) throw (logic_error) {
 	unique(name);
 	try {
-		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<double, Constants::TYPE_DOUBLE>(fillValue));
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<double, Constants::TYPE_DOUBLE>(grid.getSize(), fillValue));
 		accessorMap[name] = accessor;
 		accessorList.push_back(accessor);
 		return *accessor;
@@ -119,7 +119,7 @@ Accessor& MapSegment::addVariableDouble(const string& name, double fillValue) th
 Accessor& MapSegment::addVariableFloat(const string& name, float fillValue) throw (logic_error) {
 	unique(name);
 	try {
-		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<float, Constants::TYPE_FLOAT>(fillValue));
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<float, Constants::TYPE_FLOAT>(grid.getSize(), fillValue));
 		accessorMap[name] = accessor;
 		accessorList.push_back(accessor);
 		return *accessor;
@@ -131,7 +131,7 @@ Accessor& MapSegment::addVariableFloat(const string& name, float fillValue) thro
 Accessor& MapSegment::addVariableInt(const string& name, int32_t fillValue, double scaleFactor, double addOffset) throw (logic_error) {
 	unique(name);
 	try {
-		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<int32_t, Constants::TYPE_INT>(fillValue, scaleFactor, addOffset));
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<int32_t, Constants::TYPE_INT>(grid.getSize(), fillValue, scaleFactor, addOffset));
 		accessorMap[name] = accessor;
 		accessorList.push_back(accessor);
 		return *accessor;
@@ -143,7 +143,7 @@ Accessor& MapSegment::addVariableInt(const string& name, int32_t fillValue, doub
 Accessor& MapSegment::addVariableLong(const string& name, int64_t fillValue) throw (logic_error) {
 	unique(name);
 	try {
-		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<int64_t, Constants::TYPE_LONG>(fillValue));
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<int64_t, Constants::TYPE_LONG>(grid.getSize(), fillValue));
 		accessorMap[name] = accessor;
 		accessorList.push_back(accessor);
 		return *accessor;
@@ -155,7 +155,7 @@ Accessor& MapSegment::addVariableLong(const string& name, int64_t fillValue) thr
 Accessor& MapSegment::addVariableShort(const string& name, int16_t fillValue, double scaleFactor, double addOffset) throw (logic_error) {
 	unique(name);
 	try {
-		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<int16_t, Constants::TYPE_SHORT>(fillValue, scaleFactor, addOffset));
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<int16_t, Constants::TYPE_SHORT>(grid.getSize(), fillValue, scaleFactor, addOffset));
 		accessorMap[name] = accessor;
 		accessorList.push_back(accessor);
 		return *accessor;
@@ -167,7 +167,7 @@ Accessor& MapSegment::addVariableShort(const string& name, int16_t fillValue, do
 Accessor& MapSegment::addVariableUByte(const string& name, uint8_t fillValue, double scaleFactor, double addOffset) throw (logic_error) {
 	unique(name);
 	try {
-		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<uint8_t, Constants::TYPE_UBYTE>(fillValue, scaleFactor, addOffset));
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<uint8_t, Constants::TYPE_UBYTE>(grid.getSize(), fillValue, scaleFactor, addOffset));
 		accessorMap[name] = accessor;
 		accessorList.push_back(accessor);
 		return *accessor;
@@ -179,7 +179,7 @@ Accessor& MapSegment::addVariableUByte(const string& name, uint8_t fillValue, do
 Accessor& MapSegment::addVariableUInt(const string& name, uint32_t fillValue, double scaleFactor, double addOffset) throw (logic_error) {
 	unique(name);
 	try {
-		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<uint32_t, Constants::TYPE_UINT>(fillValue, scaleFactor, addOffset));
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<uint32_t, Constants::TYPE_UINT>(grid.getSize(), fillValue, scaleFactor, addOffset));
 		accessorMap[name] = accessor;
 		accessorList.push_back(accessor);
 		return *accessor;
@@ -191,7 +191,7 @@ Accessor& MapSegment::addVariableUInt(const string& name, uint32_t fillValue, do
 Accessor& MapSegment::addVariableULong(const string& name, uint64_t fillValue) throw (logic_error) {
 	unique(name);
 	try {
-		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<uint64_t, Constants::TYPE_ULONG>(fillValue));
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<uint64_t, Constants::TYPE_ULONG>(grid.getSize(), fillValue));
 		accessorMap[name] = accessor;
 		accessorList.push_back(accessor);
 		return *accessor;
@@ -203,7 +203,7 @@ Accessor& MapSegment::addVariableULong(const string& name, uint64_t fillValue) t
 Accessor& MapSegment::addVariableUShort(const string& name, uint16_t fillValue, double scaleFactor, double addOffset) throw (logic_error) {
 	unique(name);
 	try {
-		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<uint16_t, Constants::TYPE_USHORT>(fillValue, scaleFactor, addOffset));
+		shared_ptr<Accessor> accessor = shared_ptr<Accessor>(new MapAccessor<uint16_t, Constants::TYPE_USHORT>(grid.getSize(), fillValue, scaleFactor, addOffset));
 		accessorMap[name] = accessor;
 		accessorList.push_back(accessor);
 		return *accessor;

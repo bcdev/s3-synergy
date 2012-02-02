@@ -62,7 +62,7 @@ void SegmentWriter::process(Context& context) {
 	            IOUtils::createCountVector(dimIds.size(), grid.getSizeK(), lastL - firstL + 1, grid.getSizeM(), shape);
 	            context.getLogging().progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
 	            const Accessor& accessor = segment.getAccessor(varName);
-	            if (accessor.canReturnDataPointer()) {
+	            if (true) {
 	                NetCDF::putData(ncId, varId, origin, shape, accessor.getUntypedData());
 	            } else {
 	                putData(ncId, varId, accessor, firstL, lastL, grid);

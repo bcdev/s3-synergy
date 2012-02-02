@@ -8,34 +8,57 @@
 #ifndef MAPACCESSOR_H_
 #define MAPACCESSOR_H_
 
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <sys/types.h>
+
 #include <algorithm>
+#include <cstdio>
 #include <limits>
-#include <map>
 #include <typeinfo>
 
 #include "Accessor.h"
 #include "Boost.h"
 #include "Constants.h"
 
-using std::copy;
-using std::fill;
-using std::invalid_argument;
-using std::map;
 using std::numeric_limits;
 using std::logic_error;
 
 template<class T, int N>
 class MapAccessor: public virtual Accessor {
 public:
-	MapAccessor(T fillValue = numeric_limits<T>::min(), double scaleFactor = 1.0, double addOffset = 0.0) :
-			Accessor(), fillValue(fillValue), scaleFactor(scaleFactor), addOffset(addOffset), data() {
+	MapAccessor(size_t n, T fillValue = numeric_limits<T>::min(), double scaleFactor = 1.0, double addOffset = 0.0) :
+			Accessor(), fillValue(fillValue), scaleFactor(scaleFactor), addOffset(addOffset) {
+		using std::min;
+		using std::runtime_error;
+
+		tmpnam(filename);
+		fd = open(filename, O_RDWR | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR);
+		if (fd < 0) {
+			BOOST_THROW_EXCEPTION(runtime_error("Unable to open file '" + string(filename) + "'"));
+		}
+		valarray<T> buffer(fillValue, 1024);
+		for (size_t i = 0; i < n; i += 1024) {
+			write(fd, &buffer[0], min<size_t>(1024, n - i) * sizeof(T));
+		}
+		length = n * sizeof(T);
+		addr = mmap(0, length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+		if (addr == (caddr_t) -1) {
+			BOOST_THROW_EXCEPTION(runtime_error("Unable to map file '" + string(filename) + "' to memory."));
+		}
+		data = (T*) addr;
 	}
 
 	~MapAccessor() {
+		using std::remove;
+
+		munmap(addr, length);
+		close(fd);
+		remove(filename);
 	}
 
 	int8_t getByte(size_t i) const throw (bad_cast, out_of_range) {
-		return boost::numeric_cast<int8_t>(*getValue(i));
+		return boost::numeric_cast<int8_t>(getValue(i));
 	}
 
 	void setByte(size_t i, int8_t value) throw (bad_cast, out_of_range) {
@@ -43,7 +66,7 @@ public:
 	}
 
 	double getDouble(size_t i) const throw (bad_cast, out_of_range) {
-		return boost::numeric_cast<double>(*getValue(i)) * scaleFactor + addOffset;
+		return boost::numeric_cast<double>(getValue(i)) * scaleFactor + addOffset;
 	}
 
 	void setDouble(size_t i, double value) throw (bad_cast, out_of_range) {
@@ -56,7 +79,7 @@ public:
 	}
 
 	float getFloat(size_t i) const throw (bad_cast, out_of_range) {
-		return boost::numeric_cast<float>(*getValue(i)) * float(scaleFactor) + float(addOffset);
+		return boost::numeric_cast<float>(getValue(i)) * float(scaleFactor) + float(addOffset);
 	}
 
 	void setFloat(size_t i, float value) throw (bad_cast, out_of_range) {
@@ -69,7 +92,7 @@ public:
 	}
 
 	int32_t getInt(size_t i) const throw (bad_cast, out_of_range) {
-		return boost::numeric_cast<int32_t>(*getValue(i));
+		return boost::numeric_cast<int32_t>(getValue(i));
 	}
 
 	void setInt(size_t i, int32_t value) throw (bad_cast, out_of_range) {
@@ -77,7 +100,7 @@ public:
 	}
 
 	int64_t getLong(size_t i) const throw (bad_cast, out_of_range) {
-		return boost::numeric_cast<int64_t>(*getValue(i));
+		return boost::numeric_cast<int64_t>(getValue(i));
 	}
 
 	void setLong(size_t i, int64_t value) throw (bad_cast, out_of_range) {
@@ -85,7 +108,7 @@ public:
 	}
 
 	int16_t getShort(size_t i) const throw (bad_cast, out_of_range) {
-		return boost::numeric_cast<int16_t>(*getValue(i));
+		return boost::numeric_cast<int16_t>(getValue(i));
 	}
 
 	void setShort(size_t i, int16_t value) throw (bad_cast, out_of_range) {
@@ -93,7 +116,7 @@ public:
 	}
 
 	uint8_t getUByte(size_t i) const throw (bad_cast, out_of_range) {
-		return boost::numeric_cast<uint8_t>(*getValue(i));
+		return boost::numeric_cast<uint8_t>(getValue(i));
 	}
 
 	void setUByte(size_t i, uint8_t value) throw (bad_cast, out_of_range) {
@@ -101,7 +124,7 @@ public:
 	}
 
 	uint32_t getUInt(size_t i) const throw (bad_cast, out_of_range) {
-		return boost::numeric_cast<uint32_t>(*getValue(i));
+		return boost::numeric_cast<uint32_t>(getValue(i));
 	}
 
 	void setUInt(size_t i, uint32_t value) throw (bad_cast, out_of_range) {
@@ -109,7 +132,7 @@ public:
 	}
 
 	uint64_t getULong(size_t i) const throw (bad_cast, out_of_range) {
-		return boost::numeric_cast<uint64_t>(*getValue(i));
+		return boost::numeric_cast<uint64_t>(getValue(i));
 	}
 
 	void setULong(size_t i, uint64_t value) throw (bad_cast, out_of_range) {
@@ -117,26 +140,19 @@ public:
 	}
 
 	uint16_t getUShort(size_t i) const throw (bad_cast, out_of_range) {
-		return boost::numeric_cast<uint16_t>(*getValue(i));
+		return boost::numeric_cast<uint16_t>(getValue(i));
 	}
 
 	void setUShort(size_t i, uint16_t value) throw (bad_cast, out_of_range) {
 		data[i] = boost::numeric_cast<T>(value);
 	}
 
-	const T* getValue(size_t i) const throw (out_of_range) {
-        if (isFillValue(i)) {
-            return &fillValue;
-        }
-        return &(data.at(i));
-	}
-
-	const void* getUntypedValue(size_t i) const throw (bad_cast, out_of_range) {
-	    return getValue(i);
+	const T getValue(size_t i) const throw (out_of_range) {
+        return data[i];
 	}
 
 	const size_t getSampleCount() const {
-		return data.size();
+		return length / sizeof(T);
 	}
 
 	virtual valarray<int8_t>& getByteData() const throw (logic_error) {
@@ -188,7 +204,7 @@ public:
 	}
 
 	void* getUntypedData() const {
-		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
+		return data;
 	}
 
 	int getType() const {
@@ -204,14 +220,11 @@ public:
 	}
 
 	bool isFillValue(size_t i) const throw (out_of_range) {
-		if (data.find(i) == data.end()) {
-			return true;
-		}
-		return data.at(i) == fillValue;
+		return data[i] == fillValue;
 	}
 
 	void setFillValue(size_t i) throw (out_of_range) {
-		data.erase(i);
+		data[i] = fillValue;
 	}
 
 	string getFillValue() const {
@@ -228,17 +241,17 @@ public:
 		// intentionally doing nothing
 	}
 
-	bool canReturnDataPointer() const {
-		return false;
-	}
-
 private:
 
 	const T fillValue;
 	const double scaleFactor;
 	const double addOffset;
 
-	map<long, T> data;
+	char filename[L_tmpnam];
+	int fd;
+	size_t length;
+	void* addr;
+	T* data;
 };
 
 #endif /* MAPACCESSOR_H_ */

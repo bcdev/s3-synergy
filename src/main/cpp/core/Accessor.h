@@ -295,8 +295,6 @@ public:
 	virtual string getFillValue() const = 0;
 
 	virtual void shift(long n, long strideK, long strideL) = 0;
-
-	virtual bool canReturnDataPointer() const = 0;
 };
 
 #endif	/* ACCESSOR_H */
