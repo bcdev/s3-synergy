@@ -45,6 +45,7 @@ void Vac::setupAccessors(Context& context) {
     vgtReflectanceAccessors[1] = &collocatedSegment->getAccessor("B2");
     vgtReflectanceAccessors[2] = &collocatedSegment->getAccessor("B3");
     vgtReflectanceAccessors[3] = &collocatedSegment->getAccessor("MIR");
+    // TODO - NDVI
 }
 
 void Vac::prepareAuxdata(Context& context) {

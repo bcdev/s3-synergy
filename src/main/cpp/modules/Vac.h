@@ -31,6 +31,7 @@ private:
 		}
 
 	    valarray<double> reflectances;
+	    double ndvi;
 
 	    double lon;
 	    double lat;
