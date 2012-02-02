@@ -28,14 +28,14 @@ template<class T, int N>
 class MapAccessor: public virtual Accessor {
 public:
 	MapAccessor(size_t n, T fillValue = numeric_limits<T>::min(), double scaleFactor = 1.0, double addOffset = 0.0) :
-			Accessor(), fillValue(fillValue), scaleFactor(scaleFactor), addOffset(addOffset) {
+			Accessor(), fillValue(fillValue), scaleFactor(scaleFactor), addOffset(addOffset), filename(Constants::S3_SYNERGY_HOME.length() + 12) {
 		using std::min;
 		using std::runtime_error;
 
-		tmpnam(filename);
-		fd = open(filename, O_RDWR | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR);
+		strcpy(&filename[0], string(Constants::S3_SYNERGY_HOME + "/tmp/XXXXXX").c_str());
+		fd = mkstemp(&filename[0]);
 		if (fd < 0) {
-			BOOST_THROW_EXCEPTION(runtime_error("Unable to open file '" + string(filename) + "'"));
+			BOOST_THROW_EXCEPTION(runtime_error("Unable to open file '" + string(&filename[0]) + "'"));
 		}
 		valarray<T> buffer(fillValue, 1024);
 		for (size_t i = 0; i < n; i += 1024) {
@@ -44,17 +44,17 @@ public:
 		length = n * sizeof(T);
 		addr = mmap(0, length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 		if (addr == (caddr_t) -1) {
-			BOOST_THROW_EXCEPTION(runtime_error("Unable to map file '" + string(filename) + "' to memory."));
+			BOOST_THROW_EXCEPTION(runtime_error("Unable to map file '" + string(&filename[0]) + "' to memory."));
 		}
 		data = (T*) addr;
 	}
 
-	~MapAccessor() {
+	virtual ~MapAccessor() {
 		using std::remove;
 
 		munmap(addr, length);
 		close(fd);
-		remove(filename);
+		remove(&filename[0]);
 	}
 
 	int8_t getByte(size_t i) const throw (bad_cast, out_of_range) {
@@ -247,7 +247,7 @@ private:
 	const double scaleFactor;
 	const double addOffset;
 
-	char filename[L_tmpnam];
+	valarray<char> filename;
 	int fd;
 	size_t length;
 	void* addr;
