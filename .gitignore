@@ -14,6 +14,7 @@ target/
 /files/
 /jobs/
 /testdata/
+/tmp/
 /modules/
 CMakeCache.txt
 CMakeFiles/

@@ -9,11 +9,12 @@
 #define MAPACCESSOR_H_
 
 #include <fcntl.h>
+#include <stdlib.h>
 #include <sys/mman.h>
 #include <sys/types.h>
 
 #include <algorithm>
-#include <cstdio>
+#include <cstring>
 #include <limits>
 #include <typeinfo>
 
@@ -31,7 +32,9 @@ public:
 			Accessor(), fillValue(fillValue), scaleFactor(scaleFactor), addOffset(addOffset), filename(Constants::S3_SYNERGY_HOME.length() + 12) {
 		using std::min;
 		using std::runtime_error;
+		using std::strcpy;
 
+		string a;
 		strcpy(&filename[0], string(Constants::S3_SYNERGY_HOME + "/tmp/XXXXXX").c_str());
 		fd = mkstemp(&filename[0]);
 		if (fd < 0) {
