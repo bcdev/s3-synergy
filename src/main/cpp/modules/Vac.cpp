@@ -45,7 +45,7 @@ void Vac::setupAccessors(Context& context) {
     vgtReflectanceAccessors[1] = &collocatedSegment->getAccessor("B2");
     vgtReflectanceAccessors[2] = &collocatedSegment->getAccessor("B3");
     vgtReflectanceAccessors[3] = &collocatedSegment->getAccessor("MIR");
-    // TODO - NDVI
+    ndviAccessor = &collocatedSegment->addVariable(context.getDictionary().getProductDescriptor(Constants::PRODUCT_VGS).getSegmentDescriptor(Constants::SEGMENT_VGS).getVariableDescriptor("NDVI"));
 }
 
 void Vac::prepareAuxdata(Context& context) {
@@ -100,6 +100,7 @@ void Vac::process(Context& context) {
 				const size_t geoIndex = geoGrid.getIndex(k, l, m);
 				setupPixel(p, index, geoIndex);
 				computeSDR(p, w);
+				computeNdvi(p);
 				for (size_t b = 0; b < vgtReflectanceAccessors.size(); b++) {
 					if (p.reflectances[b] != Constants::FILL_VALUE_DOUBLE) {
 						vgtReflectanceAccessors[b]->setDouble(index, p.reflectances[b]);
@@ -107,6 +108,7 @@ void Vac::process(Context& context) {
 						vgtReflectanceAccessors[b]->setFillValue(index);
 					}
 				}
+				ndviAccessor->setByte(index, p.ndvi);
 			}
 		}
 	}

@@ -56,6 +56,7 @@ private:
     Accessor* latAccessor;
     Accessor* lonAccessor;
     Accessor* aotAccessor;
+    Accessor* ndviAccessor;
 
     TiePointInterpolator<double>* tiePointInterpolatorOlc;
 
@@ -83,6 +84,19 @@ private:
 	void computeSDR(Pixel& pixel, valarray<double>& w);
     template<class T>
     static void copy(const valarray<T>& s, valarray<T>& t);
+
+    // todo - really these bands?
+    static void computeNdvi(const Pixel& p) {
+        double rToaB1 = p.reflectances[0];
+        double rToaB2 = p.reflectances[1];
+
+        if (rToaB1 == Constants::FILL_VALUE_DOUBLE || rToaB2 == Constants::FILL_VALUE_DOUBLE) {
+            p.ndvi = Constants::FILL_VALUE_DOUBLE;
+        }
+
+        p.ndvi = (rToaB2 - rToaB1) / (rToaB2 + rToaB1);
+    }
+
 };
 
 template<class T>
