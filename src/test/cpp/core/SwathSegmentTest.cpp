@@ -65,9 +65,9 @@ void SwathSegmentTest::testGetId() {
 void SwathSegmentTest::testGetGrid() {
     const Grid& grid = segment->getGrid();
 
-    CPPUNIT_ASSERT(grid.getFirstK() == 0);
-    CPPUNIT_ASSERT(grid.getFirstL() == 0);
-    CPPUNIT_ASSERT(grid.getFirstM() == 0);
+    CPPUNIT_ASSERT(grid.getMinK() == 0);
+    CPPUNIT_ASSERT(grid.getMinL() == 0);
+    CPPUNIT_ASSERT(grid.getMinM() == 0);
     CPPUNIT_ASSERT(grid.getSizeK() == Constants::N_CAM);
     CPPUNIT_ASSERT(grid.getSizeL() == 2000);
     CPPUNIT_ASSERT(grid.getSizeM() == Constants::N_DET_CAM);

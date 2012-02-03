@@ -7,6 +7,7 @@
 
 #include <cmath>
 
+#include "../core/LookupTable.h"
 #include "../core/TiePointInterpolator.h"
 
 #include "Aco.h"
@@ -174,8 +175,8 @@ void Aco::process(Context& context) {
 
 		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l) + " ...", getId());
 
-		for (long k = collocatedGrid.getFirstK(); k < collocatedGrid.getFirstK() + collocatedGrid.getSizeK(); k++) {
-			for (long m = collocatedGrid.getFirstM(); m < collocatedGrid.getFirstM() + collocatedGrid.getSizeM(); m++) {
+		for (long k = collocatedGrid.getMinK(); k <= collocatedGrid.getMaxK(); k++) {
+			for (long m = collocatedGrid.getMinM(); m <= collocatedGrid.getMaxM(); m++) {
 				const size_t geoIndex = geoGrid.getIndex(k, l, m);
 				const size_t i = collocatedGrid.getIndex(k, l, m);
 

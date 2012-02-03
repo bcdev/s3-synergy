@@ -98,8 +98,8 @@ void Ave::averageVariables(Logging& logging, long firstL, long lastL) {
 			const Accessor& sourceAccessor = sourceSegment->getAccessor(variableName);
 			Accessor& targetAccessor = targetSegment->getAccessor(variableName);
 
-			for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
-				for (long targetM = targetGrid.getFirstM(); targetM < targetGrid.getFirstM() + targetGrid.getSizeM(); targetM++) {
+			for (long k = targetGrid.getMinK(); k <= targetGrid.getMaxK(); k++) {
+				for (long targetM = targetGrid.getMinM(); targetM <= targetGrid.getMaxM(); targetM++) {
 					const size_t targetIndex = targetGrid.getIndex(k, targetL, targetM);
 
 					double sum = 0.0;
@@ -143,8 +143,8 @@ void Ave::averageFlags(long targetL) {
 	const Accessor& sourceAccessor = sourceSegment->getAccessor("SYN_flags");
 	Accessor& targetAccessor = targetSegment->getAccessor("SYN_flags");
 
-	for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
-		for (long targetM = targetGrid.getFirstM(); targetM < targetGrid.getFirstM() + targetGrid.getSizeM(); targetM++) {
+	for (long k = targetGrid.getMinK(); k <= targetGrid.getMaxK(); k++) {
+		for (long targetM = targetGrid.getMinM(); targetM < targetGrid.getMaxM(); targetM++) {
 			uint16_t averagedFlags = 0;
 			bool partlyCloudy = false;
 			bool partlyWater = false;
@@ -186,8 +186,8 @@ void Ave::averageLatLon(long targetL) {
 	Accessor& targetLatAccessor = targetSegment->getAccessor("latitude");
 	Accessor& targetLonAccessor = targetSegment->getAccessor("longitude");
 
-	for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
-		for (long targetM = targetGrid.getFirstM(); targetM < targetGrid.getFirstM() + targetGrid.getSizeM(); targetM++) {
+	for (long k = targetGrid.getMinK(); k <= targetGrid.getMaxK(); k++) {
+		for (long targetM = targetGrid.getMinM(); targetM <= targetGrid.getMaxM(); targetM++) {
 			double x = 0.0;
 			double y = 0.0;
 			double z = 0.0;

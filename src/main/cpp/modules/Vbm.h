@@ -77,6 +77,10 @@ private:
 	static double toaReflectance(double nO3, double airMass, double surfaceReflectance,
 	        double cO3, double rho, double ratm, double ts, double tv);
 
+	static double duToAtmCm(double ozone) {
+		return ozone * 0.001;
+	}
+
 	uint16_t aerosolModel;
 
 	LookupTable<double>* synLutRho;
@@ -104,6 +108,7 @@ private:
     valarray<Accessor*> vgtReflectanceAccessors;
     Accessor* vgtFlagsAccessor;
     Accessor* vgtAgAccessor;
+    Accessor* vgtPgAccessor;
     Accessor* vgtOgAccessor;
     Accessor* vgtWvgAccessor;
     Accessor* vgtSaaAccessor;

@@ -42,12 +42,6 @@ public:
 	}
 
 	/**
-	 * Returns the first value of the camera index dimension.
-	 * @return the first value of the camera index dimension.
-	 */
-	virtual long getFirstK() const = 0;
-
-	/**
 	 * Returns the first value of the row index dimension.
 	 * @return the first value of the row index dimension.
 	 */
@@ -58,12 +52,6 @@ public:
 	 * @return the last value of the row index dimension.
 	 */
 	virtual long getLastL() const = 0;
-
-	/**
-	 * Returns the first value of the column index dimension.
-	 * @return the first value of the column index dimension.
-	 */
-	virtual long getFirstM() const = 0;
 
 	/**
 	 * Returns the size of the camera index dimension.
@@ -109,8 +97,7 @@ public:
 	virtual long getStrideM() const = 0;
 
 	/**
-	 * Returns the plain index for given coordinates ({@code k}, {@code l},
-	 * {@code m}).
+	 * Returns the plain index for given coordinates ({@code k}, {@code l}, {@code m}).
 	 * @param k The camera index.
 	 * @param l The row index.
 	 * @param m The column index.

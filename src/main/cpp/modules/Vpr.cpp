@@ -190,8 +190,8 @@ void Vpr::process(Context& context) {
 
 		firstRequiredSourceL = sourceGrid.getLastL() + 1;
 
-		for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
-			for (long m = targetGrid.getFirstM(); m < targetGrid.getFirstM() + targetGrid.getSizeM(); m++) {
+		for (long k = targetGrid.getMinK(); k <= targetGrid.getMaxK(); k++) {
+			for (long m = targetGrid.getMinM(); m < targetGrid.getMaxM(); m++) {
 				const double targetLat = getTargetLat(l);
 				const double targetLon = getTargetLon(m);
 				const bool sourcePixelFound = pixelFinder.findSourcePixel(targetLat, targetLon, sourceK, sourceL, sourceM);
@@ -250,9 +250,9 @@ void Vpr::getMinMaxSourceLat(double& minLat, double& maxLat) const {
 	const Grid& geoGrid = geoSegment->getGrid();
 	const Grid& synGrid = synSegment->getGrid();
 
-	for (long k = synGrid.getFirstK(); k <= synGrid.getMaxK(); k++) {
-		for (long l = synGrid.getFirstL(); l <= synGrid.getMaxL(); l++) {
-			for (long m = synGrid.getFirstM(); m <= synGrid.getMaxM(); m++) {
+	for (long k = synGrid.getMinK(); k <= synGrid.getMaxK(); k++) {
+		for (long l = synGrid.getFirstL(); l <= synGrid.getLastL(); l++) {
+			for (long m = synGrid.getMinM(); m <= synGrid.getMaxM(); m++) {
 				const size_t index = geoGrid.getIndex(k, l, m);
 				if (!latAccessor->isFillValue(index)) {
 					const double lat = latAccessor->getDouble(index);
@@ -440,5 +440,4 @@ void Vpr::setTpLonBounds(Context& context) const {
 		a.setDouble(index + 1, lon + DEGREES_PER_SUBSAMPLED_TARGET_PIXEL * 0.5);
 	}
 }
-
 

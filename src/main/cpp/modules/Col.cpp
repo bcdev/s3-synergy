@@ -83,8 +83,8 @@ void Col::process(Context& context) {
 			const long lastComputableL = context.getLastComputableL(sourceSegment, *this);
 			long& firstRequiredL = firstRequiredLMap[&sourceSegment];
 
-			for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
-				for (long m = targetGrid.getFirstM(); m < targetGrid.getFirstM() + targetGrid.getSizeM(); m++) {
+			for (long k = targetGrid.getMinK(); k <= targetGrid.getMaxK(); k++) {
+				for (long m = targetGrid.getMinM(); m <= targetGrid.getMaxM(); m++) {
 					const size_t targetIndex = targetGrid.getIndex(k, l, m);
 
 					if (collocationXAccessor.isFillValue(targetIndex) || collocationYAccessor.isFillValue(targetIndex)) {
@@ -183,8 +183,8 @@ void Col::process(Context& context) {
 			const Accessor* sourceAccessor = sourceAccessorMap[targetAccessor];
 			const Accessor* xCollocationAccessor = xCollocationAccessorMap[targetAccessor];
 
-			for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
-				for (long m = targetGrid.getFirstM(); m < targetGrid.getFirstM() + targetGrid.getSizeM(); m++) {
+			for (long k = targetGrid.getMinK(); k <= targetGrid.getMaxK(); k++) {
+				for (long m = targetGrid.getMinM(); m <= targetGrid.getMaxM(); m++) {
 					const size_t targetIndex = targetGrid.getIndex(k, l, m);
 
 					double deltaX = 0.0;
@@ -215,8 +215,8 @@ void Col::process(Context& context) {
 			const Accessor* sourceAccessor = sourceAccessorMap[targetAccessor];
 			const Accessor* yCollocationAccessor = yCollocationAccessorMap[targetAccessor];
 
-			for (long k = targetGrid.getFirstK(); k < targetGrid.getFirstK() + targetGrid.getSizeK(); k++) {
-				for (long m = targetGrid.getFirstM(); m < targetGrid.getFirstM() + targetGrid.getSizeM(); m++) {
+			for (long k = targetGrid.getMinK(); k <= targetGrid.getMaxK(); k++) {
+				for (long m = targetGrid.getMinM(); m <= targetGrid.getMaxM(); m++) {
 					const size_t targetIndex = targetGrid.getIndex(k, l, m);
 
 					double y = 0.0;

@@ -25,14 +25,11 @@
 
 class GridImpl: public virtual Grid {
 public:
-	GridImpl(long sizeK, long sizeL, long sizeM, long minL,
-			long maxL);
-	GridImpl(const Grid& bounds);
-	virtual ~GridImpl();
+	GridImpl(long sizeK, long sizeL, long sizeM, long minL, long maxL);
 
-	long getFirstK() const {
-		return firstK;
-	}
+	GridImpl(const Grid& bounds);
+
+	virtual ~GridImpl();
 
 	long getFirstL() const {
 		return firstL;
@@ -40,10 +37,6 @@ public:
 
 	long getLastL() const {
 		return firstL + sizeL - 1;
-	}
-
-	long getFirstM() const {
-		return firstM;
 	}
 
 	long getSizeK() const {
@@ -77,11 +70,11 @@ public:
 	size_t getIndex(long k, long l, long m) const throw (out_of_range);
 
 	long getMinK() const {
-		return firstK;
+		return minK;
 	}
 
 	long getMaxK() const {
-		return firstK + sizeK - 1;
+		return minK + sizeK - 1;
 	}
 
 	long getMinL() const {
@@ -93,27 +86,34 @@ public:
 	}
 
 	long getMinM() const {
-		return firstM;
+		return minM;
 	}
 
 	long getMaxM() const {
-		return firstM + sizeM - 1;
+		return minM + sizeM - 1;
 	}
 
-	long getK(size_t index) const;
+	long getK(size_t index) const {
+	    return index / strideK;
+	}
 
-	long getL(size_t index) const;
+	long getL(size_t index) const {
+	    return (index % strideK) / strideL;
+	}
 
-	long getM(size_t index) const;
+	long getM(size_t index) const {
+	    return index % sizeM;
+	}
 
 	void setFirstL(long l);
 
 	bool isValidPosition(long k, long l, long m) const;
 
 private:
-	long firstK;
-	long firstL;
-	long firstM;
+	long minK;
+	long minM;
+	long minL;
+	long maxL;
 
 	long sizeK;
 	long sizeL;
@@ -123,9 +123,7 @@ private:
 	long strideL;
 	long strideM;
 
-	long minL;
-	long maxL;
+	long firstL;
 };
 
 #endif	/* GRIDIMPL_H */
-

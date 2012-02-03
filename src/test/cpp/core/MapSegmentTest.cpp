@@ -52,9 +52,9 @@ void MapSegmentTest::testGetId() {
 void MapSegmentTest::testGetGrid() {
     const Grid& grid = segment->getGrid();
 
-    CPPUNIT_ASSERT(grid.getFirstK() == 0);
-    CPPUNIT_ASSERT(grid.getFirstL() == 0);
-    CPPUNIT_ASSERT(grid.getFirstM() == 0);
+    CPPUNIT_ASSERT(grid.getMinK() == 0);
+    CPPUNIT_ASSERT(grid.getMinL() == 0);
+    CPPUNIT_ASSERT(grid.getMinM() == 0);
     CPPUNIT_ASSERT(grid.getSizeK() == 1);
     CPPUNIT_ASSERT(grid.getSizeL() == 1000);
     CPPUNIT_ASSERT(grid.getSizeM() == 2000);

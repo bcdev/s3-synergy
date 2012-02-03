@@ -105,14 +105,6 @@ void LookupTableTest::testInterpolation2D() {
 	coordinates[0] = 1.0;
 	coordinates[1] = 0.5;
 	CPPUNIT_ASSERT(lut->getScalar(coordinates, f, workspace) == 2.5);
-
-	valarray<double> table(lut->getStride(0));
-	valarray<double> w(lut->getStride(1));
-
-	/*
-	lut->getTable(coordinates, 1, table);
-	CPPUNIT_ASSERT(lut->getScalar(coordinates, 1, table, w) == 2.5);
-	*/
 }
 
 void LookupTableTest::testInterpolation3D() {
@@ -165,21 +157,6 @@ void LookupTableTest::testInterpolation3D() {
 
 		actual = lut->getScalar(x, f, workspace);
 		CPPUNIT_ASSERT(abs(expected - actual) < 1.0E-10);
-
-		valarray<double> table(lut->getStride(0));
-		valarray<double> w(lut->getStride(1));
-
-		/*
-		lut->getTable(x, 1, table);
-
-		actual = lut->getScalar(x, 1, table, w);
-		CPPUNIT_ASSERT(abs(expected - actual) < 1.0E-10);
-
-		lut->getTable(x, 2, table);
-
-		actual = lut->getScalar(x, 2, table, w);
-		CPPUNIT_ASSERT(abs(expected - actual) < 1.0E-10);
-		*/
 	}
 }
 
@@ -238,25 +215,5 @@ void LookupTableTest::testInterpolation4D() {
 
 		actual = lut->getScalar(x, f, workspace);
 		CPPUNIT_ASSERT(abs(expected - actual) < 1.0E-10);
-
-		matrix<double> mat1(lut->getMatrixRowCount(), lut->getMatrixColCount());
-		matrix<double> mat2(lut->getMatrixRowCount(), lut->getMatrixColCount());
-		valarray<double> w1(lut->getMatrixWorkspaceSize());
-
-		lut->getMatrix(x, mat1, f, w1);
-
-		/*
-		valarray<double> table(lut->getStride(0));
-		valarray<double> w2(lut->getStride(1));
-
-		lut->getTable(x, 1, table);
-		lut->getMatrix(x, 1, mat2, table, w2);
-
-		for (size_t j = 0; j < mat1.size1(); ++j) {
-			for (size_t k = 0; k < mat1.size2(); ++k) {
-				CPPUNIT_ASSERT(abs(mat1(j, k) - mat2(j, k)) < 1.0E-10);
-			}
-		}
-		*/
 	}
 }

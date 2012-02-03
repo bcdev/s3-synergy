@@ -9,7 +9,6 @@
 #define ACO_H_
 
 #include "../modules/BasicModule.h"
-#include "../core/LookupTable.h"
 
 class Aco: public BasicModule {
 public:

@@ -268,9 +268,9 @@ void Aer::process(Context& context) {
 	Pixel q;
 
 	for (long l = firstL; l <= lastL; l++) {
-		context.getLogging().progress("Retrieving aerosol properties for line l = " + lexical_cast<string>(l), getId());
-		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
-			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
+		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
+		for (long k = averagedGrid->getMinK(); k <= averagedGrid->getMaxK(); k++) {
+			for (long m = averagedGrid->getMinM(); m <= averagedGrid->getMaxM(); m++) {
 				const size_t pixelIndex = averagedGrid->getIndex(k, l, m);
 				Pixel& p = pixels[pixelIndex];
 
@@ -298,8 +298,8 @@ void Aer::process(Context& context) {
 
 	for (long targetL = firstL; targetL <= lastFillableL; targetL++) {
 		context.getLogging().info("Filling line l = " + lexical_cast<string>(targetL), getId());
-		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
-			for (long targetM = averagedGrid->getFirstM(); targetM <= averagedGrid->getMaxM(); targetM++) {
+		for (long k = averagedGrid->getMinK(); k <= averagedGrid->getMaxK(); k++) {
+			for (long targetM = averagedGrid->getMinM(); targetM <= averagedGrid->getMaxM(); targetM++) {
 				const size_t targetPixelIndex = averagedGrid->getIndex(k, targetL, targetM);
 				Pixel& p = pixels[targetPixelIndex];
 
@@ -339,45 +339,6 @@ void Aer::process(Context& context) {
 		}
 	}
 
-	/*
-	long lastFilterableL;
-	if (lastL < averagedGrid->getMaxL()) {
-		lastFilterableL = lastFillableL - 1;
-	} else {
-		lastFilterableL = lastL;
-	}
-
-	valarray<double> tauValues(9);
-	valarray<double> errValues(9);
-	for (long targetL = firstL; targetL <= lastFilterableL; targetL++) {
-		context.getLogging().info("Filtering line l = " + lexical_cast<string>(targetL), getId());
-
-		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
-			for (long targetM = averagedGrid->getFirstM(); targetM <= averagedGrid->getMaxM(); targetM++) {
-				const size_t pixelIndex = averagedGrid->getIndex(k, targetL, targetM);
-				Pixel& p = pixels[pixelIndex];
-
-				size_t i = 0;
-				for (long sourceL = targetL - 1; sourceL <= targetL + 1; sourceL++) {
-					for (long sourceM = targetM - 1; sourceM <= targetM + 1; sourceM++) {
-						if (!averagedGrid->isValidPosition(k, sourceL, sourceM)) {
-							continue;
-						}
-						tauValues[i] = p.aot;
-						errValues[i] = p.aotError;
-						i++;
-					}
-				}
-				const size_t h = i / 2;
-				std::nth_element(&tauValues[0], &tauValues[h], &tauValues[i]);
-				std::nth_element(&errValues[0], &errValues[h], &errValues[i]);
-				p.aotFiltered = tauValues[h];
-				p.aotErrorFiltered = errValues[h];
-			}
-		}
-	}
-	*/
-
 	context.getLogging().info("Putting lines ...", getId());
 	putPixels(pixels, firstL, lastL);
 
@@ -388,8 +349,8 @@ void Aer::process(Context& context) {
 void Aer::getPixels(Context& context, valarray<Pixel>& pixels) const {
 	const PixelInitializer pixelInitializer(context);
 	for (long l = averagedGrid->getFirstL(); l <= averagedGrid->getLastL(); l++) {
-		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
-			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
+		for (long k = averagedGrid->getMinK(); k <= averagedGrid->getMaxK(); k++) {
+			for (long m = averagedGrid->getMinM(); m <= averagedGrid->getMaxM(); m++) {
 				const size_t index = averagedGrid->getIndex(k, l, m);
 				pixelInitializer.getPixel(index, pixels[index]);
 			}
@@ -461,8 +422,8 @@ void Aer::putPixels(const valarray<Pixel>& pixels, long firstL, long lastL) cons
 	Accessor& flagsAccessor = averagedSegment->getAccessor("SYN_flags");
 
 	for (long l = firstL; l <= lastL; l++) {
-		for (long k = averagedGrid->getFirstK(); k <= averagedGrid->getMaxK(); k++) {
-			for (long m = averagedGrid->getFirstM(); m <= averagedGrid->getMaxM(); m++) {
+		for (long k = averagedGrid->getMinK(); k <= averagedGrid->getMaxK(); k++) {
+			for (long m = averagedGrid->getMinM(); m <= averagedGrid->getMaxM(); m++) {
 				const size_t index = averagedGrid->getIndex(k, l, m);
 				const Pixel& p = pixels[index];
 

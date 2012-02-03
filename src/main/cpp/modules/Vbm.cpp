@@ -50,6 +50,7 @@ void Vbm::addTargetVariables(Context& context) {
 
     vgtAgAccessor = &collocatedSegment.addVariable("AG", Constants::TYPE_DOUBLE);
     vgtOgAccessor = &collocatedSegment.addVariable("OG", Constants::TYPE_DOUBLE);
+    vgtPgAccessor = &collocatedSegment.addVariable("PG", Constants::TYPE_DOUBLE);
     vgtWvgAccessor = &collocatedSegment.addVariable("WVG", Constants::TYPE_DOUBLE);
     vgtSaaAccessor = &collocatedSegment.addVariable("SAA", Constants::TYPE_DOUBLE);
     vgtSzaAccessor = &collocatedSegment.addVariable("SZA", Constants::TYPE_DOUBLE);
@@ -178,8 +179,8 @@ void Vbm::process(Context& context) {
 
     for (long l = firstL; l <= lastL; l++) {
         context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
-        for (long k = collocatedGrid.getFirstK(); k <= collocatedGrid.getMaxK(); k++) {
-            for (long m = collocatedGrid.getFirstM(); m <= collocatedGrid.getMaxM(); m++) {
+        for (long k = collocatedGrid.getMinK(); k <= collocatedGrid.getMaxK(); k++) {
+            for (long m = collocatedGrid.getMinM(); m <= collocatedGrid.getMaxM(); m++) {
                 const size_t index = collocatedGrid.getIndex(k, l, m);
                 const size_t geoIndex = geoGrid.getIndex(k, l, m);
                 initPixel(p, index, geoIndex, tpiWeights, tpiIndexes);
@@ -258,7 +259,6 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflect
 		coordinates[0] = p.vzaOlc;
 		synLutT->getVector(&coordinates[0], tv, f, w);
 
-#pragma omp parallel for
 		for (size_t i = 0; i < 18; i++) {
 			if (p.radiances[i] != Constants::FILL_VALUE_DOUBLE) {
 				synSurfaceReflectances[i] = surfaceReflectance(p.ozone, p.vzaOlc, p.sza, p.solarIrradiances[i], p.radiances[i], synCO3[i], rho[i], ratm[i], ts[i], tv[i]);
@@ -281,7 +281,6 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflect
 		coordinates[4] = p.aerosolModel;
 		synLutT->getVector(&coordinates[0], tv, f, w);
 
-#pragma omp parallel for
 		for (size_t i = 21; i < 24; i++) {
 			if (p.radiances[i - 3] != Constants::FILL_VALUE_DOUBLE) {
 				synSurfaceReflectances[i - 3] = surfaceReflectance(p.ozone, p.vzaSln, p.sza, p.solarIrradiances[i - 3], p.radiances[i - 3], synCO3[i], rho[i], ratm[i - 18], ts[i], tv[i]);
@@ -345,7 +344,6 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hypSurfaceReflec
 
 		const double airMass = 0.5 * (1.0 / cos(p.sza * D2R) + 1.0 / cos(p.vzaOlc * D2R));
 
-#pragma omp parallel for
 		for (size_t h = 0; h < hypSurfaceReflectances.size(); h++) {
 			if (hypSurfaceReflectances[h] != Constants::FILL_VALUE_DOUBLE) {
 				hypToaReflectances[h] = toaReflectance(p.ozone, airMass, hypSurfaceReflectances[h], hypCO3[h], rho[h], ratm[h], ts[h], tv[h]);
@@ -357,7 +355,6 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hypSurfaceReflec
 void Vbm::performHyperspectralFiltering(const valarray<double>& hypToaReflectances, valarray<double>& vgtToaReflectances) const {
 	fill(&vgtToaReflectances[0], &vgtToaReflectances[vgtToaReflectances.size()], Constants::FILL_VALUE_DOUBLE);
 
-#pragma omp parallel for
 	for (size_t b = 0; b < 4; b++) {
 		const valarray<double>& hypSpectralResponse = hypSpectralResponses[b];
 		double rs = 0.0;
@@ -426,7 +423,8 @@ void Vbm::setValues(size_t index, Pixel& p, uint8_t flags, const valarray<double
     vgtFlagsAccessor->setUByte(index, flags);
 
     vgtAgAccessor->setDouble(index, p.aot);
-    vgtOgAccessor->setDouble(index, p.ozone * 0.001); // conversion from DU into atm cm
+    vgtPgAccessor->setDouble(index, p.airPressure);
+    vgtOgAccessor->setDouble(index, duToAtmCm(p.ozone));
     vgtWvgAccessor->setDouble(index, p.waterVapour);
 
     vgtSaaAccessor->setDouble(index, p.saa);

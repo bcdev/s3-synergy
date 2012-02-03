@@ -85,8 +85,8 @@ void Pcl::process(Context& context) {
 #endif
 	for (long l = firstL; l <= lastL; l++) {
 		context.getLogging().progress("Setting flags for line l = " + lexical_cast<string>(l), getId());
-		for (long k = collocatedGrid.getFirstK(); k < collocatedGrid.getFirstK() + collocatedGrid.getSizeK(); k++) {
-			for (long m = collocatedGrid.getFirstM(); m < collocatedGrid.getFirstM() + collocatedGrid.getSizeM(); m++) {
+		for (long k = collocatedGrid.getMinK(); k <= collocatedGrid.getMaxK(); k++) {
+			for (long m = collocatedGrid.getMinM(); m <= collocatedGrid.getMaxM(); m++) {
 				const size_t index = collocatedGrid.getIndex(k, l, m);
 
 				const uint32_t currentOlcFlags = olcFlags[index];

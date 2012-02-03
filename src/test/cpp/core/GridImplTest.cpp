@@ -38,9 +38,9 @@ void GridImplTest::tearDown() {
 }
 
 void GridImplTest::testMetrics() {
-    CPPUNIT_ASSERT(grid->getFirstK() == 0);
-    CPPUNIT_ASSERT(grid->getFirstL() == 0);
-    CPPUNIT_ASSERT(grid->getFirstM() == 0);
+    CPPUNIT_ASSERT(grid->getMinK() == 0);
+    CPPUNIT_ASSERT(grid->getMinL() == 0);
+    CPPUNIT_ASSERT(grid->getMinM() == 0);
 
     CPPUNIT_ASSERT(grid->getSizeK() == 5);
     CPPUNIT_ASSERT(grid->getSizeL() == 2000);
