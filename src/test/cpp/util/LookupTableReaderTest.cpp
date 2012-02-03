@@ -19,7 +19,7 @@ LookupTableReaderTest::~LookupTableReaderTest() {
 }
 
 void LookupTableReaderTest::setUp() {
-	reader = new LookupTableReader(Constants::S3_SYNERGY_HOME + "/files/S3__SY_2_SYRTAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc");
+	reader = new LookupTableReader(Constants::AUX_ID_SYRTAX, Constants::S3_SYNERGY_HOME + "/files/S3__SY_2_SYRTAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc");
 }
 
 void LookupTableReaderTest::tearDown() {
@@ -30,7 +30,7 @@ void LookupTableReaderTest::testRead_OLC_R_atm() {
 	shared_ptr<const LookupTable<float> > lut(reader->readLookupTable<float>("OLC_R_atm"));
 
 	CPPUNIT_ASSERT(lut != 0);
-	CPPUNIT_ASSERT(lut->getId().compare("OLC_R_atm") == 0);
+	CPPUNIT_ASSERT(lut->getId().compare(Constants::AUX_ID_SYRTAX + "::" + "OLC_R_atm") == 0);
 	CPPUNIT_ASSERT(lut->getDimensionCount() == 8);
 	CPPUNIT_ASSERT(lut->getDimensionLength(0) == 31);
 	CPPUNIT_ASSERT(lut->getDimensionLength(1) == 21);
@@ -98,7 +98,7 @@ void LookupTableReaderTest::testRead_SLN_R_atm() {
 	const shared_ptr<LookupTable<float> > lut(reader->readLookupTable<float>("SLN_R_atm"));
 
 	CPPUNIT_ASSERT(lut != 0);
-	CPPUNIT_ASSERT(lut->getId().compare("SLN_R_atm") == 0);
+	CPPUNIT_ASSERT(lut->getId().compare(Constants::AUX_ID_SYRTAX + "::" + "SLN_R_atm") == 0);
 	CPPUNIT_ASSERT(lut->getDimensionCount() == 8);
 	CPPUNIT_ASSERT(lut->getScaleFactor() == 0.004f);
 	CPPUNIT_ASSERT(lut->getAddOffset() == 0.0f);
@@ -132,7 +132,7 @@ void LookupTableReaderTest::testRead_SLO_R_atm() {
 	const shared_ptr<LookupTable<float> > lut(reader->readLookupTable<float>("SLO_R_atm"));
 
 	CPPUNIT_ASSERT(lut != 0);
-	CPPUNIT_ASSERT(lut->getId().compare("SLO_R_atm") == 0);
+	CPPUNIT_ASSERT(lut->getId().compare(Constants::AUX_ID_SYRTAX + "::" + "SLO_R_atm") == 0);
 	CPPUNIT_ASSERT(lut->getDimensionCount() == 8);
 	CPPUNIT_ASSERT(lut->getScaleFactor() == 0.004f);
 	CPPUNIT_ASSERT(lut->getAddOffset() == 0.0f);

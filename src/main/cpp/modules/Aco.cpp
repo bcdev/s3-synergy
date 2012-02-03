@@ -130,11 +130,11 @@ void Aco::process(Context& context) {
 		errAccessors.push_back(&collocatedSegment.getAccessor("SDR_" + lexical_cast<string>(i) + "_er"));
 	}
 
-	const LookupTable<double>& lutOlcRatm = (LookupTable<double>&) context.getObject("OLC_R_atm");
-	const LookupTable<double>& lutSlnRatm = (LookupTable<double>&) context.getObject("SLN_R_atm");
-	const LookupTable<double>& lutSloRatm = (LookupTable<double>&) context.getObject("SLO_R_atm");
-	const LookupTable<double>& lutT = (LookupTable<double>&) context.getObject("t");
-	const LookupTable<double>& lutRhoAtm = (LookupTable<double>&) context.getObject("rho_atm");
+	const LookupTable<double>& lutOlcRatm = getLookupTable(context, "SYRTAX", "OLC_R_atm");
+	const LookupTable<double>& lutSlnRatm = getLookupTable(context, "SYRTAX", "SLN_R_atm");
+	const LookupTable<double>& lutSloRatm = getLookupTable(context, "SYRTAX", "SLO_R_atm");
+	const LookupTable<double>& lutT = getLookupTable(context, "SYRTAX", "t");
+	const LookupTable<double>& lutRhoAtm = getLookupTable(context, "SYRTAX", "rho_atm");
 	const AuxdataProvider& auxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYRTAX);
 
 	valarray<double> cO3;

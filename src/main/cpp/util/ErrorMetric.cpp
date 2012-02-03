@@ -14,11 +14,11 @@ static const double PI = 3.14159265358979323846;
 static const double RADIAN = PI / 180.0;
 
 ErrorMetric::ErrorMetric(const Context& context) :
-		lutOlcRatm((LookupTable<double>&) context.getObject("OLC_R_atm")),
-		lutSlnRatm((LookupTable<double>&) context.getObject("SLN_R_atm")),
-		lutSloRatm((LookupTable<double>&) context.getObject("SLO_R_atm")),
-		lutT((LookupTable<double>&) context.getObject("t")),
-		lutRhoAtm((LookupTable<double>&) context.getObject("rho_atm")),
+		lutOlcRatm((LookupTable<double>&) context.getObject("SYRTAX::OLC_R_atm")),
+		lutSlnRatm((LookupTable<double>&) context.getObject("SYRTAX::SLN_R_atm")),
+		lutSloRatm((LookupTable<double>&) context.getObject("SYRTAX::SLO_R_atm")),
+		lutT((LookupTable<double>&) context.getObject("SYRTAX::t")),
+		lutRhoAtm((LookupTable<double>&) context.getObject("SYRTAX::rho_atm")),
 		lutTotalAngularWeights((LookupTable<double>&) context.getObject("weight_ang_tot")),
 		lutD((LookupTable<double>&) context.getObject("D")),
 		validMask(30),

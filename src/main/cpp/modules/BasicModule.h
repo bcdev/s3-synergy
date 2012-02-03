@@ -75,9 +75,9 @@ protected:
 
     void addAccessor(Context& context, Segment& s, const VariableDescriptor& varDescriptor) const;
 
-    AuxdataProvider& getAuxdataProvider(Context& context, const string& id) const;
+    AuxdataProvider& getAuxdataProvider(Context& context, const string& auxId) const;
 
-    LookupTable<double>& getLookupTable(Context& context, const string& id, const string& varName) const;
+    LookupTable<double>& getLookupTable(Context& context, const string& auxId, const string& varName) const;
 };
 
 #endif	/* BASICMODULE_H */

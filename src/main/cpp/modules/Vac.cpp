@@ -16,6 +16,10 @@ Vac::~Vac() {
 }
 
 void Vac::start(Context& context) {
+	getLookupTable(context, Constants::AUX_ID_VSRTAX, "rho_atm");
+	getLookupTable(context, Constants::AUX_ID_VSRTAX, "VGT_R_atm");
+	getLookupTable(context, Constants::AUX_ID_VSRTAX, "t");
+
 	context.getSegment(Constants::SEGMENT_SYN_COLLOCATED).addVariable("NDVI", Constants::TYPE_DOUBLE);
 }
 
@@ -38,11 +42,11 @@ void Vac::process(Context& context) {
 	const Accessor& waterVapourAccessor = segment.getAccessor("WVG");
 
 	valarray<double> cO3;
-	uint16_t aerosolModel;
+	uint16_t aerosolModelIndex;
 
 	const AuxdataProvider& auxiliaryData = getAuxdataProvider(context, Constants::AUX_ID_VSRTAX);
 	auxiliaryData.getVectorDouble("C_O3", cO3);
-	auxiliaryData.getUShort("AMIN", aerosolModel);
+	auxiliaryData.getUShort("AMIN", aerosolModelIndex);
 
 	const LookupTable<double>& lutRhoAtm = getLookupTable(context, Constants::AUX_ID_VSRTAX, "rho_atm");
 	const LookupTable<double>& lutRatm = getLookupTable(context, Constants::AUX_ID_VSRTAX, "VGT_R_atm");
@@ -111,7 +115,7 @@ void Vac::process(Context& context) {
 							coordinates[0] = airPressure;
 							coordinates[1] = waterVapour;
 							coordinates[2] = aot;
-							coordinates[3] = aerosolModel;
+							coordinates[3] = aerosolModelIndex;
 							coordinates[4] = b;
 
 							const double rhoAtm = lutRhoAtm.getScalar(&coordinates[0], f, w);
@@ -122,7 +126,7 @@ void Vac::process(Context& context) {
 							coordinates[3] = airPressure;
 							coordinates[4] = waterVapour;
 							coordinates[5] = aot;
-							coordinates[6] = aerosolModel;
+							coordinates[6] = aerosolModelIndex;
 							coordinates[7] = b;
 
 							const double rAtm = lutRatm.getScalar(&coordinates[0], f, w);
@@ -131,7 +135,7 @@ void Vac::process(Context& context) {
 							coordinates[1] = airPressure;
 							coordinates[2] = waterVapour;
 							coordinates[3] = aot;
-							coordinates[4] = aerosolModel;
+							coordinates[4] = aerosolModelIndex;
 							coordinates[5] = b;
 
 							const double ts = lutT.getScalar(&coordinates[0], f, w);

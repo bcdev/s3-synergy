@@ -8,7 +8,7 @@
 
 #include "LookupTableReader.h"
 
-LookupTableReader::LookupTableReader(const string& path) {
+LookupTableReader::LookupTableReader(const string& id, const string& path) : id(id) {
     fileId = NetCDF::openFileReadOnly(path);
 }
 
