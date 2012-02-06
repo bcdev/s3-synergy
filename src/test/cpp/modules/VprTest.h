@@ -8,8 +8,6 @@
 #ifndef VPRTEST_H
 #define	VPRTEST_H
 
-#include "../../../../src/main/cpp/modules/Vpr.h"
-
 #include <cppunit/extensions/HelperMacros.h>
 
 class VprTest : public CPPUNIT_NS::TestFixture {

@@ -1,26 +1,26 @@
 /*
- * Vpr.h
+ * Vco.h
  *
- *  Created on: Dec 01, 2011
- *      Author: thomasstorm
+ *  Created on: Feb 6, 2012
+ *      Author: ralf
  */
 
-#ifndef VPR_H_
-#define VPR_H_
+#ifndef VCO_H_
+#define VCO_H_
 
-#include "../modules/BasicModule.h"
+#include "BasicModule.h"
 #include "../util/PixelFinder.h"
 
-class Vpr : public BasicModule, private GeoLocation {
+class Vco: public BasicModule, private GeoLocation {
 public:
-	Vpr();
-	virtual ~Vpr();
+	Vco();
+	virtual ~Vco();
 
 	void start(Context& context);
 	void process(Context& context);
 
 private:
-	friend class VprTest;
+	friend class VcoTest;
 
 	void addTargetSegments(Context& context);
 	void addTargetVariables(Context& context);
@@ -43,19 +43,12 @@ private:
 	double getTargetLat(long l) const ;
 	double getTargetLon(long m) const;
 
-	double getSubsampledTargetLat(long l) const ;
-	double getSubsampledTargetLon(long m) const;
-
 	void setValue(Accessor* sourceAccessor, Accessor* targetAccessor, size_t sourceIndex, size_t targetIndex) const;
 
 	void setMapLats(Context& context) const;
     void setMapLons(Context& context) const;
     void setMapLatBounds(Context& context) const;
     void setMapLonBounds(Context& context) const;
-    void setTpLats(Context& context) const;
-    void setTpLons(Context& context) const;
-    void setTpLatBounds(Context& context) const;
-    void setTpLonBounds(Context& context) const;
 
 	int maxTargetLat;
 	int minTargetLat;
@@ -74,4 +67,4 @@ private:
 	static const double DEGREES_PER_SUBSAMPLED_TARGET_PIXEL = 1.0 / SUBSAMPLED_TARGET_PIXELS_PER_DEGREE;
 };
 
-#endif /* VPR_H_ */
+#endif /* VCO_H_ */

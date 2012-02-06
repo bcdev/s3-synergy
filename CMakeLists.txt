@@ -38,10 +38,11 @@ file(GLOB_RECURSE AER_TEST_SOURCES src/test/cpp/modules/AerTest.cpp)
 file(GLOB_RECURSE AVE_TEST_SOURCES src/test/cpp/modules/AveTest.cpp)
 file(GLOB_RECURSE COL_TEST_SOURCES src/test/cpp/modules/ColTest.cpp)
 file(GLOB_RECURSE PCL_TEST_SOURCES src/test/cpp/modules/PclTest.cpp)
-file(GLOB_RECURSE VAC_TEST_SOURCES src/test/cpp/modules/VacTest.cpp)
 file(GLOB_RECURSE VBM_TEST_SOURCES src/test/cpp/modules/VbmTest.cpp)
 file(GLOB_RECURSE VFL_TEST_SOURCES src/test/cpp/modules/VflTest.cpp)
 file(GLOB_RECURSE VPR_TEST_SOURCES src/test/cpp/modules/VprTest.cpp)
+file(GLOB_RECURSE VAC_TEST_SOURCES src/test/cpp/modules/VacTest.cpp)
+file(GLOB_RECURSE VCO_TEST_SOURCES src/test/cpp/modules/VcoTest.cpp)
 
 file(GLOB_RECURSE SYL2_1_INTEGRATION_TEST_SOURCES src/test/cpp/integration/Syl2_1_Test.cpp)
 file(GLOB_RECURSE SYL2_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/Syl2_2_Test.cpp)
@@ -335,6 +336,25 @@ target_link_libraries(sy_unt_vac
 )
 set_property(TARGET sy_unt_vac PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
+add_executable(sy_unt_vco src/test/cpp/SyUntVcoRunner.cpp
+    ${CORE_MAIN_SOURCES}
+    ${UTIL_MAIN_SOURCES}
+    ${READER_MAIN_SOURCES}
+    ${WRITER_MAIN_SOURCES}
+    ${MODULES_MAIN_SOURCES}
+    ${VCO_TEST_SOURCES}
+)
+target_link_libraries(sy_unt_vco
+    cppunit
+    netcdf
+    xerces-c
+    xqilla
+    ${BOOST_REGEX}
+    ${BOOST_SYSTEM}
+    ${BOOST_FILESYSTEM}
+)
+set_property(TARGET sy_unt_vco PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+#
 add_executable(sy_int_syl2_1 src/test/cpp/SyIntSyl2_1_Runner.cpp
     ${CORE_MAIN_SOURCES}
     ${UTIL_MAIN_SOURCES}
@@ -483,6 +503,7 @@ install(TARGETS syl2 vgtp
   sy_unt_vpr
   sy_unt_vwr
   sy_unt_vac
+  sy_unt_vco
   RUNTIME DESTINATION bin
   CONFIGURATIONS Release
 )

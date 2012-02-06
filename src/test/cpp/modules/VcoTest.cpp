@@ -1,5 +1,5 @@
 /* 
- * File:   VprTest.cpp
+ * File:   VcoTest.cpp
  * Author: thomasstorm
  * 
  * Created on Dec 01, 2011
@@ -13,37 +13,37 @@
 #include "../../../../src/main/cpp/modules/Pcl.h"
 #include "../../../../src/main/cpp/modules/Vbm.h"
 #include "../../../../src/main/cpp/modules/Vfl.h"
-#include "../../../../src/main/cpp/modules/Vpr.h"
+#include "../../../../src/main/cpp/modules/Vco.h"
 #include "../../../../src/main/cpp/util/BasicTask.h"
 #include "../../../../src/main/cpp/writer/SegmentWriter.h"
 
-#include "VprTest.h"
+#include "VcoTest.h"
 
 using std::getenv;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(VprTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(VcoTest);
 
-VprTest::VprTest() {
+VcoTest::VcoTest() {
 }
 
-VprTest::~VprTest() {
+VcoTest::~VcoTest() {
 }
 
-void VprTest::setUp() {
+void VcoTest::setUp() {
 }
 
-void VprTest::tearDown() {
+void VcoTest::tearDown() {
 }
 
-void VprTest::testVpr() {
-	BasicTask task("SY_UNT_VPR");
+void VcoTest::testVco() {
+	BasicTask task("SY_UNT_VCO");
 
 	shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
 	shared_ptr<Module> col = shared_ptr<Module>(new Col());
 	shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
 	shared_ptr<Module> vbm = shared_ptr<Module>(new Vbm());
 	shared_ptr<Module> vfl = shared_ptr<Module>(new Vfl());
-	shared_ptr<Module> vpr = shared_ptr<Module>(new Vpr());
+	shared_ptr<Module> vco = shared_ptr<Module>(new Vco());
 	shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
 
 	task.getContext().addModule(reader);
@@ -51,8 +51,8 @@ void VprTest::testVpr() {
 	task.getContext().addModule(pcl);
 	task.getContext().addModule(vbm);
 	task.getContext().addModule(vfl);
-	task.getContext().addModule(vpr);
+	task.getContext().addModule(vco);
 	task.getContext().addModule(writer);
 
-	task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_VPR.xml");
+	task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_VCO.xml");
 }
