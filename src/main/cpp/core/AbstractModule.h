@@ -35,7 +35,7 @@ using std::runtime_error;
 /**
  * A basic module, doing nothing.
  */
-class AbstractModule: public Module {
+class AbstractModule: virtual public Module {
 public:
 
 	/**
