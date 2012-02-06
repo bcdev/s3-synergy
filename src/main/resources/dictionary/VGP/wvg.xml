@@ -4,9 +4,9 @@
         <variable>
             <name>WVG</name>
             <type>ubyte</type>
-            <segment_name>VGP_TP</segment_name>
+            <segment_name>VGT_TP</segment_name>
             <dimensions>
-                <id>VGP_TP</id>
+                <id>VGT_TP</id>
             </dimensions>
             <attributes>          
                 <attribute>

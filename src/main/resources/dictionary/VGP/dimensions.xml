@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
-    <set name="VGP">
+    <set name="VGT">
         <dimensions>
             <dimension>
                 <name>NX</name>
@@ -12,7 +12,7 @@
             </dimension>
         </dimensions>
     </set>
-    <set name="VGP_TP">
+    <set name="VGT_TP">
         <dimensions>
             <dimension>
                 <name>SX</name>
@@ -24,7 +24,7 @@
             </dimension>
         </dimensions>
     </set>
-    <set name="VGP_LAT">
+    <set name="VGT_LAT">
         <dimensions>
             <dimension>
                 <name>NY</name>
@@ -32,7 +32,7 @@
             </dimension>
         </dimensions>
     </set>
-    <set name="VGP_LON">
+    <set name="VGT_LON">
         <dimensions>
             <dimension>
                 <name>NX</name>
@@ -40,7 +40,7 @@
             </dimension>
         </dimensions>
     </set>
-    <set name="VGP_LAT_TP">
+    <set name="VGT_LAT_TP">
         <dimensions>
             <dimension>
                 <name>SY</name>
@@ -48,7 +48,7 @@
             </dimension>
         </dimensions>
     </set>
-    <set name="VGP_LON_TP">
+    <set name="VGT_LON_TP">
         <dimensions>
             <dimension>
                 <name>SX</name>
@@ -56,7 +56,7 @@
             </dimension>
         </dimensions>
     </set>    
-    <set name="VGP_LAT_BNDS">
+    <set name="VGT_LAT_BNDS">
         <dimensions>
             <dimension>
                 <name>NY</name>
@@ -68,7 +68,7 @@
             </dimension>            
         </dimensions>
     </set>
-    <set name="VGP_LON_BNDS">
+    <set name="VGT_LON_BNDS">
         <dimensions>
             <dimension>
                 <name>NX</name>
@@ -80,7 +80,7 @@
             </dimension>            
         </dimensions>
     </set>
-    <set name="VGP_LAT_TP_BNDS">
+    <set name="VGT_LAT_TP_BNDS">
         <dimensions>
             <dimension>
                 <name>SY</name>
@@ -92,7 +92,7 @@
             </dimension>            
         </dimensions>
     </set>
-    <set name="VGP_LON_TP_BNDS">
+    <set name="VGT_LON_TP_BNDS">
         <dimensions>
             <dimension>
                 <name>SX</name>

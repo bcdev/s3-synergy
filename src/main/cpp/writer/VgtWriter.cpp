@@ -64,24 +64,22 @@ void VgtWriter::defineCommonDimensions(int fileId, const string& segmentName, co
         variables = getNonSubsampledCommonVariables(dict);
     }
     for(size_t i = 0; i < variables.size(); i++) {
-        const VariableDescriptor* variableDescriptor = variables[i];
-        // Removing the next line causes a segmentation fault!
-        std::cout << "";
-        valarray<int> dimIds(variableDescriptor->getDimensions().size());
-        for(size_t j = 0; j < variableDescriptor->getDimensions().size(); j++) {
-        	const Dimension* dim = variableDescriptor->getDimensions()[j];
+        VariableDescriptor* variable = variables[i];
+        valarray<int> dimIds(variable->getDimensions().size());
+        for(size_t j = 0; j < variable->getDimensions().size(); j++) {
+        	const Dimension* dim = variable->getDimensions()[j];
         	int dimId = NetCDF::findDimension(fileId, dim->getName());
         	if(dimId == -1) {
         		dimId = NetCDF::defineDimension(fileId, dim->getName(), dim->getSize());
         	}
         	dimIds[j] = dimId;
         }
-        commonDimIds[variableDescriptor] = dimIds;
+        commonDimIds.insert(make_pair(variable, dimIds));
     }
 }
 
 void VgtWriter::defineCommonVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, valarray<int> >& commonDimIds) {
-    vector<VariableDescriptor*> variables;
+	vector<VariableDescriptor*> variables;
     if(isSubsampledSegment(segmentName)) {
         variables = getSubsampledCommonVariables(dict);
     } else {
@@ -144,39 +142,24 @@ const vector<SegmentDescriptor*> VgtWriter::getCommonSegments(const Dictionary& 
 }
 
 bool VgtWriter::isSubsampledCommonSegment(const string& segmentName) const {
-    return segmentName.compare(Constants::SEGMENT_VGP_LAT_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_LON_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_LAT_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_LON_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LAT_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LON_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LAT_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LON_BNDS) == 0;
+    return segmentName.compare(Constants::SEGMENT_VGT_LAT_TP) == 0
+            || segmentName.compare(Constants::SEGMENT_VGT_LON_TP) == 0
+            || segmentName.compare(Constants::SEGMENT_VGT_LAT_TP_BNDS) == 0
+            || segmentName.compare(Constants::SEGMENT_VGT_LON_TP_BNDS) == 0;
 }
 
 bool VgtWriter::isSubsampledSegment(const string& segmentName) const {
-    return segmentName.compare(Constants::SEGMENT_OLC_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_SLN_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_SLO_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_TP) == 0;
+    return segmentName.compare(Constants::SEGMENT_VGT_TP) == 0;
 }
 
 bool VgtWriter::isCommonDescriptor(const SegmentDescriptor& segmentDescriptor) const {
     const string& segmentName = segmentDescriptor.getName();
-    return segmentName.compare(Constants::SEGMENT_VGP_LAT) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_LAT_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LAT) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LAT_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_LON) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_LON_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LON) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LON_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_LAT_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LAT_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_LAT_TP_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LAT_TP_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_LON_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LON_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_LON_TP_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LON_TP_BNDS) == 0;
+    return segmentName.compare(Constants::SEGMENT_VGT_LAT) == 0
+            || segmentName.compare(Constants::SEGMENT_VGT_LAT_TP) == 0
+            || segmentName.compare(Constants::SEGMENT_VGT_LON) == 0
+            || segmentName.compare(Constants::SEGMENT_VGT_LON_TP) == 0
+            || segmentName.compare(Constants::SEGMENT_VGT_LAT_BNDS) == 0
+            || segmentName.compare(Constants::SEGMENT_VGT_LAT_TP_BNDS) == 0
+            || segmentName.compare(Constants::SEGMENT_VGT_LON_BNDS) == 0
+            || segmentName.compare(Constants::SEGMENT_VGT_LON_TP_BNDS) == 0;
 }

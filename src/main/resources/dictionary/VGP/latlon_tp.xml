@@ -4,9 +4,9 @@
         <variable>
             <name>lat</name>
             <type>double</type>
-            <segment_name>VGP_LAT_TP</segment_name>
+            <segment_name>VGT_LAT_TP</segment_name>
             <dimensions>
-                <id>VGP_LAT_TP</id>
+                <id>VGT_LAT_TP</id>
             </dimensions>
             <attributes>
                 <attribute>
@@ -39,9 +39,9 @@
         <variable>
             <name>lon</name>
             <type>double</type>
-            <segment_name>VGP_LON_TP</segment_name>
+            <segment_name>VGT_LON_TP</segment_name>
             <dimensions>
-                <id>VGP_LON_TP</id>
+                <id>VGT_LON_TP</id>
             </dimensions>
             <attributes>
                 <attribute>
@@ -74,17 +74,17 @@
         <variable>
             <name>lat_bnds</name>
             <type>double</type>
-            <segment_name>VGP_LAT_TP_BNDS</segment_name>
+            <segment_name>VGT_LAT_TP_BNDS</segment_name>
             <dimensions>
-                <id>VGP_LAT_TP_BNDS</id>
+                <id>VGT_LAT_TP_BNDS</id>
             </dimensions>
         </variable>
         <variable>
             <name>lon_bnds</name>
             <type>double</type>
-            <segment_name>VGP_LON_TP_BNDS</segment_name>
+            <segment_name>VGT_LON_TP_BNDS</segment_name>
             <dimensions>
-                <id>VGP_LON_TP_BNDS</id>
+                <id>VGT_LON_TP_BNDS</id>
             </dimensions>
         </variable>
     </variables>

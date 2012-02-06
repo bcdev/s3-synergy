@@ -36,68 +36,68 @@ void Vpr::addTargetSegments(Context& context) {
     const int rowCount = latCellCount * TARGET_PIXELS_PER_DEGREE;
     const int colCount = lonCellCount * TARGET_PIXELS_PER_DEGREE;
 
-    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LAT + "' to context.", getId());
-    context.addSingleLineSegment(Constants::SEGMENT_VGP_LAT, rowCount);
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGT_LAT + "' to context.", getId());
+    context.addSingleLineSegment(Constants::SEGMENT_VGT_LAT, rowCount);
 
-    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LON + "' to context.", getId());
-    context.addSingleLineSegment(Constants::SEGMENT_VGP_LON, colCount);
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGT_LON + "' to context.", getId());
+    context.addSingleLineSegment(Constants::SEGMENT_VGT_LON, colCount);
 
-    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LAT_BNDS + "' to context.", getId());
-    context.addSingleLineSegment(Constants::SEGMENT_VGP_LAT_BNDS, rowCount * 2);
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGT_LAT_BNDS + "' to context.", getId());
+    context.addSingleLineSegment(Constants::SEGMENT_VGT_LAT_BNDS, rowCount * 2);
 
-    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LON_BNDS + "' to context.", getId());
-    context.addSingleLineSegment(Constants::SEGMENT_VGP_LON_BNDS, colCount * 2);
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGT_LON_BNDS + "' to context.", getId());
+    context.addSingleLineSegment(Constants::SEGMENT_VGT_LON_BNDS, colCount * 2);
 
-    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP + "' to context.", getId());
-    context.addMapSegment(Constants::SEGMENT_VGP, rowCount, colCount);
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGT + "' to context.", getId());
+    context.addMapSegment(Constants::SEGMENT_VGT, rowCount, colCount);
 
     const int subsampledRowCount = latCellCount * SUBSAMPLED_TARGET_PIXELS_PER_DEGREE;
     const int subsampledColCount = lonCellCount * SUBSAMPLED_TARGET_PIXELS_PER_DEGREE;
 
-    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LAT_TP + "' to context.", getId());
-    context.addSingleLineSegment(Constants::SEGMENT_VGP_LAT_TP, subsampledRowCount);
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGT_LAT_TP + "' to context.", getId());
+    context.addSingleLineSegment(Constants::SEGMENT_VGT_LAT_TP, subsampledRowCount);
 
-    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LON_TP + "' to context.", getId());
-    context.addSingleLineSegment(Constants::SEGMENT_VGP_LON_TP, subsampledColCount);
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGT_LON_TP + "' to context.", getId());
+    context.addSingleLineSegment(Constants::SEGMENT_VGT_LON_TP, subsampledColCount);
 
-    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LAT_TP_BNDS + "' to context.", getId());
-    context.addSingleLineSegment(Constants::SEGMENT_VGP_LAT_TP_BNDS, subsampledRowCount * 2);
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGT_LAT_TP_BNDS + "' to context.", getId());
+    context.addSingleLineSegment(Constants::SEGMENT_VGT_LAT_TP_BNDS, subsampledRowCount * 2);
 
-    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_LON_TP_BNDS + "' to context.", getId());
-    context.addSingleLineSegment(Constants::SEGMENT_VGP_LON_TP_BNDS, subsampledColCount * 2);
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGT_LON_TP_BNDS + "' to context.", getId());
+    context.addSingleLineSegment(Constants::SEGMENT_VGT_LON_TP_BNDS, subsampledColCount * 2);
 
-    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGP_TP + "' to context.", getId());
-    context.addMapSegment(Constants::SEGMENT_VGP_TP, subsampledRowCount, subsampledColCount);
+    context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGT_TP + "' to context.", getId());
+    context.addMapSegment(Constants::SEGMENT_VGT_TP, subsampledRowCount, subsampledColCount);
 }
 
 void Vpr::addTargetVariables(Context& context) {
     const ProductDescriptor& pd = context.getDictionary().getProductDescriptor(Constants::PRODUCT_VGP);
 
-	context.getSegment(Constants::SEGMENT_VGP_LAT).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LAT).getVariableDescriptor("lat"));
-	context.getSegment(Constants::SEGMENT_VGP_LON).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LON).getVariableDescriptor("lon"));
-	context.getSegment(Constants::SEGMENT_VGP_LAT_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LAT_BNDS).getVariableDescriptor("lat_bnds"));
-	context.getSegment(Constants::SEGMENT_VGP_LON_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LON_BNDS).getVariableDescriptor("lon_bnds"));
+	context.getSegment(Constants::SEGMENT_VGT_LAT).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGT_LAT).getVariableDescriptor("lat"));
+	context.getSegment(Constants::SEGMENT_VGT_LON).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGT_LON).getVariableDescriptor("lon"));
+	context.getSegment(Constants::SEGMENT_VGT_LAT_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGT_LAT_BNDS).getVariableDescriptor("lat_bnds"));
+	context.getSegment(Constants::SEGMENT_VGT_LON_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGT_LON_BNDS).getVariableDescriptor("lon_bnds"));
 
-	Segment& vgtSegment = context.getSegment(Constants::SEGMENT_VGP);
-	vgtSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("B0"));
-    vgtSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("B2"));
-    vgtSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("B3"));
-    vgtSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("MIR"));
-    vgtSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP).getVariableDescriptor("SM"));
+	Segment& vgtSegment = context.getSegment(Constants::SEGMENT_VGT);
+	vgtSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGT).getVariableDescriptor("B0"));
+    vgtSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGT).getVariableDescriptor("B2"));
+    vgtSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGT).getVariableDescriptor("B3"));
+    vgtSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGT).getVariableDescriptor("MIR"));
+    vgtSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGT).getVariableDescriptor("SM"));
 
-	context.getSegment(Constants::SEGMENT_VGP_LAT_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LAT_TP).getVariableDescriptor("lat"));
-	context.getSegment(Constants::SEGMENT_VGP_LON_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LON_TP).getVariableDescriptor("lon"));
-	context.getSegment(Constants::SEGMENT_VGP_LAT_TP_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LAT_TP_BNDS).getVariableDescriptor("lat_bnds"));
-	context.getSegment(Constants::SEGMENT_VGP_LON_TP_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_LON_TP_BNDS).getVariableDescriptor("lon_bnds"));
+	context.getSegment(Constants::SEGMENT_VGT_LAT_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGT_LAT_TP).getVariableDescriptor("lat"));
+	context.getSegment(Constants::SEGMENT_VGT_LON_TP).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGT_LON_TP).getVariableDescriptor("lon"));
+	context.getSegment(Constants::SEGMENT_VGT_LAT_TP_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGT_LAT_TP_BNDS).getVariableDescriptor("lat_bnds"));
+	context.getSegment(Constants::SEGMENT_VGT_LON_TP_BNDS).addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGT_LON_TP_BNDS).getVariableDescriptor("lon_bnds"));
 
-	Segment& vgtTiePointSegment = context.getSegment(Constants::SEGMENT_VGP_TP);
-	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("AG"));
-	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("OG"));
-	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("SAA"));
-	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("SZA"));
-	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("VAA"));
-	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("VZA"));
-	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGP_TP).getVariableDescriptor("WVG"));
+	Segment& vgtTiePointSegment = context.getSegment(Constants::SEGMENT_VGT_TP);
+	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGT_TP).getVariableDescriptor("AG"));
+	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGT_TP).getVariableDescriptor("OG"));
+	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGT_TP).getVariableDescriptor("SAA"));
+	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGT_TP).getVariableDescriptor("SZA"));
+	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGT_TP).getVariableDescriptor("VAA"));
+	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGT_TP).getVariableDescriptor("VZA"));
+	vgtTiePointSegment.addVariable(pd.getSegmentDescriptor(Constants::SEGMENT_VGT_TP).getVariableDescriptor("WVG"));
 }
 
 void Vpr::process(Context& context) {
@@ -105,8 +105,8 @@ void Vpr::process(Context& context) {
 	using std::min;
 
 	const Segment& syn = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-	const Segment& vgp = context.getSegment(Constants::SEGMENT_VGP);
-	const Segment& vgpTiePoint = context.getSegment(Constants::SEGMENT_VGP_TP);
+	const Segment& vgp = context.getSegment(Constants::SEGMENT_VGT);
+	const Segment& vgpTiePoint = context.getSegment(Constants::SEGMENT_VGT_TP);
 
 	setMapLats(context);
 	setMapLats(context);
@@ -338,7 +338,7 @@ void Vpr::setValue(Accessor* sourceAccessor, Accessor* targetAccessor, size_t so
 }
 
 void Vpr::setMapLats(Context& context) const {
-	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LAT);
+	const Segment& s = context.getSegment(Constants::SEGMENT_VGT_LAT);
 	const Grid& g = s.getGrid();
 
 	Accessor& a = s.getAccessor("lat");
@@ -349,7 +349,7 @@ void Vpr::setMapLats(Context& context) const {
 }
 
 void Vpr::setMapLons(Context& context) const {
-	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LON);
+	const Segment& s = context.getSegment(Constants::SEGMENT_VGT_LON);
 	const Grid& g = s.getGrid();
 
 	Accessor& a = s.getAccessor("lon");
@@ -360,7 +360,7 @@ void Vpr::setMapLons(Context& context) const {
 }
 
 void Vpr::setMapLatBounds(Context& context) const {
-	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LAT_BNDS);
+	const Segment& s = context.getSegment(Constants::SEGMENT_VGT_LAT_BNDS);
 	const Grid& g = s.getGrid();
 
 	Accessor& a = s.getAccessor("lat_bnds");
@@ -375,7 +375,7 @@ void Vpr::setMapLatBounds(Context& context) const {
 }
 
 void Vpr::setMapLonBounds(Context& context) const {
-	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LON_BNDS);
+	const Segment& s = context.getSegment(Constants::SEGMENT_VGT_LON_BNDS);
 	const Grid& g = s.getGrid();
 
 	Accessor& a = s.getAccessor("lon_bnds");
@@ -390,7 +390,7 @@ void Vpr::setMapLonBounds(Context& context) const {
 }
 
 void Vpr::setTpLats(Context& context) const {
-	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LAT_TP);
+	const Segment& s = context.getSegment(Constants::SEGMENT_VGT_LAT_TP);
 	const Grid& g = s.getGrid();
 
 	Accessor& a = s.getAccessor("lat");
@@ -401,7 +401,7 @@ void Vpr::setTpLats(Context& context) const {
 }
 
 void Vpr::setTpLons(Context& context) const {
-	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LON_TP);
+	const Segment& s = context.getSegment(Constants::SEGMENT_VGT_LON_TP);
 	const Grid& g = s.getGrid();
 
 	Accessor& a = s.getAccessor("lon");
@@ -412,7 +412,7 @@ void Vpr::setTpLons(Context& context) const {
 }
 
 void Vpr::setTpLatBounds(Context& context) const {
-	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LAT_TP_BNDS);
+	const Segment& s = context.getSegment(Constants::SEGMENT_VGT_LAT_TP_BNDS);
 	const Grid& g = s.getGrid();
 
 	Accessor& a = s.getAccessor("lat_bnds");
@@ -427,7 +427,7 @@ void Vpr::setTpLatBounds(Context& context) const {
 }
 
 void Vpr::setTpLonBounds(Context& context) const {
-	const Segment& s = context.getSegment(Constants::SEGMENT_VGP_LON_TP_BNDS);
+	const Segment& s = context.getSegment(Constants::SEGMENT_VGT_LON_TP_BNDS);
 	const Grid& g = s.getGrid();
 
 	Accessor& a = s.getAccessor("lon_bnds");

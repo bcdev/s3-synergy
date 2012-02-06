@@ -4,9 +4,9 @@
         <variable>
             <name>SZA</name>
             <type>ubyte</type>
-            <segment_name>VGS_TP</segment_name>
+            <segment_name>VGT</segment_name>
             <dimensions>
-                <id>VGS_TP</id>
+                <id>VGT</id>
             </dimensions>
             <attributes>
                 <attribute>

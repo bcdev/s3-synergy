@@ -4,9 +4,9 @@
         <variable>
             <name>NDVI</name>
             <type>byte</type>
-            <segment_name>VGS</segment_name>
+            <segment_name>VGT</segment_name>
             <dimensions>
-                <id>VGS</id>
+                <id>VGT</id>
             </dimensions>
             <attributes>
                 <attribute>

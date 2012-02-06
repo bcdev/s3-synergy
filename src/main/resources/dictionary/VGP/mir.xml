@@ -4,9 +4,9 @@
         <variable>
             <name>MIR</name>
             <type>short</type>
-            <segment_name>VGP</segment_name>
+            <segment_name>VGT</segment_name>
             <dimensions>
-                <id>VGP</id>
+                <id>VGT</id>
             </dimensions>
             <attributes>
                 <attribute>

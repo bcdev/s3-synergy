@@ -72,19 +72,9 @@ void VgtSegmentProvider::addCommonSegments(Context& context) {
         vector<VariableDescriptor*> variableDescriptors = segDesc->getVariableDescriptors();
         foreach(VariableDescriptor* varDesc, variableDescriptors) {
             const string& segmentName = segDesc->getName();
-            if (!context.hasSegment(segmentName) &&
-                    segmentName.compare(Constants::SEGMENT_VGP_LAT_BNDS) != 0 &&
-                    segmentName.compare(Constants::SEGMENT_VGP_LON_BNDS) != 0 &&
-                    segmentName.compare(Constants::SEGMENT_VGP_LAT_TP_BNDS) != 0 &&
-                    segmentName.compare(Constants::SEGMENT_VGP_LON_TP_BNDS) != 0) {
-                valarray<size_t> dimensionSizes = IOUtils::getDimensionSizes(varDesc);
-                context.addSwathSegment(segmentName, dimensionSizes[0], dimensionSizes[1], dimensionSizes[2], 0, dimensionSizes[1] - 1);
-            } else if(segmentName.compare(Constants::SEGMENT_VGP_LAT_BNDS) == 0 ||
-                    segmentName.compare(Constants::SEGMENT_VGP_LON_BNDS) == 0 ||
-                    segmentName.compare(Constants::SEGMENT_VGP_LAT_TP_BNDS) == 0 ||
-                    segmentName.compare(Constants::SEGMENT_VGP_LON_TP_BNDS) == 0) {
-                valarray<size_t> dimensionSizes = IOUtils::getDimensionSizes(varDesc);
-                context.addSingleLineSegment(segmentName, dimensionSizes[2]);
+            if (!context.hasSegment(segmentName)) {
+            	valarray<size_t> dimensionSizes = IOUtils::getDimensionSizes(varDesc);
+            	context.addSingleLineSegment(segmentName, dimensionSizes[2]);
             }
             Segment& segment = context.getSegment(segmentName);
             if (!segment.hasVariable(varDesc->getName())) {
@@ -128,20 +118,12 @@ const vector<SegmentDescriptor*> VgtSegmentProvider::getNonCommonSegmentDescript
 
 bool VgtSegmentProvider::isCommonDescriptor(const SegmentDescriptor& segmentDescriptor) const {
     const string& segmentName = segmentDescriptor.getName();
-    return segmentName.compare(Constants::SEGMENT_VGP_LAT) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_LAT_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LAT) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LAT_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_LON) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_LON_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LON) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LON_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_LAT_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LAT_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_LAT_TP_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LAT_TP_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_LON_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LON_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGP_LON_TP_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGS_LON_TP_BNDS) == 0;
+    return segmentName.compare(Constants::SEGMENT_VGT_LAT) == 0
+            || segmentName.compare(Constants::SEGMENT_VGT_LAT_TP) == 0
+            || segmentName.compare(Constants::SEGMENT_VGT_LON) == 0
+            || segmentName.compare(Constants::SEGMENT_VGT_LON_TP) == 0
+            || segmentName.compare(Constants::SEGMENT_VGT_LAT_BNDS) == 0
+            || segmentName.compare(Constants::SEGMENT_VGT_LAT_TP_BNDS) == 0
+            || segmentName.compare(Constants::SEGMENT_VGT_LON_BNDS) == 0
+            || segmentName.compare(Constants::SEGMENT_VGT_LON_TP_BNDS) == 0;
 }

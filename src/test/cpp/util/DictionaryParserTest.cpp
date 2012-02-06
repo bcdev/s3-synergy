@@ -209,8 +209,8 @@ void DictionaryParserTest::testVgpProductDescriptor() {
     CPPUNIT_ASSERT(dictionary->hasProductDescriptor(Constants::PRODUCT_VGP));
     const ProductDescriptor & p = dictionary->getProductDescriptor(Constants::PRODUCT_VGP);
 
-    CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_VGP));
-    const SegmentDescriptor & s = p.getSegmentDescriptor(Constants::SEGMENT_VGP);
+    CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_VGT));
+    const SegmentDescriptor & s = p.getSegmentDescriptor(Constants::SEGMENT_VGT);
 
     CPPUNIT_ASSERT(s.hasVariableDescriptor("B0"));
     CPPUNIT_ASSERT(s.hasVariableDescriptor("B2"));
@@ -218,8 +218,8 @@ void DictionaryParserTest::testVgpProductDescriptor() {
     CPPUNIT_ASSERT(s.hasVariableDescriptor("MIR"));
     CPPUNIT_ASSERT(s.hasVariableDescriptor("SM"));
 
-    CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_VGP_TP));
-    const SegmentDescriptor& t = p.getSegmentDescriptor(Constants::SEGMENT_VGP_TP);
+    CPPUNIT_ASSERT(p.hasSegmentDescriptor(Constants::SEGMENT_VGT_TP));
+    const SegmentDescriptor& t = p.getSegmentDescriptor(Constants::SEGMENT_VGT_TP);
 
     CPPUNIT_ASSERT(t.hasVariableDescriptor("AG"));
     CPPUNIT_ASSERT(t.hasVariableDescriptor("OG"));

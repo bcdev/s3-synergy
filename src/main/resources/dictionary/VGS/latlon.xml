@@ -4,9 +4,9 @@
         <variable>
             <name>lat</name>
             <type>double</type>
-            <segment_name>VGS_LAT</segment_name>
+            <segment_name>VGT_LAT</segment_name>
             <dimensions>
-                <id>VGS_LAT</id>
+                <id>VGT_LAT</id>
             </dimensions>
             <attributes>
                 <attribute>
