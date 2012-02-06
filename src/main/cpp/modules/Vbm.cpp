@@ -407,7 +407,7 @@ uint8_t Vbm::performQualityFlagging(Pixel& p, const valarray<double>& vgtToaRefl
         flags |= Constants::VGT_MIR_GOOD_FLAG;
     }
     if (isSet(p.synFlags, Constants::SY2_LAND_FLAG)) {
-    	p.vgtFlags |= Constants::VGT_LAND_FLAG;
+    	flags |= Constants::VGT_LAND_FLAG;
     }
     return flags;
 }
