@@ -30,15 +30,23 @@ class MapAccessor: public virtual Accessor {
 public:
 	MapAccessor(size_t n, T fillValue = numeric_limits<T>::min(), double scaleFactor = 1.0, double addOffset = 0.0) :
 			Accessor(), fillValue(fillValue), scaleFactor(scaleFactor), addOffset(addOffset), filename(Constants::S3_SYNERGY_HOME.length() + 12) {
-		using std::min;
-		using std::runtime_error;
-		using std::strcpy;
+	    using std::min;
+	    using std::runtime_error;
+	    using std::strcpy;
 
-		string a;
-		strcpy(&filename[0], string(Constants::S3_SYNERGY_HOME + "/tmp/XXXXXX").c_str());
-		fd = mkstemp(&filename[0]);
-		if (fd < 0) {
-			BOOST_THROW_EXCEPTION(runtime_error("Unable to open file '" + string(&filename[0]) + "'"));
+	    const string tempFile = Constants::S3_SYNERGY_HOME + "/tmp/XXXXXX";
+
+        if (!boost::filesystem::exists(path(tempFile).parent_path())) {
+            if (!boost::filesystem::create_directories(path(tempFile).parent_path())) {
+                BOOST_THROW_EXCEPTION( runtime_error("Cannot create directory '" + tempFile + "'."));
+            }
+        }
+
+        string a;
+        strcpy(&filename[0], tempFile.c_str());
+        fd = mkstemp(&filename[0]);
+        if (fd < 0) {
+            BOOST_THROW_EXCEPTION(runtime_error("Unable to open file '" + string(&filename[0]) + "'"));
 		}
 		valarray<T> buffer(fillValue, 1024);
 		for (size_t i = 0; i < n; i += 1024) {
