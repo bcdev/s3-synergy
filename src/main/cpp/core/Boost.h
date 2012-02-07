@@ -25,6 +25,7 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/exception/all.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
@@ -52,6 +53,9 @@ using boost::error_info;
 using boost::lexical_cast;
 using boost::numeric_cast;
 using boost::numeric::ublas::matrix;
+using boost::posix_time::from_iso_string;
+using boost::posix_time::ptime;
+using boost::posix_time::time_duration;
 using boost::regex;
 using boost::regex_match;
 using boost::regex_replace;

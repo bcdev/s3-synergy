@@ -60,6 +60,3 @@ void VcoTest::testVco() {
 	task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_VCO.xml");
 }
 
-void VcoTest::testTimeConversion() {
-
-}
