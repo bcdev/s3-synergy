@@ -13,7 +13,6 @@
 class VcoTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(VcoTest);
     CPPUNIT_TEST(testVco);
-    CPPUNIT_TEST(testTimeConversion);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -24,7 +23,6 @@ public:
 
 private:
     void testVco();
-    void testTimeConversion();
 };
 
 #endif	/* VCOTEST_H */
