@@ -5,7 +5,7 @@
  *      Author: ralf
  */
 
-#include "../../../main/cpp/util/IOUtils.h"
+#include "../../../main/cpp/core/Constants.h"
 #include "../../../main/cpp/util/LookupTableReader.h"
 
 #include "LookupTableReaderTest.h"

@@ -12,14 +12,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * File:   IOUtils.h
+ * File:   Utils.h
  * Author: thomass
  *
  * Created on January 5, 2011, 10:05 AM
  */
 
-#ifndef IOUTILS_H
-#define	IOUTILS_H
+#ifndef UTILS_H
+#define	UTILS_H
 
 #include <cstdlib>
 #include <iostream>
@@ -30,7 +30,7 @@
 #include "../core/NetCDF.h"
 #include "../core/Segment.h"
 
-class IOUtils {
+class Utils {
 public:
 	static void createCountVector(size_t dimCount, size_t camCount, size_t lineCount, size_t colCount, valarray<size_t>& shape) {
 	    shape.resize(dimCount);
@@ -110,6 +110,11 @@ public:
 	    }
 	    return directoryNames;
 	}
+
+    static void replaceString(const string& toReplace, const string& replacement, string& input) {
+        regex expr(toReplace.c_str());
+        input = regex_replace(input, expr, replacement);
+    }
 };
 
-#endif	/* IOUTILS_H */
+#endif	/* UTILS_H */

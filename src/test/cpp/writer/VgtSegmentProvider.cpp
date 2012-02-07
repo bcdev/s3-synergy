@@ -21,7 +21,7 @@
 #include <algorithm>
 #include <stdio.h>
 #include <string.h>
-#include "../../../main/cpp/util/IOUtils.h"
+#include "../../../main/cpp/util/Utils.h"
 #include "VgtSegmentProvider.h"
 
 using std::min;
@@ -55,7 +55,7 @@ void VgtSegmentProvider::addNonCommonSegments(Context& context) {
         foreach(VariableDescriptor* varDesc, variableDescriptors) {
             const string& segmentName = segDesc->getName();
             if (!context.hasSegment(segmentName)) {
-                valarray<size_t> dimensionSizes = IOUtils::getDimensionSizes(varDesc);
+                valarray<size_t> dimensionSizes = Utils::getDimensionSizes(varDesc);
                 context.addMapSegment(segmentName, dimensionSizes[1], dimensionSizes[2]);
             }
             Segment& segment = context.getSegment(segmentName);
@@ -73,7 +73,7 @@ void VgtSegmentProvider::addCommonSegments(Context& context) {
         foreach(VariableDescriptor* varDesc, variableDescriptors) {
             const string& segmentName = segDesc->getName();
             if (!context.hasSegment(segmentName)) {
-            	valarray<size_t> dimensionSizes = IOUtils::getDimensionSizes(varDesc);
+            	valarray<size_t> dimensionSizes = Utils::getDimensionSizes(varDesc);
             	context.addSingleLineSegment(segmentName, dimensionSizes[2]);
             }
             Segment& segment = context.getSegment(segmentName);

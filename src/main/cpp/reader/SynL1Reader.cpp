@@ -7,9 +7,9 @@
 
 #include <cstdlib>
 
-#include "../util/IOUtils.h"
-#include "../core/NetCDF.h"
 #include "../core/JobOrder.h"
+#include "../core/NetCDF.h"
+#include "../util/Utils.h"
 
 #include "SynL1Reader.h"
 
@@ -176,8 +176,8 @@ void SynL1Reader::process(Context& context) {
 								const int varId = ncVarIdMap[varName];
 								const int fileId = ncFileIdMap[ncFileName];
 								const size_t dimCount = variableDescriptor->getDimensions().size();
-								IOUtils::createStartVector(dimCount, firstL, starts);
-								IOUtils::createCountVector(dimCount, grid.getSizeK(), lastL - firstL + 1, grid.getSizeM(), counts);
+								Utils::createStartVector(dimCount, firstL, starts);
+								Utils::createCountVector(dimCount, grid.getSizeK(), lastL - firstL + 1, grid.getSizeM(), counts);
 								context.getLogging().progress("Reading variable '" + varName + "' into segment " + segment.toString(), getId());
 								const Accessor& accessor = segment.getAccessor(varName);
 								NetCDF::getVariableData(fileId, varId, starts, counts, accessor.getUntypedData());

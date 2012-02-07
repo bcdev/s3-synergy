@@ -6,7 +6,6 @@
  */
 
 #include "VgtWriter.h"
-#include "../util/IOUtils.h"
 
 VgtWriter::VgtWriter() : AbstractWriter("VGP_WRITER") {
 }

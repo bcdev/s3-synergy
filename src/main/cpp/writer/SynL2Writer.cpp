@@ -9,7 +9,6 @@
 #include <stdexcept>
 
 #include "../core/Config.h"
-#include "../util/IOUtils.h"
 #include "../core/NetCDF.h"
 
 #include "SynL2Writer.h"

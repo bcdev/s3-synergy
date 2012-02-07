@@ -15,6 +15,17 @@ using std::string;
 
 class TimeConverter {
 public:
+    /**
+     * Creating a new instance with the given start time.
+     *
+     * @param startTime the start time, expected in one of the following formats:
+     *  <ul>
+     *      <li>yyyyMMdd_hhmmss.MMMM</li>
+     *      <li>yyyyMMddThhmmss.MMMM<li>
+     *      <li>yyyyMMdd_hhmmss<li>
+     *      <li>yyyyMMddThhmmss<li>
+     *  </ul>
+     */
     TimeConverter(const string& startTime);
     virtual ~TimeConverter();
 
@@ -26,14 +37,6 @@ public:
 
 private:
     int64_t startTime;
-
-    // copied from AbstractWriter
-    // TODO - put into utility class
-    static void replaceString(const string& toReplace, const string& replacement, string& input) {
-        regex expr(toReplace.c_str());
-        input = regex_replace(input, expr, replacement);
-    }
-
 };
 
 #endif /* TIMECONVERTER_H_ */

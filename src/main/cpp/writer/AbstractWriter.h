@@ -51,7 +51,6 @@ private:
 	void writeManifest(string& manifest) const;
 	void removeManifestTemplate() const;
 
-	static void replaceString(const string& toReplace, const string& replacement, string& input);
 	static string getMd5Sum(const string& file);
 };
 
