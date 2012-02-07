@@ -126,8 +126,8 @@ void Col::process(Context& context) {
 					const size_t sourceIndex = sourceGrid.getIndex(sourceK, sourceL, sourceM);
 
                     if(targetName.compare("TG") == 0) {
-                        const uint64_t blah = sourceAccessor.getLong(sourceIndex);
-                        targetAccessor.setShort(targetIndex, tc.getMinutesSinceStartTime(blah));
+                        const uint64_t microseconds = sourceAccessor.getLong(sourceIndex);
+                        targetAccessor.setShort(targetIndex, tc.getMinutesSinceStartTime(microseconds));
                         continue;
                     }
 
@@ -291,7 +291,7 @@ void Col::addOlciVariables(Context& context) {
 
 	targetSegment.addVariable("TG", Constants::TYPE_SHORT);
 	string targetName = "TG";
-    sourceNameMap[targetName] = "OLCI_time_stamps";
+    sourceNameMap[targetName] = "time";
     sourceSegmentMap[targetName] = &context.getSegment(Constants::SEGMENT_OLC_TIME);
     targetNames.push_back(targetName);
 
