@@ -13,6 +13,7 @@
 #include "../../../../src/main/cpp/modules/Pcl.h"
 #include "../../../../src/main/cpp/modules/Vbm.h"
 #include "../../../../src/main/cpp/modules/Vfl.h"
+#include "../../../../src/main/cpp/modules/Vac.h"
 #include "../../../../src/main/cpp/modules/Vco.h"
 #include "../../../../src/main/cpp/util/BasicTask.h"
 #include "../../../../src/main/cpp/writer/SegmentWriter.h"
@@ -43,6 +44,7 @@ void VcoTest::testVco() {
 	shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
 	shared_ptr<Module> vbm = shared_ptr<Module>(new Vbm());
 	shared_ptr<Module> vfl = shared_ptr<Module>(new Vfl());
+	shared_ptr<Module> vac = shared_ptr<Module>(new Vac());
 	shared_ptr<Module> vco = shared_ptr<Module>(new Vco());
 	shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
 
@@ -51,8 +53,13 @@ void VcoTest::testVco() {
 	task.getContext().addModule(pcl);
 	task.getContext().addModule(vbm);
 	task.getContext().addModule(vfl);
+	task.getContext().addModule(vac);
 	task.getContext().addModule(vco);
 	task.getContext().addModule(writer);
 
 	task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_VCO.xml");
+}
+
+void VcoTest::testTimeConversion() {
+
 }
