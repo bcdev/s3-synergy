@@ -18,7 +18,11 @@ public:
     TimeConverter(const string& startTime);
     virtual ~TimeConverter();
 
-    int16_t getMinutesSinceStartTime(int64_t microSeconds) const;
+    /**
+     * Returns the number of minutes the given date differs from the start time.
+     * The date is given as microseconds from 01.01.2000.
+     */
+    int16_t getMinutesSinceStartTime(uint64_t microSeconds) const;
 
 private:
     int64_t startTime;

@@ -32,8 +32,8 @@ TimeConverter::~TimeConverter() {
     // TODO Auto-generated destructor stub
 }
 
-int16_t TimeConverter::getMinutesSinceStartTime(int64_t microSeconds) const {
-    const int64_t seconds = microSeconds / 1000 / 1000;
+int16_t TimeConverter::getMinutesSinceStartTime(uint64_t microSeconds) const {
+    const int64_t seconds = microSeconds / 1000L / 1000L;
     const int64_t secondsSinceStartTime = seconds - startTime;
     return secondsSinceStartTime / 60;
 }

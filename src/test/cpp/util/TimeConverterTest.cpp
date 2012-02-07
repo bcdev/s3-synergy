@@ -35,6 +35,6 @@ void TimeConverterTest::testGetTime() {
 
 void TimeConverterTest::testLeapYear() {
     const TimeConverter tc("20000301_000000.0000");
-    const int16_t minutes = tc.getMinutesSinceStartTime(60 * 24 * 60 * 1000 * 1000L);
+    const int16_t minutes = tc.getMinutesSinceStartTime(60UL * 24UL * 60UL * 60UL * 1000UL * 1000UL);
     CPPUNIT_ASSERT_EQUAL((int16_t)0, minutes);
 }
