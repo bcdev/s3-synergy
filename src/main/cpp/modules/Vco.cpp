@@ -106,6 +106,7 @@ void Vco::process(Context& context) {
     sourceAccessors[8] = &syn.getAccessor("VAA");
     sourceAccessors[9] = &syn.getAccessor("VZA");
     // TODO - TG
+    // sourceAccessors[10] = &syn.getAccessor("TG");
 
 	targetAccessors[0] = &vgt.getAccessor("B0");
 	targetAccessors[1] = &vgt.getAccessor("B2");
