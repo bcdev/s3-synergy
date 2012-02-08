@@ -70,7 +70,7 @@ protected:
 
     template<class T>
     static bool isSet(T flags, T flagMasks) {
-        return (flags & flagMasks) != 0;
+        return (flags & flagMasks) == flagMasks;
     }
 
     void addAccessor(Context& context, Segment& s, const VariableDescriptor& varDescriptor) const;
