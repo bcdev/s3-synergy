@@ -125,6 +125,12 @@ void Col::process(Context& context) {
 
 					const size_t sourceIndex = sourceGrid.getIndex(sourceK, sourceL, sourceM);
 
+					if(targetName.compare("TG") == 0) {
+					    const uint64_t microseconds = sourceAccessor.getLong(sourceIndex);
+					    targetAccessor.setShort(targetIndex, tc.getMinutesSinceStartTime(microseconds));
+					    continue;
+					}
+
 					switch (sourceAccessor.getType()) {
 					case Constants::TYPE_BYTE: {
 						targetAccessor.setByte(targetIndex, sourceAccessor.getByte(sourceIndex));
@@ -282,6 +288,15 @@ void Col::addOlciVariables(Context& context) {
 			collocationNameMapY[targetName] = "delta_y_" + lexical_cast<string>(OLC_TO_SYN_CHANNEL_MAPPING[i]);
 		}
 	}
+
+	const string targetName = "TG";
+	const string sourceName = "time";
+	targetSegment.addVariable(targetName, Constants::TYPE_SHORT);
+	sourceNameMap[targetName] = sourceName;
+	sourceSegmentMap[targetName] = &context.getSegment(Constants::SEGMENT_OLC_TIME);
+	targetNames.push_back(targetName);
+    collocationNameMapX[targetName] = "delta_x_1";
+    collocationNameMapY[targetName] = "delta_y_1";
 
 	addVariableAlias(context, targetSegment, "OLC_confidence", sourceSegment, "OLC_confidence");
 
