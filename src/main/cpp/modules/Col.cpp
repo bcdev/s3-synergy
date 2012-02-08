@@ -6,7 +6,6 @@
  */
 
 #include "Col.h"
-#include "../util/TimeConverter.h"
 
 #include <cmath>
 
@@ -34,8 +33,6 @@ void Col::start(Context& context) {
 void Col::process(Context& context) {
 	using std::floor;
 	using std::min;
-
-	const TimeConverter tc(context.getJobOrder().getIpfConfiguration().getSensingTimeStart());
 
 	const Segment& olc = context.getSegment(Constants::SEGMENT_OLC);
 	const Segment& sln = context.getSegment(Constants::SEGMENT_SLN);
@@ -124,12 +121,6 @@ void Col::process(Context& context) {
 					}
 
 					const size_t sourceIndex = sourceGrid.getIndex(sourceK, sourceL, sourceM);
-
-					if(targetName.compare("TG") == 0) {
-					    const uint64_t microseconds = sourceAccessor.getLong(sourceIndex);
-					    targetAccessor.setShort(targetIndex, tc.getMinutesSinceStartTime(microseconds));
-					    continue;
-					}
 
 					switch (sourceAccessor.getType()) {
 					case Constants::TYPE_BYTE: {
@@ -295,6 +286,7 @@ void Col::addOlciVariables(Context& context) {
 	sourceNameMap[targetName] = sourceName;
 	sourceSegmentMap[targetName] = &context.getSegment(Constants::SEGMENT_OLC_TIME);
 	targetNames.push_back(targetName);
+	// todo - verify
     collocationNameMapX[targetName] = "delta_x_1";
     collocationNameMapY[targetName] = "delta_y_1";
 

@@ -6,6 +6,7 @@
  */
 
 #include "Vco.h"
+#include "../util/TimeConverter.h"
 
 Vco::Vco() : BasicModule("VCO") {
 }
@@ -153,6 +154,7 @@ void Vco::process(Context& context) {
 	long firstRequiredSourceL = 0;
 
 	PixelFinder pixelFinder(*this, DEGREES_PER_TARGET_PIXEL);
+	const TimeConverter tc(context.getJobOrder().getIpfConfiguration().getSensingTimeStart());
 
 	for (long l = firstTargetL; l <= lastTargetL; l++) {
 		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
@@ -196,8 +198,7 @@ void Vco::process(Context& context) {
 						}
 					}
 					const int64_t sourceTime = sourceAccessors[10]->getLong(sourceL);
-					// TODO - compute target time (minutes since start time)
-					const int16_t targetTime = 0;
+					const int16_t targetTime = tc.getMinutesSinceStartTime(sourceTime);
 					targetAccessors[10]->setShort(targetIndex, targetTime);
 				}
 			}
