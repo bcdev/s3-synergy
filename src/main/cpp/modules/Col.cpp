@@ -284,16 +284,6 @@ void Col::addOlciVariables(Context& context) {
 		}
 	}
 
-	const string targetName = "TG";
-	const string sourceName = "time";
-	targetSegment.addVariable(targetName, Constants::TYPE_LONG);
-	sourceNameMap[targetName] = sourceName;
-	sourceSegmentMap[targetName] = &context.getSegment(Constants::SEGMENT_OLC_TIME);
-	targetNames.push_back(targetName);
-	// todo - verify
-    collocationNameMapX[targetName] = "delta_x_1";
-    collocationNameMapY[targetName] = "delta_y_1";
-
 	addVariableAlias(context, targetSegment, "OLC_confidence", sourceSegment, "OLC_confidence");
 
 //	addVariableAlias(context, targetSegment, "longitude", sourceSegment, "longitude");
