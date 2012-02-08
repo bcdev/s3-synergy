@@ -103,7 +103,7 @@ void Col::process(Context& context) {
 					    sourceK = 0;
 					    sourceL = (long) floor(collocationYAccessor.getDouble(targetIndex));
 					    sourceM = 0;
-					}
+					} else {
 						sourceK = 0;
 						sourceL = (long) floor(collocationYAccessor.getDouble(targetIndex));
 						sourceM = (long) floor(collocationXAccessor.getDouble(targetIndex));
