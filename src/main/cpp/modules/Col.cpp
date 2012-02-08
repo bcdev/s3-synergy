@@ -286,7 +286,7 @@ void Col::addOlciVariables(Context& context) {
 
 	const string targetName = "TG";
 	const string sourceName = "time";
-	targetSegment.addVariable(targetName, Constants::TYPE_SHORT);
+	targetSegment.addVariable(targetName, Constants::TYPE_LONG);
 	sourceNameMap[targetName] = sourceName;
 	sourceSegmentMap[targetName] = &context.getSegment(Constants::SEGMENT_OLC_TIME);
 	targetNames.push_back(targetName);
