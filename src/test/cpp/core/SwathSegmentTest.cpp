@@ -132,14 +132,14 @@ void SwathSegmentTest::testMoveForward() {
     }
 
     segment->moveForward(200);
-    CPPUNIT_ASSERT(grid.getFirstL() == 200);
+    CPPUNIT_ASSERT(grid.getMinInMemoryL() == 200);
 
 #pragma omp parallel for
-    for (long l = grid.getFirstL(); l < grid.getFirstL() + grid.getSizeL(); l++) {
+    for (long l = grid.getMinInMemoryL(); l < grid.getMinInMemoryL() + grid.getSizeL(); l++) {
         for (long k = 0; k < grid.getSizeK(); k++) {
             for (long m = 0; m < grid.getSizeM(); m++) {
                 const size_t i = grid.getIndex(k, l, m);
-                if (l < grid.getFirstL() + grid.getSizeL() - 200) {
+                if (l < grid.getMinInMemoryL() + grid.getSizeL() - 200) {
                     CPPUNIT_ASSERT(data[i] == l);
                 } else {
                     CPPUNIT_ASSERT(data[i] == 0);
@@ -149,16 +149,16 @@ void SwathSegmentTest::testMoveForward() {
     }
 
     CPPUNIT_ASSERT_THROW(segment->moveForward(100), logic_error);
-    CPPUNIT_ASSERT(grid.getFirstL() == 200);
+    CPPUNIT_ASSERT(grid.getMinInMemoryL() == 200);
 
     CPPUNIT_ASSERT_THROW(segment->moveForward(2201), logic_error);
-    CPPUNIT_ASSERT(grid.getFirstL() == 200);
+    CPPUNIT_ASSERT(grid.getMinInMemoryL() == 200);
 
     segment->moveForward(2200);
-    CPPUNIT_ASSERT(grid.getFirstL() == 2200);
+    CPPUNIT_ASSERT(grid.getMinInMemoryL() == 2200);
 
 #pragma omp parallel for
-    for (long l = grid.getFirstL(); l < grid.getFirstL() + grid.getSizeL(); l++) {
+    for (long l = grid.getMinInMemoryL(); l < grid.getMinInMemoryL() + grid.getSizeL(); l++) {
         for (long k = 0; k < grid.getSizeK(); k++) {
             for (long m = 0; m < grid.getSizeM(); m++) {
                 const size_t i = grid.getIndex(k, l, m);

@@ -105,8 +105,7 @@ void Vco::process(Context& context) {
     sourceAccessors[7] = &syn.getAccessor("SZA");
     sourceAccessors[8] = &syn.getAccessor("VAA");
     sourceAccessors[9] = &syn.getAccessor("VZA");
-    // TODO - TG
-    // sourceAccessors[10] = &syn.getAccessor("TG");
+    sourceAccessors[10] = &context.getSegment(Constants::SEGMENT_OLC_TIME).getAccessor("time");
 
 	targetAccessors[0] = &vgt.getAccessor("B0");
 	targetAccessors[1] = &vgt.getAccessor("B2");
@@ -158,7 +157,7 @@ void Vco::process(Context& context) {
 	for (long l = firstTargetL; l <= lastTargetL; l++) {
 		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
 
-		firstRequiredSourceL = sourceGrid.getLastL() + 1;
+		firstRequiredSourceL = sourceGrid.getMaxInMemoryL() + 1;
 
 		for (long k = targetGrid.getMinK(); k <= targetGrid.getMaxK(); k++) {
 			for (long m = targetGrid.getMinM(); m < targetGrid.getMaxM(); m++) {
@@ -188,7 +187,6 @@ void Vco::process(Context& context) {
 
 				if (!sourceAccessors[5]->isFillValue(sourceIndex) && (sourceNdvi > targetNdvi || targetAccessors[5]->isFillValue(targetIndex))) {
 					// 4. Set the samples of the target pixel
-				    // todo - remove '-1' after time grid accessor has been created
 					for (size_t i = 0; i < targetAccessors.size() - 1; i++) {
 						Accessor* sourceAccessor = sourceAccessors[i];
 						Accessor* targetAccessor = targetAccessors[i];
@@ -197,6 +195,10 @@ void Vco::process(Context& context) {
 							setValue(sourceAccessor, targetAccessor, sourceIndex, targetIndex);
 						}
 					}
+					const int64_t sourceTime = sourceAccessors[10]->getLong(sourceL);
+					// TODO - compute target time (minutes since start time)
+					const int16_t targetTime = 0;
+					targetAccessors[10]->setShort(targetIndex, targetTime);
 				}
 			}
 		}
@@ -211,7 +213,7 @@ void Vco::getMinMaxSourceLat(double& minLat, double& maxLat) const {
 	const Grid& synGrid = synSegment->getGrid();
 
 	for (long k = synGrid.getMinK(); k <= synGrid.getMaxK(); k++) {
-		for (long l = synGrid.getFirstL(); l <= synGrid.getLastL(); l++) {
+		for (long l = synGrid.getMinInMemoryL(); l <= synGrid.getMaxInMemoryL(); l++) {
 			for (long m = synGrid.getMinM(); m <= synGrid.getMaxM(); m++) {
 				const size_t index = geoGrid.getIndex(k, l, m);
 				if (!latAccessor->isFillValue(index)) {

@@ -227,7 +227,7 @@ string MapSegment::toString() const {
 	ostringstream oss;
 	oss << className << "[";
 	oss << "id = " << getId() << ", ";
-	oss << "firstL = " << getGrid().getFirstL() << ", ";
+	oss << "firstL = " << getGrid().getMinInMemoryL() << ", ";
 	oss << "sizeL = " << getGrid().getSizeL() << "]";
 
 	return oss.str();

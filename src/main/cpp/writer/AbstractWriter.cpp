@@ -70,9 +70,9 @@ void AbstractWriter::process(Context& context) {
         if (context.hasSegment(segmentName)) {
             const Segment& segment = context.getSegment(segmentName);
             const Grid& grid = segment.getGrid();
-            const long firstL = segment.getGrid().getFirstL();
+            const long firstL = segment.getGrid().getMinInMemoryL();
             context.getLogging().debug("Segment [" + segment.toString() + "]: firstL = " + lexical_cast<string>(firstL), getId());
-            const long lastL = segment.getGrid().getLastL();
+            const long lastL = segment.getGrid().getMaxInMemoryL();
             context.getLogging().debug("Segment [" + segment.toString() + "]: lastL = " + lexical_cast<string>(lastL), getId());
 
             if (firstL <= lastL) {

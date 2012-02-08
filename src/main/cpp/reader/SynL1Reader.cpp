@@ -155,11 +155,11 @@ void SynL1Reader::process(Context& context) {
 			{
 				const Segment& segment = context.getSegment(segmentDescriptor->getName());
 				const Grid& grid = segment.getGrid();
-				if (!context.hasLastComputedL(segment, *this) || context.getLastComputedL(segment, *this) < grid.getFirstL() + grid.getSizeL() - 1) {
+				if (!context.hasLastComputedL(segment, *this) || context.getLastComputedL(segment, *this) < grid.getMinInMemoryL() + grid.getSizeL() - 1) {
 					const vector<VariableDescriptor*> variableDescriptors = segmentDescriptor->getVariableDescriptors();
-					const long firstL = segment.getGrid().getFirstL();
+					const long firstL = segment.getGrid().getMinInMemoryL();
 					context.getLogging().debug("Segment [" + segment.toString() + "]: firstL = " + lexical_cast<string>(firstL), getId());
-					const long lastL = segment.getGrid().getLastL();
+					const long lastL = segment.getGrid().getMaxInMemoryL();
 					context.getLogging().debug("Segment [" + segment.toString() + "]: lastL = " + lexical_cast<string>(lastL), getId());
 
 					foreach(VariableDescriptor* variableDescriptor, variableDescriptors)

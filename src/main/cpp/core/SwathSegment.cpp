@@ -233,17 +233,17 @@ Accessor& SwathSegment::getAccessor(const string& name) const throw (logic_error
 }
 
 void SwathSegment::moveForward(long l) throw (logic_error) {
-	if (l < grid.getFirstL()) {
+	if (l < grid.getMinInMemoryL()) {
 		BOOST_THROW_EXCEPTION( logic_error("Class: " + className + ": l < grid.getStartL()."));
 	}
-	if (l > grid.getFirstL() + grid.getSizeL()) {
+	if (l > grid.getMinInMemoryL() + grid.getSizeL()) {
 		BOOST_THROW_EXCEPTION( logic_error("Class: " + className + ": l > grid.getStartL() + grid.getSizeL()."));
 	}
 	if (l + grid.getSizeL() - 1 > grid.getMaxL()) {
 		l = grid.getMaxL() - grid.getSizeL() + 1;
 	}
 	for (size_t i = 0; i < accessorList.size(); i++) {
-		accessorList[i]->shift(l - grid.getFirstL(), grid.getStrideK(), grid.getStrideL());
+		accessorList[i]->shift(l - grid.getMinInMemoryL(), grid.getStrideK(), grid.getStrideL());
 	}
 	grid.setFirstL(l);
 }
@@ -252,7 +252,7 @@ string SwathSegment::toString() const {
 	ostringstream oss;
 	oss << className << "[";
 	oss << "id = " << getId() << ", ";
-	oss << "firstL = " << getGrid().getFirstL() << ", ";
+	oss << "firstL = " << getGrid().getMinInMemoryL() << ", ";
 	oss << "sizeL = " << getGrid().getSizeL() << "]";
 
 	return oss.str();

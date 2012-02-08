@@ -69,6 +69,6 @@ void SynL2SegmentProvider::process(Context& context) {
 	vector<SegmentDescriptor*> segmentDescriptors = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptors();
 	foreach(SegmentDescriptor* segDesc, segmentDescriptors) {
 	    Segment& segment = context.getSegment(segDesc->getName());
-	    context.setLastComputedL(segment, *this, segment.getGrid().getLastL());
+	    context.setLastComputedL(segment, *this, segment.getGrid().getMaxInMemoryL());
 	}
 }
