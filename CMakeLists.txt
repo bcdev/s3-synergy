@@ -50,6 +50,9 @@ file(GLOB_RECURSE SYL2_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/Syl2_
 file(GLOB_RECURSE VGTP_1_INTEGRATION_TEST_SOURCES src/test/cpp/integration/VgtP_1_Test.cpp)
 file(GLOB_RECURSE VGTP_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/VgtP_2_Test.cpp)
 
+file(GLOB_RECURSE VGTS_1_INTEGRATION_TEST_SOURCES src/test/cpp/integration/VgtS_1_Test.cpp)
+file(GLOB_RECURSE VGTS_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/VgtS_2_Test.cpp)
+
 if(${BOOST_MT})
    set(BOOST_REGEX boost_regex-mt) 
    set(BOOST_SYSTEM boost_system-mt) 
@@ -443,6 +446,25 @@ target_link_libraries(sy_int_vgtp_2
 )
 set_property(TARGET sy_int_vgtp_2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
+add_executable(sy_int_vgts_1 src/test/cpp/SyIntVgtS_1_Runner.cpp
+    ${CORE_MAIN_SOURCES}
+    ${UTIL_MAIN_SOURCES}
+    ${READER_MAIN_SOURCES}
+	${WRITER_MAIN_SOURCES}
+    ${MODULES_MAIN_SOURCES}
+    ${VGTS_1_INTEGRATION_TEST_SOURCES}
+)
+target_link_libraries(sy_int_vgts_1
+    cppunit
+    netcdf
+    xerces-c
+    xqilla
+    ${BOOST_REGEX}
+    ${BOOST_SYSTEM}
+    ${BOOST_FILESYSTEM}
+)
+set_property(TARGET sy_int_vgts_1 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+#
 
 ##
 # Project main targets
@@ -480,11 +502,28 @@ target_link_libraries(vgtp
     ${BOOST_FILESYSTEM}
 )
 set_property(TARGET vgtp PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
+#
+add_executable(vgts src/main/cpp/tasks/vgts.cpp
+    ${CORE_MAIN_SOURCES}
+    ${UTIL_MAIN_SOURCES}
+    ${READER_MAIN_SOURCES}
+    ${WRITER_MAIN_SOURCES}
+    ${MODULES_MAIN_SOURCES}
+)
+target_link_libraries(vgts
+    netcdf
+    xerces-c
+    xqilla
+    ${BOOST_REGEX}
+    ${BOOST_SYSTEM}
+    ${BOOST_FILESYSTEM}
+)
+set_property(TARGET vgts PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 
 ##
 # Project installation
 #
-install(TARGETS syl2 vgtp
+install(TARGETS syl2 vgtp vgts
   sy_int_syl2_1
   sy_int_syl2_2
   sy_int_vgtp_1

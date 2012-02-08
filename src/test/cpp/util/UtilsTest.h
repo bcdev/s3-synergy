@@ -28,6 +28,7 @@ CPPUNIT_TEST_SUITE(UtilsTest);
 		CPPUNIT_TEST(testCreateCountVector);
 		CPPUNIT_TEST(testCreateStartVector);
 		CPPUNIT_TEST(testReplacing);
+		CPPUNIT_TEST(testReset);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -39,6 +40,7 @@ private:
 	void testCreateCountVector();
 	void testCreateStartVector();
 	void testReplacing();
+	void testReset();
 };
 
 #endif	/* UTILSTEST_H */

@@ -21,7 +21,6 @@
 #include <netcdf.h>
 #include <string>
 
-#include "../../../main/cpp/core/SwathSegment.h"
 #include "../../../main/cpp/util/Utils.h"
 
 #include "UtilsTest.h"
@@ -91,4 +90,11 @@ void UtilsTest::testReplacing() {
     string second = "<checksum checksumName=\"MD5\">${checksum-tiepoints_meteo.nc}</checksum>";
     Utils::replaceString("\\$\\{checksum-tiepoints_meteo\\.nc\\}", "someChecksum", second);
     CPPUNIT_ASSERT(second.compare("<checksum checksumName=\"MD5\">someChecksum</checksum>") == 0);
+}
+
+void UtilsTest::testReset() {
+    shared_ptr<string> ptr = shared_ptr<string>(new string("abc"));
+    CPPUNIT_ASSERT(ptr.get() != 0);
+    ptr.reset();
+    CPPUNIT_ASSERT(ptr.get() == 0);
 }

@@ -10,9 +10,6 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../../src/main/cpp/core/Context.h"
-#include "../../../../src/main/cpp/core/Dictionary.h"
-
 class ColTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(ColTest);
     CPPUNIT_TEST(testCol);

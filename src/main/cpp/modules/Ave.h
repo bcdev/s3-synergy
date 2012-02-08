@@ -25,6 +25,7 @@ public:
 	virtual ~Ave();
 
 	void start(Context& context);
+	void stop(Context& context);
 	void process(Context& context);
 
 private:

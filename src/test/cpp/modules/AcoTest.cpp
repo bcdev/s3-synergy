@@ -5,8 +5,7 @@
  * Created on August 16, 2011, 1:36 PM
  */
 
-#include "../../../../src/main/cpp/core/Context.h"
-#include "../../../../src/main/cpp/core/Processor.h"
+#include "../../../../src/main/cpp/core/ExitCode.h"
 #include "../../../../src/main/cpp/modules/Aer.h"
 #include "../../../../src/main/cpp/modules/Aei.h"
 #include "../../../../src/main/cpp/modules/Ave.h"
@@ -14,8 +13,7 @@
 #include "../../../../src/main/cpp/modules/Col.h"
 #include "../../../../src/main/cpp/modules/Pcl.h"
 #include "../../../../src/main/cpp/reader/SynL1Reader.h"
-#include "../../../../src/main/cpp/util/DictionaryParser.h"
-#include "../../../../src/main/cpp/util/JobOrderParser.h"
+#include "../../../../src/main/cpp/util/BasicTask.h"
 #include "../../../../src/main/cpp/writer/SegmentWriter.h"
 
 #include "AcoTest.h"
@@ -29,32 +27,14 @@ AcoTest::~AcoTest() {
 }
 
 void AcoTest::setUp() {
-    prepareContext();
-}
-
-void AcoTest::prepareContext() {
-    XPathInitializer init;
-
-    context = shared_ptr<Context>(new Context());
-
-    shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
-    context->setErrorHandler(errorHandler);
-
-    shared_ptr<JobOrderParser> jobOrderParser = shared_ptr<JobOrderParser>(new JobOrderParser());
-    shared_ptr<JobOrder> jobOrder = jobOrderParser->parse(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_ACO.xml");
-    context->setJobOrder(jobOrder);
-
-    shared_ptr<Logging> logging = jobOrderParser->createLogging("LOG.SY_UNT_ACO");
-    context->setLogging(logging);
-
-    shared_ptr<Dictionary> dictionary = DictionaryParser().parse(Constants::S3_SYNERGY_HOME + "/src/main/resources/dictionary");
-    context->setDictionary(dictionary);
 }
 
 void AcoTest::tearDown() {
 }
 
 void AcoTest::testAco() {
+    BasicTask task("SY_UNT_ACO");
+
 	shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
 	shared_ptr<Module> col = shared_ptr<Module>(new Col());
 	shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
@@ -64,15 +44,15 @@ void AcoTest::testAco() {
 	shared_ptr<Module> aco = shared_ptr<Module>(new Aco());
 	shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
 
-	context->addModule(reader);
-	context->addModule(col);
-	context->addModule(pcl);
-	context->addModule(ave);
-	context->addModule(aer);
-	context->addModule(aei);
-	context->addModule(aco);
-	context->addModule(writer);
+	task.getContext().addModule(reader);
+	task.getContext().addModule(col);
+	task.getContext().addModule(pcl);
+	task.getContext().addModule(ave);
+	task.getContext().addModule(aer);
+	task.getContext().addModule(aei);
+	task.getContext().addModule(aco);
+	task.getContext().addModule(writer);
 
-	Processor processor;
-	processor.process(*context);
+	const int exitCode = task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_ACO.xml");
+	CPPUNIT_ASSERT(exitCode == ExitCode::OK);
 }

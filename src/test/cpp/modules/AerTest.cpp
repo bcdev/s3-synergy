@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <cstdlib>
 
-#include "../../../main/cpp/core/Processor.h"
+#include "../../../main/cpp/core/ExitCode.h"
 #include "../../../main/cpp/core/Context.h"
 #include "../../../main/cpp/reader/SynL1Reader.h"
 #include "../../../main/cpp/modules/Aer.h"
@@ -16,11 +16,11 @@
 #include "../../../main/cpp/modules/Col.h"
 #include "../../../main/cpp/modules/Pcl.h"
 #include "../../../main/cpp/writer/SegmentWriter.h"
-#include "../../../main/cpp/util/DictionaryParser.h"
-#include "../../../main/cpp/util/JobOrderParser.h"
 #include "../../../main/cpp/core/Pixel.h"
+#include "../../../main/cpp/util/BasicTask.h"
+#include "../../../main/cpp/util/DictionaryParser.h"
 #include "../../../main/cpp/util/ErrorMetric.h"
-
+#include "../../../main/cpp/util/JobOrderParser.h"
 
 #include "AerTest.h"
 
@@ -141,21 +141,23 @@ void AerTest::testAer_s() {
 }
 
 void AerTest::testAer() {
+    BasicTask task("SY_UNT_AER");
+
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
     shared_ptr<Module> col = shared_ptr<Module>(new Col());
     shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
     shared_ptr<Module> ave = shared_ptr<Module>(new Ave());
     shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
 
-    context->addModule(reader);
-    context->addModule(col);
-    context->addModule(pcl);
-    context->addModule(ave);
-    context->addModule(aer);
-    context->addModule(writer);
+    task.getContext().addModule(reader);
+    task.getContext().addModule(col);
+    task.getContext().addModule(pcl);
+    task.getContext().addModule(ave);
+    task.getContext().addModule(aer);
+    task.getContext().addModule(writer);
 
-	Processor processor;
-	processor.process(*context);
+    const int exitCode = task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_AER.xml");
+    CPPUNIT_ASSERT(exitCode == ExitCode::OK);
 }
 
 void AerTest::testReadAuxdata() {

@@ -7,13 +7,12 @@
 
 #include <cstdlib>
 
-#include "../../../../src/main/cpp/core/Processor.h"
-#include "../../../../src/main/cpp/reader/SynL1Reader.h"
-#include "../../../../src/main/cpp/modules/Col.h"
-#include "../../../../src/main/cpp/modules/Pcl.h"
-#include "../../../../src/main/cpp/writer/SegmentWriter.h"
-#include "../../../../src/main/cpp/util/DictionaryParser.h"
-#include "../../../../src/main/cpp/util/JobOrderParser.h"
+#include "../../../main/cpp/core/ExitCode.h"
+#include "../../../main/cpp/reader/SynL1Reader.h"
+#include "../../../main/cpp/modules/Col.h"
+#include "../../../main/cpp/modules/Pcl.h"
+#include "../../../main/cpp/writer/SegmentWriter.h"
+#include "../../../main/cpp/util/BasicTask.h"
 
 #include "PclTest.h"
 
@@ -28,41 +27,24 @@ PclTest::~PclTest() {
 }
 
 void PclTest::setUp() {
-    XPathInitializer init;
-
-    prepareContext();
 }
 
 void PclTest::tearDown() {
 }
 
-void PclTest::prepareContext() {
-    context = shared_ptr<Context>(new Context());
-    shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
-    context->setErrorHandler(errorHandler);
-
-    JobOrderParser jobOrderParser;
-    shared_ptr<JobOrder> jobOrder = jobOrderParser.parse(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_PCL.xml");
-    context->setJobOrder(jobOrder);
-
-    shared_ptr<Dictionary> dictionary = DictionaryParser().parse(Constants::S3_SYNERGY_HOME + "/src/main/resources/dictionary");
-    context->setDictionary(dictionary);
-
-    shared_ptr<Logging> logging = jobOrderParser.createLogging("LOG.SY_UNT_PCL");
-    context->setLogging(logging);
-}
-
 void PclTest::testPcl() {
+    BasicTask task("SY_UNT_PCL");
+
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
     shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
     shared_ptr<Module> col = shared_ptr<Module>(new Col());
     shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
 
-    context->addModule(reader);
-    context->addModule(col);
-    context->addModule(pcl);
-    context->addModule(writer);
+    task.getContext().addModule(reader);
+    task.getContext().addModule(col);
+    task.getContext().addModule(pcl);
+    task.getContext().addModule(writer);
 
-    Processor processor;
-	processor.process(*context);
+    const int exitCode = task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_PCL.xml");
+    CPPUNIT_ASSERT(exitCode == ExitCode::OK);
 }

@@ -10,9 +10,6 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../../src/main/cpp/core/Context.h"
-#include "../../../../src/main/cpp/core/Dictionary.h"
-
 class PclTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(PclTest);
     CPPUNIT_TEST(testPcl);
@@ -25,9 +22,6 @@ public:
     void tearDown();
 
 private:
-    shared_ptr<Context> context;
-    void prepareContext();
-
     void testPcl();
 };
 

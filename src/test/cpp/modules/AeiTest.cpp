@@ -8,8 +8,7 @@
 #include <algorithm>
 #include <cstdlib>
 
-#include "../../../main/cpp/core/Processor.h"
-#include "../../../main/cpp/core/Context.h"
+#include "../../../main/cpp/core/ExitCode.h"
 #include "../../../main/cpp/reader/SynL1Reader.h"
 #include "../../../main/cpp/modules/Aei.h"
 #include "../../../main/cpp/modules/Aer.h"
@@ -17,10 +16,7 @@
 #include "../../../main/cpp/modules/Col.h"
 #include "../../../main/cpp/modules/Pcl.h"
 #include "../../../main/cpp/writer/SegmentWriter.h"
-#include "../../../main/cpp/util/DictionaryParser.h"
-#include "../../../main/cpp/util/JobOrderParser.h"
-#include "../../../main/cpp/core/Pixel.h"
-#include "../../../main/cpp/util/ErrorMetric.h"
+#include "../../../main/cpp/util/BasicTask.h"
 
 #include "AeiTest.h"
 
@@ -36,31 +32,15 @@ AeiTest::~AeiTest() {
 }
 
 void AeiTest::setUp() {
-    XPathInitializer init;
-    prepareContext();
 }
 
-void AeiTest::prepareContext() {
-    context = shared_ptr<Context>(new Context());
-    shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
-    context->setErrorHandler(errorHandler);
-
-    JobOrderParser jobOrderParser;
-    shared_ptr<JobOrder> jobOrder = jobOrderParser.parse(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_AEI.xml");
-    context->setJobOrder(jobOrder);
-
-    shared_ptr<Logging> logging = jobOrderParser.createLogging("LOG.SY_UNT_AEI");
-    context->setLogging(logging);
-
-    shared_ptr<Dictionary> dictionary = DictionaryParser().parse(Constants::S3_SYNERGY_HOME + "/src/main/resources/dictionary");
-    context->setDictionary(dictionary);
-}
 
 void AeiTest::tearDown() {
-	context.reset();
 }
 
 void AeiTest::testAei() {
+    BasicTask task("SY_UNT_AEI");
+
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
     shared_ptr<Module> col = shared_ptr<Module>(new Col());
     shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
@@ -69,14 +49,14 @@ void AeiTest::testAei() {
     shared_ptr<Module> aei = shared_ptr<Aei>(new Aei());
     shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
 
-    context->addModule(reader);
-    context->addModule(col);
-    context->addModule(pcl);
-    context->addModule(ave);
-    context->addModule(aer);
-    context->addModule(aei);
-    context->addModule(writer);
+    task.getContext().addModule(reader);
+    task.getContext().addModule(col);
+    task.getContext().addModule(pcl);
+    task.getContext().addModule(ave);
+    task.getContext().addModule(aer);
+    task.getContext().addModule(aei);
+    task.getContext().addModule(writer);
 
-    Processor processor;
-    processor.process(*context);
+    const int exitCode = task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_AEI.xml");
+    CPPUNIT_ASSERT(exitCode == ExitCode::OK);
 }

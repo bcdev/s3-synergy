@@ -7,6 +7,7 @@
 
 #include <cstdlib>
 
+#include "../../../../src/main/cpp/core/ExitCode.h"
 #include "../../../../src/main/cpp/core/SwathSegment.h"
 #include "../../../../src/main/cpp/reader/SynL1Reader.h"
 #include "../../../../src/main/cpp/modules/Col.h"
@@ -57,6 +58,7 @@ void VcoTest::testVco() {
 	task.getContext().addModule(vco);
 	task.getContext().addModule(writer);
 
-	task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_VCO.xml");
+	const int exitCode = task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_VCO.xml");
+	CPPUNIT_ASSERT(exitCode == ExitCode::OK);
 }
 

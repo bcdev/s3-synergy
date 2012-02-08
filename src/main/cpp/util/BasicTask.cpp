@@ -6,7 +6,7 @@
  */
 
 #include "../core/ExitCode.h"
-#include "../core/Processor.h"
+#include "../core/MultiSourceProcessor.h"
 #include "DictionaryParser.h"
 #include "JobOrderParser.h"
 
@@ -59,7 +59,7 @@ int BasicTask::execute(const string& jobOrderPath) {
     shared_ptr<Dictionary> dictionary = dictionaryParser.parse(Constants::S3_SYNERGY_HOME + "/src/main/resources/dictionary");
     context.setDictionary(dictionary);
 
-	Processor processor;
+	MultiSourceProcessor processor;
 	processor.process(context);
 
 	return ExitCode::OK;

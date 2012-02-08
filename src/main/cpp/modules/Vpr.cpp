@@ -30,6 +30,10 @@ void Vpr::start(Context& context) {
     addTargetVariables(context);
 }
 
+void Vpr::stop(Context& context) {
+    context.removeSegment(Constants::SEGMENT_VGT);
+}
+
 void Vpr::addTargetSegments(Context& context) {
     const int latCellCount = maxTargetLat - minTargetLat;
     const int lonCellCount = maxTargetLon - minTargetLon;

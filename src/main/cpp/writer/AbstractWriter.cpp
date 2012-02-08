@@ -108,6 +108,7 @@ void AbstractWriter::process(Context& context) {
 }
 
 void AbstractWriter::stop(Context& context) {
+    // todo - create SAFE module
 	createSafeProduct(context);
 
 	ncVarIdMap.clear();

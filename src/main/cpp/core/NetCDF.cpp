@@ -201,7 +201,8 @@ size_t NetCDF::getDimensionLength(int fileId, int dimId) {
 }
 
 string NetCDF::getDimensionName(int fileId, int dimId) {
-	char dimName[NC_MAX_NAME + 1];const int status = nc_inq_dimname(fileId, dimId, dimName);
+	char dimName[NC_MAX_NAME + 1];
+	const int status = nc_inq_dimname(fileId, dimId, dimName);
 	checkStatus(status, "getting dimension name");
 	return string(dimName);
 }

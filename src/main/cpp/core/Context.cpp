@@ -282,3 +282,11 @@ long Context::getFirstRequiredL(const Segment& segment) const {
 			}
 	return firstRequiredL;
 }
+
+void Context::setSourcePath(const string& sourcePath) {
+    this->sourcePath = sourcePath;
+}
+
+const string& Context::getSourcePath() const {
+    return sourcePath;
+}

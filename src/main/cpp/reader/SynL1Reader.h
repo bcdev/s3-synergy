@@ -32,6 +32,8 @@ private:
 
     map<string, int> ncFileIdMap;
     map<string, int> ncVarIdMap;
+
+    vector<string> addedSegments;
 };
 
 #endif	/* SYNL1READER_H */

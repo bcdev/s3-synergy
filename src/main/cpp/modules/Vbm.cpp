@@ -37,6 +37,11 @@ void Vbm::start(Context& context) {
     prepareAuxdata(context);
 }
 
+void Vbm::stop(Context& context) {
+    tiePointInterpolatorOlc.reset();
+    tiePointInterpolatorSln.reset();
+}
+
 void Vbm::addTargetVariables(Context& context) {
     context.getLogging().info("Adding variables to segment", getId());
 

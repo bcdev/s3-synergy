@@ -10,14 +10,11 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../../src/main/cpp/core/Context.h"
-#include "../../../../src/main/cpp/core/Dictionary.h"
-
 class AveTest : public CPPUNIT_NS::TestFixture {
-    CPPUNIT_TEST_SUITE(AveTest);
-    // CPPUNIT_TEST(testIsRadianceName);
+CPPUNIT_TEST_SUITE(AveTest);
+    CPPUNIT_TEST(testIsRadianceName);
     CPPUNIT_TEST(testAve);
-    CPPUNIT_TEST_SUITE_END();
+CPPUNIT_TEST_SUITE_END();
 
 public:
     AveTest();
@@ -26,11 +23,8 @@ public:
     void tearDown();
 
 private:
-    void prepareContext();
     void testAve();
     void testIsRadianceName();
-    shared_ptr<Context> context;
-    shared_ptr<Ave> ave;
 };
 
 #endif	/* AVETEST_H */

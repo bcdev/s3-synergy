@@ -17,6 +17,7 @@ public:
 	virtual ~Vpr();
 
 	void start(Context& context);
+	void stop(Context& context);
 	void process(Context& context);
 
 private:

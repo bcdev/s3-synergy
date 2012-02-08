@@ -95,20 +95,12 @@ void DirectLocatorTest::testLocation() {
 		~TestGrid() {
 		}
 
-		long getFirstK() const {
+		long getMinInMemoryL() const {
 			return 0;
 		}
 
-		long getFirstL() const {
-			return 0;
-		}
-
-		long getLastL() const {
+		long getMaxInMemoryL() const {
 			return 2;
-		}
-
-		long getFirstM() const {
-			return 0;
 		}
 
 		long getSizeK() const {
@@ -144,27 +136,27 @@ void DirectLocatorTest::testLocation() {
 		}
 
 		long getMinK() const {
-			return getFirstK();
+			return 0;
 		}
 
 		long getMaxK() const {
-			return getFirstK() + getSizeK() - 1;
+			return getSizeK() - 1;
 		}
 
 		long getMinL() const {
-			return getFirstL();
+			return getMinInMemoryL();
 		}
 
 		long getMaxL() const {
-			return getFirstL() + getSizeL() - 1;
+			return getMinInMemoryL() + getSizeL() - 1;
 		}
 
 		long getMinM() const {
-			return getFirstM();
+			return 0;
 		}
 
 		long getMaxM() const {
-			return getFirstM() + getSizeM() - 1;
+			return getSizeM() - 1;
 		}
 
 		bool isValidPosition(long k, long l, long m) const {

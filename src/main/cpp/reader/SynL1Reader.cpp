@@ -18,19 +18,18 @@ using std::min;
 using std::max;
 
 SynL1Reader::SynL1Reader() :
-        BasicModule("SY1_READER") {
+        BasicModule("SY1_READER"), addedSegments() {
 }
 
 SynL1Reader::~SynL1Reader() {
 	pair<string, int> fileIdPair;
-	foreach(fileIdPair, ncFileIdMap)
-			{
-				try {
-					NetCDF::closeFile(fileIdPair.second);
-				} catch (exception& ignored) {
-					// ok
-				}
-			}
+	foreach(fileIdPair, ncFileIdMap) {
+	    try {
+	        NetCDF::closeFile(fileIdPair.second);
+	    } catch (exception& ignored) {
+	        // ok
+	    }
+	}
 }
 
 long SynL1Reader::getSegmentSize(const string& segmentName, const long rowCount) const {
@@ -54,7 +53,7 @@ void SynL1Reader::start(Context& context) {
 	const Dictionary& dict = context.getDictionary();
 	const vector<SegmentDescriptor*> segmentDescriptors = dict.getProductDescriptor(Constants::PRODUCT_SY1).getSegmentDescriptors();
 
-	sourceDirPath = path(context.getJobOrder().getIpfProcessors().at(0).getInputList().at(0).getFileNames().at(0));
+	sourceDirPath = path(context.getSourcePath());
 	if (!sourceDirPath.has_root_directory()) {
 		sourceDirPath = Constants::S3_SYNERGY_HOME / sourceDirPath;
 	}
@@ -111,6 +110,7 @@ void SynL1Reader::start(Context& context) {
 								const long sizeL = getSegmentSize(segmentName, rowCount);
 								context.getLogging().info("Adding segment '" + segmentName + "' to context", getId());
 								context.addSwathSegment(segmentName, sizeL, colCount, camCount, 0, rowCount - 1);
+								addedSegments.push_back(segmentName);
 							}
 
 							// Copy variable attributes to dictionary
@@ -133,13 +133,17 @@ void SynL1Reader::start(Context& context) {
 }
 
 void SynL1Reader::stop(Context& context) {
-	pair<string, int> fileIdPair;
+	foreach (string segment, addedSegments) {
+	    context.removeSegment(segment);
+	}
 
-	foreach(fileIdPair, ncFileIdMap)
-			{
-				context.getLogging().info("Closing netCDF file '" + fileIdPair.first + ".nc'", getId());
-				NetCDF::closeFile(fileIdPair.second);
-			}
+	addedSegments.clear();
+
+	pair<string, int> fileIdPair;
+	foreach (fileIdPair, ncFileIdMap) {
+	    context.getLogging().info("Closing netCDF file '" + fileIdPair.first + ".nc'", getId());
+	    NetCDF::closeFile(fileIdPair.second);
+	}
 	ncVarIdMap.clear();
 	ncFileIdMap.clear();
 }

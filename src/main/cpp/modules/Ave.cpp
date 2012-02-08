@@ -35,6 +35,11 @@ void Ave::start(Context& context) {
 	addVariables(context);
 }
 
+void Ave::stop(Context& context) {
+    variableNames.clear();
+    context.removeSegment(targetSegment->getId());
+}
+
 void Ave::process(Context& context) {
 	using std::min;
 

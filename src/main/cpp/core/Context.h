@@ -276,6 +276,18 @@ public:
 
 	const time_t& getStartTime() const;
 
+	/**
+	 * Sets the path of the current source product.
+	 * @param sourcePath The path to be set.
+	 */
+	void setSourcePath(const string& sourcePath);
+
+	/**
+	 * Returns the path of the current source product.
+	 * @return The path of the current source product.
+	 */
+	const string& getSourcePath() const;
+
 private:
 	/**
 	 * Returns the index of the first row in a segment, which is required for
@@ -359,6 +371,8 @@ private:
 
 	map<const Segment*, map<const Module*, long> > firstRequiredLMap;
 	map<const Segment*, map<const Module*, long> > lastComputedLMap;
+
+	string sourcePath;
 };
 
 #endif	/* CONTEXT_H */

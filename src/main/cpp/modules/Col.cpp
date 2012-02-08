@@ -30,6 +30,20 @@ void Col::start(Context& context) {
 	addSlstrVariables(context);
 }
 
+void Col::stop(Context& context) {
+    yCollocationAccessorMap.clear();
+    xCollocationAccessorMap.clear();
+    sourceAccessorMap.clear();
+    solarIrradianceAccessors.clear();
+    sourceSegmentMap.clear();
+    sourceNameMap.clear();
+    collocationNameMapY.clear();
+    collocationNameMapX.clear();
+    targetNames.clear();
+
+    context.removeSegment(Constants::SEGMENT_SYN_COLLOCATED);
+}
+
 void Col::process(Context& context) {
 	using std::floor;
 	using std::min;

@@ -10,8 +10,6 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../../src/main/cpp/core/Context.h"
-
 class AeiTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(AeiTest);
     CPPUNIT_TEST(testAei);
@@ -24,8 +22,6 @@ public:
     void tearDown();
 
 private:
-    void prepareContext();
-    shared_ptr<Context> context;
     void testAei();
 };
 
