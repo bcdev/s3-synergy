@@ -67,9 +67,9 @@ void Col::process(Context& context) {
 	for (long l = firstL; l <= lastL; l++) {
 		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
 
-		firstRequiredLMap[&olc] = olc.getGrid().getLastL() + 1;
-		firstRequiredLMap[&sln] = sln.getGrid().getLastL() + 1;
-		firstRequiredLMap[&slo] = slo.getGrid().getLastL() + 1;
+		firstRequiredLMap[&olc] = olc.getGrid().getMaxInMemoryL() + 1;
+		firstRequiredLMap[&sln] = sln.getGrid().getMaxInMemoryL() + 1;
+		firstRequiredLMap[&slo] = slo.getGrid().getMaxInMemoryL() + 1;
 
 		for (size_t i = 0; i < targetNames.size(); i++) {
 			const string& targetName = targetNames[i];

@@ -88,7 +88,7 @@ void VgtSegmentProvider::setLastComputedLines(Context& context, const string& id
     vector<SegmentDescriptor*> segmentDescriptors = context.getDictionary().getProductDescriptor(identifier).getSegmentDescriptors();
     foreach(SegmentDescriptor* segDesc, segmentDescriptors) {
         Segment& segment = context.getSegment(segDesc->getName());
-        context.setLastComputedL(segment, *this, segment.getGrid().getLastL());
+        context.setLastComputedL(segment, *this, segment.getGrid().getMaxInMemoryL());
     }
 }
 

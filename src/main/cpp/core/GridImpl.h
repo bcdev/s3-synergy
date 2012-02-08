@@ -31,11 +31,11 @@ public:
 
 	virtual ~GridImpl();
 
-	long getFirstL() const {
+	long getMinInMemoryL() const {
 		return firstL;
 	}
 
-	long getLastL() const {
+	long getMaxInMemoryL() const {
 		return firstL + sizeL - 1;
 	}
 

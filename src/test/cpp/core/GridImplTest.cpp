@@ -51,7 +51,7 @@ void GridImplTest::testMetrics() {
     CPPUNIT_ASSERT(grid->getStrideL() == 760);
     CPPUNIT_ASSERT(grid->getStrideM() == 1);
 
-    CPPUNIT_ASSERT(grid->getLastL() == grid->getFirstL() + grid->getSizeL() - 1);
+    CPPUNIT_ASSERT(grid->getMaxInMemoryL() == grid->getMinInMemoryL() + grid->getSizeL() - 1);
 }
 
 void GridImplTest::testGetIndex() {
@@ -66,13 +66,13 @@ void GridImplTest::testGetIndex() {
 
 void GridImplTest::testSetGetFirstL() {
     grid->setFirstL(1000);
-    CPPUNIT_ASSERT(grid->getFirstL() == 1000);
-    CPPUNIT_ASSERT(grid->getLastL() == grid->getFirstL() + grid->getSizeL() - 1);
+    CPPUNIT_ASSERT(grid->getMinInMemoryL() == 1000);
+    CPPUNIT_ASSERT(grid->getMaxInMemoryL() == grid->getMinInMemoryL() + grid->getSizeL() - 1);
 
     grid->setFirstL(58000);
-    CPPUNIT_ASSERT(grid->getFirstL() == 58000);
-    CPPUNIT_ASSERT(grid->getLastL() == grid->getFirstL() + grid->getSizeL() - 1);
+    CPPUNIT_ASSERT(grid->getMinInMemoryL() == 58000);
+    CPPUNIT_ASSERT(grid->getMaxInMemoryL() == grid->getMinInMemoryL() + grid->getSizeL() - 1);
 
     CPPUNIT_ASSERT_THROW(grid->setFirstL(58001), out_of_range);
-    CPPUNIT_ASSERT(grid->getFirstL() == 58000);
+    CPPUNIT_ASSERT(grid->getMinInMemoryL() == 58000);
 }

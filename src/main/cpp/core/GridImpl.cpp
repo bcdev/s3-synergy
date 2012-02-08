@@ -54,7 +54,7 @@ GridImpl::GridImpl(const Grid& b) : Grid() {
 	this->strideK = b.getStrideK();
 	this->strideL = b.getStrideL();
 	this->strideM = b.getStrideM();
-	this->firstL = b.getFirstL();
+	this->firstL = b.getMinInMemoryL();
 }
 
 GridImpl::~GridImpl() {
@@ -86,8 +86,8 @@ size_t GridImpl::getIndex(long k, long l, long m) const throw (out_of_range) {
 bool GridImpl::isValidPosition(long k, long l, long m) const {
     return (getMinK() <= k &&
             getMaxK() >= k &&
-            getFirstL() <= l &&
-            getLastL() >= l &&
+            getMinInMemoryL() <= l &&
+            getMaxInMemoryL() >= l &&
             getMinM() <= m &&
             getMaxM() >= m);
 }

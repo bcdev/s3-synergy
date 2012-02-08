@@ -42,16 +42,16 @@ public:
 	}
 
 	/**
-	 * Returns the first value of the row index dimension.
-	 * @return the first value of the row index dimension.
+	 * Returns the row index of the first row in memory.
+	 * @return the row index of the first row in memory.
 	 */
-	virtual long getFirstL() const = 0;
+	virtual long getMinInMemoryL() const = 0;
 
 	/**
-	 * Returns the last value of the row index dimension.
-	 * @return the last value of the row index dimension.
+	 * Returns the row index of the last row in memory.
+	 * @return the row index of the last row in memory.
 	 */
-	virtual long getLastL() const = 0;
+	virtual long getMaxInMemoryL() const = 0;
 
 	/**
 	 * Returns the size of the camera index dimension.
@@ -60,8 +60,8 @@ public:
 	virtual long getSizeK() const = 0;
 
 	/**
-	 * Returns the size of the row index dimension.
-	 * @return the size of the row index dimension.
+	 * Returns the number of rows in memory.
+	 * @return the number of rows in memory.
 	 */
 	virtual long getSizeL() const = 0;
 

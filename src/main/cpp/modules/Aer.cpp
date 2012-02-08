@@ -348,7 +348,7 @@ void Aer::process(Context& context) {
 
 void Aer::getPixels(Context& context, valarray<Pixel>& pixels) const {
 	const PixelInitializer pixelInitializer(context);
-	for (long l = averagedGrid->getFirstL(); l <= averagedGrid->getLastL(); l++) {
+	for (long l = averagedGrid->getMinInMemoryL(); l <= averagedGrid->getMaxInMemoryL(); l++) {
 		for (long k = averagedGrid->getMinK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long m = averagedGrid->getMinM(); m <= averagedGrid->getMaxM(); m++) {
 				const size_t index = averagedGrid->getIndex(k, l, m);

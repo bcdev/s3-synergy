@@ -149,7 +149,7 @@ bool Context::isCompleted() const {
 	foreach(shared_ptr<Segment> segment, segmentList)
 			{
 				const Grid& grid = segment->getGrid();
-				if (grid.getLastL() < grid.getMaxL()) {
+				if (grid.getMaxInMemoryL() < grid.getMaxL()) {
 					return false;
 				}
 			}
@@ -177,7 +177,7 @@ const time_t& Context::getStartTime() const {
 }
 
 void Context::moveForward(shared_ptr<Segment> segment) const {
-	long lastComputedL = segment->getGrid().getLastL();
+	long lastComputedL = segment->getGrid().getMaxInMemoryL();
 
 	if (contains(lastComputedLMap, segment.get())) {
 		typedef pair<const Module*, long> Q;
@@ -192,7 +192,7 @@ void Context::moveForward(shared_ptr<Segment> segment) const {
 		l = segment->getGrid().getMaxL() - segment->getGrid().getSizeL() + 1;
 	}
 	// TODO - get the requirements of modules and segments that use this segment as source
-	if (l > segment->getGrid().getFirstL()) {
+	if (l > segment->getGrid().getMinInMemoryL()) {
 		getLogging().debug("Moving segment [" + segment->toString() + "] forward to line " + lexical_cast<string>(l), "Context");
 		segment->moveForward(l);
 	}
@@ -219,7 +219,7 @@ long Context::getLastComputableL(const Segment& segment, const Module& module) c
 	if (!contains(moduleList, module)) {
 		BOOST_THROW_EXCEPTION( invalid_argument("Unknown module '" + module.getId() + "'."));
 	}
-	long lastComputedL = min(segment.getGrid().getLastL(), segment.getGrid().getMaxL());
+	long lastComputedL = min(segment.getGrid().getMaxInMemoryL(), segment.getGrid().getMaxL());
 	foreach(shared_ptr<Module> m, moduleList)
 			{
 				if (m.get() == &module) {
@@ -267,13 +267,13 @@ void Context::setLastComputedL(const Segment& segment, const Module& module, lon
 
 long Context::getFirstComputableL(const Segment& segment, const Module& module) const {
 	if (hasLastComputedL(segment, module)) {
-		return max(segment.getGrid().getFirstL(), getLastComputedL(segment, module) + 1);
+		return max(segment.getGrid().getMinInMemoryL(), getLastComputedL(segment, module) + 1);
 	}
-	return segment.getGrid().getFirstL();
+	return segment.getGrid().getMinInMemoryL();
 }
 
 long Context::getFirstRequiredL(const Segment& segment) const {
-	long firstRequiredL = min(segment.getGrid().getLastL() + 1, segment.getGrid().getMaxL());
+	long firstRequiredL = min(segment.getGrid().getMaxInMemoryL() + 1, segment.getGrid().getMaxL());
 	foreach (shared_ptr<Module> module, moduleList)
 			{
 				if (hasFirstRequiredL(segment, *module)) {

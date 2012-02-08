@@ -188,7 +188,7 @@ void Vpr::process(Context& context) {
 	for (long l = firstTargetL; l <= lastTargetL; l++) {
 		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
 
-		firstRequiredSourceL = sourceGrid.getLastL() + 1;
+		firstRequiredSourceL = sourceGrid.getMaxInMemoryL() + 1;
 
 		for (long k = targetGrid.getMinK(); k <= targetGrid.getMaxK(); k++) {
 			for (long m = targetGrid.getMinM(); m < targetGrid.getMaxM(); m++) {
@@ -251,7 +251,7 @@ void Vpr::getMinMaxSourceLat(double& minLat, double& maxLat) const {
 	const Grid& synGrid = synSegment->getGrid();
 
 	for (long k = synGrid.getMinK(); k <= synGrid.getMaxK(); k++) {
-		for (long l = synGrid.getFirstL(); l <= synGrid.getLastL(); l++) {
+		for (long l = synGrid.getMinInMemoryL(); l <= synGrid.getMaxInMemoryL(); l++) {
 			for (long m = synGrid.getMinM(); m <= synGrid.getMaxM(); m++) {
 				const size_t index = geoGrid.getIndex(k, l, m);
 				if (!latAccessor->isFillValue(index)) {
