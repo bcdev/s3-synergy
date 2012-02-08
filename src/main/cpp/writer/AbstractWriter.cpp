@@ -10,8 +10,8 @@
 #include <stdexcept>
 
 #include "../core/Config.h"
-#include "../util/IOUtils.h"
 #include "../core/NetCDF.h"
+#include "../util/Utils.h"
 
 #include "AbstractWriter.h"
 
@@ -95,8 +95,8 @@ void AbstractWriter::process(Context& context) {
                         const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
                         context.getLogging().progress("Writing variable '" + varName + "' of segment [" + segment.toString() + "]", getId());
                         const Accessor& accessor = segment.getAccessor(varName);
-                        IOUtils::createStartVector(dimIds.size(), firstL, origin);
-                        IOUtils::createCountVector(dimIds.size(), grid.getSizeK(), lastL - firstL + 1, grid.getSizeM(), shape);
+                        Utils::createStartVector(dimIds.size(), firstL, origin);
+                        Utils::createCountVector(dimIds.size(), grid.getSizeK(), lastL - firstL + 1, grid.getSizeM(), shape);
                         NetCDF::putData(ncId, varId, origin, shape, accessor.getUntypedData());
                     }
                 }
@@ -203,12 +203,12 @@ void AbstractWriter::createSafeProduct(const Context& context) {
 
 void AbstractWriter::copyTemplateFiles() const {
     const string sourceDirPath = Constants::S3_SYNERGY_HOME + "/src/main/resources/SAFE_metacomponents/" + getProductDescriptorIdentifier();
-    const vector<string> fileNames = IOUtils::getFileNames(sourceDirPath);
+    const vector<string> fileNames = Utils::getFileNames(sourceDirPath);
     foreach(string fileName, fileNames) {
         boost::filesystem::copy_file(sourceDirPath + "/" + fileName, targetDirPath / fileName);
     }
     boost::filesystem::create_directory(path(targetDirPath.string() + "/schema"));
-    const vector<string> schemaFileNames = IOUtils::getFileNames(sourceDirPath + "/schema");
+    const vector<string> schemaFileNames = Utils::getFileNames(sourceDirPath + "/schema");
     foreach(string fileName, schemaFileNames) {
         boost::filesystem::copy_file(sourceDirPath + "/schema/" + fileName, targetDirPath / "schema" / fileName);
     }
@@ -230,14 +230,14 @@ void AbstractWriter::setStartTime(const Context& context, string& manifest) cons
     char buffer[32];
     strftime(buffer, 32, "%Y-%m-%dT%H:%M:%S", ptm);
     string startTime = string(buffer);
-    replaceString("\\$\\{processing-start-time\\}", startTime, manifest);
+    Utils::replaceString("\\$\\{processing-start-time\\}", startTime, manifest);
 }
 
 void AbstractWriter::setChecksums(string& manifest) const {
     pair<string, int> fileIdPair;
     foreach(fileIdPair, ncFileIdMap) {
         string checksum = getMd5Sum(targetDirPath.string() + "/" + fileIdPair.first + ".nc");
-        replaceString("\\s*\\$\\{checksum-" + fileIdPair.first + "\\.nc\\}\\s*", checksum, manifest);
+        Utils::replaceString("\\s*\\$\\{checksum-" + fileIdPair.first + "\\.nc\\}\\s*", checksum, manifest);
         NetCDF::closeFile(fileIdPair.second);
     }
 }
@@ -255,11 +255,6 @@ void AbstractWriter::removeManifestTemplate() const {
     boost::filesystem::remove(manifestTemplate);
 }
 
-void AbstractWriter::replaceString(const string& toReplace, const string& replacement, string& input) {
-    regex expr(toReplace.c_str());
-    input = regex_replace(input, expr, replacement);
-}
-
 string AbstractWriter::getMd5Sum(const string& file) {
     FILE* pipe = popen(string(Constants::MD5SUM_EXECUTABLE + " " + file).c_str(), "r");
     if (!pipe || !boost::filesystem::exists(path(file))) {
@@ -272,6 +267,6 @@ string AbstractWriter::getMd5Sum(const string& file) {
                 result += buffer;
     }
     pclose(pipe);
-    replaceString("\\s+.*", "", result);
+    Utils::replaceString("\\s+.*", "", result);
     return result;
 }

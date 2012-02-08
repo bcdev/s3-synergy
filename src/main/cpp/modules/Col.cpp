@@ -6,6 +6,7 @@
  */
 
 #include "Col.h"
+#include "../util/TimeConverter.h"
 
 #include <cmath>
 
@@ -34,6 +35,8 @@ void Col::process(Context& context) {
 	using std::floor;
 	using std::min;
 
+	const TimeConverter tc(context.getJobOrder().getIpfConfiguration().getSensingTimeStart());
+
 	const Segment& olc = context.getSegment(Constants::SEGMENT_OLC);
 	const Segment& sln = context.getSegment(Constants::SEGMENT_SLN);
 	const Segment& slo = context.getSegment(Constants::SEGMENT_SLO);
@@ -52,15 +55,14 @@ void Col::process(Context& context) {
 	vector<Accessor*> yAccessors;
 	map<const Segment*, long> firstRequiredLMap;
 
-	foreach(const string& targetName, targetNames)
-			{
-				const Segment& s = *sourceSegmentMap[targetName];
-				sourceAccessors.push_back(&s.getAccessor(sourceNameMap[targetName]));
-				targetAccessors.push_back(&t.getAccessor(targetName));
+	foreach(const string& targetName, targetNames) {
+	    const Segment& s = *sourceSegmentMap[targetName];
+	    sourceAccessors.push_back(&s.getAccessor(sourceNameMap[targetName]));
+	    targetAccessors.push_back(&t.getAccessor(targetName));
 
-				xAccessors.push_back(&olc.getAccessor(collocationNameMapX[targetName]));
-				yAccessors.push_back(&olc.getAccessor(collocationNameMapY[targetName]));
-			}
+	    xAccessors.push_back(&olc.getAccessor(collocationNameMapX[targetName]));
+	    yAccessors.push_back(&olc.getAccessor(collocationNameMapY[targetName]));
+	}
 
 	for (long l = firstL; l <= lastL; l++) {
 		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
@@ -122,6 +124,7 @@ void Col::process(Context& context) {
 					}
 
 					const size_t sourceIndex = sourceGrid.getIndex(sourceK, sourceL, sourceM);
+
 					switch (sourceAccessor.getType()) {
 					case Constants::TYPE_BYTE: {
 						targetAccessor.setByte(targetIndex, sourceAccessor.getByte(sourceIndex));

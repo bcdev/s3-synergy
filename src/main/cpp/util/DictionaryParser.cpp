@@ -6,7 +6,7 @@
  */
 
 #include "DictionaryParser.h"
-#include "IOUtils.h"
+#include "Utils.h"
 
 DictionaryParser::DictionaryParser() : xmlParser(), exclusionSet() {
     exclusionSet.insert("dimensions.xml");
@@ -21,12 +21,12 @@ DictionaryParser::~DictionaryParser() {
 
 shared_ptr<Dictionary> DictionaryParser::parse(const string& dictionaryPath) {
 	shared_ptr<Dictionary> dictionary = shared_ptr<Dictionary>(new Dictionary());
-    vector<string> productDescriptorNames = IOUtils::getDirectoryNames(dictionaryPath);
+    vector<string> productDescriptorNames = Utils::getDirectoryNames(dictionaryPath);
 
     foreach(string productDescriptorName, productDescriptorNames) {
         ProductDescriptor& productDescriptor = dictionary->addProductDescriptor(productDescriptorName);
         const string subDirPath = dictionaryPath + "/" + productDescriptorName;
-        vector<string> varDescriptorFileNames = IOUtils::getFileNames(subDirPath);
+        vector<string> varDescriptorFileNames = Utils::getFileNames(subDirPath);
         foreach (string varDescriptorFileName, varDescriptorFileNames) {
             if (!contains(exclusionSet, varDescriptorFileName)) {
                 parseVariables(subDirPath, varDescriptorFileName, productDescriptor);

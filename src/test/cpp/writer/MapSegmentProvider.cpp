@@ -20,7 +20,7 @@
 
 #include <algorithm>
 
-#include "../../../main/cpp/util/IOUtils.h"
+#include "../../../main/cpp/core/Constants.h"
 
 #include "MapSegmentProvider.h"
 

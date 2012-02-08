@@ -12,32 +12,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
- * File:   IOUtilsTest.h
+ * File:   UtilsTest.h
  * Author: thomass
  *
  * Created on January 6, 2011, 12:14 PM
  */
 
-#ifndef IOUTILSTEST_H
-#define	IOUTILSTEST_H
+#ifndef UTILSTEST_H
+#define	UTILSTEST_H
 
 #include <cppunit/extensions/HelperMacros.h>
 
-class IOUtilsTest: public CPPUNIT_NS::TestFixture {
-CPPUNIT_TEST_SUITE(IOUtilsTest);
+class UtilsTest: public CPPUNIT_NS::TestFixture {
+CPPUNIT_TEST_SUITE(UtilsTest);
 		CPPUNIT_TEST(testCreateCountVector);
 		CPPUNIT_TEST(testCreateStartVector);
+		CPPUNIT_TEST(testReplacing);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
-	IOUtilsTest();
-	virtual ~IOUtilsTest();
+	UtilsTest();
+	virtual ~UtilsTest();
 	void setUp();
 	void tearDown();
 private:
 	void testCreateCountVector();
 	void testCreateStartVector();
+	void testReplacing();
 };
 
-#endif	/* IOUTILSTEST_H */
+#endif	/* UTILSTEST_H */
 

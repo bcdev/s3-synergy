@@ -106,6 +106,7 @@ void Vco::process(Context& context) {
     sourceAccessors[8] = &syn.getAccessor("VAA");
     sourceAccessors[9] = &syn.getAccessor("VZA");
     // TODO - TG
+    // sourceAccessors[10] = &syn.getAccessor("TG");
 
 	targetAccessors[0] = &vgt.getAccessor("B0");
 	targetAccessors[1] = &vgt.getAccessor("B2");
@@ -187,6 +188,7 @@ void Vco::process(Context& context) {
 
 				if (!sourceAccessors[5]->isFillValue(sourceIndex) && (sourceNdvi > targetNdvi || targetAccessors[5]->isFillValue(targetIndex))) {
 					// 4. Set the samples of the target pixel
+				    // todo - remove '-1' after time grid accessor has been created
 					for (size_t i = 0; i < targetAccessors.size() - 1; i++) {
 						Accessor* sourceAccessor = sourceAccessors[i];
 						Accessor* targetAccessor = targetAccessors[i];

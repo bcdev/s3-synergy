@@ -21,8 +21,8 @@
 #include <boost/lexical_cast.hpp>
 #include <cstdlib>
 
+#include "../../../main/cpp/core/Constants.h"
 #include "../../../main/cpp/util/DictionaryParser.h"
-#include "../../../main/cpp/util/IOUtils.h"
 
 #include "DictionaryParserTest.h"
 

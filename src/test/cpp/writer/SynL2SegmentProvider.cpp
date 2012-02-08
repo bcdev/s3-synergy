@@ -20,7 +20,7 @@
 
 #include <algorithm>
 
-#include "../../../main/cpp/util/IOUtils.h"
+#include "../../../main/cpp/util/Utils.h"
 
 #include "SynL2SegmentProvider.h"
 
@@ -48,7 +48,7 @@ void SynL2SegmentProvider::start(Context& context) {
 	    foreach(VariableDescriptor* varDesc, variableDescriptors) {
 	        const string& segmentName = segDesc->getName();
 	        if (!context.hasSegment(segmentName)) {
-	            valarray<size_t> dimensionSizes = IOUtils::getDimensionSizes(varDesc);
+	            valarray<size_t> dimensionSizes = Utils::getDimensionSizes(varDesc);
 	            context.addSwathSegment(segmentName, min(segmentLineCount, dimensionSizes[1]), dimensionSizes[2], dimensionSizes[0], 0, dimensionSizes[1] - 1);
 	        }
 	        Segment& segment = context.getSegment(segmentName);

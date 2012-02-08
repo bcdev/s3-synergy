@@ -18,9 +18,8 @@
  * Created on November 15, 2010, 4:21 PM
  */
 
-#include "../../../main/cpp/util/IOUtils.h"
-
 #include "JobOrderParserTest.h"
+#include "../../../main/cpp/core/Constants.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(JobOrderParserTest);
 
