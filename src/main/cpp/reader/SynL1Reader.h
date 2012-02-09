@@ -26,7 +26,7 @@ public:
 private:
     int getNcFile(const string& ncFileBasename);
     long getSegmentSize(const string& segmentName, const long rowCount) const;
-
+    void addDimensionToDictionary(int fileId, int dimId, VariableDescriptor& variableDescriptor, size_t dimSize) const;
     path sourceDirPath;
     long segmentLineCount;
 

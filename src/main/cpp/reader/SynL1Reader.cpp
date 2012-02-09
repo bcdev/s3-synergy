@@ -82,22 +82,22 @@ void SynL1Reader::start(Context& context) {
 	            camCount = NetCDF::getDimensionLength(fileId, dimIds[0]);
 	            rowCount = NetCDF::getDimensionLength(fileId, dimIds[1]);
 	            colCount = NetCDF::getDimensionLength(fileId, dimIds[2]);
-	            variableDescriptor->addDimension(NetCDF::getDimensionName(fileId, dimIds[0])).setSize(camCount);
-	            variableDescriptor->addDimension(NetCDF::getDimensionName(fileId, dimIds[1])).setSize(rowCount);
-	            variableDescriptor->addDimension(NetCDF::getDimensionName(fileId, dimIds[2])).setSize(colCount);
+	            addDimensionToDictionary(fileId, dimIds[0], *variableDescriptor, camCount);
+	            addDimensionToDictionary(fileId, dimIds[1], *variableDescriptor, rowCount);
+	            addDimensionToDictionary(fileId, dimIds[2], *variableDescriptor, colCount);
 	            break;
 	        case 2:
 	            camCount = 1;
 	            rowCount = NetCDF::getDimensionLength(fileId, dimIds[0]);
 	            colCount = NetCDF::getDimensionLength(fileId, dimIds[1]);
-	            variableDescriptor->addDimension(NetCDF::getDimensionName(fileId, dimIds[0])).setSize(rowCount);
-	            variableDescriptor->addDimension(NetCDF::getDimensionName(fileId, dimIds[1])).setSize(colCount);
+	            addDimensionToDictionary(fileId, dimIds[0], *variableDescriptor, rowCount);
+	            addDimensionToDictionary(fileId, dimIds[1], *variableDescriptor, colCount);
 	            break;
 	        case 1:
 	            camCount = 1;
 	            rowCount = 1;
 	            colCount = NetCDF::getDimensionLength(fileId, dimIds[0]);
-	            variableDescriptor->addDimension(NetCDF::getDimensionName(fileId, dimIds[0])).setSize(colCount);
+	            addDimensionToDictionary(fileId, dimIds[0], *variableDescriptor, colCount);
 	            break;
 	        default:
 	            BOOST_THROW_EXCEPTION( runtime_error("Invalid number of dimensions for variable '" + ncVarName + "'."));
@@ -196,4 +196,13 @@ int SynL1Reader::getNcFile(const string& ncFileBasename) {
 	ncFileIdMap[ncFileBasename] = fileId;
 
 	return fileId;
+}
+
+void SynL1Reader::addDimensionToDictionary(int fileId, int dimId, VariableDescriptor& variableDescriptor, size_t dimSize) const {
+    const string& dimName = NetCDF::getDimensionName(fileId, dimId);
+    if(variableDescriptor.hasDimension(dimName) ) {
+        variableDescriptor.getDimension(dimName).setSize(dimSize);
+    } else {
+        variableDescriptor.addDimension(dimName).setSize(dimSize);
+    }
 }
