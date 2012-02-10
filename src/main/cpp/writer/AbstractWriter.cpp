@@ -206,12 +206,12 @@ void AbstractWriter::copyTemplateFiles() const {
     const string sourceDirPath = Constants::S3_SYNERGY_HOME + "/src/main/resources/SAFE_metacomponents/" + getProductDescriptorIdentifier();
     const vector<string> fileNames = Utils::getFileNames(sourceDirPath);
     foreach(string fileName, fileNames) {
-        boost::filesystem::copy_file(sourceDirPath + "/" + fileName, targetDirPath / fileName);
+        boost::filesystem::copy_file(sourceDirPath + "/" + fileName, targetDirPath / fileName, copy_option::overwrite_if_exists);
     }
     boost::filesystem::create_directory(path(targetDirPath.string() + "/schema"));
     const vector<string> schemaFileNames = Utils::getFileNames(sourceDirPath + "/schema");
     foreach(string fileName, schemaFileNames) {
-        boost::filesystem::copy_file(sourceDirPath + "/schema/" + fileName, targetDirPath / "schema" / fileName);
+        boost::filesystem::copy_file(sourceDirPath + "/schema/" + fileName, targetDirPath / "schema" / fileName, copy_option::overwrite_if_exists);
     }
 }
 
