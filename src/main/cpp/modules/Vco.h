@@ -17,6 +17,10 @@ public:
 	virtual ~Vco();
 
 	void start(Context& context);
+	void stop(Context& context) {
+		context.setLastComputedL(context.getSegment(Constants::SEGMENT_VGT), *this, -1);
+	}
+
 	void process(Context& context);
 
 private:

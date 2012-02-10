@@ -102,6 +102,7 @@ bool Context::removeSegment(const string& id) {
 	const vector<shared_ptr<Segment> >::iterator position = find_if(segmentList.begin(), segmentList.end(), Id<Segment>(id));
 	if (position != segmentList.end()) {
 		lastComputedLMap.erase(position->get());
+		firstRequiredLMap.erase(position->get());
 		segmentList.erase(position);
 		segmentMap.erase(id);
 		return true;
