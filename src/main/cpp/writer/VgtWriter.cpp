@@ -13,10 +13,12 @@ VgtWriter::VgtWriter() : AbstractWriter("VGP_WRITER") {
 VgtWriter::~VgtWriter() {}
 
 const string& VgtWriter::getProductDescriptorIdentifier() const {
+	// TODO - VGT S
     return Constants::PRODUCT_VGP;
 }
 
 const string& VgtWriter::getSafeManifestName() const {
+	// TODO - VGT S
     return Constants::SAFE_MANIFEST_NAME_VGT_P;
 }
 

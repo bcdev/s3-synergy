@@ -13,7 +13,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
  * File:   Accessor.h
- * Author: ralf
+ * Author: Ralf Quast
  *
  * Created on December 15, 2010, 4:01 PM
  */
@@ -44,8 +44,8 @@ using boost::uint32_t;
 using boost::uint64_t;
 
 /**
- * Represents an accessor to the samples of a variable. An accessor provides
- * accessor and mutator methods for each value type. 
+ * Represents the samples of a variable. The interface provides accessor and mutator methods for
+ * each type of variable.
  */
 class Accessor {
 public:
@@ -198,82 +198,90 @@ public:
 
 	/**
 	 * Returns the number of sample values.
-	 * @return the grid of the parent segment.
+	 * @return the number of sample values.
 	 */
 	virtual const size_t getSampleCount() const = 0;
 
 	/**
-	 * Returns the container of samples values. If the samples are not
+	 * Returns a reference to samples values. If the samples are not
 	 * of type {@code int8_t} a {@code bad_cast} exception is thrown.
-	 * @return the container of sample values.
+	 * @return a reference to the sample values.
 	 */
 	virtual valarray<int8_t>& getByteData() const throw (exception) = 0;
 
 	/**
-	 * Returns the container of samples values. If the samples are not
+	 * Returns a reference to the samples values. If the samples are not
 	 * of type {@code uint8_t} a {@code bad_cast} exception is thrown.
-	 * @return the container of sample values.
+	 * @return a reference to the sample values.
 	 */
 	virtual valarray<uint8_t>& getUByteData() const throw (exception) = 0;
 
 	/**
-	 * Returns the container of samples values. If the samples are not
+	 * Returns a reference to the samples values. If the samples are not
 	 * of type {@code int16_t} a {@code bad_cast} exception is thrown.
-	 * @return the container of sample values.
+	 * @return a reference to the sample values.
 	 */
 	virtual valarray<int16_t>& getShortData() const throw (exception) = 0;
 
 	/**
-	 * Returns the container of samples values. If the samples are not
+	 * Returns a reference to the samples values. If the samples are not
 	 * of type {@code uint16_t} a {@code bad_cast} exception is thrown.
-	 * @return the container of sample values.
+	 * @return a reference to the sample values.
 	 */
 	virtual valarray<uint16_t>& getUShortData() const throw (exception) = 0;
 
 	/**
-	 * Returns the container of samples values. If the samples are not
+	 * Returns a reference to the samples values. If the samples are not
 	 * of type {@code int32_t} a {@code bad_cast} exception is thrown.
-	 * @return the container of sample values.
+	 * @return a reference to the sample values.
 	 */
 	virtual valarray<int32_t>& getIntData() const throw (exception) = 0;
 
 	/**
-	 * Returns the container of samples values. If the samples are not
+	 * Returns a reference to the samples values. If the samples are not
 	 * of type {@code uint32_t} a {@code bad_cast} exception is thrown.
-	 * @return the container of sample values.
+	 * @return a reference to the sample values.
 	 */
 	virtual valarray<uint32_t>& getUIntData() const throw (exception) = 0;
 
 	/**
-	 * Returns the container of samples values. If the samples are not
+	 * Returns a reference to the samples values. If the samples are not
 	 * of type {@code int64_t} a {@code bad_cast} exception is thrown.
-	 * @return the container of sample values.
+	 * @return a reference to the sample values.
 	 */
 	virtual valarray<int64_t>& getLongData() const throw (exception) = 0;
 
 	/**
-	 * Returns the container of samples values. If the samples are not
+	 * Returns a reference to the samples values. If the samples are not
 	 * of type {@code uint64_t} a {@code bad_cast} exception is thrown.
-	 * @return the container of sample values.
+	 * @return a reference to the sample values.
 	 */
 	virtual valarray<uint64_t>& getULongData() const throw (exception) = 0;
 
 	/**
-	 * Returns the container of samples values. If the samples are not
+	 * Returns a reference to the samples values. If the samples are not
 	 * of type {@code float} a {@code bad_cast} exception is thrown.
-	 * @return the container of sample values.
+	 * @return a reference to the sample values.
 	 */
 	virtual valarray<float>& getFloatData() const throw (exception) = 0;
 
 	/**
-	 * Returns the container of samples values. If the samples are not
+	 * Returns a reference to the samples values. If the samples are not
 	 * of type {@code double} a {@code bad_cast} exception is thrown.
-	 * @return the container of sample values.
+	 * @return a reference to the sample values.
 	 */
 	virtual valarray<double>& getDoubleData() const throw (exception) = 0;
 
+	/**
+	 * Returns a (properly scaled) copy of the samples values.
+	 * @return a copy of the sample values.
+	 */
 	virtual valarray<double> getDoubles() const = 0;
 
+	/**
+	 * Returns a (properly scaled) copy of the samples values.
+	 * @return a copy of the sample values.
+	 */
 	virtual valarray<float> getFloats() const = 0;
 
 	/**
@@ -282,18 +290,49 @@ public:
 	 */
 	virtual void* getUntypedData() const = 0;
 
+	/**
+	 * Returns the scale factor of the variable.
+	 * @return the scale factor of the variable.
+	 */
 	virtual double getScaleFactor() const = 0;
 
+	/**
+	 * Returns the add-offset of the variable.
+	 * @return the add-offset of the variable.
+	 */
 	virtual double getAddOffset() const = 0;
 
+	/**
+	 * Returns the type of the variable.
+	 * @return the type of the variable.
+	 */
 	virtual int getType() const = 0;
 
+	/**
+	 * Returns {@code true} if the value of the sample at index {@code i} is the fill value.
+	 * @return {@code true} if the value of the sample at index {@code i} is the fill value, {@code false} otherwise.
+	 */
 	virtual bool isFillValue(size_t i) const throw (out_of_range) = 0;
 
+	/**
+	 * Sets the value of the sample at index {@code i} to the fill value.
+	 * @param i The index.
+	 */
 	virtual void setFillValue(size_t i) throw (out_of_range) = 0;
 
+	/**
+	 * Returns the fill value of the variable.
+	 * @return the fill value of the variable.
+	 */
 	virtual string getFillValue() const = 0;
 
+	/**
+	 * Shifts the samples {@code n} rows backward. The sample values of rows {@code 0,..., N - n} are overwritten
+	 * with those of rows {@code n,...,N}. The samples of the latter are filled with the fill value.
+	 * @param n The number of rows to be shifted.
+	 * @param strideK The stride for the camera dimension.
+	 * @param strideL The stride for the row dimension.
+	 */
 	virtual void shift(long n, long strideK, long strideL) = 0;
 };
 

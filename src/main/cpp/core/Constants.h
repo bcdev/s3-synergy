@@ -13,7 +13,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
  * File:   Constants.h
- * Author: ralf
+ * Author: Ralf Quast
  *
  * Created on December 15, 2010, 5:39 PM
  */
@@ -109,7 +109,7 @@ const int TYPE_ULONG = 11;
 const int TYPE_STRING = 12;
 
 /**
- * Log information
+ * Log levels
  */
 const string LOG_LEVEL_INFO = "INFO";
 const string LOG_LEVEL_PROGRESS = "PROGRESS";
@@ -118,7 +118,7 @@ const string LOG_LEVEL_WARNING = "WARNING";
 const string LOG_LEVEL_ERROR = "ERROR";
 
 /**
- * Auxdata information.
+ * Auxiliary data IDs.
  */
 const string AUX_ID_SYCPAX = "SYCPAX";
 const string AUX_ID_SYRTAX = "SYRTAX";
@@ -129,48 +129,138 @@ const string AUX_ID_VPRTAX = "VPRTAX";
 const string AUX_ID_VSCPAX = "VSCPAX";
 
 /**
- * Flags.
+ * The mask for the SY1 OLCI land flag.
  */
 const uint32_t SY1_OLCI_LAND_FLAG = 2147483648U;
+/**
+ * The mask for the SY1 SLSTR cloud summary flag.
+ */
 const uint8_t SY1_SLSTR_CLOUD_FLAG = 64U;
-
+/**
+ * The mask for the SY2 cloud flag.
+ */
 const uint16_t SY2_CLOUD_FLAG = 1U;
+/**
+ * The mask for the SY2 snow-risk flag.
+ */
 const uint16_t SY2_SNOW_RISK_FLAG = 2U;
+/**
+ * The mask for the SY2 shadow-risk flag.
+ */
 const uint16_t SY2_SHADOW_RISK_FLAG = 4U;
+/**
+ * The mask for the SY2 cloud-filled flag.
+ */
 const uint16_t SY2_CLOUD_FILLED_FLAG = 8U;
+/**
+ * The mask for the SY2 land flag.
+ */
 const uint16_t SY2_LAND_FLAG = 16U;
+/**
+ * The mask for the SY2 no-OLC flag.
+ */
 const uint16_t SY2_NO_OLC_FLAG = 32U;
+/**
+ * The mask for the SY2 no-SLN flag.
+ */
 const uint16_t SY2_NO_SLN_FLAG = 64U;
+/**
+ * The mask for the SY2 no-SLO flag.
+ */
 const uint16_t SY2_NO_SLO_FLAG = 128U;
+/**
+ * The mask for the SY2 partly-cloudy flag.
+ */
 const uint16_t SY2_PARTLY_CLOUDY_FLAG = 256U;
+/**
+ * The mask for the SY2 partly-water flag.
+ */
 const uint16_t SY2_PARTLY_WATER_FLAG = 512U;
+/**
+ * The mask for the SY2 border flag.
+ */
 const uint16_t SY2_BORDER_FLAG = 1024U;
+/**
+ * The mask for the SY2 aerosol-filled flag.
+ */
 const uint16_t SY2_AEROSOL_FILLED_FLAG = 2048U;
+/**
+ * The mask for the SY2 aerosol-success flag.
+ */
 const uint16_t SY2_AEROSOL_SUCCESS_FLAG = 4096U;
+/**
+ * The mask for the SY2 aerosol-negative-curvature flag.
+ */
 const uint16_t SY2_AEROSOL_NEGATIVE_CURVATURE_FLAG = 8192U;
+/**
+ * The mask for the SY2 aerosol-too-low flag.
+ */
 const uint16_t SY2_AEROSOL_TOO_LOW_FLAG = 16384U;
+/**
+ * The mask for the SY2 aerosol-high-error flag.
+ */
 const uint16_t SY2_AEROSOL_HIGH_ERROR_FLAG = 32768U;
+/**
+ * The mask for any flags set by the AVE module.
+ */
 const uint16_t SY2_AVERAGE_FLAG_MASK = SY2_PARTLY_CLOUDY_FLAG | SY2_PARTLY_WATER_FLAG | SY2_BORDER_FLAG | SY2_AEROSOL_FILLED_FLAG | SY2_AEROSOL_HIGH_ERROR_FLAG | SY2_AEROSOL_NEGATIVE_CURVATURE_FLAG | SY2_AEROSOL_SUCCESS_FLAG | SY2_AEROSOL_TOO_LOW_FLAG;
 
+/**
+ * The 'clear sky' value of the VGT cloud flags.
+ */
 const uint8_t VGT_CLEAR_VALUE = 252U;
+/**
+ * The 'cloud shadow' value of the VGT cloud flags.
+ */
 const uint8_t VGT_SHADOW_VALUE = 1U;
+/**
+ * The 'uncertain' value of the VGT cloud flags.
+ */
 const uint8_t VGT_UNCERTAIN_VALUE = 2U;
+/**
+ * The 'cloudy' value of the VGT cloud flags.
+ */
 const uint8_t VGT_CLOUD_VALUE = 3U;
+/**
+ * The mask for the VGT ice or snow flag.
+ */
 const uint8_t VGT_ICE_OR_SNOW_FLAG = 4U;
+/**
+ * The mask for the VGT land flag.
+ */
 const uint8_t VGT_LAND_FLAG = 8U;
+/**
+ * The mask for the VGT MIR-good flag.
+ */
 const uint8_t VGT_MIR_GOOD_FLAG = 16U;
+/**
+ * The mask for the VGT B3-good flag.
+ */
 const uint8_t VGT_B3_GOOD_FLAG = 32U;
+/**
+ * The mask for the VGT B2-good flag.
+ */
 const uint8_t VGT_B2_GOOD_FLAG = 64U;
+/**
+ * The mask for the VGT B0-good flag.
+ */
 const uint8_t VGT_B0_GOOD_FLAG = 128U;
 
 /**
- * Misc
+ * The default fill value used for 'double' type variables.
  */
-
 const double FILL_VALUE_DOUBLE = -numeric_limits<double>::max();
-const string GLOBAL_ATTRIBUTES_FILENAME = "global_attributes.xml";
+/**
+ * The name of the SYN SAFE manifest file.
+ */
 const string SAFE_MANIFEST_NAME_SYN = "manifest_SYN";
+/**
+ * The name of the VGT-P SAFE manifest file.
+ */
 const string SAFE_MANIFEST_NAME_VGT_P = "manifest_VGP";
+/**
+ * The name of the VGT-S SAFE manifest file.
+ */
 const string SAFE_MANIFEST_NAME_VGT_S = "manifest_VGS";
 }
 

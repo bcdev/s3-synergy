@@ -13,7 +13,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
  * File:   AbstractModule.h
- * Author: ralf
+ * Author: Ralf Quast
  *
  * Created on December 21, 2010, 12:24 PM
  */
@@ -33,7 +33,7 @@ using std::max;
 using std::runtime_error;
 
 /**
- * A basic module, doing nothing.
+ * An abstract implementation of the {@code Module} interface, which does nothing.
  */
 class AbstractModule: virtual public Module {
 public:

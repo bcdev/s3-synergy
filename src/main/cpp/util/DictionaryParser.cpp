@@ -41,7 +41,7 @@ shared_ptr<Dictionary> DictionaryParser::parse(const string& dictionaryPath) {
 }
 
 void DictionaryParser::parseGlobalAttributes(const string& dirPath, ProductDescriptor& productDescriptor) const {
-    const string descriptorFilePath = dirPath + "/" + Constants::GLOBAL_ATTRIBUTES_FILENAME;
+    const string descriptorFilePath = dirPath + "/global_attributes.xml";
     const vector<string> attributeNames = xmlParser.evaluateToStringList(descriptorFilePath, "/dataset/global_attributes/attribute/name/child::text()");
     foreach(string attributeName, attributeNames) {
         string valueQuery = "/dataset/global_attributes/attribute[name=\"" + attributeName + "\"]/value";

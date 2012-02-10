@@ -13,7 +13,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
  * File:   ByteAccessor.h
- * Author: ralf
+ * Author: Ralf Quast
  *
  * Created on December 17, 2010, 1:45 PM
  */
@@ -23,6 +23,9 @@
 
 #include "AbstractAccessor.h"
 
+/**
+ * A concrete implementation of the {@code Accessor} interface for the 'byte' type.
+ */
 class ByteAccessor: public virtual AbstractAccessor<int8_t, Constants::TYPE_BYTE> {
 public:
 

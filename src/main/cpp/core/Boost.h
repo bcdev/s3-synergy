@@ -13,7 +13,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
  * File:   Boost.h
- * Author: ralf
+ * Author: Ralf Quast
  *
  * Created on January 14, 2011, 12:29 PM
  */

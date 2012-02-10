@@ -13,7 +13,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
  * File:   AbstractAccessor.h
- * Author: ralf
+ * Author: Ralf Quast
  *
  * Created on December 17, 2010, 2:05 PM
  */
@@ -34,6 +34,9 @@ using std::fill;
 using std::invalid_argument;
 using std::numeric_limits;
 
+/**
+ * An abstract implementation of the {@code Accessor} interface.
+ */
 template<class T, int N>
 class AbstractAccessor: public virtual Accessor {
 public:
@@ -236,10 +239,9 @@ public:
 		if (data.size() % strideK != 0) {
 			BOOST_THROW_EXCEPTION( invalid_argument("data.size() % strideK != 0"));
 		}
-#pragma omp parallel for
 		for (size_t k = 0; k < data.size(); k += strideK) {
 			copy(&data[k + n * strideL], &data[k + strideK], &data[k]);
-			fill(&data[k + strideK - n * strideL], &data[k + strideK], T(0));
+			fill(&data[k + strideK - n * strideL], &data[k + strideK], fillValue);
 		}
 	}
 
