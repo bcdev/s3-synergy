@@ -10,9 +10,6 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../../src/main/cpp/core/Context.h"
-#include "../../../../src/main/cpp/core/Dictionary.h"
-
 class SynL1ReaderTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(SynL1ReaderTest);
     CPPUNIT_TEST(testReader);
@@ -26,8 +23,6 @@ public:
 
 private:
     void testReader();
-    void prepareContext();
-    shared_ptr<Context> context;
 };
 
 #endif	/* SYNL1READERTEST_H */

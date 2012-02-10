@@ -7,11 +7,11 @@
 
 #include <cstdlib>
 
-#include "../../../../src/main/cpp/core/Processor.h"
-#include "../../../../src/main/cpp/reader/SynL1Reader.h"
-#include "../../../../src/main/cpp/writer/SegmentWriter.h"
-#include "../../../../src/main/cpp/util/DictionaryParser.h"
-#include "../../../../src/main/cpp/util/JobOrderParser.h"
+
+#include "../../../main/cpp/core/ExitCode.h"
+#include "../../../main/cpp/reader/SynL1Reader.h"
+#include "../../../main/cpp/util/BasicTask.h"
+#include "../../../main/cpp/writer/SegmentWriter.h"
 
 #include "SynL1ReaderTest.h"
 
@@ -24,36 +24,18 @@ SynL1ReaderTest::~SynL1ReaderTest() {
 }
 
 void SynL1ReaderTest::setUp() {
-	XPathInitializer init;
-
-	prepareContext();
-}
-
-void SynL1ReaderTest::prepareContext() {
-    context = shared_ptr<Context>(new Context());
-    shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
-    context->setErrorHandler(errorHandler);
-
-    shared_ptr<Dictionary> dictionary = DictionaryParser().parse(Constants::S3_SYNERGY_HOME + "/src/main/resources/dictionary");
-    context->setDictionary(dictionary);
-
-    JobOrderParser jobOrderParser;
-    shared_ptr<JobOrder> jobOrder = jobOrderParser.parse(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_SRE.xml");
-    context->setJobOrder(jobOrder);
-
-    shared_ptr<Logging> logging = jobOrderParser.createLogging("LOG.SY_UNT_SRE");
-    context->setLogging(logging);
 }
 
 void SynL1ReaderTest::tearDown() {
 }
 
 void SynL1ReaderTest::testReader() {
+    BasicTask task("SY_UNT_SRE");
     shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
     shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
-	context->addModule(reader);
-	context->addModule(writer);
+    task.getContext().addModule(reader);
+    task.getContext().addModule(writer);
 
-	Processor processor;
-	processor.process(*context);
+    const int exitCode = task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_SRE.xml");
+    CPPUNIT_ASSERT(exitCode == ExitCode::OK);
 }
