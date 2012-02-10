@@ -68,6 +68,25 @@ find_library(BOOST_FILESYSTEM
     HINTS ${LIB_HOME}/lib
     NO_DEFAULT_PATH
 )
+find_library(CPPUNIT
+    NAMES cppunit
+    HINTS ${LIB_HOME}/lib
+)
+find_library(NETCDF
+    NAMES netcdf
+    HINTS ${LIB_HOME}/lib
+    NO_DEFAULT_PATH
+)
+find_library(XERCES
+    NAMES xerces-c
+    HINTS ${LIB_HOME}/lib
+    NO_DEFAULT_PATH
+)
+find_library(XQILLA
+    NAMES xqilla
+    HINTS ${LIB_HOME}/lib
+    NO_DEFAULT_PATH
+)
 find_program(MD5_SUM_EXECUTABLE NAMES md5sum gmd5sum)
 
 ##
@@ -84,9 +103,9 @@ include_directories(before
 ##
 # Project link directories
 #
-link_directories(
-    ${LIB_HOME}/lib
-)
+#link_directories(
+#    ${LIB_HOME}/lib
+#)
 #link_directories(
 #    ${JAVA_HOME}/${JAVA_LIB_DIR}
 #    ${JAVA_HOME}/${JAVA_JVM_DIR}
@@ -105,13 +124,13 @@ add_executable(sy_unt_gen src/test/cpp/SyUntGenRunner.cpp
 	${SEGMENT_WRITER_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_gen
-	cppunit
-	netcdf
-	xerces-c
-	xqilla
-	${BOOST_REGEX}
-	${BOOST_SYSTEM}
-	${BOOST_FILESYSTEM}
+    ${BOOST_FILESYSTEM}
+    ${BOOST_REGEX}
+    ${BOOST_SYSTEM}
+	${CPPUNIT}
+	${NETCDF}
+	${XERCES}
+	${XQILLA}
 )
 set_property(TARGET sy_unt_gen PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -123,13 +142,13 @@ add_executable(sy_unt_sre src/test/cpp/SyUntSreRunner.cpp
 	${READER_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_sre
-	cppunit
-	netcdf
-	xerces-c
-	xqilla
-	${BOOST_REGEX}
-	${BOOST_SYSTEM}
-	${BOOST_FILESYSTEM}
+    ${BOOST_FILESYSTEM}
+    ${BOOST_REGEX}
+    ${BOOST_SYSTEM}
+    ${CPPUNIT}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET sy_unt_sre PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -140,13 +159,13 @@ add_executable(sy_unt_swr src/test/cpp/SyUntSwrRunner.cpp
 	${SYN_WRITER_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_swr
-	cppunit
-	netcdf
-	xerces-c
-	xqilla
-	${BOOST_REGEX}
-	${BOOST_SYSTEM}
-	${BOOST_FILESYSTEM}
+    ${BOOST_FILESYSTEM}
+    ${BOOST_REGEX}
+    ${BOOST_SYSTEM}
+    ${CPPUNIT}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET sy_unt_swr PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -159,13 +178,13 @@ add_executable(sy_unt_col src/test/cpp/SyUntColRunner.cpp
 	${COL_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_col
-	cppunit
-	netcdf
-	xerces-c
-	xqilla
-	${BOOST_REGEX}
-	${BOOST_SYSTEM}
-	${BOOST_FILESYSTEM}
+    ${BOOST_FILESYSTEM}
+    ${BOOST_REGEX}
+    ${BOOST_SYSTEM}
+    ${CPPUNIT}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET sy_unt_col PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -178,13 +197,13 @@ add_executable(sy_unt_pcl src/test/cpp/SyUntPclRunner.cpp
 	${PCL_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_pcl
-	cppunit
-	netcdf
-	xerces-c
-	xqilla
-	${BOOST_REGEX}
-	${BOOST_SYSTEM}
-	${BOOST_FILESYSTEM}
+    ${BOOST_FILESYSTEM}
+    ${BOOST_REGEX}
+    ${BOOST_SYSTEM}
+    ${CPPUNIT}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET sy_unt_pcl PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -197,13 +216,13 @@ add_executable(sy_unt_ave src/test/cpp/SyUntAveRunner.cpp
     ${AVE_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_ave
-    cppunit
-    netcdf
-    xerces-c
-    xqilla
+    ${BOOST_FILESYSTEM}
     ${BOOST_REGEX}
     ${BOOST_SYSTEM}
-    ${BOOST_FILESYSTEM}
+    ${CPPUNIT}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET sy_unt_ave PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -216,13 +235,13 @@ add_executable(sy_unt_aer src/test/cpp/SyUntAerRunner.cpp
 	${AER_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_aer
-	cppunit
-	netcdf
-	xerces-c
-	xqilla
-	${BOOST_REGEX}
-	${BOOST_SYSTEM}
-	${BOOST_FILESYSTEM}
+    ${BOOST_FILESYSTEM}
+    ${BOOST_REGEX}
+    ${BOOST_SYSTEM}
+    ${CPPUNIT}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET sy_unt_aer PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -235,13 +254,13 @@ add_executable(sy_unt_aei src/test/cpp/SyUntAeiRunner.cpp
     ${AEI_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_aei
-    cppunit
-    netcdf
-    xerces-c
-    xqilla
+    ${BOOST_FILESYSTEM}
     ${BOOST_REGEX}
     ${BOOST_SYSTEM}
-    ${BOOST_FILESYSTEM}
+    ${CPPUNIT}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET sy_unt_aei PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -254,13 +273,13 @@ add_executable(sy_unt_aco src/test/cpp/SyUntAcoRunner.cpp
     ${ACO_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_aco
-    cppunit
-    netcdf
-    xerces-c
-    xqilla
+    ${BOOST_FILESYSTEM}
     ${BOOST_REGEX}
     ${BOOST_SYSTEM}
-    ${BOOST_FILESYSTEM}
+    ${CPPUNIT}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET sy_unt_aco PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -273,13 +292,13 @@ add_executable(sy_unt_vbm src/test/cpp/SyUntVbmRunner.cpp
     ${VBM_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_vbm
-    cppunit
-    netcdf
-    xerces-c
-    xqilla
+    ${BOOST_FILESYSTEM}
     ${BOOST_REGEX}
     ${BOOST_SYSTEM}
-    ${BOOST_FILESYSTEM}
+    ${CPPUNIT}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET sy_unt_vbm PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -292,13 +311,13 @@ add_executable(sy_unt_vfl src/test/cpp/SyUntVflRunner.cpp
     ${VFL_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_vfl
-    cppunit
-    netcdf
-    xerces-c
-    xqilla
+    ${BOOST_FILESYSTEM}
     ${BOOST_REGEX}
     ${BOOST_SYSTEM}
-    ${BOOST_FILESYSTEM}
+    ${CPPUNIT}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET sy_unt_vfl PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -311,13 +330,13 @@ add_executable(sy_unt_vpr src/test/cpp/SyUntVprRunner.cpp
     ${VPR_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_vpr
-    cppunit
-    netcdf
-    xerces-c
-    xqilla
+    ${BOOST_FILESYSTEM}
     ${BOOST_REGEX}
     ${BOOST_SYSTEM}
-    ${BOOST_FILESYSTEM}
+    ${CPPUNIT}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET sy_unt_vpr PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -330,13 +349,13 @@ add_executable(sy_unt_vac src/test/cpp/SyUntVacRunner.cpp
     ${VAC_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_vac
-    cppunit
-    netcdf
-    xerces-c
-    xqilla
+    ${BOOST_FILESYSTEM}
     ${BOOST_REGEX}
     ${BOOST_SYSTEM}
-    ${BOOST_FILESYSTEM}
+    ${CPPUNIT}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET sy_unt_vac PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -349,13 +368,13 @@ add_executable(sy_unt_vco src/test/cpp/SyUntVcoRunner.cpp
     ${VCO_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_vco
-    cppunit
-    netcdf
-    xerces-c
-    xqilla
+    ${BOOST_FILESYSTEM}
     ${BOOST_REGEX}
     ${BOOST_SYSTEM}
-    ${BOOST_FILESYSTEM}
+    ${CPPUNIT}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET sy_unt_vco PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -365,13 +384,13 @@ add_executable(sy_int_syl2_1 src/test/cpp/SyIntSyl2_1_Runner.cpp
     ${SYL2_1_INTEGRATION_TEST_SOURCES}
 )
 target_link_libraries(sy_int_syl2_1
-    cppunit
-    netcdf
-    xerces-c
-    xqilla
+    ${BOOST_FILESYSTEM}
     ${BOOST_REGEX}
     ${BOOST_SYSTEM}
-    ${BOOST_FILESYSTEM}
+    ${CPPUNIT}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET sy_int_syl2_1 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -383,13 +402,13 @@ add_executable(sy_unt_vwr src/test/cpp/SyUntVwrRunner.cpp
 	${VGT_WRITER_TEST_SOURCES}
 )
 target_link_libraries(sy_unt_vwr
-	cppunit
-	netcdf
-	xerces-c
-	xqilla
+    ${BOOST_FILESYSTEM}
     ${BOOST_REGEX}
     ${BOOST_SYSTEM}
-    ${BOOST_FILESYSTEM}
+    ${CPPUNIT}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET sy_unt_vwr PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -402,13 +421,13 @@ add_executable(sy_int_syl2_2 src/test/cpp/SyIntSyl2_2_Runner.cpp
     ${SYL2_2_INTEGRATION_TEST_SOURCES}
 )
 target_link_libraries(sy_int_syl2_2
-    cppunit
-    netcdf
-    xerces-c
-    xqilla
+    ${BOOST_FILESYSTEM}
     ${BOOST_REGEX}
     ${BOOST_SYSTEM}
-    ${BOOST_FILESYSTEM}
+    ${CPPUNIT}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET sy_int_syl2_2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -418,13 +437,13 @@ add_executable(sy_int_vgtp_1 src/test/cpp/SyIntVgtP_1_Runner.cpp
     ${VGTP_1_INTEGRATION_TEST_SOURCES}
 )
 target_link_libraries(sy_int_vgtp_1
-    cppunit
-    netcdf
-    xerces-c
-    xqilla
+    ${BOOST_FILESYSTEM}
     ${BOOST_REGEX}
     ${BOOST_SYSTEM}
-    ${BOOST_FILESYSTEM}
+    ${CPPUNIT}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET sy_int_vgtp_1 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -437,35 +456,51 @@ add_executable(sy_int_vgtp_2 src/test/cpp/SyIntVgtP_2_Runner.cpp
     ${VGTP_2_INTEGRATION_TEST_SOURCES}
 )
 target_link_libraries(sy_int_vgtp_2
-    cppunit
-    netcdf
-    xerces-c
-    xqilla
+    ${BOOST_FILESYSTEM}
     ${BOOST_REGEX}
     ${BOOST_SYSTEM}
-    ${BOOST_FILESYSTEM}
+    ${CPPUNIT}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET sy_int_vgtp_2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
 add_executable(sy_int_vgts_1 src/test/cpp/SyIntVgtS_1_Runner.cpp
     ${CORE_MAIN_SOURCES}
     ${UTIL_MAIN_SOURCES}
-    ${READER_MAIN_SOURCES}
-	${WRITER_MAIN_SOURCES}
     ${MODULES_MAIN_SOURCES}
     ${VGTS_1_INTEGRATION_TEST_SOURCES}
 )
 target_link_libraries(sy_int_vgts_1
-    cppunit
-    netcdf
-    xerces-c
-    xqilla
+    ${BOOST_FILESYSTEM}
     ${BOOST_REGEX}
     ${BOOST_SYSTEM}
-    ${BOOST_FILESYSTEM}
+    ${CPPUNIT}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET sy_int_vgts_1 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
+add_executable(sy_int_vgts_2 src/test/cpp/SyIntVgtS_2_Runner.cpp
+    ${CORE_MAIN_SOURCES}
+    ${UTIL_MAIN_SOURCES}
+    ${READER_MAIN_SOURCES}
+    ${WRITER_MAIN_SOURCES}
+    ${MODULES_MAIN_SOURCES}
+    ${VGTS_2_INTEGRATION_TEST_SOURCES}
+)
+target_link_libraries(sy_int_vgts_2
+    ${BOOST_FILESYSTEM}
+    ${BOOST_REGEX}
+    ${BOOST_SYSTEM}
+    ${CPPUNIT}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
+)
+set_property(TARGET sy_int_vgts_2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 
 ##
 # Project main targets
@@ -478,12 +513,12 @@ add_executable(syl2 src/main/cpp/tasks/syl2.cpp
     ${MODULES_MAIN_SOURCES}
 )
 target_link_libraries(syl2
-    netcdf
-    xerces-c
-    xqilla
+    ${BOOST_FILESYSTEM}
     ${BOOST_REGEX}
     ${BOOST_SYSTEM}
-    ${BOOST_FILESYSTEM}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET syl2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -495,12 +530,12 @@ add_executable(vgtp src/main/cpp/tasks/vgtp.cpp
     ${MODULES_MAIN_SOURCES}
 )
 target_link_libraries(vgtp
-    netcdf
-    xerces-c
-    xqilla
+    ${BOOST_FILESYSTEM}
     ${BOOST_REGEX}
     ${BOOST_SYSTEM}
-    ${BOOST_FILESYSTEM}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET vgtp PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
@@ -512,12 +547,12 @@ add_executable(vgts src/main/cpp/tasks/vgts.cpp
     ${MODULES_MAIN_SOURCES}
 )
 target_link_libraries(vgts
-    netcdf
-    xerces-c
-    xqilla
+    ${BOOST_FILESYSTEM}
     ${BOOST_REGEX}
     ${BOOST_SYSTEM}
-    ${BOOST_FILESYSTEM}
+    ${NETCDF}
+    ${XERCES}
+    ${XQILLA}
 )
 set_property(TARGET vgts PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 
@@ -529,6 +564,8 @@ install(TARGETS syl2 vgtp vgts
   sy_int_syl2_2
   sy_int_vgtp_1
   sy_int_vgtp_2
+  sy_int_vgts_1
+  sy_int_vgts_2
   sy_unt_gen
   sy_unt_sre
   sy_unt_swr
