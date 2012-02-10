@@ -20,7 +20,7 @@ SegmentWriter::SegmentWriter() :
 
 SegmentWriter::~SegmentWriter() {
 	pair<string, int> fileIdPair;
-	foreach(fileIdPair, ncFileIdMap) {
+	foreach (fileIdPair, ncFileIdMap) {
 	    try {
 	        NetCDF::closeFile(fileIdPair.second);
 	    } catch (exception& ignored) {
@@ -29,11 +29,10 @@ SegmentWriter::~SegmentWriter() {
 }
 
 void SegmentWriter::process(Context& context) {
-
 	const vector<string> segmentIds = context.getSegmentIds();
 	valarray<size_t> origin;
 	valarray<size_t> shape;
-	foreach(const string& segmentName, segmentIds) {
+	foreach (const string& segmentName, segmentIds) {
 	    const Segment& segment = context.getSegment(segmentName);
 	    const Grid& grid = segment.getGrid();
 	    const long firstL = segment.getGrid().getMinInMemoryL();
@@ -43,7 +42,7 @@ void SegmentWriter::process(Context& context) {
 
 	    if (firstL <= lastL) {
 	        const vector<string> variableNames = segment.getVariableNames();
-	        foreach(const string varName, variableNames) {
+	        foreach (const string varName, variableNames) {
 	            const string ncFileBasename = segment.getId();
 	            const string variableKey = segmentName + varName;
 	            if (!contains(ncVarIdMap, variableKey)) {
@@ -79,11 +78,11 @@ void SegmentWriter::start(Context& context) {
 
 	const vector<string> segmentIds = context.getSegmentIds();
 
-	foreach(string segmentId, segmentIds) {
+	foreach (string segmentId, segmentIds) {
 	    const Segment& segment = context.getSegment(segmentId);
 	    const vector<string> variableNames = segment.getVariableNames();
 
-	    foreach(string variableName, variableNames) {
+	    foreach (string variableName, variableNames) {
 	        context.getLogging().info("Defining variable for " + variableName, getId());
 	        createNcVar(segment, variableName);
 	    }
@@ -91,7 +90,7 @@ void SegmentWriter::start(Context& context) {
 
 	pair<string, int> fileIdPair;
 
-	foreach(fileIdPair, ncFileIdMap) {
+	foreach (fileIdPair, ncFileIdMap) {
 	    NetCDF::terminateFile(fileIdPair.second);
 	}
 }
@@ -99,7 +98,7 @@ void SegmentWriter::start(Context& context) {
 void SegmentWriter::stop(Context& context) {
 	pair<string, int> fileIdPair;
 
-	foreach(fileIdPair, ncFileIdMap) {
+	foreach (fileIdPair, ncFileIdMap) {
 	    NetCDF::closeFile(fileIdPair.second);
 	}
 	ncVarIdMap.clear();

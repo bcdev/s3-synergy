@@ -1,77 +1,47 @@
-set(BOOST_HOME /usr/local 
+set(LIB_HOME /usr/local 
     CACHE 
     PATH 
-    "The path to the Boost installation."
+    "The path to any locally installed dependencies, like e.g., the boost, netcdf, xerces-c, or xqilla shared libraries."
 )
 
-set(BOOST_MT OFF 
-    CACHE 
-    BOOL 
-    "Use Boost MT libs?"
-)    
-    
-set(JAVA_HOME /usr/lib/jvm/java-6-sun 
-	CACHE 
-	PATH 
-	"The path to the Java JDK."
-)
+#set(JAVA_HOME /usr/lib/jvm/java-6-sun 
+#	CACHE 
+#	PATH 
+#	"The path to the Java JDK."
+#)
 	
-set(JAVA_INC_DIR include
-	CACHE 
-	PATH
-	"The directory of the Java include files within the JAVA_HOME directory."
-)
+#set(JAVA_INC_DIR include#
+#	CACHE 
+#	PATH
+#	"The directory of the Java include files within the JAVA_HOME directory."
+#)
 
-set(JAVA_LIB_DIR jre/lib/amd64
-	CACHE 
-	PATH
-	"The directory of the Java library within the JAVA_HOME directory."
-)
+#set(JAVA_LIB_DIR jre/lib/amd64
+#	CACHE 
+#	PATH
+#	"The directory of the Java library within the JAVA_HOME directory."
+#)
 
-set(JAVA_JVM_DIR jre/lib/amd64/server
-	CACHE 
-	PATH
-	"The directory of the JVM library within the JAVA_HOME directory."
-)
+#set(JAVA_JVM_DIR jre/lib/amd64/server
+#	CACHE 
+#	PATH
+#	"The directory of the JVM library within the JAVA_HOME directory."
+#)
 
-set(MD5_SUM_EXECUTABLE /usr/bin/md5sum
-	CACHE
-	PATH
-	"The path to the md5sum executable."
-)
+#set(SAFE_HOME /usr/local/safe-suite
+#	CACHE
+#	PATH
+#	"The path to the SAFE suite."
+#)
 
-set(NETCDF_HOME /usr/local 
-    CACHE 
-    PATH 
-    "The path to the netCDF installation."
-)
+#set(SAFE_INC_DIR include
+#	CACHE
+#	PATH
+#	"The directory of the SAFE suite include files within the SAFE_HOME directory."
+#)
 
-set(SAFE_HOME /usr/local/safe-suite
-	CACHE
-	PATH
-	"The path to the SAFE suite."
-)
-
-set(SAFE_INC_DIR include
-	CACHE
-	PATH
-	"The directory of the SAFE suite include files within the SAFE_HOME directory."
-)
-
-set(SAFE_LIB_DIR lib/c++/LINUX
-	CACHE
-	PATH
-	"The directory of the SAFE suite libraries within the SAFE_HOME directory."
-)
-
-set(XERCES_HOME /usr/local 
-    CACHE 
-    PATH 
-    "The path to the Apache Xerces-C installation."
-)
-    
-set(XQILLA_HOME /usr/local 
-    CACHE 
-    PATH 
-    "The path to the XQilla installation."
-)
+#set(SAFE_LIB_DIR lib/c++/LINUX
+#	CACHE
+#	PATH
+#	"The directory of the SAFE suite libraries within the SAFE_HOME directory."
+#)

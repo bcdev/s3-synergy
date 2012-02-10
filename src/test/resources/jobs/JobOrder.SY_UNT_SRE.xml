@@ -2,8 +2,8 @@
     <Ipf_Conf>
         <Processor_Name>S3L2PP-SYN</Processor_Name>
         <Version>01.00</Version>
-        <Stdout_Log_Level>INFO</Stdout_Log_Level> <!-- Default: INFO -->
-        <Stderr_Log_Level>INFO</Stderr_Log_Level> <!-- Default: INFO -->
+        <Stdout_Log_Level>DEBUG</Stdout_Log_Level> <!-- Default: INFO -->
+        <Stderr_Log_Level>DEBUG</Stderr_Log_Level> <!-- Default: INFO -->
         <Test>true</Test>
         <Breakpoint_Enable>false</Breakpoint_Enable>
         <Acquisition_Station>unknown</Acquisition_Station>
@@ -39,7 +39,7 @@
                 <Output>
                     <File_Type>SY2</File_Type>
                     <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
-                    <File_Name>testdata/SY2/SY_UNT_SRE.SAFE</File_Name>
+                    <File_Name>testdata/SY2/SY_UNT_SRE.BREAKPOINT</File_Name>
                 </Output>
             </List_of_Outputs>
         </Ipf_Proc>

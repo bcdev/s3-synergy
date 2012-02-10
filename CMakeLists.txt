@@ -53,44 +53,45 @@ file(GLOB_RECURSE VGTP_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/VgtP_
 file(GLOB_RECURSE VGTS_1_INTEGRATION_TEST_SOURCES src/test/cpp/integration/VgtS_1_Test.cpp)
 file(GLOB_RECURSE VGTS_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/VgtS_2_Test.cpp)
 
-if(${BOOST_MT})
-   set(BOOST_REGEX boost_regex-mt) 
-   set(BOOST_SYSTEM boost_system-mt) 
-   set(BOOST_FILESYSTEM boost_filesystem-mt)
-else(${BOOST_MT})
-   set(BOOST_REGEX boost_regex) 
-   set(BOOST_SYSTEM boost_system) 
-   set(BOOST_FILESYSTEM boost_filesystem)
-endif(${BOOST_MT})
- 
+find_library(BOOST_REGEX
+    NAMES boost_regex boost_regex-mt 
+    HINTS ${LIB_HOME}/lib 
+    NO_DEFAULT_PATH
+)
+find_library(BOOST_SYSTEM
+    NAMES boost_system boost_system-mt
+    HINTS ${LIB_HOME}/lib
+    NO_DEFAULT_PATH
+)
+find_library(BOOST_FILESYSTEM
+    NAMES boost_filesystem boost_filesystem-mt
+    HINTS ${LIB_HOME}/lib
+    NO_DEFAULT_PATH
+)
+find_program(MD5_SUM_EXECUTABLE NAMES md5sum gmd5sum)
+
 ##
 # Project include directories
 #
 include_directories(before
-    ${BOOST_HOME}/include
-    ${NETCDF_HOME}/include
-    ${XERCES_HOME}/include
-    ${XQILLA_HOME}/include
+    ${LIB_HOME}/include
 )
-include_directories(before
-    ${JAVA_HOME}/${JAVA_INC_DIR}
-    ${SAFE_HOME}/${SAFE_INC_DIR}
-)
+#include_directories(before
+#    ${JAVA_HOME}/${JAVA_INC_DIR}
+#    ${SAFE_HOME}/${SAFE_INC_DIR}
+#)
 
 ##
 # Project link directories
 #
 link_directories(
-    ${BOOST_HOME}/lib
-    ${NETCDF_HOME}/lib
-    ${XERCES_HOME}/lib
-    ${XQILLA_HOME}/lib
+    ${LIB_HOME}/lib
 )
-link_directories(
-    ${JAVA_HOME}/${JAVA_LIB_DIR}
-    ${JAVA_HOME}/${JAVA_JVM_DIR}
-    ${SAFE_HOME}/${SAFE_LIB_DIR}
-)
+#link_directories(
+#    ${JAVA_HOME}/${JAVA_LIB_DIR}
+#    ${JAVA_HOME}/${JAVA_JVM_DIR}
+#    ${SAFE_HOME}/${SAFE_LIB_DIR}
+#)
 
 ##
 # Project test targets
