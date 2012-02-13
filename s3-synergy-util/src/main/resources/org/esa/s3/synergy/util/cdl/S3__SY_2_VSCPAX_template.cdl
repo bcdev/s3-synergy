@@ -1,4 +1,4 @@
-netcdf s3__sy_2_vscpax {
+netcdf S3__SY_2_VSCPAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00 {
 dimensions:
 	AMIN = 3 ;
 	NDV_channel = 2 ;
@@ -21,10 +21,10 @@ variables:
 		:references = "S3-L2-SD-08-S-BC-IODD" ;
 		:contact = "info@brockmann-consult.de" ;
 		:netCDF_version = "netCDF-4" ;
-		:dataset_name = "S3__SY_2_VSCPAX_20110701T000000_20120701T000000_20112007T120000__BC__D_NT_AUX_01.nc" ;
-		:creation_time = "20110720T120000Z" ;
-		:validity_start = "20110701T000000Z" ;
-		:validity_stop = "20120701T000000Z" ;
+		:dataset_name = "S3__SY_2_VSCPAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc" ;
+        :creation_time = "20120101T000000Z" ;
+        :validity_start = "20140101T000000Z" ;
+        :validity_stop = "20120101T000000Z" ;
 data:
 
     AMIN = 1, 2, 3 ;
