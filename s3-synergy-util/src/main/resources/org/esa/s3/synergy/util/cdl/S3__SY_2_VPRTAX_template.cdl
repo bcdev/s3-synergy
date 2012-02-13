@@ -1,4 +1,4 @@
-netcdf s3__sy_2_vprtax {
+netcdf S3__SY_2_VPRTAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00 {
 dimensions:
 	AMIN = 1 ;
 	ADA = 11 ;
@@ -54,14 +54,17 @@ variables:
 		R_atm:scale_factor = 0.004;
 		R_atm:valid_min = 0 ;
 		R_atm:valid_max = 250 ;
+        R_atm:_DeflateLevel = 9;
 	float t(SZA, air_pressure, water_vapour, T550, AMIN, wavelength) ;
 		t:long_name = "Atmospheric transmission" ;
 		t:valid_min = 0.f ;
 		t:valid_max = 1.f ;
+        t:_DeflateLevel = 9;
 	float rho_atm(air_pressure, water_vapour, T550, AMIN, wavelength) ;
 		rho_atm:long_name = "Atmospheric bihemispherical Albedo" ;
 		rho_atm:valid_min = 0.f ;
 		rho_atm:valid_max = 1.f ;
+        rho_atm:_DeflateLevel = 9;
 	float C_O3(wavelength) ;
 		C_O3:long_name = "Ozone correction factor" ;
 		C_O3:valid_min = 0.f ;
@@ -77,10 +80,10 @@ variables:
 		:references = "S3-L2-SD-08-S-BC-IODD" ;
 		:contact = "info@brockmann-consult.de" ;
 		:netCDF_version = "netCDF-4" ;
-		:dataset_name = "S3__SY_2_VPRTAX_20110701T000000_20120701T000000_20112007T120000__BC__D_NT_AUX_01.nc" ;
-		:creation_time = "20110720T120000Z" ;
-		:validity_start = "20110701T000000Z" ;
-		:validity_stop = "20120701T000000Z" ;
+		:dataset_name = "S3__SY_2_VPRTAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc" ;
+        :creation_time = "20120101T000000Z" ;
+        :validity_start = "20140101T000000Z" ;
+        :validity_stop = "20120101T000000Z" ;
 data:
 
     ADA = 0.f, 18.f, 36.f, 54.f, 72.f, 90.f, 108.f, 126.f, 144.f, 162.f, 180.f ;

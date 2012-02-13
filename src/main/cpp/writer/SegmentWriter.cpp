@@ -20,7 +20,7 @@ SegmentWriter::SegmentWriter() :
 
 SegmentWriter::~SegmentWriter() {
 	pair<string, int> fileIdPair;
-	foreach (fileIdPair, ncFileIdMap) {
+	reverse_foreach (fileIdPair, ncFileIdMap) {
 	    try {
 	        NetCDF::closeFile(fileIdPair.second);
 	    } catch (exception& ignored) {
@@ -98,7 +98,7 @@ void SegmentWriter::start(Context& context) {
 void SegmentWriter::stop(Context& context) {
 	pair<string, int> fileIdPair;
 
-	foreach (fileIdPair, ncFileIdMap) {
+	reverse_foreach (fileIdPair, ncFileIdMap) {
 	    NetCDF::closeFile(fileIdPair.second);
 	}
 	ncVarIdMap.clear();

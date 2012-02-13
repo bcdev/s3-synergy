@@ -30,12 +30,12 @@ class ContextTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(testInitialState);
     CPPUNIT_TEST(testAddModule);
     CPPUNIT_TEST(testAddObject);
-    CPPUNIT_TEST(testAddSegment);
+    CPPUNIT_TEST(testAddRemoveSegment);
     CPPUNIT_TEST(testSetGetDictionary);
     CPPUNIT_TEST(testSetGetJobOrder);
     CPPUNIT_TEST(testGetUnknownObject);
     CPPUNIT_TEST(testGetUnknownSegment);
-    CPPUNIT_TEST(testSetGetLastLComputed);
+    CPPUNIT_TEST(testSetGetLastComputedL);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -48,12 +48,12 @@ private:
     void testInitialState();
     void testAddModule();
     void testAddObject();
-    void testAddSegment();
+    void testAddRemoveSegment();
     void testSetGetDictionary();
     void testSetGetJobOrder();
     void testGetUnknownObject();
     void testGetUnknownSegment();
-    void testSetGetLastLComputed();
+    void testSetGetLastComputedL();
 
     shared_ptr<Context> context;
 };

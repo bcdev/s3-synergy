@@ -23,7 +23,7 @@ AbstractWriter::AbstractWriter(const string& name) :
 
 AbstractWriter::~AbstractWriter() {
 	pair<string, int> fileIdPair;
-	foreach(fileIdPair, ncFileIdMap) {
+	reverse_foreach(fileIdPair, ncFileIdMap) {
 	    try {
 	        NetCDF::closeFile(fileIdPair.second);
 	    } catch (exception& ignored) {
@@ -108,6 +108,14 @@ void AbstractWriter::process(Context& context) {
 }
 
 void AbstractWriter::stop(Context& context) {
+	pair<string, int> fileIdPair;
+	reverse_foreach(fileIdPair, ncFileIdMap) {
+	    try {
+	        NetCDF::closeFile(fileIdPair.second);
+	    } catch (exception& ignored) {
+	    }
+	}
+
     // todo - create SAFE module
 	createSafeProduct(context);
 

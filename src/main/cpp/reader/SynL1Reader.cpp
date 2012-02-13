@@ -23,7 +23,7 @@ SynL1Reader::SynL1Reader() :
 
 SynL1Reader::~SynL1Reader() {
 	pair<string, int> fileIdPair;
-	foreach(fileIdPair, ncFileIdMap) {
+	reverse_foreach(fileIdPair, ncFileIdMap) {
 	    try {
 	        NetCDF::closeFile(fileIdPair.second);
 	    } catch (exception& ignored) {
@@ -133,19 +133,18 @@ void SynL1Reader::start(Context& context) {
 }
 
 void SynL1Reader::stop(Context& context) {
-	foreach (string segment, addedSegments) {
-	    context.removeSegment(segment);
-	}
-
-	addedSegments.clear();
-
 	pair<string, int> fileIdPair;
-	foreach (fileIdPair, ncFileIdMap) {
+	reverse_foreach (fileIdPair, ncFileIdMap) {
 	    context.getLogging().info("Closing netCDF file '" + fileIdPair.first + ".nc'", getId());
 	    NetCDF::closeFile(fileIdPair.second);
 	}
 	ncVarIdMap.clear();
 	ncFileIdMap.clear();
+
+	reverse_foreach (string segment, addedSegments) {
+	    context.removeSegment(segment);
+	}
+	addedSegments.clear();
 }
 
 void SynL1Reader::process(Context& context) {
