@@ -53,7 +53,7 @@
             </List_of_Inputs>
             <List_of_Outputs count="0">
                 <Output>
-                    <File_Type>SY2</File_Type>
+                    <File_Type>VGP</File_Type>
                     <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
                     <File_Name>testdata/VGP/SY_SYS_VGTP_1/S3__SY_2_VGP____2013621T10920_2013621T101413_0270_001_002_0001_ARG_D_NT_TDS_01.SAFE</File_Name>
                 </Output>

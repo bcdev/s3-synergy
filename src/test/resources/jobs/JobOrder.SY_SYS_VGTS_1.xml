@@ -20,13 +20,29 @@
                 <Name>Segment_Line_Count</Name>
                 <Value>2000</Value> <!-- Value range: [8, 2000], Default: 2000 -->
             </Processing_Parameter>
+            <Processing_Parameter>
+                <Name>VGT_Northernmost_Latitude</Name>
+                <Value>75</Value> <!-- Value range: [-56, 75], Default: 75 -->
+            </Processing_Parameter>
+            <Processing_Parameter>
+                <Name>VGT_Southernmost_Latitude</Name>
+                <Value>25</Value> <!-- Value range: [-56, 75], Default: -56 -->
+            </Processing_Parameter>
+            <Processing_Parameter>
+                <Name>VGT_Westernmost_Longitude</Name>
+                <Value>-11</Value> <!-- Value range: [-180, 180], Default: -180 -->
+            </Processing_Parameter>
+            <Processing_Parameter>
+                <Name>VGT_Easternmost_Longitude</Name>
+                <Value>62</Value> <!-- Value range: [-180, 180], Default: 180 -->
+            </Processing_Parameter>
         </Dynamic_Processing_Parameters>
     </Ipf_Conf>
     <List_of_Ipf_Procs>
         <Ipf_Proc>
             <Task_Name>SYL2</Task_Name>
             <Task_Version>01.00</Task_Version>
-            <List_of_Inputs count="1">
+            <List_of_Inputs count="3">
                 <Input>
                     <File_Type>SY1</File_Type>
                     <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
@@ -41,7 +57,7 @@
                         <File_Name>testdata/SY1/S3A_SY_1_SYN________2013621T10920_2013621T101413_2_00293_2_DMS_TD04_01</File_Name>
                     </List_of_File_Names>
                 </Input>
-				<Input>
+                <Input>
                     <File_Type>SY1</File_Type>
                     <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
                     <List_of_File_Names count="1">
@@ -51,9 +67,9 @@
             </List_of_Inputs>
             <List_of_Outputs count="0">
                 <Output>
-                    <File_Type>SY2</File_Type>
+                    <File_Type>VGS</File_Type>
                     <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
-                    <File_Name>testdata/VGS/SY_UNT_VCO.BREAKPOINT</File_Name>
+                    <File_Name>testdata/VGP/SY_SYS_VGTP_1/S3__SY_2_VGP____2013621T10920_2013621T101413_0270_001_002_0001_ARG_D_NT_TDS_01.SAFE</File_Name>
                 </Output>
             </List_of_Outputs>
         </Ipf_Proc>

@@ -25,7 +25,7 @@ void VgtS_1_Test::tearDown() {
 }
 
 void VgtS_1_Test::testParseJobOrder_01() {
-	BasicTask task("VG_INT_VGTP_2");
+	BasicTask task("SY_INT_VGTS_1_01");
 
     const string jobOrderPath = Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_INT_VGTS_1_01.xml";
 
@@ -35,7 +35,7 @@ void VgtS_1_Test::testParseJobOrder_01() {
 }
 
 void VgtS_1_Test::testParseJobOrder_02() {
-	BasicTask task("VG_INT_VGTP_2");
+	BasicTask task("SY_INT_VGTS_1_02");
 
     const string jobOrderPath = Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_INT_VGTS_1_02.xml";
 
