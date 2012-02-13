@@ -25,7 +25,7 @@ This document is a manifest file of a SAFE archive. -->
             <xfdu:contentUnit
                 unitType='Measurement Data Unit'
                 textInfo='TOA Reflectance 430-470nm (Band B0)'
-                dmdID='viewAzimuthAngle viewZenithAngle solarAzimuthAngle solarZenithAngle waterVapourColumn ozpneColumn aerosolOpticalDepth'
+                dmdID='viewAzimuthAngle viewZenithAngle solarAzimuthAngle solarZenithAngle waterVapourColumn ozoneColumn aerosolOpticalDepth'
                 repID='measurementDataSchema'>
                 <dataObjectPointer
                     dataObjectID='toaReflectanceB0' />
@@ -34,7 +34,7 @@ This document is a manifest file of a SAFE archive. -->
             <xfdu:contentUnit
                 unitType='Measurement Data Unit'
                 textInfo='TOA Reflectance 610-680nm (Band B2)'
-                dmdID='viewAzimuthAngle viewZenithAngle solarAzimuthAngle solarZenithAngle waterVapourColumn ozpneColumn aerosolOpticalDepth'
+                dmdID='viewAzimuthAngle viewZenithAngle solarAzimuthAngle solarZenithAngle waterVapourColumn ozoneColumn aerosolOpticalDepth'
                 repID='measurementDataSchema'>
                 <dataObjectPointer
                     dataObjectID='toaReflectanceB1' />
@@ -43,7 +43,7 @@ This document is a manifest file of a SAFE archive. -->
             <xfdu:contentUnit
                 unitType='Measurement Data Unit'
                 textInfo='TOA Reflectance 780-890nm (Band B3)'
-                dmdID='viewAzimuthAngle viewZenithAngle solarAzimuthAngle solarZenithAngle waterVapourColumn ozpneColumn aerosolOpticalDepth'
+                dmdID='viewAzimuthAngle viewZenithAngle solarAzimuthAngle solarZenithAngle waterVapourColumn ozoneColumn aerosolOpticalDepth'
                 repID='measurementDataSchema'>
                 <dataObjectPointer
                     dataObjectID='toaReflectanceB2' />
@@ -52,7 +52,7 @@ This document is a manifest file of a SAFE archive. -->
             <xfdu:contentUnit
                 unitType='Measurement Data Unit'
                 textInfo='TOA Reflectance 1580-1750nm (Band MIR)'
-                dmdID='viewAzimuthAngle viewZenithAngle solarAzimuthAngle solarZenithAngle waterVapourColumn ozpneColumn aerosolOpticalDepth'
+                dmdID='viewAzimuthAngle viewZenithAngle solarAzimuthAngle solarZenithAngle waterVapourColumn ozoneColumn aerosolOpticalDepth'
                 repID='measurementDataSchema'>
                 <dataObjectPointer
                     dataObjectID='toaReflectanceMIR' />
@@ -412,7 +412,7 @@ This document is a manifest file of a SAFE archive. -->
 
         <dataObject
             ID='ozoneColumn'
-            repID='measurementDataSchema'>
+            repID='tiepointsSchema'>
             <byteStream mimeType='application/octetstream'>
                 <fileLocation
                     locatorType='URL'
@@ -425,7 +425,7 @@ This document is a manifest file of a SAFE archive. -->
 
         <dataObject
             ID='waterVapourColumn'
-            repID='measurementDataSchema'>
+            repID='tiepointsSchema'>
             <byteStream mimeType='application/octetstream'>
                 <fileLocation
                     locatorType='URL'
@@ -438,7 +438,7 @@ This document is a manifest file of a SAFE archive. -->
 
         <dataObject
             ID='aerosolOpticalDepth'
-            repID='measurementDataSchema'>
+            repID='tiepointsSchema'>
             <byteStream mimeType='application/octetstream'>
                 <fileLocation
                     locatorType='URL'
@@ -451,7 +451,7 @@ This document is a manifest file of a SAFE archive. -->
 
         <dataObject
             ID='pixelStatusFlags'
-            repID='measurementDataSchema'>
+            repID='statusFlagsSchema'>
             <byteStream mimeType='application/octetstream'>
                 <fileLocation
                     locatorType='URL'
@@ -462,7 +462,58 @@ This document is a manifest file of a SAFE archive. -->
             </byteStream>
         </dataObject>
 
+        <dataObject
+            ID='viewAzimuthAngle'
+            repID='geometryDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='vaa.nc' />
+                <checksum checksumName='MD5'>
+                    ${checksum-vaa.nc}
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='viewZenithAngle'
+            repID='geometryDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='vza.nc' />
+                <checksum checksumName='MD5'>
+                    ${checksum-vza.nc}
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='solarAzimuthAngle'
+            repID='geometryDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='saa.nc' />
+                <checksum checksumName='MD5'>
+                    ${checksum-saa.nc}
+                </checksum>
+            </byteStream>
+        </dataObject>
+
+        <dataObject
+            ID='solarZenithAngle'
+            repID='geometryDataSchema'>
+            <byteStream mimeType='application/octetstream'>
+                <fileLocation
+                    locatorType='URL'
+                    href='sza.nc' />
+                <checksum checksumName='MD5'>
+                    ${checksum-sza.nc}
+                </checksum>
+            </byteStream>
+        </dataObject>
+
     </dataObjectSection>
 
 </xfdu:XFDU>
-
