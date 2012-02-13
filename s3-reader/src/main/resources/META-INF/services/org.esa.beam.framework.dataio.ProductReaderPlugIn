@@ -3,4 +3,5 @@ org.esa.beam.dataio.olci.OlciLevel2ProductReaderPlugIn
 org.esa.beam.dataio.slstr.SlstrLevel2LndProductReaderPlugIn
 org.esa.beam.dataio.slstr.SlstrLevel2SSTProductReaderPlugIn
 org.esa.beam.dataio.syn.SynProductReaderPlugIn
+org.esa.beam.dataio.vgtp.VgtpProductReaderPlugIn
 

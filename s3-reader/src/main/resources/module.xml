@@ -75,6 +75,16 @@
             <description>Import an OLCI/SLSTR L2 SYN data product or product subset.</description>
             <helpId>importS3SynProduct</helpId>
         </action>
+        <action>
+            <id>importS3VgtpProduct</id>
+            <class>org.esa.beam.visat.actions.ProductImportAction</class>
+            <formatName>VGTP-L2-SYN</formatName>
+            <text>Import VGT P L2 SYN Product...</text>
+            <mnemonic>Y</mnemonic>
+            <shortDescr>Import a VGT P L2 SYN data product or product subset.</shortDescr>
+            <description>Import a VGT P L2 SYN data product or product subset.</description>
+            <helpId>importS3VgtpProduct</helpId>
+        </action>
     </extension>
 
 </module>
