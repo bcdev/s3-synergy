@@ -259,7 +259,7 @@ void Context::setLastComputedL(const Segment& segment, const Module& module, lon
 	if (!contains(moduleList, module)) {
 		BOOST_THROW_EXCEPTION( invalid_argument("Unknown module '" + module.getId() + "'."));
 	}
-	if ((hasLastComputedL(segment, module) && l < getLastComputedL(segment, module)) || l > segment.getGrid().getMaxL()) {
+	if (l != -1 && ((hasLastComputedL(segment, module) && l < getLastComputedL(segment, module)) || l > segment.getGrid().getMaxL())) {
 		BOOST_THROW_EXCEPTION( invalid_argument("Invalid row index l = " + lexical_cast<string > (l)));
 	}
 	getLogging().debug("Segment " + segment.toString() + ": last computed L = " + lexical_cast<string>(l), module.getId());
