@@ -65,8 +65,6 @@ public:
 		moduleList.push_back(module);
 	}
 
-	bool removeModule(shared_ptr<Module> module);
-
 	/**
 	 * Adds an object to the context.
 	 * @param object The object.
