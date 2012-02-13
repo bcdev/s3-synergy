@@ -26,7 +26,7 @@
         <Ipf_Proc>
             <Task_Name>SYL2</Task_Name>
             <Task_Version>01.00</Task_Version>
-            <List_of_Inputs count="1">
+            <List_of_Inputs count="2">
                 <Input>
                     <File_Type>SY1</File_Type>
                     <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
@@ -42,7 +42,7 @@
                     </List_of_File_Names>
                 </Input>
             </List_of_Inputs>
-            <List_of_Outputs count="0">
+            <List_of_Outputs count="1">
                 <Output>
                     <File_Type>SY2</File_Type>
                     <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->

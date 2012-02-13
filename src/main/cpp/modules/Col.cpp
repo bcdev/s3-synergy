@@ -84,6 +84,7 @@ void Col::process(Context& context) {
 
 		for (size_t i = 0; i < targetNames.size(); i++) {
 			const string& targetName = targetNames[i];
+		    context.getLogging().debug("    Processing variable '" + targetName + "'", getId());
 			const Segment& sourceSegment = *sourceSegmentMap[targetName];
 			const Grid& sourceGrid = sourceSegment.getGrid();
 
@@ -95,6 +96,9 @@ void Col::process(Context& context) {
 
 			const long lastComputableL = context.getLastComputableL(sourceSegment, *this);
 			long& firstRequiredL = firstRequiredLMap[&sourceSegment];
+
+			context.getLogging().debug("    lastComputableL=" + lexical_cast<string>(lastComputableL) + "'", getId());
+			context.getLogging().debug("    firstRequiredL=" + lexical_cast<string>(firstRequiredL) + "'", getId());
 
 			for (long k = targetGrid.getMinK(); k <= targetGrid.getMaxK(); k++) {
 				for (long m = targetGrid.getMinM(); m <= targetGrid.getMaxM(); m++) {
@@ -189,12 +193,16 @@ void Col::process(Context& context) {
 			}
 		}
 
+		context.getLogging().debug("    getting INFO segments", getId());
+
 		const Segment& olcInfo = context.getSegment(Constants::SEGMENT_OLC_INFO);
 		const Segment& slnInfo = context.getSegment(Constants::SEGMENT_SLN_INFO);
 		const Segment& sloInfo = context.getSegment(Constants::SEGMENT_SLO_INFO);
 		const Grid& olcInfoGrid = olcInfo.getGrid();
 		const Grid& slnInfoGrid = slnInfo.getGrid();
 		const Grid& sloInfoGrid = sloInfo.getGrid();
+
+		context.getLogging().debug("    collocating solar irradiances < 18", getId());
 
 		for (size_t i = 0; i < 18; i++) {
 			Accessor* targetAccessor = solarIrradianceAccessors[i];
@@ -228,6 +236,9 @@ void Col::process(Context& context) {
 				}
 			}
 		}
+
+		context.getLogging().debug("    collocating solar irradiances >= 18", getId());
+
 		for (size_t i = 18; i < 30; i++) {
 			Accessor* targetAccessor = solarIrradianceAccessors[i];
 			const Accessor* sourceAccessor = sourceAccessorMap[targetAccessor];
@@ -262,6 +273,12 @@ void Col::process(Context& context) {
 			}
 		}
 	}
+
+	context.getLogging().debug("    setting first required L of SEGMENT_OLC to " + lexical_cast<string>(min(firstRequiredLMap[&olc], lastL)), getId());
+	context.getLogging().debug("    setting first required L of SEGMENT_SLN to " + lexical_cast<string>(firstRequiredLMap[&sln]), getId());
+	context.getLogging().debug("    setting first required L of SEGMENT_SLO to " + lexical_cast<string>(firstRequiredLMap[&slo]), getId());
+	context.getLogging().debug("    setting first required L of collocated segment to " + lexical_cast<string>(firstRequiredLMap[&olc]), getId());
+	context.getLogging().debug("    setting last computed L of collocated segment to " + lexical_cast<string>(lastL), getId());
 
 	context.setFirstRequiredL(olc, *this, min(firstRequiredLMap[&olc], lastL));
 	context.setFirstRequiredL(sln, *this, firstRequiredLMap[&sln]);
