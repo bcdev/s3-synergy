@@ -1,18 +1,21 @@
 /*
- * Module responsible for classifying pixels.
+ * Copyright (C) 2010 by Brockmann Consult (info@brockmann-consult.de)
  *
- * Preconditions:
- * 	- the segment 'SYN_COLLOCATED' must have been added to the context
- *  - that segment needs to comprise the variables 'OLC_flags', 'SLN_confidence', and 'SLO_confidence'
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation. This program is distributed in the hope it will
+ * be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
- * Postconditions:
- *  - the variables 'SYN_flags', 'OLC_flags', 'SLN_flags', and 'SLO_flags' have been added to the segment 'SYN_COLLOCATED'
- *  - that variables comprise flags for land and cloud for each pixel
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  *
- * Pcl.cpp
+ * File:   Pcl.cpp
+ * Author: Thomas Storm, Ralf Quast
  *
- *  Created on: Sep 14, 2011
- *      Author: thomasstorm
+ * Created on Sep 14, 2011
  */
 
 #include "Pcl.h"
@@ -25,91 +28,153 @@ Pcl::~Pcl() {
 }
 
 void Pcl::start(Context& context) {
-	setUpSegment(context);
-	setUpSourceAccessors(context);
-}
+	Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 
-void Pcl::setUpSegment(Context& context) {
-	collocatedSegment = &(context.getSegment(Constants::SEGMENT_SYN_COLLOCATED));
 	const ProductDescriptor& productDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2);
-	const SegmentDescriptor& collocatedDescriptor = productDescriptor.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
-	const VariableDescriptor& synFlags = collocatedDescriptor.getVariableDescriptor("SYN_flags");
-	const VariableDescriptor& olcFlags = collocatedDescriptor.getVariableDescriptor("OLC_flags");
-	const VariableDescriptor& slnFlags = collocatedDescriptor.getVariableDescriptor("SLN_flags");
-	const VariableDescriptor& sloFlags = collocatedDescriptor.getVariableDescriptor("SLO_flags");
-	context.getLogging().info("Adding variable 'SYN_flags' to segment '" + collocatedSegment->getId() + "'.", getId());
-	context.getLogging().info("Adding variable 'OLC_flags' to segment '" + collocatedSegment->getId() + "'.", getId());
-	context.getLogging().info("Adding variable 'SLN_flags' to segment '" + collocatedSegment->getId() + "'.", getId());
-	context.getLogging().info("Adding variable 'SLO_flags' to segment '" + collocatedSegment->getId() + "'.", getId());
-	collocatedSegment->addVariable(synFlags);
-	collocatedSegment->addVariable(olcFlags);
-	collocatedSegment->addVariable(slnFlags);
-	collocatedSegment->addVariable(sloFlags);
-}
+	const SegmentDescriptor& segmentDescriptor = productDescriptor.getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
 
-void Pcl::setUpSourceAccessors(Context& context) {
-	olcFlagsAccessor = &collocatedSegment->getAccessor("OLC_confidence");
-	slnFlagsAccessor = &collocatedSegment->getAccessor("SLN_confidence");
-	sloFlagsAccessor = &collocatedSegment->getAccessor("SLO_confidence");
+	context.getLogging().info("Adding variable 'SYN_flags' to segment '" + collocatedSegment.getId() + "'.", getId());
+	collocatedSegment.addVariable(segmentDescriptor.getVariableDescriptor("SYN_flags"));
 
-	for (size_t b = 1; b <= 30; b++) {
-		radianceAccessors.push_back(&collocatedSegment->getAccessor("L_" + lexical_cast<string>(b)));
-	}
+	context.getLogging().info("Adding variable 'OLC_flags' to segment '" + collocatedSegment.getId() + "'.", getId());
+	collocatedSegment.addVariable(segmentDescriptor.getVariableDescriptor("OLC_flags"));
 
-	for(size_t b = 1; b <= 6; b++) {
-	    slnExceptionAccessors.push_back(&collocatedSegment->getAccessor("L_" + lexical_cast<string>(b + 18) + "_exception"));
-	    sloExceptionAccessors.push_back(&collocatedSegment->getAccessor("L_" + lexical_cast<string>(b + 24) + "_exception"));
-	}
+	context.getLogging().info("Adding variable 'SLN_flags' to segment '" + collocatedSegment.getId() + "'.", getId());
+	collocatedSegment.addVariable(segmentDescriptor.getVariableDescriptor("SLN_flags"));
+
+	context.getLogging().info("Adding variable 'SLO_flags' to segment '" + collocatedSegment.getId() + "'.", getId());
+	collocatedSegment.addVariable(segmentDescriptor.getVariableDescriptor("SLO_flags"));
 }
 
 void Pcl::process(Context& context) {
-	context.getLogging().info("Setting flags for segment '" + collocatedSegment->toString() + "'.", getId());
-	Accessor& synTargetFlags = collocatedSegment->getAccessor("SYN_flags");
-	Accessor& olcTargetFlags = collocatedSegment->getAccessor("OLC_flags");
-	Accessor& slnTargetFlags = collocatedSegment->getAccessor("SLN_flags");
-	Accessor& sloTargetFlags = collocatedSegment->getAccessor("SLO_flags");
+	const Segment& segment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+	const Accessor& sourceOlcFlagsAccessor = segment.getAccessor("OLC_confidence");
+	const Accessor& sourceSlnFlagsAccessor = segment.getAccessor("SLN_confidence");
+	const Accessor& sourceSloFlagsAccessor = segment.getAccessor("SLO_confidence");
 
-	const valarray<uint32_t>& olcFlags = olcFlagsAccessor->getUIntData();
-	const valarray<uint8_t>& slnFlags = slnFlagsAccessor->getUByteData();
-	const valarray<uint8_t>& sloFlags = sloFlagsAccessor->getUByteData();
+	vector<const Accessor*> radianceAccessors;
+	for (size_t b = 1; b <= 30; b++) {
+		radianceAccessors.push_back(&segment.getAccessor("L_" + lexical_cast<string>(b)));
+	}
 
-	const long firstL = context.getFirstComputableL(*collocatedSegment, *this);
-	context.getLogging().debug("Segment [" + collocatedSegment->toString() + "]: firstComputableL = " + lexical_cast<string>(firstL), getId());
-	long lastL = context.getLastComputableL(*collocatedSegment, *this);
-	context.getLogging().debug("Segment [" + collocatedSegment->toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
+	vector<const Accessor*> slnExceptionAccessors;
+	vector<const Accessor*> sloExceptionAccessors;
+	for (size_t b = 1; b <= 6; b++) {
+		slnExceptionAccessors.push_back(&segment.getAccessor("L_" + lexical_cast<string>(b + 18) + "_exception"));
+		sloExceptionAccessors.push_back(&segment.getAccessor("L_" + lexical_cast<string>(b + 24) + "_exception"));
+	}
 
-	const Grid& collocatedGrid = collocatedSegment->getGrid();
+	Accessor& targetSynFlagsAccessor = segment.getAccessor("SYN_flags");
+	Accessor& targetOlcFlagsAccessor = segment.getAccessor("OLC_flags");
+	Accessor& targetSlnFlagsAccessor = segment.getAccessor("SLN_flags");
+	Accessor& targetSloFlagsAccessor = segment.getAccessor("SLO_flags");
+
+	const valarray<uint32_t>& sourceOlcFlags = sourceOlcFlagsAccessor.getUIntData();
+	const valarray<uint8_t>& sourceSlnFlags = sourceSlnFlagsAccessor.getUByteData();
+	const valarray<uint8_t>& sourceSloFlags = sourceSloFlagsAccessor.getUByteData();
+
+	const long firstL = context.getFirstComputableL(segment, *this);
+	context.getLogging().debug("Segment [" + segment.toString() + "]: firstComputableL = " + lexical_cast<string>(firstL), getId());
+	long lastL = context.getLastComputableL(segment, *this);
+	context.getLogging().debug("Segment [" + segment.toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
+
+	const Grid& collocatedGrid = segment.getGrid();
 
 #if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100) > 40100
 #pragma omp parallel for
 #endif
 	for (long l = firstL; l <= lastL; l++) {
-		context.getLogging().progress("Setting flags for line l = " + lexical_cast<string>(l), getId());
+		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
 		for (long k = collocatedGrid.getMinK(); k <= collocatedGrid.getMaxK(); k++) {
 			for (long m = collocatedGrid.getMinM(); m <= collocatedGrid.getMaxM(); m++) {
 				const size_t index = collocatedGrid.getIndex(k, l, m);
 
-				const uint32_t currentOlcFlags = olcFlags[index];
-				const uint8_t currentSlnFlags = slnFlags[index];
-				const uint8_t currentSloFlags = sloFlags[index];
-				uint16_t synValue = computeSynFlagValue(currentOlcFlags, currentSlnFlags, currentSloFlags, index);
-				synTargetFlags.setUShort(index, synValue);
+				const uint32_t fOlc = sourceOlcFlags[index];
+				const uint8_t fSln = sourceSlnFlags[index];
+				const uint8_t fSlo = sourceSloFlags[index];
 
-				const uint16_t olcValue = computeOlcFlagValue(currentOlcFlags);
-				olcTargetFlags.setUShort(index, olcValue);
-
-				const uint32_t slnValue = computeSlnFlagValue(currentSlnFlags, index);
-				slnTargetFlags.setUShort(index, slnValue);
-
-				const uint32_t sloValue = computeSloFlagValue(currentSloFlags, index);
-				sloTargetFlags.setUShort(index, sloValue);
+				targetOlcFlagsAccessor.setUShort(index, computeOlcSummaryFlags(fOlc));
+				targetSlnFlagsAccessor.setUInt(index, computeSlsSummaryFlags(fSln, slnExceptionAccessors, index));
+				targetSloFlagsAccessor.setUInt(index, computeSlsSummaryFlags(fSlo, sloExceptionAccessors, index));
+				targetSynFlagsAccessor.setUShort(index, computeSynFlags(fOlc, fSln, fSlo, radianceAccessors, index));
 			}
 		}
 	}
-	context.setLastComputedL(*collocatedSegment, *this, lastL);
+	context.setLastComputedL(segment, *this, lastL);
 }
 
-uint16_t Pcl::computeSynFlagValue(uint32_t olcFlags, uint8_t slnFlags, uint8_t sloFlags, size_t index) {
+uint16_t Pcl::computeOlcSummaryFlags(uint32_t sourceFlags) {
+	uint16_t targetFlags = 0;
+
+	bool summarySatured = false;
+	// TODO - extract constants for OLCI flags
+	for (uint32_t saturatedFlag = 2097152U; saturatedFlag >= 2U; saturatedFlag = saturatedFlag >> 1) {
+		summarySatured |= isSet(sourceFlags, saturatedFlag);
+	}
+
+	targetFlags |= summarySatured ? 1 : 0;
+	// TODO - extract constants for OLCI flags
+	targetFlags |= isSet(sourceFlags, 4194304U) ? 2 : 0;
+	targetFlags |= isSet(sourceFlags, 8388608U) ? 4 : 0;
+	targetFlags |= isSet(sourceFlags, 33554432U) ? 8 : 0;
+	targetFlags |= isSet(sourceFlags, 67108864U) ? 16 : 0;
+	targetFlags |= isSet(sourceFlags, 134217728U) ? 256 : 0;
+	targetFlags |= isSet(sourceFlags, 268435456U) ? 512 : 0;
+	targetFlags |= isSet(sourceFlags, 536870912U) ? 1024 : 0;
+	targetFlags |= isSet(sourceFlags, 1073741824U) ? 2048 : 0;
+	targetFlags |= isSet(sourceFlags, 2147483648U) ? 4096 : 0;
+
+	return targetFlags;
+}
+
+uint32_t Pcl::computeSlsSummaryFlags(uint8_t sourceFlags, const vector<const Accessor*>& exceptionAccessors, size_t index) {
+	uint32_t targetFlags = 0;
+
+	bool summaryIspAbsent = false;
+	bool summaryPixelAbsent = false;
+	bool summaryNotDecompressed = false;
+	bool summaryNoSignal = false;
+	bool summarySaturation = false;
+	bool summaryInvalidRadiance = false;
+	bool summaryNoParameters = false;
+	bool summaryUnfilledPixel = false;
+
+	foreach (const Accessor* exceptionAccessor, exceptionAccessors)
+			{
+				const uint8_t exceptionFlag = exceptionAccessor->getUByte(index);
+				// TODO - extract constants for exception flags
+				summaryIspAbsent |= isSet<uint8_t>(exceptionFlag, 1);
+				summaryPixelAbsent |= isSet<uint8_t>(exceptionFlag, 2);
+				summaryNotDecompressed |= isSet<uint8_t>(exceptionFlag, 4);
+				summaryNoSignal |= isSet<uint8_t>(exceptionFlag, 8);
+				summarySaturation |= isSet<uint8_t>(exceptionFlag, 16);
+				summaryInvalidRadiance |= isSet<uint8_t>(exceptionFlag, 32);
+				summaryNoParameters |= isSet<uint8_t>(exceptionFlag, 64);
+				summaryUnfilledPixel |= isSet<uint8_t>(exceptionFlag, 128);
+			}
+
+	targetFlags |= summaryIspAbsent ? 1 : 0;
+	targetFlags |= summaryPixelAbsent ? 2 : 0;
+	targetFlags |= summaryNotDecompressed ? 4 : 0;
+	targetFlags |= summaryNoSignal ? 8 : 0;
+	targetFlags |= summarySaturation ? 16 : 0;
+	targetFlags |= summaryInvalidRadiance ? 32 : 0;
+	targetFlags |= summaryNoParameters ? 64 : 0;
+	targetFlags |= summaryUnfilledPixel ? 128 : 0;
+
+	// TODO - extract constants for SLSTR source and target flags (NOTE: test product does not comply with specification)
+	targetFlags |= isSet<uint8_t>(sourceFlags, 1) ? 1 << 16 : 0; // cosmetic
+	targetFlags |= isSet<uint8_t>(sourceFlags, 4) ? 1 << 18 : 0; // day
+	targetFlags |= isSet<uint8_t>(sourceFlags, 8) ? 1 << 19 : 0; // twilight
+	targetFlags |= isSet<uint8_t>(sourceFlags, 16) ? 1 << 20 : 0; // sun_glint
+	targetFlags |= isSet<uint8_t>(sourceFlags, 32) ? 1 << 21 : 0; // snow
+	targetFlags |= isSet<uint8_t>(sourceFlags, 64) ? 1 << 22 : 0; // summary_cloud
+	targetFlags |= isSet<uint8_t>(sourceFlags, 128) ? 1 << 23 : 0; // summary_pointing
+
+	return targetFlags;
+}
+
+uint16_t Pcl::computeSynFlags(uint32_t olcFlags, uint8_t slnFlags, uint8_t sloFlags, const vector<const Accessor*>& radianceAccessors, size_t index) {
 	const bool land = isSet(olcFlags, Constants::SY1_OLCI_LAND_FLAG);
 	const bool cloud = isSet(slnFlags, Constants::SY1_SLSTR_CLOUD_FLAG) || isSet(sloFlags, Constants::SY1_SLSTR_CLOUD_FLAG);
 
@@ -121,134 +186,28 @@ uint16_t Pcl::computeSynFlagValue(uint32_t olcFlags, uint8_t slnFlags, uint8_t s
 		synFlags |= Constants::SY2_CLOUD_FLAG;
 	}
 
-    bool noOLC = true;
-    bool noSLN = true;
-    bool noSLO = true;
-    for (size_t b = 0; b < 18; b++) {
-        noOLC &= radianceAccessors[b]->isFillValue(index);
-    }
-    for (size_t b = 18; b < 24; b++) {
-        noSLN &= radianceAccessors[b]->isFillValue(index);
-    }
-    for (size_t b = 24; b < 30; b++) {
-        noSLO &= radianceAccessors[b]->isFillValue(index);
-    }
-    if (noOLC) {
-        synFlags |= Constants::SY2_NO_OLC_FLAG;
-    }
-    if (noSLN) {
-        synFlags |= Constants::SY2_NO_SLN_FLAG;
-    }
-    if (noSLO) {
-        synFlags |= Constants::SY2_NO_SLO_FLAG;
-    }
+	bool noOlc = true;
+	bool noSln = true;
+	bool noSlo = true;
+	for (size_t b = 0; b < 18; b++) {
+		noOlc &= radianceAccessors[b]->isFillValue(index);
+	}
+	for (size_t b = 18; b < 24; b++) {
+		noSln &= radianceAccessors[b]->isFillValue(index);
+	}
+	for (size_t b = 24; b < 30; b++) {
+		noSlo &= radianceAccessors[b]->isFillValue(index);
+	}
+	if (noOlc) {
+		synFlags |= Constants::SY2_NO_OLC_FLAG;
+	}
+	if (noSln) {
+		synFlags |= Constants::SY2_NO_SLN_FLAG;
+	}
+	if (noSlo) {
+		synFlags |= Constants::SY2_NO_SLO_FLAG;
+	}
 
 	return synFlags;
 }
 
-uint16_t Pcl::computeOlcFlagValue(uint32_t currentOlcFlags) {
-    uint16_t olcValue = 0;
-    bool isSummarySatured = false;
-    for(uint32_t flag = 2097152U; flag >= 2U; flag = flag >> 1) {
-        isSummarySatured |= isSet(currentOlcFlags, flag);
-    }
-    olcValue |= isSummarySatured ? 1 : 0;
-    olcValue |= isSet(currentOlcFlags, 4194304U) ? 2 : 0;
-    olcValue |= isSet(currentOlcFlags, 8388608U) ? 4 : 0;
-    olcValue |= isSet(currentOlcFlags, 33554432U) ? 8 : 0;
-    olcValue |= isSet(currentOlcFlags, 67108864U) ? 16 : 0;
-    olcValue |= isSet(currentOlcFlags, 134217728U) ? 256 : 0;
-    olcValue |= isSet(currentOlcFlags, 268435456U) ? 512 : 0;
-    olcValue |= isSet(currentOlcFlags, 536870912U) ? 1024 : 0;
-    olcValue |= isSet(currentOlcFlags, 1073741824U) ? 2048 : 0;
-    olcValue |= isSet(currentOlcFlags, 2147483648U) ? 4096 : 0;
-    return olcValue;
-}
-
-uint16_t Pcl::computeSlnFlagValue(uint32_t currentSlnFlags, size_t index) {
-    uint16_t slnValue = 0;
-    bool isSummaryISPAbsent = false;
-    bool isSummaryPixelAbsent = false;
-    bool isSummaryNotDecompressed = false;
-    bool isSummaryNoSignal = false;
-    bool isSummarySaturation = false;
-    bool isSummaryInvalidRadiance = false;
-    bool isSummaryNoParameters = false;
-    bool isSummaryUnfilledPixel = false;
-    foreach(const Accessor* slnExceptionAccessor, slnExceptionAccessors) {
-        uint8_t currentExceptionFlag = slnExceptionAccessor->getUByte(index);
-        isSummaryISPAbsent |= isSet(currentExceptionFlag, (uint8_t)1);
-        isSummaryPixelAbsent |= isSet(currentExceptionFlag, (uint8_t)2);
-        isSummaryNotDecompressed |= isSet(currentExceptionFlag, (uint8_t)4);
-        isSummaryNoSignal |= isSet(currentExceptionFlag, (uint8_t)8);
-        isSummarySaturation |= isSet(currentExceptionFlag, (uint8_t)16);
-        isSummaryInvalidRadiance |= isSet(currentExceptionFlag, (uint8_t)32);
-        isSummaryNoParameters |= isSet(currentExceptionFlag, (uint8_t)64);
-        isSummaryUnfilledPixel |= isSet(currentExceptionFlag, (uint8_t)128);
-    }
-
-    slnValue |= isSummaryISPAbsent ? 1 : 0;
-    slnValue |= isSummaryPixelAbsent ? 2 : 0;
-    slnValue |= isSummaryNotDecompressed ? 4 : 0;
-    slnValue |= isSummaryNoSignal ? 8 : 0;
-    slnValue |= isSummarySaturation ? 16 : 0;
-    slnValue |= isSummaryInvalidRadiance ? 32 : 0;
-    slnValue |= isSummaryNoParameters ? 64 : 0;
-    slnValue |= isSummaryUnfilledPixel ? 128 : 0;
-
-    // todo - is aligned with L1c Products Definition, but doesn't work with test product
-
-//    slnValue |= isSet(currentSlnFlags, 1U) ? 1 << 16 : 0; // cosmetic
-//    slnValue |= isSet(currentSlnFlags, 4U) ? 1 << 18 : 0; // day
-//    slnValue |= isSet(currentSlnFlags, 8U) ? 1 << 19 : 0; // twilight
-//    slnValue |= isSet(currentSlnFlags, 16U) ? 1 << 20 : 0; // sun_glint
-//    slnValue |= isSet(currentSlnFlags, 32U) ? 1 << 21 : 0; // snow
-//    slnValue |= isSet(currentSlnFlags, 64U) ? 1 << 22 : 0; // summary_cloud
-//    slnValue |= isSet(currentSlnFlags, 128U) ? 1 << 23 : 0; // summary_pointing
-
-    return slnValue;
-}
-
-uint16_t Pcl::computeSloFlagValue(uint32_t currentSloFlags, size_t index) {
-    uint16_t sloValue = 0;
-    bool isSummaryISPAbsent = false;
-    bool isSummaryPixelAbsent = false;
-    bool isSummaryNotDecompressed = false;
-    bool isSummaryNoSignal = false;
-    bool isSummarySaturation = false;
-    bool isSummaryInvalidRadiance = false;
-    bool isSummaryNoParameters = false;
-    bool isSummaryUnfilledPixel = false;
-    foreach(const Accessor* sloExceptionAccessor, sloExceptionAccessors) {
-        uint8_t currentExceptionFlag = sloExceptionAccessor->getUByte(index);
-        isSummaryISPAbsent |= isSet(currentExceptionFlag, (uint8_t)1);
-        isSummaryPixelAbsent |= isSet(currentExceptionFlag, (uint8_t)2);
-        isSummaryNotDecompressed |= isSet(currentExceptionFlag, (uint8_t)4);
-        isSummaryNoSignal |= isSet(currentExceptionFlag, (uint8_t)8);
-        isSummarySaturation |= isSet(currentExceptionFlag, (uint8_t)16);
-        isSummaryInvalidRadiance |= isSet(currentExceptionFlag, (uint8_t)32);
-        isSummaryNoParameters |= isSet(currentExceptionFlag, (uint8_t)64);
-        isSummaryUnfilledPixel |= isSet(currentExceptionFlag, (uint8_t)128);
-    }
-
-    sloValue |= isSummaryISPAbsent ? 1 : 0;
-    sloValue |= isSummaryPixelAbsent ? 2 : 0;
-    sloValue |= isSummaryNotDecompressed ? 4 : 0;
-    sloValue |= isSummaryNoSignal ? 8 : 0;
-    sloValue |= isSummarySaturation ? 16 : 0;
-    sloValue |= isSummaryInvalidRadiance ? 32 : 0;
-    sloValue |= isSummaryNoParameters ? 64 : 0;
-    sloValue |= isSummaryUnfilledPixel ? 128 : 0;
-
-    // todo - is aligned with L1c Products Definition, but doesn't work with test product
-
-//    sloValue |= isSet(currentSloFlags, 1U) ? 1 << 16 : 0; // cosmetic
-//    sloValue |= isSet(currentSloFlags, 4U) ? 1 << 18 : 0; // day
-//    sloValue |= isSet(currentSloFlags, 8U) ? 1 << 19 : 0; // twilight
-//    sloValue |= isSet(currentSloFlags, 16U) ? 1 << 20 : 0; // sun_glint
-//    sloValue |= isSet(currentSloFlags, 32U) ? 1 << 21 : 0; // snow
-//    sloValue |= isSet(currentSloFlags, 64U) ? 1 << 22 : 0; // summary_cloud
-//    sloValue |= isSet(currentSloFlags, 128U) ? 1 << 23 : 0; // summary_pointing
-
-    return sloValue;
-}
