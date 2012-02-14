@@ -1,8 +1,21 @@
 /*
- * Pcl.h
+ * Copyright (C) 2010 by Brockmann Consult (info@brockmann-consult.de)
  *
- *  Created on: Sep 14, 2011
- *      Author: thomasstorm
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation. This program is distributed in the hope it will
+ * be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
+ *
+ * File:   Pcl.h
+ * Author: Thomas Storm, Ralf Quast
+ *
+ * Created on Sep 14, 2011
  */
 
 #ifndef PCL_H_
@@ -21,22 +34,9 @@ public:
 private:
 	friend class PclTest;
 
-	Segment* collocatedSegment;
-    const Accessor* olcFlagsAccessor;
-    const Accessor* slnFlagsAccessor;
-    const Accessor* sloFlagsAccessor;
-	vector<Accessor*> radianceAccessors;
-	vector<Accessor*> slnExceptionAccessors;
-	vector<Accessor*> sloExceptionAccessors;
-
-	static uint16_t computeOlcFlagValue(uint32_t currentOlcFlags);
-
-	void setUpSourceAccessors(Context & context);
-    void setUpSegment(Context & context);
-
-	uint16_t computeSynFlagValue(uint32_t olcFlags, uint8_t slnFlags, uint8_t sloFlags, size_t index);
-	uint16_t computeSlnFlagValue(uint32_t currentSlnFlags, size_t index);
-	uint16_t computeSloFlagValue(uint32_t currentSloFlags, size_t index);
+	static uint16_t computeOlcSummaryFlags(uint32_t sourceFlags);
+	static uint32_t computeSlsSummaryFlags(uint8_t sourceFlags, const vector<const Accessor*>& exceptionAccessors, size_t index);
+	static uint16_t computeSynFlags(uint32_t sourceOlcFlags, uint8_t sourceSlnFlags, uint8_t sourceSloFlags, const vector<const Accessor*>& radianceAccessors, size_t index);
 };
 
 #endif /* PCL_H_ */
