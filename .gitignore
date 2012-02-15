@@ -11,10 +11,13 @@
 target/
 /bin/
 /config/
-/files/
+/files/*.nc
 /jobs/
-/testdata/
-/tmp/
+/testdata/SY1/S3A_SY_1_SYN________2013621T10920_2013621T101413_2_00293_2_DMS_TD04_0?/
+/testdata/SY2/
+/testdata/VGP/
+/testdata/VGS/
+/tmp/??????
 /modules/
 CMakeCache.txt
 CMakeFiles/

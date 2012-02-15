@@ -2,14 +2,14 @@
     <set name="VGT">
         <dimensions>
             <dimension>
-                <name>NX</name>
-                <size>40320</size>
-            </dimension>
-            <dimension>
                 <name>NY</name>
                 <size>14672</size>
             </dimension>
         </dimensions>
+            <dimension>
+                <name>NX</name>
+                <size>40320</size>
+            </dimension>
     </set>
     <set name="VGT_LAT">
         <dimensions>

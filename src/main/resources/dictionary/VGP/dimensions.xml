@@ -3,24 +3,24 @@
     <set name="VGT">
         <dimensions>
             <dimension>
-                <name>NX</name>
-                <size>8176</size>
-            </dimension>
-            <dimension>
                 <name>NY</name>
                 <size>5600</size>
+            </dimension>
+            <dimension>
+                <name>NX</name>
+                <size>8176</size>
             </dimension>
         </dimensions>
     </set>
     <set name="VGT_TP">
         <dimensions>
             <dimension>
-                <name>SX</name>
-                <size>1022</size>
-            </dimension>
-            <dimension>
                 <name>SY</name>
                 <size>700</size>
+            </dimension>
+            <dimension>
+                <name>SX</name>
+                <size>1022</size>
             </dimension>
         </dimensions>
     </set>
