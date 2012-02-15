@@ -1,7 +1,7 @@
-set(LIB_HOME /usr/local 
+set(LIBS_HOME ~/usr 
     CACHE 
     PATH 
-    "The path to any locally installed dependencies, like e.g., the boost, netcdf, xerces-c, or xqilla shared libraries."
+    "The path to locally installed dependencies, like e.g., the boost, netcdf, xerces-c, or xqilla shared libraries."
 )
 
 #set(JAVA_HOME /usr/lib/jvm/java-6-sun 
