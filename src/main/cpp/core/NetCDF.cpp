@@ -171,7 +171,7 @@ int NetCDF::getVariableType(int fileId, int varId) {
 int NetCDF::getVariableId(int fileId, const string& varName) {
 	int varId;
 	const int status = nc_inq_varid(fileId, varName.c_str(), &varId);
-	if(status == NC_ENOTVAR) {
+	if (status == NC_ENOTVAR) {
 	    return -1;
 	}
 	checkStatus(status, "getting variable ID for variable '" + varName + "'");

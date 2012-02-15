@@ -136,16 +136,16 @@ void AbstractWriter::defineNcVar(const Context& context, const ProductDescriptor
 		}
 		const path ncFilePath = targetDirPath / (ncFileBasename + ".nc");
 		const int fileId = NetCDF::createFile(ncFilePath.string());
-
-		putGlobalAttributes(fileId, variableDescriptor, productDescriptor.getAttributes());
-
 		const string& variableName = variableDescriptor.getName();
 
 		valarray<int> dimIds;
 		NetCDF::defineDimensions(fileId, variableName, variableDescriptor.getDimensions(), grid, dimIds);
 		map<const VariableDescriptor*, valarray<int> > commonDimIds;
+
 		defineCoordinateDimensions(fileId, segmentDescriptor.getName(), context.getDictionary(), commonDimIds);
 		defineCoordinateVariables(fileId, segmentDescriptor.getName(), context.getDictionary(), commonDimIds);
+
+		putGlobalAttributes(fileId, variableDescriptor, productDescriptor.getAttributes());
 
 		ncFileIdMap[ncFileBasename] = fileId;
 		ncDimIdMap.insert(make_pair(ncFileBasename, dimIds));
@@ -165,22 +165,9 @@ void AbstractWriter::putGlobalAttributes(int fileId, const VariableDescriptor& v
 			{
 				const string& attributeName = attribute->getName();
 				if (attributeName.compare("title") == 0) {
-					string title;
-					if (variableDescriptor.hasAttribute("long_name")) {
-						title = variableDescriptor.getAttribute("long_name").getValue();
-					} else {
-						title = variableDescriptor.getName();
-					}
-					attribute->setValue(title);
+					attribute->setValue("TBD");
 				} else if (attributeName.compare("comment") == 0) {
-					string comment = "This dataset contains the '";
-					if (variableDescriptor.hasAttribute("long_name")) {
-						comment.append(variableDescriptor.getAttribute("long_name").getValue().c_str());
-					} else {
-						comment.append(variableDescriptor.getName().c_str());
-					}
-					comment.append(" 'variable.");
-					attribute->setValue(comment);
+					attribute->setValue("TBD");
 				} else if (attributeName.compare("processor_version") == 0) {
 					attribute->setValue(Constants::PROCESSOR_VERSION);
 				} else if (attributeName.compare("dataset_name") == 0) {

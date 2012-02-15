@@ -8,7 +8,7 @@
         </attribute>
         <attribute>
             <name>title</name>
-            <value>${title}</value> <!-- needs to be set at runtime, e.g. to 'B0 TOA Reflectance' -->
+            <value>${title}</value>
             <type>string</type>
         </attribute>
         <attribute>
@@ -28,7 +28,7 @@
         </attribute>        
         <attribute>
             <name>comment</name>
-            <value>${comment}</value> <!-- needs to be set at runtime e.g. to 'This dataset contains the B0 TOA reflectance variable.' -->
+            <value>${comment}</value>
             <type>string</type>
         </attribute>
         <attribute>

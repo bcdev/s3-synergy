@@ -12,7 +12,7 @@
 
 class VgtWriter: public AbstractWriter {
 public:
-    VgtWriter(const string& productId = Constants::PRODUCT_VGP, const string safeManifestName = Constants::SAFE_MANIFEST_NAME_VGP);
+    VgtWriter(const string& productId = Constants::PRODUCT_VGP, const string& safeManifestName = Constants::SAFE_MANIFEST_NAME_VGP);
     virtual ~VgtWriter();
 
 protected:
@@ -30,10 +30,12 @@ private:
 	vector<SegmentDescriptor*> getCoordinateSegmentDescriptors(const Dictionary& dict) const;
 	vector<VariableDescriptor*> getSubsampledCoordinateVariableDescriptors(const Dictionary& dict) const;
 	vector<VariableDescriptor*> getCoordinateVariableDescriptors(const Dictionary& dict) const;
-	bool isCoordinateSegmentDescriptor(const SegmentDescriptor& segmentDescriptor) const;
-	bool isTiePointCoordinateSegment(const string& segmentName) const;
-	bool isTiePointSegment(const string& segmentName) const;
-	const vector<int> getFileIds() const;
+	vector<int> getFileIds() const;
+
+	static bool isCoordinateSegmentDescriptor(const SegmentDescriptor& segmentDescriptor);
+	static bool isTiePointCoordinateSegment(const string& segmentName);
+	static bool isTiePointSegment(const string& segmentName);
+
 
 	const string productId;
 	const string safeManifestName;

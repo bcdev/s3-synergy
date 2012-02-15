@@ -7,7 +7,7 @@
 
 #include "VgtWriter.h"
 
-VgtWriter::VgtWriter(const string& productId, const string safeManifestName) :
+VgtWriter::VgtWriter(const string& productId, const string& safeManifestName) :
 		AbstractWriter("VGT_WRITER"), productId(productId), safeManifestName(safeManifestName) {
 }
 
@@ -46,13 +46,13 @@ void VgtWriter::writeCoordinateVariables(Context& context) {
 								continue;
 							}
 							const vector<string> varNames = segment.getVariableNames();
-							foreach (string var, varNames)
+							foreach (string varName, varNames)
 									{
-										const int varId = NetCDF::getVariableId(fileId, var);
+										const int varId = NetCDF::getVariableId(fileId, varName);
 										if (varId == -1) {
 											continue;
 										}
-										const Accessor& accessor = segment.getAccessor(var);
+										const Accessor& accessor = segment.getAccessor(varName);
 										NetCDF::putData(fileId, varId, accessor.getUntypedData());
 									}
 							context.setLastComputedL(segment, *this, segment.getGrid().getMaxL());
@@ -95,11 +95,11 @@ void VgtWriter::defineCoordinateVariables(int fileId, const string& segmentName,
 			}
 }
 
-const vector<int> VgtWriter::getFileIds() const {
+vector<int> VgtWriter::getFileIds() const {
 	typedef pair<string, int> Entry;
 
 	vector<int> fileIds(ncFileIdMap.size());
-	foreach(Entry entry, ncFileIdMap)
+	foreach(const Entry entry, ncFileIdMap)
 			{
 				fileIds.push_back(entry.second);
 			}
@@ -146,7 +146,7 @@ vector<SegmentDescriptor*> VgtWriter::getCoordinateSegmentDescriptors(const Dict
 	const vector<SegmentDescriptor*> allSegmentDescriptors = productDescriptor.getSegmentDescriptors();
 
 	vector<SegmentDescriptor*> coordinateSegmentDescriptors;
-	foreach(SegmentDescriptor* segmentDescriptor, allSegmentDescriptors)
+	foreach (SegmentDescriptor* segmentDescriptor, allSegmentDescriptors)
 			{
 				if (isCoordinateSegmentDescriptor(*segmentDescriptor)) {
 					coordinateSegmentDescriptors.push_back(segmentDescriptor);
@@ -155,18 +155,18 @@ vector<SegmentDescriptor*> VgtWriter::getCoordinateSegmentDescriptors(const Dict
 	return coordinateSegmentDescriptors;
 }
 
-bool VgtWriter::isTiePointCoordinateSegment(const string& segmentName) const {
+bool VgtWriter::isTiePointCoordinateSegment(const string& segmentName) {
 	return segmentName.compare(Constants::SEGMENT_VGT_LAT_TP) == 0 ||
 			segmentName.compare(Constants::SEGMENT_VGT_LON_TP) == 0 ||
 			segmentName.compare(Constants::SEGMENT_VGT_LAT_TP_BNDS) == 0 ||
 			segmentName.compare(Constants::SEGMENT_VGT_LON_TP_BNDS) == 0;
 }
 
-bool VgtWriter::isTiePointSegment(const string& segmentName) const {
+bool VgtWriter::isTiePointSegment(const string& segmentName) {
 	return segmentName.compare(Constants::SEGMENT_VGT_TP) == 0;
 }
 
-bool VgtWriter::isCoordinateSegmentDescriptor(const SegmentDescriptor& segmentDescriptor) const {
+bool VgtWriter::isCoordinateSegmentDescriptor(const SegmentDescriptor& segmentDescriptor) {
 	const string& segmentName = segmentDescriptor.getName();
 	return segmentName.compare(Constants::SEGMENT_VGT_LAT) == 0 ||
 			segmentName.compare(Constants::SEGMENT_VGT_LAT_TP) == 0 ||
