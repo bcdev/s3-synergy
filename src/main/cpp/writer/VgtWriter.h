@@ -12,33 +12,23 @@
 
 class VgtWriter: public AbstractWriter {
 public:
-    VgtWriter(const string& productId = Constants::PRODUCT_VGP, const string& safeManifestName = Constants::SAFE_MANIFEST_NAME_VGP);
-    virtual ~VgtWriter();
+    VgtWriter(const string& productId = Constants::PRODUCT_VGP);
+    ~VgtWriter();
 
 protected:
-    const string& getProductId() const;
-    const string& getSafeManifestName() const;
-    const vector<SegmentDescriptor*> getSegmentDescriptors(const Dictionary& dict) const;
-
-    void writeCoordinateVariables(Context& context);
-    void defineCoordinateDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, valarray<int> >& coordinateDimIds);
-    void defineCoordinateVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, valarray<int> >& coordinateDimIds);
+	vector<SegmentDescriptor*> getSegmentDescriptors(const ProductDescriptor& productDescriptor) const;
+    void defineCoordinateVariables(const Context& context, int fileId, const ProductDescriptor& productDescriptor, const string& segmentName) const;
+    void writeCoordinateVariables(Context& context, int fileId, const ProductDescriptor& productDescriptor, const string& segmentName) const;
 
 private:
 	friend class VgtWriterTest;
 
-	vector<SegmentDescriptor*> getCoordinateSegmentDescriptors(const Dictionary& dict) const;
-	vector<VariableDescriptor*> getSubsampledCoordinateVariableDescriptors(const Dictionary& dict) const;
-	vector<VariableDescriptor*> getCoordinateVariableDescriptors(const Dictionary& dict) const;
-	vector<int> getFileIds() const;
+	vector<VariableDescriptor*> getCoordinateVariableDescriptors(const ProductDescriptor& productDescriptor) const;
+	vector<VariableDescriptor*> getTiePointCoordinateVariableDescriptors(const ProductDescriptor& productDescriptor) const;
 
-	static bool isCoordinateSegmentDescriptor(const SegmentDescriptor& segmentDescriptor);
+	static bool isCoordinateSegment(const string& segmentName);
 	static bool isTiePointCoordinateSegment(const string& segmentName);
 	static bool isTiePointSegment(const string& segmentName);
-
-
-	const string productId;
-	const string safeManifestName;
 };
 
 #endif	/* VGTWRITER_H */

@@ -15,6 +15,7 @@
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
 #include "../../../../src/main/cpp/util/BasicTask.h"
 #include "../../../../src/main/cpp/writer/VgtWriter.h"
+#include "../../../../src/main/cpp/writer/ManifestWriter.h"
 
 #include "VgtP_2_Test.h"
 
@@ -42,6 +43,7 @@ void VgtP_2_Test::testIntegrationOfVgtPModules() {
 	shared_ptr<Module> vfl = shared_ptr<Module>(new Vfl());
 	shared_ptr<Module> vpr = shared_ptr<Module>(new Vpr());
 	shared_ptr<Module> writer = shared_ptr<Module>(new VgtWriter());
+	shared_ptr<Module> manifestWriter = shared_ptr<Module>(new ManifestWriter(Constants::PRODUCT_VGP));
 
 	task.getContext().addModule(reader);
 	task.getContext().addModule(col);
@@ -50,6 +52,7 @@ void VgtP_2_Test::testIntegrationOfVgtPModules() {
 	task.getContext().addModule(vfl);
 	task.getContext().addModule(vpr);
 	task.getContext().addModule(writer);
+	task.getContext().addModule(manifestWriter);
 
 	const int exitCode = task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_INT_VGTP_2.xml");
 

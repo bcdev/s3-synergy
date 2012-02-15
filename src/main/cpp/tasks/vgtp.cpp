@@ -12,6 +12,7 @@
 #include "../modules/Vpr.h"
 #include "../reader/SynL1Reader.h"
 #include "../writer/VgtWriter.h"
+#include "../writer/ManifestWriter.h"
 
 #include "../util/BasicTask.h"
 
@@ -25,6 +26,7 @@ int main(int argc, char* argv[]) {
 	shared_ptr<Module> vfl = shared_ptr<Module>(new Vfl());
 	shared_ptr<Module> vpr = shared_ptr<Module>(new Vpr());
 	shared_ptr<Module> writer = shared_ptr<Module>(new VgtWriter());
+	shared_ptr<Module> manifestWriter = shared_ptr<Module>(new ManifestWriter(Constants::PRODUCT_VGP));
 
 	task.getContext().addModule(reader);
 	task.getContext().addModule(col);
@@ -33,6 +35,7 @@ int main(int argc, char* argv[]) {
 	task.getContext().addModule(vfl);
 	task.getContext().addModule(vpr);
 	task.getContext().addModule(writer);
+	task.getContext().addModule(manifestWriter);
 
 	return task.execute(argc, argv);
 }

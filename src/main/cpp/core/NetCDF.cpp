@@ -228,8 +228,7 @@ void NetCDF::getVariableData(int fileId, int varId, const valarray<size_t>& orig
 int NetCDF::findDimension(int fileId, const string& dimName) {
     int dimId;
     const int status = nc_inq_dimid(fileId, dimName.c_str(), &dimId);
-    const int dimensionNotFoundErrorCode = -46;
-    if(status == dimensionNotFoundErrorCode) {
+    if (status == NC_EBADDIM) {
         return -1;
     }
     checkStatus(status, "finding dimension '" + dimName + "'");
@@ -376,7 +375,6 @@ void NetCDF::defineDimensions(const int fileId, const string& name, const vector
 
 void NetCDF::checkStatus(int status, const string& action) {
 	using std::ostringstream;
-
 	if (status != 0) {
 		ostringstream oss;
 		oss << "IO error " << status << " while " << action << " ";

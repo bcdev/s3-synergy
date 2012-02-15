@@ -18,42 +18,38 @@ using std::valarray;
 
 class AbstractWriter: public BasicModule {
 public:
-	AbstractWriter(const string& name);
-	virtual ~AbstractWriter();
+
 	void process(Context& context);
 	void start(Context& context);
 	void stop(Context& context);
 
 protected:
-    path targetDirPath;
+	AbstractWriter(const string& name, const string& productId);
+	virtual ~AbstractWriter();
 
-    map<string, int> ncFileIdMap;
-    map<string, valarray<int> > ncDimIdMap;
-    map<string, int> ncVarIdMap;
+	virtual vector<SegmentDescriptor*> getSegmentDescriptors(const ProductDescriptor& productDescriptor) const {
+	    return productDescriptor.getSegmentDescriptors();
+	}
 
-	virtual const string& getProductId() const = 0;
-	virtual const string& getSafeManifestName() const = 0;
-	virtual const vector<SegmentDescriptor*> getSegmentDescriptors(const Dictionary& dict) const = 0;
+	virtual void defineCoordinateVariables(const Context& context, int fileId, const ProductDescriptor& productDescriptor, const string& segmentName) const {
+	}
 
-	virtual void writeCoordinateVariables(Context& context) = 0;
-	virtual void defineCoordinateDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, valarray<int> >& commonDimIds) = 0;
-	virtual void defineCoordinateVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, valarray<int> >& commonDimIds) = 0;
+	virtual void writeCoordinateVariables(Context& context, int fileId, const ProductDescriptor& productDescriptor, const string& segmentName) const {
+	}
 
 private:
 	friend class AbstractWriterTest;
-	void defineNcVar(const Context& context, const ProductDescriptor& productDescriptor, const SegmentDescriptor& segmentDescriptor,
+
+	void defineVariable(const Context& context, const ProductDescriptor& productDescriptor, const SegmentDescriptor& segmentDescriptor,
 	        const VariableDescriptor& variable, const Grid& grid);
-	void putGlobalAttributes(int fileId, const VariableDescriptor& variableDescriptor, const vector<Attribute*>& attributes) const;
+	void putGlobalAttributes(int fileId, const string& ncFileBasename, const vector<Attribute*>& attributes) const;
 
-	void createSafeProduct(const Context& context);
-	void copyTemplateFiles() const;
-	string readManifest() const;
-	void setStartTime(const Context& context, string& manifest) const;
-	void setChecksums(string& manifest) const;
-	void writeManifest(string& manifest) const;
-	void removeManifestTemplate() const;
+	const string productId;
 
-	static string getMd5Sum(const string& file);
+    path targetDirPath;
+    map<string, int> ncFileIdMap;
+    map<string, valarray<int> > ncDimIdMap;
+    map<string, int> ncVarIdMap;
 };
 
 #endif	/* ABSTRACTWRITER_H */

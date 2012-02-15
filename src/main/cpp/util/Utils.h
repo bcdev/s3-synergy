@@ -92,19 +92,32 @@ public:
 	    if (is_directory(directory)) {
 	        for (directory_iterator iter(directory); iter != directory_iterator(); ++iter) {
 	            if (!is_directory(iter->path())) {
-	                fileNames.push_back(iter->path().filename().c_str());
+	                fileNames.push_back(iter->path().filename().string());
 	            }
 	        }
 	    }
 	    return fileNames;
 	}
 
+	static vector<path> getFilePaths(const string& directory, const string& extension) {
+	    vector<path> filePaths;
+	    if (is_directory(directory)) {
+	        for (directory_iterator iter(directory); iter != directory_iterator(); ++iter) {
+	            if (!is_directory(iter->path()) && extension.compare(iter->path().filename().extension().string()) == 0) {
+	                filePaths.push_back(iter->path());
+	            }
+	        }
+	    }
+	    return filePaths;
+	}
+
+
 	static vector<string> getDirectoryNames(const string& directory) {
 	    vector<string> directoryNames;
 	    if (is_directory(directory)) {
 	        for (directory_iterator iter(directory); iter != directory_iterator(); ++iter) {
 	            if (is_directory(iter->path())) {
-	                directoryNames.push_back(iter->path().filename().c_str());
+	                directoryNames.push_back(iter->path().filename().string());
 	            }
 	        }
 	    }

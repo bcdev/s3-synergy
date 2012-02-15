@@ -16,6 +16,7 @@
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
 #include "../../../../src/main/cpp/util/BasicTask.h"
 #include "../../../../src/main/cpp/writer/VgtWriter.h"
+#include "../../../../src/main/cpp/writer/ManifestWriter.h"
 
 #include "VgtS_2_Test.h"
 
@@ -43,7 +44,8 @@ void VgtS_2_Test::testIntegrationOfVgtSModules() {
 	shared_ptr<Module> vfl = shared_ptr<Module>(new Vfl());
 	shared_ptr<Module> vac = shared_ptr<Module>(new Vac());
 	shared_ptr<Module> vco = shared_ptr<Module>(new Vco());
-	shared_ptr<Module> writer = shared_ptr<Module>(new VgtWriter(Constants::PRODUCT_VGS, Constants::SAFE_MANIFEST_NAME_VGS));
+	shared_ptr<Module> writer = shared_ptr<Module>(new VgtWriter(Constants::PRODUCT_VGS));
+	shared_ptr<Module> manifestWriter = shared_ptr<Module>(new ManifestWriter(Constants::PRODUCT_VGS));
 
 	task.getContext().addModule(reader);
 	task.getContext().addModule(col);
@@ -53,6 +55,7 @@ void VgtS_2_Test::testIntegrationOfVgtSModules() {
 	task.getContext().addModule(vac);
 	task.getContext().addModule(vco);
 	task.getContext().addModule(writer);
+	task.getContext().addModule(manifestWriter);
 
 	const int exitCode = task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_INT_VGTS_2.xml");
 

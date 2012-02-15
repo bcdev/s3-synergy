@@ -250,18 +250,6 @@ const uint8_t VGT_B0_GOOD_FLAG = 128U;
  * The default fill value used for 'double' type variables.
  */
 const double FILL_VALUE_DOUBLE = -numeric_limits<double>::max();
-/**
- * The name of the SYN SAFE manifest file.
- */
-const string SAFE_MANIFEST_NAME_SYN = "manifest_SYN";
-/**
- * The name of the VGT-P SAFE manifest file.
- */
-const string SAFE_MANIFEST_NAME_VGP = "manifest_VGP";
-/**
- * The name of the VGT-S SAFE manifest file.
- */
-const string SAFE_MANIFEST_NAME_VGS = "manifest_VGS";
 }
 
 #endif	/* CONSTANTS_H */

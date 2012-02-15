@@ -13,6 +13,7 @@
 #include "../modules/Pcl.h"
 #include "../reader/SynL1Reader.h"
 #include "../writer/SynL2Writer.h"
+#include "../writer/ManifestWriter.h"
 
 #include "../util/BasicTask.h"
 
@@ -27,6 +28,7 @@ int main(int argc, char* argv[]) {
 	shared_ptr<Module> aei = shared_ptr<Module>(new Aei());
 	shared_ptr<Module> aco = shared_ptr<Module>(new Aco());
 	shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
+	shared_ptr<Module> manifestWriter = shared_ptr<Module>(new ManifestWriter(Constants::PRODUCT_SY2));
 
 	task.getContext().addModule(reader);
 	task.getContext().addModule(col);
@@ -36,6 +38,7 @@ int main(int argc, char* argv[]) {
 	task.getContext().addModule(aei);
 	task.getContext().addModule(aco);
 	task.getContext().addModule(writer);
+	task.getContext().addModule(manifestWriter);
 
 	return task.execute(argc, argv);
 }

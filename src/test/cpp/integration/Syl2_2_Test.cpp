@@ -16,6 +16,7 @@
 #include "../../../../src/main/cpp/util/JobOrderParser.h"
 #include "../../../../src/main/cpp/util/BasicTask.h"
 #include "../../../../src/main/cpp/writer/SynL2Writer.h"
+#include "../../../../src/main/cpp/writer/ManifestWriter.h"
 
 #include "Syl2_2_Test.h"
 
@@ -44,6 +45,7 @@ void Syl2_2_Test::testIntegrationOfSynL2Modules() {
 	shared_ptr<Module> aei = shared_ptr<Module>(new Aei());
 	shared_ptr<Module> aco = shared_ptr<Module>(new Aco());
 	shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
+	shared_ptr<Module> manifestWriter = shared_ptr<Module>(new ManifestWriter(Constants::PRODUCT_SY2));
 
 	task.getContext().addModule(reader);
 	task.getContext().addModule(col);
@@ -53,6 +55,7 @@ void Syl2_2_Test::testIntegrationOfSynL2Modules() {
 	task.getContext().addModule(aei);
 	task.getContext().addModule(aco);
 	task.getContext().addModule(writer);
+	task.getContext().addModule(manifestWriter);
 
 	const int exitCode = task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_INT_SYL2_2.xml");
 
