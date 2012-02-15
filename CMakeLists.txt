@@ -55,42 +55,42 @@ file(GLOB_RECURSE VGTS_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/VgtS_
 
 find_library(BOOST_REGEX
     NAMES boost_regex boost_regex-mt 
-    HINTS ${LIBS_HOME}/lib 
+    PATHS ~/usr/lib /usr/local/lib /usr/lib 
     NO_DEFAULT_PATH
     DOC "The path to the Boost Regular Expression shared library."
 )
 find_library(BOOST_SYSTEM
     NAMES boost_system boost_system-mt
-    HINTS ${LIBS_HOME}/lib
+    PATHS ~/usr/lib /usr/local/lib /usr/lib 
     NO_DEFAULT_PATH
     DOC "The path to the Boost System shared library."
 )
 find_library(BOOST_FILESYSTEM
     NAMES boost_filesystem boost_filesystem-mt
-    HINTS ${LIBS_HOME}/lib
+    PATHS ~/usr/lib /usr/local/lib /usr/lib 
     NO_DEFAULT_PATH
     DOC "The path to the Boost Filesystem shared library."
 )
 find_library(CPPUNIT
     NAMES cppunit
-    HINTS ${LIBS_HOME}/lib
+    PATHS ~/usr/lib /usr/local/lib /usr/lib 
     DOC "The path to the CppUnit shared library."
 )
 find_library(NETCDF
     NAMES netcdf
-    HINTS ${LIBS_HOME}/lib
+    PATHS ~/usr/lib /usr/local/lib /usr/lib 
     NO_DEFAULT_PATH
     DOC "The path to the netCDF shared library."
 )
 find_library(XERCES
     NAMES xerces-c
-    HINTS ${LIBS_HOME}/lib
+    PATHS ~/usr/lib /usr/local/lib /usr/lib 
     NO_DEFAULT_PATH
     DOC "The path to the Xerces-c shared library."
 )
 find_library(XQILLA
     NAMES xqilla
-    HINTS ${LIBS_HOME}/lib
+    PATHS ~/usr/lib /usr/local/lib /usr/lib 
     NO_DEFAULT_PATH
     DOC "The path to the XQilla shared library."
 )
@@ -100,7 +100,7 @@ find_program(MD5_SUM_EXECUTABLE NAMES md5sum gmd5sum)
 # Project include directories
 #
 include_directories(before
-    ${LIBS_HOME}/include
+    ~/usr/include
 )
 #include_directories(before
 #    ${JAVA_HOME}/${JAVA_INC_DIR}
@@ -110,9 +110,6 @@ include_directories(before
 ##
 # Project link directories
 #
-#link_directories(
-#    ${LIBS_HOME}/lib
-#)
 #link_directories(
 #    ${JAVA_HOME}/${JAVA_LIB_DIR}
 #    ${JAVA_HOME}/${JAVA_JVM_DIR}
