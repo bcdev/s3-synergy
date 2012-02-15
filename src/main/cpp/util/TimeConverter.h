@@ -8,7 +8,6 @@
 #ifndef TIMECONVERTER_H_
 #define TIMECONVERTER_H_
 
-#include "../core/Boost.h"
 #include <string>
 
 using std::string;
@@ -27,16 +26,17 @@ public:
      *  </ul>
      */
     TimeConverter(const string& startTime);
-    virtual ~TimeConverter();
+
+    ~TimeConverter();
 
     /**
      * Returns the number of minutes the given date differs from the start time.
      * The date is given as microseconds from 01.01.2000.
      */
-    int16_t getMinutesSinceStartTime(uint64_t microSeconds) const;
+    int64_t getMinutesSinceStartTime(int64_t microSeconds) const;
 
 private:
-    int64_t startTime;
+    int64_t startSeconds;
 };
 
 #endif /* TIMECONVERTER_H_ */

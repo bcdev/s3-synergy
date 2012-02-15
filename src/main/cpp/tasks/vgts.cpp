@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
 	shared_ptr<Module> vfl = shared_ptr<Module>(new Vfl());
 	shared_ptr<Module> vac = shared_ptr<Module>(new Vac());
 	shared_ptr<Module> vco = shared_ptr<Module>(new Vco());
-	shared_ptr<Module> writer = shared_ptr<Module>(new VgtWriter());
+	shared_ptr<Module> writer = shared_ptr<Module>(new VgtWriter(Constants::PRODUCT_VGS, Constants::SAFE_MANIFEST_NAME_VGS));
 
 	task.getContext().addModule(reader);
 	task.getContext().addModule(col);

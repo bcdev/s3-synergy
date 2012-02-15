@@ -39,7 +39,7 @@ void AbstractWriter::start(Context& context) {
 	context.getLogging().info("target product path is '" + targetDirPath.string() + "'", getId());
 
 	const Dictionary& dict = context.getDictionary();
-	const ProductDescriptor& productDescriptor = dict.getProductDescriptor(getProductDescriptorIdentifier());
+	const ProductDescriptor& productDescriptor = dict.getProductDescriptor(getProductId());
 	const vector<SegmentDescriptor*> segmentDescriptors = getSegmentDescriptors(dict);
 
 	foreach(SegmentDescriptor* segmentDescriptor, segmentDescriptors) {
@@ -104,7 +104,7 @@ void AbstractWriter::process(Context& context) {
             }
         }
     }
-    writeCommonVariables(context);
+    writeCoordinateVariables(context);
 }
 
 void AbstractWriter::stop(Context& context) {
@@ -144,8 +144,8 @@ void AbstractWriter::defineNcVar(const Context& context, const ProductDescriptor
 		valarray<int> dimIds;
 		NetCDF::defineDimensions(fileId, variableName, variableDescriptor.getDimensions(), grid, dimIds);
 		map<const VariableDescriptor*, valarray<int> > commonDimIds;
-		defineCommonDimensions(fileId, segmentDescriptor.getName(), context.getDictionary(), commonDimIds);
-		defineCommonVariables(fileId, segmentDescriptor.getName(), context.getDictionary(), commonDimIds);
+		defineCoordinateDimensions(fileId, segmentDescriptor.getName(), context.getDictionary(), commonDimIds);
+		defineCoordinateVariables(fileId, segmentDescriptor.getName(), context.getDictionary(), commonDimIds);
 
 		ncFileIdMap[ncFileBasename] = fileId;
 		ncDimIdMap.insert(make_pair(ncFileBasename, dimIds));
@@ -211,7 +211,7 @@ void AbstractWriter::createSafeProduct(const Context& context) {
 }
 
 void AbstractWriter::copyTemplateFiles() const {
-    const string sourceDirPath = Constants::S3_SYNERGY_HOME + "/src/main/resources/SAFE_metacomponents/" + getProductDescriptorIdentifier();
+    const string sourceDirPath = Constants::S3_SYNERGY_HOME + "/src/main/resources/SAFE_metacomponents/" + getProductId();
     const vector<string> fileNames = Utils::getFileNames(sourceDirPath);
     foreach(string fileName, fileNames) {
         boost::filesystem::copy_file(sourceDirPath + "/" + fileName, targetDirPath / fileName, copy_option::overwrite_if_exists);

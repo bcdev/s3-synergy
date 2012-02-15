@@ -22,12 +22,12 @@ public:
     virtual ~SynL2Writer();
 
 protected:
-	const string& getProductDescriptorIdentifier() const;
+	const string& getProductId() const;
 	const vector<SegmentDescriptor*> getSegmentDescriptors(const Dictionary& dict) const;
 	const string& getSafeManifestName() const;
-	void writeCommonVariables(Context& context);
-    void defineCommonDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, valarray<int> >& commonDimIds);
-    void defineCommonVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, valarray<int> >& commonDimIds);
+	void writeCoordinateVariables(Context& context);
+    void defineCoordinateDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, valarray<int> >& commonDimIds);
+    void defineCoordinateVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, valarray<int> >& commonDimIds);
 
 private:
 	friend class SynL2WriterTest;

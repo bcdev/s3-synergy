@@ -257,11 +257,11 @@ const string SAFE_MANIFEST_NAME_SYN = "manifest_SYN";
 /**
  * The name of the VGT-P SAFE manifest file.
  */
-const string SAFE_MANIFEST_NAME_VGT_P = "manifest_VGP";
+const string SAFE_MANIFEST_NAME_VGP = "manifest_VGP";
 /**
  * The name of the VGT-S SAFE manifest file.
  */
-const string SAFE_MANIFEST_NAME_VGT_S = "manifest_VGS";
+const string SAFE_MANIFEST_NAME_VGS = "manifest_VGS";
 }
 
 #endif	/* CONSTANTS_H */

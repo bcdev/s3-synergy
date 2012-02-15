@@ -31,12 +31,14 @@ protected:
     map<string, valarray<int> > ncDimIdMap;
     map<string, int> ncVarIdMap;
 
-	virtual const string& getProductDescriptorIdentifier() const = 0;
+	virtual const string& getProductId() const = 0;
 	virtual const string& getSafeManifestName() const = 0;
 	virtual const vector<SegmentDescriptor*> getSegmentDescriptors(const Dictionary& dict) const = 0;
-	virtual void writeCommonVariables(Context& context) = 0;
-	virtual void defineCommonDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, valarray<int> >& commonDimIds) = 0;
-	virtual void defineCommonVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, valarray<int> >& commonDimIds) = 0;
+
+	virtual void writeCoordinateVariables(Context& context) = 0;
+	virtual void defineCoordinateDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, valarray<int> >& commonDimIds) = 0;
+	virtual void defineCoordinateVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, valarray<int> >& commonDimIds) = 0;
+
 private:
 	friend class AbstractWriterTest;
 	void defineNcVar(const Context& context, const ProductDescriptor& productDescriptor, const SegmentDescriptor& segmentDescriptor,

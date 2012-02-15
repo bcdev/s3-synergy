@@ -21,7 +21,7 @@ SynL2Writer::SynL2Writer() : AbstractWriter("SY2_WRITER") {
 
 SynL2Writer::~SynL2Writer() {}
 
-const string& SynL2Writer::getProductDescriptorIdentifier() const {
+const string& SynL2Writer::getProductId() const {
     return Constants::PRODUCT_SY2;
 }
 
@@ -30,17 +30,16 @@ const string& SynL2Writer::getSafeManifestName() const {
 }
 
 const vector<SegmentDescriptor*> SynL2Writer::getSegmentDescriptors(const Dictionary& dict) const {
-    const ProductDescriptor& productDescriptor = dict.getProductDescriptor(getProductDescriptorIdentifier());
-    return productDescriptor.getSegmentDescriptors();
+    return dict.getProductDescriptor(getProductId()).getSegmentDescriptors();
 }
 
-void SynL2Writer::writeCommonVariables(Context& context) {
-    // for SYN, we don't need to write common variables
+void SynL2Writer::writeCoordinateVariables(Context& context) {
+    // for SYN, we don't need to write coordinate variables
 }
 
-void SynL2Writer::defineCommonDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, valarray<int> >& commonDimIds) {
-    // for SYN, we don't need to define common dimensions
+void SynL2Writer::defineCoordinateDimensions(int fileId, const string& segmentName, const Dictionary& dict, map<const VariableDescriptor*, valarray<int> >& commonDimIds) {
+    // for SYN, we don't need to define coordinate dimensions
 }
-void SynL2Writer::defineCommonVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, valarray<int> >& commonDimIds) {
-    // for SYN, we don't need to define common variables
+void SynL2Writer::defineCoordinateVariables(int fileId, const string& segmentName, const Dictionary& dict, const map<const VariableDescriptor*, valarray<int> >& commonDimIds) {
+    // for SYN, we don't need to define coordinate variables
 }

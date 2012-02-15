@@ -31,7 +31,6 @@ void SynL2WriterTest::setUp() {
 	prepareContext();
 }
 
-
 void SynL2WriterTest::prepareContext() {
     context = shared_ptr<Context>(new Context());
     shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
