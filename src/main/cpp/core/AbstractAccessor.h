@@ -30,7 +30,7 @@ using std::invalid_argument;
 using std::numeric_limits;
 
 /**
- * An abstract implementation of the {@code Accessor} interface.
+ * An abstract implementation of the {@code Accessor} interface using memory stored in an array.
  */
 template<class T, int N>
 class AbstractAccessor: public virtual Accessor {

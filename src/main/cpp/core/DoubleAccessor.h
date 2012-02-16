@@ -21,6 +21,11 @@
 class DoubleAccessor : public virtual AbstractAccessor<double, Constants::TYPE_DOUBLE> {
 public:
 
+    /**
+     * Constructs a new instance of this class.
+     * @param n The size of the underlying array.
+     * @param fillValue The fill value used for the variable.
+     */
     DoubleAccessor(size_t n, double fillValue = -numeric_limits<double>::max()) : AbstractAccessor<double, Constants::TYPE_DOUBLE>(n, fillValue) {
     }
 

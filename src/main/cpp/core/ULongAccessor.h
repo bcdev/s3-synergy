@@ -19,6 +19,11 @@
 class ULongAccessor: public virtual AbstractAccessor<uint64_t, Constants::TYPE_ULONG> {
 public:
 
+    /**
+     * Constructs a new instance of this class.
+     * @param n The size of the underlying array.
+     * @param fillValue The fill value used for the variable.
+     */
 	ULongAccessor(size_t n, uint64_t fillValue = 0) :
 			AbstractAccessor<uint64_t, Constants::TYPE_ULONG>(n, fillValue) {
 	}

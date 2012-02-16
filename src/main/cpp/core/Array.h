@@ -18,30 +18,16 @@
 
 #include <valarray>
 
-#include <boost/cstdint.hpp>
-
 #include "Boost.h"
+#include "Types.h"
 
 using std::valarray;
-
-using boost::int8_t;
-using boost::int16_t;
-using boost::int32_t;
-using boost::int64_t;
-using boost::uint8_t;
-using boost::uint16_t;
-using boost::uint32_t;
-using boost::uint64_t;
 
 template<class T, class W>
 class ArrayImpl;
 
 /**
- * Represents an array of values.
- *
- * NOTE: This class is not used yet.
- *
- * @author Ralf Quast
+ * Represents an array of values. This class is not used yet.
  */
 template<class W>
 class Array {

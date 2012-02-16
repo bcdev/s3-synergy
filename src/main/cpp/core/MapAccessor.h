@@ -33,6 +33,9 @@
 using std::numeric_limits;
 using std::logic_error;
 
+/**
+ * An abstract implementation of the {@code Accessor} interface using memory stored in a file.
+ */
 template<class T, int N>
 class MapAccessor: public virtual Accessor {
 public:
@@ -261,7 +264,6 @@ public:
 	}
 
 private:
-
 	const T fillValue;
 	const double scaleFactor;
 	const double addOffset;

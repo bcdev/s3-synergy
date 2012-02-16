@@ -27,9 +27,6 @@ using std::getenv;
 using std::max;
 using std::runtime_error;
 
-/**
- * An abstract implementation of the {@code Module} interface, which does nothing.
- */
 class AbstractModule: virtual public Module {
 public:
 

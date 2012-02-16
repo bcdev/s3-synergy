@@ -18,12 +18,16 @@
 
 #include "AbstractAccessor.h"
 
-/**
- * A concrete implementation of the {@code Accessor} interface for the 'byte' type.
- */
 class ByteAccessor: public virtual AbstractAccessor<int8_t, Constants::TYPE_BYTE> {
 public:
 
+    /**
+     * Constructs a new instance of this class.
+     * @param n The size of the underlying array.
+     * @param fillValue The fill value used for the variable.
+     * @param scaleFactor The scale factor used for the variable.
+     * @param scaleFactor The add-offset used for the variable.
+     */
 	ByteAccessor(size_t n, int8_t fillValue = numeric_limits<uint8_t>::min(), double scaleFactor = 1.0, double addOffset = 0.0) :
 			AbstractAccessor<int8_t, Constants::TYPE_BYTE>(n, fillValue, scaleFactor, addOffset) {
 	}

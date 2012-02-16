@@ -21,6 +21,13 @@
 class UByteAccessor: public virtual AbstractAccessor<uint8_t, Constants::TYPE_UBYTE> {
 public:
 
+    /**
+     * Constructs a new instance of this class.
+     * @param n The size of the underlying array.
+     * @param fillValue The fill value used for the variable.
+     * @param scaleFactor The scale factor used for the variable.
+     * @param scaleFactor The add-offset used for the variable.
+     */
 	UByteAccessor(size_t n, uint8_t fillValue = 0, double scaleFactor = 1.0, double addOffset = 0.0) :
 			AbstractAccessor<uint8_t, Constants::TYPE_UBYTE>(n, fillValue, scaleFactor, addOffset) {
 	}

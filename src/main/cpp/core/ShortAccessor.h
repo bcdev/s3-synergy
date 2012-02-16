@@ -21,6 +21,13 @@
 class ShortAccessor: public virtual AbstractAccessor<int16_t, Constants::TYPE_SHORT> {
 public:
 
+    /**
+     * Constructs a new instance of this class.
+     * @param n The size of the underlying array.
+     * @param fillValue The fill value used for the variable.
+     * @param scaleFactor The scale factor used for the variable.
+     * @param scaleFactor The add-offset used for the variable.
+     */
 	ShortAccessor(size_t n, int16_t fillValue = numeric_limits<uint16_t>::min(), double scaleFactor = 1.0, double addOffset = 0.0) :
 			AbstractAccessor<int16_t, Constants::TYPE_SHORT>(n, fillValue, scaleFactor, addOffset) {
 	}

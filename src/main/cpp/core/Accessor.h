@@ -21,7 +21,7 @@
 #include <typeinfo>
 #include <valarray>
 
-#include <boost/cstdint.hpp>
+#include "Types.h"
 
 using std::bad_cast;
 using std::exception;
@@ -29,17 +29,8 @@ using std::out_of_range;
 using std::string;
 using std::valarray;
 
-using boost::int8_t;
-using boost::int16_t;
-using boost::int32_t;
-using boost::int64_t;
-using boost::uint8_t;
-using boost::uint16_t;
-using boost::uint32_t;
-using boost::uint64_t;
-
 /**
- * Represents the samples of a variable. The interface provides accessor and mutator methods for
+ * An accessor to the samples of a variable. The interface provides accessing and mutating methods for
  * each type of variable.
  */
 class Accessor {

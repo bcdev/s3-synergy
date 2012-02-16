@@ -13,29 +13,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef FLOATACCESSOR_H
-#define	FLOATACCESSOR_H
+#include <boost/cstdint.hpp>
 
-#include "AbstractAccessor.h"
-
-class FloatAccessor : public virtual AbstractAccessor<float, Constants::TYPE_FLOAT> {
-public:
-
-    /**
-     * Constructs a new instance of this class.
-     * @param n The size of the underlying array.
-     * @param fillValue The fill value used for the variable.
-     */
-    FloatAccessor(size_t n, float fillValue = -numeric_limits<float>::max()) : AbstractAccessor<float, Constants::TYPE_FLOAT>(n, fillValue) {
-    }
-
-    virtual ~FloatAccessor() {
-    }
-
-    valarray<float>& getFloatData() const throw (bad_cast) {
-        return getTypedData();
-    }
-};
-
-#endif	/* FLOATACCESSOR_H */
-
+using boost::int8_t;
+using boost::int16_t;
+using boost::int32_t;
+using boost::int64_t;
+using boost::uint8_t;
+using boost::uint16_t;
+using boost::uint32_t;
+using boost::uint64_t;
