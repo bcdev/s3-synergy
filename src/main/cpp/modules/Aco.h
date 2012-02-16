@@ -18,6 +18,9 @@
 
 #include "../modules/BasicModule.h"
 
+/**
+ * The SYN L2 atmospheric correction module (ACO).
+ */
 class Aco: public BasicModule {
 public:
 	Aco();

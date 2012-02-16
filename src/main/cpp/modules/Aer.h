@@ -25,6 +25,9 @@
 #include "../util/UnivariateFunction.h"
 #include "../util/ErrorMetric.h"
 
+/**
+ * The SYN L2 aerosol retrieval module (AER).
+ */
 class Aer: public BasicModule {
 public:
 	Aer();

@@ -20,6 +20,9 @@
 
 #include "BasicModule.h"
 
+/**
+ * The SYN L2 aerosol interpolation module (AEI).
+ */
 class Aei: public BasicModule {
 public:
 	Aei();

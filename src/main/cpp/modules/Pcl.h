@@ -18,6 +18,9 @@
 
 #include "../modules/BasicModule.h"
 
+/**
+ * The SYN L2 pixel classification module (PCL).
+ */
 class Pcl: public BasicModule {
 public:
 	Pcl();

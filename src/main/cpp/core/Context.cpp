@@ -149,7 +149,7 @@ void Context::handleError(exception& e) {
 	}
 }
 
-const time_t Context::getStartTime() const {
+time_t Context::getStartTime() const {
     return startTime;
 }
 

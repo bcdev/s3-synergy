@@ -22,9 +22,7 @@
 #include "../modules/BasicModule.h"
 
 /**
- * AVE - the SYN L2 averaging module.
- *
- * @author Thomas Storm
+ * The SYN L2 averaging module (AVE).
  */
 class Ave: public BasicModule {
 public:

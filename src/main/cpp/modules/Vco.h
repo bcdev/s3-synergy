@@ -19,6 +19,9 @@
 #include "BasicModule.h"
 #include "../util/PixelFinder.h"
 
+/**
+ * The VGT-S composition module (VCO).
+ */
 class Vco: public BasicModule, private GeoLocation {
 public:
 	Vco();

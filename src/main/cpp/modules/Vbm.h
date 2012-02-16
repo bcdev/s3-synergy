@@ -20,6 +20,9 @@
 
 #include "BasicModule.h"
 
+/**
+ * The VGT spectral band-mapping module (VBM).
+ */
 class Vbm: public BasicModule {
 public:
 	Vbm();

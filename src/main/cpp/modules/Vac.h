@@ -20,6 +20,9 @@
 
 #include "../modules/BasicModule.h"
 
+/**
+ * The VGT atmospheric correction module (VAC).
+ */
 class Vac : public BasicModule {
 public:
 	Vac();

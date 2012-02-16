@@ -26,9 +26,7 @@ using std::vector;
 using std::logic_error;
 
 /**
- * COL - the SYN L2 collocation module.
- *
- * @author Ralf Quast
+ * The SYN L2 collocation module (COL).
  */
 class Col: public BasicModule {
 public:

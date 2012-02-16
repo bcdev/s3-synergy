@@ -26,7 +26,7 @@
 using std::set;
 
 /**
- * A basic module, doing nothing.
+ * A basic module, by default doing nothing.
  */
 class BasicModule: public AbstractModule {
 public:

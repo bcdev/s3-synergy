@@ -18,6 +18,9 @@
 
 #include "../modules/BasicModule.h"
 
+/**
+ * The VGT pixel flagging module (VFL).
+ */
 class Vfl : public BasicModule {
 public:
 	Vfl();

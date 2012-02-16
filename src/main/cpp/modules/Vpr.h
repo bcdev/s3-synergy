@@ -19,6 +19,9 @@
 #include "../modules/BasicModule.h"
 #include "../util/PixelFinder.h"
 
+/**
+ * The VGT-P projection module (VPR).
+ */
 class Vpr : public BasicModule, private GeoLocation {
 public:
 	Vpr();
