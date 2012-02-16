@@ -15,8 +15,7 @@
 
 #include "DebugLogging.h"
 
-DebugLogging::DebugLogging(const string& logFileName) {
-    openLogFile(logFileName);
+DebugLogging::DebugLogging(const string& logFileName) : InfoLogging(logFileName) {
 }
 
 DebugLogging::~DebugLogging() {

@@ -15,8 +15,7 @@
 
 #include "InfoLogging.h"
 
-InfoLogging::InfoLogging(const string& logFileName) {
-    openLogFile(logFileName);
+InfoLogging::InfoLogging(const string& logFileName) : ProgressLogging(logFileName) {
 }
 
 InfoLogging::~InfoLogging() {

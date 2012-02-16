@@ -18,6 +18,9 @@
 
 #include "InfoLogging.h"
 
+/**
+ * A concrete implementation of the IPF Logging interface.
+ */
 class DebugLogging: public InfoLogging {
 public:
     DebugLogging(const string& logFileName);
@@ -27,9 +30,6 @@ public:
 	void debug(const string& message, const string& moduleName) {
 	    logToStdout(message, moduleName, PROCESSOR_VERSION, "[D]");
 	}
-
-protected:
-    DebugLogging() {};
 };
 
 #endif	/* DEBUGLOGGING_H */

@@ -18,6 +18,9 @@
 
 #include "../core/NullLogging.h"
 
+/**
+ * A concrete implementation of the IPF Logging interface.
+ */
 class ErrorLogging : public NullLogging {
 public:
     ErrorLogging(const string& logFileName);
@@ -27,10 +30,6 @@ public:
     void error(const string& message, const string& moduleName) {
         logToError(message, moduleName, PROCESSOR_VERSION);
     };
-
-protected:
-    ErrorLogging() {};
-
 };
 
 #endif	/* ERRORLOGGING_H */

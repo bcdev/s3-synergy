@@ -15,8 +15,7 @@
 
 #include "ProgressLogging.h"
 
-ProgressLogging::ProgressLogging(const string& logFileName) {
-    openLogFile(logFileName);
+ProgressLogging::ProgressLogging(const string& logFileName) : WarningLogging(logFileName) {
 }
 
 ProgressLogging::~ProgressLogging() {

@@ -18,6 +18,9 @@
 
 #include "ErrorLogging.h"
 
+/**
+ * A concrete implementation of the IPF Logging interface.
+ */
 class WarningLogging : public ErrorLogging {
 public:
     WarningLogging(const string& logFileName);
@@ -27,10 +30,6 @@ public:
     void warning(const string& message, const string& moduleName) {
         logToStdout(message, moduleName, PROCESSOR_VERSION, "[W]");
     };
-
-protected:
-    WarningLogging() {};
-
 };
 
 #endif	/* WARNINGLOGGING_H */

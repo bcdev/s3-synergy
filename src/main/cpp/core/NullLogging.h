@@ -18,6 +18,9 @@
 
 #include "Logging.h"
 
+/**
+ * A concrete implementation of the IPF Logging interface that does nothing.
+ */
 class NullLogging : public Logging {
 public:
     NullLogging();
@@ -39,5 +42,6 @@ public:
     virtual void error(const string& message, const string& moduleName) {
     };
 };
+
 #endif	/* NULLLOGGING_H */
 

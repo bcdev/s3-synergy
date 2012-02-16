@@ -18,6 +18,9 @@
 
 #include "ProgressLogging.h"
 
+/**
+ * A concrete implementation of the IPF Logging interface.
+ */
 class InfoLogging: public ProgressLogging {
 public:
 	InfoLogging(const string& logFileName);
@@ -27,10 +30,6 @@ public:
 	void info(const string& message, const string& moduleName) {
 	    logToStdout(message, moduleName, PROCESSOR_VERSION, "[I]");
 	}
-
-protected:
-	InfoLogging() {};
-
 };
 
 #endif	/* INFOLOGGING_H */

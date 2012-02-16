@@ -20,6 +20,10 @@
 
 class Bracket;
 
+
+/**
+ * A utility class for minimizing univariate functions.
+ */
 class Min {
 public:
 

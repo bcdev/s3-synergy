@@ -23,6 +23,9 @@
 #include "MultivariateFunction.h"
 #include "UnivariateFunction.h"
 
+/**
+ * A utility class for minimizing an univariate function along a straight line.
+ */
 template<class T>
 class LineMinimizer: private UnivariateFunction {
 public:
@@ -50,6 +53,9 @@ private:
 	size_t end;
 };
 
+/**
+ * A utility class for minimizing multivariate functions.
+ */
 class MultiMin {
 public:
 	virtual ~MultiMin();

@@ -15,8 +15,7 @@
 
 #include "WarningLogging.h"
 
-WarningLogging::WarningLogging(const string& logFileName) {
-    openLogFile(logFileName);
+WarningLogging::WarningLogging(const string& logFileName) : ErrorLogging(logFileName) {
 }
 
 WarningLogging::~WarningLogging() {

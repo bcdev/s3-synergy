@@ -22,7 +22,7 @@
     </dependency>
     
 
-    <categories>Reader,Sentinel,OLCI</categories>
+    <categories>Reader,Sentinel,OLCI,SLSTR</categories>
 
     <extension point="beam-ui:actions">
         <action>

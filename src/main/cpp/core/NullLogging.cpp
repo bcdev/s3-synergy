@@ -15,7 +15,7 @@
 
 #include "NullLogging.h"
 
-NullLogging::NullLogging() {
+NullLogging::NullLogging() : Logging() {
 }
 
 NullLogging::~NullLogging() {

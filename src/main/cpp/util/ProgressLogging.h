@@ -18,6 +18,9 @@
 
 #include "WarningLogging.h"
 
+/**
+ * A concrete implementation of the IPF Logging interface.
+ */
 class ProgressLogging : public WarningLogging {
 public:
     ProgressLogging(const string& logFileName);
@@ -27,9 +30,6 @@ public:
     void progress(const string& message, const string& moduleName) {
         logToStdout(message, moduleName, PROCESSOR_VERSION, "[P]");
     };
-
-protected:
-    ProgressLogging() {};
 };
 
 #endif	/* PROGRESSLOGGING_H */

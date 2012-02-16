@@ -20,14 +20,41 @@
 
 #include "XPathInitializer.h"
 
+/**
+ * A utility class for creating an IPF task.
+ */
 class BasicTask {
 public:
+    /**
+     * Constructs a new instance of this class.
+     * @param name The name of the task created.
+     */
 	BasicTask(const string& name);
+
+	/**
+	 * Destructor.
+	 */
 	~BasicTask();
 
+    /**
+     * Executes the task, i.e. executes all modules added to the task's context.
+     * @param argc The number of command line arguments.
+     * @param argv The command line arguments.
+     * @return the exit code.
+     */
 	int execute(int argc, char* argv[]);
+
+    /**
+     * Executes the task, i.e. executes all modules added to the task's context.
+     * @param jobOrderPath The path to the IPF Job Order file.
+     * @return the exit code.
+     */
 	int execute(const string& jobOrderPath);
 
+    /**
+     * Returns the task's context.
+     * @return the task's context.
+     */
 	Context& getContext() {
 		return context;
 	}

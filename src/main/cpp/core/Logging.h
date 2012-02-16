@@ -19,31 +19,87 @@
 #include <fstream>
 #include <string>
 
-#include "../core/Boost.h"
-
 using std::ofstream;
 using std::string;
 
+/**
+ * Represent the IPF Logging interface.
+ */
 class Logging {
 public:
 
-    Logging();
-    virtual ~Logging() {
-    };
-
+    /**
+     * Logs a debug message.
+     * @param message The message.
+     * @param moduleName The module name that calls the method.
+     */
     virtual void debug(const string& message, const string& moduleName) = 0;
+
+    /**
+     * Logs an info message.
+     * @param message The message.
+     * @param moduleName The module name that calls the method.
+     */
     virtual void info(const string& message, const string& moduleName) = 0;
+
+    /**
+     * Logs a progress message.
+     * @param message The message.
+     * @param moduleName The module name that calls the method.
+     */
     virtual void progress(const string& message, const string& moduleName) = 0;
+
+    /**
+     * Logs a warning message.
+     * @param message The message.
+     * @param moduleName The module name that calls the method.
+     */
     virtual void warning(const string& message, const string& moduleName) = 0;
+
+    /**
+     * Logs an error message.
+     * @param message The message.
+     * @param moduleName The module name that calls the method.
+     */
     virtual void error(const string& message, const string& moduleName) = 0;
 
+    /**
+     * The INFO log level.
+     */
     const static string LOG_LEVEL_INFO;
+
+    /**
+     * The PROGRESS log level.
+     */
     const static string LOG_LEVEL_PROGRESS;
+
+    /**
+     * The DEBUG log level.
+     */
     const static string LOG_LEVEL_DEBUG;
+
+    /**
+     * The WARNING log level.
+     */
     const static string LOG_LEVEL_WARNING;
+
+    /**
+     * The ERROR log level.
+     */
     const static string LOG_LEVEL_ERROR;
 
 protected:
+    /**
+     * Constructs a new instance of this class.
+     */
+    Logging();
+
+    /**
+     * Destructor.
+     */
+    virtual ~Logging() {
+    };
+
     void openLogFile(const string& logFileName);
     string createMessageHeader(const string& moduleName, const string& moduleVersion) const;
     void logToError(const string& message, const string& moduleName, const string& moduleVersion);

@@ -15,7 +15,7 @@
 
 #include "ErrorLogging.h"
 
-ErrorLogging::ErrorLogging(const string& logFileName) {
+ErrorLogging::ErrorLogging(const string& logFileName) : NullLogging() {
     openLogFile(logFileName);
 }
 

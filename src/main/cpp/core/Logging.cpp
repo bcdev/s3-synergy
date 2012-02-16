@@ -16,7 +16,9 @@
 #include <ctime>
 #include <iostream>
 
+#include "../core/Boost.h"
 #include "../core/Constants.h"
+
 #include "Logging.h"
 
 using std::cerr;
