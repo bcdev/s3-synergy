@@ -41,9 +41,6 @@ file(GLOB_RECURSE READER_MAIN_SOURCES src/main/cpp/reader/*.cpp)
 file(GLOB_RECURSE READER_TEST_SOURCES src/test/cpp/reader/*.cpp)
 file(GLOB_RECURSE MODULES_MAIN_SOURCES src/main/cpp/modules/*.cpp)
 file(GLOB_RECURSE WRITER_MAIN_SOURCES src/main/cpp/writer/*.cpp)
-file(GLOB_RECURSE SYN_WRITER_TEST_SOURCES src/test/cpp/writer/SynL2WriterTest.cpp  src/test/cpp/writer/SynL2SegmentProvider.cpp)
-file(GLOB_RECURSE VGT_WRITER_TEST_SOURCES src/test/cpp/writer/VgtWriterTest.cpp src/test/cpp/writer/VgtSegmentProvider.cpp)
-file(GLOB_RECURSE SEG_WRITER_TEST_SOURCES src/test/cpp/writer/SegmentWriterTest.cpp src/test/cpp/writer/MapSegmentProvider.cpp)
 file(GLOB_RECURSE UTIL_MAIN_SOURCES src/main/cpp/util/*.cpp)
 file(GLOB_RECURSE UTIL_TEST_SOURCES src/test/cpp/util/*.cpp)
 
@@ -58,13 +55,10 @@ file(GLOB_RECURSE VFL_TEST_SOURCES src/test/cpp/modules/VflTest.cpp)
 file(GLOB_RECURSE VPR_TEST_SOURCES src/test/cpp/modules/VprTest.cpp)
 file(GLOB_RECURSE VAC_TEST_SOURCES src/test/cpp/modules/VacTest.cpp)
 file(GLOB_RECURSE VCO_TEST_SOURCES src/test/cpp/modules/VcoTest.cpp)
-
 file(GLOB_RECURSE SYL2_1_INTEGRATION_TEST_SOURCES src/test/cpp/integration/Syl2_1_Test.cpp)
 file(GLOB_RECURSE SYL2_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/Syl2_2_Test.cpp)
-
 file(GLOB_RECURSE VGTP_1_INTEGRATION_TEST_SOURCES src/test/cpp/integration/VgtP_1_Test.cpp)
 file(GLOB_RECURSE VGTP_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/VgtP_2_Test.cpp)
-
 file(GLOB_RECURSE VGTS_1_INTEGRATION_TEST_SOURCES src/test/cpp/integration/VgtS_1_Test.cpp)
 file(GLOB_RECURSE VGTS_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/VgtS_2_Test.cpp)
 
@@ -142,8 +136,7 @@ add_executable(sy_unt_gen src/test/cpp/TestRunner.cpp
 	${CORE_MAIN_SOURCES}
 	${UTIL_TEST_SOURCES}
 	${UTIL_MAIN_SOURCES}
-	${WRITER_MAIN_SOURCES}
-	${SEG_WRITER_TEST_SOURCES}
+	src/main/cpp/writer/SegmentWriter.cpp src/test/cpp/writer/SegmentWriterTest.cpp src/test/cpp/writer/MapSegmentProvider.cpp
 )
 target_link_libraries(sy_unt_gen
     ${BOOST_FILESYSTEM}
@@ -178,7 +171,7 @@ add_executable(sy_unt_swr src/test/cpp/TestRunner.cpp
 	${CORE_MAIN_SOURCES}
 	${UTIL_MAIN_SOURCES}
 	${WRITER_MAIN_SOURCES}
-	${SYN_WRITER_TEST_SOURCES}
+    src/test/cpp/writer/SynL2WriterTest.cpp  src/test/cpp/writer/SynL2SegmentProvider.cpp
 )
 target_link_libraries(sy_unt_swr
     ${BOOST_FILESYSTEM}
@@ -421,7 +414,7 @@ add_executable(sy_unt_vwr src/test/cpp/TestRunner.cpp
 	${CORE_MAIN_SOURCES}
 	${UTIL_MAIN_SOURCES}
 	${WRITER_MAIN_SOURCES}
-	${VGT_WRITER_TEST_SOURCES}
+    src/test/cpp/writer/VgtWriterTest.cpp src/test/cpp/writer/VgtSegmentProvider.cpp
 )
 target_link_libraries(sy_unt_vwr
     ${BOOST_FILESYSTEM}
