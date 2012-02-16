@@ -71,10 +71,11 @@ string ManifestWriter::readManifest() const {
 }
 
 void ManifestWriter::setStartTime(const Context& context, string& manifest) const {
-	struct tm* ptm = localtime(&context.getStartTime());
+    time_t t = context.getStartTime();
+	struct tm* ptm = localtime(&t);
 	char buffer[32];
 	strftime(buffer, 32, "%Y-%m-%dT%H:%M:%S", ptm);
-	string startTime = string(buffer);
+	string startTime(buffer);
 	Utils::replaceString("\\$\\{processing-start-time\\}", startTime, manifest);
 }
 
