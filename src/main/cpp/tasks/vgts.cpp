@@ -25,6 +25,9 @@
 
 #include "../util/BasicTask.h"
 
+/**
+ * The VGT-S processor main routine.
+ */
 int main(int argc, char* argv[]) {
 	BasicTask task("VGTS");
 

@@ -25,6 +25,9 @@
 
 #include "../util/BasicTask.h"
 
+/**
+ * The SYN-L2 processor main routine.
+ */
 int main(int argc, char* argv[]) {
 	BasicTask task("SYL2");
 

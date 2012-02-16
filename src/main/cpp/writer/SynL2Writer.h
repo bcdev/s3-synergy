@@ -18,6 +18,9 @@
 
 #include "../writer/AbstractWriter.h"
 
+/**
+ * The SYN L2 writer module.
+ */
 class SynL2Writer: public AbstractWriter {
 public:
     SynL2Writer();

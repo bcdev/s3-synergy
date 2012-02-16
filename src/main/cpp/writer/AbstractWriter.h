@@ -24,6 +24,9 @@
 using std::map;
 using std::valarray;
 
+/**
+ * An abstract writer module.
+ */
 class AbstractWriter: public BasicModule {
 public:
 

@@ -24,6 +24,9 @@
 
 #include "../util/BasicTask.h"
 
+/**
+ * The VGT-P processor main routine.
+ */
 int main(int argc, char* argv[]) {
 	BasicTask task("VGTP");
 

@@ -18,6 +18,9 @@
 
 #include "../writer/AbstractWriter.h"
 
+/**
+ * The VGT writer module.
+ */
 class VgtWriter: public AbstractWriter {
 public:
     VgtWriter(const string& productId = Constants::PRODUCT_VGP);

@@ -18,6 +18,9 @@
 
 #include "../modules/BasicModule.h"
 
+/**
+ * The module used for writing the SAFE manifest.
+ */
 class ManifestWriter : public BasicModule {
 public:
 	ManifestWriter(const string& productId);

@@ -24,6 +24,9 @@
 using std::map;
 using std::valarray;
 
+/**
+ * The writer module used for writing breakpoint data.
+ */
 class SegmentWriter: public BasicModule {
 public:
 	SegmentWriter();

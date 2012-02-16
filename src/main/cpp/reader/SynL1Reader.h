@@ -22,6 +22,9 @@
 
 using std::map;
 
+/**
+ * The SYN L1 reader module.
+ */
 class SynL1Reader : public BasicModule {
 public:
     SynL1Reader();
