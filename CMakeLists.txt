@@ -1,3 +1,18 @@
+#
+# Copyright (C) 2012  Brockmann Consult GmbH (info@brockmann-consult.de)
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation. This program is distributed in the hope it will
+# be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
+#
+
 project (s3-synergy)
 set(s3-synergy_VERSION_MAJOR 1)
 set(s3-synergy_VERSION_MINOR 0)
@@ -53,6 +68,9 @@ file(GLOB_RECURSE VGTP_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/VgtP_
 file(GLOB_RECURSE VGTS_1_INTEGRATION_TEST_SOURCES src/test/cpp/integration/VgtS_1_Test.cpp)
 file(GLOB_RECURSE VGTS_2_INTEGRATION_TEST_SOURCES src/test/cpp/integration/VgtS_2_Test.cpp)
 
+##
+# Project libraries
+#
 find_library(BOOST_REGEX
     NAMES boost_regex boost_regex-mt 
     PATHS ~/usr/lib /usr/local/lib /usr/lib 
