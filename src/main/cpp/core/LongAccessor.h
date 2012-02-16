@@ -21,6 +21,11 @@
 class LongAccessor: public virtual AbstractAccessor<int64_t, Constants::TYPE_LONG> {
 public:
 
+    /**
+     * Constructs a new instance of this class.
+     * @param n The size of the underlying array.
+     * @param fillValue The fill value used for the variable.
+     */
 	LongAccessor(size_t n, int64_t fillValue = numeric_limits<uint64_t>::min()) :
 			AbstractAccessor<int64_t, Constants::TYPE_LONG>(n, fillValue) {
 	}

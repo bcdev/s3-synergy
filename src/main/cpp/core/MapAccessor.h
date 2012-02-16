@@ -39,6 +39,13 @@ using std::logic_error;
 template<class T, int N>
 class MapAccessor: public virtual Accessor {
 public:
+    /**
+     * Constructs a new instance of this class.
+     * @param n The size of the underlying array.
+     * @param fillValue The fill value used for the variable.
+     * @param scaleFactor The scale factor used for the variable.
+     * @param addOffset The add-offset used for the variable.
+     */
 	MapAccessor(size_t n, T fillValue = numeric_limits<T>::min(), double scaleFactor = 1.0, double addOffset = 0.0) :
 			Accessor(), fillValue(fillValue), scaleFactor(scaleFactor), addOffset(addOffset), filename(Constants::S3_SYNERGY_HOME.length() + 12) {
 	    using std::min;
@@ -177,51 +184,87 @@ public:
 		return length / sizeof(T);
 	}
 
-	virtual valarray<int8_t>& getByteData() const throw (logic_error) {
+    /**
+     * Not implemented; always throws a {@code logic_error}.
+     */
+	valarray<int8_t>& getByteData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-	virtual valarray<double>& getDoubleData() const throw (logic_error) {
+    /**
+     * Not implemented; always throws a {@code logic_error}.
+     */
+	valarray<double>& getDoubleData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-	virtual valarray<float>& getFloatData() const throw (logic_error) {
+    /**
+     * Not implemented; always throws a {@code logic_error}.
+     */
+	valarray<float>& getFloatData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-	virtual valarray<int32_t>& getIntData() const throw (logic_error) {
+    /**
+     * Not implemented; always throws a {@code logic_error}.
+     */
+	valarray<int32_t>& getIntData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-	virtual valarray<int64_t>& getLongData() const throw (logic_error) {
+    /**
+     * Not implemented; always throws a {@code logic_error}.
+     */
+	valarray<int64_t>& getLongData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-	virtual valarray<int16_t>& getShortData() const throw (logic_error) {
+    /**
+     * Not implemented; always throws a {@code logic_error}.
+     */
+	valarray<int16_t>& getShortData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-	virtual valarray<uint8_t>& getUByteData() const throw (logic_error) {
+    /**
+     * Not implemented; always throws a {@code logic_error}.
+     */
+	valarray<uint8_t>& getUByteData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-	virtual valarray<uint32_t>& getUIntData() const throw (logic_error) {
+    /**
+     * Not implemented; always throws a {@code logic_error}.
+     */
+	valarray<uint32_t>& getUIntData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-	virtual valarray<uint64_t>& getULongData() const throw (logic_error) {
+    /**
+     * Not implemented; always throws a {@code logic_error}.
+     */
+	valarray<uint64_t>& getULongData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-	virtual valarray<uint16_t>& getUShortData() const throw (logic_error) {
+    /**
+     * Not implemented; always throws a {@code logic_error}.
+     */
+    valarray<uint16_t>& getUShortData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-	virtual valarray<double> getDoubles() const {
+    /**
+     * Not implemented; always throws a {@code logic_error}.
+     */
+	valarray<double> getDoubles() const {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-	virtual valarray<float> getFloats() const {
+    /**
+     * Not implemented; always throws a {@code logic_error}.
+     */
+	valarray<float> getFloats() const {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
@@ -259,6 +302,9 @@ public:
 		return lexical_cast<string>(fillValue);
 	}
 
+    /**
+     * Intentionally does nothing..
+     */
 	void shift(long n, long strideK, long strideL) {
 		// intentionally doing nothing
 	}
