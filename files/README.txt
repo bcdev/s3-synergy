@@ -1,1 +1,1 @@
-Put auxiliaray data into this directory. 
+Put auxiliary data into this directory. 
