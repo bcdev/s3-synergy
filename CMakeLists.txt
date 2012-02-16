@@ -137,7 +137,7 @@ include_directories(before
 ##
 # Project test targets
 #
-add_executable(sy_unt_gen src/test/cpp/SyUntGenRunner.cpp
+add_executable(sy_unt_gen src/test/cpp/TestRunner.cpp
 	${CORE_TEST_SOURCES}
 	${CORE_MAIN_SOURCES}
 	${UTIL_TEST_SOURCES}
@@ -156,7 +156,7 @@ target_link_libraries(sy_unt_gen
 )
 set_property(TARGET sy_unt_gen PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_unt_sre src/test/cpp/SyUntSreRunner.cpp
+add_executable(sy_unt_sre src/test/cpp/TestRunner.cpp
 	${CORE_MAIN_SOURCES}
 	${UTIL_MAIN_SOURCES}
 	${READER_MAIN_SOURCES}
@@ -174,7 +174,7 @@ target_link_libraries(sy_unt_sre
 )
 set_property(TARGET sy_unt_sre PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_unt_swr src/test/cpp/SyUntSwrRunner.cpp
+add_executable(sy_unt_swr src/test/cpp/TestRunner.cpp
 	${CORE_MAIN_SOURCES}
 	${UTIL_MAIN_SOURCES}
 	${WRITER_MAIN_SOURCES}
@@ -191,7 +191,7 @@ target_link_libraries(sy_unt_swr
 )
 set_property(TARGET sy_unt_swr PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_unt_col src/test/cpp/SyUntColRunner.cpp
+add_executable(sy_unt_col src/test/cpp/TestRunner.cpp
 	${CORE_MAIN_SOURCES}
 	${UTIL_MAIN_SOURCES}
 	${READER_MAIN_SOURCES}
@@ -210,7 +210,7 @@ target_link_libraries(sy_unt_col
 )
 set_property(TARGET sy_unt_col PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_unt_pcl src/test/cpp/SyUntPclRunner.cpp
+add_executable(sy_unt_pcl src/test/cpp/TestRunner.cpp
 	${CORE_MAIN_SOURCES}
 	${UTIL_MAIN_SOURCES}
 	${READER_MAIN_SOURCES}
@@ -229,7 +229,7 @@ target_link_libraries(sy_unt_pcl
 )
 set_property(TARGET sy_unt_pcl PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_unt_ave src/test/cpp/SyUntAveRunner.cpp
+add_executable(sy_unt_ave src/test/cpp/TestRunner.cpp
     ${CORE_MAIN_SOURCES}
     ${UTIL_MAIN_SOURCES}
     ${READER_MAIN_SOURCES}
@@ -248,7 +248,7 @@ target_link_libraries(sy_unt_ave
 )
 set_property(TARGET sy_unt_ave PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_unt_aer src/test/cpp/SyUntAerRunner.cpp
+add_executable(sy_unt_aer src/test/cpp/TestRunner.cpp
 	${CORE_MAIN_SOURCES}
 	${UTIL_MAIN_SOURCES}
 	${READER_MAIN_SOURCES}
@@ -267,7 +267,7 @@ target_link_libraries(sy_unt_aer
 )
 set_property(TARGET sy_unt_aer PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_unt_aei src/test/cpp/SyUntAeiRunner.cpp
+add_executable(sy_unt_aei src/test/cpp/TestRunner.cpp
     ${CORE_MAIN_SOURCES}
     ${UTIL_MAIN_SOURCES}
     ${READER_MAIN_SOURCES}
@@ -286,7 +286,7 @@ target_link_libraries(sy_unt_aei
 )
 set_property(TARGET sy_unt_aei PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_unt_aco src/test/cpp/SyUntAcoRunner.cpp
+add_executable(sy_unt_aco src/test/cpp/TestRunner.cpp
     ${CORE_MAIN_SOURCES}
     ${UTIL_MAIN_SOURCES}
     ${READER_MAIN_SOURCES}
@@ -305,7 +305,7 @@ target_link_libraries(sy_unt_aco
 )
 set_property(TARGET sy_unt_aco PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_unt_vbm src/test/cpp/SyUntVbmRunner.cpp
+add_executable(sy_unt_vbm src/test/cpp/TestRunner.cpp
     ${CORE_MAIN_SOURCES}
     ${UTIL_MAIN_SOURCES}
     ${READER_MAIN_SOURCES}
@@ -324,7 +324,7 @@ target_link_libraries(sy_unt_vbm
 )
 set_property(TARGET sy_unt_vbm PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_unt_vfl src/test/cpp/SyUntVflRunner.cpp
+add_executable(sy_unt_vfl src/test/cpp/TestRunner.cpp
     ${CORE_MAIN_SOURCES}
     ${UTIL_MAIN_SOURCES}
     ${READER_MAIN_SOURCES}
@@ -343,7 +343,7 @@ target_link_libraries(sy_unt_vfl
 )
 set_property(TARGET sy_unt_vfl PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_unt_vpr src/test/cpp/SyUntVprRunner.cpp
+add_executable(sy_unt_vpr src/test/cpp/TestRunner.cpp
     ${CORE_MAIN_SOURCES}
     ${UTIL_MAIN_SOURCES}
     ${READER_MAIN_SOURCES}
@@ -362,7 +362,7 @@ target_link_libraries(sy_unt_vpr
 )
 set_property(TARGET sy_unt_vpr PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_unt_vac src/test/cpp/SyUntVacRunner.cpp
+add_executable(sy_unt_vac src/test/cpp/TestRunner.cpp
     ${CORE_MAIN_SOURCES}
     ${UTIL_MAIN_SOURCES}
     ${READER_MAIN_SOURCES}
@@ -381,7 +381,7 @@ target_link_libraries(sy_unt_vac
 )
 set_property(TARGET sy_unt_vac PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_unt_vco src/test/cpp/SyUntVcoRunner.cpp
+add_executable(sy_unt_vco src/test/cpp/TestRunner.cpp
     ${CORE_MAIN_SOURCES}
     ${UTIL_MAIN_SOURCES}
     ${READER_MAIN_SOURCES}
@@ -400,7 +400,7 @@ target_link_libraries(sy_unt_vco
 )
 set_property(TARGET sy_unt_vco PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_int_syl2_1 src/test/cpp/SyIntSyl2_1_Runner.cpp
+add_executable(sy_int_syl2_1 src/test/cpp/TestRunner.cpp
     ${CORE_MAIN_SOURCES}
     ${UTIL_MAIN_SOURCES}
     ${SYL2_1_INTEGRATION_TEST_SOURCES}
@@ -417,7 +417,7 @@ target_link_libraries(sy_int_syl2_1
 set_property(TARGET sy_int_syl2_1 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
 
-add_executable(sy_unt_vwr src/test/cpp/SyUntVwrRunner.cpp
+add_executable(sy_unt_vwr src/test/cpp/TestRunner.cpp
 	${CORE_MAIN_SOURCES}
 	${UTIL_MAIN_SOURCES}
 	${WRITER_MAIN_SOURCES}
@@ -434,7 +434,7 @@ target_link_libraries(sy_unt_vwr
 )
 set_property(TARGET sy_unt_vwr PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_int_syl2_2 src/test/cpp/SyIntSyl2_2_Runner.cpp
+add_executable(sy_int_syl2_2 src/test/cpp/TestRunner.cpp
     ${CORE_MAIN_SOURCES}
     ${UTIL_MAIN_SOURCES}
     ${READER_MAIN_SOURCES}
@@ -453,7 +453,7 @@ target_link_libraries(sy_int_syl2_2
 )
 set_property(TARGET sy_int_syl2_2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_int_vgtp_1 src/test/cpp/SyIntVgtP_1_Runner.cpp
+add_executable(sy_int_vgtp_1 src/test/cpp/TestRunner.cpp
     ${CORE_MAIN_SOURCES}
     ${UTIL_MAIN_SOURCES}
     ${VGTP_1_INTEGRATION_TEST_SOURCES}
@@ -469,7 +469,7 @@ target_link_libraries(sy_int_vgtp_1
 )
 set_property(TARGET sy_int_vgtp_1 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_int_vgtp_2 src/test/cpp/SyIntVgtP_2_Runner.cpp
+add_executable(sy_int_vgtp_2 src/test/cpp/TestRunner.cpp
     ${CORE_MAIN_SOURCES}
     ${UTIL_MAIN_SOURCES}
     ${READER_MAIN_SOURCES}
@@ -488,7 +488,7 @@ target_link_libraries(sy_int_vgtp_2
 )
 set_property(TARGET sy_int_vgtp_2 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_int_vgts_1 src/test/cpp/SyIntVgtS_1_Runner.cpp
+add_executable(sy_int_vgts_1 src/test/cpp/TestRunner.cpp
     ${CORE_MAIN_SOURCES}
     ${UTIL_MAIN_SOURCES}
     ${MODULES_MAIN_SOURCES}
@@ -505,7 +505,7 @@ target_link_libraries(sy_int_vgts_1
 )
 set_property(TARGET sy_int_vgts_1 PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 #
-add_executable(sy_int_vgts_2 src/test/cpp/SyIntVgtS_2_Runner.cpp
+add_executable(sy_int_vgts_2 src/test/cpp/TestRunner.cpp
     ${CORE_MAIN_SOURCES}
     ${UTIL_MAIN_SOURCES}
     ${READER_MAIN_SOURCES}
