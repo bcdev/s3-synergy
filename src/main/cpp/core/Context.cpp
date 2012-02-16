@@ -24,7 +24,6 @@
 #include "NullLogging.h"
 #include "SwathSegment.h"
 
-using std::invalid_argument;
 using std::find;
 using std::find_if;
 using std::max;
@@ -56,11 +55,12 @@ Segment& Context::addMapSegment(const string& id, long sizeL, long sizeM) throw 
 	return *segment;
 }
 
-Segment& Context::addSingleLineSegment(const string& id, long sizeM) throw (logic_error) {
+Segment& Context::addSingleLineSegment(const string& id, long size) throw (logic_error) {
 	if (hasSegment(id)) {
 		BOOST_THROW_EXCEPTION( invalid_argument("A segment with ID '" + id + "' already exists in the context."));
 	}
-	shared_ptr<Segment> segment = shared_ptr<Segment>(new SwathSegment(id, 1, sizeM, 1, 0, 0));
+	// TODO - use a concrete SingleLineSegment implementation
+	shared_ptr<Segment> segment = shared_ptr<Segment>(new SwathSegment(id, 1, size, 1, 0, 0));
 	segmentMap[id] = segment;
 	segmentList.push_back(segment);
 
@@ -90,14 +90,14 @@ bool Context::removeSegment(const string& id) {
 	return false;
 }
 
-Identifiable& Context::getObject(const string& id) const {
+Identifiable& Context::getObject(const string& id) const throw (invalid_argument) {
 	if (contains(objectMap, id)) {
 		return *objectMap.at(id);
 	}
 	BOOST_THROW_EXCEPTION( invalid_argument("Object with id '" + id + "' does not exist in the context."));
 }
 
-Segment& Context::getSegment(const string& id) const {
+Segment& Context::getSegment(const string& id) const throw (invalid_argument) {
 	if (contains(segmentMap, id)) {
 		return *segmentMap.at(id);
 	}
@@ -149,12 +149,12 @@ void Context::handleError(exception& e) {
 	}
 }
 
-void Context::setStartTime(time_t startTime) {
-    this->startTime = startTime;
+const time_t Context::getStartTime() const {
+    return startTime;
 }
 
-const time_t& Context::getStartTime() const {
-    return startTime;
+void Context::setStartTime(time_t t) {
+    startTime = t;
 }
 
 void Context::moveForward(shared_ptr<Segment> segment) const {

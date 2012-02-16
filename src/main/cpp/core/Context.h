@@ -31,15 +31,17 @@
 #include "Segment.h"
 
 using std::exception;
+using std::invalid_argument;
+using std::logic_error;
 using std::map;
 using std::vector;
 
 class Module;
 
 /**
- * Represents the context of a processing.
+ * Represents the context in a processing. The context is used for bookkeeping and
+ * for accessing data and auxiliary data that have to be available globally.
  */
-// todo - divide context into ModuleContext, ProcessorContext, RuntimeContext (nf-20110419)
 class Context {
 public:
 	/**
@@ -69,10 +71,10 @@ public:
 	/**
 	 * Adds a single-line segment to the context.
 	 * @param id The segment ID.
-	 * @param sizeM The size of the segment's column index dimension.
+	 * @param size The size of the segment.
 	 * @return a reference to the segment added.
 	 */
-	Segment& addSingleLineSegment(const string& id, long sizeM) throw (logic_error);
+	Segment& addSingleLineSegment(const string& id, long size) throw (logic_error);
 
 	/**
 	 * Adds a swath segment to the context.
@@ -95,18 +97,23 @@ public:
 	 */
 	Segment& addMapSegment(const string& id, long sizeL, long sizeM) throw (logic_error);
 
+
+	/**
+	 * Removes a segment from the context.
+	 * @param id The segment ID.
+	 */
 	bool removeSegment(const string& id);
 
 	/**
-	 * Returns a list of modules, which have been added to the context.
-	 * @return a list of modules, which have been added to the context.
+	 * Returns the list of modules that have been added to the context.
+	 * @return the list of modules that have been added to the context.
 	 */
 	vector<shared_ptr<Module> > getModules() const {
 		return moduleList;
 	}
 
 	/**
-	 * Returns the dictionary.
+	 * Returns the dictionary. Throws a logic error, if no dictionary is set.
 	 * @return the dictionary.
 	 */
 	Dictionary& getDictionary() const throw (logic_error) {
@@ -118,14 +125,14 @@ public:
 
 	/**
 	 * Sets the dictionary.
-	 * @param dictionary The dictionary.
+	 * @param dictionary The context dictionary.
 	 */
 	void setDictionary(shared_ptr<Dictionary> dictionary) {
 		this->dictionary = dictionary;
 	}
 
 	/**
-	 * Returns the job order.
+	 * Returns the job order. Throws a logic error, if no job order is set.
 	 * @return the job order.
 	 */
 	JobOrder& getJobOrder() const throw (logic_error) {
@@ -144,10 +151,10 @@ public:
 	}
 
 	/**
-	 * Returns the logging.
+	 * Returns the logging. Throws a logic error, if no logging is set.
 	 * @return the logging.
 	 */
-	Logging& getLogging() const throw (logic_error ){
+	Logging& getLogging() const throw (logic_error) {
 		if (logging == 0) {
 			BOOST_THROW_EXCEPTION(logic_error("No logging set."));
 		}
@@ -163,22 +170,28 @@ public:
 	}
 
 	/**
+	 * Sets the error handler.
+	 * @param errorHandler The error handler.
+	 */
+	void setErrorHandler(shared_ptr<ErrorHandler> errorHandler);
+
+	/**
 	 * Returns the object associated with the supplied object ID.
 	 * @param id The object ID.
 	 * @return the object associated with {@code id}.
 	 */
-	Identifiable& getObject(const string& id) const;
+	Identifiable& getObject(const string& id) const throw (invalid_argument);
 
 	/**
 	 * Returns the segment associated with the supplied segment ID.
 	 * @param id The segment ID.
 	 * @return the segment associated with {@code id}.
 	 */
-	Segment& getSegment(const string& id) const;
+	Segment& getSegment(const string& id) const throw (invalid_argument);
 
 	/**
-	 * Returns a vector containing all segment ids.
-	 * @return A vector containing all segment ids.
+	 * Returns a list containing IDs of all segments added to the context.
+	 * @return A list containing IDs of all segments added to the context.
 	 */
 	vector<string> getSegmentIds() const {
 		vector<string> ids;
@@ -248,8 +261,7 @@ public:
 	bool hasSegment(const string& id) const;
 
 	/**
-	 * Inquires the context about the index of the last row in a segment,
-	 * which has been computed by a certain module.
+	 * Inquires the index of the last row in a segment, which has been computed by a certain module.
 	 * @param segment The segment.
 	 * @param module The module.
 	 * @return {@code true} if the context has the requested information,
@@ -257,29 +269,47 @@ public:
 	 */
 	bool hasLastComputedL(const Segment& segment, const Module& module) const;
 
+	/**
+	 * Inquires status of computation.
+	 * @return {@code true} if all segments have been computed,
+	 *         {@code false} otherwise.
+	 */
 	bool isCompleted() const;
 
+	/**
+	 * Moves all segments forward as far as feasible.
+	 */
 	void moveSegmentsForward() const;
 
-	void setErrorHandler(shared_ptr<ErrorHandler> errorHandler);
-
+	/**
+	 * Handles an exception according to the error handler set in the context.
+	 * @param e The exception.
+	 */
 	void handleError(exception& e);
 
-	void setStartTime(time_t startTime);
-
-	const time_t& getStartTime() const;
+	/**
+	 * Returns the processing start time.
+	 * @return the processing start time.
+	 */
+	time_t getStartTime() const;
 
 	/**
-	 * Sets the path of the current source product.
-	 * @param sourcePath The path to be set.
+	 * Sets the processing start time.
+	 * @param t The processing start time.
 	 */
-	void setSourcePath(const string& sourcePath);
+	void setStartTime(time_t t);
 
 	/**
 	 * Returns the path of the current source product.
 	 * @return The path of the current source product.
 	 */
 	const string& getSourcePath() const;
+
+	/**
+	 * Sets the path of the current source product.
+	 * @param sourcePath The path to be set.
+	 */
+	void setSourcePath(const string& sourcePath);
 
 private:
 	/**
@@ -292,8 +322,7 @@ private:
 	long getFirstRequiredL(const Segment& segment) const;
 
 	/**
-	 * Inquires the context about the index of the first row in a segment,
-	 * which is required by a certain module.
+	 * Inquires the index of the first row in a segment, which is required by a certain module.
 	 * @param segment The segment.
 	 * @param module The module.
 	 * @return {@code true} if the context has the requested information,
