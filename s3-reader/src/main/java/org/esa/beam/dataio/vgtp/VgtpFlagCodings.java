@@ -16,18 +16,38 @@
 package org.esa.beam.dataio.vgtp;
 
 import org.esa.beam.framework.datamodel.FlagCoding;
+import org.esa.beam.util.BitSetter;
 
 /**
- * Created by IntelliJ IDEA.
- * User: olafd
- * Date: 13.02.12
- * Time: 16:11
- * To change this template use File | Settings | File Templates.
+ * Class providing the flag codings in a VGT P data product.
+ *
+ * @author Olaf Danne
+ * @since 1.0
  */
 public class VgtpFlagCodings {
-    public static final String VGT_FLAG_BAND_NAME = "VGTP_flags";
 
-    public static FlagCoding createVgtpFlagCoding() {
-        return null;  //To change body of created methods use File | Settings | File Templates.
+    public static final String VGTP_SM_FLAG_BAND_NAME = "SM";
+
+    private static final int VGTP_CLOUD_1 = 0;
+    private static final int VGTP_CLOUD_2 = 1;
+    private static final int VGTP_ICE_SNOW = 2;
+    private static final int VGTP_LAND = 3;
+    private static final int VGTP_MIR_GOOD = 4;
+    private static final int VGTP_B3_GOOD = 5;
+    private static final int VGTP_B2_GOOD = 6;
+    private static final int VGTP_B0_GOOD = 7;
+
+    public static FlagCoding createSmFlagCoding() {
+        FlagCoding flagCoding = new FlagCoding(VGTP_SM_FLAG_BAND_NAME);
+        flagCoding.addFlag("VGTP_CLOUD_1", BitSetter.setFlag(0, VGTP_CLOUD_1), null);
+        flagCoding.addFlag("VGTP_CLOUD_2", BitSetter.setFlag(0, VGTP_CLOUD_2), null);
+        flagCoding.addFlag("VGTP_ICE_SNOW", BitSetter.setFlag(0, VGTP_ICE_SNOW), null);
+        flagCoding.addFlag("VGTP_LAND", BitSetter.setFlag(0, VGTP_LAND), null);
+        flagCoding.addFlag("MIR_GOOD", BitSetter.setFlag(0, VGTP_MIR_GOOD), null);
+        flagCoding.addFlag("B3_GOOD", BitSetter.setFlag(0, VGTP_B3_GOOD), null);
+        flagCoding.addFlag("B2_GOOD", BitSetter.setFlag(0, VGTP_B2_GOOD), null);
+        flagCoding.addFlag("B0_GOOD", BitSetter.setFlag(0, VGTP_B0_GOOD), null);
+
+        return flagCoding;
     }
 }

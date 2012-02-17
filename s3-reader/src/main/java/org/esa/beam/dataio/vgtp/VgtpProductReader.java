@@ -16,13 +16,11 @@
 package org.esa.beam.dataio.vgtp;
 
 import com.bc.ceres.core.ProgressMonitor;
+import com.bc.ceres.glevel.MultiLevelImage;
 import org.esa.beam.dataio.syn.SynProductReaderPlugIn;
 import org.esa.beam.framework.dataio.AbstractProductReader;
 import org.esa.beam.framework.dataio.ProductIO;
-import org.esa.beam.framework.datamodel.Band;
-import org.esa.beam.framework.datamodel.FlagCoding;
-import org.esa.beam.framework.datamodel.Product;
-import org.esa.beam.framework.datamodel.ProductData;
+import org.esa.beam.framework.datamodel.*;
 import org.esa.beam.util.ProductUtils;
 import org.esa.beam.util.io.FileUtils;
 import org.w3c.dom.Document;
@@ -40,7 +38,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Product reader responsible for reading OLCI/SLSTR L2 SYN data products in SAFE format.
+ * Product reader responsible for reading VGT P data products in SAFE format.
  *
  * @author Olaf Danne
  * @since 1.0
@@ -49,6 +47,7 @@ public class VgtpProductReader extends AbstractProductReader {
 
     private final Logger logger;
     private List<Product> measurementProducts;
+    private List<Product> tiepointsProducts;
     private Product geoCoordinatesProduct;
 
     public VgtpProductReader(VgtpProductReaderPlugIn readerPlugIn) {
@@ -77,6 +76,9 @@ public class VgtpProductReader extends AbstractProductReader {
         for (Product product : measurementProducts) {
             product.dispose();
         }
+        for (Product product : tiepointsProducts) {
+            product.dispose();
+        }
         if (geoCoordinatesProduct != null) {
             geoCoordinatesProduct.dispose();
         }
@@ -84,7 +86,8 @@ public class VgtpProductReader extends AbstractProductReader {
     }
 
     private Product createProduct(VgtpManifest manifest) {
-        measurementProducts = loadMeasurementProducts(manifest.getMeasurementFileNames());
+        measurementProducts = loadDataProducts(manifest.getMeasurementFileNames());
+        tiepointsProducts = loadDataProducts(manifest.getTiepointsFileNames());
         int width = measurementProducts.get(0).getSceneRasterWidth();
         int height = measurementProducts.get(0).getSceneRasterHeight();
         Product product = new Product(getProductName(), SynProductReaderPlugIn.FORMAT_NAME_SYN, width,
@@ -93,17 +96,34 @@ public class VgtpProductReader extends AbstractProductReader {
         product.setEndTime(manifest.getStopTime());
         product.setFileLocation(getInputFile());
         attachMeasurementBands(measurementProducts, product);
-        attachAnnotationData(manifest, product);
+        attachAnnotationData(tiepointsProducts, manifest, product);
         return product;
     }
 
-    private void attachAnnotationData(VgtpManifest manifest, Product product) {
-//        attachGeoCoodinatesToProduct(manifest.getGeoCoordinatesFileName(), product);
-        attachTiePointsToProduct(manifest.getTiepointsFileNames(), product);
+    private void attachAnnotationData(List<Product> tiepointsProducts, VgtpManifest manifest, Product product) {
+        attachTiePointsToProduct(tiepointsProducts, product);
     }
 
-    private void attachTiePointsToProduct(List<String> tiePointsFileNames, Product product) {
-        // the tie points are provided on a different grid, so we currently don't use them for the SYN product
+    private void attachTiePointsToProduct(List<Product> tiePointsProducts, Product product) {
+        for (Product tpProduct : tiePointsProducts) {
+            final MetadataElement metadataRoot = tpProduct.getMetadataRoot();
+            final MetadataElement globalAttributes = metadataRoot.getElement("Global_Attributes");
+            final int subsampling = 8;
+            final Band tpBand = tpProduct.getBandAt(0);
+            final MultiLevelImage sourceImage = tpBand.getGeophysicalImage();
+            final int width = sourceImage.getWidth();
+            final int height = sourceImage.getHeight();
+            final float[] tiePointData = new float[width * height];
+            sourceImage.getData().getSamples(0, 0, width, height, 0, tiePointData);
+            TiePointGrid tiePointGrid = new TiePointGrid(tpBand.getName(), tpBand.getRasterWidth(),
+                                                         tpBand.getRasterHeight(), 0, 0, subsampling,
+                                                         subsampling, tiePointData, true);
+            product.addTiePointGrid(tiePointGrid);
+            if (product.getTiePointGrid("TP_latitude") != null && product.getTiePointGrid("TP_longitude") != null) {
+                product.setGeoCoding(new TiePointGeoCoding(product.getTiePointGrid("TP_latitude"),
+                                                           product.getTiePointGrid("TP_longitude")));
+            }
+        }
     }
 
     private void attachGeoCoodinatesToProduct(String geoCoordinatesFileName, Product product) {
@@ -122,10 +142,10 @@ public class VgtpProductReader extends AbstractProductReader {
                 final String bandName = sourceBand.getName();
                 if (!product.containsBand(bandName)) {
                     final Band targetBand = ProductUtils.copyBand(bandName, bandProduct, product);
-                    if (sourceBand.getName().endsWith(VgtpFlagCodings.VGT_FLAG_BAND_NAME)) {
-                        final FlagCoding vgtpFlagCoding = VgtpFlagCodings.createVgtpFlagCoding();
-                        targetBand.setSampleCoding(vgtpFlagCoding);
-                        product.getFlagCodingGroup().add(vgtpFlagCoding);
+                    if (sourceBand.getName().endsWith(VgtpFlagCodings.VGTP_SM_FLAG_BAND_NAME)) {
+                        final FlagCoding vgtpSmFlagCoding = VgtpFlagCodings.createSmFlagCoding();
+                        targetBand.setSampleCoding(vgtpSmFlagCoding);
+                        product.getFlagCodingGroup().add(vgtpSmFlagCoding);
                     }
                     targetBand.setSourceImage(sourceBand.getSourceImage());
                 }
@@ -137,9 +157,9 @@ public class VgtpProductReader extends AbstractProductReader {
         return FileUtils.getFilenameWithoutExtension(getParentInputDirectory());
     }
 
-    private List<Product> loadMeasurementProducts(List<String> measurementFileNames) {
+    private List<Product> loadDataProducts(List<String> dataFileNames) {
         List<Product> products = new ArrayList<Product>();
-        for (String fileName : measurementFileNames) {
+        for (String fileName : dataFileNames) {
             try {
                 products.add(readProduct(fileName));
             } catch (IOException e) {

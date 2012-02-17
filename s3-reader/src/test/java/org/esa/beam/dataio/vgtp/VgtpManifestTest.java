@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class VgtpManifestTest {
@@ -36,7 +37,7 @@ public class VgtpManifestTest {
 
     @Before
     public void before() throws ParserConfigurationException, IOException, SAXException {
-        InputStream stream = getClass().getResourceAsStream("VGT_P_TEST_manifest.xml");
+        InputStream stream = getClass().getResourceAsStream("VGP_TEST_manifest.xml");
         try {
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(stream);
             manifestTest = new VgtpManifest(doc);
@@ -68,9 +69,7 @@ public class VgtpManifestTest {
     @Test
     public void testGetMeasurementFileNames() {
         List<String> measurementFiles = manifestTest.getMeasurementFileNames();
-        // todo: manifest to be adjusted
-//        assertEquals(4, measurementFiles.size());
-        assertEquals(8, measurementFiles.size());
+        assertEquals(4, measurementFiles.size());
         assertEquals("b0.nc", measurementFiles.get(0));
         assertEquals("b2.nc", measurementFiles.get(1));
         assertEquals("b3.nc", measurementFiles.get(2));
@@ -80,23 +79,27 @@ public class VgtpManifestTest {
     @Test
     public void testGetTiepointsFileNames() {
         List<String> tiepointsFiles = manifestTest.getTiepointsFileNames();
-        // todo: manifest to be adjusted
-//        assertEquals(4, tiepointsFiles.size());
-//        assertEquals("og.nc", tiepointsFiles.get(0));
-//        assertEquals("wvg.nc", tiepointsFiles.get(1));
-//        assertEquals("ag.nc", tiepointsFiles.get(2));
-//        assertEquals("sm.nc", tiepointsFiles.get(3));
+        assertEquals(3, tiepointsFiles.size());
+        assertEquals("og.nc", tiepointsFiles.get(0));
+        assertEquals("wvg.nc", tiepointsFiles.get(1));
+        assertEquals("ag.nc", tiepointsFiles.get(2));
+    }
+
+    @Test
+    public void testGetStatusFlagFileName() {
+        String statusFlagFile = manifestTest.getStatusFlagFile();
+        assertNotNull(statusFlagFile);
+        assertEquals("sm.nc", statusFlagFile);
     }
 
     @Test
     public void testGetGeometryFileNames() {
         List<String> geometryFiles = manifestTest.getGeometryFileNames();
-        // todo: manifest to be adjusted
-//        assertEquals(4, tiepointsFiles.size());
-//        assertEquals("sza.nc", geometryFiles.get(0));
-//        assertEquals("saa.nc", geometryFiles.get(1));
-//        assertEquals("vza.nc", geometryFiles.get(2));
-//        assertEquals("vaa.nc", geometryFiles.get(3));
+        assertEquals(4, geometryFiles.size());
+        assertEquals("vaa.nc", geometryFiles.get(0));
+        assertEquals("vza.nc", geometryFiles.get(1));
+        assertEquals("saa.nc", geometryFiles.get(2));
+        assertEquals("sza.nc", geometryFiles.get(3));
     }
 
 }

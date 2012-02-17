@@ -18,10 +18,7 @@ package org.esa.beam.dataio.syn;
 import com.bc.ceres.core.ProgressMonitor;
 import org.esa.beam.framework.dataio.AbstractProductReader;
 import org.esa.beam.framework.dataio.ProductIO;
-import org.esa.beam.framework.datamodel.Band;
-import org.esa.beam.framework.datamodel.FlagCoding;
-import org.esa.beam.framework.datamodel.Product;
-import org.esa.beam.framework.datamodel.ProductData;
+import org.esa.beam.framework.datamodel.*;
 import org.esa.beam.util.ProductUtils;
 import org.esa.beam.util.io.FileUtils;
 import org.w3c.dom.Document;
@@ -108,7 +105,12 @@ public class SynProductReader extends AbstractProductReader {
     private void attachGeoCoodinatesToProduct(String geoCoordinatesFileName, Product product) {
         try {
             geoCoordinatesProduct = readProduct(geoCoordinatesFileName);
-            geoCoordinatesProduct.transferGeoCodingTo(product, null);
+            // todo: is it ok just to take the lats/lons from the 'middle' camera??
+            if (geoCoordinatesProduct.getBand("latitude_CAM3") != null &&
+                    geoCoordinatesProduct.getBand("longitude_CAM3") != null) {
+                product.setGeoCoding(new PixelGeoCoding(geoCoordinatesProduct.getBand("latitude_CAM3"),
+                                                        geoCoordinatesProduct.getBand("longitude_CAM3"), null, 5));
+            }
         } catch (IOException e) {
             String msg = String.format("Not able to read file '%s.", geoCoordinatesFileName);
             logger.log(Level.WARNING, msg, e);

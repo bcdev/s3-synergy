@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class encapsulating the manifest file of an OLCI/SLSTR L2 SYN product.
+ * Class encapsulating the manifest file of a VGT P L2 SYN product.
  *
  * @author Olaf Danne
  * @since 1.0
@@ -75,11 +75,11 @@ class VgtpManifest {
     }
 
     public List<String> getMeasurementFileNames() {
-        NodeList dataObjects = xPathHelper.getNodeList(
+        NodeList measurementObjects = xPathHelper.getNodeList(
                 "/XFDU/dataObjectSection/dataObject[@repID='measurementDataSchema']", doc);
         List<String> fileNames = new ArrayList<String>();
-        for (int i = 0; i < dataObjects.getLength(); i++) {
-            Node item = dataObjects.item(i);
+        for (int i = 0; i < measurementObjects.getLength(); i++) {
+            Node item = measurementObjects.item(i);
             String fileName = xPathHelper.getString("./byteStream/fileLocation/@href", item);
             fileNames.add(fileName);
         }
@@ -88,41 +88,35 @@ class VgtpManifest {
     }
 
     public List<String> getTiepointsFileNames() {
-        NodeList dataObjects = xPathHelper.getNodeList(
-                "/XFDU/metadataSection/metadataObject[@repID='tiepointsSchema']", doc);
+        NodeList tiepointsObjects = xPathHelper.getNodeList(
+                "/XFDU/dataObjectSection/dataObject[@repID='tiepointsSchema']", doc);
         List<String> fileNames = new ArrayList<String>();
-        for (int i = 0; i < dataObjects.getLength(); i++) {
-            Node item = dataObjects.item(i);
+        for (int i = 0; i < tiepointsObjects.getLength(); i++) {
+            Node item = tiepointsObjects.item(i);
             String fileName = xPathHelper.getString("./byteStream/fileLocation/@href", item);
             fileNames.add(fileName);
         }
 
         return fileNames;
+    }
+
+    public String getStatusFlagFile() {
+        Node statusFlagObject = xPathHelper.getNode("/XFDU/dataObjectSection/dataObject[@repID='statusFlagsSchema']",
+                                                 doc);
+        return xPathHelper.getString("./byteStream/fileLocation/@href", statusFlagObject);
     }
 
     public List<String> getGeometryFileNames() {
-        NodeList dataObjects = xPathHelper.getNodeList(
-                "/XFDU/metadataSection/metadataObject[@repID='geometryDataSchema']", doc);
+        NodeList geometryObjects = xPathHelper.getNodeList(
+                "/XFDU/dataObjectSection/dataObject[@repID='geometryDataSchema']", doc);
         List<String> fileNames = new ArrayList<String>();
-        for (int i = 0; i < dataObjects.getLength(); i++) {
-            Node item = dataObjects.item(i);
+        for (int i = 0; i < geometryObjects.getLength(); i++) {
+            Node item = geometryObjects.item(i);
             String fileName = xPathHelper.getString("./byteStream/fileLocation/@href", item);
             fileNames.add(fileName);
         }
 
         return fileNames;
-    }
-
-//    public String getGeoCoordinatesFileName() {
-//        Node geoDataObject = xPathHelper.getNode("/XFDU/metadataSection/metadataObject[@repID='geocoordinatesSchema']",
-//                doc);
-//        return xPathHelper.getString("./byteStream/fileLocation/@href", geoDataObject);
-//    }
-
-    public String getTimeFileName() {
-        Node timeObject = xPathHelper.getNode("/XFDU/metadataSection/metadataObject[@repID='timeCoordinatesSchema']",
-                doc);
-        return xPathHelper.getString("./byteStream/fileLocation/@href", timeObject);
     }
 
     private String removeTimeZoneCharacter(String utcString) {
