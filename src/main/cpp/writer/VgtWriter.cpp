@@ -57,9 +57,9 @@ void VgtWriter::defineCoordinateVariables(const Context& context, int fileId, co
 				}
 				NetCDF::defineVariable(fileId, coordinateVariableDescriptor->getName(), coordinateVariableDescriptor->getType(), dimIds);
 			}
-	/*
 	const VariableDescriptor& crsDescriptor = productDescriptor.getSegmentDescriptor("CRS").getVariableDescriptor("crs");
 	const int crsId = NetCDF::defineVariable(fileId, crsDescriptor.getName(), crsDescriptor.getType());
+	/*
 	foreach (const Attribute* attribute, crsDescriptor.getAttributes())
 			{
 				NetCDF::putAttribute(fileId, crsId, *attribute);
