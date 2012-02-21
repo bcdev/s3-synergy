@@ -18,6 +18,8 @@
 
 #include <string>
 
+#include "../core/Types.h"
+
 using std::string;
 
 class TimeConverter {
