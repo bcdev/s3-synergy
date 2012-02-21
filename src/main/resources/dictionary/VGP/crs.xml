@@ -21,13 +21,11 @@
             <type>int</type>
             <segment_name>CRS</segment_name>
             <attributes>
-            <!--
                 <attribute>
                     <name>grid_mapping_name</name>
                     <type>string</type>
                     <value>latitude_longitude</value>
                 </attribute>
-                -->
                 <attribute>
                     <name>longitude_of_prime_meridian</name>
                     <type>double</type>
