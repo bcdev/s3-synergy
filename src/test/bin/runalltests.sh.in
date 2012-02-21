@@ -1,6 +1,6 @@
 #! /bin/sh
 
-export LD_LIBRARY_PATH="$HOME/usr/lib:/usr/local/lib:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="$HOME/usr/lib:/usr/local/lib:/usr/lib"
 
 @CMAKE_INSTALL_PREFIX@/bin/sy_unt_sre > OUT.SY_UNT_SRE
 @CMAKE_INSTALL_PREFIX@/bin/sy_unt_swr > OUT.SY_UNT_SWR
