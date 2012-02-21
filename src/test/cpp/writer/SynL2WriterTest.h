@@ -18,9 +18,6 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../../../src/main/cpp/core/Context.h"
-#include "../../../../src/main/cpp/core/Dictionary.h"
-
 class SynL2WriterTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(SynL2WriterTest);
     CPPUNIT_TEST(testWriter);
@@ -34,8 +31,6 @@ public:
 
 protected:
     void testWriter();
-    void prepareContext();
-    shared_ptr<Context> context;
 };
 
 #endif /* SYNL2WRITERTEST_H_ */

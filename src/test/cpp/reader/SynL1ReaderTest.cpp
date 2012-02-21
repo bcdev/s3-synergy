@@ -15,7 +15,6 @@
 
 #include <cstdlib>
 
-
 #include "../../../main/cpp/core/ExitCode.h"
 #include "../../../main/cpp/reader/SynL1Reader.h"
 #include "../../../main/cpp/util/BasicTask.h"

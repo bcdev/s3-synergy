@@ -15,10 +15,10 @@
 
 #include <cstdlib>
 
-#include "../../../../src/main/cpp/core/Processor.h"
-#include "../../../../src/main/cpp/writer/SynL2Writer.h"
-#include "../../../../src/main/cpp/util/DictionaryParser.h"
-#include "../../../../src/main/cpp/util/JobOrderParser.h"
+#include "../../../main/cpp/core/ExitCode.h"
+#include "../../../main/cpp/util/BasicTask.h"
+#include "../../../main/cpp/writer/ManifestWriter.h"
+#include "../../../main/cpp/writer/SynL2Writer.h"
 
 #include "SynL2SegmentProvider.h"
 #include "SynL2WriterTest.h"
@@ -34,36 +34,20 @@ SynL2WriterTest::~SynL2WriterTest() {
 }
 
 void SynL2WriterTest::setUp() {
-	XPathInitializer init;
-
-	prepareContext();
-}
-
-void SynL2WriterTest::prepareContext() {
-    context = shared_ptr<Context>(new Context());
-    shared_ptr<ErrorHandler> errorHandler = shared_ptr<ErrorHandler>(new ErrorHandler());
-    context->setErrorHandler(errorHandler);
-
-    JobOrderParser jobOrderParser;
-    shared_ptr<JobOrder> jobOrder = jobOrderParser.parse(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_SWR.xml");
-    context->setJobOrder(jobOrder);
-
-    shared_ptr<Dictionary> dictionary = DictionaryParser().parse(Constants::S3_SYNERGY_HOME + "/src/main/resources/dictionary");
-    context->setDictionary(dictionary);
-
-    shared_ptr<Logging> logging = jobOrderParser.createLogging("LOG.SY_UNT_SWR");
-    context->setLogging(logging);
 }
 
 void SynL2WriterTest::tearDown() {
 }
 
 void SynL2WriterTest::testWriter() {
+    BasicTask task("SY_UNT_SWR");
     shared_ptr<Module> module = shared_ptr<Module>(new SynL2SegmentProvider());
     shared_ptr<Module> writer = shared_ptr<Module>(new SynL2Writer());
-    context->addModule(module);
-    context->addModule(writer);
+    shared_ptr<Module> manifestWriter = shared_ptr<Module>(new ManifestWriter(Constants::PRODUCT_SY2));
+    task.getContext().addModule(module);
+    task.getContext().addModule(writer);
+    task.getContext().addModule(manifestWriter);
 
-    Processor processor;
-	processor.process(*context);
+    const int exitCode = task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_SWR.xml");
+    CPPUNIT_ASSERT(exitCode == ExitCode::OK);
 }
