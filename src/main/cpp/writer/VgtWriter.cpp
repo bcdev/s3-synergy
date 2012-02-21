@@ -27,10 +27,13 @@ vector<SegmentDescriptor*> VgtWriter::getSegmentDescriptors(const ProductDescrip
 	vector<SegmentDescriptor*> segmentDescriptors;
 	foreach (SegmentDescriptor* segmentDescriptor, allSegmentDescriptors)
 			{
-				if (!isCoordinateSegment(segmentDescriptor->getName()) && !isTiePointCoordinateSegment(segmentDescriptor->getName())) {
+				const string segmentName = segmentDescriptor->getName();
+
+				if (!isCoordinateSegment(segmentName) && !isTiePointCoordinateSegment(segmentName) && !segmentName.compare("CRS") == 0) {
 					segmentDescriptors.push_back(segmentDescriptor);
 				}
 			}
+
 	return segmentDescriptors;
 }
 
