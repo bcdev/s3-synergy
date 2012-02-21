@@ -64,6 +64,7 @@ void VgtWriter::defineCoordinateVariables(const Context& context, int fileId, co
 	foreach (const Attribute* attribute, crsDescriptor.getAttributes())
 			{
 				//context.getLogging().debug("Defining attribute '" + attribute->getName() + "'", getId());
+				const string& name = attribute->getName();
 				NetCDF::putAttribute(fileId, crsId, *attribute);
 			}
 }
