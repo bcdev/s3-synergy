@@ -100,6 +100,7 @@ public class SynProductReader extends AbstractProductReader {
 
     private void attachTiePointsToProduct(List<String> tiePointsFileNames, Product product) {
         // the tie points are provided on a different grid, so we currently don't use them for the SYN product
+        // todo: at least attach TPGs for lat/lon for each camera
     }
 
     private void attachGeoCoodinatesToProduct(String geoCoordinatesFileName, Product product) {

@@ -49,6 +49,8 @@ public class VgtpProductReader extends AbstractProductReader {
     private List<Product> measurementProducts;
     private List<Product> tiepointsProducts;
     private Product geoCoordinatesProduct;
+    private int width;
+    private int height;
 
     public VgtpProductReader(VgtpProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
@@ -88,13 +90,14 @@ public class VgtpProductReader extends AbstractProductReader {
     private Product createProduct(VgtpManifest manifest) {
         measurementProducts = loadDataProducts(manifest.getMeasurementFileNames());
         tiepointsProducts = loadDataProducts(manifest.getTiepointsFileNames());
-        int width = measurementProducts.get(0).getSceneRasterWidth();
-        int height = measurementProducts.get(0).getSceneRasterHeight();
+        width = measurementProducts.get(0).getSceneRasterWidth();
+        height = measurementProducts.get(0).getSceneRasterHeight();
         Product product = new Product(getProductName(), SynProductReaderPlugIn.FORMAT_NAME_SYN, width,
                                       height, this);
         product.setStartTime(manifest.getStartTime());
         product.setEndTime(manifest.getStopTime());
         product.setFileLocation(getInputFile());
+        // todo: copy metadata
         attachMeasurementBands(measurementProducts, product);
         attachAnnotationData(tiepointsProducts, manifest, product);
         return product;
@@ -119,20 +122,10 @@ public class VgtpProductReader extends AbstractProductReader {
                                                          tpBand.getRasterHeight(), 0, 0, subsampling,
                                                          subsampling, tiePointData, true);
             product.addTiePointGrid(tiePointGrid);
-            if (product.getTiePointGrid("TP_latitude") != null && product.getTiePointGrid("TP_longitude") != null) {
-                product.setGeoCoding(new TiePointGeoCoding(product.getTiePointGrid("TP_latitude"),
-                                                           product.getTiePointGrid("TP_longitude")));
-            }
-        }
-    }
-
-    private void attachGeoCoodinatesToProduct(String geoCoordinatesFileName, Product product) {
-        try {
-            geoCoordinatesProduct = readProduct(geoCoordinatesFileName);
-            geoCoordinatesProduct.transferGeoCodingTo(product, null);
-        } catch (IOException e) {
-            String msg = String.format("Not able to read file '%s.", geoCoordinatesFileName);
-            logger.log(Level.WARNING, msg, e);
+//            if (product.getTiePointGrid("TP_latitude") != null && product.getTiePointGrid("TP_longitude") != null) {
+//                product.setGeoCoding(new TiePointGeoCoding(product.getTiePointGrid("TP_latitude"),
+//                                                           product.getTiePointGrid("TP_longitude")));
+//            }
         }
     }
 

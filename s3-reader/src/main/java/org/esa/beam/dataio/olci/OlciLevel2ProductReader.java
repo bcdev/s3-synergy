@@ -111,7 +111,6 @@ public class OlciLevel2ProductReader extends AbstractProductReader {
         product.setFileLocation(getInputFile());
         attachMeasurementBands(measurementProducts, product);
         attachAnnotationData(manifest, product);
-        // todo: copy metadata
         return product;
     }
 
@@ -137,17 +136,10 @@ public class OlciLevel2ProductReader extends AbstractProductReader {
                                                              subsampling, tiePointData, true);
                 product.addTiePointGrid(tiePointGrid);
             }
-            // todo: set lat/lon TPG and geocoding:
-            // - get lat_bnds and lon_bnds data from e.g. b0 product
-            // - get their source images (NX,2) and (NY,2) which provide all lat/lon values on the boundary of the product
-            // - interpolate these data per row (longitudes) and column (latitudes) into
-            //   float[] lonTiePointData and float[] latTiePointData, respectively
-            // - set new TPGs as above
-            // - set TiePointGeoCoding as below and attach to target product
-//            if (product.getTiePointGrid("TP_latitude") != null && product.getTiePointGrid("TP_longitude") != null) {
-//                product.setGeoCoding(new TiePointGeoCoding(product.getTiePointGrid("TP_latitude"),
-//                                                           product.getTiePointGrid("TP_longitude")));
-//            }
+            if (product.getTiePointGrid("TP_latitude") != null && product.getTiePointGrid("TP_longitude") != null) {
+                product.setGeoCoding(new TiePointGeoCoding(product.getTiePointGrid("TP_latitude"),
+                                                           product.getTiePointGrid("TP_longitude")));
+            }
         } catch (IOException e) {
             String msg = String.format("Not able to read file '%s.", tiePointsFileName);
             logger.log(Level.WARNING, msg, e);
