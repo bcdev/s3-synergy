@@ -57,14 +57,15 @@ void VgtWriter::defineCoordinateVariables(const Context& context, int fileId, co
 				}
 				NetCDF::defineVariable(fileId, coordinateVariableDescriptor->getName(), coordinateVariableDescriptor->getType(), dimIds);
 			}
+
 	const VariableDescriptor& crsDescriptor = productDescriptor.getSegmentDescriptor("CRS").getVariableDescriptor("crs");
 	const int crsId = NetCDF::defineVariable(fileId, crsDescriptor.getName(), crsDescriptor.getType());
-	/*
+
 	foreach (const Attribute* attribute, crsDescriptor.getAttributes())
 			{
+				context.getLogging().debug("Defining attribute '" + attribute->getName() + "'", getId());
 				NetCDF::putAttribute(fileId, crsId, *attribute);
 			}
-	*/
 }
 
 void VgtWriter::writeCoordinateVariables(Context& context, int fileId, const ProductDescriptor& productDescriptor, const string& segmentName) const {
@@ -125,10 +126,8 @@ vector<VariableDescriptor*> VgtWriter::getCoordinateVariableDescriptors(const Pr
 }
 
 bool VgtWriter::isTiePointCoordinateSegment(const string& segmentName) {
-	return segmentName.compare(Constants::SEGMENT_VGT_LAT_TP) == 0 ||
-			segmentName.compare(Constants::SEGMENT_VGT_LON_TP) == 0 ||
-			segmentName.compare(Constants::SEGMENT_VGT_LAT_TP_BNDS) == 0 ||
-			segmentName.compare(Constants::SEGMENT_VGT_LON_TP_BNDS) == 0;
+	return segmentName.compare(Constants::SEGMENT_VGT_LAT_TP) == 0 || segmentName.compare(Constants::SEGMENT_VGT_LON_TP) == 0 || segmentName.compare(Constants::SEGMENT_VGT_LAT_TP_BNDS) == 0
+			|| segmentName.compare(Constants::SEGMENT_VGT_LON_TP_BNDS) == 0;
 }
 
 bool VgtWriter::isTiePointSegment(const string& segmentName) {
@@ -136,8 +135,6 @@ bool VgtWriter::isTiePointSegment(const string& segmentName) {
 }
 
 bool VgtWriter::isCoordinateSegment(const string& segmentName) {
-	return segmentName.compare(Constants::SEGMENT_VGT_LAT) == 0 ||
-			segmentName.compare(Constants::SEGMENT_VGT_LON) == 0 ||
-			segmentName.compare(Constants::SEGMENT_VGT_LAT_BNDS) == 0 ||
-			segmentName.compare(Constants::SEGMENT_VGT_LON_BNDS) == 0;
+	return segmentName.compare(Constants::SEGMENT_VGT_LAT) == 0 || segmentName.compare(Constants::SEGMENT_VGT_LON) == 0 || segmentName.compare(Constants::SEGMENT_VGT_LAT_BNDS) == 0
+			|| segmentName.compare(Constants::SEGMENT_VGT_LON_BNDS) == 0;
 }
