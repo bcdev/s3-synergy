@@ -29,96 +29,105 @@ VgtSegmentProvider::~VgtSegmentProvider() {
 }
 
 void VgtSegmentProvider::start(Context& context) {
-    addCommonSegments(context);
-    addNonCommonSegments(context);
+	addCoordinateSegments(context);
+	addNonCoordinateSegments(context);
 }
 
 void VgtSegmentProvider::stop(Context& context) {
-	reverse_foreach(const string id, context.getSegmentIds()) {
-	    context.removeSegment(id);
-	}
+	reverse_foreach (const string id, context.getSegmentIds())
+			{
+				context.removeSegment(id);
+			}
 }
 
 void VgtSegmentProvider::process(Context& context) {
-    setLastComputedLines(context, Constants::PRODUCT_VGP);
+	setLastComputedLines(context, Constants::PRODUCT_VGP);
 }
 
-void VgtSegmentProvider::addNonCommonSegments(Context& context) {
-    vector<SegmentDescriptor*> segmentDescriptors = getNonCommonSegmentDescriptors(context.getDictionary());
-    foreach(SegmentDescriptor* segDesc, segmentDescriptors) {
-        vector<VariableDescriptor*> variableDescriptors = segDesc->getVariableDescriptors();
-        foreach(VariableDescriptor* varDesc, variableDescriptors) {
-            const string& segmentName = segDesc->getName();
-            if (!context.hasSegment(segmentName)) {
-                valarray<size_t> dimensionSizes = Utils::getDimensionSizes(varDesc);
-                context.addMapSegment(segmentName, dimensionSizes[1], dimensionSizes[2]);
-            }
-            Segment& segment = context.getSegment(segmentName);
-            if (!segment.hasVariable(varDesc->getName())) {
-                segment.addVariable(*varDesc);
-            }
-        }
-    }
+void VgtSegmentProvider::addNonCoordinateSegments(Context& context) {
+	vector<SegmentDescriptor*> segmentDescriptors = getNonCoordinateSegmentDescriptors(context.getDictionary());
+	foreach(SegmentDescriptor* segDesc, segmentDescriptors)
+			{
+				vector<VariableDescriptor*> variableDescriptors = segDesc->getVariableDescriptors();
+				foreach(VariableDescriptor* varDesc, variableDescriptors)
+						{
+							const string& segmentName = segDesc->getName();
+							if (segmentName.compare("CRS") == 0) {
+								continue;
+							}
+							if (!context.hasSegment(segmentName)) {
+								valarray<size_t> dimensionSizes = Utils::getDimensionSizes(varDesc);
+								context.addMapSegment(segmentName, dimensionSizes[1], dimensionSizes[2]);
+							}
+							Segment& segment = context.getSegment(segmentName);
+							if (!segment.hasVariable(varDesc->getName())) {
+								segment.addVariable(*varDesc);
+							}
+						}
+			}
 }
 
-void VgtSegmentProvider::addCommonSegments(Context& context) {
-    vector<SegmentDescriptor*> segmentDescriptors = getCommonSegmentDescriptors(context.getDictionary());
-    foreach(SegmentDescriptor* segDesc, segmentDescriptors) {
-        vector<VariableDescriptor*> variableDescriptors = segDesc->getVariableDescriptors();
-        foreach(VariableDescriptor* varDesc, variableDescriptors) {
-            const string& segmentName = segDesc->getName();
-            if (!context.hasSegment(segmentName)) {
-            	valarray<size_t> dimensionSizes = Utils::getDimensionSizes(varDesc);
-            	context.addSingleLineSegment(segmentName, dimensionSizes[2]);
-            }
-            Segment& segment = context.getSegment(segmentName);
-            if (!segment.hasVariable(varDesc->getName())) {
-                segment.addVariable(*varDesc);
-            }
-        }
-    }
+void VgtSegmentProvider::addCoordinateSegments(Context& context) {
+	vector<SegmentDescriptor*> segmentDescriptors = getCommonSegmentDescriptors(context.getDictionary());
+	foreach(SegmentDescriptor* segDesc, segmentDescriptors)
+			{
+				vector<VariableDescriptor*> variableDescriptors = segDesc->getVariableDescriptors();
+				foreach(VariableDescriptor* varDesc, variableDescriptors)
+						{
+							const string& segmentName = segDesc->getName();
+							if (!context.hasSegment(segmentName)) {
+								valarray<size_t> dimensionSizes = Utils::getDimensionSizes(varDesc);
+								context.addSingleLineSegment(segmentName, dimensionSizes[2]);
+							}
+							Segment& segment = context.getSegment(segmentName);
+							if (!segment.hasVariable(varDesc->getName())) {
+								segment.addVariable(*varDesc);
+							}
+						}
+			}
 }
 
 void VgtSegmentProvider::setLastComputedLines(Context& context, const string& identifier) {
-    vector<SegmentDescriptor*> segmentDescriptors = context.getDictionary().getProductDescriptor(identifier).getSegmentDescriptors();
-    foreach(SegmentDescriptor* segDesc, segmentDescriptors) {
-        Segment& segment = context.getSegment(segDesc->getName());
-        context.setLastComputedL(segment, *this, segment.getGrid().getMaxInMemoryL());
-    }
+	vector<SegmentDescriptor*> segmentDescriptors = context.getDictionary().getProductDescriptor(identifier).getSegmentDescriptors();
+	foreach(SegmentDescriptor* segDesc, segmentDescriptors)
+			{
+				if (segDesc->getName().compare("CRS") == 0) {
+					continue;
+				}
+				Segment& segment = context.getSegment(segDesc->getName());
+				context.setLastComputedL(segment, *this, segment.getGrid().getMaxInMemoryL());
+			}
 }
 
 const vector<SegmentDescriptor*> VgtSegmentProvider::getCommonSegmentDescriptors(const Dictionary& dict) const {
-    const ProductDescriptor& vgtPProductDescriptor = dict.getProductDescriptor(Constants::PRODUCT_VGP);
-    vector<SegmentDescriptor*> allVgtPSegmentDescriptors = vgtPProductDescriptor.getSegmentDescriptors();
-    vector<SegmentDescriptor*> commonSegmentDescriptors;
-    foreach(SegmentDescriptor* segmentDescriptor, allVgtPSegmentDescriptors) {
-        if(isCommonDescriptor(*segmentDescriptor)) {
-            commonSegmentDescriptors.push_back(segmentDescriptor);
-        }
-    }
-    return commonSegmentDescriptors;
+	const ProductDescriptor& vgtPProductDescriptor = dict.getProductDescriptor(Constants::PRODUCT_VGP);
+	vector<SegmentDescriptor*> allVgtPSegmentDescriptors = vgtPProductDescriptor.getSegmentDescriptors();
+	vector<SegmentDescriptor*> commonSegmentDescriptors;
+	foreach(SegmentDescriptor* segmentDescriptor, allVgtPSegmentDescriptors)
+			{
+				if (isCommonDescriptor(*segmentDescriptor)) {
+					commonSegmentDescriptors.push_back(segmentDescriptor);
+				}
+			}
+	return commonSegmentDescriptors;
 }
 
-const vector<SegmentDescriptor*> VgtSegmentProvider::getNonCommonSegmentDescriptors(const Dictionary& dict) const {
-    const ProductDescriptor& vgtPProductDescriptor = dict.getProductDescriptor(Constants::PRODUCT_VGP);
-    vector<SegmentDescriptor*> allVgtPSegmentDescriptors = vgtPProductDescriptor.getSegmentDescriptors();
-    vector<SegmentDescriptor*> nonCommonSegmentDescriptors;
-    foreach(SegmentDescriptor* segmentDescriptor, allVgtPSegmentDescriptors) {
-        if(!isCommonDescriptor(*segmentDescriptor)) {
-            nonCommonSegmentDescriptors.push_back(segmentDescriptor);
-        }
-    }
-    return nonCommonSegmentDescriptors;
+const vector<SegmentDescriptor*> VgtSegmentProvider::getNonCoordinateSegmentDescriptors(const Dictionary& dict) const {
+	const ProductDescriptor& vgtPProductDescriptor = dict.getProductDescriptor(Constants::PRODUCT_VGP);
+	vector<SegmentDescriptor*> allVgtPSegmentDescriptors = vgtPProductDescriptor.getSegmentDescriptors();
+	vector<SegmentDescriptor*> nonCommonSegmentDescriptors;
+	foreach(SegmentDescriptor* segmentDescriptor, allVgtPSegmentDescriptors)
+			{
+				if (!isCommonDescriptor(*segmentDescriptor)) {
+					nonCommonSegmentDescriptors.push_back(segmentDescriptor);
+				}
+			}
+	return nonCommonSegmentDescriptors;
 }
 
 bool VgtSegmentProvider::isCommonDescriptor(const SegmentDescriptor& segmentDescriptor) const {
-    const string& segmentName = segmentDescriptor.getName();
-    return segmentName.compare(Constants::SEGMENT_VGT_LAT) == 0
-            || segmentName.compare(Constants::SEGMENT_VGT_LAT_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_VGT_LON) == 0
-            || segmentName.compare(Constants::SEGMENT_VGT_LON_TP) == 0
-            || segmentName.compare(Constants::SEGMENT_VGT_LAT_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGT_LAT_TP_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGT_LON_BNDS) == 0
-            || segmentName.compare(Constants::SEGMENT_VGT_LON_TP_BNDS) == 0;
+	const string& segmentName = segmentDescriptor.getName();
+	return segmentName.compare(Constants::SEGMENT_VGT_LAT) == 0 || segmentName.compare(Constants::SEGMENT_VGT_LAT_TP) == 0 || segmentName.compare(Constants::SEGMENT_VGT_LON) == 0
+			|| segmentName.compare(Constants::SEGMENT_VGT_LON_TP) == 0 || segmentName.compare(Constants::SEGMENT_VGT_LAT_BNDS) == 0 || segmentName.compare(Constants::SEGMENT_VGT_LAT_TP_BNDS) == 0
+			|| segmentName.compare(Constants::SEGMENT_VGT_LON_BNDS) == 0 || segmentName.compare(Constants::SEGMENT_VGT_LON_TP_BNDS) == 0;
 }

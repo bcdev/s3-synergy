@@ -28,12 +28,12 @@ public:
     void process(Context& context);
 
 private:
-    void addNonCommonSegments(Context& context);
-    void addCommonSegments(Context& context);
+    void addNonCoordinateSegments(Context& context);
+    void addCoordinateSegments(Context& context);
     bool isCommonDescriptor(const SegmentDescriptor& segmentDescriptor) const;
     void setLastComputedLines(Context& context, const string& identifier);
     const vector<SegmentDescriptor*> getCommonSegmentDescriptors(const Dictionary& dict) const;
-    const vector<SegmentDescriptor*> getNonCommonSegmentDescriptors(const Dictionary& dict) const;
+    const vector<SegmentDescriptor*> getNonCoordinateSegmentDescriptors(const Dictionary& dict) const;
 };
 
 #endif	/* VGTSEGMENTPROVIDER_H */

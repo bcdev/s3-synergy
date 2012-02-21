@@ -260,6 +260,13 @@ int NetCDF::defineDimension(int fileId, const string& dimName, size_t size) {
 	return dimId;
 }
 
+int NetCDF::defineVariable(int fileId, const string& varName, int type) {
+	int varId;
+	int status = nc_def_var(fileId, varName.c_str(), type, 0, 0, &varId);
+	checkStatus(status, "defining variable");
+	return varId;
+}
+
 int NetCDF::defineVariable(int fileId, const string& varName, int type, const valarray<int>& dimIds, bool compress) {
 	int varId;
 	int status = nc_def_var(fileId, varName.c_str(), type, dimIds.size(), &dimIds[0], &varId);

@@ -94,7 +94,7 @@ void Vco::process(Context& context) {
 	const Segment& vgt = context.getSegment(Constants::SEGMENT_VGT);
 
 	setMapLats(context);
-	setMapLats(context);
+	setMapLons(context);
 	setMapLatBounds(context);
 	setMapLonBounds(context);
 

@@ -41,6 +41,8 @@ public:
 
 	static int defineDimension(int fileId, const string& dimName, size_t size);
 
+	static int defineVariable(int fileId, const string& varName, int type);
+
 	static int defineVariable(int fileId, const string& varName, int type,
 			const valarray<int>& dimIds, bool compress = false);
 

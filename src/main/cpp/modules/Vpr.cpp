@@ -121,7 +121,7 @@ void Vpr::process(Context& context) {
 	const Segment& vgpTiePoint = context.getSegment(Constants::SEGMENT_VGT_TP);
 
 	setMapLats(context);
-	setMapLats(context);
+	setMapLons(context);
 	setMapLatBounds(context);
 	setMapLonBounds(context);
 	setTpLats(context);
