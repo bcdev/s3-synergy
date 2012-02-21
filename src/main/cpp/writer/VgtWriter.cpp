@@ -60,10 +60,10 @@ void VgtWriter::defineCoordinateVariables(const Context& context, int fileId, co
 
 	const VariableDescriptor& crsDescriptor = productDescriptor.getSegmentDescriptor("CRS").getVariableDescriptor("crs");
 	const int crsId = NetCDF::defineVariable(fileId, crsDescriptor.getName(), crsDescriptor.getType());
-	const vector<Attribute*> crsAttributes(crsDescriptor.getAttributes());
 
-	foreach (const Attribute* attribute, crsAttributes)
+	foreach (const Attribute* attribute, crsDescriptor.getAttributes())
 			{
+				context.getLogging().debug("Defining attribute '" + attribute->getName() + "'", getId());
 				NetCDF::putAttribute(fileId, crsId, *attribute);
 			}
 }
