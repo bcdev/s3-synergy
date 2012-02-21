@@ -63,8 +63,8 @@ void VgtWriter::defineCoordinateVariables(const Context& context, int fileId, co
 
 	NetCDF::putAttribute(fileId, crsId, crsDescriptor.getAttribute("grid_mapping_name"));
 	NetCDF::putAttribute(fileId, crsId, crsDescriptor.getAttribute("longitude_of_prime_meridian"));
-	NetCDF::putAttribute(fileId, crsId, crsDescriptor.getAttribute("semi_major_axis"));
-	NetCDF::putAttribute(fileId, crsId, crsDescriptor.getAttribute("inverse_flattening"));
+	//NetCDF::putAttribute(fileId, crsId, crsDescriptor.getAttribute("semi_major_axis"));
+	//NetCDF::putAttribute(fileId, crsId, crsDescriptor.getAttribute("inverse_flattening"));
 }
 
 void VgtWriter::writeCoordinateVariables(Context& context, int fileId, const ProductDescriptor& productDescriptor, const string& segmentName) const {
