@@ -21,7 +21,7 @@
 
 #include "ManifestWriter.h"
 
-ManifestWriter::ManifestWriter(const string& productId) : BasicModule("MAN_WRITER"), manifestName("manifest") {
+ManifestWriter::ManifestWriter(const string& productId) : BasicModule("MAN_WRITER"), productId(productId), manifestName("manifest") {
 }
 
 ManifestWriter::~ManifestWriter() {
