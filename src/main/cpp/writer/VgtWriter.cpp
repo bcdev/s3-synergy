@@ -61,11 +61,15 @@ void VgtWriter::defineCoordinateVariables(const Context& context, int fileId, co
 	const VariableDescriptor& crsDescriptor = productDescriptor.getSegmentDescriptor("CRS").getVariableDescriptor("crs");
 	const int crsId = NetCDF::defineVariable(fileId, crsDescriptor.getName(), crsDescriptor.getType());
 
+	NetCDF::putAttribute(fileId, crsId, crsDescriptor.getAttribute("grid_mapping_name"));
+
+	/*
 	foreach (const Attribute* attribute, crsDescriptor.getAttributes())
 			{
 				//context.getLogging().debug("Defining attribute '" + attribute->getName() + "'", getId());
 				NetCDF::putAttribute(fileId, crsId, *attribute);
 			}
+			*/
 }
 
 void VgtWriter::writeCoordinateVariables(Context& context, int fileId, const ProductDescriptor& productDescriptor, const string& segmentName) const {
