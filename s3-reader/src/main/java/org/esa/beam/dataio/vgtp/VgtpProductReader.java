@@ -51,6 +51,7 @@ public class VgtpProductReader extends AbstractProductReader {
     private Product geoCoordinatesProduct;
     private int width;
     private int height;
+    private VgtpManifest manifest;
 
     public VgtpProductReader(VgtpProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
@@ -60,8 +61,8 @@ public class VgtpProductReader extends AbstractProductReader {
     @Override
     protected Product readProductNodesImpl() throws IOException {
         File inputFile = getInputFile();
-        VgtpManifest manifest = createManifestFile(inputFile);
-        return createProduct(manifest);
+        manifest = createManifestFile(inputFile);
+        return createProduct();
     }
 
 
@@ -87,20 +88,41 @@ public class VgtpProductReader extends AbstractProductReader {
         super.close();
     }
 
-    private Product createProduct(VgtpManifest manifest) {
+    private Product createProduct() {
         measurementProducts = loadDataProducts(manifest.getMeasurementFileNames());
         tiepointsProducts = loadDataProducts(manifest.getTiepointsFileNames());
         width = measurementProducts.get(0).getSceneRasterWidth();
         height = measurementProducts.get(0).getSceneRasterHeight();
-        Product product = new Product(getProductName(), SynProductReaderPlugIn.FORMAT_NAME_SYN, width,
+        Product product = new Product(getProductName(), getProductType(), width,
                                       height, this);
         product.setStartTime(manifest.getStartTime());
         product.setEndTime(manifest.getStopTime());
         product.setFileLocation(getInputFile());
-        // todo: copy metadata
+
+        product.getMetadataRoot().addElement(new MetadataElement("Global_Attributes"));
+        product.getMetadataRoot().addElement(new MetadataElement("Variable_Attributes"));
+        ProductUtils.copyMetadata(measurementProducts.get(0).getMetadataRoot().getElement("Global_Attributes"),
+                                  product.getMetadataRoot().getElement("Global_Attributes"));
+        product.getMetadataRoot().getElement("Global_Attributes").setAttributeString("dataset_name", getProductName());
+        for (Product measurementProduct : measurementProducts) {
+            for (final MetadataElement element : measurementProduct.getMetadataRoot().getElement("Variable_Attributes").getElements()) {
+//                if (!element.getName().startsWith("lat") && !element.getName().startsWith("lon")) {
+                if (isMeasurementBandElement(element)) {
+                    product.getMetadataRoot().getElement("Variable_Attributes").addElement(element.createDeepClone());
+                }
+            }
+        }
+
         attachMeasurementBands(measurementProducts, product);
         attachAnnotationData(tiepointsProducts, manifest, product);
+        ProductUtils.copyGeoCoding(measurementProducts.get(0), product);
         return product;
+    }
+
+    private boolean isMeasurementBandElement(MetadataElement element) {
+        return (!element.getName().startsWith("lat") &&
+                !element.getName().startsWith("lon") &&
+                !element.getName().equals("crs"));
     }
 
     private void attachAnnotationData(List<Product> tiepointsProducts, VgtpManifest manifest, Product product) {
@@ -111,7 +133,7 @@ public class VgtpProductReader extends AbstractProductReader {
         for (Product tpProduct : tiePointsProducts) {
             final MetadataElement metadataRoot = tpProduct.getMetadataRoot();
             final MetadataElement globalAttributes = metadataRoot.getElement("Global_Attributes");
-            final int subsampling = 8;
+            final int subsampling = getTiePointSubsamplingFactor();
             final Band tpBand = tpProduct.getBandAt(0);
             final MultiLevelImage sourceImage = tpBand.getGeophysicalImage();
             final int width = sourceImage.getWidth();
@@ -121,11 +143,62 @@ public class VgtpProductReader extends AbstractProductReader {
             TiePointGrid tiePointGrid = new TiePointGrid(tpBand.getName(), tpBand.getRasterWidth(),
                                                          tpBand.getRasterHeight(), 0, 0, subsampling,
                                                          subsampling, tiePointData, true);
+            setTiePointScalingFactor(tiePointGrid);
             product.addTiePointGrid(tiePointGrid);
-//            if (product.getTiePointGrid("TP_latitude") != null && product.getTiePointGrid("TP_longitude") != null) {
-//                product.setGeoCoding(new TiePointGeoCoding(product.getTiePointGrid("TP_latitude"),
-//                                                           product.getTiePointGrid("TP_longitude")));
-//            }
+        }
+    }
+    
+    private int getTiePointSubsamplingFactor() {
+        if (isVGSProduct()) {
+            return 1;
+        } else if (isVGPProduct()) {
+            return 8;
+        } else {
+            throw new IllegalArgumentException("Invalid input - product seems to be neither of type VGS nor VGP.");
+        }
+    }
+
+    private String getProductType() {
+        final String descr = manifest.getDescription();
+        if (descr.contains("VGT S")) {
+            return "VGT_S_L2_SYN";
+        } else if (descr.contains("VGT P")) {
+            return "VGT_P_L2_SYN";
+        } else {
+            throw new IllegalArgumentException("Invalid input - product seems to be neither of type VGS nor VGP.");
+        }
+    }
+
+    private  boolean isVGSProduct() {
+        return getProductType().equals("VGT_S_L2_SYN");
+    }
+
+    private  boolean isVGPProduct() {
+        return getProductType().equals("VGT_P_L2_SYN");
+    }
+
+    private void setMeasurementBandScalingFactor(Band band) {
+        if (band.getName().equals("ndvi")) {
+            band.setScalingFactor(0.004);
+        } else if (isSpectralBand(band)) {
+                band.setScalingFactor(0.004);
+        }
+    }
+
+    private boolean isSpectralBand(Band band) {
+        return band.getName().equals("b0")||
+               band.getName().equals("b2") ||
+               band.getName().equals("b3") ||
+               band.getName().equals("mir");
+    }
+
+    private void setTiePointScalingFactor(TiePointGrid tpg) {
+        if (tpg.getName().equals("ag")) {
+            tpg.setScalingFactor(0.004);
+        } else if (tpg.getName().equals("og")) {
+            tpg.setScalingFactor(0.004);
+        } else if (tpg.getName().equals("wvg")) {
+            tpg.setScalingFactor(0.04);
         }
     }
 
@@ -139,6 +212,8 @@ public class VgtpProductReader extends AbstractProductReader {
                         final FlagCoding vgtpSmFlagCoding = VgtpFlagCodings.createSmFlagCoding();
                         targetBand.setSampleCoding(vgtpSmFlagCoding);
                         product.getFlagCodingGroup().add(vgtpSmFlagCoding);
+                    } else {
+                        setMeasurementBandScalingFactor(targetBand);
                     }
                     targetBand.setSourceImage(sourceBand.getSourceImage());
                 }

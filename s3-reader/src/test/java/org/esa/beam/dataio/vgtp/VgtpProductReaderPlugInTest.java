@@ -30,34 +30,28 @@ import static org.junit.Assert.*;
 
 public class VgtpProductReaderPlugInTest {
 
-    public static final String VGTP_SENSOR_ID = "SY";
+    public static final String VGT_SENSOR_ID = "SY";
 
-    private SynProductReaderPlugIn plugIn;
+    private VgtpProductReaderPlugIn plugIn;
 
     @Before
     public void setup() {
-        plugIn = new SynProductReaderPlugIn();
+        plugIn = new VgtpProductReaderPlugIn();
     }
 
     @Test
     public void testIfPlugInIsLoaded() {
         ProductIOPlugInManager ioPlugInManager = ProductIOPlugInManager.getInstance();
         Iterator<ProductReaderPlugIn> readerPlugIns = ioPlugInManager.getReaderPlugIns(
-                SynProductReaderPlugIn.FORMAT_NAME_SYN);
+                VgtpProductReaderPlugIn.FORMAT_NAME_VGTP);
         assertTrue(readerPlugIns.hasNext());
-        assertTrue(readerPlugIns.next() instanceof SynProductReaderPlugIn);
+        assertTrue(readerPlugIns.next() instanceof VgtpProductReaderPlugIn);
 
     }
 
     @Test
-    public void testDecodeQualificationWithFullResolution() {
-        String validPath = createManifestFilePath(VGTP_SENSOR_ID);
-        assertEquals(DecodeQualification.INTENDED, plugIn.getDecodeQualification(validPath));
-    }
-
-    @Test
-    public void testDecodeQualificationWithReducedResolution() {
-        String validPath = createManifestFilePath(VGTP_SENSOR_ID);
+    public void testDecodeQualification() {
+        String validPath = createManifestFilePath(VGT_SENSOR_ID);
         assertEquals(DecodeQualification.INTENDED, plugIn.getDecodeQualification(validPath));
     }
 
@@ -97,7 +91,7 @@ public class VgtpProductReaderPlugInTest {
     }
     private String createManifestFilePath(String sensorId) {
         String validParentDirectory = String.format("/S3_%s_2_MMM_TTTTTTTTTTTT_instanceID_GGG_CCCC_VV.SAFE/", sensorId);
-        String manifestFile = "manifest_SYN.xml";
+        String manifestFile = "manifest.xml";
         return validParentDirectory + manifestFile;
     }
 }

@@ -86,7 +86,7 @@ public class VgtpProductReaderPlugIn implements ProductReaderPlugIn {
     }
 
     private boolean isInputFileNameValid(String name) {
-        return "manifest_VGP.xml".equals(name);
+        return "manifest.xml".equals(name);
     }
 
     private boolean isDirectoryNameValid(String parentDirectoryName) {
