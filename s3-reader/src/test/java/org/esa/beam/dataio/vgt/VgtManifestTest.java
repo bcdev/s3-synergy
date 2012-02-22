@@ -13,7 +13,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-package org.esa.beam.dataio.vgtp;
+package org.esa.beam.dataio.vgt;
 
 import org.esa.beam.framework.datamodel.ProductData;
 import org.junit.Before;
@@ -31,16 +31,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class VgtpManifestTest {
+public class VgtManifestTest {
 
-    private VgtpManifest manifestTest;
+    private VgtManifest manifestTest;
 
     @Before
     public void before() throws ParserConfigurationException, IOException, SAXException {
         InputStream stream = getClass().getResourceAsStream("VGP_TEST_manifest.xml");
         try {
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(stream);
-            manifestTest = new VgtpManifest(doc);
+            manifestTest = new VgtManifest(doc);
         } finally {
             stream.close();
 

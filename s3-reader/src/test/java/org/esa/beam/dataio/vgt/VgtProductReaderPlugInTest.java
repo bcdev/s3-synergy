@@ -13,9 +13,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-package org.esa.beam.dataio.vgtp;
+package org.esa.beam.dataio.vgt;
 
-import org.esa.beam.dataio.syn.SynProductReaderPlugIn;
 import org.esa.beam.framework.dataio.DecodeQualification;
 import org.esa.beam.framework.dataio.ProductIOPlugInManager;
 import org.esa.beam.framework.dataio.ProductReader;
@@ -28,24 +27,24 @@ import java.util.Iterator;
 
 import static org.junit.Assert.*;
 
-public class VgtpProductReaderPlugInTest {
+public class VgtProductReaderPlugInTest {
 
     public static final String VGT_SENSOR_ID = "SY";
 
-    private VgtpProductReaderPlugIn plugIn;
+    private VgtProductReaderPlugIn plugIn;
 
     @Before
     public void setup() {
-        plugIn = new VgtpProductReaderPlugIn();
+        plugIn = new VgtProductReaderPlugIn();
     }
 
     @Test
     public void testIfPlugInIsLoaded() {
         ProductIOPlugInManager ioPlugInManager = ProductIOPlugInManager.getInstance();
         Iterator<ProductReaderPlugIn> readerPlugIns = ioPlugInManager.getReaderPlugIns(
-                VgtpProductReaderPlugIn.FORMAT_NAME_VGTP);
+                VgtProductReaderPlugIn.FORMAT_NAME_VGTP);
         assertTrue(readerPlugIns.hasNext());
-        assertTrue(readerPlugIns.next() instanceof VgtpProductReaderPlugIn);
+        assertTrue(readerPlugIns.next() instanceof VgtProductReaderPlugIn);
 
     }
 

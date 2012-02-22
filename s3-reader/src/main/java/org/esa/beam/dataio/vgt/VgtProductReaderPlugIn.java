@@ -13,7 +13,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-package org.esa.beam.dataio.vgtp;
+package org.esa.beam.dataio.vgt;
 
 import org.esa.beam.framework.dataio.DecodeQualification;
 import org.esa.beam.framework.dataio.ProductReader;
@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  * @author Olaf Danne
  * @since 1.0
  */
-public class VgtpProductReaderPlugIn implements ProductReaderPlugIn {
+public class VgtProductReaderPlugIn implements ProductReaderPlugIn {
 
     public static final String FORMAT_NAME_VGTP = "VGTP-L2-SYN";
 
@@ -56,7 +56,7 @@ public class VgtpProductReaderPlugIn implements ProductReaderPlugIn {
 
     @Override
     public ProductReader createReaderInstance() {
-        return new VgtpProductReader(this);
+        return new VgtProductReader(this);
     }
 
     @Override

@@ -13,11 +13,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-package org.esa.beam.dataio.vgtp;
+package org.esa.beam.dataio.vgt;
 
 import com.bc.ceres.core.ProgressMonitor;
 import com.bc.ceres.glevel.MultiLevelImage;
-import org.esa.beam.dataio.syn.SynProductReaderPlugIn;
 import org.esa.beam.framework.dataio.AbstractProductReader;
 import org.esa.beam.framework.dataio.ProductIO;
 import org.esa.beam.framework.datamodel.*;
@@ -43,7 +42,7 @@ import java.util.logging.Logger;
  * @author Olaf Danne
  * @since 1.0
  */
-public class VgtpProductReader extends AbstractProductReader {
+public class VgtProductReader extends AbstractProductReader {
 
     private final Logger logger;
     private List<Product> measurementProducts;
@@ -51,9 +50,9 @@ public class VgtpProductReader extends AbstractProductReader {
     private Product geoCoordinatesProduct;
     private int width;
     private int height;
-    private VgtpManifest manifest;
+    private VgtManifest manifest;
 
-    public VgtpProductReader(VgtpProductReaderPlugIn readerPlugIn) {
+    public VgtProductReader(VgtProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
         logger = Logger.getLogger(getClass().getSimpleName());
     }
@@ -125,7 +124,7 @@ public class VgtpProductReader extends AbstractProductReader {
                 !element.getName().equals("crs"));
     }
 
-    private void attachAnnotationData(List<Product> tiepointsProducts, VgtpManifest manifest, Product product) {
+    private void attachAnnotationData(List<Product> tiepointsProducts, VgtManifest manifest, Product product) {
         attachTiePointsToProduct(tiepointsProducts, product);
     }
 
@@ -208,8 +207,8 @@ public class VgtpProductReader extends AbstractProductReader {
                 final String bandName = sourceBand.getName();
                 if (!product.containsBand(bandName)) {
                     final Band targetBand = ProductUtils.copyBand(bandName, bandProduct, product);
-                    if (sourceBand.getName().endsWith(VgtpFlagCodings.VGTP_SM_FLAG_BAND_NAME)) {
-                        final FlagCoding vgtpSmFlagCoding = VgtpFlagCodings.createSmFlagCoding();
+                    if (sourceBand.getName().endsWith(VgtFlagCodings.VGTP_SM_FLAG_BAND_NAME)) {
+                        final FlagCoding vgtpSmFlagCoding = VgtFlagCodings.createSmFlagCoding();
                         targetBand.setSampleCoding(vgtpSmFlagCoding);
                         product.getFlagCodingGroup().add(vgtpSmFlagCoding);
                     } else {
@@ -248,10 +247,10 @@ public class VgtpProductReader extends AbstractProductReader {
         return product;
     }
 
-    private VgtpManifest createManifestFile(File inputFile) throws IOException {
+    private VgtManifest createManifestFile(File inputFile) throws IOException {
         InputStream manifestInputStream = new FileInputStream(inputFile);
         try {
-            return new VgtpManifest(createXmlDocument(manifestInputStream));
+            return new VgtManifest(createXmlDocument(manifestInputStream));
         } finally {
             manifestInputStream.close();
         }

@@ -13,7 +13,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-package org.esa.beam.dataio.vgtp;
+package org.esa.beam.dataio.vgt;
 
 import org.esa.beam.framework.datamodel.ProductData;
 import org.esa.beam.util.XPathHelper;
@@ -33,12 +33,12 @@ import java.util.List;
  * @author Olaf Danne
  * @since 1.0
  */
-class VgtpManifest {
+class VgtManifest {
 
     private Document doc;
     private XPathHelper xPathHelper;
 
-    VgtpManifest(Document manifestDocument) {
+    VgtManifest(Document manifestDocument) {
         doc = manifestDocument;
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPathHelper = new XPathHelper(xPath);
