@@ -430,7 +430,7 @@ This document is a sample manifest file of a SAFE archive. -->
 
         <dataObject
             ID='pixelStatusFlags'
-            repID='measurementDataSchema'>
+            repID='statusFlagsSchema'>
             <byteStream mimeType='application/octetstream'>
                 <fileLocation
                     locatorType='URL'
