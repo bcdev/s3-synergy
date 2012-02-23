@@ -25,6 +25,21 @@ configure_file (
 )
 
 configure_file (
+  "src/main/bin/syl2.sh.in"
+  "src/main/bin/syl2.sh"
+)
+
+configure_file (
+  "src/main/bin/vgtp.sh.in"
+  "src/main/bin/vgtp.sh"
+)
+
+configure_file (
+  "src/main/bin/vgts.sh.in"
+  "src/main/bin/vgts.sh"
+)
+
+configure_file (
   "src/test/bin/runalltests.sh.in"
   "src/test/bin/runalltests.sh"
 )
@@ -598,6 +613,11 @@ install(TARGETS syl2 vgtp vgts
   sy_unt_vco
   RUNTIME DESTINATION bin
   CONFIGURATIONS Release
+)
+
+install(DIRECTORY src/main/bin/ DESTINATION bin
+  FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+  FILES_MATCHING PATTERN "*.sh"
 )
 
 install(DIRECTORY src/test/bin/ DESTINATION bin
