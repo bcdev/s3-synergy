@@ -47,9 +47,6 @@ public class VgtProductReader extends AbstractProductReader {
     private final Logger logger;
     private List<Product> measurementProducts;
     private List<Product> tiepointsProducts;
-    private Product geoCoordinatesProduct;
-    private int width;
-    private int height;
     private VgtManifest manifest;
 
     public VgtProductReader(VgtProductReaderPlugIn readerPlugIn) {
@@ -81,19 +78,15 @@ public class VgtProductReader extends AbstractProductReader {
         for (Product product : tiepointsProducts) {
             product.dispose();
         }
-        if (geoCoordinatesProduct != null) {
-            geoCoordinatesProduct.dispose();
-        }
         super.close();
     }
 
     private Product createProduct() {
         measurementProducts = loadDataProducts(manifest.getMeasurementFileNames());
         tiepointsProducts = loadDataProducts(manifest.getTiepointsFileNames());
-        width = measurementProducts.get(0).getSceneRasterWidth();
-        height = measurementProducts.get(0).getSceneRasterHeight();
-        Product product = new Product(getProductName(), getProductType(), width,
-                                      height, this);
+        final int width = measurementProducts.get(0).getSceneRasterWidth();
+        final int height = measurementProducts.get(0).getSceneRasterHeight();
+        Product product = new Product(getProductName(), getProductType(), width, height, this);
         product.setStartTime(manifest.getStartTime());
         product.setEndTime(manifest.getStopTime());
         product.setFileLocation(getInputFile());
@@ -105,7 +98,6 @@ public class VgtProductReader extends AbstractProductReader {
         product.getMetadataRoot().getElement("Global_Attributes").setAttributeString("dataset_name", getProductName());
         for (Product measurementProduct : measurementProducts) {
             for (final MetadataElement element : measurementProduct.getMetadataRoot().getElement("Variable_Attributes").getElements()) {
-//                if (!element.getName().startsWith("lat") && !element.getName().startsWith("lon")) {
                 if (isMeasurementBandElement(element)) {
                     product.getMetadataRoot().getElement("Variable_Attributes").addElement(element.createDeepClone());
                 }
@@ -113,7 +105,7 @@ public class VgtProductReader extends AbstractProductReader {
         }
 
         attachMeasurementBands(measurementProducts, product);
-        attachAnnotationData(tiepointsProducts, manifest, product);
+        attachAnnotationData(tiepointsProducts, product);
         ProductUtils.copyGeoCoding(measurementProducts.get(0), product);
         return product;
     }
@@ -124,14 +116,12 @@ public class VgtProductReader extends AbstractProductReader {
                 !element.getName().equals("crs"));
     }
 
-    private void attachAnnotationData(List<Product> tiepointsProducts, VgtManifest manifest, Product product) {
+    private void attachAnnotationData(List<Product> tiepointsProducts, Product product) {
         attachTiePointsToProduct(tiepointsProducts, product);
     }
 
     private void attachTiePointsToProduct(List<Product> tiePointsProducts, Product product) {
         for (Product tpProduct : tiePointsProducts) {
-            final MetadataElement metadataRoot = tpProduct.getMetadataRoot();
-            final MetadataElement globalAttributes = metadataRoot.getElement("Global_Attributes");
             final int subsampling = getTiePointSubsamplingFactor();
             final Band tpBand = tpProduct.getBandAt(0);
             final MultiLevelImage sourceImage = tpBand.getGeophysicalImage();

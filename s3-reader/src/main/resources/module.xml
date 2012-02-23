@@ -79,7 +79,7 @@
             <id>importS3VgtProduct</id>
             <class>org.esa.beam.visat.actions.ProductImportAction</class>
             <formatName>VGT-L2-SYN</formatName>
-            <text>Import VGT P L2 SYN Product...</text>
+            <text>Import VGT L2 SYN Product...</text>
             <mnemonic>Y</mnemonic>
             <shortDescr>Import a VGT L2 SYN data product or product subset.</shortDescr>
             <description>Import a VGT L2 SYN data product or product subset.</description>

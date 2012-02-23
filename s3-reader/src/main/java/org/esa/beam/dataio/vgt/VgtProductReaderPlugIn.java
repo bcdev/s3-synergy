@@ -25,20 +25,20 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
- * PlugIn class which provides an OLCI/SLSTR SYN product reader to the framework.
+ * PlugIn class which provides a VGT P or S product reader to the framework.
  *
  * @author Olaf Danne
  * @since 1.0
  */
 public class VgtProductReaderPlugIn implements ProductReaderPlugIn {
 
-    public static final String FORMAT_NAME_VGTP = "VGTP-L2-SYN";
+    public static final String FORMAT_NAME_VGT = "VGT-L2-SYN";
 
     private static final Class[] SUPPORTED_INPUT_TYPES = new Class[]{String.class, File.class};
     private static final String DESCRIPTION = "SYNSAFE Format";
     private static final String MANIFEST_FILE_EXTENSION = ".xml";
     private static final String[] DEFAULT_FILE_EXTENSIONS = new String[]{MANIFEST_FILE_EXTENSION};
-    private static final String[] FORMAT_NAMES = new String[]{FORMAT_NAME_VGTP};
+    private static final String[] FORMAT_NAMES = new String[]{FORMAT_NAME_VGT};
 
     @Override
     public DecodeQualification getDecodeQualification(Object input) {
