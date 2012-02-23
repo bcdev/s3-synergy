@@ -22,6 +22,8 @@
 
 using std::runtime_error;
 
+using boost::lexical_cast;
+
 AbstractWriter::AbstractWriter(const string& name, const string& productId) :
         BasicModule(name), productId(productId) {
 }

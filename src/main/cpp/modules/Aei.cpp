@@ -17,6 +17,8 @@
 
 #include "Aei.h"
 
+using boost::lexical_cast;
+
 Aei::Aei() :
         BasicModule("AEI") {
 }

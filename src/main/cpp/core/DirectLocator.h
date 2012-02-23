@@ -19,6 +19,9 @@
 #include "Accessor.h"
 #include "Grid.h"
 
+/**
+ * A rotation. This class is not used.
+ */
 class Rotation {
 public:
 	Rotation(double lat = 0.0, double lon = 0.0);
@@ -48,6 +51,9 @@ private:
 	double a33;
 };
 
+/**
+ * In the DPM referred to as 'direct location model'. This class is not used.
+ */
 class DirectLocator {
 public:
 	DirectLocator(const Accessor& latAccessor, const Accessor& lonAccessor, const Grid& grid);

@@ -17,6 +17,8 @@
 
 #include <cmath>
 
+using boost::lexical_cast;
+
 Col::Col() :
 		BasicModule("COL") {
 }

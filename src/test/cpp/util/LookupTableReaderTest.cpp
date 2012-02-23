@@ -72,7 +72,7 @@ void LookupTableReaderTest::testRead_OLC_R_atm() {
 	valarray<float> coordinates(7);
 	valarray<float> values(18);
 	valarray<float> f(lut->getDimensionCount());
-	valarray<float> w(lut->getVectorWorkspaceSize());
+	valarray<float> w;
 
 	coordinates[0] = 0.0f; // ADA
 	coordinates[1] = 0.0f; // SZA

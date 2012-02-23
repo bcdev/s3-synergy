@@ -17,6 +17,10 @@
 
 #include "TimeConverter.h"
 
+using boost::posix_time::from_iso_string;
+using boost::posix_time::ptime;
+using boost::posix_time::time_duration;
+
 TimeConverter::TimeConverter(const string& startTimeString) {
     string s(startTimeString);
     s.replace(8, 1, "T");

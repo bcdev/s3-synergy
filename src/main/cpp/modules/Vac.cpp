@@ -16,6 +16,8 @@
 #include "Aco.h"
 #include "Vac.h"
 
+using boost::lexical_cast;
+
 Vac::Vac() :
 		BasicModule("VAC") {
 }

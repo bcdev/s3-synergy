@@ -27,7 +27,7 @@ template<class T, class W>
 class ArrayImpl;
 
 /**
- * Represents an array of values. This class is not used yet.
+ * Represents an array of values. This class is not used.
  */
 template<class W>
 class Array {

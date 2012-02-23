@@ -34,29 +34,12 @@ using std::string;
 using std::valarray;
 using std::vector;
 
+/**
+ * The base class for all descriptors. This is non-public API.
+ */
 template<class A, class E>
 class Descriptor {
 public:
-
-    Descriptor(const string& name) :
-            name(name), attributeMap(), elementMap() {
-    }
-
-    virtual ~Descriptor() {
-        pair<string, A*> apair;
-        pair<string, E*> tpair;
-
-        reverse_foreach(apair, attributeMap)
-                {
-                    delete apair.second;
-                }
-
-        reverse_foreach(tpair, elementMap)
-                {
-                    delete tpair.second;
-                }
-    }
-
     void addAttribute(const A& a) {
         addAttribute(a.getType(), a.getName(), a.getValue());
     }
@@ -68,16 +51,6 @@ public:
         A* a = new A(type, name, value);
         attributeMap[name] = a;
         return *a;
-    }
-
-    E& addElement(const string& name) {
-        if (hasElement(name)) {
-            BOOST_THROW_EXCEPTION( logic_error("Element '" + name + "' already exists."));
-        }
-        E* e = new E(name);
-        elementMap[name] = e;
-        elementList.push_back(e);
-        return *e;
     }
 
     A& getAttribute(const string& name) const {
@@ -98,11 +71,53 @@ public:
         return attributes;
     }
 
+    const string& getName() const {
+        return name;
+    }
+
+    bool hasAttribute(const string& name) const {
+        return attributeMap.find(name) != attributeMap.end();
+    }
+
+protected:
+    Descriptor(const string& name) :
+            name(name), attributeMap(), elementMap() {
+    }
+
+    virtual ~Descriptor() {
+        pair<string, A*> apair;
+        pair<string, E*> tpair;
+
+        reverse_foreach(apair, attributeMap)
+                {
+                    delete apair.second;
+                }
+
+        reverse_foreach(tpair, elementMap)
+                {
+                    delete tpair.second;
+                }
+    }
+
+    E& addElement(const string& name) {
+        if (hasElement(name)) {
+            BOOST_THROW_EXCEPTION( logic_error("Element '" + name + "' already exists."));
+        }
+        E* e = new E(name);
+        elementMap[name] = e;
+        elementList.push_back(e);
+        return *e;
+    }
+
     E& getElement(const string& name) const {
         if (!hasElement(name)) {
             BOOST_THROW_EXCEPTION( out_of_range("Descriptor '" + this->name + "' contains no element '" + name + "'."));
         }
         return *elementMap.at(name);
+    }
+
+    bool hasElement(const string& name) const {
+        return elementMap.find(name) != elementMap.end();
     }
 
     vector<E*> getElements() const {
@@ -115,20 +130,7 @@ public:
         return elements;
     }
 
-    const string& getName() const {
-        return name;
-    }
-
-    bool hasAttribute(const string& name) const {
-        return attributeMap.find(name) != attributeMap.end();
-    }
-
-    bool hasElement(const string& name) const {
-        return elementMap.find(name) != elementMap.end();
-    }
-
 private:
-
     Descriptor(const Descriptor& descriptor) {
     }
 
@@ -139,7 +141,7 @@ private:
 };
 
 /**
- * Represents the static information about an attribute of a netCDF-variable.
+ * Describes a netCDF attribute.
  */
 class Attribute {
 public:
@@ -158,11 +160,14 @@ public:
      *
      * @param type The attribute's type.
      * @param name The attribute's name.
-     * @param data The attribute's data.
+     * @param data The attribute's value.
      */
     Attribute(int type, const string& name, const valarray<int8_t>& data) :
             name(name), type(type) {
-        string s;
+    	using boost::lexical_cast;
+    	using boost::numeric_cast;
+
+    	string s;
         for (size_t i = 0; i < data.size(); i++) {
             if (i > 0) {
                 s += " ";
@@ -177,11 +182,14 @@ public:
      *
      * @param type The attribute's type.
      * @param name The attribute's name.
-     * @param data The attribute's data.
+     * @param data The attribute's value.
      */
     Attribute(int type, const string& name, const valarray<uint8_t>& data) :
             name(name), type(type) {
-        string s;
+    	using boost::lexical_cast;
+    	using boost::numeric_cast;
+
+    	string s;
         for (size_t i = 0; i < data.size(); i++) {
             if (i > 0) {
                 s += " ";
@@ -196,12 +204,14 @@ public:
      *
      * @param type The attribute's type.
      * @param name The attribute's name.
-     * @param data The attribute's data.
+     * @param data The attribute's value.
      */
     template<class T>
     Attribute(int type, const string& name, const valarray<T>& data) :
             name(name), type(type) {
-        string s;
+    	using boost::lexical_cast;
+
+    	string s;
         for (size_t i = 0; i < data.size(); i++) {
             if (i > 0) {
                 s += " ";
@@ -216,9 +226,18 @@ public:
      */
     ~Attribute();
 
+    /**
+     * Returns the attribute value as 'byte' array.
+     * @return the attribute value as 'byte' array.
+     */
     valarray<int8_t> getBytes() const {
+    	using boost::is_any_of;
+    	using boost::lexical_cast;
+    	using boost::numeric_cast;
+    	using boost::algorithm::split;
+
         vector<string> tokens;
-        split(tokens, value, boost::is_any_of(" "));
+        split(tokens, value, is_any_of(" "));
         valarray<int8_t> result(tokens.size());
         for (size_t i = 0; i < tokens.size(); i++) {
             result[i] = numeric_cast<int8_t>(lexical_cast<int16_t>(tokens[i]));
@@ -226,9 +245,18 @@ public:
         return result;
     }
 
+    /**
+     * Returns the attribute value as 'unsigned byte' array.
+     * @return the attribute value as 'unsigned byte' array.
+     */
     valarray<uint8_t> getUBytes() const {
-        vector<string> tokens;
-        split(tokens, value, boost::is_any_of(" "));
+    	using boost::is_any_of;
+    	using boost::lexical_cast;
+    	using boost::numeric_cast;
+    	using boost::algorithm::split;
+
+    	vector<string> tokens;
+        split(tokens, value, is_any_of(" "));
         valarray<uint8_t> result(tokens.size());
         for (size_t i = 0; i < tokens.size(); i++) {
             result[i] = numeric_cast<uint8_t>(lexical_cast<uint16_t>(tokens[i]));
@@ -236,38 +264,74 @@ public:
         return result;
     }
 
+    /**
+     * Returns the attribute value as 'short' array.
+     * @return the attribute value as 'short' array.
+     */
     valarray<int16_t> getShorts() const {
         return getComponents<int16_t>();
     }
 
+    /**
+     * Returns the attribute value as 'unsigned short' array.
+     * @return the attribute value as 'unsigend short' array.
+     */
     valarray<uint16_t> getUShorts() const {
         return getComponents<uint16_t>();
     }
 
+    /**
+     * Returns the attribute value as 'int' array.
+     * @return the attribute value as 'int' array.
+     */
     valarray<int32_t> getInts() const {
         return getComponents<int32_t>();
     }
 
+    /**
+     * Returns the attribute value as 'unsigned int' array.
+     * @return the attribute value as 'unsigned int' array.
+     */
     valarray<uint32_t> getUInts() const {
         return getComponents<uint32_t>();
     }
 
+    /**
+     * Returns the attribute value as 'long' array.
+     * @return the attribute value as 'long' array.
+     */
     valarray<int64_t> getLongs() const {
         return getComponents<int64_t>();
     }
 
+    /**
+     * Returns the attribute value as 'unsigned long' array.
+     * @return the attribute value as 'unsigned long' array.
+     */
     valarray<uint64_t> getULongs() const {
         return getComponents<uint64_t>();
     }
 
+    /**
+     * Returns the attribute value as 'float' array.
+     * @return the attribute value as 'float' array.
+     */
     valarray<float> getFloats() const {
         return getComponents<float>();
     }
 
+    /**
+     * Returns the attribute value as 'double' array.
+     * @return the attribute value as 'double' array.
+     */
     valarray<double> getDoubles() const {
         return getComponents<double>();
     }
 
+    /**
+     * Returns the attribute value as 'string' array.
+     * @return the attribute value as 'string' array.
+     */
     valarray<string> getTokens() const {
         return getComponents<string>();
     }
@@ -312,6 +376,10 @@ public:
 
     template<class T>
     valarray<T> getComponents() const {
+    	using boost::is_any_of;
+    	using boost::lexical_cast;
+    	using boost::algorithm::split;
+
         vector<string> tokens;
         split(tokens, value, boost::is_any_of(" "));
         valarray<T> result(tokens.size());
@@ -328,10 +396,10 @@ private:
 };
 
 /**
- * Represents a variable dimension.
+ * Describes a netCDF dimension.
  *
  * @param name The dimension's name.
- * @param size The dimension's size, i.e. the number of values the dimension has.
+ * @param size The dimension's size.
  */
 class Dimension {
 public:
@@ -382,20 +450,15 @@ private:
     size_t size;
 };
 
-class SegmentDescriptor;
-
 /**
- * Represents the static information about an (input or output) variable. All
- * variables are instantiated using the Dictionary. The pixel values,
- * however, are not stored in the variables but in the current Segment.
+ * Describes a netCDF variable.
  */
 class VariableDescriptor: public Descriptor<Attribute, Dimension> {
 public:
 
     /**
      * Constructor.
-     * @param name The symbolic name of the variable, by which it is
-     * addresses within the processing.
+     * @param name The name of the variable.
      */
     VariableDescriptor(const string& name);
 
@@ -420,6 +483,10 @@ public:
         this->type = type;
     }
 
+    /**
+     * Returns the variable's fill value.
+     * @return the variable's fill value.
+     */
     template<class T>
     T getFillValue() const {
         return hasAttribute("_FillValue") ? getAttribute("_FillValue").getComponents<T>()[0] : T(0);
@@ -441,70 +508,84 @@ public:
         return hasAttribute("add_offset") ? getAttribute("add_offset").getDoubles()[0] : 0.0;
     }
 
+    /**
+     * Adds a dimension to the variable.
+     * @param name The name of the dimension.
+     * @return a reference to the dimension added.
+     */
     Dimension& addDimension(const string& name) {
-
         return addElement(name);
     }
 
+    /**
+     * Returns a dimension of the variable.
+     * @param name The name of the dimension.
+     * @return a reference to the dimension with the requested name.
+     */
     Dimension& getDimension(const string& name) const {
         return getElement(name);
     }
 
+    /**
+     * Returns the dimensions of the variable.
+     * @return the dimensions of the variable.
+     */
     vector<Dimension*> getDimensions() const {
         return getElements();
     }
 
+    /**
+     * Inquires the variable about a dimension.
+     * @param name The name of the dimension.
+     * @return {@code true} if the variable has a dimension with the requested name, {@code false} otherwise.
+     */
     bool hasDimension(const string& name) const {
         return hasElement(name);
     }
 
     /**
-     * Getter for the variable's file name.
-     * @return The variable's file name.
+     * Returns the name of the netCDF file the variable is or shall be stored in.
+     * @return the the name of the netCDF file the variable is or shall be stored in.
      */
     string getNcFileBasename() const {
         return ncFileName;
     }
 
     /**
-     * Sets the variable's file name.
-     * @param fileName The variable's file name.
+     * Set the name of the netCDF file the variable is or shall be stored in.
+     * @param The the name of the netCDF file the variable is or shall be stored in.
      */
     void setNcFileName(const string& ncFileName) {
         this->ncFileName = ncFileName;
     }
 
     /**
-     * Returns the name of the variable, by which it is addressed within its
-     * netCDF-file.
-     * @return the netCDF-name of the variable.
+     * Returns the name of the variable, which is used or shall be used in its netCDF file.
+     * @return the name of the variable used in its netCDF file.
      */
     string getNcVarName() const {
         return ncVarName;
     }
 
     /**
-     * Sets the name of the variable, by which it is addressed within its
-     * netCDF-file.
-     * @param ncVariableName The name to set.
+     * Sets the name of the variable, which is used or shall be used in its netCDF file.
+     * @param ncVariableName The name of the variable used in its netCDF file.
      */
     void setNcName(const string& ncVarName) {
         this->ncVarName = ncVarName;
     }
 
     /**
-     * Returns the name of the segment this variable is associated with during
-     * the processing.
-     * @return The segment's name.
+     * Returns the name of the segment this variable is or shall be associated with.
+     * @return the name of the associated segment.
      */
     string getSegmentName() const {
         return segmentName;
     }
 
     /**
-     * Sets the name of the segment this variable is associated with during
-     * the processing.
-     * @param segmentName The segment's name.
+     * Sets the name of the segment this variable is or shall be associated with.
+     * @param The name of the associated segment.
      */
     void setSegmentName(const string& segmentName) {
         this->segmentName = segmentName;
@@ -512,7 +593,7 @@ public:
 
     /**
      * Returns a string representation of the variable.
-     * @return A string representation of the variable.
+     * @return a string representation of the variable.
      */
     string toString() const;
 
@@ -522,11 +603,6 @@ private:
     string ncFileName;
     string segmentName;
 
-    /**
-     * Returns the string for the given type.
-     * @param the type as integer.
-     * @return the type as string.
-     */
     static const string getTypeString(const int type) {
         switch (type) {
         case Constants::TYPE_BYTE:
@@ -554,39 +630,71 @@ private:
         case Constants::TYPE_STRING:
             return "string";
         default:
-            BOOST_THROW_EXCEPTION(runtime_error("Unsupported attribute type."));
+            BOOST_THROW_EXCEPTION(runtime_error("Unknown attribute type."));
             break;
         }
     }
 };
 
+/**
+ * Describes a segment. A segment descriptor is a collection of variable descriptors and attributes.
+ */
 class SegmentDescriptor: public Descriptor<Attribute, VariableDescriptor> {
 public:
 
+	/**
+	 * Constructor.
+	 * @param name The segment's name.
+	 */
     SegmentDescriptor(const string& name) :
             Descriptor<Attribute, VariableDescriptor>(name) {
     }
 
+    /**
+     * Destructor.
+     */
     ~SegmentDescriptor() {
     }
 
+    /**
+     * Adds a variable descriptor.
+     * @param The name of the variable descriptor to be added.
+     * @return a reference to the variable descriptor added.
+     */
     VariableDescriptor& addVariableDescriptor(const string& name) {
         return addElement(name);
     }
 
+    /**
+     * Returns a variable descriptor that has been added .
+     * @param The name of the variable descriptor.
+     * @return a reference to the variable descriptor.
+     */
     VariableDescriptor& getVariableDescriptor(const string& name) const {
         return getElement(name);
     }
 
+    /**
+     * Returns all variable descriptors.
+     * @return the variable descriptors.
+     */
     vector<VariableDescriptor*> getVariableDescriptors() const {
         return getElements();
     }
 
+    /**
+     * Inquires the segment descriptor about a variable descriptor.
+     * @param name The name of the variable descriptor.
+     * @return {@code true} if the segment descriptor has a variable descriptor with the requested name, {@code false} otherwise.
+     */
     bool hasVariableDescriptor(const string& name) const {
         return hasElement(name);
     }
 };
 
+/**
+ * Describes a product. A product descriptor is a collection of segment descriptors and attributes.
+ */
 class ProductDescriptor: public Descriptor<Attribute, SegmentDescriptor> {
 public:
 
@@ -615,12 +723,7 @@ public:
 };
 
 /**
- * A dictionary serves as source for static information about variables, i.e.
- * the name, type, dimensions, and attributes of variables both to be written
- * and read.
- *
- * @param configFile The file comprising the path to the output variable
- * definitions.
+ * A dictionary is a collection of segment descriptors and attributes.
  */
 class Dictionary: public Descriptor<Attribute, ProductDescriptor> {
 public:

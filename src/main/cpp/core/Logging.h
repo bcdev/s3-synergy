@@ -63,31 +63,6 @@ public:
      */
     virtual void error(const string& message, const string& moduleName) = 0;
 
-    /**
-     * The INFO log level.
-     */
-    const static string LOG_LEVEL_INFO;
-
-    /**
-     * The PROGRESS log level.
-     */
-    const static string LOG_LEVEL_PROGRESS;
-
-    /**
-     * The DEBUG log level.
-     */
-    const static string LOG_LEVEL_DEBUG;
-
-    /**
-     * The WARNING log level.
-     */
-    const static string LOG_LEVEL_WARNING;
-
-    /**
-     * The ERROR log level.
-     */
-    const static string LOG_LEVEL_ERROR;
-
 protected:
     /**
      * Constructs a new instance of this class.

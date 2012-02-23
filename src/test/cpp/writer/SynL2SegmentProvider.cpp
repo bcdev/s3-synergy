@@ -21,6 +21,8 @@
 
 using std::min;
 
+using boost::lexical_cast;
+
 SynL2SegmentProvider::SynL2SegmentProvider() :
 		AbstractModule("SYN_L2_SEGMENT_PROVIDER") {
 }

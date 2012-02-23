@@ -18,6 +18,8 @@
 using std::abs;
 using std::fill;
 
+using boost::lexical_cast;
+
 Vfl::Vfl() : BasicModule("VFL") {
 }
 

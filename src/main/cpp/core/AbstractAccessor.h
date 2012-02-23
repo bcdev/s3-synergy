@@ -215,6 +215,9 @@ public:
 	}
 
 	string getFillValue() const {
+		using boost::lexical_cast;
+		using boost::numeric_cast;
+
 		if (N == Constants::TYPE_BYTE) {
 			return lexical_cast<string>(numeric_cast<int16_t>(fillValue));
 		}

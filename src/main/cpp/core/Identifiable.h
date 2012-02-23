@@ -21,8 +21,7 @@
 using std::string;
 
 /**
- * Interface for an object identifiable by menas of an ID. Implementing
- * classes shall implement the copy contructor.
+ * Interface representing an object identifiable by means of an ID.
  */
 class Identifiable {
 public:

@@ -57,16 +57,17 @@ VariableDescriptor::~VariableDescriptor() {
 }
 
 string VariableDescriptor::toString() const {
-    std::ostringstream oss;
-    oss << "VariableDescriptor " << "[";
-    oss << "name = " << getName() << ", ";
-    oss << "type = " << getTypeString(type) << ", ";
-    oss << "scale factor = " << lexical_cast<string>(getScaleFactor()) << ", ";
-    oss << "add offset = " << lexical_cast<string>(getAddOffset()) << ", ";
-    oss << "ncFileName = " << ncFileName << ", ";
-    oss << "ncVarName = " << ncVarName << "]";
+	using boost::lexical_cast;
 
-    return oss.str();
+	string s("VariableDescriptor [");
+    s.append("name = " + getName() + ", ");
+    s.append("type = " + getTypeString(type) + ", ");
+    s.append("scale factor = " + lexical_cast<string>(getScaleFactor()) + ", ");
+    s.append("add offset = " + lexical_cast<string>(getAddOffset()) + ", ");
+    s.append("ncFileName = " + ncFileName + ", ");
+    s.append("ncVarName = " + ncVarName + "]");
+
+    return s;
 };
 
 Dictionary::Dictionary() : Descriptor<Attribute, ProductDescriptor>("Dictionary") {

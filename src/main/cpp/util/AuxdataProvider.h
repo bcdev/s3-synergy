@@ -27,6 +27,8 @@ using std::map;
 using std::string;
 using std::valarray;
 
+using boost::numeric::ublas::matrix;
+
 class AuxdataProvider: public Identifiable {
 public:
 	AuxdataProvider(const string& id, string auxdataPath);

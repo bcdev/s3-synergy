@@ -43,17 +43,16 @@ public:
 	virtual const string& getVersion() const = 0;
 
 	/**
-	 * Acquires and initializes resources the module needs for processing.
-	 * Resources may be added to the context as objects using the
-	 * {@code context.addObject()} method.
-	 * @param context The context of the module.
+	 * Prepares the context for the processing. Resources may be added to the
+	 * context as objects using the {@code context.addObject()} method.
+	 * @param context The context.
 	 */
 	virtual void start(Context& context) = 0;
 
 	/**
 	 * Removes objects this module has added to the context and releases
 	 * resources this module has acquired.
-	 * @param context The context of the module.
+	 * @param context The context.
 	 */
 	virtual void stop(Context& context) = 0;
 

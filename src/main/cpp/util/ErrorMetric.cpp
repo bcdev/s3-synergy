@@ -39,8 +39,6 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		matTv(40, 30),
 		matRho(40, 30),
 		diffuseFractions(6),
-		lutWeights(lutOlcRatm.getDimensionCount()),
-		lutWorkspace(lutOlcRatm.getMatrixWorkspaceSize()),
 		pn(10),
 		p0(10),
 		pe(10),

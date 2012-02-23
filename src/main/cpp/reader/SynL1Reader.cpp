@@ -25,6 +25,8 @@ using std::getenv;
 using std::min;
 using std::max;
 
+using boost::lexical_cast;
+
 SynL1Reader::SynL1Reader() :
         BasicModule("SY1_READER"), addedSegments() {
 }

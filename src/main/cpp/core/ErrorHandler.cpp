@@ -29,6 +29,7 @@ ErrorHandler::~ErrorHandler() {
 
 void ErrorHandler::handleError(Context& context, exception& e) const {
 	using std::exit;
+	using boost::diagnostic_information;
 
 	const string moduleName =
 			boost::get_error_info<errinfo_module_name>(e) == 0 ?

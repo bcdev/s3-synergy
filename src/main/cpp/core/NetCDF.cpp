@@ -41,13 +41,13 @@ int NetCDF::openFileWritable(const string& path) {
 	return ncId;
 }
 
-void NetCDF::terminateFile(int ncId) {
-	const int status = nc_enddef(ncId);
+void NetCDF::terminateFile(int fileId) {
+	const int status = nc_enddef(fileId);
 	checkStatus(status, "terminating file");
 }
 
-void NetCDF::closeFile(int ncId) {
-	const int status = nc_close(ncId);
+void NetCDF::closeFile(int fileId) {
+	const int status = nc_close(fileId);
 	checkStatus(status, "closing file");
 }
 
@@ -80,7 +80,7 @@ Attribute NetCDF::getAttribute(int fileId, int varId, const string& attrName) {
 	case Constants::TYPE_STRING:
 		return Attribute(attrType, attrName, NetCDF::getAttributeValues(fileId, varId, attrName));
 	default:
-		BOOST_THROW_EXCEPTION(runtime_error("Unsupported attribute type."));
+		BOOST_THROW_EXCEPTION(runtime_error("Unknown attribute type."));
 		break;
 	}
 }
@@ -167,7 +167,7 @@ int NetCDF::getVariableId(int fileId, const string& varName) {
 	int varId;
 	const int status = nc_inq_varid(fileId, varName.c_str(), &varId);
 	if (status == NC_ENOTVAR) {
-	    return -1;
+		return -1;
 	}
 	checkStatus(status, "getting variable ID for variable '" + varName + "'");
 	return varId;
@@ -221,13 +221,13 @@ void NetCDF::getVariableData(int fileId, int varId, const valarray<size_t>& orig
 }
 
 int NetCDF::findDimension(int fileId, const string& dimName) {
-    int dimId;
-    const int status = nc_inq_dimid(fileId, dimName.c_str(), &dimId);
-    if (status == NC_EBADDIM) {
-        return -1;
-    }
-    checkStatus(status, "finding dimension '" + dimName + "'");
-    return dimId;
+	int dimId;
+	const int status = nc_inq_dimid(fileId, dimName.c_str(), &dimId);
+	if (status == NC_EBADDIM) {
+		return -1;
+	}
+	checkStatus(status, "finding dimension '" + dimName + "'");
+	return dimId;
 }
 
 void NetCDF::putValue(int fileId, int varId, const valarray<size_t>& indices, const void* value) {
@@ -279,7 +279,7 @@ int NetCDF::defineVariable(int fileId, const string& varName, int type, const va
 }
 
 void NetCDF::putGlobalAttribute(int fileId, const Attribute& attribute) {
-    putAttribute(fileId, NC_GLOBAL, attribute);
+	putAttribute(fileId, NC_GLOBAL, attribute);
 }
 
 void NetCDF::putAttribute(int fileId, int varId, const Attribute& attribute) {
@@ -349,31 +349,30 @@ void NetCDF::putAttributeStrings(int fileId, int varId, const Attribute& attribu
 }
 
 void NetCDF::defineDimensions(const int fileId, const string& name, const vector<Dimension*>& dimensions, const Grid& grid, valarray<int>& dimIds) {
-    const long sizeK = grid.getSizeK();
-    const long sizeL = grid.getMaxL() - grid.getMinL() + 1;
-    const long sizeM = grid.getSizeM();
-    const size_t dimCount = dimensions.size();
+	const long sizeK = grid.getSizeK();
+	const long sizeL = grid.getMaxL() - grid.getMinL() + 1;
+	const long sizeM = grid.getSizeM();
+	const size_t dimCount = dimensions.size();
 
-    dimIds.resize(dimCount, 0);
-    switch (dimCount) {
-    case 3:
-        dimIds[0] = NetCDF::defineDimension(fileId, dimensions[0]->getName(), sizeK);
-        dimIds[1] = NetCDF::defineDimension(fileId, dimensions[1]->getName(), sizeL);
-        dimIds[2] = NetCDF::defineDimension(fileId, dimensions[2]->getName(), sizeM);
-        break;
-    case 2:
-        dimIds[0] = NetCDF::defineDimension(fileId, dimensions[0]->getName(), sizeL);
-        dimIds[1] = NetCDF::defineDimension(fileId, dimensions[1]->getName(), sizeM);
-        break;
-    case 1:
-        dimIds[0] = NetCDF::defineDimension(fileId, dimensions[0]->getName(), sizeM);
-        break;
-    default:
-        BOOST_THROW_EXCEPTION(logic_error("AbstractWriter::createNcVar(): invalid number of dimensions (" + name + ")"));
-        break;
-    }
+	dimIds.resize(dimCount, 0);
+	switch (dimCount) {
+	case 3:
+		dimIds[0] = NetCDF::defineDimension(fileId, dimensions[0]->getName(), sizeK);
+		dimIds[1] = NetCDF::defineDimension(fileId, dimensions[1]->getName(), sizeL);
+		dimIds[2] = NetCDF::defineDimension(fileId, dimensions[2]->getName(), sizeM);
+		break;
+	case 2:
+		dimIds[0] = NetCDF::defineDimension(fileId, dimensions[0]->getName(), sizeL);
+		dimIds[1] = NetCDF::defineDimension(fileId, dimensions[1]->getName(), sizeM);
+		break;
+	case 1:
+		dimIds[0] = NetCDF::defineDimension(fileId, dimensions[0]->getName(), sizeM);
+		break;
+	default:
+		BOOST_THROW_EXCEPTION(logic_error("AbstractWriter::createNcVar(): invalid number of dimensions (" + name + ")"));
+		break;
+	}
 }
-
 
 void NetCDF::checkStatus(int status, const string& action) {
 	using std::ostringstream;

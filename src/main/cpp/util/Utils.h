@@ -25,6 +25,8 @@
 #include "../core/NetCDF.h"
 #include "../core/Segment.h"
 
+using boost::filesystem::path;
+
 class Utils {
 public:
 	static void createCountVector(size_t dimCount, size_t camCount, size_t lineCount, size_t colCount, valarray<size_t>& shape) {
@@ -83,6 +85,9 @@ public:
 	}
 
 	static vector<string> getFileNames(const string& directory) {
+		using boost::filesystem::directory_iterator;
+		using boost::filesystem::is_directory;
+
 	    vector<string> fileNames;
 	    if (is_directory(directory)) {
 	        for (directory_iterator iter(directory); iter != directory_iterator(); ++iter) {
@@ -95,7 +100,10 @@ public:
 	}
 
 	static vector<path> getFilePaths(const string& directory, const string& extension) {
-	    vector<path> filePaths;
+		using boost::filesystem::directory_iterator;
+		using boost::filesystem::is_directory;
+
+		vector<path> filePaths;
 	    if (is_directory(directory)) {
 	        for (directory_iterator iter(directory); iter != directory_iterator(); ++iter) {
 	            if (!is_directory(iter->path()) && extension.compare(iter->path().filename().extension().string()) == 0) {
@@ -108,7 +116,10 @@ public:
 
 
 	static vector<string> getDirectoryNames(const string& directory) {
-	    vector<string> directoryNames;
+		using boost::filesystem::directory_iterator;
+		using boost::filesystem::is_directory;
+
+		vector<string> directoryNames;
 	    if (is_directory(directory)) {
 	        for (directory_iterator iter(directory); iter != directory_iterator(); ++iter) {
 	            if (is_directory(iter->path())) {
@@ -120,6 +131,9 @@ public:
 	}
 
     static void replaceString(const string& toReplace, const string& replacement, string& input) {
+    	using boost::regex;
+    	using boost::regex_replace;
+
         regex expr(toReplace.c_str());
         input = regex_replace(input, expr, replacement);
     }

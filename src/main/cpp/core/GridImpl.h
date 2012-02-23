@@ -18,20 +18,32 @@
 
 #include "Grid.h"
 
+/**
+ * A concrete implementation of the {@code Grid} interface.
+ */
 class GridImpl: public virtual Grid {
 public:
+	/**
+	 * Constructor.
+	 * @param sizeK The size of the camera dimension.
+	 * @param sizeL The number of rows in memory.
+	 * @param sizeM The size of the column dimension.
+	 * @param minL The minimum row index.
+	 * @param maxL The maximum row index.
+	 */
 	GridImpl(long sizeK, long sizeL, long sizeM, long minL, long maxL);
 
-	GridImpl(const Grid& bounds);
-
+	/**
+	 * Destructor.
+	 */
 	virtual ~GridImpl();
 
 	long getMinInMemoryL() const {
-		return firstL;
+		return minInMemoryL;
 	}
 
 	long getMaxInMemoryL() const {
-		return firstL + sizeL - 1;
+		return minInMemoryL + sizeL - 1;
 	}
 
 	long getSizeK() const {
@@ -100,7 +112,7 @@ public:
 	    return index % sizeM;
 	}
 
-	void setFirstL(long l);
+	void moveForward(long l);
 
 	bool isValidPosition(long k, long l, long m) const;
 
@@ -118,7 +130,7 @@ private:
 	long strideL;
 	long strideM;
 
-	long firstL;
+	long minInMemoryL;
 };
 
 #endif	/* GRIDIMPL_H */

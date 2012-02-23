@@ -35,6 +35,8 @@ Accessor& MapSegment::addVariable(const VariableDescriptor& d) throw (logic_erro
 }
 
 Accessor& MapSegment::addVariable(const VariableDescriptor& d, const string& targetName) throw (logic_error) {
+	using boost::numeric_cast;
+
 	switch (d.getType()) {
 	case Constants::TYPE_BYTE:
 		return addVariableByte(targetName, numeric_cast<int8_t>(d.getFillValue<int16_t>()), d.getScaleFactor(), d.getAddOffset());

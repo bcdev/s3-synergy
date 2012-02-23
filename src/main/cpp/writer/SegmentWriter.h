@@ -24,6 +24,8 @@
 using std::map;
 using std::valarray;
 
+using boost::filesystem::path;
+
 /**
  * The writer module used for writing breakpoint data.
  */

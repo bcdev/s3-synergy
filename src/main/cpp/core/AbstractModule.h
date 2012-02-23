@@ -27,6 +27,10 @@ using std::getenv;
 using std::max;
 using std::runtime_error;
 
+/**
+ * An implementation of the {@code Module} interface doing nothing. The class
+ * serves as a base class for all modules.
+ */
 class AbstractModule: virtual public Module {
 public:
 
@@ -35,8 +39,8 @@ public:
 	 * @param moduleId The module ID.
 	 * @param moduleVersion The module version.
 	 */
-	AbstractModule(const string& moduleId, const string& moduleVersion = Constants::PROCESSOR_VERSION) :
-			id(moduleId), version(moduleVersion) {
+	AbstractModule(const string& id, const string& version = Constants::PROCESSOR_VERSION) :
+			id(id), version(version) {
 	}
 
 	virtual ~AbstractModule() {
@@ -50,12 +54,21 @@ public:
 		return version;
 	}
 
+	/**
+	 * Intentionally does nothing.
+	 */
 	virtual void start(Context& context) {
 	}
 
+	/**
+	 * Intentionally does nothing.
+	 */
 	virtual void stop(Context& context) {
 	}
 
+	/**
+	 * Intentionally does nothing.
+	 */
 	virtual void process(Context& context) {
 	}
 

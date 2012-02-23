@@ -21,6 +21,9 @@
 
 #include "ManifestWriter.h"
 
+using boost::filesystem::copy_file;
+using boost::filesystem::copy_option;
+
 ManifestWriter::ManifestWriter(const string& productId) : BasicModule("MAN_WRITER"), productId(productId), manifestName("manifest") {
 }
 
@@ -49,13 +52,13 @@ void ManifestWriter::copyTemplateFiles() const {
 	const vector<string> fileNames = Utils::getFileNames(sourceDirPath);
 	foreach(string fileName, fileNames)
 			{
-				boost::filesystem::copy_file(sourceDirPath + "/" + fileName, targetDirPath / fileName, copy_option::overwrite_if_exists);
+				copy_file(sourceDirPath + "/" + fileName, targetDirPath / fileName, copy_option::overwrite_if_exists);
 			}
 	boost::filesystem::create_directory(path(targetDirPath.string() + "/schema"));
 	const vector<string> schemaFileNames = Utils::getFileNames(sourceDirPath + "/schema");
 	foreach(string fileName, schemaFileNames)
 			{
-				boost::filesystem::copy_file(sourceDirPath + "/schema/" + fileName, targetDirPath / "schema" / fileName, copy_option::overwrite_if_exists);
+				copy_file(sourceDirPath + "/schema/" + fileName, targetDirPath / "schema" / fileName, copy_option::overwrite_if_exists);
 			}
 }
 

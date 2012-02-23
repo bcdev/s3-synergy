@@ -24,6 +24,8 @@
 using std::map;
 using std::valarray;
 
+using boost::filesystem::path;
+
 /**
  * An abstract writer module.
  */

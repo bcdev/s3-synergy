@@ -16,6 +16,8 @@
 #include "Vco.h"
 #include "../util/TimeConverter.h"
 
+using boost::lexical_cast;
+
 Vco::Vco() : BasicModule("VCO") {
 }
 

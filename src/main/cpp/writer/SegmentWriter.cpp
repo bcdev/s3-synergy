@@ -22,6 +22,8 @@
 
 using std::runtime_error;
 
+using boost::lexical_cast;
+
 SegmentWriter::SegmentWriter() :
 		BasicModule("SEG_WRITER") {
 }

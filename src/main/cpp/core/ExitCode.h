@@ -16,13 +16,28 @@
 #ifndef EXITCODE_H_
 #define EXITCODE_H_
 
+/**
+ * Represents the IPF Exit Code interface.
+ */
 class ExitCode {
 public:
+	/**
+	 * Destructor.
+	 */
 	~ExitCode() {
 	}
 
+	/**
+	 * The exit code indicating succesfull processing.
+	 */
 	const static int OK;
+	/**
+	 * The exit code indicating incomplete processing.
+	 */
 	const static int INCOMPLETE;
+	/**
+	 * The exit code indicating processing failure.
+	 */
 	const static int FAILURE;
 
 private:

@@ -33,30 +33,11 @@
 #define foreach         BOOST_FOREACH
 #define reverse_foreach BOOST_REVERSE_FOREACH
 
-using boost::algorithm::ends_with;
-using boost::algorithm::starts_with;
-using boost::algorithm::split;
-using boost::algorithm::to_lower;
-using boost::algorithm::trim_copy;
-using boost::diagnostic_information;
-using boost::filesystem::copy_option;
-using boost::filesystem::create_directories;
-using boost::filesystem::directory_iterator;
-using boost::filesystem::exists;
-using boost::filesystem::is_directory;
-using boost::filesystem::path;
 using boost::error_info;
-using boost::lexical_cast;
-using boost::numeric_cast;
-using boost::numeric::ublas::matrix;
-using boost::posix_time::from_iso_string;
-using boost::posix_time::ptime;
-using boost::posix_time::time_duration;
-using boost::regex;
-using boost::regex_match;
-using boost::regex_replace;
 using boost::shared_array;
 using boost::shared_ptr;
+
+using boost::numeric::ublas::matrix;
 
 typedef error_info<struct errinfo_exit_code_, int> errinfo_exit_code;
 typedef error_info<struct errinfo_nc_status_, int> errinfo_nc_status;

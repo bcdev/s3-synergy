@@ -20,6 +20,9 @@
 #include "IpfConfiguration.h"
 #include "IpfProcessor.h"
 
+/**
+ * Represents an IPF Job Order.
+ */
 class JobOrder {
 public:
 	JobOrder();

@@ -15,6 +15,8 @@
 
 #include "Vpr.h"
 
+using boost::lexical_cast;
+
 Vpr::Vpr() : BasicModule("VPR") {
 }
 

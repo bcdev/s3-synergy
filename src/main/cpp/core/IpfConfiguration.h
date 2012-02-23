@@ -24,6 +24,9 @@
 using std::string;
 using std::vector;
 
+/**
+ * Represents a processing parameter in an IPF Job Order.
+ */
 class ProcessingParameter {
 public:
 	ProcessingParameter(const string& name, const string& value);
@@ -42,6 +45,9 @@ private:
 	string value;
 };
 
+/**
+ * Represents the configuration element in an IPF Job Order.
+ */
 class IpfConfiguration {
 private:
 	string orderId;

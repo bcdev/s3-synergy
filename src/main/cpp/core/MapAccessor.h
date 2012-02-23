@@ -39,32 +39,36 @@ using std::logic_error;
 template<class T, int N>
 class MapAccessor: public virtual Accessor {
 public:
-    /**
-     * Constructs a new instance of this class.
-     * @param n The size of the underlying array.
-     * @param fillValue The fill value used for the variable.
-     * @param scaleFactor The scale factor used for the variable.
-     * @param addOffset The add-offset used for the variable.
-     */
+	/**
+	 * Constructs a new instance of this class.
+	 * @param n The size of the underlying array.
+	 * @param fillValue The fill value used for the variable.
+	 * @param scaleFactor The scale factor used for the variable.
+	 * @param addOffset The add-offset used for the variable.
+	 */
 	MapAccessor(size_t n, T fillValue = numeric_limits<T>::min(), double scaleFactor = 1.0, double addOffset = 0.0) :
 			Accessor(), fillValue(fillValue), scaleFactor(scaleFactor), addOffset(addOffset), filename(Constants::S3_SYNERGY_HOME.length() + 12) {
-	    using std::min;
-	    using std::runtime_error;
-	    using std::strcpy;
+		using std::min;
+		using std::runtime_error;
+		using std::strcpy;
 
-	    const string tempFile = Constants::S3_SYNERGY_HOME + "/tmp/XXXXXX";
+		using boost::filesystem::create_directories;
+		using boost::filesystem::exists;
+		using boost::filesystem::path;
 
-        if (!boost::filesystem::exists(path(tempFile).parent_path())) {
-            if (!boost::filesystem::create_directories(path(tempFile).parent_path())) {
-                BOOST_THROW_EXCEPTION( runtime_error("Cannot create directory '" + tempFile + "'."));
-            }
-        }
+		const string tempFile = Constants::S3_SYNERGY_HOME + "/tmp/XXXXXX";
 
-        string a;
-        strcpy(&filename[0], tempFile.c_str());
-        fd = mkstemp(&filename[0]);
-        if (fd < 0) {
-            BOOST_THROW_EXCEPTION(runtime_error("Unable to open file '" + string(&filename[0]) + "'"));
+		if (!exists(path(tempFile).parent_path())) {
+			if (!create_directories(path(tempFile).parent_path())) {
+				BOOST_THROW_EXCEPTION( runtime_error("Cannot create directory '" + tempFile + "'."));
+			}
+		}
+
+		string a;
+		strcpy(&filename[0], tempFile.c_str());
+		fd = mkstemp(&filename[0]);
+		if (fd < 0) {
+			BOOST_THROW_EXCEPTION(runtime_error("Unable to open file '" + string(&filename[0]) + "'"));
 		}
 		valarray<T> buffer(fillValue, 1024);
 		for (size_t i = 0; i < n; i += 1024) {
@@ -177,93 +181,93 @@ public:
 	}
 
 	const T getValue(size_t i) const throw (out_of_range) {
-        return data[i];
+		return data[i];
 	}
 
 	const size_t getSampleCount() const {
 		return length / sizeof(T);
 	}
 
-    /**
-     * Not implemented; always throws a {@code logic_error}.
-     */
+	/**
+	 * Not implemented; always throws a {@code logic_error}.
+	 */
 	valarray<int8_t>& getByteData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-    /**
-     * Not implemented; always throws a {@code logic_error}.
-     */
+	/**
+	 * Not implemented; always throws a {@code logic_error}.
+	 */
 	valarray<double>& getDoubleData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-    /**
-     * Not implemented; always throws a {@code logic_error}.
-     */
+	/**
+	 * Not implemented; always throws a {@code logic_error}.
+	 */
 	valarray<float>& getFloatData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-    /**
-     * Not implemented; always throws a {@code logic_error}.
-     */
+	/**
+	 * Not implemented; always throws a {@code logic_error}.
+	 */
 	valarray<int32_t>& getIntData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-    /**
-     * Not implemented; always throws a {@code logic_error}.
-     */
+	/**
+	 * Not implemented; always throws a {@code logic_error}.
+	 */
 	valarray<int64_t>& getLongData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-    /**
-     * Not implemented; always throws a {@code logic_error}.
-     */
+	/**
+	 * Not implemented; always throws a {@code logic_error}.
+	 */
 	valarray<int16_t>& getShortData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-    /**
-     * Not implemented; always throws a {@code logic_error}.
-     */
+	/**
+	 * Not implemented; always throws a {@code logic_error}.
+	 */
 	valarray<uint8_t>& getUByteData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-    /**
-     * Not implemented; always throws a {@code logic_error}.
-     */
+	/**
+	 * Not implemented; always throws a {@code logic_error}.
+	 */
 	valarray<uint32_t>& getUIntData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-    /**
-     * Not implemented; always throws a {@code logic_error}.
-     */
+	/**
+	 * Not implemented; always throws a {@code logic_error}.
+	 */
 	valarray<uint64_t>& getULongData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-    /**
-     * Not implemented; always throws a {@code logic_error}.
-     */
-    valarray<uint16_t>& getUShortData() const throw (logic_error) {
+	/**
+	 * Not implemented; always throws a {@code logic_error}.
+	 */
+	valarray<uint16_t>& getUShortData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-    /**
-     * Not implemented; always throws a {@code logic_error}.
-     */
+	/**
+	 * Not implemented; always throws a {@code logic_error}.
+	 */
 	valarray<double> getDoubles() const {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
-    /**
-     * Not implemented; always throws a {@code logic_error}.
-     */
+	/**
+	 * Not implemented; always throws a {@code logic_error}.
+	 */
 	valarray<float> getFloats() const {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
@@ -293,6 +297,9 @@ public:
 	}
 
 	string getFillValue() const {
+		using boost::lexical_cast;
+		using boost::numeric_cast;
+
 		if (getType() == Constants::TYPE_BYTE) {
 			return lexical_cast<string>(numeric_cast<int16_t>(fillValue));
 		}
@@ -302,9 +309,9 @@ public:
 		return lexical_cast<string>(fillValue);
 	}
 
-    /**
-     * Intentionally does nothing..
-     */
+	/**
+	 * Intentionally does nothing..
+	 */
 	void shift(long n, long strideK, long strideL) {
 		// intentionally doing nothing
 	}

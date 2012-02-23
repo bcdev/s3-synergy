@@ -15,6 +15,8 @@
 
 #include "Pcl.h"
 
+using boost::lexical_cast;
+
 Pcl::Pcl() :
 		BasicModule("PCL") {
 }

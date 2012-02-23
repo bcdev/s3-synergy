@@ -18,6 +18,8 @@
 
 #include "../modules/BasicModule.h"
 
+using boost::filesystem::path;
+
 /**
  * The module used for writing the SAFE manifest.
  */

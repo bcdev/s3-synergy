@@ -25,6 +25,8 @@ using std::cos;
 using std::exp;
 using std::sqrt;
 
+using boost::lexical_cast;
+
 Aco::Aco() :
 		BasicModule("ACO") {
 }
@@ -172,7 +174,7 @@ void Aco::process(Context& context) {
 		matrix<double> matRho(40, 30);
 
 		valarray<double> f(lutOlcRatm.getDimensionCount());
-		valarray<double> w(lutOlcRatm.getMatrixWorkspaceSize());
+		valarray<double> w;
 
 		valarray<double> ts(30);
 		valarray<double> tv(30);

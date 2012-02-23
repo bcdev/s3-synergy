@@ -24,11 +24,27 @@ using std::vector;
 
 class Context;
 
+/**
+ * An error handler.
+ */
 class ErrorHandler {
 public:
+	/**
+	 * Constructor.
+	 */
 	ErrorHandler();
+
+	/**
+	 * Destructor.
+	 */
 	~ErrorHandler();
 
+	/**
+	 * Handles the exception supplied as argument (logs an error message and
+	 * terminates).
+	 * @param context The context.
+	 * @param e The exception.
+	 */
 	void handleError(Context& context, std::exception& e) const;
 
 private:

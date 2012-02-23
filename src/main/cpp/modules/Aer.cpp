@@ -28,6 +28,8 @@ using std::cos;
 using std::min;
 using std::numeric_limits;
 
+using boost::lexical_cast;
+
 class PixelInitializer {
 
 public:

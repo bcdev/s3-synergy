@@ -28,6 +28,8 @@
 
 using std::getenv;
 
+using boost::lexical_cast;
+
 CPPUNIT_TEST_SUITE_REGISTRATION(DictionaryParserTest);
 
 DictionaryParserTest::DictionaryParserTest() {

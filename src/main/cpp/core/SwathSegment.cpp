@@ -35,6 +35,8 @@ Accessor& SwathSegment::addVariable(const VariableDescriptor& d) throw (logic_er
 }
 
 Accessor& SwathSegment::addVariable(const VariableDescriptor& d, const string& targetName) throw (logic_error) {
+	using boost::numeric_cast;
+
 	switch (d.getType()) {
 	case Constants::TYPE_BYTE:
 		return addVariableByte(targetName, numeric_cast<int8_t>(d.getFillValue<int16_t>()), d.getScaleFactor(), d.getAddOffset());
@@ -240,7 +242,7 @@ void SwathSegment::moveForward(long l) throw (logic_error) {
 	for (size_t i = 0; i < accessorList.size(); i++) {
 		accessorList[i]->shift(l - grid.getMinInMemoryL(), grid.getStrideK(), grid.getStrideL());
 	}
-	grid.setFirstL(l);
+	grid.moveForward(l);
 }
 
 string SwathSegment::toString() const {

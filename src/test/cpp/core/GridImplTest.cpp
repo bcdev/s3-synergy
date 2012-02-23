@@ -59,15 +59,15 @@ void GridImplTest::testGetIndex() {
     CPPUNIT_ASSERT_THROW(grid->getIndex(0, 0, 760), out_of_range);
 }
 
-void GridImplTest::testSetGetFirstL() {
-    grid->setFirstL(1000);
+void GridImplTest::testSetGetMinInMemoryL() {
+    grid->moveForward(1000);
     CPPUNIT_ASSERT(grid->getMinInMemoryL() == 1000);
     CPPUNIT_ASSERT(grid->getMaxInMemoryL() == grid->getMinInMemoryL() + grid->getSizeL() - 1);
 
-    grid->setFirstL(58000);
+    grid->moveForward(58000);
     CPPUNIT_ASSERT(grid->getMinInMemoryL() == 58000);
     CPPUNIT_ASSERT(grid->getMaxInMemoryL() == grid->getMinInMemoryL() + grid->getSizeL() - 1);
 
-    CPPUNIT_ASSERT_THROW(grid->setFirstL(58001), out_of_range);
+    CPPUNIT_ASSERT_THROW(grid->moveForward(58001), out_of_range);
     CPPUNIT_ASSERT(grid->getMinInMemoryL() == 58000);
 }

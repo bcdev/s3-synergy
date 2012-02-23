@@ -18,6 +18,8 @@
 
 #include "Ave.h"
 
+using boost::lexical_cast;
+
 Ave::Ave() :
 		BasicModule("AVE") {
 }
@@ -256,6 +258,9 @@ void Ave::addVariables(Context& context) {
 }
 
 bool Ave::isRadianceName(const string& variableName) {
+	using boost::regex;
+	using boost::regex_match;
+
 	static const regex regularExpression("(solar_irradiance|L)_[0-9][0-9]?(_er)?");
 	return regex_match(variableName, regularExpression);
 }

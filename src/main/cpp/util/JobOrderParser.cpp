@@ -25,8 +25,10 @@ using std::string;
 using std::bad_cast;
 using std::logic_error;
 
+using boost::lexical_cast;
+
 JobOrderParser::JobOrderParser() :
-        parser() {
+		parser() {
 }
 
 JobOrderParser::~JobOrderParser() {
@@ -34,31 +36,27 @@ JobOrderParser::~JobOrderParser() {
 
 shared_ptr<JobOrder> JobOrderParser::parse(const string& path) {
 	IpfConfiguration config = parseIpfConfiguration(path);
-	vector<IpfProcessor> ipfProcessors =
-			parseIpfProcessors(path);
+	vector<IpfProcessor> ipfProcessors = parseIpfProcessors(path);
 	return shared_ptr<JobOrder>(new JobOrder(config, ipfProcessors));
 }
 
 IpfConfiguration JobOrderParser::parseIpfConfiguration(const string& path) {
+	using boost::algorithm::to_lower;
+
 	IpfConfiguration configuration;
 	string value = parser.evaluateToString(path, "/Ipf_Job_Order/Ipf_Conf/Stdout_Log_Level");
-	if (value.empty() || (value.compare(Constants::LOG_LEVEL_INFO) != 0
-	                && value.compare(Constants::LOG_LEVEL_DEBUG) != 0
-					&& value.compare(Constants::LOG_LEVEL_WARNING) != 0
-					&& value.compare(Constants::LOG_LEVEL_PROGRESS) != 0
-					&& value.compare(Constants::LOG_LEVEL_ERROR) != 0)) {
+	if (value.empty()
+			|| (value.compare(Constants::LOG_LEVEL_INFO) != 0 && value.compare(Constants::LOG_LEVEL_DEBUG) != 0 && value.compare(Constants::LOG_LEVEL_WARNING) != 0
+					&& value.compare(Constants::LOG_LEVEL_PROGRESS) != 0 && value.compare(Constants::LOG_LEVEL_ERROR) != 0)) {
 		value = Constants::LOG_LEVEL_INFO; // default value
 	}
 	standardLogLevel = value;
 	configuration.setStandardLogLevel(value);
 
-	value = parser.evaluateToString(path,
-			"/Ipf_Job_Order/Ipf_Conf/Stderr_Log_Level");
+	value = parser.evaluateToString(path, "/Ipf_Job_Order/Ipf_Conf/Stderr_Log_Level");
 	if (value.empty()
-			|| (value.compare(Constants::LOG_LEVEL_INFO) != 0 && value.compare(Constants::LOG_LEVEL_DEBUG) != 0
-					&& value.compare(Constants::LOG_LEVEL_WARNING) != 0
-					&& value.compare(Constants::LOG_LEVEL_PROGRESS) != 0
-					&& value.compare(Constants::LOG_LEVEL_ERROR) != 0)) {
+			|| (value.compare(Constants::LOG_LEVEL_INFO) != 0 && value.compare(Constants::LOG_LEVEL_DEBUG) != 0 && value.compare(Constants::LOG_LEVEL_WARNING) != 0
+					&& value.compare(Constants::LOG_LEVEL_PROGRESS) != 0 && value.compare(Constants::LOG_LEVEL_ERROR) != 0)) {
 		value = Constants::LOG_LEVEL_INFO; // default value
 	}
 	configuration.setErrorLogLevel(value);
@@ -67,8 +65,7 @@ IpfConfiguration JobOrderParser::parseIpfConfiguration(const string& path) {
 	const string orderIdWithExt = path.substr(firstDotIndex + 1);
 	configuration.setOrderId(orderIdWithExt.substr(0, orderIdWithExt.length() - 4));
 
-	value = parser.evaluateToString(path,
-			"/Ipf_Job_Order/Ipf_Conf/Processor_Name");
+	value = parser.evaluateToString(path, "/Ipf_Job_Order/Ipf_Conf/Processor_Name");
 	configuration.setProcessorName(value);
 
 	value = parser.evaluateToString(path, "/Ipf_Job_Order/Ipf_Conf/Version");
@@ -81,25 +78,21 @@ IpfConfiguration JobOrderParser::parseIpfConfiguration(const string& path) {
 		configuration.setTest(value.compare("true") == 0 || value.compare("True") == 0 || value.compare("TRUE") == 0);
 	}
 
-	value = parser.evaluateToString(path,
-			"/Ipf_Job_Order/Ipf_Conf/Acquisition_Station");
+	value = parser.evaluateToString(path, "/Ipf_Job_Order/Ipf_Conf/Acquisition_Station");
 	configuration.setAcquisitionStation(value);
 
-	value = parser.evaluateToString(path,
-			"/Ipf_Job_Order/Ipf_Conf/Processing_Station");
+	value = parser.evaluateToString(path, "/Ipf_Job_Order/Ipf_Conf/Processing_Station");
 	configuration.setProcessingStation(value);
 
-	value = parser.evaluateToString(path,
-			"/Ipf_Job_Order/Ipf_Conf/Sensing_Time/Start");
+	value = parser.evaluateToString(path, "/Ipf_Job_Order/Ipf_Conf/Sensing_Time/Start");
 	configuration.setSensingTimeStart(value);
 
-	value = parser.evaluateToString(path,
-			"/Ipf_Job_Order/Ipf_Conf/Sensing_Time/Stop");
+	value = parser.evaluateToString(path, "/Ipf_Job_Order/Ipf_Conf/Sensing_Time/Stop");
 	configuration.setSensingTimeStop(value);
 
-    value = parser.evaluateToString(path, "/Ipf_Job_Order/Ipf_Conf/Breakpoint_Enable");
-    to_lower(value);
-    bool enableBreakpoint = value.compare("true") == 0 ? true : false;
+	value = parser.evaluateToString(path, "/Ipf_Job_Order/Ipf_Conf/Breakpoint_Enable");
+	to_lower(value);
+	bool enableBreakpoint = value.compare("true") == 0 ? true : false;
 	configuration.setBreakpointEnable(enableBreakpoint);
 
 	vector<string> keys = parser.evaluateToStringList(path, "/Ipf_Job_Order/Ipf_Conf/Dynamic_Processing_Parameters/Processing_Parameter/Name/child::text()");
@@ -116,10 +109,8 @@ IpfConfiguration JobOrderParser::parseIpfConfiguration(const string& path) {
 	return configuration;
 }
 
-vector<IpfProcessor> JobOrderParser::parseIpfProcessors(
-		const string& path) const {
-	vector<string> values = parser.evaluateToStringList(path,
-			"/Ipf_Job_Order/List_of_Ipf_Procs/Ipf_Proc");
+vector<IpfProcessor> JobOrderParser::parseIpfProcessors(const string& path) const {
+	vector<string> values = parser.evaluateToStringList(path, "/Ipf_Job_Order/List_of_Ipf_Procs/Ipf_Proc");
 	vector<IpfProcessor> result;
 	for (size_t i = 0; i < values.size(); i++) {
 		result.push_back(parseIpfProcessor(path, i + 1));
@@ -127,8 +118,7 @@ vector<IpfProcessor> JobOrderParser::parseIpfProcessors(
 	return result;
 }
 
-IpfProcessor JobOrderParser::parseIpfProcessor(
-		const string& path, int index) const {
+IpfProcessor JobOrderParser::parseIpfProcessor(const string& path, int index) const {
 	string baseQuery = "/Ipf_Job_Order/List_of_Ipf_Procs/Ipf_Proc[";
 	baseQuery.append(lexical_cast<string>(index));
 	baseQuery.append("]");
@@ -139,33 +129,26 @@ IpfProcessor JobOrderParser::parseIpfProcessor(
 	const string taskVersionQuery = baseQuery + "/Task_Version";
 	const string taskVersion = parser.evaluateToString(path, taskVersionQuery);
 
-	vector<BreakpointFile> breakpointFiles = parseBreakpointFiles(path,
-			baseQuery);
+	vector<BreakpointFile> breakpointFiles = parseBreakpointFiles(path, baseQuery);
 	vector<Input> inputList = parseInputs(path, baseQuery);
 	vector<Output> outputList = parseOutputs(path, baseQuery);
-	IpfProcessor processorConfigurartion(taskName, taskVersion,
-			breakpointFiles, inputList, outputList);
+	IpfProcessor processorConfigurartion(taskName, taskVersion, breakpointFiles, inputList, outputList);
 
 	return processorConfigurartion;
 }
 
-vector<BreakpointFile> JobOrderParser::parseBreakpointFiles(const string& path,
-		const string& baseQuery) const {
-	const string breakPointFilesQuery = baseQuery
-			+ "/BreakPoint/List_of_Brk_Files/Brk_File";
-	const size_t breakPointFileCount = parser.evaluateToStringList(path,
-			breakPointFilesQuery).size();
+vector<BreakpointFile> JobOrderParser::parseBreakpointFiles(const string& path, const string& baseQuery) const {
+	const string breakPointFilesQuery = baseQuery + "/BreakPoint/List_of_Brk_Files/Brk_File";
+	const size_t breakPointFileCount = parser.evaluateToStringList(path, breakPointFilesQuery).size();
 	vector<BreakpointFile> breakpointFiles;
 	for (size_t i = 0; i < breakPointFileCount; i++) {
-		const string query = breakPointFilesQuery + "["
-				+ lexical_cast<string>(i + 1) + "]";
+		const string query = breakPointFilesQuery + "[" + lexical_cast<string>(i + 1) + "]";
 		breakpointFiles.push_back(parseBreakpointFile(path, query));
 	}
 	return breakpointFiles;
 }
 
-BreakpointFile JobOrderParser::parseBreakpointFile(const string& path,
-		const string& baseQuery) const {
+BreakpointFile JobOrderParser::parseBreakpointFile(const string& path, const string& baseQuery) const {
 	const string enableQuery = baseQuery + "/Enable";
 	const string enable = parser.evaluateToString(path, enableQuery);
 
@@ -186,22 +169,18 @@ BreakpointFile JobOrderParser::parseBreakpointFile(const string& path,
 	return breakpointFile;
 }
 
-vector<Input> JobOrderParser::parseInputs(const string& path,
-		const string& baseQuery) const {
+vector<Input> JobOrderParser::parseInputs(const string& path, const string& baseQuery) const {
 	const string inputQuery = baseQuery + "/List_of_Inputs/Input";
-	const size_t inputCount =
-			parser.evaluateToStringList(path, inputQuery).size();
+	const size_t inputCount = parser.evaluateToStringList(path, inputQuery).size();
 	vector<Input> inputs;
 	for (size_t i = 0; i < inputCount; i++) {
-		const string query = inputQuery + "[" + lexical_cast<string>(i + 1)
-				+ "]";
+		const string query = inputQuery + "[" + lexical_cast<string>(i + 1) + "]";
 		inputs.push_back(parseInput(path, query));
 	}
 	return inputs;
 }
 
-Input JobOrderParser::parseInput(const string& path,
-		const string& baseQuery) const {
+Input JobOrderParser::parseInput(const string& path, const string& baseQuery) const {
 	const string fileTypeQuery = baseQuery + "/File_Type";
 	const string fileType = parser.evaluateToString(path, fileTypeQuery);
 
@@ -212,29 +191,21 @@ Input JobOrderParser::parseInput(const string& path,
 	}
 
 	const string fileNamesQuery = baseQuery + "/List_of_File_Names/File_Name";
-	const size_t fileNameCount = parser.evaluateToStringList(path,
-			fileNamesQuery).size();
+	const size_t fileNameCount = parser.evaluateToStringList(path, fileNamesQuery).size();
 	vector<string> fileNames;
 	for (size_t i = 0; i < fileNameCount; i++) {
-		const string fileNameQuery = fileNamesQuery + "["
-				+ lexical_cast<string>(i + 1) + "]";
+		const string fileNameQuery = fileNamesQuery + "[" + lexical_cast<string>(i + 1) + "]";
 		fileNames.push_back(parser.evaluateToString(path, fileNameQuery));
 	}
 
-	const string timeIntervalsQuery = baseQuery
-			+ "/List_of_Time_Intervals/Time_Interval";
-	const size_t timeIntervalsCount = parser.evaluateToStringList(path,
-			timeIntervalsQuery).size();
+	const string timeIntervalsQuery = baseQuery + "/List_of_Time_Intervals/Time_Interval";
+	const size_t timeIntervalsCount = parser.evaluateToStringList(path, timeIntervalsQuery).size();
 	vector<TimeInterval> timeIntervals;
 	for (size_t i = 0; i < timeIntervalsCount; i++) {
-		const string timeIntervalsStartQuery = timeIntervalsQuery + "["
-				+ lexical_cast<string>(i + 1) + "]/Start";
-		const string timeIntervalsStopQuery = timeIntervalsQuery + "["
-				+ lexical_cast<string>(i + 1) + "]/Stop";
-		const string start = parser.evaluateToString(path,
-				timeIntervalsStartQuery);
-		const string stop = parser.evaluateToString(path,
-				timeIntervalsStopQuery);
+		const string timeIntervalsStartQuery = timeIntervalsQuery + "[" + lexical_cast<string>(i + 1) + "]/Start";
+		const string timeIntervalsStopQuery = timeIntervalsQuery + "[" + lexical_cast<string>(i + 1) + "]/Stop";
+		const string start = parser.evaluateToString(path, timeIntervalsStartQuery);
+		const string stop = parser.evaluateToString(path, timeIntervalsStopQuery);
 		TimeInterval timeInterval(start, stop);
 		timeIntervals.push_back(timeInterval);
 	}
@@ -243,22 +214,18 @@ Input JobOrderParser::parseInput(const string& path,
 	return input;
 }
 
-vector<Output> JobOrderParser::parseOutputs(const string& path,
-		const string& baseQuery) const {
+vector<Output> JobOrderParser::parseOutputs(const string& path, const string& baseQuery) const {
 	const string outputQuery = baseQuery + "/List_of_Outputs/Output";
-	const size_t outputCount =
-			parser.evaluateToStringList(path, outputQuery).size();
+	const size_t outputCount = parser.evaluateToStringList(path, outputQuery).size();
 	vector<Output> outputs;
 	for (size_t i = 0; i < outputCount; i++) {
-		const string query = outputQuery + "[" + lexical_cast<string>(i + 1)
-				+ "]";
+		const string query = outputQuery + "[" + lexical_cast<string>(i + 1) + "]";
 		outputs.push_back(parseOutput(path, query));
 	}
 	return outputs;
 }
 
-Output JobOrderParser::parseOutput(const string& path,
-		const string& baseQuery) const {
+Output JobOrderParser::parseOutput(const string& path, const string& baseQuery) const {
 	const string fileTypeQuery = baseQuery + "/File_Type";
 	const string fileType = parser.evaluateToString(path, fileTypeQuery);
 

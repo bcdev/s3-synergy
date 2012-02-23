@@ -23,6 +23,8 @@ using std::abs;
 using std::cos;
 using std::fill;
 
+using boost::lexical_cast;
+
 Vbm::Vbm() :
         BasicModule("VBM"),
         hypSpectralResponses(VGT_CHANNEL_COUNT),
@@ -185,7 +187,7 @@ void Vbm::process(Context& context) {
     Pixel p;
 
     valarray<double> f(hypLutRatm->getDimensionCount());
-    valarray<double> workspace(hypLutRatm->getVectorWorkspaceSize());
+    valarray<double> workspace;
     valarray<double> coordinates(hypLutRatm->getDimensionCount());
     valarray<double> tpiWeights(1);
     valarray<size_t> tpiIndexes(1);

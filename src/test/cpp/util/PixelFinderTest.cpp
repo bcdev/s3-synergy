@@ -107,6 +107,7 @@ void PixelFinderTest::testFindSinglePixels() {
 
 void PixelFinderTest::testFindPixelsInLine() {
 	using std::string;
+	using boost::lexical_cast;
 
 	long resultK = 0;
 	long resultL = 0;

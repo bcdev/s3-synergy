@@ -45,7 +45,7 @@ string Logging::createMessageHeader(const string& moduleName, const string& modu
     header.append(" ");
     header.append(moduleVersion);
     header.append(" [");
-    header.append(lexical_cast<string>(getpid()));
+    header.append(boost::lexical_cast<string>(getpid()));
     header.append("]: ");
 
     return header;

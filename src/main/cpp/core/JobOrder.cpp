@@ -36,7 +36,7 @@ JobOrder::~JobOrder() {
 void JobOrder::log(Logging& logging) const {
     ipfConfiguration.log(logging);
     for (size_t i = 0; i < ipfProcessors.size(); i++) {
-        logging.debug("Parsing IPF processors " + lexical_cast<string>(i + 1) + ":", "JobOrder");
+        logging.debug("Parsing IPF processors " + boost::lexical_cast<string>(i + 1) + ":", "JobOrder");
         ipfProcessors[i].log(logging);
     }
 }

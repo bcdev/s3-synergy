@@ -16,6 +16,9 @@
 #include "DictionaryParser.h"
 #include "Utils.h"
 
+using boost::lexical_cast;
+using boost::filesystem::path;
+
 DictionaryParser::DictionaryParser() :
 		xmlParser(), exclusionSet() {
 	exclusionSet.insert("dimensions.xml");

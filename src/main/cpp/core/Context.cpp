@@ -30,6 +30,8 @@ using std::max;
 using std::min;
 using std::numeric_limits;
 
+using boost::lexical_cast;
+
 Context::Context() :
 		logging(shared_ptr<Logging>(new NullLogging())), dictionary(), jobOrder(), errorHandler() {
 }

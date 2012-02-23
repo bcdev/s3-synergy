@@ -25,5 +25,5 @@ LOG.*
 OUT.*
 Makefile
 Config.h
-runalltests.sh
+*.sh
 install_manifest.txt

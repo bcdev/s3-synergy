@@ -136,10 +136,25 @@ public:
 	 */
 	virtual long getMaxM() const = 0;
 
+	/**
+	 * Returns the camera index for a given plain index.
+	 * @param index The plain index.
+	 * @return the camera index.
+	 */
     virtual long getK(size_t index) const = 0;
 
+	/**
+	 * Returns the row index for a given plain index.
+	 * @param index The plain index.
+	 * @return the row index.
+	 */
     virtual long getL(size_t index) const = 0;
 
+	/**
+	 * Returns the column index for a given plain index.
+	 * @param index The plain index.
+	 * @return the column index.
+	 */
     virtual long getM(size_t index) const = 0;
 
 	/**

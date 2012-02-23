@@ -22,6 +22,8 @@
 
 using std::map;
 
+using boost::filesystem::path;
+
 /**
  * The SYN L1 reader module.
  */
