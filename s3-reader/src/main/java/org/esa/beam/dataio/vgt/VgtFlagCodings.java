@@ -13,7 +13,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-package org.esa.beam.dataio.vgtp;
+package org.esa.beam.dataio.vgt;
 
 import org.esa.beam.framework.datamodel.FlagCoding;
 import org.esa.beam.util.BitSetter;
@@ -24,7 +24,7 @@ import org.esa.beam.util.BitSetter;
  * @author Olaf Danne
  * @since 1.0
  */
-public class VgtpFlagCodings {
+public class VgtFlagCodings {
 
     public static final String VGTP_SM_FLAG_BAND_NAME = "SM";
 
