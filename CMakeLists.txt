@@ -588,7 +588,7 @@ set_property(TARGET vgts PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
-add_custom_target(doc
+add_custom_target(doc ALL
     ${DOXYGEN_EXECUTABLE} src/main/doxygen/doxygen.properties WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating API documentation" VERBATIM
 )
@@ -661,6 +661,9 @@ install(DIRECTORY src/test/resources/config/ DESTINATION config
 install(DIRECTORY src/test/resources/jobs/ DESTINATION jobs
   FILE_PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
   FILES_MATCHING PATTERN "JobOrder.SY_SYS_*.xml"
+)
+
+install(DIRECTORY doc/ DESTINATION doc
 )
 
 install(DIRECTORY tmp/ DESTINATION tmp
