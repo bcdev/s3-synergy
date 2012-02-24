@@ -17,7 +17,7 @@ project (s3-synergy)
 set(s3-synergy_VERSION_MAJOR 1)
 set(s3-synergy_VERSION_MINOR 0)
 
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 2.6)
 
 configure_file (
   "src/main/cpp/core/Config.h.in"
