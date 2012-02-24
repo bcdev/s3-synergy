@@ -663,8 +663,10 @@ install(DIRECTORY src/test/resources/jobs/ DESTINATION jobs
   FILES_MATCHING PATTERN "JobOrder.SY_SYS_*.xml"
 )
 
+if(DOXYGEN_FOUND)
 install(DIRECTORY doc/ DESTINATION doc
 )
+endif(DOXYGEN_FOUND)
 
 install(DIRECTORY tmp/ DESTINATION tmp
 )
