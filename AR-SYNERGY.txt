@@ -57,3 +57,8 @@
 
  Type ./bin/runalltests.sh
  
+API Documentation
+=================
+
+The API documentation (HTML) will be installed into the 'doc' directory of the installation directory.
+ 
