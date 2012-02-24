@@ -13,6 +13,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
+/**
+ * @file A file defining several primitive types.
+ */
+
 #include <boost/cstdint.hpp>
 
 using boost::int8_t;
