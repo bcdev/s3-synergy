@@ -21,17 +21,17 @@
 using std::valarray;
 
 /**
- * Interface for real-valued functions of more than a single variable.
+ * Interface for real-valued functions of several variables.
  */
 class MultivariateFunction {
 public:
 
 	/**
-	 * Returns the value of the function at {@code x}.
+	 * Returns the value of the multivariate function at a given argument.
 	 *
-	 * @param x The variables.
+	 * @param x The argument.
 	 *
-	 * @return The value of the function at {@code x}.
+	 * @return The value of the multivariate function at a given argument.
 	 */
 	virtual double getValue(valarray<double>& x) = 0;
 

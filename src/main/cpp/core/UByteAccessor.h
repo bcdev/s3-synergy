@@ -18,6 +18,9 @@
 
 #include "AbstractAccessor.h"
 
+/**
+ * A concrete implementation of the AbstractAccessor for the unsigned 'byte' type.
+ */
 class UByteAccessor: public virtual AbstractAccessor<uint8_t, Constants::TYPE_UBYTE> {
 public:
 

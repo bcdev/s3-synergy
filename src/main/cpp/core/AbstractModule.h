@@ -28,7 +28,7 @@ using std::max;
 using std::runtime_error;
 
 /**
- * An implementation of the {@code Module} interface doing nothing. The class
+ * An implementation of the Module interface doing nothing. The class
  * serves as a base class for all modules.
  */
 class AbstractModule: virtual public Module {

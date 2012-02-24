@@ -39,10 +39,10 @@ public:
 	virtual const string& getId() const = 0;
 
 	/**
-	 * Equal to operator.
+	 * Equality operator.
 	 * @param that An object.
-	 * @return {@code true} if {@code this} and {@code that} object are the
-	 *         same, {@code false} otherwise.
+	 * @return true if this object and that object are the
+	 *         same, false otherwise.
 	 */
 	virtual bool operator==(const Identifiable& that) const {
 		return this == &that;

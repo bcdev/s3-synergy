@@ -18,6 +18,9 @@
 
 #include "AbstractAccessor.h"
 
+/**
+ * A concrete implementation of the AbstractAccessor for the 'long' type.
+ */
 class LongAccessor: public virtual AbstractAccessor<int64_t, Constants::TYPE_LONG> {
 public:
 

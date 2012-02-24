@@ -18,6 +18,9 @@
 
 #include "AbstractAccessor.h"
 
+/**
+ * A concrete implementation of the AbstractAccessor for the 'byte' type.
+ */
 class ByteAccessor: public virtual AbstractAccessor<int8_t, Constants::TYPE_BYTE> {
 public:
 

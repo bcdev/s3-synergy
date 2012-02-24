@@ -16,6 +16,9 @@
 #ifndef USHORTACCESSOR_H
 #define	USHORTACCESSOR_H
 
+/**
+ * A concrete implementation of the AbstractAccessor for the unsigned 'short' type.
+ */
 class UShortAccessor: public virtual AbstractAccessor<uint16_t, Constants::TYPE_USHORT> {
 public:
 

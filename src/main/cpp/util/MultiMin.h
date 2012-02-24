@@ -75,14 +75,14 @@ public:
 	 * @param f            the multivariate function.
 	 * @param pn           the initial guess of the minimum. On return contains the
 	 *                     minimum found. The length of this array must be equal to
-	 *                     the number of variables in {@code f}.
+	 *                     the number of variables in f.
 	 * @param u            the initial direction set. On return contains the actual
 	 *                     direction set. The number of directions must be equal to
-	 *                     the number of variables in {@code f}.
+	 *                     the number of variables in f.
 	 * @param accuracyGoal the prescribed accuracy goal.
 	 * @param maxIter      the maximum number of iterations.
 	 *
-	 * @return {@code true} on success.
+	 * @return true on success.
 	 */
 	static bool powell(MultivariateFunction& f, valarray<double>& pn, valarray<valarray<double> >& u, const double accuracyGoal, const size_t maxIter);
 
@@ -99,14 +99,14 @@ public:
      * @param end           the index of the last variable, exclusive.
 	 * @param pn            the initial guess of the minimum. On return contains the
 	 *                      minimum found. The length of this array must be equal to
-	 *                      the number of variables in {@code f}.
+	 *                      the number of variables in f.
 	 * @param u             the initial direction set. On return contains the actual
 	 *                      direction set. The number of directions must be equal to
-	 *                      the number of variables in {@code f}.
+	 *                      the number of variables in f.
 	 * @param accuracyGoal  the prescribed accuracy goal.
 	 * @param maxIter       the maximum number of iterations.
 	 *
-	 * @return {@code true} on success.
+	 * @return true on success.
 	 */
 	template<class T>
 	static bool powell(T* obj, double(T::*f)(valarray<double>&), LineMinimizer<T>& lineMinimizer, size_t begin, size_t end, valarray<double>& pn, valarray<double>& p0, valarray<double>& pe,

@@ -42,9 +42,9 @@ public:
 	 * @param absoluteAccuracyGoal the absolute accuracy goal for the minimum being searched.
 	 * @param maxIter              the maximum number of iterations being performed.
 	 *
-	 * @return {@code true} on success.
+	 * @return true on success.
 	 *
-	 * @throws invalid_argument if the {@code bracket} is invalid.
+	 * @throws invalid_argument if the bracket is invalid.
 	 */
 	static bool brent(UnivariateFunction& f, Bracket& bracket, double relativeAccuracyGoal = DEFAULT_RELATIVE_ACCURACY_GOAL, double absoluteAccuracyGoal = DEFAULT_ABSOLUTE_ACCURACY_GOAL, int maxIter = 100);
 

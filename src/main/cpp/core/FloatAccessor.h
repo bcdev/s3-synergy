@@ -18,6 +18,9 @@
 
 #include "AbstractAccessor.h"
 
+/**
+ * A concrete implementation of the AbstractAccessor for the 'float' type.
+ */
 class FloatAccessor : public virtual AbstractAccessor<float, Constants::TYPE_FLOAT> {
 public:
 

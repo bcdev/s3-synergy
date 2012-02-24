@@ -537,7 +537,7 @@ public:
     /**
      * Inquires the variable about a dimension.
      * @param name The name of the dimension.
-     * @return {@code true} if the variable has a dimension with the requested name, {@code false} otherwise.
+     * @return true if the variable has a dimension with the requested name, false otherwise.
      */
     bool hasDimension(const string& name) const {
         return hasElement(name);
@@ -685,7 +685,7 @@ public:
     /**
      * Inquires the segment descriptor about a variable descriptor.
      * @param name The name of the variable descriptor.
-     * @return {@code true} if the segment descriptor has a variable descriptor with the requested name, {@code false} otherwise.
+     * @return true if the segment descriptor has a variable descriptor with the requested name, false otherwise.
      */
     bool hasVariableDescriptor(const string& name) const {
         return hasElement(name);

@@ -18,6 +18,9 @@
 
 #include "AbstractAccessor.h"
 
+/**
+ * A concrete implementation of the AbstractAccessor for the 'double' type.
+ */
 class DoubleAccessor : public virtual AbstractAccessor<double, Constants::TYPE_DOUBLE> {
 public:
 

@@ -34,7 +34,7 @@ using std::numeric_limits;
 using std::logic_error;
 
 /**
- * An abstract implementation of the {@code Accessor} interface using memory stored in a file.
+ * An abstract implementation of the Accessor interface using memory stored in a file.
  */
 template<class T, int N>
 class MapAccessor: public virtual Accessor {
@@ -189,84 +189,84 @@ public:
 	}
 
 	/**
-	 * Not implemented; always throws a {@code logic_error}.
+	 * Not implemented; always throws a logic_error.
 	 */
 	valarray<int8_t>& getByteData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
 	/**
-	 * Not implemented; always throws a {@code logic_error}.
+	 * Not implemented; always throws a logic_error.
 	 */
 	valarray<double>& getDoubleData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
 	/**
-	 * Not implemented; always throws a {@code logic_error}.
+	 * Not implemented; always throws a logic_error.
 	 */
 	valarray<float>& getFloatData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
 	/**
-	 * Not implemented; always throws a {@code logic_error}.
+	 * Not implemented; always throws a logic_error.
 	 */
 	valarray<int32_t>& getIntData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
 	/**
-	 * Not implemented; always throws a {@code logic_error}.
+	 * Not implemented; always throws a logic_error.
 	 */
 	valarray<int64_t>& getLongData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
 	/**
-	 * Not implemented; always throws a {@code logic_error}.
+	 * Not implemented; always throws a logic_error.
 	 */
 	valarray<int16_t>& getShortData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
 	/**
-	 * Not implemented; always throws a {@code logic_error}.
+	 * Not implemented; always throws a logic_error.
 	 */
 	valarray<uint8_t>& getUByteData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
 	/**
-	 * Not implemented; always throws a {@code logic_error}.
+	 * Not implemented; always throws a logic_error.
 	 */
 	valarray<uint32_t>& getUIntData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
 	/**
-	 * Not implemented; always throws a {@code logic_error}.
+	 * Not implemented; always throws a logic_error.
 	 */
 	valarray<uint64_t>& getULongData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
 	/**
-	 * Not implemented; always throws a {@code logic_error}.
+	 * Not implemented; always throws a logic_error.
 	 */
 	valarray<uint16_t>& getUShortData() const throw (logic_error) {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
 	/**
-	 * Not implemented; always throws a {@code logic_error}.
+	 * Not implemented; always throws a logic_error.
 	 */
 	valarray<double> getDoubles() const {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));
 	}
 
 	/**
-	 * Not implemented; always throws a {@code logic_error}.
+	 * Not implemented; always throws a logic_error.
 	 */
 	valarray<float> getFloats() const {
 		BOOST_THROW_EXCEPTION(logic_error("Not implemented."));

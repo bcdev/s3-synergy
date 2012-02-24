@@ -18,6 +18,9 @@
 
 #include "AbstractAccessor.h"
 
+/**
+ * A concrete implementation of the AbstractAccessor for the 'int' type.
+ */
 class IntAccessor: public virtual AbstractAccessor<int32_t, Constants::TYPE_INT> {
 public:
 

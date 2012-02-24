@@ -22,11 +22,11 @@
 class UnivariateFunction {
 public:
     /**
-     * Returns the value of the function at {@code x}.
+     * Returns the value of the univariate function at a given argument.
      *
-     * @param x The variable.
+     * @param x The argument.
      *
-     * @return The value of the function at {@code x}.
+     * @return The value of the univariate function at the given argument.
      */
     virtual double getValue(double x) = 0;
 

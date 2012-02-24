@@ -44,7 +44,7 @@ public:
 
 	/**
 	 * Prepares the context for the processing. Resources may be added to the
-	 * context as objects using the {@code context.addObject()} method.
+	 * context as using the {@code context.add...(...)} methods.
 	 * @param context The context.
 	 */
 	virtual void start(Context& context) = 0;

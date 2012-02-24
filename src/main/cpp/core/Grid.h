@@ -24,8 +24,8 @@ using std::out_of_range;
 
 /**
  * Interface, which represents (a slice of) the OLCI L1C grid. The OLCI L1C
- * grid dimensions are the camera index {@code k}, the row index {@code l},
- * and the column index {@code c}.
+ * grid dimensions are the camera index <em>k</em>, the row index <em>l</em>,
+ * and the column index <em>m</em>.
  */
 class Grid {
 public:
@@ -92,7 +92,7 @@ public:
 	virtual long getStrideM() const = 0;
 
 	/**
-	 * Returns the plain index for given coordinates ({@code k}, {@code l}, {@code m}).
+	 * Returns the plain index for given indexes (<em>k</em>, <em>l</em>, <em>m</em>).
 	 * @param k The camera index.
 	 * @param l The row index.
 	 * @param m The column index.

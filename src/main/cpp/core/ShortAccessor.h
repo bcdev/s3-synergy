@@ -18,6 +18,9 @@
 
 #include "AbstractAccessor.h"
 
+/**
+ * A concrete implementation of the AbstractAccessor for the 'short' type.
+ */
 class ShortAccessor: public virtual AbstractAccessor<int16_t, Constants::TYPE_SHORT> {
 public:
 

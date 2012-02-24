@@ -79,7 +79,7 @@ public:
 };
 
 /**
- * A concrete implementation of the {@code LookupTable} interface.
+ * A concrete implementation of the LookupTable interface.
  */
 template<class T, class W>
 class LookupTableImpl: public LookupTable<W> {

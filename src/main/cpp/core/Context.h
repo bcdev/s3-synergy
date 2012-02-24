@@ -178,14 +178,14 @@ public:
 	/**
 	 * Returns the object associated with the supplied object ID.
 	 * @param id The object ID.
-	 * @return the object associated with {@code id}.
+	 * @return the object associated with the given ID.
 	 */
 	Identifiable& getObject(const string& id) const throw (invalid_argument);
 
 	/**
 	 * Returns the segment associated with the supplied segment ID.
 	 * @param id The segment ID.
-	 * @return the segment associated with {@code id}.
+	 * @return the segment associated with the given ID.
 	 */
 	Segment& getSegment(const string& id) const throw (invalid_argument);
 
@@ -207,8 +207,8 @@ public:
 	 * computed by a certain module.
 	 * @param segment The segment.
 	 * @param module The module.
-	 * @return the index of the last row in {@code segment}, which has
-	 *         been computed by {@code module}.
+	 * @return the index of the last row in the given segment, which has
+	 *         been computed by the given module.
 	 */
 	long getLastComputedL(const Segment& segment, const Module& module) const;
 
@@ -219,8 +219,8 @@ public:
 	 * computed by a certain module.
 	 * @param segment The segment.
 	 * @param module The module.
-	 * @param l The index of the last row in {@code segment}, which has
-	 *          been computed by {@code module}.
+	 * @param l The index of the last row in the given segment, which has
+	 *          been computed by the given module.
 	 */
 	void setLastComputedL(const Segment& segment, const Module& module, long l);
 
@@ -247,16 +247,16 @@ public:
 	/**
 	 * Inquires the context about an object.
 	 * @param id The object ID.
-	 * @return {@code true} if an object with the given ID has been added to
-	 *         the context, {@code false} otherwise.
+	 * @return true if an object with the given ID has been added to
+	 *         the context, false otherwise.
 	 */
 	bool hasObject(const string& id) const;
 
 	/**
 	 * Inquires the context about a segment.
 	 * @param id The segment ID.
-	 * @return {@code true} if a segement with the given ID has been added to
-	 *         the context, {@code false} otherwise.
+	 * @return true if a segement with the given ID has been added to
+	 *         the context, false otherwise.
 	 */
 	bool hasSegment(const string& id) const;
 
@@ -264,15 +264,15 @@ public:
 	 * Inquires the index of the last row in a segment, which has been computed by a certain module.
 	 * @param segment The segment.
 	 * @param module The module.
-	 * @return {@code true} if the context has the requested information,
-	 *         {@code false} otherwise.
+	 * @return true if the context has the requested information,
+	 *         false otherwise.
 	 */
 	bool hasLastComputedL(const Segment& segment, const Module& module) const;
 
 	/**
 	 * Inquires status of computation.
-	 * @return {@code true} if all segments have been computed,
-	 *         {@code false} otherwise.
+	 * @return true if all segments have been computed,
+	 *         false otherwise.
 	 */
 	bool isCompleted() const;
 
@@ -316,7 +316,7 @@ private:
 	 * Returns the index of the first row in a segment, which is required for
 	 * processing the given segment.
 	 * @param segment The segment.
-	 * @return the index of the first row in {@code segment}, which is
+	 * @return the index of the first row in the given segment, which is
 	 *         required for processing.
 	 */
 	long getFirstRequiredL(const Segment& segment) const;
@@ -325,8 +325,8 @@ private:
 	 * Inquires the index of the first row in a segment, which is required by a certain module.
 	 * @param segment The segment.
 	 * @param module The module.
-	 * @return {@code true} if the context has the requested information,
-	 *         {@code false} otherwise.
+	 * @return true if the context has the requested information,
+	 *         false otherwise.
 	 */
 	bool hasFirstRequiredL(const Segment& segment, const Module& module) const;
 

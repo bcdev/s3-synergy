@@ -16,6 +16,9 @@
 #ifndef UINTACCESSOR_H
 #define	UINTACCESSOR_H
 
+/**
+ * A concrete implementation of the AbstractAccessor for the unsigned 'int' type.
+ */
 class UIntAccessor: public virtual AbstractAccessor<uint32_t, Constants::TYPE_UINT> {
 public:
 

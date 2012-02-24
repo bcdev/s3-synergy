@@ -19,7 +19,7 @@
 #include "Grid.h"
 
 /**
- * A concrete implementation of the {@code Grid} interface.
+ * A concrete implementation of the Grid interface.
  */
 class GridImpl: public virtual Grid {
 public:

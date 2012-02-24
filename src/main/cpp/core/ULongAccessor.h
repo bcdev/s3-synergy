@@ -16,6 +16,9 @@
 #ifndef ULONGACCESSOR_H
 #define	ULONGACCESSOR_H
 
+/**
+ * A concrete implementation of the AbstractAccessor for the unsigned 'long' type.
+ */
 class ULongAccessor: public virtual AbstractAccessor<uint64_t, Constants::TYPE_ULONG> {
 public:
 
