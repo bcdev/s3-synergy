@@ -407,6 +407,7 @@ public:
     /**
      * Constructor.
      * @param name The dimension's name.
+     * @param size The dimension's size.
      */
     Dimension(const string& name, size_t size = 0);
 
@@ -545,7 +546,7 @@ public:
 
     /**
      * Returns the name of the netCDF file the variable is or shall be stored in.
-     * @return the the name of the netCDF file the variable is or shall be stored in.
+     * @return the name of the netCDF file the variable is or shall be stored in.
      */
     string getNcFileBasename() const {
         return ncFileName;
@@ -553,7 +554,7 @@ public:
 
     /**
      * Set the name of the netCDF file the variable is or shall be stored in.
-     * @param The the name of the netCDF file the variable is or shall be stored in.
+     * @param ncFileName The name of the netCDF file the variable is or shall be stored in.
      */
     void setNcFileName(const string& ncFileName) {
         this->ncFileName = ncFileName;
@@ -569,7 +570,7 @@ public:
 
     /**
      * Sets the name of the variable, which is used or shall be used in its netCDF file.
-     * @param ncVariableName The name of the variable used in its netCDF file.
+     * @param ncVarName The name of the variable used in its netCDF file.
      */
     void setNcName(const string& ncVarName) {
         this->ncVarName = ncVarName;
@@ -585,7 +586,7 @@ public:
 
     /**
      * Sets the name of the segment this variable is or shall be associated with.
-     * @param The name of the associated segment.
+     * @param segmentName The name of the associated segment.
      */
     void setSegmentName(const string& segmentName) {
         this->segmentName = segmentName;
