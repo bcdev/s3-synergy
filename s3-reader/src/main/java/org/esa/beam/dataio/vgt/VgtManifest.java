@@ -87,7 +87,7 @@ class VgtManifest {
         return fileNames;
     }
 
-    public List<String> getTiepointsFileNames() {
+    public List<String> getTiepointFileNames() {
         NodeList tiepointsObjects = xPathHelper.getNodeList(
                 "/XFDU/dataObjectSection/dataObject[@repID='tiepointsSchema']", doc);
         List<String> fileNames = new ArrayList<String>();
@@ -103,6 +103,12 @@ class VgtManifest {
     public String getStatusFlagFile() {
         Node statusFlagObject = xPathHelper.getNode("/XFDU/dataObjectSection/dataObject[@repID='statusFlagsSchema']",
                                                  doc);
+        return xPathHelper.getString("./byteStream/fileLocation/@href", statusFlagObject);
+    }
+
+    public String getTimeCoordinatesFile() {
+        Node statusFlagObject = xPathHelper.getNode("/XFDU/dataObjectSection/dataObject[@repID='timeCoordinatesSchema']",
+                                                    doc);
         return xPathHelper.getString("./byteStream/fileLocation/@href", statusFlagObject);
     }
 

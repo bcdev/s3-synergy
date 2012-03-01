@@ -78,7 +78,7 @@ public class VgtManifestTest {
 
     @Test
     public void testGetTiepointsFileNames() {
-        List<String> tiepointsFiles = manifestTest.getTiepointsFileNames();
+        List<String> tiepointsFiles = manifestTest.getTiepointFileNames();
         assertEquals(3, tiepointsFiles.size());
         assertEquals("og.nc", tiepointsFiles.get(0));
         assertEquals("wvg.nc", tiepointsFiles.get(1));

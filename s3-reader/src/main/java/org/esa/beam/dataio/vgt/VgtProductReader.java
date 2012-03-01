@@ -19,7 +19,12 @@ import com.bc.ceres.core.ProgressMonitor;
 import com.bc.ceres.glevel.MultiLevelImage;
 import org.esa.beam.framework.dataio.AbstractProductReader;
 import org.esa.beam.framework.dataio.ProductIO;
-import org.esa.beam.framework.datamodel.*;
+import org.esa.beam.framework.datamodel.Band;
+import org.esa.beam.framework.datamodel.FlagCoding;
+import org.esa.beam.framework.datamodel.MetadataElement;
+import org.esa.beam.framework.datamodel.Product;
+import org.esa.beam.framework.datamodel.ProductData;
+import org.esa.beam.framework.datamodel.TiePointGrid;
 import org.esa.beam.util.ProductUtils;
 import org.esa.beam.util.io.FileUtils;
 import org.w3c.dom.Document;
@@ -46,7 +51,7 @@ public class VgtProductReader extends AbstractProductReader {
 
     private final Logger logger;
     private List<Product> measurementProducts;
-    private List<Product> tiepointsProducts;
+    private List<Product> tiepointProducts;
     private VgtManifest manifest;
 
     public VgtProductReader(VgtProductReaderPlugIn readerPlugIn) {
@@ -75,18 +80,32 @@ public class VgtProductReader extends AbstractProductReader {
         for (Product product : measurementProducts) {
             product.dispose();
         }
-        for (Product product : tiepointsProducts) {
+        for (Product product : tiepointProducts) {
             product.dispose();
         }
         super.close();
     }
 
     private Product createProduct() {
-        measurementProducts = loadDataProducts(manifest.getMeasurementFileNames());
-        tiepointsProducts = loadDataProducts(manifest.getTiepointsFileNames());
+        final String productName = getProductName();
+        final String productType = getProductType();
+
+        final List<String> measurementFileNames = manifest.getMeasurementFileNames();
+        measurementFileNames.add(manifest.getStatusFlagFile());
+
+        if (isVGSProduct()) {
+            measurementFileNames.addAll(manifest.getGeometryFileNames());
+            measurementFileNames.add(manifest.getTimeCoordinatesFile());
+        }
+        measurementProducts = loadDataProducts(measurementFileNames);
+        final List<String> tiepointFileNames = manifest.getTiepointFileNames();
+        if (isVGPProduct()) {
+            tiepointFileNames.addAll(manifest.getGeometryFileNames());
+        }
+        tiepointProducts = loadDataProducts(tiepointFileNames);
         final int width = measurementProducts.get(0).getSceneRasterWidth();
         final int height = measurementProducts.get(0).getSceneRasterHeight();
-        Product product = new Product(getProductName(), getProductType(), width, height, this);
+        Product product = new Product(productName, productType, width, height, this);
         product.setStartTime(manifest.getStartTime());
         product.setEndTime(manifest.getStopTime());
         product.setFileLocation(getInputFile());
@@ -95,9 +114,10 @@ public class VgtProductReader extends AbstractProductReader {
         product.getMetadataRoot().addElement(new MetadataElement("Variable_Attributes"));
         ProductUtils.copyMetadata(measurementProducts.get(0).getMetadataRoot().getElement("Global_Attributes"),
                                   product.getMetadataRoot().getElement("Global_Attributes"));
-        product.getMetadataRoot().getElement("Global_Attributes").setAttributeString("dataset_name", getProductName());
+        product.getMetadataRoot().getElement("Global_Attributes").setAttributeString("dataset_name", productName);
         for (Product measurementProduct : measurementProducts) {
-            for (final MetadataElement element : measurementProduct.getMetadataRoot().getElement("Variable_Attributes").getElements()) {
+            for (final MetadataElement element : measurementProduct.getMetadataRoot().getElement(
+                    "Variable_Attributes").getElements()) {
                 if (isMeasurementBandElement(element)) {
                     product.getMetadataRoot().getElement("Variable_Attributes").addElement(element.createDeepClone());
                 }
@@ -105,7 +125,7 @@ public class VgtProductReader extends AbstractProductReader {
         }
 
         attachMeasurementBands(measurementProducts, product);
-        attachAnnotationData(tiepointsProducts, product);
+        attachAnnotationData(tiepointProducts, product);
         ProductUtils.copyGeoCoding(measurementProducts.get(0), product);
         return product;
     }
@@ -136,7 +156,7 @@ public class VgtProductReader extends AbstractProductReader {
             product.addTiePointGrid(tiePointGrid);
         }
     }
-    
+
     private int getTiePointSubsamplingFactor() {
         if (isVGSProduct()) {
             return 1;
@@ -158,11 +178,11 @@ public class VgtProductReader extends AbstractProductReader {
         }
     }
 
-    private  boolean isVGSProduct() {
+    private boolean isVGSProduct() {
         return getProductType().equals("VGT_S_L2_SYN");
     }
 
-    private  boolean isVGPProduct() {
+    private boolean isVGPProduct() {
         return getProductType().equals("VGT_P_L2_SYN");
     }
 
@@ -170,12 +190,12 @@ public class VgtProductReader extends AbstractProductReader {
         if (band.getName().equals("ndvi")) {
             band.setScalingFactor(0.004);
         } else if (isSpectralBand(band)) {
-                band.setScalingFactor(0.004);
+            band.setScalingFactor(0.004);
         }
     }
 
     private boolean isSpectralBand(Band band) {
-        return band.getName().equals("b0")||
+        return band.getName().equals("b0") ||
                band.getName().equals("b2") ||
                band.getName().equals("b3") ||
                band.getName().equals("mir");
@@ -214,9 +234,9 @@ public class VgtProductReader extends AbstractProductReader {
         return FileUtils.getFilenameWithoutExtension(getParentInputDirectory());
     }
 
-    private List<Product> loadDataProducts(List<String> dataFileNames) {
+    private List<Product> loadDataProducts(List<String> fileNameList) {
         List<Product> products = new ArrayList<Product>();
-        for (String fileName : dataFileNames) {
+        for (String fileName : fileNameList) {
             try {
                 products.add(readProduct(fileName));
             } catch (IOException e) {
