@@ -33,12 +33,12 @@ import java.util.List;
  * @author Olaf Danne
  * @since 1.0
  */
-class SynManifest {
+class SynL2Manifest {
 
     private Document doc;
     private XPathHelper xPathHelper;
 
-    SynManifest(Document manifestDocument) {
+    SynL2Manifest(Document manifestDocument) {
         doc = manifestDocument;
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPathHelper = new XPathHelper(xPath);

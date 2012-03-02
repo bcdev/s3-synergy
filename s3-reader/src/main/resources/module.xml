@@ -74,21 +74,21 @@
         <action>
             <id>importS3SynProduct</id>
             <class>org.esa.beam.visat.actions.ProductImportAction</class>
-            <formatName>OLCI-SLSTR-L2-SYN</formatName>
-            <text>Import OLCI/SLSTR L2 SYN Product...</text>
+            <formatName>S3-SY2</formatName>
+            <text>Import Sentinel-3 Synergy Level-2 Product...</text>
             <mnemonic>Y</mnemonic>
-            <shortDescr>Import an OLCI/SLSTR L2 SYN data product or product subset.</shortDescr>
-            <description>Import an OLCI/SLSTR L2 SYN data product or product subset.</description>
+            <shortDescr>Import a Sentinel-3 Synergy Level-2 data product or product subset.</shortDescr>
+            <description>Import a Sentinel-3 Synergy Level-2 data product or product subset.</description>
             <helpId>importS3SynProduct</helpId>
         </action>
         <action>
             <id>importS3VgtProduct</id>
             <class>org.esa.beam.visat.actions.ProductImportAction</class>
-            <formatName>VGT-L2-SYN</formatName>
-            <text>Import VGT L2 SYN Product...</text>
+            <formatName>S3-VGT</formatName>
+            <text>Import Sentinel-3 VGT Product...</text>
             <mnemonic>Y</mnemonic>
-            <shortDescr>Import a VGT L2 SYN data product or product subset.</shortDescr>
-            <description>Import a VGT L2 SYN data product or product subset.</description>
+            <shortDescr>Import a Sentinel-3 VGT data product or product subset.</shortDescr>
+            <description>Import a Sentinel-3 VGT data product or product subset.</description>
             <helpId>importS3VgtProduct</helpId>
         </action>
     </extension>

@@ -13,7 +13,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-package org.esa.beam.dataio.vgt;
+package org.esa.beam.dataio.syn;
 
 import org.esa.beam.framework.datamodel.ProductData;
 import org.esa.beam.util.XPathHelper;

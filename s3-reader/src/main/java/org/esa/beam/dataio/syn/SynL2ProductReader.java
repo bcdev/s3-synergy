@@ -41,13 +41,13 @@ import java.util.logging.Logger;
  * @author Olaf Danne
  * @since 1.0
  */
-public class SynProductReader extends AbstractProductReader {
+public class SynL2ProductReader extends AbstractProductReader {
 
     private final Logger logger;
     private List<Product> measurementProducts;
     private Product geoCoordinatesProduct;
 
-    public SynProductReader(SynProductReaderPlugIn readerPlugIn) {
+    public SynL2ProductReader(SynL2ProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
         logger = Logger.getLogger(getClass().getSimpleName());
     }
@@ -55,7 +55,7 @@ public class SynProductReader extends AbstractProductReader {
     @Override
     protected Product readProductNodesImpl() throws IOException {
         File inputFile = getInputFile();
-        SynManifest manifest = createManifestFile(inputFile);
+        SynL2Manifest manifest = createManifestFile(inputFile);
         return createProduct(manifest);
     }
 
@@ -79,11 +79,11 @@ public class SynProductReader extends AbstractProductReader {
         super.close();
     }
 
-    private Product createProduct(SynManifest manifest) {
+    private Product createProduct(SynL2Manifest manifest) {
         measurementProducts = loadMeasurementProducts(manifest.getMeasurementFileNames());
         int width = measurementProducts.get(0).getSceneRasterWidth();
         int height = measurementProducts.get(0).getSceneRasterHeight();
-        Product product = new Product(getProductName(), SynProductReaderPlugIn.FORMAT_NAME_SYN, width,
+        Product product = new Product(getProductName(), SynL2ProductReaderPlugIn.FORMAT_NAME_SYN, width,
                                       height, this);
         product.setStartTime(manifest.getStartTime());
         product.setEndTime(manifest.getStopTime());
@@ -93,7 +93,7 @@ public class SynProductReader extends AbstractProductReader {
         return product;
     }
 
-    private void attachAnnotationData(SynManifest manifest, Product product) {
+    private void attachAnnotationData(SynL2Manifest manifest, Product product) {
         attachGeoCoodinatesToProduct(manifest.getGeoCoordinatesFileName(), product);
         attachTiePointsToProduct(manifest.getTiepointsFileNames(), product);
     }
@@ -123,20 +123,20 @@ public class SynProductReader extends AbstractProductReader {
             for (final Band sourceBand : bandProduct.getBands()) {
                 final String bandName = sourceBand.getName();
                 final Band targetBand = ProductUtils.copyBand(bandName, bandProduct, product);
-                if (sourceBand.getName().endsWith(SynFlagCodings.SYN_FLAG_BAND_NAME)) {
-                    final FlagCoding synFlagCoding = SynFlagCodings.createSynFlagCoding();
+                if (sourceBand.getName().endsWith(SynL2FlagCodings.SYN_FLAG_BAND_NAME)) {
+                    final FlagCoding synFlagCoding = SynL2FlagCodings.createSynFlagCoding();
                     targetBand.setSampleCoding(synFlagCoding);
                     product.getFlagCodingGroup().add(synFlagCoding);
-                } else if (sourceBand.getName().endsWith(SynFlagCodings.OLCI_FLAG_BAND_NAME)) {
-                    final FlagCoding olciFlagCoding = SynFlagCodings.createOlciFlagCoding();
+                } else if (sourceBand.getName().endsWith(SynL2FlagCodings.OLCI_FLAG_BAND_NAME)) {
+                    final FlagCoding olciFlagCoding = SynL2FlagCodings.createOlciFlagCoding();
                     targetBand.setSampleCoding(olciFlagCoding);
                     product.getFlagCodingGroup().add(olciFlagCoding);
-                } else if (sourceBand.getName().endsWith(SynFlagCodings.SLSTR_NADIR_FLAG_BAND_NAME)) {
-                    final FlagCoding slnFlagCoding = SynFlagCodings.createSlstrNadirFlagCoding();
+                } else if (sourceBand.getName().endsWith(SynL2FlagCodings.SLSTR_NADIR_FLAG_BAND_NAME)) {
+                    final FlagCoding slnFlagCoding = SynL2FlagCodings.createSlstrNadirFlagCoding();
                     targetBand.setSampleCoding(slnFlagCoding);
                     product.getFlagCodingGroup().add(slnFlagCoding);
-                } else if (sourceBand.getName().endsWith(SynFlagCodings.SLSTR_OBLIQUE_FLAG_BAND_NAME)) {
-                    final FlagCoding sloFlagCoding = SynFlagCodings.createSlstrObliqueFlagCoding();
+                } else if (sourceBand.getName().endsWith(SynL2FlagCodings.SLSTR_OBLIQUE_FLAG_BAND_NAME)) {
+                    final FlagCoding sloFlagCoding = SynL2FlagCodings.createSlstrObliqueFlagCoding();
                     targetBand.setSampleCoding(sloFlagCoding);
                     product.getFlagCodingGroup().add(sloFlagCoding);
                 }
@@ -172,10 +172,10 @@ public class SynProductReader extends AbstractProductReader {
         return product;
     }
 
-    private SynManifest createManifestFile(File inputFile) throws IOException {
+    private SynL2Manifest createManifestFile(File inputFile) throws IOException {
         InputStream manifestInputStream = new FileInputStream(inputFile);
         try {
-            return new SynManifest(createXmlDocument(manifestInputStream));
+            return new SynL2Manifest(createXmlDocument(manifestInputStream));
         } finally {
             manifestInputStream.close();
         }

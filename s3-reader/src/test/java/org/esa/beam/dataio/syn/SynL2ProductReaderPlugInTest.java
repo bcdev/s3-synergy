@@ -27,24 +27,24 @@ import java.util.Iterator;
 
 import static org.junit.Assert.*;
 
-public class SynProductReaderPlugInTest {
+public class SynL2ProductReaderPlugInTest {
 
     public static final String SYN_SENSOR_ID = "SY";
 
-    private SynProductReaderPlugIn plugIn;
+    private SynL2ProductReaderPlugIn plugIn;
 
     @Before
     public void setup() {
-        plugIn = new SynProductReaderPlugIn();
+        plugIn = new SynL2ProductReaderPlugIn();
     }
 
     @Test
     public void testIfPlugInIsLoaded() {
         ProductIOPlugInManager ioPlugInManager = ProductIOPlugInManager.getInstance();
         Iterator<ProductReaderPlugIn> readerPlugIns = ioPlugInManager.getReaderPlugIns(
-                SynProductReaderPlugIn.FORMAT_NAME_SYN);
+                SynL2ProductReaderPlugIn.FORMAT_NAME_SYN);
         assertTrue(readerPlugIns.hasNext());
-        assertTrue(readerPlugIns.next() instanceof SynProductReaderPlugIn);
+        assertTrue(readerPlugIns.next() instanceof SynL2ProductReaderPlugIn);
 
     }
 
@@ -95,8 +95,8 @@ public class SynProductReaderPlugInTest {
         assertNotSame(secondInstance, firstInstance);
     }
     private String createManifestFilePath(String sensorId) {
-        String validParentDirectory = String.format("/S3_%s_2_MMM_TTTTTTTTTTTT_instanceID_GGG_CCCC_VV.SAFE/", sensorId);
-        String manifestFile = "manifest_SYN.xml";
+        String validParentDirectory = String.format("/S3_%s_2_SYN_TTTTTTTTTTTT_instanceID_GGG_CCCC_VV.SAFE/", sensorId);
+        String manifestFile = "manifest.xml";
         return validParentDirectory + manifestFile;
     }
 }

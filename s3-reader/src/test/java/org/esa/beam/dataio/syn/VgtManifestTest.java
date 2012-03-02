@@ -15,6 +15,7 @@
 
 package org.esa.beam.dataio.syn;
 
+import org.esa.beam.dataio.syn.VgtManifest;
 import org.esa.beam.framework.datamodel.ProductData;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,18 +29,19 @@ import java.io.InputStream;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class SYNManifestTest {
+public class VgtManifestTest {
 
-    private SynManifest manifestTest;
+    private VgtManifest manifestTest;
 
     @Before
     public void before() throws ParserConfigurationException, IOException, SAXException {
-        InputStream stream = getClass().getResourceAsStream("SYN_TEST_manifest.xml");
+        InputStream stream = getClass().getResourceAsStream("VGP_TEST_manifest.safe");
         try {
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(stream);
-            manifestTest = new SynManifest(doc);
+            manifestTest = new VgtManifest(doc);
         } finally {
             stream.close();
 
@@ -48,7 +50,7 @@ public class SYNManifestTest {
 
     @Test
     public void testGetDescription() throws Exception {
-        assertEquals("Sentinel 3 SYN Level 2", manifestTest.getDescription());
+        assertEquals("Sentinel 3 SYN Level 2 VGT P", manifestTest.getDescription());
     }
 
     @Test
@@ -68,31 +70,37 @@ public class SYNManifestTest {
     @Test
     public void testGetMeasurementFileNames() {
         List<String> measurementFiles = manifestTest.getMeasurementFileNames();
-        assertEquals(34, measurementFiles.size());
-        assertEquals("r0400.nc", measurementFiles.get(0));
-        assertEquals("r0560.nc", measurementFiles.get(5));
-        assertEquals("r0550n.nc", measurementFiles.get(18));
-        assertEquals("r1375o.nc", measurementFiles.get(27));
-        assertEquals("flags.nc", measurementFiles.get(33));
-    }
-
-    @Test
-    public void testGetGeoCoordinatesFileName() {
-        assertEquals("geolocation.nc", manifestTest.getGeoCoordinatesFileName());
+        assertEquals(4, measurementFiles.size());
+        assertEquals("b0.nc", measurementFiles.get(0));
+        assertEquals("b2.nc", measurementFiles.get(1));
+        assertEquals("b3.nc", measurementFiles.get(2));
+        assertEquals("mir.nc", measurementFiles.get(3));
     }
 
     @Test
     public void testGetTiepointsFileNames() {
-        List<String> tiepointsFiles = manifestTest.getTiepointsFileNames();
-        assertEquals(4, tiepointsFiles.size());
-        assertEquals("tiepoints_meteo.nc", tiepointsFiles.get(0));
-        assertEquals("tiepoints_olci.nc", tiepointsFiles.get(1));
-        assertEquals("tiepoints_slstr_n.nc", tiepointsFiles.get(2));
-        assertEquals("tiepoints_slstr_o.nc", tiepointsFiles.get(3));
+        List<String> tiepointsFiles = manifestTest.getTiepointFileNames();
+        assertEquals(3, tiepointsFiles.size());
+        assertEquals("og.nc", tiepointsFiles.get(0));
+        assertEquals("wvg.nc", tiepointsFiles.get(1));
+        assertEquals("ag.nc", tiepointsFiles.get(2));
     }
 
     @Test
-    public void testGetTimeFileName() {
-        assertEquals("time.nc", manifestTest.getTimeFileName());
+    public void testGetStatusFlagFileName() {
+        String statusFlagFile = manifestTest.getStatusFlagFile();
+        assertNotNull(statusFlagFile);
+        assertEquals("sm.nc", statusFlagFile);
     }
+
+    @Test
+    public void testGetGeometryFileNames() {
+        List<String> geometryFiles = manifestTest.getGeometryFileNames();
+        assertEquals(4, geometryFiles.size());
+        assertEquals("vaa.nc", geometryFiles.get(0));
+        assertEquals("vza.nc", geometryFiles.get(1));
+        assertEquals("saa.nc", geometryFiles.get(2));
+        assertEquals("sza.nc", geometryFiles.get(3));
+    }
+
 }

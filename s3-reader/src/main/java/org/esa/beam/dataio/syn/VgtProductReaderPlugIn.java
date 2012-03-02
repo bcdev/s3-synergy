@@ -25,20 +25,19 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
- * PlugIn class which provides an OLCI/SLSTR SYN product reader to the framework.
+ * PlugIn class which provides a VGT P or S product reader to the framework.
  *
  * @author Olaf Danne
  * @since 1.0
  */
-public class SynProductReaderPlugIn implements ProductReaderPlugIn {
+public class VgtProductReaderPlugIn implements ProductReaderPlugIn {
 
-    public static final String FORMAT_NAME_SYN = "OLCI-SLSTR-L2-SYN";
+    public static final String FORMAT_NAME_VGT = "S3-VGT";
 
     private static final Class[] SUPPORTED_INPUT_TYPES = new Class[]{String.class, File.class};
-    private static final String DESCRIPTION = "SYNSAFE Format";
-    private static final String MANIFEST_FILE_EXTENSION = ".xml";
-    private static final String[] DEFAULT_FILE_EXTENSIONS = new String[]{MANIFEST_FILE_EXTENSION};
-    private static final String[] FORMAT_NAMES = new String[]{FORMAT_NAME_SYN};
+    private static final String DESCRIPTION = "Sentinel-3 VGT Continuity Product";
+    private static final String[] DEFAULT_FILE_EXTENSIONS = new String[]{".safe", ".xml"};
+    private static final String[] FORMAT_NAMES = new String[]{FORMAT_NAME_VGT};
 
     @Override
     public DecodeQualification getDecodeQualification(Object input) {
@@ -56,7 +55,7 @@ public class SynProductReaderPlugIn implements ProductReaderPlugIn {
 
     @Override
     public ProductReader createReaderInstance() {
-        return new SynProductReader(this);
+        return new VgtProductReader(this);
     }
 
     @Override
@@ -76,7 +75,7 @@ public class SynProductReaderPlugIn implements ProductReaderPlugIn {
 
     @Override
     public BeamFileFilter getProductFileFilter() {
-        return new BeamFileFilter(FORMAT_NAMES[0], MANIFEST_FILE_EXTENSION, DESCRIPTION);
+        return new BeamFileFilter(FORMAT_NAMES[0], DEFAULT_FILE_EXTENSIONS, DESCRIPTION);
     }
 
     private boolean isInputValid(Object input) {
@@ -86,11 +85,11 @@ public class SynProductReaderPlugIn implements ProductReaderPlugIn {
     }
 
     private boolean isInputFileNameValid(String name) {
-        return "manifest_SYN.xml".equals(name);
+        return "manifest.safe".equals(name.toLowerCase()) || "manifest.xml".equals(name.toLowerCase());
     }
 
     private boolean isDirectoryNameValid(String parentDirectoryName) {
-        Pattern pattern = Pattern.compile("S3.?_SY_2_..._.*.SAFE");
+        Pattern pattern = Pattern.compile("S3.?_SY_2_VG[PS]_.*.SAFE");
         return pattern.matcher(parentDirectoryName).matches();
     }
 

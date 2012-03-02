@@ -13,8 +13,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-package org.esa.beam.dataio.vgt;
+package org.esa.beam.dataio.syn;
 
+import org.esa.beam.dataio.syn.VgtProductReaderPlugIn;
 import org.esa.beam.framework.dataio.DecodeQualification;
 import org.esa.beam.framework.dataio.ProductIOPlugInManager;
 import org.esa.beam.framework.dataio.ProductReader;
@@ -89,7 +90,7 @@ public class VgtProductReaderPlugInTest {
         assertNotSame(secondInstance, firstInstance);
     }
     private String createManifestFilePath(String sensorId) {
-        String validParentDirectory = String.format("/S3_%s_2_MMM_TTTTTTTTTTTT_instanceID_GGG_CCCC_VV.SAFE/", sensorId);
+        String validParentDirectory = String.format("/S3_%s_2_VGP_TTTTTTTTTTTT_instanceID_GGG_CCCC_VV.SAFE/", sensorId);
         String manifestFile = "manifest.xml";
         return validParentDirectory + manifestFile;
     }

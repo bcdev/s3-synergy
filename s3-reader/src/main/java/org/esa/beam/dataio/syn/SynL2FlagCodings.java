@@ -24,7 +24,7 @@ import org.esa.beam.util.BitSetter;
  * @author Olaf Danne
  * @since 1.0
  */
-public class SynFlagCodings {
+public class SynL2FlagCodings {
 
     protected static final String SYN_FLAG_BAND_NAME = "SYN_flags";
     protected static final String OLCI_FLAG_BAND_NAME = "OLC_flags";

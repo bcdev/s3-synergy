@@ -13,7 +13,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-package org.esa.beam.dataio.vgt;
+package org.esa.beam.dataio.syn;
 
 import org.esa.beam.framework.dataio.DecodeQualification;
 import org.esa.beam.framework.dataio.ProductReader;
@@ -25,20 +25,19 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
- * PlugIn class which provides a VGT P or S product reader to the framework.
+ * PlugIn class which provides an OLCI/SLSTR SYN product reader to the framework.
  *
  * @author Olaf Danne
  * @since 1.0
  */
-public class VgtProductReaderPlugIn implements ProductReaderPlugIn {
+public class SynL2ProductReaderPlugIn implements ProductReaderPlugIn {
 
-    public static final String FORMAT_NAME_VGT = "VGT-L2-SYN";
+    public static final String FORMAT_NAME_SYN = "S3-SY2";
 
     private static final Class[] SUPPORTED_INPUT_TYPES = new Class[]{String.class, File.class};
-    private static final String DESCRIPTION = "SYNSAFE Format";
-    private static final String MANIFEST_FILE_EXTENSION = ".xml";
-    private static final String[] DEFAULT_FILE_EXTENSIONS = new String[]{MANIFEST_FILE_EXTENSION};
-    private static final String[] FORMAT_NAMES = new String[]{FORMAT_NAME_VGT};
+    private static final String DESCRIPTION = "Sentinel-3 Synergy Level-2 Product";
+    private static final String[] DEFAULT_FILE_EXTENSIONS = new String[]{".safe", ".xml"};
+    private static final String[] FORMAT_NAMES = new String[]{FORMAT_NAME_SYN};
 
     @Override
     public DecodeQualification getDecodeQualification(Object input) {
@@ -56,7 +55,7 @@ public class VgtProductReaderPlugIn implements ProductReaderPlugIn {
 
     @Override
     public ProductReader createReaderInstance() {
-        return new VgtProductReader(this);
+        return new SynL2ProductReader(this);
     }
 
     @Override
@@ -76,7 +75,7 @@ public class VgtProductReaderPlugIn implements ProductReaderPlugIn {
 
     @Override
     public BeamFileFilter getProductFileFilter() {
-        return new BeamFileFilter(FORMAT_NAMES[0], MANIFEST_FILE_EXTENSION, DESCRIPTION);
+        return new BeamFileFilter(FORMAT_NAMES[0], DEFAULT_FILE_EXTENSIONS, DESCRIPTION);
     }
 
     private boolean isInputValid(Object input) {
@@ -86,11 +85,11 @@ public class VgtProductReaderPlugIn implements ProductReaderPlugIn {
     }
 
     private boolean isInputFileNameValid(String name) {
-        return "manifest.xml".equals(name);
+        return "manifest.safe".equals(name.toLowerCase()) || "manifest.xml".equals(name.toLowerCase());
     }
 
     private boolean isDirectoryNameValid(String parentDirectoryName) {
-        Pattern pattern = Pattern.compile("S3.?_SY_2_..._.*.SAFE");
+        Pattern pattern = Pattern.compile("S3.?_SY_2_SYN_.*.SAFE");
         return pattern.matcher(parentDirectoryName).matches();
     }
 
