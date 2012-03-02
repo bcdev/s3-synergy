@@ -92,7 +92,7 @@ void ManifestWriter::setChecksums(string& manifest) const {
 }
 
 void ManifestWriter::writeManifest(string& manifest) const {
-	std::ofstream ofs(string(targetDirPath.string() + "/" + manifestName + ".xml").c_str(), std::ofstream::out);
+	std::ofstream ofs(string(targetDirPath.string() + "/" + manifestName + ".safe").c_str(), std::ofstream::out);
 	for (size_t i = 0; i < manifest.size(); i++) {
 		ofs.put(manifest[i]);
 	}
