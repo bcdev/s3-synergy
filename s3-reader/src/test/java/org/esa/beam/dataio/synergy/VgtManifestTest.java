@@ -13,9 +13,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-package org.esa.beam.dataio.syn;
+package org.esa.beam.dataio.synergy;
 
-import org.esa.beam.dataio.syn.VgtManifest;
 import org.esa.beam.framework.datamodel.ProductData;
 import org.junit.Before;
 import org.junit.Test;

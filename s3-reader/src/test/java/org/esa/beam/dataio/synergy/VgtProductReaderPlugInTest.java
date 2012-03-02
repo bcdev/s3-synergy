@@ -13,7 +13,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-package org.esa.beam.dataio.syn;
+package org.esa.beam.dataio.synergy;
 
 import org.esa.beam.framework.dataio.DecodeQualification;
 import org.esa.beam.framework.dataio.ProductIOPlugInManager;
@@ -27,36 +27,30 @@ import java.util.Iterator;
 
 import static org.junit.Assert.*;
 
-public class SynL2ProductReaderPlugInTest {
+public class VgtProductReaderPlugInTest {
 
-    public static final String SYN_SENSOR_ID = "SY";
+    public static final String VGT_SENSOR_ID = "SY";
 
-    private SynL2ProductReaderPlugIn plugIn;
+    private VgtProductReaderPlugIn plugIn;
 
     @Before
     public void setup() {
-        plugIn = new SynL2ProductReaderPlugIn();
+        plugIn = new VgtProductReaderPlugIn();
     }
 
     @Test
     public void testIfPlugInIsLoaded() {
         ProductIOPlugInManager ioPlugInManager = ProductIOPlugInManager.getInstance();
         Iterator<ProductReaderPlugIn> readerPlugIns = ioPlugInManager.getReaderPlugIns(
-                SynL2ProductReaderPlugIn.FORMAT_NAME_SYN);
+                VgtProductReaderPlugIn.FORMAT_NAME_VGT);
         assertTrue(readerPlugIns.hasNext());
-        assertTrue(readerPlugIns.next() instanceof SynL2ProductReaderPlugIn);
+        assertTrue(readerPlugIns.next() instanceof VgtProductReaderPlugIn);
 
     }
 
     @Test
-    public void testDecodeQualificationWithFullResolution() {
-        String validPath = createManifestFilePath(SYN_SENSOR_ID);
-        assertEquals(DecodeQualification.INTENDED, plugIn.getDecodeQualification(validPath));
-    }
-
-    @Test
-    public void testDecodeQualificationWithReducedResolution() {
-        String validPath = createManifestFilePath(SYN_SENSOR_ID);
+    public void testDecodeQualification() {
+        String validPath = createManifestFilePath(VGT_SENSOR_ID);
         assertEquals(DecodeQualification.INTENDED, plugIn.getDecodeQualification(validPath));
     }
 
@@ -95,7 +89,7 @@ public class SynL2ProductReaderPlugInTest {
         assertNotSame(secondInstance, firstInstance);
     }
     private String createManifestFilePath(String sensorId) {
-        String validParentDirectory = String.format("/S3_%s_2_SYN_TTTTTTTTTTTT_instanceID_GGG_CCCC_VV.SAFE/", sensorId);
+        String validParentDirectory = String.format("/S3_%s_2_VGP_TTTTTTTTTTTT_instanceID_GGG_CCCC_VV.SAFE/", sensorId);
         String manifestFile = "manifest.xml";
         return validParentDirectory + manifestFile;
     }

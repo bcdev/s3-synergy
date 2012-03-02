@@ -13,9 +13,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-package org.esa.beam.dataio.syn;
+package org.esa.beam.dataio.synergy;
 
-import org.esa.beam.dataio.syn.VgtProductReaderPlugIn;
 import org.esa.beam.framework.dataio.DecodeQualification;
 import org.esa.beam.framework.dataio.ProductIOPlugInManager;
 import org.esa.beam.framework.dataio.ProductReader;
@@ -28,30 +27,36 @@ import java.util.Iterator;
 
 import static org.junit.Assert.*;
 
-public class VgtProductReaderPlugInTest {
+public class SynL2ProductReaderPlugInTest {
 
-    public static final String VGT_SENSOR_ID = "SY";
+    public static final String SYN_SENSOR_ID = "SY";
 
-    private VgtProductReaderPlugIn plugIn;
+    private SynL2ProductReaderPlugIn plugIn;
 
     @Before
     public void setup() {
-        plugIn = new VgtProductReaderPlugIn();
+        plugIn = new SynL2ProductReaderPlugIn();
     }
 
     @Test
     public void testIfPlugInIsLoaded() {
         ProductIOPlugInManager ioPlugInManager = ProductIOPlugInManager.getInstance();
         Iterator<ProductReaderPlugIn> readerPlugIns = ioPlugInManager.getReaderPlugIns(
-                VgtProductReaderPlugIn.FORMAT_NAME_VGT);
+                SynL2ProductReaderPlugIn.FORMAT_NAME_SYN);
         assertTrue(readerPlugIns.hasNext());
-        assertTrue(readerPlugIns.next() instanceof VgtProductReaderPlugIn);
+        assertTrue(readerPlugIns.next() instanceof SynL2ProductReaderPlugIn);
 
     }
 
     @Test
-    public void testDecodeQualification() {
-        String validPath = createManifestFilePath(VGT_SENSOR_ID);
+    public void testDecodeQualificationWithFullResolution() {
+        String validPath = createManifestFilePath(SYN_SENSOR_ID);
+        assertEquals(DecodeQualification.INTENDED, plugIn.getDecodeQualification(validPath));
+    }
+
+    @Test
+    public void testDecodeQualificationWithReducedResolution() {
+        String validPath = createManifestFilePath(SYN_SENSOR_ID);
         assertEquals(DecodeQualification.INTENDED, plugIn.getDecodeQualification(validPath));
     }
 
@@ -90,7 +95,7 @@ public class VgtProductReaderPlugInTest {
         assertNotSame(secondInstance, firstInstance);
     }
     private String createManifestFilePath(String sensorId) {
-        String validParentDirectory = String.format("/S3_%s_2_VGP_TTTTTTTTTTTT_instanceID_GGG_CCCC_VV.SAFE/", sensorId);
+        String validParentDirectory = String.format("/S3_%s_2_SYN_TTTTTTTTTTTT_instanceID_GGG_CCCC_VV.SAFE/", sensorId);
         String manifestFile = "manifest.xml";
         return validParentDirectory + manifestFile;
     }
