@@ -32,14 +32,14 @@ import static org.junit.Assert.assertTrue;
 
 public class SynL2ManifestTest {
 
-    private SynL2Manifest manifestTest;
+    private Manifest manifestTest;
 
     @Before
     public void before() throws ParserConfigurationException, IOException, SAXException {
         InputStream stream = getClass().getResourceAsStream("SY2_TEST_manifest.safe");
         try {
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(stream);
-            manifestTest = new SynL2Manifest(doc);
+            manifestTest = Manifest.createManifest(doc);
         } finally {
             stream.close();
         }
@@ -81,8 +81,8 @@ public class SynL2ManifestTest {
     }
 
     @Test
-    public void testGetTiepointsFileNames() {
-        List<String> tiepointsFiles = manifestTest.getTiepointsFileNames();
+    public void testGetTiepointFileNames() {
+        List<String> tiepointsFiles = manifestTest.getTiePointFileNames();
         assertEquals(4, tiepointsFiles.size());
         assertEquals("tiepoints_meteo.nc", tiepointsFiles.get(0));
         assertEquals("tiepoints_olci.nc", tiepointsFiles.get(1));

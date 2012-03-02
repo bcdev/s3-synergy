@@ -19,35 +19,40 @@ import org.esa.beam.framework.datamodel.FlagCoding;
 import org.esa.beam.util.BitSetter;
 
 /**
- * Class providing the flag codings in an OLCI/SLSTR L2 SYN data product.
+ * Class providing the flag codings in Sentinel-3 Synergy data products.
  *
  * @author Olaf Danne
+ * @author Ralf Quast
  * @since 1.0
  */
-public class SynL2FlagCodings {
+class FlagCodings {
 
-    protected static final String SYN_FLAG_BAND_NAME = "SYN_flags";
-    protected static final String OLCI_FLAG_BAND_NAME = "OLC_flags";
-    protected static final String SLSTR_NADIR_FLAG_BAND_NAME = "SLN_flags";
-    protected static final String SLSTR_OBLIQUE_FLAG_BAND_NAME = "SLO_flags";
+    private FlagCodings() {
+    }
+
+    static final String SY2_FLAG_BAND_NAME = "SYN_flags";
+    static final String OLCI_FLAG_BAND_NAME = "OLC_flags";
+    static final String SLSTR_NADIR_FLAG_BAND_NAME = "SLN_flags";
+    static final String SLSTR_OBLIQUE_FLAG_BAND_NAME = "SLO_flags";
+    static final String VGT_STATUS_MASK_BAND_NAME = "SM";
 
 
-    private static final int SYN_CLOUD = 0;
-    private static final int SYN_SNOW_RISK = 1;
-    private static final int SYN_SHADOW_RISK = 2;
-    private static final int SYN_CLOUD_FILLED = 3;
-    private static final int SYN_LAND = 4;
-    private static final int SYN_NO_OLC = 5;
-    private static final int SYN_NO_SLN = 6;
-    private static final int SYN_NO_SLO = 7;
-    private static final int SYN_PARTLY_CLOUDY = 8;
-    private static final int SYN_PARTLY_WATER = 9;
-    private static final int SYN_BORDER = 10;
-    private static final int SYN_AEROSOL_FILLED = 11;
-    private static final int SYN_SUCCESS = 12;
-    private static final int SYN_NEGATIVE_CURVATURE = 13;
-    private static final int SYN_TOO_LOW = 14;
-    private static final int SYN_HIGH_ERROR = 15;
+    private static final int SY2_CLOUD = 0;
+    private static final int SY2_SNOW_RISK = 1;
+    private static final int SY2_SHADOW_RISK = 2;
+    private static final int SY2_CLOUD_FILLED = 3;
+    private static final int SY2_LAND = 4;
+    private static final int SY2_NO_OLC = 5;
+    private static final int SY2_NO_SLN = 6;
+    private static final int SY2_NO_SLO = 7;
+    private static final int SY2_PARTLY_CLOUDY = 8;
+    private static final int SY2_PARTLY_WATER = 9;
+    private static final int SY2_BORDER = 10;
+    private static final int SY2_AEROSOL_FILLED = 11;
+    private static final int SY2_SUCCESS = 12;
+    private static final int SY2_NEGATIVE_CURVATURE = 13;
+    private static final int SY2_TOO_LOW = 14;
+    private static final int SY2_HIGH_ERROR = 15;
 
     private static final int OLC_SUMMARY_SATURATED = 0;
     private static final int OLC_DUBIOUS = 1;
@@ -102,30 +107,39 @@ public class SynL2FlagCodings {
     private static final int SLO_SUMMARY_CLOUD = 18;
     private static final int SLO_SUMMARY_POINTING = 19;
 
+    private static final int VGT_CLOUD_1 = 0;
+    private static final int VGT_CLOUD_2 = 1;
+    private static final int VGT_ICE_SNOW = 2;
+    private static final int VGT_LAND = 3;
+    private static final int VGT_MIR_GOOD = 4;
+    private static final int VGT_B3_GOOD = 5;
+    private static final int VGT_B2_GOOD = 6;
+    private static final int VGT_B0_GOOD = 7;
 
-    protected static FlagCoding createSynFlagCoding() {
-        FlagCoding flagCoding = new FlagCoding(SYN_FLAG_BAND_NAME);
-        flagCoding.addFlag("SYN_CLOUD", BitSetter.setFlag(0, SYN_CLOUD), null);
-        flagCoding.addFlag("SYN_SNOW_RISK", BitSetter.setFlag(0, SYN_SNOW_RISK), null);
-        flagCoding.addFlag("SYN_SHADOW_RISK", BitSetter.setFlag(0, SYN_SHADOW_RISK), null);
-        flagCoding.addFlag("SYN_CLOUD_FILLED", BitSetter.setFlag(0, SYN_CLOUD_FILLED), null);
-        flagCoding.addFlag("SYN_LAND", BitSetter.setFlag(0, SYN_LAND), null);
-        flagCoding.addFlag("SYN_NO_OLC", BitSetter.setFlag(0, SYN_NO_OLC), null);
-        flagCoding.addFlag("SYN_NO_SLN", BitSetter.setFlag(0, SYN_NO_SLN), null);
-        flagCoding.addFlag("SYN_NO_SLO", BitSetter.setFlag(0, SYN_NO_SLO), null);
-        flagCoding.addFlag("SYN_PARTLY_CLOUDY", BitSetter.setFlag(0, SYN_PARTLY_CLOUDY), null);
-        flagCoding.addFlag("SYN_PARTLY_WATER", BitSetter.setFlag(0, SYN_PARTLY_WATER), null);
-        flagCoding.addFlag("SYN_BORDER", BitSetter.setFlag(0, SYN_BORDER), null);
-        flagCoding.addFlag("SYN_AEROSOL_FILLED", BitSetter.setFlag(0, SYN_AEROSOL_FILLED), null);
-        flagCoding.addFlag("SYN_SUCCESS", BitSetter.setFlag(0, SYN_SUCCESS), null);
-        flagCoding.addFlag("SYN_NEGATIVE_CURVATURE", BitSetter.setFlag(0, SYN_NEGATIVE_CURVATURE), null);
-        flagCoding.addFlag("SYN_TOO_LOW", BitSetter.setFlag(0, SYN_TOO_LOW), null);
-        flagCoding.addFlag("SYN_HIGH_ERROR", BitSetter.setFlag(0, SYN_HIGH_ERROR), null);
+
+    static FlagCoding createSynL2FlagCoding() {
+        FlagCoding flagCoding = new FlagCoding(SY2_FLAG_BAND_NAME);
+        flagCoding.addFlag("SY2_CLOUD", BitSetter.setFlag(0, SY2_CLOUD), null);
+        flagCoding.addFlag("SY2_SNOW_RISK", BitSetter.setFlag(0, SY2_SNOW_RISK), null);
+        flagCoding.addFlag("SY2_SHADOW_RISK", BitSetter.setFlag(0, SY2_SHADOW_RISK), null);
+        flagCoding.addFlag("SY2_CLOUD_FILLED", BitSetter.setFlag(0, SY2_CLOUD_FILLED), null);
+        flagCoding.addFlag("SY2_LAND", BitSetter.setFlag(0, SY2_LAND), null);
+        flagCoding.addFlag("SY2_NO_OLC", BitSetter.setFlag(0, SY2_NO_OLC), null);
+        flagCoding.addFlag("SY2_NO_SLN", BitSetter.setFlag(0, SY2_NO_SLN), null);
+        flagCoding.addFlag("SY2_NO_SLO", BitSetter.setFlag(0, SY2_NO_SLO), null);
+        flagCoding.addFlag("SY2_PARTLY_CLOUDY", BitSetter.setFlag(0, SY2_PARTLY_CLOUDY), null);
+        flagCoding.addFlag("SY2_PARTLY_WATER", BitSetter.setFlag(0, SY2_PARTLY_WATER), null);
+        flagCoding.addFlag("SY2_BORDER", BitSetter.setFlag(0, SY2_BORDER), null);
+        flagCoding.addFlag("SY2_AEROSOL_FILLED", BitSetter.setFlag(0, SY2_AEROSOL_FILLED), null);
+        flagCoding.addFlag("SY2_SUCCESS", BitSetter.setFlag(0, SY2_SUCCESS), null);
+        flagCoding.addFlag("SY2_NEGATIVE_CURVATURE", BitSetter.setFlag(0, SY2_NEGATIVE_CURVATURE), null);
+        flagCoding.addFlag("SY2_TOO_LOW", BitSetter.setFlag(0, SY2_TOO_LOW), null);
+        flagCoding.addFlag("SY2_HIGH_ERROR", BitSetter.setFlag(0, SY2_HIGH_ERROR), null);
 
         return flagCoding;
     }
 
-    protected static FlagCoding createOlciFlagCoding() {
+    static FlagCoding createOlciFlagCoding() {
         FlagCoding flagCoding = new FlagCoding(OLCI_FLAG_BAND_NAME);
         flagCoding.addFlag("OLC_SUMMARY_SATURATED", BitSetter.setFlag(0, OLC_SUMMARY_SATURATED), null);
         flagCoding.addFlag("OLC_DUBIOUS", BitSetter.setFlag(0, OLC_DUBIOUS), null);
@@ -141,7 +155,7 @@ public class SynL2FlagCodings {
         return flagCoding;
     }
 
-    protected static FlagCoding createSlstrNadirFlagCoding() {
+    static FlagCoding createSlstrNadirFlagCoding() {
         FlagCoding flagCoding = new FlagCoding(SLSTR_NADIR_FLAG_BAND_NAME);
         flagCoding.addFlag("SLN_SUMMARY_ISP_ABSENT", BitSetter.setFlag(0, SLN_SUMMARY_ISP_ABSENT), null);
         flagCoding.addFlag("SLN_SUMMARY_PIXEL_ABSENT", BitSetter.setFlag(0, SLN_SUMMARY_PIXEL_ABSENT), null);
@@ -167,7 +181,7 @@ public class SynL2FlagCodings {
         return flagCoding;
     }
 
-    protected static FlagCoding createSlstrObliqueFlagCoding() {
+    static FlagCoding createSlstrObliqueFlagCoding() {
         FlagCoding flagCoding = new FlagCoding(SLSTR_OBLIQUE_FLAG_BAND_NAME);
         flagCoding.addFlag("SLO_SUMMARY_ISP_ABSENT", BitSetter.setFlag(0, SLO_SUMMARY_ISP_ABSENT), null);
         flagCoding.addFlag("SLO_SUMMARY_PIXEL_ABSENT", BitSetter.setFlag(0, SLO_SUMMARY_PIXEL_ABSENT), null);
@@ -193,4 +207,17 @@ public class SynL2FlagCodings {
         return flagCoding;
     }
 
+    static FlagCoding createVgtFlagCoding() {
+        FlagCoding flagCoding = new FlagCoding(VGT_STATUS_MASK_BAND_NAME);
+        flagCoding.addFlag("VGT_CLOUD_1", BitSetter.setFlag(0, VGT_CLOUD_1), null);
+        flagCoding.addFlag("VGT_CLOUD_2", BitSetter.setFlag(0, VGT_CLOUD_2), null);
+        flagCoding.addFlag("VGT_ICE_SNOW", BitSetter.setFlag(0, VGT_ICE_SNOW), null);
+        flagCoding.addFlag("VGT_LAND", BitSetter.setFlag(0, VGT_LAND), null);
+        flagCoding.addFlag("MIR_GOOD", BitSetter.setFlag(0, VGT_MIR_GOOD), null);
+        flagCoding.addFlag("B3_GOOD", BitSetter.setFlag(0, VGT_B3_GOOD), null);
+        flagCoding.addFlag("B2_GOOD", BitSetter.setFlag(0, VGT_B2_GOOD), null);
+        flagCoding.addFlag("B0_GOOD", BitSetter.setFlag(0, VGT_B0_GOOD), null);
+
+        return flagCoding;
+    }
 }

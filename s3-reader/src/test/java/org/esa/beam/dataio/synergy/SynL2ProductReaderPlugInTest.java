@@ -42,10 +42,9 @@ public class SynL2ProductReaderPlugInTest {
     public void testIfPlugInIsLoaded() {
         ProductIOPlugInManager ioPlugInManager = ProductIOPlugInManager.getInstance();
         Iterator<ProductReaderPlugIn> readerPlugIns = ioPlugInManager.getReaderPlugIns(
-                SynL2ProductReaderPlugIn.FORMAT_NAME_SYN);
+                SynL2ProductReaderPlugIn.FORMAT_NAME);
         assertTrue(readerPlugIns.hasNext());
         assertTrue(readerPlugIns.next() instanceof SynL2ProductReaderPlugIn);
-
     }
 
     @Test

@@ -42,7 +42,7 @@ public class VgtProductReaderPlugInTest {
     public void testIfPlugInIsLoaded() {
         ProductIOPlugInManager ioPlugInManager = ProductIOPlugInManager.getInstance();
         Iterator<ProductReaderPlugIn> readerPlugIns = ioPlugInManager.getReaderPlugIns(
-                VgtProductReaderPlugIn.FORMAT_NAME_VGT);
+                VgtProductReaderPlugIn.FORMAT_NAME);
         assertTrue(readerPlugIns.hasNext());
         assertTrue(readerPlugIns.next() instanceof VgtProductReaderPlugIn);
 

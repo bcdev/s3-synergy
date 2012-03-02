@@ -21,27 +21,39 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class encapsulating the manifest file of a VGT P L2 SYN product.
+ * Class encapsulating the manifest file of Sentinel-3 Synergy products.
  *
  * @author Olaf Danne
+ * @author Ralf Quast
  * @since 1.0
  */
-class VgtManifest {
+class Manifest {
 
-    private Document doc;
-    private XPathHelper xPathHelper;
+    private final Document doc;
+    private final String annotationDataSectionPath;
+    private final XPathHelper xPathHelper;
 
-    VgtManifest(Document manifestDocument) {
+    public static Manifest createManifest(Document manifestDocument) {
+        final XPathHelper helper = new XPathHelper(XPathFactory.newInstance().newXPath());
+        final String description = helper.getString("/XFDU/informationPackageMap/contentUnit/@textInfo",
+                                                    manifestDocument);
+        if (description.contains("VGT")) {
+            return new Manifest(manifestDocument, "dataObjectSection/dataObject");
+        } else {
+            return new Manifest(manifestDocument, "metadataSection/metadataObject");
+        }
+    }
+
+    private Manifest(Document manifestDocument, String path) {
         doc = manifestDocument;
-        XPath xPath = XPathFactory.newInstance().newXPath();
-        xPathHelper = new XPathHelper(xPath);
+        annotationDataSectionPath = path;
+        xPathHelper = new XPathHelper(XPathFactory.newInstance().newXPath());
     }
 
     public String getDescription() {
@@ -75,11 +87,11 @@ class VgtManifest {
     }
 
     public List<String> getMeasurementFileNames() {
-        NodeList measurementObjects = xPathHelper.getNodeList(
+        NodeList dataObjects = xPathHelper.getNodeList(
                 "/XFDU/dataObjectSection/dataObject[@repID='measurementDataSchema']", doc);
         List<String> fileNames = new ArrayList<String>();
-        for (int i = 0; i < measurementObjects.getLength(); i++) {
-            Node item = measurementObjects.item(i);
+        for (int i = 0; i < dataObjects.getLength(); i++) {
+            Node item = dataObjects.item(i);
             String fileName = xPathHelper.getString("./byteStream/fileLocation/@href", item);
             fileNames.add(fileName);
         }
@@ -87,12 +99,12 @@ class VgtManifest {
         return fileNames;
     }
 
-    public List<String> getTiepointFileNames() {
-        NodeList tiepointsObjects = xPathHelper.getNodeList(
-                "/XFDU/dataObjectSection/dataObject[@repID='tiepointsSchema']", doc);
+    public List<String> getTiePointFileNames() {
+        NodeList dataObjects = xPathHelper.getNodeList(
+                "/XFDU/" + annotationDataSectionPath + "[@repID='tiepointsSchema']", doc);
         List<String> fileNames = new ArrayList<String>();
-        for (int i = 0; i < tiepointsObjects.getLength(); i++) {
-            Node item = tiepointsObjects.item(i);
+        for (int i = 0; i < dataObjects.getLength(); i++) {
+            Node item = dataObjects.item(i);
             String fileName = xPathHelper.getString("./byteStream/fileLocation/@href", item);
             fileNames.add(fileName);
         }
@@ -100,16 +112,22 @@ class VgtManifest {
         return fileNames;
     }
 
-    public String getStatusFlagFile() {
-        Node statusFlagObject = xPathHelper.getNode("/XFDU/dataObjectSection/dataObject[@repID='statusFlagsSchema']",
+    public String getGeoCoordinatesFileName() {
+        Node geoDataObject = xPathHelper.getNode("/XFDU/metadataSection/metadataObject[@repID='geocoordinatesSchema']",
                                                  doc);
-        return xPathHelper.getString("./byteStream/fileLocation/@href", statusFlagObject);
+        return xPathHelper.getString("./byteStream/fileLocation/@href", geoDataObject);
     }
 
-    public String getTimeCoordinatesFile() {
-        Node statusFlagObject = xPathHelper.getNode("/XFDU/dataObjectSection/dataObject[@repID='timeCoordinatesSchema']",
+    public String getStatusFlagFileName() {
+        Node statusFlagObject = xPathHelper.getNode("/XFDU/dataObjectSection/dataObject[@repID='statusFlagsSchema']",
                                                     doc);
         return xPathHelper.getString("./byteStream/fileLocation/@href", statusFlagObject);
+    }
+
+    public String getTimeFileName() {
+        Node timeObject = xPathHelper.getNode("/XFDU/" + annotationDataSectionPath + "[@repID='timeCoordinatesSchema']",
+                                              doc);
+        return xPathHelper.getString("./byteStream/fileLocation/@href", timeObject);
     }
 
     public List<String> getGeometryFileNames() {

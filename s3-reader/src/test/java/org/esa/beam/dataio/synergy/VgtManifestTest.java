@@ -33,14 +33,14 @@ import static org.junit.Assert.assertTrue;
 
 public class VgtManifestTest {
 
-    private VgtManifest manifestTest;
+    private Manifest manifestTest;
 
     @Before
     public void before() throws ParserConfigurationException, IOException, SAXException {
         InputStream stream = getClass().getResourceAsStream("VGP_TEST_manifest.safe");
         try {
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(stream);
-            manifestTest = new VgtManifest(doc);
+            manifestTest = Manifest.createManifest(doc);
         } finally {
             stream.close();
 
@@ -77,8 +77,8 @@ public class VgtManifestTest {
     }
 
     @Test
-    public void testGetTiepointsFileNames() {
-        List<String> tiepointsFiles = manifestTest.getTiepointFileNames();
+    public void testGetTiePointFileNames() {
+        List<String> tiepointsFiles = manifestTest.getTiePointFileNames();
         assertEquals(3, tiepointsFiles.size());
         assertEquals("og.nc", tiepointsFiles.get(0));
         assertEquals("wvg.nc", tiepointsFiles.get(1));
@@ -87,7 +87,7 @@ public class VgtManifestTest {
 
     @Test
     public void testGetStatusFlagFileName() {
-        String statusFlagFile = manifestTest.getStatusFlagFile();
+        String statusFlagFile = manifestTest.getStatusFlagFileName();
         assertNotNull(statusFlagFile);
         assertEquals("sm.nc", statusFlagFile);
     }

@@ -15,82 +15,28 @@
 
 package org.esa.beam.dataio.synergy;
 
-import org.esa.beam.framework.dataio.DecodeQualification;
 import org.esa.beam.framework.dataio.ProductReader;
-import org.esa.beam.framework.dataio.ProductReaderPlugIn;
-import org.esa.beam.util.io.BeamFileFilter;
+import org.esa.beam.framework.datamodel.Product;
 
-import java.io.File;
-import java.util.Locale;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * PlugIn class which provides an OLCI/SLSTR SYN product reader to the framework.
+ * PlugIn class which provides an Sentinel-3 Synergy Level-2 product reader to the framework.
  *
  * @author Olaf Danne
  * @since 1.0
  */
-public class SynL2ProductReaderPlugIn implements ProductReaderPlugIn {
+public class SynL2ProductReaderPlugIn extends SynProductReaderPlugIn {
 
-    public static final String FORMAT_NAME_SYN = "S3-SY2";
+    static final String FORMAT_NAME = "S3-SY2";
 
-    private static final Class[] SUPPORTED_INPUT_TYPES = new Class[]{String.class, File.class};
-    private static final String DESCRIPTION = "Sentinel-3 Synergy Level-2 Product";
-    private static final String[] DEFAULT_FILE_EXTENSIONS = new String[]{".safe", ".xml"};
-    private static final String[] FORMAT_NAMES = new String[]{FORMAT_NAME_SYN};
-
-    @Override
-    public DecodeQualification getDecodeQualification(Object input) {
-        if (isInputValid(input)) {
-            return DecodeQualification.INTENDED;
-        } else {
-            return DecodeQualification.UNABLE;
-        }
-    }
-
-    @Override
-    public Class[] getInputTypes() {
-        return SUPPORTED_INPUT_TYPES;
+    public SynL2ProductReaderPlugIn() {
+        super(FORMAT_NAME, "S3.?_SY_2_SYN_.*.SAFE", "Sentinel-3 Synergy Level-2 Products");
     }
 
     @Override
     public ProductReader createReaderInstance() {
         return new SynL2ProductReader(this);
     }
-
-    @Override
-    public String[] getFormatNames() {
-        return FORMAT_NAMES;
-    }
-
-    @Override
-    public String[] getDefaultFileExtensions() {
-        return DEFAULT_FILE_EXTENSIONS;
-    }
-
-    @Override
-    public String getDescription(Locale locale) {
-        return DESCRIPTION;
-    }
-
-    @Override
-    public BeamFileFilter getProductFileFilter() {
-        return new BeamFileFilter(FORMAT_NAMES[0], DEFAULT_FILE_EXTENSIONS, DESCRIPTION);
-    }
-
-    private boolean isInputValid(Object input) {
-        File inputFile = new File(input.toString());
-        String parentDirectoryName = inputFile.getParentFile().getName();
-        return isInputFileNameValid(inputFile.getName()) && isDirectoryNameValid(parentDirectoryName);
-    }
-
-    private boolean isInputFileNameValid(String name) {
-        return "manifest.safe".equals(name.toLowerCase()) || "manifest.xml".equals(name.toLowerCase());
-    }
-
-    private boolean isDirectoryNameValid(String parentDirectoryName) {
-        Pattern pattern = Pattern.compile("S3.?_SY_2_SYN_.*.SAFE");
-        return pattern.matcher(parentDirectoryName).matches();
-    }
-
 }

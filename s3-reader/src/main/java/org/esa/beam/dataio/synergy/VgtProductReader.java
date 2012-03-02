@@ -52,7 +52,7 @@ public class VgtProductReader extends AbstractProductReader {
     private final Logger logger;
     private List<Product> measurementProducts;
     private List<Product> tiepointProducts;
-    private VgtManifest manifest;
+    private Manifest manifest;
 
     public VgtProductReader(VgtProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
@@ -72,7 +72,7 @@ public class VgtProductReader extends AbstractProductReader {
                                           int sourceStepX, int sourceStepY, Band destBand, int destOffsetX,
                                           int destOffsetY, int destWidth, int destHeight, ProductData destBuffer,
                                           ProgressMonitor pm) throws IOException {
-        throw new IllegalStateException(String.format("No source to read from for band '%s'.", destBand.getName()));
+        throw new IllegalStateException("Data are provided by images");
     }
 
     @Override
@@ -91,14 +91,14 @@ public class VgtProductReader extends AbstractProductReader {
         final String productType = getProductType();
 
         final List<String> measurementFileNames = manifest.getMeasurementFileNames();
-        measurementFileNames.add(manifest.getStatusFlagFile());
+        measurementFileNames.add(manifest.getStatusFlagFileName());
 
         if (isVGSProduct()) {
             measurementFileNames.addAll(manifest.getGeometryFileNames());
-            measurementFileNames.add(manifest.getTimeCoordinatesFile());
+            measurementFileNames.add(manifest.getTimeFileName());
         }
         measurementProducts = loadDataProducts(measurementFileNames);
-        final List<String> tiepointFileNames = manifest.getTiepointFileNames();
+        final List<String> tiepointFileNames = manifest.getTiePointFileNames();
         if (isVGPProduct()) {
             tiepointFileNames.addAll(manifest.getGeometryFileNames());
         }
@@ -142,7 +142,7 @@ public class VgtProductReader extends AbstractProductReader {
 
     private void attachTiePointsToProduct(List<Product> tiePointsProducts, Product product) {
         for (Product tpProduct : tiePointsProducts) {
-            final int subsampling = getTiePointSubsamplingFactor();
+            final int subsampling = 8;
             final Band tpBand = tpProduct.getBandAt(0);
             final MultiLevelImage sourceImage = tpBand.getGeophysicalImage();
             final int width = sourceImage.getWidth();
@@ -157,33 +157,23 @@ public class VgtProductReader extends AbstractProductReader {
         }
     }
 
-    private int getTiePointSubsamplingFactor() {
-        if (isVGSProduct()) {
-            return 1;
-        } else if (isVGPProduct()) {
-            return 8;
-        } else {
-            throw new IllegalArgumentException("Invalid input - product seems to be neither of type VGS nor VGP.");
-        }
-    }
-
     private String getProductType() {
         final String descr = manifest.getDescription();
         if (descr.contains("VGT S")) {
-            return "VGT_S_L2_SYN";
+            return "S3-VGT-S";
         } else if (descr.contains("VGT P")) {
-            return "VGT_P_L2_SYN";
+            return "S3-VGT-P";
         } else {
             throw new IllegalArgumentException("Invalid input - product seems to be neither of type VGS nor VGP.");
         }
     }
 
     private boolean isVGSProduct() {
-        return getProductType().equals("VGT_S_L2_SYN");
+        return manifest.getDescription().contains("VGT S");
     }
 
     private boolean isVGPProduct() {
-        return getProductType().equals("VGT_P_L2_SYN");
+        return manifest.getDescription().contains("VGT P");
     }
 
     private void setMeasurementBandScalingFactor(Band band) {
@@ -217,8 +207,8 @@ public class VgtProductReader extends AbstractProductReader {
                 final String bandName = sourceBand.getName();
                 if (!product.containsBand(bandName)) {
                     final Band targetBand = ProductUtils.copyBand(bandName, bandProduct, product);
-                    if (sourceBand.getName().endsWith(VgtFlagCodings.VGTP_SM_FLAG_BAND_NAME)) {
-                        final FlagCoding vgtpSmFlagCoding = VgtFlagCodings.createSmFlagCoding();
+                    if (sourceBand.getName().endsWith(FlagCodings.VGT_STATUS_MASK_BAND_NAME)) {
+                        final FlagCoding vgtpSmFlagCoding = FlagCodings.createVgtFlagCoding();
                         targetBand.setSampleCoding(vgtpSmFlagCoding);
                         product.getFlagCodingGroup().add(vgtpSmFlagCoding);
                     } else {
@@ -257,10 +247,10 @@ public class VgtProductReader extends AbstractProductReader {
         return product;
     }
 
-    private VgtManifest createManifestFile(File inputFile) throws IOException {
+    private Manifest createManifestFile(File inputFile) throws IOException {
         InputStream manifestInputStream = new FileInputStream(inputFile);
         try {
-            return new VgtManifest(createXmlDocument(manifestInputStream));
+            return Manifest.createManifest(createXmlDocument(manifestInputStream));
         } finally {
             manifestInputStream.close();
         }

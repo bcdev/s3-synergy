@@ -15,25 +15,14 @@
 
 package org.esa.beam.dataio.synergy;
 
-import com.bc.ceres.core.ProgressMonitor;
-import org.esa.beam.framework.dataio.AbstractProductReader;
-import org.esa.beam.framework.dataio.ProductIO;
-import org.esa.beam.framework.datamodel.*;
-import org.esa.beam.util.ProductUtils;
-import org.esa.beam.util.io.FileUtils;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
+import org.esa.beam.framework.datamodel.Band;
+import org.esa.beam.framework.datamodel.FlagCoding;
+import org.esa.beam.framework.datamodel.PixelGeoCoding;
+import org.esa.beam.framework.datamodel.Product;
+import org.esa.beam.framework.datamodel.ProductNodeGroup;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Product reader responsible for reading OLCI/SLSTR L2 SYN data products in SAFE format.
@@ -41,61 +30,19 @@ import java.util.logging.Logger;
  * @author Olaf Danne
  * @since 1.0
  */
-public class SynL2ProductReader extends AbstractProductReader {
+public class SynL2ProductReader extends SynProductReader {
 
-    private final Logger logger;
     private List<Product> measurementProducts;
     private Product geoCoordinatesProduct;
 
     public SynL2ProductReader(SynL2ProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
-        logger = Logger.getLogger(getClass().getSimpleName());
     }
 
     @Override
-    protected Product readProductNodesImpl() throws IOException {
-        File inputFile = getInputFile();
-        SynL2Manifest manifest = createManifestFile(inputFile);
-        return createProduct(manifest);
-    }
-
-
-    @Override
-    protected void readBandRasterDataImpl(int sourceOffsetX, int sourceOffsetY, int sourceWidth, int sourceHeight,
-                                          int sourceStepX, int sourceStepY, Band destBand, int destOffsetX,
-                                          int destOffsetY, int destWidth, int destHeight, ProductData destBuffer,
-                                          ProgressMonitor pm) throws IOException {
-        throw new IllegalStateException(String.format("No source to read from for band '%s'.", destBand.getName()));
-    }
-
-    @Override
-    public void close() throws IOException {
-        for (Product product : measurementProducts) {
-            product.dispose();
-        }
-        if (geoCoordinatesProduct != null) {
-            geoCoordinatesProduct.dispose();
-        }
-        super.close();
-    }
-
-    private Product createProduct(SynL2Manifest manifest) {
-        measurementProducts = loadMeasurementProducts(manifest.getMeasurementFileNames());
-        int width = measurementProducts.get(0).getSceneRasterWidth();
-        int height = measurementProducts.get(0).getSceneRasterHeight();
-        Product product = new Product(getProductName(), SynL2ProductReaderPlugIn.FORMAT_NAME_SYN, width,
-                                      height, this);
-        product.setStartTime(manifest.getStartTime());
-        product.setEndTime(manifest.getStopTime());
-        product.setFileLocation(getInputFile());
-        attachMeasurementBands(measurementProducts, product);
-        attachAnnotationData(manifest, product);
-        return product;
-    }
-
-    private void attachAnnotationData(SynL2Manifest manifest, Product product) {
+    protected void attachAnnotationData(Manifest manifest, Product product) throws IOException {
         attachGeoCoodinatesToProduct(manifest.getGeoCoordinatesFileName(), product);
-        attachTiePointsToProduct(manifest.getTiepointsFileNames(), product);
+        attachTiePointsToProduct(manifest.getTiePointFileNames(), product);
     }
 
     private void attachTiePointsToProduct(List<String> tiePointsFileNames, Product product) {
@@ -103,105 +50,58 @@ public class SynL2ProductReader extends AbstractProductReader {
         // todo: at least attach TPGs for lat/lon for each camera
     }
 
-    private void attachGeoCoodinatesToProduct(String geoCoordinatesFileName, Product product) {
-        try {
-            geoCoordinatesProduct = readProduct(geoCoordinatesFileName);
-            // todo: is it ok just to take the lats/lons from the 'middle' camera??
-            if (geoCoordinatesProduct.getBand("latitude_CAM3") != null &&
-                    geoCoordinatesProduct.getBand("longitude_CAM3") != null) {
-                product.setGeoCoding(new PixelGeoCoding(geoCoordinatesProduct.getBand("latitude_CAM3"),
-                                                        geoCoordinatesProduct.getBand("longitude_CAM3"), null, 5));
-            }
-        } catch (IOException e) {
-            String msg = String.format("Not able to read file '%s.", geoCoordinatesFileName);
-            logger.log(Level.WARNING, msg, e);
-        }
-    }
+    private void attachGeoCoodinatesToProduct(String geoCoordinatesFileName, Product product) throws IOException {
+        geoCoordinatesProduct = readProduct(geoCoordinatesFileName);
 
-    private void attachMeasurementBands(List<Product> measurementProducts, Product product) {
-        for (final Product bandProduct : measurementProducts) {
-            for (final Band sourceBand : bandProduct.getBands()) {
-                final String bandName = sourceBand.getName();
-                final Band targetBand = ProductUtils.copyBand(bandName, bandProduct, product);
-                if (sourceBand.getName().endsWith(SynL2FlagCodings.SYN_FLAG_BAND_NAME)) {
-                    final FlagCoding synFlagCoding = SynL2FlagCodings.createSynFlagCoding();
-                    targetBand.setSampleCoding(synFlagCoding);
-                    product.getFlagCodingGroup().add(synFlagCoding);
-                } else if (sourceBand.getName().endsWith(SynL2FlagCodings.OLCI_FLAG_BAND_NAME)) {
-                    final FlagCoding olciFlagCoding = SynL2FlagCodings.createOlciFlagCoding();
-                    targetBand.setSampleCoding(olciFlagCoding);
-                    product.getFlagCodingGroup().add(olciFlagCoding);
-                } else if (sourceBand.getName().endsWith(SynL2FlagCodings.SLSTR_NADIR_FLAG_BAND_NAME)) {
-                    final FlagCoding slnFlagCoding = SynL2FlagCodings.createSlstrNadirFlagCoding();
-                    targetBand.setSampleCoding(slnFlagCoding);
-                    product.getFlagCodingGroup().add(slnFlagCoding);
-                } else if (sourceBand.getName().endsWith(SynL2FlagCodings.SLSTR_OBLIQUE_FLAG_BAND_NAME)) {
-                    final FlagCoding sloFlagCoding = SynL2FlagCodings.createSlstrObliqueFlagCoding();
-                    targetBand.setSampleCoding(sloFlagCoding);
-                    product.getFlagCodingGroup().add(sloFlagCoding);
+        for (final Band band : product.getBands()) {
+            for (int i = 1; i <= 5; i++) {
+                if (band.getName().endsWith("CAM" + i)) {
+                    final String latBandName = "latitude_CAM" + i;
+                    final String lonBandName = "longitude_CAM" + i;
+                    if (geoCoordinatesProduct.containsBand(latBandName) &&
+                        geoCoordinatesProduct.containsBand(lonBandName)) {
+                        band.setGeoCoding(new PixelGeoCoding(geoCoordinatesProduct.getBand(latBandName),
+                                                             geoCoordinatesProduct.getBand(lonBandName),
+                                                             null, 5));
+                    }
                 }
-                targetBand.setSourceImage(sourceBand.getSourceImage());
             }
         }
     }
 
-    private String getProductName() {
-        return FileUtils.getFilenameWithoutExtension(getParentInputDirectory());
-    }
+    @Override
+    protected void attachFlagCodings(Product product) {
+        final ProductNodeGroup<FlagCoding> flagCodingGroup = product.getFlagCodingGroup();
 
-    private List<Product> loadMeasurementProducts(List<String> measurementFileNames) {
-        List<Product> products = new ArrayList<Product>();
-        for (String fileName : measurementFileNames) {
-            try {
-                products.add(readProduct(fileName));
-            } catch (IOException e) {
-                String msg = String.format("Not able to read file '%s.", fileName);
-                logger.log(Level.WARNING, msg, e);
+        for (final Band band : product.getBands()) {
+            final String bandName = band.getName();
+            if (bandName.startsWith(FlagCodings.SY2_FLAG_BAND_NAME)) {
+                if (!flagCodingGroup.contains(FlagCodings.SY2_FLAG_BAND_NAME)) {
+                    flagCodingGroup.add(FlagCodings.createSynL2FlagCoding());
+                }
+                band.setSampleCoding(flagCodingGroup.get(FlagCodings.SY2_FLAG_BAND_NAME));
+                continue;
+            }
+            if (bandName.startsWith(FlagCodings.OLCI_FLAG_BAND_NAME)) {
+                if (!flagCodingGroup.contains(FlagCodings.OLCI_FLAG_BAND_NAME)) {
+                    flagCodingGroup.add(FlagCodings.createOlciFlagCoding());
+                }
+                band.setSampleCoding(flagCodingGroup.get(FlagCodings.OLCI_FLAG_BAND_NAME));
+                continue;
+            }
+            if (bandName.startsWith(FlagCodings.SLSTR_NADIR_FLAG_BAND_NAME)) {
+                if (!flagCodingGroup.contains(FlagCodings.SLSTR_NADIR_FLAG_BAND_NAME)) {
+                    flagCodingGroup.add(FlagCodings.createSlstrNadirFlagCoding());
+                }
+                band.setSampleCoding(flagCodingGroup.get(FlagCodings.SLSTR_NADIR_FLAG_BAND_NAME));
+                continue;
+            }
+            if (bandName.startsWith(FlagCodings.SLSTR_OBLIQUE_FLAG_BAND_NAME)) {
+                if (!flagCodingGroup.contains(FlagCodings.SLSTR_OBLIQUE_FLAG_BAND_NAME)) {
+                    flagCodingGroup.add(FlagCodings.createSlstrObliqueFlagCoding());
+                }
+                band.setSampleCoding(flagCodingGroup.get(FlagCodings.SLSTR_OBLIQUE_FLAG_BAND_NAME));
             }
         }
-        return products;
     }
-
-    private Product readProduct(String fileName) throws IOException {
-        File dataSetFile = new File(getParentInputDirectory(), fileName);
-        Product product = ProductIO.readProduct(dataSetFile);
-        if (product == null) {
-            String msg = String.format("Could not read file '%s. No appropriate reader found.", fileName);
-            throw new IOException(msg);
-        }
-        return product;
-    }
-
-    private SynL2Manifest createManifestFile(File inputFile) throws IOException {
-        InputStream manifestInputStream = new FileInputStream(inputFile);
-        try {
-            return new SynL2Manifest(createXmlDocument(manifestInputStream));
-        } finally {
-            manifestInputStream.close();
-        }
-
-    }
-
-    private Document createXmlDocument(InputStream inputStream) throws IOException {
-        Document doc = null;
-        try {
-            doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
-        } catch (SAXException e) {
-            String msg = "Not able to read manifest XML file.";
-            logger.log(Level.WARNING, msg, e);
-        } catch (ParserConfigurationException e) {
-            String msg = "Not able to read manifest XML file.";
-            logger.log(Level.WARNING, msg, e);
-        }
-        return doc;
-    }
-
-    private File getParentInputDirectory() {
-        return getInputFile().getParentFile();
-    }
-
-    private File getInputFile() {
-        return new File(getInput().toString());
-    }
-
 }
