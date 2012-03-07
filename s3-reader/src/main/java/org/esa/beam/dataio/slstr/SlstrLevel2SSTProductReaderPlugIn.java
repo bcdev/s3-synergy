@@ -35,9 +35,8 @@ public class SlstrLevel2SSTProductReaderPlugIn implements ProductReaderPlugIn {
     public static final String FORMAT_NAME_SLSTR_L2 = "SLSTR-L2-SST";
 
     private static final Class[] SUPPORTED_INPUT_TYPES = new Class[]{String.class, File.class};
-    private static final String DESCRIPTION = "SLSTR L2b SAFE Format";
-    private static final String MANIFEST_FILE_EXTENSION = ".xml";      // todo: discuss
-    private static final String[] DEFAULT_FILE_EXTENSIONS = new String[]{MANIFEST_FILE_EXTENSION};
+    private static final String DESCRIPTION = "Sentinel-3 SLSTR Level-2 SST product";
+    private static final String[] DEFAULT_FILE_EXTENSIONS = new String[]{".safe", ".xml"};
     private static final String[] FORMAT_NAMES = new String[]{FORMAT_NAME_SLSTR_L2};
 
 
@@ -77,7 +76,7 @@ public class SlstrLevel2SSTProductReaderPlugIn implements ProductReaderPlugIn {
 
     @Override
     public BeamFileFilter getProductFileFilter() {
-        return new BeamFileFilter(FORMAT_NAMES[0], MANIFEST_FILE_EXTENSION, DESCRIPTION);
+        return new BeamFileFilter(FORMAT_NAMES[0], DEFAULT_FILE_EXTENSIONS, DESCRIPTION);
     }
 
 
@@ -90,8 +89,7 @@ public class SlstrLevel2SSTProductReaderPlugIn implements ProductReaderPlugIn {
     }
 
     private boolean isInputFileNameValid(String name) {
-        final String manifestFileName = "manifest".concat(MANIFEST_FILE_EXTENSION);
-        return manifestFileName.equals(name);
+        return "manifest.safe".equals(name) || "manifest.xml".equals(name);
     }
 
     private boolean isDirectoryNameValid(String parentDirectoryName) {

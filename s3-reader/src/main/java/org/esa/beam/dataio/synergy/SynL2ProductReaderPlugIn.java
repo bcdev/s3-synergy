@@ -32,7 +32,7 @@ public class SynL2ProductReaderPlugIn extends SynProductReaderPlugIn {
     static final String FORMAT_NAME = "S3-SY2";
 
     public SynL2ProductReaderPlugIn() {
-        super(FORMAT_NAME, "S3.?_SY_2_SYN_.*.SAFE", "Sentinel-3 Synergy Level-2 Products");
+        super(FORMAT_NAME, "S3.?_SY_2_SYN_.*.SAFE", "Sentinel-3 Synergy Level-2 products");
     }
 
     @Override

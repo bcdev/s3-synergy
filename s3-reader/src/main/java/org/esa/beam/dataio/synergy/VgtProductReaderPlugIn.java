@@ -28,7 +28,7 @@ public class VgtProductReaderPlugIn extends SynProductReaderPlugIn {
     static final String FORMAT_NAME = "S3-VGT";
 
     public VgtProductReaderPlugIn() {
-        super(FORMAT_NAME, "S3.?_SY_[23]_VG[PS]_.*.SAFE", "Sentinel-3 VGT Products");
+        super(FORMAT_NAME, "S3.?_SY_[23]_VG[PS]_.*.SAFE", "Sentinel-3 VGT products");
     }
 
     @Override
