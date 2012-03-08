@@ -44,7 +44,7 @@ configure_file (
   "src/test/bin/runalltests.sh"
 )
 
-set(CMAKE_CXX_FLAGS "-fopenmp -O3 -mfpmath=sse -mtune=generic -std=c++98")
+set(CMAKE_CXX_FLAGS "-fopenmp -O3 -std=c++98")
 set(CMAKE_CXX_FLAGS_DEBUG "-fopenmp -g -O0 -std=c++98 -Wall")
 
 ##
