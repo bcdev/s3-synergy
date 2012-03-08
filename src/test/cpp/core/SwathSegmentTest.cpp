@@ -116,7 +116,6 @@ void SwathSegmentTest::testMoveForward() {
     valarray<uint32_t>& data = segment->getAccessor("U").getUIntData();
 
     const Grid& grid = segment->getGrid();
-#pragma omp parallel for
     for (long l = 0; l < grid.getSizeL(); l++) {
         for (long k = 0; k < grid.getSizeK(); k++) {
             for (long m = 0; m < grid.getSizeM(); m++) {
@@ -129,7 +128,6 @@ void SwathSegmentTest::testMoveForward() {
     segment->moveForward(200);
     CPPUNIT_ASSERT(grid.getMinInMemoryL() == 200);
 
-#pragma omp parallel for
     for (long l = grid.getMinInMemoryL(); l < grid.getMinInMemoryL() + grid.getSizeL(); l++) {
         for (long k = 0; k < grid.getSizeK(); k++) {
             for (long m = 0; m < grid.getSizeM(); m++) {
@@ -152,7 +150,6 @@ void SwathSegmentTest::testMoveForward() {
     segment->moveForward(2200);
     CPPUNIT_ASSERT(grid.getMinInMemoryL() == 2200);
 
-#pragma omp parallel for
     for (long l = grid.getMinInMemoryL(); l < grid.getMinInMemoryL() + grid.getSizeL(); l++) {
         for (long k = 0; k < grid.getSizeK(); k++) {
             for (long m = 0; m < grid.getSizeM(); m++) {

@@ -84,14 +84,12 @@ abstract class SynProductReader extends AbstractProductReader {
         attachMeasurementBands(product);
         attachAnnotationData(manifest, product);
 
-        attachFlagCodings(product);
+        // attachFlagCodings(product);
 
         return product;
     }
 
     protected abstract void attachAnnotationData(Manifest manifest, Product product) throws IOException;
-
-    protected abstract void attachFlagCodings(Product product);
 
     private void attachMeasurementBands(Product product) {
         for (final Product childProduct : openProductList) {

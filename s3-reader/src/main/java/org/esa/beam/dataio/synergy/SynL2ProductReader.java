@@ -68,40 +68,4 @@ public class SynL2ProductReader extends SynProductReader {
             }
         }
     }
-
-    @Override
-    protected void attachFlagCodings(Product product) {
-        final ProductNodeGroup<FlagCoding> flagCodingGroup = product.getFlagCodingGroup();
-
-        for (final Band band : product.getBands()) {
-            final String bandName = band.getName();
-            if (bandName.startsWith(FlagCodings.SY2_FLAG_BAND_NAME)) {
-                if (!flagCodingGroup.contains(FlagCodings.SY2_FLAG_BAND_NAME)) {
-                    flagCodingGroup.add(FlagCodings.createSynL2FlagCoding());
-                }
-                band.setSampleCoding(flagCodingGroup.get(FlagCodings.SY2_FLAG_BAND_NAME));
-                continue;
-            }
-            if (bandName.startsWith(FlagCodings.OLCI_FLAG_BAND_NAME)) {
-                if (!flagCodingGroup.contains(FlagCodings.OLCI_FLAG_BAND_NAME)) {
-                    flagCodingGroup.add(FlagCodings.createOlciFlagCoding());
-                }
-                band.setSampleCoding(flagCodingGroup.get(FlagCodings.OLCI_FLAG_BAND_NAME));
-                continue;
-            }
-            if (bandName.startsWith(FlagCodings.SLSTR_NADIR_FLAG_BAND_NAME)) {
-                if (!flagCodingGroup.contains(FlagCodings.SLSTR_NADIR_FLAG_BAND_NAME)) {
-                    flagCodingGroup.add(FlagCodings.createSlstrNadirFlagCoding());
-                }
-                band.setSampleCoding(flagCodingGroup.get(FlagCodings.SLSTR_NADIR_FLAG_BAND_NAME));
-                continue;
-            }
-            if (bandName.startsWith(FlagCodings.SLSTR_OBLIQUE_FLAG_BAND_NAME)) {
-                if (!flagCodingGroup.contains(FlagCodings.SLSTR_OBLIQUE_FLAG_BAND_NAME)) {
-                    flagCodingGroup.add(FlagCodings.createSlstrObliqueFlagCoding());
-                }
-                band.setSampleCoding(flagCodingGroup.get(FlagCodings.SLSTR_OBLIQUE_FLAG_BAND_NAME));
-            }
-        }
-    }
 }

@@ -51,7 +51,7 @@ private:
 	string extractFunctionName(const string& info) const;
 	string extractClassName(const string& info) const;
 	string extractLineNumber(const string& info) const;
-	vector<string> splitIntoLines(const string& text) const;
+	string extractFirstLine(const string& text) const;
 	string createMessage(const string& moduleName, const string& methodName,
 			const string& module, const string& functionName,
 			const string& lineNumber, const string& exceptionMessage) const;
