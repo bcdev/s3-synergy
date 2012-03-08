@@ -56,10 +56,10 @@ void ErrorHandler::handleError(Context& context, exception& e) const {
 
 string ErrorHandler::extractLineNumber(const string& info) const {
 	const string firstLine = extractFirstLine(info);
-	vector<string> temp;
-	boost::iter_split(temp, firstLine, boost::first_finder("("));
-	boost::iter_split(temp, temp[1], boost::first_finder("):"));
-	return temp[0];
+	vector<string> result;
+	boost::iter_split(result, firstLine, boost::first_finder("("));
+	boost::iter_split(result, result[1], boost::first_finder("):"));
+	return result.front();
 }
 
 string ErrorHandler::extractFunctionName(const string& info) const {
@@ -69,7 +69,7 @@ string ErrorHandler::extractFunctionName(const string& info) const {
 	boost::iter_split(result, result[1], boost::first_finder(" "));
 	boost::iter_split(result, firstLine, boost::first_finder("::"));
 	boost::iter_split(result, result[1], boost::first_finder("("));
-	return result[0];
+	return result.front();
 }
 
 string ErrorHandler::extractClassName(const string& info) const {
@@ -79,13 +79,13 @@ string ErrorHandler::extractClassName(const string& info) const {
 	boost::iter_split(result, result[1], boost::first_finder("::"));
 	boost::iter_split(result, result[0], boost::first_finder(" "));
 
-	return result[result.size() - 1];
+	return result.back();
 }
 
 string ErrorHandler::extractFirstLine(const string& text) const {
 	vector<string> result;
 	boost::iter_split(result, text, boost::first_finder("\n"));
-	return result.at(0);
+	return result.front();
 }
 
 string ErrorHandler::createMessage(const string& moduleName,
