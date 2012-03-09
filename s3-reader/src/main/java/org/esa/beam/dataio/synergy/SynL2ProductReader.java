@@ -16,10 +16,13 @@
 package org.esa.beam.dataio.synergy;
 
 import org.esa.beam.framework.datamodel.Band;
+import org.esa.beam.framework.datamodel.GeoCoding;
 import org.esa.beam.framework.datamodel.PixelGeoCoding;
 import org.esa.beam.framework.datamodel.Product;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,32 +38,41 @@ public class SynL2ProductReader extends SynProductReader {
     }
 
     @Override
-    protected void attachAnnotationData(Manifest manifest, Product product) throws IOException {
-        attachGeoCoordinatesToProduct(manifest.getGeoCoordinatesFileName(), product);
-        attachTiePointsToProduct(manifest.getTiePointFileNames(), product);
+    protected List<String> getTiePointFileNames(Manifest manifest) {
+        // the tie points are provided on a different grid, so we currently don't use them
+        return Collections.emptyList();
     }
 
-    private void attachTiePointsToProduct(List<String> tiePointFileNames, Product product) {
-        // the tie points are provided on a different grid, so we currently don't use them for the SYN product
-        // todo: at least attach TPGs for lat/lon for each camera
+    @Override
+    protected List<String> getTimeFileNames(Manifest manifest) {
+        // the time data are provided on a different grid, so we currently don't use them
+        return Collections.emptyList();
     }
 
-    private void attachGeoCoordinatesToProduct(String geoCoordinatesFileName, Product product) throws IOException {
-        final Product geoCoordinatesProduct = readProduct(geoCoordinatesFileName);
+    @Override
+    protected void attachGeoCoding(Manifest manifest, Product targetProduct) throws IOException {
+        final List<GeoCoding> geoCodingList = new ArrayList<GeoCoding>();
+        for (int i = 1; i <= 5; i++) {
+            final String latBandName = "latitude_CAM" + i;
+            final String lonBandName = "longitude_CAM" + i;
+            final Band latBand = targetProduct.getBand(latBandName);
+            final Band lonBand = targetProduct.getBand(lonBandName);
+            final GeoCoding geoCoding = new PixelGeoCoding(latBand, lonBand, null, 5);
 
-        for (final Band band : product.getBands()) {
+            geoCodingList.add(geoCoding);
+        }
+        for (final Band targetBand : targetProduct.getBands()) {
             for (int i = 1; i <= 5; i++) {
-                if (band.getName().endsWith("CAM" + i)) {
-                    final String latBandName = "latitude_CAM" + i;
-                    final String lonBandName = "longitude_CAM" + i;
-                    if (geoCoordinatesProduct.containsBand(latBandName) &&
-                        geoCoordinatesProduct.containsBand(lonBandName)) {
-                        band.setGeoCoding(new PixelGeoCoding(geoCoordinatesProduct.getBand(latBandName),
-                                                             geoCoordinatesProduct.getBand(lonBandName),
-                                                             null, 5));
-                    }
+                if (targetBand.getName().contains("CAM" + i)) {
+                    targetBand.setGeoCoding(geoCodingList.get(i - 1));
+                    break;
                 }
             }
         }
+    }
+
+    @Override
+    protected void attachTiepointData(Band sourceBand, Product targetProduct) {
+        // the tie points are provided on a different grid, so we currently don't use them
     }
 }

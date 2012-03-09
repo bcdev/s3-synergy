@@ -36,23 +36,14 @@ import java.util.List;
 class Manifest {
 
     private final Document doc;
-    private final String annotationDataSectionPath;
     private final XPathHelper xPathHelper;
 
     public static Manifest createManifest(Document manifestDocument) {
-        final XPathHelper helper = new XPathHelper(XPathFactory.newInstance().newXPath());
-        final String description = helper.getString("/XFDU/informationPackageMap/contentUnit/@textInfo",
-                                                    manifestDocument);
-        if (description.contains("VGT")) {
-            return new Manifest(manifestDocument, "dataObjectSection/dataObject");
-        } else {
-            return new Manifest(manifestDocument, "metadataSection/metadataObject");
-        }
+        return new Manifest(manifestDocument);
     }
 
-    private Manifest(Document manifestDocument, String path) {
+    private Manifest(Document manifestDocument) {
         doc = manifestDocument;
-        annotationDataSectionPath = path;
         xPathHelper = new XPathHelper(XPathFactory.newInstance().newXPath());
     }
 
@@ -61,89 +52,81 @@ class Manifest {
     }
 
     public ProductData.UTC getStartTime() {
-        Node periodNode = xPathHelper.getNode("/XFDU/metadataSection/metadataObject[@ID='acquisitionPeriod']", doc);
-        String utcString = xPathHelper.getString("//metadataWrap/xmlData/acquisitionPeriod/startTime", periodNode);
-        if (!Character.isDigit(utcString.charAt(utcString.length() - 1))) {
-            utcString = removeTimeZoneCharacter(utcString);
-        }
-        try {
-            return ProductData.UTC.parse(utcString, "yyyy-MM-dd'T'HH:mm:ss");
-        } catch (ParseException ignored) {
-            return null;
-        }
+        return getTime("startTime");
     }
 
     public ProductData.UTC getStopTime() {
-        Node periodNode = xPathHelper.getNode("/XFDU/metadataSection/metadataObject[@ID='acquisitionPeriod']", doc);
-        String utcString = xPathHelper.getString("//metadataWrap/xmlData/acquisitionPeriod/stopTime", periodNode);
-        if (!Character.isDigit(utcString.charAt(utcString.length() - 1))) {
-            utcString = removeTimeZoneCharacter(utcString);
+        return getTime("stopTime");
+    }
+
+    public List<String> getFileNames(final String schema) {
+        final List<String> fileNameList = new ArrayList<String>();
+
+        getFileNames("dataObjectSection/dataObject", schema, fileNameList);
+        getFileNames("metadataSection/metadataObject", schema, fileNameList);
+
+        return fileNameList;
+    }
+
+    private List<String> getFileNames(String objectPath, final String schema, List<String> fileNameList) {
+        final NodeList nodeList = xPathHelper.getNodeList(
+                "/XFDU/" + objectPath + "[@repID='" + schema + "']", doc);
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            final Node item = nodeList.item(i);
+            final String fileName = xPathHelper.getString("./byteStream/fileLocation/@href", item);
+            if (!fileNameList.contains(fileName)) {
+                fileNameList.add(fileName);
+            }
         }
+
+        return fileNameList;
+    }
+
+    private ProductData.UTC getTime(final String name) {
+        final Node period = xPathHelper.getNode("/XFDU/metadataSection/metadataObject[@ID='acquisitionPeriod']", doc);
+        final String time = xPathHelper.getString("//metadataWrap/xmlData/acquisitionPeriod/" + name, period);
         try {
-            return ProductData.UTC.parse(utcString, "yyyy-MM-dd'T'HH:mm:ss");
+            if (Character.isDigit(time.charAt(time.length() - 1))) {
+                return ProductData.UTC.parse(time, "yyyy-MM-dd'T'HH:mm:ss");
+            }
+            return ProductData.UTC.parse(time, "yyyy-MM-dd'T'HH:mm:ssZ");
         } catch (ParseException ignored) {
             return null;
         }
     }
 
-    public List<String> getMeasurementFileNames() {
-        NodeList dataObjects = xPathHelper.getNodeList(
-                "/XFDU/dataObjectSection/dataObject[@repID='measurementDataSchema']", doc);
-        List<String> fileNames = new ArrayList<String>();
-        for (int i = 0; i < dataObjects.getLength(); i++) {
-            Node item = dataObjects.item(i);
-            String fileName = xPathHelper.getString("./byteStream/fileLocation/@href", item);
-            fileNames.add(fileName);
-        }
-
-        return fileNames;
+    private String getFileName(final String objectPath, final String schema) {
+        final Node node = xPathHelper.getNode("/XFDU/" + objectPath + "[@repID='" + schema + "']", doc);
+        return xPathHelper.getString("./byteStream/fileLocation/@href", node);
     }
 
-    public List<String> getTiePointFileNames() {
-        NodeList dataObjects = xPathHelper.getNodeList(
-                "/XFDU/" + annotationDataSectionPath + "[@repID='tiepointsSchema']", doc);
-        List<String> fileNames = new ArrayList<String>();
-        for (int i = 0; i < dataObjects.getLength(); i++) {
-            Node item = dataObjects.item(i);
-            String fileName = xPathHelper.getString("./byteStream/fileLocation/@href", item);
-            fileNames.add(fileName);
-        }
-
-        return fileNames;
+    // used in tests only
+    List<String> getMeasurementFileNames() {
+        return getFileNames("measurementDataSchema");
     }
 
-    public String getGeoCoordinatesFileName() {
-        Node geoDataObject = xPathHelper.getNode("/XFDU/metadataSection/metadataObject[@repID='geocoordinatesSchema']",
-                                                 doc);
-        return xPathHelper.getString("./byteStream/fileLocation/@href", geoDataObject);
+    // used in tests only
+    List<String> getTiePointFileNames() {
+        return getFileNames("tiepointsSchema");
     }
 
-    public String getStatusFlagFileName() {
-        Node statusFlagObject = xPathHelper.getNode("/XFDU/dataObjectSection/dataObject[@repID='statusFlagsSchema']",
-                                                    doc);
-        return xPathHelper.getString("./byteStream/fileLocation/@href", statusFlagObject);
+    // used in tests only
+    String getGeoCoordinatesFileName() {
+        return getFileName("metadataSection/metadataObject", "geocoordinatesSchema");
     }
 
-    public String getTimeFileName() {
-        Node timeObject = xPathHelper.getNode("/XFDU/" + annotationDataSectionPath + "[@repID='timeCoordinatesSchema']",
-                                              doc);
-        return xPathHelper.getString("./byteStream/fileLocation/@href", timeObject);
+    // used in tests only
+    String getStatusFlagFileName() {
+        return getFileName("dataObjectSection/dataObject", "statusFlagsSchema");
     }
 
-    public List<String> getGeometryFileNames() {
-        NodeList geometryObjects = xPathHelper.getNodeList(
-                "/XFDU/dataObjectSection/dataObject[@repID='geometryDataSchema']", doc);
-        List<String> fileNames = new ArrayList<String>();
-        for (int i = 0; i < geometryObjects.getLength(); i++) {
-            Node item = geometryObjects.item(i);
-            String fileName = xPathHelper.getString("./byteStream/fileLocation/@href", item);
-            fileNames.add(fileName);
-        }
-
-        return fileNames;
+    // used in tests only
+    String getTimeFileName() {
+        return getFileName("metadataSection/metadataObject", "timeCoordinatesSchema");
     }
 
-    private String removeTimeZoneCharacter(String utcString) {
-        return utcString.substring(0, utcString.length() - 1);
+    // used in tests only
+    List<String> getGeometryFileNames() {
+        return getFileNames("geometryDataSchema");
     }
 }

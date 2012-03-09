@@ -5,6 +5,7 @@ import org.esa.beam.framework.dataio.AbstractProductReader;
 import org.esa.beam.framework.dataio.ProductIO;
 import org.esa.beam.framework.dataio.ProductReaderPlugIn;
 import org.esa.beam.framework.datamodel.Band;
+import org.esa.beam.framework.datamodel.CrsGeoCoding;
 import org.esa.beam.framework.datamodel.MetadataElement;
 import org.esa.beam.framework.datamodel.Product;
 import org.esa.beam.framework.datamodel.ProductData;
@@ -30,21 +31,16 @@ abstract class SynProductReader extends AbstractProductReader {
     private final List<Product> openProductList = new ArrayList<Product>();
 
     private final Logger logger;
-    private Manifest manifest;
 
     protected SynProductReader(ProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
         logger = Logger.getLogger(getClass().getSimpleName());
     }
 
-    protected Manifest getManifest() {
-        return manifest;
-    }
-
     @Override
     protected final Product readProductNodesImpl() throws IOException {
         final File inputFile = getInputFile();
-        manifest = createManifestFile(inputFile);
+        final Manifest manifest = createManifestFile(inputFile);
 
         return createProduct(manifest);
     }
@@ -58,7 +54,7 @@ abstract class SynProductReader extends AbstractProductReader {
     }
 
     @Override
-    public void close() throws IOException {
+    public final void close() throws IOException {
         for (final Product product : openProductList) {
             product.dispose();
         }
@@ -66,52 +62,71 @@ abstract class SynProductReader extends AbstractProductReader {
     }
 
     private Product createProduct(Manifest manifest) throws IOException {
-        readProducts(manifest.getMeasurementFileNames());
+        final List<String> fileNames = new ArrayList<String>();
+        fileNames.addAll(manifest.getFileNames("geocoordinatesSchema"));
+        fileNames.addAll(manifest.getFileNames("measurementDataSchema"));
+        fileNames.addAll(manifest.getFileNames("statusFlagsSchema"));
+        fileNames.addAll(getTimeFileNames(manifest));
+        fileNames.addAll(manifest.getFileNames("geometryDataSchema"));
+        fileNames.addAll(getTiePointFileNames(manifest));
+
+        readProducts(fileNames);
 
         final String productName = getProductName();
         final String productType = getReaderPlugIn().getFormatNames()[0];
 
-        final Product childProduct = openProductList.get(0);
-        final int w = childProduct.getSceneRasterWidth();
-        final int h = childProduct.getSceneRasterHeight();
-        final Product product = new Product(productName, productType, w, h, this);
+        final Product sourceProduct = openProductList.get(0);
+        final int w = sourceProduct.getSceneRasterWidth();
+        final int h = sourceProduct.getSceneRasterHeight();
+        final Product targetProduct = new Product(productName, productType, w, h, this);
 
-        final ProductData.UTC startTime = childProduct.getStartTime();
-        final ProductData.UTC endTime = childProduct.getEndTime();
+        final ProductData.UTC startTime = sourceProduct.getStartTime();
+        final ProductData.UTC endTime = sourceProduct.getEndTime();
         if (startTime == null || endTime == null) {
-            product.setStartTime(manifest.getStartTime());
-            product.setEndTime(manifest.getStopTime());
+            targetProduct.setStartTime(manifest.getStartTime());
+            targetProduct.setEndTime(manifest.getStopTime());
         } else {
-            product.setStartTime(startTime);
-            product.setEndTime(endTime);
+            targetProduct.setStartTime(startTime);
+            targetProduct.setEndTime(endTime);
         }
-        product.setFileLocation(getInputFile());
+        targetProduct.setFileLocation(getInputFile());
 
-        attachMeasurementBands(product);
-        attachAnnotationData(manifest, product);
+        if (sourceProduct.getGeoCoding() instanceof CrsGeoCoding) {
+            ProductUtils.copyGeoCoding(sourceProduct, targetProduct);
+        }
+
+        attachData(targetProduct);
+        attachGeoCoding(manifest, targetProduct);
 
         final MetadataElement globalAttributes = new MetadataElement("Global_Attributes");
         final MetadataElement variableAttributes = new MetadataElement("Variable_Attributes");
-        ProductUtils.copyMetadata(childProduct.getMetadataRoot().getElement("Global_Attributes"), globalAttributes);
+        ProductUtils.copyMetadata(sourceProduct.getMetadataRoot().getElement("Global_Attributes"), globalAttributes);
         globalAttributes.setAttributeString("dataset_name", productName);
         for (final Product p : openProductList) {
             for (final MetadataElement element : p.getMetadataRoot().getElement("Variable_Attributes").getElements()) {
                 variableAttributes.addElement(element.createDeepClone());
             }
         }
-        product.getMetadataRoot().addElement(globalAttributes);
-        product.getMetadataRoot().addElement(variableAttributes);
+        targetProduct.getMetadataRoot().addElement(globalAttributes);
+        targetProduct.getMetadataRoot().addElement(variableAttributes);
 
-        if (childProduct.getGeoCoding() != null) {
-            ProductUtils.copyGeoCoding(childProduct, product);
-        }
-
-        return product;
+        return targetProduct;
     }
 
-    protected abstract void attachAnnotationData(Manifest manifest, Product product) throws IOException;
+    protected List<String> getTimeFileNames(Manifest manifest) {
+        return manifest.getFileNames("timeCoordinatesSchema");
+    }
 
-    protected void readProducts(List<String> fileNames) throws IOException {
+    protected List<String> getTiePointFileNames(Manifest manifest) {
+        return manifest.getFileNames("tiepointsSchema");
+    }
+
+    protected void attachGeoCoding(Manifest manifest, Product targetProduct) throws IOException {
+    }
+
+    protected abstract void attachTiepointData(Band sourceBand, Product targetProduct);
+
+    protected final void readProducts(List<String> fileNames) throws IOException {
         for (final String fileName : fileNames) {
             readProduct(fileName);
         }
@@ -128,15 +143,18 @@ abstract class SynProductReader extends AbstractProductReader {
         return product;
     }
 
-    protected final File getInputFile() {
+    private File getInputFile() {
         return new File(getInput().toString());
     }
 
-    protected final File getInputFileParentDirectory() {
+    private File getInputFileParentDirectory() {
         return getInputFile().getParentFile();
     }
 
-    private void attachMeasurementBands(Product product) {
+    private void attachData(Product product) {
+        final int w = product.getSceneRasterWidth();
+        final int h = product.getSceneRasterHeight();
+
         final StringBuilder patternBuilder = new StringBuilder();
         for (final Product childProduct : openProductList) {
             if (childProduct.getAutoGrouping() != null) {
@@ -145,8 +163,12 @@ abstract class SynProductReader extends AbstractProductReader {
                 }
                 patternBuilder.append(childProduct.getAutoGrouping());
             }
-            for (final String bandName : childProduct.getBandNames()) {
-                ProductUtils.copyBand(bandName, childProduct, product, true);
+            for (final Band band : childProduct.getBands()) {
+                if (band.getSceneRasterWidth() == w && band.getSceneRasterHeight() == h) {
+                    ProductUtils.copyBand(band.getName(), childProduct, product, true);
+                } else {
+                    attachTiepointData(band, product);
+                }
             }
         }
         product.setAutoGrouping(patternBuilder.toString());
