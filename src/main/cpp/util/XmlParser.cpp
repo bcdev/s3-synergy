@@ -28,43 +28,32 @@ XmlParser::XmlParser() {
 XmlParser::~XmlParser() {
 }
 
-const string XmlParser::evaluateToString(const string& path,
-		const string& expression) const throw (invalid_argument) {
+const string XmlParser::evaluateToString(const string& path, const string& expression) const throw (invalid_argument) {
 	return evaluateToString(path, expression.c_str());
 }
 
-const string XmlParser::evaluateToString(const string& path,
-		const char* expression) const throw (invalid_argument) {
-	DOMImplementation* xqillaImplementation =
-			DOMImplementationRegistry::getDOMImplementation(X("XPath2 3.0"));
+const string XmlParser::evaluateToString(const string& path, const char* expression) const throw (invalid_argument) {
+	DOMImplementation* xqillaImplementation = DOMImplementationRegistry::getDOMImplementation(X("XPath2 3.0"));
 
-	AutoRelease<DOMLSParser> parser(
-			xqillaImplementation->createLSParser(
-					DOMImplementationLS::MODE_SYNCHRONOUS, 0));
+	AutoRelease<DOMLSParser> parser(xqillaImplementation->createLSParser(DOMImplementationLS::MODE_SYNCHRONOUS, 0));
 	parser->getDomConfig()->setParameter(XMLUni::fgDOMNamespaces, true);
 	parser->getDomConfig()->setParameter(XMLUni::fgXercesSchema, true);
 	parser->getDomConfig()->setParameter(XMLUni::fgDOMValidateIfSchema, true);
 
 	DOMDocument *document = parser->parseURI(path.c_str());
 	if (document == 0) {
-		BOOST_THROW_EXCEPTION(
-				invalid_argument("Path '" + path + "' does not refer to a valid XML document."));
+		BOOST_THROW_EXCEPTION( invalid_argument("Path '" + path + "' does not refer to a valid XML document."));
 	}
-	AutoRelease<DOMXPathNSResolver> resolver(
-			document->createNSResolver(document->getDocumentElement()));
-	AutoRelease<DOMXPathExpression> parsedExpression(
-			document->createExpression(X(expression), resolver));
-	AutoRelease<DOMXPathResult> iteratorResult(
-			parsedExpression->evaluate(document->getDocumentElement(),
-					DOMXPathResult::ORDERED_NODE_ITERATOR_TYPE, 0));
+	AutoRelease<DOMXPathNSResolver> resolver(document->createNSResolver(document->getDocumentElement()));
+	AutoRelease<DOMXPathExpression> parsedExpression(document->createExpression(X(expression), resolver));
+	AutoRelease<DOMXPathResult> iteratorResult(parsedExpression->evaluate(document->getDocumentElement(), DOMXPathResult::ORDERED_NODE_ITERATOR_TYPE, 0));
 
-	string result = "";
+	string result;
 	while (iteratorResult->iterateNext()) {
 		if (iteratorResult->isNode()) {
-			char* buffer = XMLString::transcode(
-					iteratorResult->getStringValue());
-			result = buffer;
-			XMLString::release(&buffer);
+			char* transcodedResult = XMLString::transcode(iteratorResult->getStringValue());
+			result.append(transcodedResult);
+			XMLString::release(&transcodedResult);
 			break;
 		}
 	}
@@ -72,45 +61,34 @@ const string XmlParser::evaluateToString(const string& path,
 	return result;
 }
 
-const vector<string> XmlParser::evaluateToStringList(const string& path,
-		const string& expression) const throw (invalid_argument) {
+const vector<string> XmlParser::evaluateToStringList(const string& path, const string& expression) const throw (invalid_argument) {
 	return evaluateToStringList(path, expression.c_str());
 }
 
-const vector<string> XmlParser::evaluateToStringList(const string& path,
-		const char* expression) const throw (invalid_argument) {
-	DOMImplementation* xqillaImplementation =
-			DOMImplementationRegistry::getDOMImplementation(X("XPath2 3.0"));
+const vector<string> XmlParser::evaluateToStringList(const string& path, const char* expression) const throw (invalid_argument) {
+	DOMImplementation* xqillaImplementation = DOMImplementationRegistry::getDOMImplementation(X("XPath2 3.0"));
 
-	AutoRelease<DOMLSParser> parser(
-			xqillaImplementation->createLSParser(
-					DOMImplementationLS::MODE_SYNCHRONOUS, 0));
+	AutoRelease<DOMLSParser> parser(xqillaImplementation->createLSParser(DOMImplementationLS::MODE_SYNCHRONOUS, 0));
 	parser->getDomConfig()->setParameter(XMLUni::fgDOMNamespaces, true);
 	parser->getDomConfig()->setParameter(XMLUni::fgXercesSchema, true);
 	parser->getDomConfig()->setParameter(XMLUni::fgDOMValidateIfSchema, true);
 
 	DOMDocument *document = parser->parseURI(path.c_str());
 	if (document == 0) {
-		BOOST_THROW_EXCEPTION(
-				invalid_argument("Path '" + path + "' does not refer to a valid XML document."));
+		BOOST_THROW_EXCEPTION( invalid_argument("Path '" + path + "' does not refer to a valid XML document."));
 	}
 
-	AutoRelease<DOMXPathNSResolver> resolver(
-			document->createNSResolver(document->getDocumentElement()));
-	AutoRelease<DOMXPathExpression> parsedExpression(
-			document->createExpression(X(expression), resolver));
-	AutoRelease<DOMXPathResult> iteratorResult(
-			parsedExpression->evaluate(document->getDocumentElement(),
-					DOMXPathResult::ORDERED_NODE_ITERATOR_TYPE, 0));
+	AutoRelease<DOMXPathNSResolver> resolver(document->createNSResolver(document->getDocumentElement()));
+	AutoRelease<DOMXPathExpression> parsedExpression(document->createExpression(X(expression), resolver));
+	AutoRelease<DOMXPathResult> iteratorResult(parsedExpression->evaluate(document->getDocumentElement(), DOMXPathResult::ORDERED_NODE_ITERATOR_TYPE, 0));
 
 	vector<string> resultList;
 	while (iteratorResult->iterateNext()) {
 		if (iteratorResult->isNode()) {
-			char *buffer = XMLString::transcode(
-					iteratorResult->getStringValue());
-			const string result = buffer;
+			char* transcodedResult = XMLString::transcode(iteratorResult->getStringValue());
+			const string result(transcodedResult);
 			resultList.push_back(result);
-			XMLString::release(&buffer);
+			XMLString::release(&transcodedResult);
 		}
 	}
 
