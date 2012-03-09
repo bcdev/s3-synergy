@@ -1,0 +1,19 @@
+#! /bin/sh
+
+export LD_LIBRARY_PATH="$HOME/usr/lib:/usr/local/lib:/usr/lib"
+
+  valgrind --tool=callgrind --inclusive=yes --tree=both --callgrind-out-file=callgrind.SY_UNT_GEN --leak-check=full --num-callers=50 @CMAKE_INSTALL_PREFIX@/bin/sy_unt_gen
+# valgrind --tool=callgrind --inclusive=yes --tree=both --callgrind-out-file=callgrind.SY_UNT_SRE --leak-check=full --num-callers=50 @CMAKE_INSTALL_PREFIX@/bin/sy_unt_sre
+# valgrind --tool=callgrind --inclusive=yes --tree=both --callgrind-out-file=callgrind.SY_UNT_SWR --leak-check=full --num-callers=50 @CMAKE_INSTALL_PREFIX@/bin/sy_unt_swr
+# valgrind --tool=callgrind --inclusive=yes --tree=both --callgrind-out-file=callgrind.SY_UNT_COL --leak-check=full --num-callers=50 @CMAKE_INSTALL_PREFIX@/bin/sy_unt_col
+# valgrind --tool=callgrind --inclusive=yes --tree=both --callgrind-out-file=callgrind.SY_UNT_PCL --leak-check=full --num-callers=50 @CMAKE_INSTALL_PREFIX@/bin/sy_unt_pcl
+# valgrind --tool=callgrind --inclusive=yes --tree=both --callgrind-out-file=callgrind.SY_UNT_AVE --leak-check=full --num-callers=50 @CMAKE_INSTALL_PREFIX@/bin/sy_unt_ave
+  valgrind --tool=callgrind --inclusive=yes --tree=both --callgrind-out-file=callgrind.SY_UNT_AER --leak-check=full --num-callers=50 @CMAKE_INSTALL_PREFIX@/bin/sy_unt_aer
+# valgrind --tool=callgrind --inclusive=yes --tree=both --callgrind-out-file=callgrind.SY_UNT_AEI --leak-check=full --num-callers=50 @CMAKE_INSTALL_PREFIX@/bin/sy_unt_aei
+  valgrind --tool=callgrind --inclusive=yes --tree=both --callgrind-out-file=callgrind.SY_UNT_ACO --leak-check=full --num-callers=50 @CMAKE_INSTALL_PREFIX@/bin/sy_unt_aco
+  valgrind --tool=callgrind --inclusive=yes --tree=both --callgrind-out-file=callgrind.SY_UNT_VBM --leak-check=full --num-callers=50 @CMAKE_INSTALL_PREFIX@/bin/sy_unt_vbm
+# valgrind --tool=callgrind --inclusive=yes --tree=both --callgrind-out-file=callgrind.SY_UNT_VFL --leak-check=full --num-callers=50 @CMAKE_INSTALL_PREFIX@/bin/sy_unt_vfl
+# valgrind --tool=callgrind --inclusive=yes --tree=both --callgrind-out-file=callgrind.SY_UNT_VPR --leak-check=full --num-callers=50 @CMAKE_INSTALL_PREFIX@/bin/sy_unt_vpr
+# valgrind --tool=callgrind --inclusive=yes --tree=both --callgrind-out-file=callgrind.SY_UNT_VWR --leak-check=full --num-callers=50 @CMAKE_INSTALL_PREFIX@/bin/sy_unt_vwr
+  valgrind --tool=callgrind --inclusive=yes --tree=both --callgrind-out-file=callgrind.SY_UNT_VAC --leak-check=full --num-callers=50 @CMAKE_INSTALL_PREFIX@/bin/sy_unt_vac
+# valgrind --tool=callgrind --inclusive=yes --tree=both --callgrind-out-file=callgrind.SY_UNT_VCO --leak-check=full --num-callers=50 @CMAKE_INSTALL_PREFIX@/bin/sy_unt_vco

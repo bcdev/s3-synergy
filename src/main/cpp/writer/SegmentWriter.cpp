@@ -117,7 +117,7 @@ void SegmentWriter::stop(Context& context) {
 }
 
 void SegmentWriter::createNcVar(const Segment& segment, const string& varName) {
-	const string ncFileBasename = segment.getId();
+	const string& ncFileBasename = segment.getId();
 
 	if (!contains(ncFileIdMap, ncFileBasename)) {
 		if (!boost::filesystem::exists(targetDirPath)) {

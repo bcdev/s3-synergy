@@ -44,6 +44,16 @@ configure_file (
   "src/test/bin/runalltests.sh"
 )
 
+configure_file (
+  "src/test/bin/memcheck.sh.in"
+  "src/test/bin/memcheck.sh"
+)
+
+configure_file (
+  "src/test/bin/profiler.sh.in"
+  "src/test/bin/profiler.sh"
+)
+
 set(CMAKE_CXX_FLAGS "-fopenmp -O3 -std=c++98")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -std=c++98 -Wall")
 
