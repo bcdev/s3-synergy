@@ -16,10 +16,8 @@
 package org.esa.beam.dataio.synergy;
 
 import org.esa.beam.framework.datamodel.Band;
-import org.esa.beam.framework.datamodel.FlagCoding;
 import org.esa.beam.framework.datamodel.PixelGeoCoding;
 import org.esa.beam.framework.datamodel.Product;
-import org.esa.beam.framework.datamodel.ProductNodeGroup;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,26 +30,23 @@ import java.util.List;
  */
 public class SynL2ProductReader extends SynProductReader {
 
-    private List<Product> measurementProducts;
-    private Product geoCoordinatesProduct;
-
     public SynL2ProductReader(SynL2ProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
     }
 
     @Override
     protected void attachAnnotationData(Manifest manifest, Product product) throws IOException {
-        attachGeoCoodinatesToProduct(manifest.getGeoCoordinatesFileName(), product);
+        attachGeoCoordinatesToProduct(manifest.getGeoCoordinatesFileName(), product);
         attachTiePointsToProduct(manifest.getTiePointFileNames(), product);
     }
 
-    private void attachTiePointsToProduct(List<String> tiePointsFileNames, Product product) {
+    private void attachTiePointsToProduct(List<String> tiePointFileNames, Product product) {
         // the tie points are provided on a different grid, so we currently don't use them for the SYN product
         // todo: at least attach TPGs for lat/lon for each camera
     }
 
-    private void attachGeoCoodinatesToProduct(String geoCoordinatesFileName, Product product) throws IOException {
-        geoCoordinatesProduct = readProduct(geoCoordinatesFileName);
+    private void attachGeoCoordinatesToProduct(String geoCoordinatesFileName, Product product) throws IOException {
+        final Product geoCoordinatesProduct = readProduct(geoCoordinatesFileName);
 
         for (final Band band : product.getBands()) {
             for (int i = 1; i <= 5; i++) {

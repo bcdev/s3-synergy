@@ -31,23 +31,15 @@ void ErrorHandler::handleError(Context& context, exception& e) const {
 	using std::exit;
 	using boost::diagnostic_information;
 
-	const string moduleName =
-			boost::get_error_info<errinfo_module_name>(e) == 0 ?
-					"Unknown" : *boost::get_error_info<errinfo_module_name>(e);
-	const string methodName =
-			boost::get_error_info<errinfo_method_name>(e) == 0 ?
-					"Unknown" : *boost::get_error_info<errinfo_method_name>(e);
-	const int exitCode =
-			boost::get_error_info<errinfo_exit_code>(e) == 0 ?
-					ExitCode::FAILURE :
-					*boost::get_error_info<errinfo_exit_code>(e);
+	const string moduleName = boost::get_error_info<errinfo_module_name>(e) == 0 ? "Unknown" : *boost::get_error_info<errinfo_module_name>(e);
+	const string methodName = boost::get_error_info<errinfo_method_name>(e) == 0 ? "Unknown" : *boost::get_error_info<errinfo_method_name>(e);
+	const int exitCode = boost::get_error_info<errinfo_exit_code>(e) == 0 ? ExitCode::FAILURE : *boost::get_error_info<errinfo_exit_code>(e);
 	const string info = diagnostic_information(e);
 	const string className = extractClassName(info);
 	const string functionName = extractFunctionName(info);
 	const string lineNumber = extractLineNumber(info);
 	const string exceptionMessage = e.what();
-	const string errorMessage = createMessage(moduleName, methodName, className,
-			functionName, lineNumber, exceptionMessage);
+	const string errorMessage = createMessage(moduleName, methodName, className, functionName, lineNumber, exceptionMessage);
 
 	context.getLogging().error(errorMessage, moduleName);
 
@@ -55,55 +47,63 @@ void ErrorHandler::handleError(Context& context, exception& e) const {
 }
 
 string ErrorHandler::extractLineNumber(const string& info) const {
-	const string firstLine = extractFirstLine(info);
+	const string line = extractFirstLine(info);
 	vector<string> result;
-	boost::iter_split(result, firstLine, boost::first_finder("("));
-	boost::iter_split(result, result[1], boost::first_finder("):"));
-	return result.front();
+
+	boost::iter_split(result, line, boost::first_finder("("));
+	if (result.size() > 1) {
+		boost::iter_split(result, result[1], boost::first_finder("):"));
+		if (result.size() > 0) {
+			return result.front();
+		}
+	}
+	return "Unknown";
 }
 
 string ErrorHandler::extractFunctionName(const string& info) const {
-	const string firstLine = extractFirstLine(info);
+	const string line = extractFirstLine(info);
 	vector<string> result;
-	boost::iter_split(result, firstLine, boost::first_finder("function"));
-	boost::iter_split(result, result[1], boost::first_finder(" "));
-	boost::iter_split(result, firstLine, boost::first_finder("::"));
-	boost::iter_split(result, result[1], boost::first_finder("("));
-	return result.front();
+
+	boost::iter_split(result, line, boost::first_finder("function"));
+	if (result.size() > 1) {
+		boost::iter_split(result, result[1], boost::first_finder(" "));
+		boost::iter_split(result, line, boost::first_finder("::"));
+		if (result.size() > 1) {
+			boost::iter_split(result, result[1], boost::first_finder("("));
+			return result.front();
+		}
+	}
+	return "Unknown";
 }
 
 string ErrorHandler::extractClassName(const string& info) const {
-	const string firstLine = extractFirstLine(info);
+	const string line = extractFirstLine(info);
 	vector<string> result;
-	boost::iter_split(result, firstLine, boost::first_finder("function"));
-	boost::iter_split(result, result[1], boost::first_finder("::"));
-	boost::iter_split(result, result[0], boost::first_finder(" "));
 
-	return result.back();
+	boost::iter_split(result, line, boost::first_finder("function"));
+	if (result.size() > 1) {
+		boost::iter_split(result, result[1], boost::first_finder("::"));
+		if (result.size() > 0) {
+			boost::iter_split(result, result[0], boost::first_finder(" "));
+			if (result.size() > 1) {
+				return result.back();
+			}
+		}
+	}
+	return "Unknown";
 }
 
 string ErrorHandler::extractFirstLine(const string& text) const {
-	vector<string> result;
-	boost::iter_split(result, text, boost::first_finder("\n"));
-	return result.front();
+	return text.substr(0, text.find("\n"));
 }
 
-string ErrorHandler::createMessage(const string& moduleName,
-		const string& methodName, const string& className,
-		const string& functionName, const string& lineNumber,
+string ErrorHandler::createMessage(const string& moduleName, const string& methodName, const string& className, const string& functionName, const string& lineNumber,
 		const string& exceptionMessage) const {
-
-	string infoText;
-	if (!className.empty() && !functionName.empty() && !lineNumber.empty()) {
-		infoText.append(
-				" at: " + className + "::" + functionName + " (l. " + lineNumber
-						+ ").");
-	}
 
 	string message;
 	message.append("An exception was thrown in method '" + methodName + "' of module '" + moduleName + "':\n");
 	message.append(exceptionMessage);
-	message.append(infoText);
+	message.append(" at: " + className + "::" + functionName + " (l. " + lineNumber + ").");
 
 	return message;
 }

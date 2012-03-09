@@ -47,53 +47,16 @@ import java.util.logging.Logger;
  * @author Olaf Danne
  * @since 1.0
  */
-public class VgtProductReader extends AbstractProductReader {
-
-    private final Logger logger;
-    private List<Product> measurementProducts;
-    private List<Product> tiepointProducts;
-    private Manifest manifest;
+public class VgtProductReader extends SynProductReader {
 
     public VgtProductReader(VgtProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
-        logger = Logger.getLogger(getClass().getSimpleName());
     }
 
     @Override
-    protected Product readProductNodesImpl() throws IOException {
-        File inputFile = getInputFile();
-        manifest = createManifestFile(inputFile);
-        return createProduct();
-    }
-
-
-    @Override
-    protected void readBandRasterDataImpl(int sourceOffsetX, int sourceOffsetY, int sourceWidth, int sourceHeight,
-                                          int sourceStepX, int sourceStepY, Band destBand, int destOffsetX,
-                                          int destOffsetY, int destWidth, int destHeight, ProductData destBuffer,
-                                          ProgressMonitor pm) throws IOException {
-        throw new IllegalStateException("Data are provided by images");
-    }
-
-    @Override
-    public void close() throws IOException {
-        for (Product product : measurementProducts) {
-            product.dispose();
-        }
-        for (Product product : tiepointProducts) {
-            product.dispose();
-        }
-        super.close();
-    }
-
-    private Product createProduct() {
-        final String productName = getProductName();
-        final String productType = getProductType();
-
-        final List<String> measurementFileNames = manifest.getMeasurementFileNames();
-        measurementFileNames.add(manifest.getStatusFlagFileName());
-
+    protected void attachAnnotationData(Manifest manifest, Product product) throws IOException {
         if (isVGSProduct()) {
+
             measurementFileNames.addAll(manifest.getGeometryFileNames());
             measurementFileNames.add(manifest.getTimeFileName());
         }
@@ -103,31 +66,8 @@ public class VgtProductReader extends AbstractProductReader {
             tiepointFileNames.addAll(manifest.getGeometryFileNames());
         }
         tiepointProducts = loadDataProducts(tiepointFileNames);
-        final int width = measurementProducts.get(0).getSceneRasterWidth();
-        final int height = measurementProducts.get(0).getSceneRasterHeight();
-        Product product = new Product(productName, productType, width, height, this);
-        product.setStartTime(manifest.getStartTime());
-        product.setEndTime(manifest.getStopTime());
-        product.setFileLocation(getInputFile());
 
-        product.getMetadataRoot().addElement(new MetadataElement("Global_Attributes"));
-        product.getMetadataRoot().addElement(new MetadataElement("Variable_Attributes"));
-        ProductUtils.copyMetadata(measurementProducts.get(0).getMetadataRoot().getElement("Global_Attributes"),
-                                  product.getMetadataRoot().getElement("Global_Attributes"));
-        product.getMetadataRoot().getElement("Global_Attributes").setAttributeString("dataset_name", productName);
-        for (Product measurementProduct : measurementProducts) {
-            for (final MetadataElement element : measurementProduct.getMetadataRoot().getElement(
-                    "Variable_Attributes").getElements()) {
-                if (isMeasurementBandElement(element)) {
-                    product.getMetadataRoot().getElement("Variable_Attributes").addElement(element.createDeepClone());
-                }
-            }
-        }
-
-        attachMeasurementBands(measurementProducts, product);
         attachAnnotationData(tiepointProducts, product);
-        ProductUtils.copyGeoCoding(measurementProducts.get(0), product);
-        return product;
     }
 
     private boolean isMeasurementBandElement(MetadataElement element) {
@@ -157,23 +97,12 @@ public class VgtProductReader extends AbstractProductReader {
         }
     }
 
-    private String getProductType() {
-        final String descr = manifest.getDescription();
-        if (descr.contains("VGT S")) {
-            return "S3-VGT-S";
-        } else if (descr.contains("VGT P")) {
-            return "S3-VGT-P";
-        } else {
-            throw new IllegalArgumentException("Invalid input - product seems to be neither of type VGS nor VGP.");
-        }
-    }
-
     private boolean isVGSProduct() {
-        return manifest.getDescription().contains("VGT S");
+        return getManifest().getDescription().contains("VGT S");
     }
 
     private boolean isVGPProduct() {
-        return manifest.getDescription().contains("VGT P");
+        return getManifest().getDescription().contains("VGT P");
     }
 
     private void setMeasurementBandScalingFactor(Band band) {
@@ -200,83 +129,4 @@ public class VgtProductReader extends AbstractProductReader {
             tpg.setScalingFactor(0.04);
         }
     }
-
-    private void attachMeasurementBands(List<Product> measurementProducts, Product product) {
-        for (final Product bandProduct : measurementProducts) {
-            for (final Band sourceBand : bandProduct.getBands()) {
-                final String bandName = sourceBand.getName();
-                if (!product.containsBand(bandName)) {
-                    final Band targetBand = ProductUtils.copyBand(bandName, bandProduct, product);
-                    if (sourceBand.getName().endsWith(FlagCodings.VGT_STATUS_MASK_BAND_NAME)) {
-                        final FlagCoding vgtpSmFlagCoding = FlagCodings.createVgtFlagCoding();
-                        targetBand.setSampleCoding(vgtpSmFlagCoding);
-                        product.getFlagCodingGroup().add(vgtpSmFlagCoding);
-                    } else {
-                        setMeasurementBandScalingFactor(targetBand);
-                    }
-                    targetBand.setSourceImage(sourceBand.getSourceImage());
-                }
-            }
-        }
-    }
-
-    private String getProductName() {
-        return FileUtils.getFilenameWithoutExtension(getParentInputDirectory());
-    }
-
-    private List<Product> loadDataProducts(List<String> fileNameList) {
-        List<Product> products = new ArrayList<Product>();
-        for (String fileName : fileNameList) {
-            try {
-                products.add(readProduct(fileName));
-            } catch (IOException e) {
-                String msg = String.format("Not able to read file '%s.", fileName);
-                logger.log(Level.WARNING, msg, e);
-            }
-        }
-        return products;
-    }
-
-    private Product readProduct(String fileName) throws IOException {
-        File dataSetFile = new File(getParentInputDirectory(), fileName);
-        Product product = ProductIO.readProduct(dataSetFile);
-        if (product == null) {
-            String msg = String.format("Could not read file '%s. No appropriate reader found.", fileName);
-            throw new IOException(msg);
-        }
-        return product;
-    }
-
-    private Manifest createManifestFile(File inputFile) throws IOException {
-        InputStream manifestInputStream = new FileInputStream(inputFile);
-        try {
-            return Manifest.createManifest(createXmlDocument(manifestInputStream));
-        } finally {
-            manifestInputStream.close();
-        }
-
-    }
-
-    private Document createXmlDocument(InputStream inputStream) throws IOException {
-        Document doc = null;
-        try {
-            doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
-        } catch (SAXException e) {
-            String msg = "Not able to read manifest XML file.";
-            logger.log(Level.WARNING, msg, e);
-        } catch (ParserConfigurationException e) {
-            String msg = "Not able to read manifest XML file.";
-            logger.log(Level.WARNING, msg, e);
-        }
-        return doc;
-    }
-
-    private File getParentInputDirectory() {
-        return getInputFile().getParentFile();
-    }
-
-    private File getInputFile() {
-        return new File(getInput().toString());
-    }
-
 }

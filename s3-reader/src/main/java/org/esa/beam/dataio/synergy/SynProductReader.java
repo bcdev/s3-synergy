@@ -5,6 +5,7 @@ import org.esa.beam.framework.dataio.AbstractProductReader;
 import org.esa.beam.framework.dataio.ProductIO;
 import org.esa.beam.framework.dataio.ProductReaderPlugIn;
 import org.esa.beam.framework.datamodel.Band;
+import org.esa.beam.framework.datamodel.MetadataElement;
 import org.esa.beam.framework.datamodel.Product;
 import org.esa.beam.framework.datamodel.ProductData;
 import org.esa.beam.util.ProductUtils;
@@ -28,17 +29,22 @@ abstract class SynProductReader extends AbstractProductReader {
 
     private final List<Product> openProductList = new ArrayList<Product>();
 
-    protected final Logger logger;
+    private final Logger logger;
+    private Manifest manifest;
 
     protected SynProductReader(ProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
         logger = Logger.getLogger(getClass().getSimpleName());
     }
 
+    protected Manifest getManifest() {
+        return manifest;
+    }
+
     @Override
     protected final Product readProductNodesImpl() throws IOException {
         final File inputFile = getInputFile();
-        final Manifest manifest = createManifestFile(inputFile);
+        manifest = createManifestFile(inputFile);
 
         return createProduct(manifest);
     }
@@ -84,22 +90,26 @@ abstract class SynProductReader extends AbstractProductReader {
         attachMeasurementBands(product);
         attachAnnotationData(manifest, product);
 
-        // attachFlagCodings(product);
+        final MetadataElement globalAttributes = new MetadataElement("Global_Attributes");
+        final MetadataElement variableAttributes = new MetadataElement("Variable_Attributes");
+        ProductUtils.copyMetadata(childProduct.getMetadataRoot().getElement("Global_Attributes"), globalAttributes);
+        globalAttributes.setAttributeString("dataset_name", productName);
+        for (final Product p : openProductList) {
+            for (final MetadataElement element : p.getMetadataRoot().getElement("Variable_Attributes").getElements()) {
+                variableAttributes.addElement(element.createDeepClone());
+            }
+        }
+        product.getMetadataRoot().addElement(globalAttributes);
+        product.getMetadataRoot().addElement(variableAttributes);
+
+        if (childProduct.getGeoCoding() != null) {
+            ProductUtils.copyGeoCoding(childProduct, product);
+        }
 
         return product;
     }
 
     protected abstract void attachAnnotationData(Manifest manifest, Product product) throws IOException;
-
-    private void attachMeasurementBands(Product product) {
-        for (final Product childProduct : openProductList) {
-            for (final Band sourceBand : childProduct.getBands()) {
-                final String bandName = sourceBand.getName();
-                final Band targetBand = ProductUtils.copyBand(bandName, childProduct, product);
-                targetBand.setSourceImage(sourceBand.getSourceImage());
-            }
-        }
-    }
 
     protected void readProducts(List<String> fileNames) throws IOException {
         for (final String fileName : fileNames) {
@@ -126,18 +136,33 @@ abstract class SynProductReader extends AbstractProductReader {
         return getInputFile().getParentFile();
     }
 
+    private void attachMeasurementBands(Product product) {
+        final StringBuilder patternBuilder = new StringBuilder();
+        for (final Product childProduct : openProductList) {
+            if (childProduct.getAutoGrouping() != null) {
+                if (patternBuilder.length() > 0) {
+                    patternBuilder.append(":");
+                }
+                patternBuilder.append(childProduct.getAutoGrouping());
+            }
+            for (final String bandName : childProduct.getBandNames()) {
+                ProductUtils.copyBand(bandName, childProduct, product, true);
+            }
+        }
+        product.setAutoGrouping(patternBuilder.toString());
+    }
+
     private String getProductName() {
         return FileUtils.getFilenameWithoutExtension(getInputFileParentDirectory());
     }
 
     private Manifest createManifestFile(File inputFile) throws IOException {
-        InputStream manifestInputStream = new FileInputStream(inputFile);
+        final InputStream manifestInputStream = new FileInputStream(inputFile);
         try {
             return Manifest.createManifest(createXmlDocument(manifestInputStream));
         } finally {
             manifestInputStream.close();
         }
-
     }
 
     private Document createXmlDocument(InputStream inputStream) throws IOException {
