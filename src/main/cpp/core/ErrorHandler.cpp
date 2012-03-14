@@ -77,6 +77,7 @@ string ErrorHandler::extractFunctionName(const string& info) const {
 }
 
 string ErrorHandler::extractClassName(const string& info) const {
+	/*
 	const string line = extractFirstLine(info);
 	vector<string> result;
 
@@ -90,6 +91,7 @@ string ErrorHandler::extractClassName(const string& info) const {
 			}
 		}
 	}
+	*/
 	return "Unknown";
 }
 
