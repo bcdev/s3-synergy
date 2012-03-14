@@ -13,9 +13,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#include <netcdf.h>
+#include <cstdlib>
 #include <stdexcept>
 #include <sstream>
+
+#include <netcdf.h>
 
 #include "NetCDF.h"
 
@@ -92,20 +94,21 @@ string NetCDF::getAttributeValue(int fileId, int varId, const string& attrName) 
 	const int status = nc_get_att_text(fileId, varId, attrName.c_str(), &attrData[0]);
 	checkStatus(status, "getting attribute string");
 	return string(&attrData[0]);
-
 }
 
 valarray<string> NetCDF::getAttributeValues(int fileId, int varId, const string& attrName) {
-	const size_t attrLength = NetCDF::getAttributeLength(fileId, varId, attrName);
-	valarray<char*> attrData(attrLength);
+	using std::free;
+
+	const size_t attrCount = NetCDF::getAttributeLength(fileId, varId, attrName);
+	valarray<char*> attrData(attrCount);
 
 	const int status = nc_get_att_string(fileId, varId, attrName.c_str(), &attrData[0]);
 	checkStatus(status, "getting attribute strings");
 
-	valarray<string> strings(attrLength);
-	for (size_t i = 0; i < attrLength; i++) {
+	valarray<string> strings(attrCount);
+	for (size_t i = 0; i < attrCount; i++) {
 		strings[i].assign(attrData[i]);
-		delete[] attrData[i];
+		free attrData[i];
 	}
 	return strings;
 }
