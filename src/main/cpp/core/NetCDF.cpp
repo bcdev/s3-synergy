@@ -105,9 +105,9 @@ valarray<string> NetCDF::getAttributeValues(int fileId, int varId, const string&
 	valarray<string> strings(attrLength);
 	for (size_t i = 0; i < attrLength; i++) {
 		strings[i].assign(attrData[i]);
+		delete &attrData[i];
 	}
 	return strings;
-
 }
 
 size_t NetCDF::getAttributeCount(int fileId, int varId) {

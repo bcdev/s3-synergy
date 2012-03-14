@@ -170,9 +170,9 @@ public:
     	string s;
         for (size_t i = 0; i < data.size(); i++) {
             if (i > 0) {
-                s += " ";
+                s.append(" ");
             }
-            s += lexical_cast<string>(numeric_cast<int16_t>(data[i]));
+            s.append(lexical_cast<string>(numeric_cast<int16_t>(data[i])));
         }
         value = s;
     }
@@ -192,9 +192,9 @@ public:
     	string s;
         for (size_t i = 0; i < data.size(); i++) {
             if (i > 0) {
-                s += " ";
+                s.append(" ");
             }
-            s += lexical_cast<string>(numeric_cast<uint16_t>(data[i]));
+            s.append(lexical_cast<string>(numeric_cast<uint16_t>(data[i])));
         }
         value = s;
     }
@@ -214,9 +214,9 @@ public:
     	string s;
         for (size_t i = 0; i < data.size(); i++) {
             if (i > 0) {
-                s += " ";
+                s.append(" ");
             }
-            s += lexical_cast<string>(data[i]);
+            s.append(lexical_cast<string>(data[i]));
         }
         value = s;
     }
