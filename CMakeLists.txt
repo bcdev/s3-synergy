@@ -630,7 +630,7 @@ install(TARGETS syl2 vgtp vgts
   sy_unt_vac
   sy_unt_vco
   RUNTIME DESTINATION bin
-  CONFIGURATIONS Release
+  CONFIGURATIONS Release Debug
 )
 
 install(DIRECTORY src/main/bin/ DESTINATION bin
