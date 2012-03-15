@@ -29,6 +29,7 @@ import java.util.List;
  * Product reader responsible for reading OLCI/SLSTR L2 SYN data products in SAFE format.
  *
  * @author Olaf Danne
+ * @author Ralf Quast
  * @since 1.0
  */
 public class SynL2ProductReader extends SynProductReader {
@@ -38,15 +39,16 @@ public class SynL2ProductReader extends SynProductReader {
     }
 
     @Override
-    protected List<String> getTiePointFileNames(Manifest manifest) {
-        // the tie points are provided on a different grid, so we currently don't use them
-        return Collections.emptyList();
-    }
+    protected List<String> getFileNames(Manifest manifest) {
+        final List<String> fileNames = new ArrayList<String>();
+        fileNames.addAll(manifest.getFileNames("geocoordinatesSchema"));
+        fileNames.addAll(manifest.getFileNames("measurementDataSchema"));
+        fileNames.addAll(manifest.getFileNames("geometryDataSchema"));
 
-    @Override
-    protected List<String> getTimeFileNames(Manifest manifest) {
-        // the time data are provided on a different grid, so we currently don't use them
-        return Collections.emptyList();
+        // TODO - time  data are provided on a different grid, so we currently don't use them
+        // TODO - meteo data are provided on a different grid, so we currently don't use them
+
+        return fileNames;
     }
 
     @Override
@@ -69,10 +71,5 @@ public class SynL2ProductReader extends SynProductReader {
                 }
             }
         }
-    }
-
-    @Override
-    protected void attachTiepointData(Band sourceBand, Product targetProduct) {
-        // the tie points are provided on a different grid, so we currently don't use them
     }
 }

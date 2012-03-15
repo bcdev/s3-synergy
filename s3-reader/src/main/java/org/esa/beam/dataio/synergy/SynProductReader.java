@@ -50,7 +50,7 @@ abstract class SynProductReader extends AbstractProductReader {
                                                 int sourceStepX, int sourceStepY, Band destBand, int destOffsetX,
                                                 int destOffsetY, int destWidth, int destHeight, ProductData destBuffer,
                                                 ProgressMonitor pm) throws IOException {
-        throw new IllegalStateException("Data are provided by images");
+        throw new IllegalStateException("Data are provided by images.");
     }
 
     @Override
@@ -58,19 +58,24 @@ abstract class SynProductReader extends AbstractProductReader {
         for (final Product product : openProductList) {
             product.dispose();
         }
+        openProductList.clear();
         super.close();
     }
 
-    private Product createProduct(Manifest manifest) throws IOException {
-        final List<String> fileNames = new ArrayList<String>();
-        fileNames.addAll(manifest.getFileNames("geocoordinatesSchema"));
-        fileNames.addAll(manifest.getFileNames("measurementDataSchema"));
-        fileNames.addAll(manifest.getFileNames("statusFlagsSchema"));
-        fileNames.addAll(getTimeFileNames(manifest));
-        fileNames.addAll(manifest.getFileNames("geometryDataSchema"));
-        fileNames.addAll(getTiePointFileNames(manifest));
+    protected abstract List<String> getFileNames(Manifest manifest);
 
-        readProducts(fileNames);
+    protected void attachBandData(Band sourceBand, Product targetProduct) {
+        ProductUtils.copyBand(sourceBand.getName(), sourceBand.getProduct(), targetProduct, true);
+    }
+
+    protected void attachTiePointData(Band sourceBand, Product targetProduct) {
+    }
+
+    protected void attachGeoCoding(Manifest manifest, Product targetProduct) throws IOException {
+    }
+
+    private Product createProduct(Manifest manifest) throws IOException {
+        readProducts(getFileNames(manifest));
 
         final String productName = getProductName();
         final String productType = getReaderPlugIn().getFormatNames()[0];
@@ -113,31 +118,19 @@ abstract class SynProductReader extends AbstractProductReader {
         return targetProduct;
     }
 
-    protected List<String> getTimeFileNames(Manifest manifest) {
-        return manifest.getFileNames("timeCoordinatesSchema");
-    }
-
-    protected List<String> getTiePointFileNames(Manifest manifest) {
-        return manifest.getFileNames("tiepointsSchema");
-    }
-
-    protected void attachGeoCoding(Manifest manifest, Product targetProduct) throws IOException {
-    }
-
-    protected abstract void attachTiepointData(Band sourceBand, Product targetProduct);
-
-    protected final void readProducts(List<String> fileNames) throws IOException {
+    private void readProducts(List<String> fileNames) throws IOException {
         for (final String fileName : fileNames) {
             readProduct(fileName);
         }
     }
 
-    protected final Product readProduct(String fileName) throws IOException {
+    private Product readProduct(String fileName) throws IOException {
         final File file = new File(getInputFileParentDirectory(), fileName);
         final Product product = ProductIO.readProduct(file);
         if (product == null) {
-            throw new IOException(
-                    MessageFormat.format("Cannot read file ''{0}''. No appropriate reader found.", fileName));
+            final String msg = MessageFormat.format("Cannot read file ''{0}''. No appropriate reader found.", fileName);
+            logger.log(Level.SEVERE, msg);
+            throw new IOException(msg);
         }
         openProductList.add(product);
         return product;
@@ -165,9 +158,9 @@ abstract class SynProductReader extends AbstractProductReader {
             }
             for (final Band band : childProduct.getBands()) {
                 if (band.getSceneRasterWidth() == w && band.getSceneRasterHeight() == h) {
-                    ProductUtils.copyBand(band.getName(), childProduct, product, true);
+                    attachBandData(band, product);
                 } else {
-                    attachTiepointData(band, product);
+                    attachTiePointData(band, product);
                 }
             }
         }

@@ -27,7 +27,7 @@
 
     <packaging>jar</packaging>
 
-    <groupId>org.esa.beam.smos</groupId>
+    <groupId>org.esa.beam.s3</groupId>
     <artifactId>s3-bootstrap</artifactId>
     <name>Sentinel-3 Bootstrap</name>
     <description>Provides the bootstrap classpath for all Sentinel-3 modules</description>

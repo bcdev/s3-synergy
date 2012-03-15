@@ -24,11 +24,14 @@ import javax.media.jai.Interpolation;
 import javax.media.jai.JAI;
 import javax.media.jai.operator.ScaleDescriptor;
 import java.awt.RenderingHints;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Product reader responsible for reading VGT P data products in SAFE format.
  *
  * @author Olaf Danne
+ * @author Ralf Quast
  * @since 1.0
  */
 public class VgtProductReader extends SynProductReader {
@@ -38,7 +41,19 @@ public class VgtProductReader extends SynProductReader {
     }
 
     @Override
-    protected void attachTiepointData(Band sourceBand, Product targetProduct) {
+    protected List<String> getFileNames(Manifest manifest) {
+        final List<String> fileNames = new ArrayList<String>();
+        fileNames.addAll(manifest.getFileNames("measurementDataSchema"));
+        fileNames.addAll(manifest.getFileNames("statusFlagsSchema"));
+        fileNames.addAll(manifest.getFileNames("timeCoordinatesSchema"));
+        fileNames.addAll(manifest.getFileNames("tiepointsSchema"));
+        fileNames.addAll(manifest.getFileNames("geometryDataSchema"));
+
+        return fileNames;
+    }
+
+    @Override
+    protected void attachTiePointData(Band sourceBand, Product targetProduct) {
         final Band targetBand = targetProduct.addBand(sourceBand.getName(), sourceBand.getDataType());
         ProductUtils.copyRasterDataNodeProperties(sourceBand, targetBand);
         final RenderingHints renderingHints = new RenderingHints(JAI.KEY_BORDER_EXTENDER,

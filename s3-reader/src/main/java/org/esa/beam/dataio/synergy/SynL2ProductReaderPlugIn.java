@@ -25,6 +25,7 @@ import java.util.List;
  * PlugIn class which provides an Sentinel-3 Synergy Level-2 product reader to the framework.
  *
  * @author Olaf Danne
+ * @author Ralf Quast
  * @since 1.0
  */
 public class SynL2ProductReaderPlugIn extends SynProductReaderPlugIn {

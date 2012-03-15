@@ -21,6 +21,7 @@ import org.esa.beam.framework.dataio.ProductReader;
  * PlugIn class which provides an Sentinel-3 VGT product reader to the framework.
  *
  * @author Olaf Danne
+ * @author Ralf Quast
  * @since 1.0
  */
 public class VgtProductReaderPlugIn extends SynProductReaderPlugIn {

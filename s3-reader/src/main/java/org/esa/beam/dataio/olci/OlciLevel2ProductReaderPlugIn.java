@@ -35,7 +35,7 @@ public class OlciLevel2ProductReaderPlugIn implements ProductReaderPlugIn {
     public static final String FORMAT_NAME_OLCI_L2 = "OLCI-L2";
 
     private static final Class[] SUPPORTED_INPUT_TYPES = new Class[]{String.class, File.class};
-    private static final String DESCRIPTION = "Sentinel -3 OLCI Level-2 products";
+    private static final String DESCRIPTION = "Sentinel-3 OLCI Level-2 products";
     private static final String[] DEFAULT_FILE_EXTENSIONS = new String[]{".safe", ".xml"};
     private static final String[] FORMAT_NAMES = new String[]{FORMAT_NAME_OLCI_L2};
 
