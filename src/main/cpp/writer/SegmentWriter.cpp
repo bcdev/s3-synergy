@@ -149,14 +149,12 @@ void SegmentWriter::createNcVar(const Segment& segment, const string& varName) {
 	const string variableKey = segment.getId() + varName;
 	ncVarIdMap[variableKey] = varId;
 
-	/*
 	const Attribute fillValue(accessor.getType(), "_FillValue", accessor.getFillValue());
 	NetCDF::putAttribute(fileId, varId, fillValue);
 
-	const Attribute scaleFactor(Constants::TYPE_FLOAT, "scale_factor", lexical_cast<string>(accessor.getScaleFactor()));
+	const Attribute scaleFactor(Constants::TYPE_DOUBLE, "scale_factor", lexical_cast<string>(accessor.getScaleFactor()));
 	NetCDF::putAttribute(fileId, varId, scaleFactor);
 
-	const Attribute addOffset(Constants::TYPE_FLOAT, "add_offset", lexical_cast<string>(accessor.getAddOffset()));
+	const Attribute addOffset(Constants::TYPE_DOUBLE, "add_offset", lexical_cast<string>(accessor.getAddOffset()));
 	NetCDF::putAttribute(fileId, varId, addOffset);
-	*/
 }
