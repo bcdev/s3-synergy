@@ -457,10 +457,6 @@ private:
 class VariableDescriptor: public Descriptor<Attribute, Dimension> {
 public:
 
-    /**
-     * Constructor.
-     * @param name The name of the variable.
-     */
     VariableDescriptor(const string& name);
 
     /**

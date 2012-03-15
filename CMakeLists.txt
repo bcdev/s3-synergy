@@ -55,7 +55,7 @@ configure_file (
 )
 
 set(CMAKE_CXX_FLAGS "-fopenmp -O3 -std=c++98")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -std=c++98 -Wall")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O  -std=c++98 -Wall")
 
 ##
 # Project source files

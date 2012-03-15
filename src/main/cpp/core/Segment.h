@@ -49,7 +49,7 @@ public:
 	/**
 	 * Adds a variable to the segment.
 	 * @param variableDescriptor The descriptor of the variable being added.
-	 * @param name The name of the variable being added.
+	 * @param targetName The name of the variable being added.
 	 */
 	virtual Accessor& addVariable(const VariableDescriptor& variableDescriptor, const string& targetName) throw (logic_error) = 0;
 

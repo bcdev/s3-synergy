@@ -330,7 +330,7 @@ void NetCDF::putAttribute(int fileId, int varId, const Attribute& attribute) {
 }
 
 template<class T>
-void NetCDF::putAttribute(int fileId, int varId, const Attribute& attribute, const T& t) {
+void NetCDF::putAttribute(int fileId, int varId, const Attribute& attribute, const valarray<T>& t) {
 	const int status = nc_put_att(fileId, varId, attribute.getName().c_str(), attribute.getType(), t.size(), &t[0]);
 	checkStatus(status, "putting attribute '" + attribute.getName() + "'");
 }

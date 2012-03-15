@@ -117,7 +117,7 @@ private:
 	NetCDF();
 
 	template<class T>
-	static void putAttribute(int fileId, int varId, const Attribute& attribute, const T& t);
+	static void putAttribute(int fileId, int varId, const Attribute& attribute, const valarray<T>& t);
 	static void putAttributeString(int fileId, int varId, const Attribute& attribute);
 	static void putAttributeStrings(int fileId, int varId, const Attribute& attribute);
 	static void checkStatus(int status, const string& action);
