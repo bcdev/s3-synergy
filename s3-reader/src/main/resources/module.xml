@@ -34,11 +34,11 @@
         <action>
             <id>importS3OlciL1bProduct</id>
             <class>org.esa.beam.visat.actions.ProductImportAction</class>
-            <formatName>OLCI-L1b</formatName>
+            <formatName>OLCI-L1B</formatName>
             <text>Import OLCI L1b Product...</text>
             <mnemonic>O</mnemonic>
-            <shortDescr>Import a OLCI L1b data product or product subset.</shortDescr>
-            <description>Import a Sentinel 3 OLCI L1b data product or product subset.</description>
+            <shortDescr>Import an OLCI L1b data product or product subset.</shortDescr>
+            <description>Import a Sentinel-3 OLCI L1b data product or product subset.</description>
             <helpId>importS3OlciL1bProduct</helpId>
         </action>
         <action>
@@ -47,8 +47,8 @@
             <formatName>OLCI-L2</formatName>
             <text>Import OLCI L2 Product...</text>
             <mnemonic>O</mnemonic>
-            <shortDescr>Import a OLCI L2 data product or product subset.</shortDescr>
-            <description>Import a Sentinel 3 OLCI L2 data product or product subset.</description>
+            <shortDescr>Import an OLCI L2 data product or product subset.</shortDescr>
+            <description>Import a Sentinel-3 OLCI L2 data product or product subset.</description>
             <helpId>importS3OlciL2Product</helpId>
         </action>
         <action>
@@ -57,8 +57,8 @@
             <formatName>SLSTR-L2-LST</formatName>
             <text>Import SLSTR L2 LST Product...</text>
             <mnemonic>S</mnemonic>
-            <shortDescr>Import a SLSTR L2 LST data product or product subset.</shortDescr>
-            <description>Import a Sentinel 3 SLSTR L2 LST data product or product subset.</description>
+            <shortDescr>Import an SLSTR L2 LST data product or product subset.</shortDescr>
+            <description>Import a Sentinel-3 SLSTR L2 LST data product or product subset.</description>
             <helpId>importS3SlstrL2LSTProduct</helpId>
         </action>
         <action>
@@ -67,8 +67,8 @@
             <formatName>SLSTR-L2-SST</formatName>
             <text>Import SLSTR L2 SST Product...</text>
             <mnemonic>S</mnemonic>
-            <shortDescr>Import a SLSTR L2 SST data product or product subset.</shortDescr>
-            <description>Import a Sentinel 3 SLSTR L2 SST data product or product subset.</description>
+            <shortDescr>Import an SLSTR L2 SST data product or product subset.</shortDescr>
+            <description>Import a Sentinel-3 SLSTR L2 SST data product or product subset.</description>
             <helpId>importS3SlstrL2SSTProduct</helpId>
         </action>
         <action>

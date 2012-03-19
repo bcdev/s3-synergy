@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  */
 public class OlciLevel1ProductReaderPlugIn implements ProductReaderPlugIn {
 
-    public static final String FORMAT_NAME_OLCI_L1B = "OLCI-L1b";
+    public static final String FORMAT_NAME_OLCI_L1B = "OLCI-L1B";
 
     private static final Class[] SUPPORTED_INPUT_TYPES = new Class[]{String.class, File.class};
     private static final String DESCRIPTION = "OLCI L1b Format";
