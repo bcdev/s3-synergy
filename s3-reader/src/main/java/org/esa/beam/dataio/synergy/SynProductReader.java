@@ -71,7 +71,7 @@ abstract class SynProductReader extends AbstractProductReader {
     protected void attachTiePointData(Band sourceBand, Product targetProduct) {
     }
 
-    protected void attachGeoCoding(Manifest manifest, Product targetProduct) throws IOException {
+    protected void attachGeoCoding(Product targetProduct) throws IOException {
     }
 
     private Product createProduct(Manifest manifest) throws IOException {
@@ -101,7 +101,7 @@ abstract class SynProductReader extends AbstractProductReader {
         }
 
         attachData(targetProduct);
-        attachGeoCoding(manifest, targetProduct);
+        attachGeoCoding(targetProduct);
 
         final MetadataElement globalAttributes = new MetadataElement("Global_Attributes");
         final MetadataElement variableAttributes = new MetadataElement("Variable_Attributes");

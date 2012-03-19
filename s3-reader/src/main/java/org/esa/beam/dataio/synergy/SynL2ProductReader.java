@@ -22,7 +22,6 @@ import org.esa.beam.framework.datamodel.Product;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -52,7 +51,7 @@ public class SynL2ProductReader extends SynProductReader {
     }
 
     @Override
-    protected void attachGeoCoding(Manifest manifest, Product targetProduct) throws IOException {
+    protected void attachGeoCoding(Product targetProduct) throws IOException {
         final List<GeoCoding> geoCodingList = new ArrayList<GeoCoding>();
         for (int i = 1; i <= 5; i++) {
             final String latBandName = "latitude_CAM" + i;
