@@ -77,9 +77,7 @@ private:
 	const Accessor* lonAccessor;
 
     static const int TARGET_PIXELS_PER_DEGREE = 112;
-    static const int SUBSAMPLED_TARGET_PIXELS_PER_DEGREE = 14;
 	static const double DEGREES_PER_TARGET_PIXEL = 1.0 / TARGET_PIXELS_PER_DEGREE;
-	static const double DEGREES_PER_SUBSAMPLED_TARGET_PIXEL = 1.0 / SUBSAMPLED_TARGET_PIXELS_PER_DEGREE;
 };
 
 #endif /* VCO_H_ */
