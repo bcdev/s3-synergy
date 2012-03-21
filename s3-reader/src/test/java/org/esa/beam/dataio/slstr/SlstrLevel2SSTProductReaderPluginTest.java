@@ -31,20 +31,20 @@ import static org.junit.Assert.*;
 public class SlstrLevel2SSTProductReaderPluginTest {
     public static final String SLSTR_SENSOR_ID = "SL";
 
-    private SlstrLevel2SSTProductReaderPlugIn plugIn;
+    private SlstrSstProductReaderPlugIn plugIn;
 
     @Before
     public void setup() {
-        plugIn = new SlstrLevel2SSTProductReaderPlugIn();
+        plugIn = new SlstrSstProductReaderPlugIn();
     }
 
     @Test
     public void testIfPlugInIsLoaded() {
         ProductIOPlugInManager ioPlugInManager = ProductIOPlugInManager.getInstance();
         Iterator<ProductReaderPlugIn> readerPlugIns = ioPlugInManager.getReaderPlugIns(
-                SlstrLevel2SSTProductReaderPlugIn.FORMAT_NAME_SLSTR_L2);
+                SlstrSstProductReaderPlugIn.FORMAT_NAME_SLSTR_SST);
         assertTrue(readerPlugIns.hasNext());
-        assertTrue(readerPlugIns.next() instanceof SlstrLevel2SSTProductReaderPlugIn);
+        assertTrue(readerPlugIns.next() instanceof SlstrSstProductReaderPlugIn);
 
     }
 

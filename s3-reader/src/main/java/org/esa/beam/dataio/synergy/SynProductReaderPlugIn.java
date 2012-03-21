@@ -8,7 +8,7 @@ import java.io.File;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-abstract class SynProductReaderPlugIn implements ProductReaderPlugIn {
+public abstract class SynProductReaderPlugIn implements ProductReaderPlugIn {
 
     private static final Class[] SUPPORTED_INPUT_TYPES = new Class[]{String.class, File.class};
     private static final String[] DEFAULT_FILE_EXTENSIONS = new String[]{".safe", ".xml"};
@@ -26,7 +26,7 @@ abstract class SynProductReaderPlugIn implements ProductReaderPlugIn {
     }
 
     @Override
-    public DecodeQualification getDecodeQualification(Object input) {
+    public final DecodeQualification getDecodeQualification(Object input) {
         if (isInputValid(input)) {
             return DecodeQualification.INTENDED;
         } else {
@@ -35,27 +35,27 @@ abstract class SynProductReaderPlugIn implements ProductReaderPlugIn {
     }
 
     @Override
-    public Class[] getInputTypes() {
+    public final Class[] getInputTypes() {
         return SUPPORTED_INPUT_TYPES;
     }
 
     @Override
-    public String[] getFormatNames() {
+    public final String[] getFormatNames() {
         return formatNames;
     }
 
     @Override
-    public String[] getDefaultFileExtensions() {
+    public final String[] getDefaultFileExtensions() {
         return DEFAULT_FILE_EXTENSIONS;
     }
 
     @Override
-    public String getDescription(Locale locale) {
+    public final String getDescription(Locale locale) {
         return description;
     }
 
     @Override
-    public BeamFileFilter getProductFileFilter() {
+    public final BeamFileFilter getProductFileFilter() {
         return new BeamFileFilter(formatName, DEFAULT_FILE_EXTENSIONS, description);
     }
 

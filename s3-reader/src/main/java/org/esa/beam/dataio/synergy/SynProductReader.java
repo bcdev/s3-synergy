@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-abstract class SynProductReader extends AbstractProductReader {
+public abstract class SynProductReader extends AbstractProductReader {
 
     private final List<Product> openProductList = new ArrayList<Product>();
 
@@ -64,14 +64,16 @@ abstract class SynProductReader extends AbstractProductReader {
 
     protected abstract List<String> getFileNames(Manifest manifest);
 
-    protected void attachBandData(Band sourceBand, Product targetProduct) {
-        ProductUtils.copyBand(sourceBand.getName(), sourceBand.getProduct(), targetProduct, true);
-    }
-
     protected void attachTiePointData(Band sourceBand, Product targetProduct) {
     }
 
     protected void attachGeoCoding(Product targetProduct) throws IOException {
+    }
+
+    protected void configureTargetProduct(Product targetProduct) {
+    }
+
+    protected void configureTargetBand(Band sourceBand, Band targetBand) {
     }
 
     private Product createProduct(Manifest manifest) throws IOException {
@@ -95,6 +97,7 @@ abstract class SynProductReader extends AbstractProductReader {
             targetProduct.setEndTime(endTime);
         }
         targetProduct.setFileLocation(getInputFile());
+        configureTargetProduct(targetProduct);
 
         if (sourceProduct.getGeoCoding() instanceof CrsGeoCoding) {
             ProductUtils.copyGeoCoding(sourceProduct, targetProduct);
@@ -116,6 +119,39 @@ abstract class SynProductReader extends AbstractProductReader {
         targetProduct.getMetadataRoot().addElement(variableAttributes);
 
         return targetProduct;
+    }
+
+    private void attachData(Product targetProduct) {
+        final int w = targetProduct.getSceneRasterWidth();
+        final int h = targetProduct.getSceneRasterHeight();
+
+        final StringBuilder patternBuilder;
+        if (targetProduct.getAutoGrouping() == null) {
+            patternBuilder = new StringBuilder();
+        } else {
+            patternBuilder = new StringBuilder(targetProduct.getAutoGrouping().toString());
+        }
+        for (final Product sourceProduct : openProductList) {
+            if (sourceProduct.getAutoGrouping() != null) {
+                if (patternBuilder.length() > 0) {
+                    patternBuilder.append(":");
+                }
+                patternBuilder.append(sourceProduct.getAutoGrouping());
+            }
+            for (final Band sourceBand : sourceProduct.getBands()) {
+                if (sourceBand.getSceneRasterWidth() == w && sourceBand.getSceneRasterHeight() == h) {
+                    final Band targetBand = attachBandData(sourceBand, targetProduct);
+                    configureTargetBand(sourceBand, targetBand);
+                } else {
+                    attachTiePointData(sourceBand, targetProduct);
+                }
+            }
+        }
+        targetProduct.setAutoGrouping(patternBuilder.toString());
+    }
+
+    private Band attachBandData(Band sourceBand, Product targetProduct) {
+        return ProductUtils.copyBand(sourceBand.getName(), sourceBand.getProduct(), targetProduct, true);
     }
 
     private void readProducts(List<String> fileNames) throws IOException {
@@ -142,29 +178,6 @@ abstract class SynProductReader extends AbstractProductReader {
 
     private File getInputFileParentDirectory() {
         return getInputFile().getParentFile();
-    }
-
-    private void attachData(Product product) {
-        final int w = product.getSceneRasterWidth();
-        final int h = product.getSceneRasterHeight();
-
-        final StringBuilder patternBuilder = new StringBuilder();
-        for (final Product childProduct : openProductList) {
-            if (childProduct.getAutoGrouping() != null) {
-                if (patternBuilder.length() > 0) {
-                    patternBuilder.append(":");
-                }
-                patternBuilder.append(childProduct.getAutoGrouping());
-            }
-            for (final Band band : childProduct.getBands()) {
-                if (band.getSceneRasterWidth() == w && band.getSceneRasterHeight() == h) {
-                    attachBandData(band, product);
-                } else {
-                    attachTiePointData(band, product);
-                }
-            }
-        }
-        product.setAutoGrouping(patternBuilder.toString());
     }
 
     private String getProductName() {

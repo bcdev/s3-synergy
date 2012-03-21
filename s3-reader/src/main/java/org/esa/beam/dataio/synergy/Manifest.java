@@ -33,7 +33,7 @@ import java.util.List;
  * @author Ralf Quast
  * @since 1.0
  */
-class Manifest {
+public class Manifest {
 
     private final Document doc;
     private final XPathHelper xPathHelper;
