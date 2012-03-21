@@ -433,10 +433,10 @@ void Vpr::setTpLatBounds(Context& context) const {
 
 	for (int m = 0; m < g.getSizeM(); m += 2) {
 		const size_t index = g.getIndex(0, 0, m);
-		const double lat = getTargetLat(m / 2);
+		const double lat = getSubsampledTargetLat(m / 2);
 
-		a.setDouble(index + 0, lat - DEGREES_PER_SUBSAMPLED_TARGET_PIXEL * 0.5);
-		a.setDouble(index + 1, lat + DEGREES_PER_SUBSAMPLED_TARGET_PIXEL * 0.5);
+		a.setDouble(index + 0, lat - DEGREES_PER_TARGET_PIXEL * 0.5);
+		a.setDouble(index + 1, lat + DEGREES_PER_TARGET_PIXEL * 0.5);
 	}
 }
 
@@ -448,10 +448,10 @@ void Vpr::setTpLonBounds(Context& context) const {
 
 	for (int m = 0; m < g.getSizeM(); m += 2) {
 		const size_t index = g.getIndex(0, 0, m);
-		const double lon = getTargetLon(m / 2);
+		const double lon = getSubsampledTargetLon(m / 2);
 
-		a.setDouble(index + 0, lon - DEGREES_PER_SUBSAMPLED_TARGET_PIXEL * 0.5);
-		a.setDouble(index + 1, lon + DEGREES_PER_SUBSAMPLED_TARGET_PIXEL * 0.5);
+		a.setDouble(index + 0, lon - DEGREES_PER_TARGET_PIXEL * 0.5);
+		a.setDouble(index + 1, lon + DEGREES_PER_TARGET_PIXEL * 0.5);
 	}
 }
 
