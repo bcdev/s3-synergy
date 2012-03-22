@@ -15,11 +15,8 @@
 
 package org.esa.beam.dataio.synergy;
 
+import org.esa.beam.dataio.manifest.ManifestProductReaderPlugIn;
 import org.esa.beam.framework.dataio.ProductReader;
-import org.esa.beam.framework.datamodel.Product;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * PlugIn class which provides an Sentinel-3 Synergy Level-2 product reader to the framework.
@@ -28,7 +25,7 @@ import java.util.List;
  * @author Ralf Quast
  * @since 1.0
  */
-public class SynL2ProductReaderPlugIn extends SynProductReaderPlugIn {
+public class SynL2ProductReaderPlugIn extends ManifestProductReaderPlugIn {
 
     static final String FORMAT_NAME = "S3-SY2";
 

@@ -15,7 +15,7 @@
 
 package org.esa.beam.dataio.slstr;
 
-import org.esa.beam.dataio.synergy.SynProductReaderPlugIn;
+import org.esa.beam.dataio.manifest.ManifestProductReaderPlugIn;
 import org.esa.beam.framework.dataio.ProductReader;
 
 /**
@@ -25,7 +25,7 @@ import org.esa.beam.framework.dataio.ProductReader;
  * @author Ralf Quast
  * @since 1.0
  */
-public class SlstrLstProductReaderPlugIn extends SynProductReaderPlugIn {
+public class SlstrLstProductReaderPlugIn extends ManifestProductReaderPlugIn {
 
     static final String FORMAT_NAME_SLSTR_LST = "SLSTR-L2-LST";
 

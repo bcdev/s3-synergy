@@ -16,12 +16,13 @@
 package org.esa.beam.dataio.slstr;
 
 import com.bc.ceres.glevel.MultiLevelImage;
-import org.esa.beam.dataio.synergy.Manifest;
-import org.esa.beam.dataio.synergy.SynProductReader;
+import org.esa.beam.dataio.manifest.Manifest;
+import org.esa.beam.dataio.manifest.ManifestProductReader;
 import org.esa.beam.framework.dataio.ProductReaderPlugIn;
 import org.esa.beam.framework.datamodel.Band;
 import org.esa.beam.framework.datamodel.MetadataElement;
 import org.esa.beam.framework.datamodel.Product;
+import org.esa.beam.framework.datamodel.RasterDataNode;
 import org.esa.beam.framework.datamodel.TiePointGeoCoding;
 import org.esa.beam.framework.datamodel.TiePointGrid;
 
@@ -36,7 +37,7 @@ import java.util.List;
  * @author Ralf Quast
  * @since 1.0
  */
-public class SlstrSstProductReader extends SynProductReader {
+public class SlstrSstProductReader extends SlstrL2ProductReader {
 
     public SlstrSstProductReader(ProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
@@ -52,52 +53,13 @@ public class SlstrSstProductReader extends SynProductReader {
         fileNames.addAll(manifest.getFileNames("geodeticTiepointCoordinatesSchema"));
         fileNames.addAll(manifest.getFileNames("cartesianTiepointCoordinatesSchema"));
         fileNames.addAll(manifest.getFileNames("nadirSolarViewGeometrySchema"));
+        fileNames.addAll(manifest.getFileNames("meteorologicalDataSchema"));
 
         fileNames.addAll(manifest.getFileNames("nadirFlagsSchema"));
         fileNames.addAll(manifest.getFileNames("nadirIndicesSchema"));
 
         // TODO - time data are provided in a 64-bit variable, so we currently don't use them
-        // TODO - meteo data?
 
         return fileNames;
-    }
-
-    @Override
-    protected void configureTargetProduct(Product targetProduct) {
-        targetProduct.setAutoGrouping("N2_SST_in:N3_SST_in:N3R_SST_in:flags_in:indices_in");
-    }
-
-    @Override
-    protected void configureTargetBand(Band sourceBand, Band targetBand) {
-        targetBand.setName(sourceBand.getProduct().getName() + "_" + sourceBand.getName());
-    }
-
-    @Override
-    protected void attachTiePointData(Band sourceBand, Product targetProduct) {
-        final Product sourceProduct = sourceBand.getProduct();
-        final MetadataElement metadataRoot = sourceProduct.getMetadataRoot();
-        final MetadataElement globalAttributes = metadataRoot.getElement("Global_Attributes");
-        final short[] resolutions = (short[]) globalAttributes.getAttribute("resolution").getDataElems();
-        final MultiLevelImage sourceImage = sourceBand.getGeophysicalImage();
-        final int w = sourceImage.getWidth();
-        final int h = sourceImage.getHeight();
-        final float[] tiePointGridData = sourceImage.getData().getSamples(0, 0, w, h, 0, new float[w * h]);
-
-        final TiePointGrid tiePointGrid = new TiePointGrid(sourceBand.getName(), w, h, -30.0f, 0.0f,
-                                                           resolutions[0] / 1000.0f,
-                                                           resolutions[1] / 1000.0f,
-                                                           tiePointGridData, true);
-        targetProduct.addTiePointGrid(tiePointGrid);
-    }
-
-    @Override
-    protected void attachGeoCoding(Product targetProduct) throws IOException {
-        final TiePointGrid latGrid = targetProduct.getTiePointGrid("latitude");
-        if (latGrid != null) {
-            final TiePointGrid lonGrid = targetProduct.getTiePointGrid("longitude");
-            if (lonGrid != null) {
-                targetProduct.setGeoCoding(new TiePointGeoCoding(latGrid, lonGrid));
-            }
-        }
     }
 }

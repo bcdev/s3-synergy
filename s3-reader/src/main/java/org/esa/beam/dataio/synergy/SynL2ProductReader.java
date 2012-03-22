@@ -15,6 +15,8 @@
 
 package org.esa.beam.dataio.synergy;
 
+import org.esa.beam.dataio.manifest.Manifest;
+import org.esa.beam.dataio.manifest.ManifestProductReader;
 import org.esa.beam.framework.datamodel.Band;
 import org.esa.beam.framework.datamodel.GeoCoding;
 import org.esa.beam.framework.datamodel.PixelGeoCoding;
@@ -31,7 +33,7 @@ import java.util.List;
  * @author Ralf Quast
  * @since 1.0
  */
-public class SynL2ProductReader extends SynProductReader {
+public class SynL2ProductReader extends ManifestProductReader {
 
     public SynL2ProductReader(SynL2ProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
@@ -51,7 +53,7 @@ public class SynL2ProductReader extends SynProductReader {
     }
 
     @Override
-    protected void attachGeoCoding(Product targetProduct) throws IOException {
+    protected void setGeoCoding(Product targetProduct) throws IOException {
         final List<GeoCoding> geoCodingList = new ArrayList<GeoCoding>();
         for (int i = 1; i <= 5; i++) {
             final String latBandName = "latitude_CAM" + i;

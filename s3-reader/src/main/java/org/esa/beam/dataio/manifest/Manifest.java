@@ -13,7 +13,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-package org.esa.beam.dataio.synergy;
+package org.esa.beam.dataio.manifest;
 
 import org.esa.beam.framework.datamodel.ProductData;
 import org.esa.beam.util.XPathHelper;
@@ -68,7 +68,7 @@ public class Manifest {
         return fileNameList;
     }
 
-    private List<String> getFileNames(String objectPath, final String schema, List<String> fileNameList) {
+    public List<String> getFileNames(String objectPath, final String schema, List<String> fileNameList) {
         final NodeList nodeList = xPathHelper.getNodeList(
                 "/XFDU/" + objectPath + "[@repID='" + schema + "']", doc);
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -82,6 +82,11 @@ public class Manifest {
         return fileNameList;
     }
 
+    public String getFileName(final String objectPath, final String schema) {
+        final Node node = xPathHelper.getNode("/XFDU/" + objectPath + "[@repID='" + schema + "']", doc);
+        return xPathHelper.getString("./byteStream/fileLocation/@href", node);
+    }
+
     private ProductData.UTC getTime(final String name) {
         final Node period = xPathHelper.getNode("/XFDU/metadataSection/metadataObject[@ID='acquisitionPeriod']", doc);
         final String time = xPathHelper.getString("//metadataWrap/xmlData/acquisitionPeriod/" + name, period);
@@ -93,40 +98,5 @@ public class Manifest {
         } catch (ParseException ignored) {
             return null;
         }
-    }
-
-    private String getFileName(final String objectPath, final String schema) {
-        final Node node = xPathHelper.getNode("/XFDU/" + objectPath + "[@repID='" + schema + "']", doc);
-        return xPathHelper.getString("./byteStream/fileLocation/@href", node);
-    }
-
-    // used in tests only
-    List<String> getMeasurementFileNames() {
-        return getFileNames("measurementDataSchema");
-    }
-
-    // used in tests only
-    List<String> getTiePointFileNames() {
-        return getFileNames("tiepointsSchema");
-    }
-
-    // used in tests only
-    String getGeoCoordinatesFileName() {
-        return getFileName("metadataSection/metadataObject", "geocoordinatesSchema");
-    }
-
-    // used in tests only
-    String getStatusFlagFileName() {
-        return getFileName("dataObjectSection/dataObject", "statusFlagsSchema");
-    }
-
-    // used in tests only
-    String getTimeFileName() {
-        return getFileName("metadataSection/metadataObject", "timeCoordinatesSchema");
-    }
-
-    // used in tests only
-    List<String> getGeometryFileNames() {
-        return getFileNames("geometryDataSchema");
     }
 }

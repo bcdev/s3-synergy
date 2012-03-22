@@ -1,4 +1,4 @@
-package org.esa.beam.dataio.synergy;
+package org.esa.beam.dataio.manifest;
 
 import org.esa.beam.framework.dataio.DecodeQualification;
 import org.esa.beam.framework.dataio.ProductReaderPlugIn;
@@ -8,7 +8,7 @@ import java.io.File;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-public abstract class SynProductReaderPlugIn implements ProductReaderPlugIn {
+public abstract class ManifestProductReaderPlugIn implements ProductReaderPlugIn {
 
     private static final Class[] SUPPORTED_INPUT_TYPES = new Class[]{String.class, File.class};
     private static final String[] DEFAULT_FILE_EXTENSIONS = new String[]{".safe", ".xml"};
@@ -18,7 +18,7 @@ public abstract class SynProductReaderPlugIn implements ProductReaderPlugIn {
     private final String description;
     private final String[] formatNames;
 
-    protected SynProductReaderPlugIn(String formatName, String directoryNamePattern, String description) {
+    protected ManifestProductReaderPlugIn(String formatName, String directoryNamePattern, String description) {
         this.formatName = formatName;
         this.directoryNamePattern = Pattern.compile(directoryNamePattern);
         this.description = description;

@@ -15,6 +15,7 @@
 
 package org.esa.beam.dataio.synergy;
 
+import org.esa.beam.dataio.manifest.ManifestProductReaderPlugIn;
 import org.esa.beam.framework.dataio.ProductReader;
 
 /**
@@ -24,7 +25,7 @@ import org.esa.beam.framework.dataio.ProductReader;
  * @author Ralf Quast
  * @since 1.0
  */
-public class VgtProductReaderPlugIn extends SynProductReaderPlugIn {
+public class VgtProductReaderPlugIn extends ManifestProductReaderPlugIn {
 
     static final String FORMAT_NAME = "S3-VGT";
 

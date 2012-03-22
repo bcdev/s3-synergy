@@ -15,6 +15,7 @@
 
 package org.esa.beam.dataio.synergy;
 
+import org.esa.beam.dataio.manifest.Manifest;
 import org.esa.beam.framework.datamodel.ProductData;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,7 +69,7 @@ public class VgtManifestTest {
 
     @Test
     public void testGetMeasurementFileNames() {
-        List<String> measurementFiles = manifestTest.getMeasurementFileNames();
+        List<String> measurementFiles = manifestTest.getFileNames("measurementDataSchema");
         assertEquals(4, measurementFiles.size());
         assertEquals("b0.nc", measurementFiles.get(0));
         assertEquals("b2.nc", measurementFiles.get(1));
@@ -78,7 +79,7 @@ public class VgtManifestTest {
 
     @Test
     public void testGetTiePointFileNames() {
-        List<String> tiepointsFiles = manifestTest.getTiePointFileNames();
+        List<String> tiepointsFiles = manifestTest.getFileNames("tiepointsSchema");
         assertEquals(3, tiepointsFiles.size());
         assertEquals("og.nc", tiepointsFiles.get(0));
         assertEquals("wvg.nc", tiepointsFiles.get(1));
@@ -87,19 +88,18 @@ public class VgtManifestTest {
 
     @Test
     public void testGetStatusFlagFileName() {
-        String statusFlagFile = manifestTest.getStatusFlagFileName();
+        String statusFlagFile = manifestTest.getFileName("dataObjectSection/dataObject", "statusFlagsSchema");
         assertNotNull(statusFlagFile);
         assertEquals("sm.nc", statusFlagFile);
     }
 
     @Test
     public void testGetGeometryFileNames() {
-        List<String> geometryFiles = manifestTest.getGeometryFileNames();
+        List<String> geometryFiles = manifestTest.getFileNames("geometryDataSchema");
         assertEquals(4, geometryFiles.size());
         assertEquals("vaa.nc", geometryFiles.get(0));
         assertEquals("vza.nc", geometryFiles.get(1));
         assertEquals("saa.nc", geometryFiles.get(2));
         assertEquals("sza.nc", geometryFiles.get(3));
     }
-
 }

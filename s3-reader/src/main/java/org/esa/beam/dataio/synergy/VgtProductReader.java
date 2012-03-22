@@ -15,6 +15,8 @@
 
 package org.esa.beam.dataio.synergy;
 
+import org.esa.beam.dataio.manifest.Manifest;
+import org.esa.beam.dataio.manifest.ManifestProductReader;
 import org.esa.beam.framework.datamodel.Band;
 import org.esa.beam.framework.datamodel.Product;
 import org.esa.beam.util.ProductUtils;
@@ -34,7 +36,7 @@ import java.util.List;
  * @author Ralf Quast
  * @since 1.0
  */
-public class VgtProductReader extends SynProductReader {
+public class VgtProductReader extends ManifestProductReader {
 
     public VgtProductReader(VgtProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
@@ -53,7 +55,7 @@ public class VgtProductReader extends SynProductReader {
     }
 
     @Override
-    protected void attachTiePointData(Band sourceBand, Product targetProduct) {
+    protected Band addTiePointGrid(Band sourceBand, Product targetProduct) {
         final Band targetBand = targetProduct.addBand(sourceBand.getName(), sourceBand.getDataType());
         ProductUtils.copyRasterDataNodeProperties(sourceBand, targetBand);
         final RenderingHints renderingHints = new RenderingHints(JAI.KEY_BORDER_EXTENDER,
@@ -63,5 +65,6 @@ public class VgtProductReader extends SynProductReader {
         targetBand.setSourceImage(ScaleDescriptor.create(sourceBand.getSourceImage(), 8.0f, 8.0f, 0.0f, 0.0f,
                                                          Interpolation.getInstance(Interpolation.INTERP_BILINEAR),
                                                          renderingHints));
+        return targetBand;
     }
 }

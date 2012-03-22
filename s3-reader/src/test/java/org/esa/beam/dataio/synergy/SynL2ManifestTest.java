@@ -15,6 +15,7 @@
 
 package org.esa.beam.dataio.synergy;
 
+import org.esa.beam.dataio.manifest.Manifest;
 import org.esa.beam.framework.datamodel.ProductData;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,7 +67,7 @@ public class SynL2ManifestTest {
 
     @Test
     public void testGetMeasurementFileNames() {
-        List<String> measurementFiles = manifestTest.getMeasurementFileNames();
+        List<String> measurementFiles = manifestTest.getFileNames("measurementDataSchema");
         assertEquals(34, measurementFiles.size());
         assertEquals("r0400.nc", measurementFiles.get(0));
         assertEquals("r0560.nc", measurementFiles.get(5));
@@ -77,12 +78,13 @@ public class SynL2ManifestTest {
 
     @Test
     public void testGetGeoCoordinatesFileName() {
-        assertEquals("geolocation.nc", manifestTest.getGeoCoordinatesFileName());
+        assertEquals("geolocation.nc",
+                     manifestTest.getFileName("metadataSection/metadataObject", "geocoordinatesSchema"));
     }
 
     @Test
     public void testGetTiepointFileNames() {
-        List<String> tiepointsFiles = manifestTest.getTiePointFileNames();
+        List<String> tiepointsFiles = manifestTest.getFileNames("tiepointsSchema");
         assertEquals(4, tiepointsFiles.size());
         assertEquals("tiepoints_meteo.nc", tiepointsFiles.get(0));
         assertEquals("tiepoints_olci.nc", tiepointsFiles.get(1));
@@ -92,6 +94,6 @@ public class SynL2ManifestTest {
 
     @Test
     public void testGetTimeFileName() {
-        assertEquals("time.nc", manifestTest.getTimeFileName());
+        assertEquals("time.nc", manifestTest.getFileName("metadataSection/metadataObject", "timeCoordinatesSchema"));
     }
 }

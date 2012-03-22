@@ -1,4 +1,4 @@
-package org.esa.beam.dataio.synergy;
+package org.esa.beam.dataio.manifest;
 
 import com.bc.ceres.core.ProgressMonitor;
 import org.esa.beam.framework.dataio.AbstractProductReader;
@@ -9,6 +9,7 @@ import org.esa.beam.framework.datamodel.CrsGeoCoding;
 import org.esa.beam.framework.datamodel.MetadataElement;
 import org.esa.beam.framework.datamodel.Product;
 import org.esa.beam.framework.datamodel.ProductData;
+import org.esa.beam.framework.datamodel.RasterDataNode;
 import org.esa.beam.util.ProductUtils;
 import org.esa.beam.util.io.FileUtils;
 import org.w3c.dom.Document;
@@ -26,13 +27,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class SynProductReader extends AbstractProductReader {
+public abstract class ManifestProductReader extends AbstractProductReader {
 
     private final List<Product> openProductList = new ArrayList<Product>();
 
     private final Logger logger;
 
-    protected SynProductReader(ProductReaderPlugIn readerPlugIn) {
+    protected ManifestProductReader(ProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
         logger = Logger.getLogger(getClass().getSimpleName());
     }
@@ -64,16 +65,30 @@ public abstract class SynProductReader extends AbstractProductReader {
 
     protected abstract List<String> getFileNames(Manifest manifest);
 
-    protected void attachTiePointData(Band sourceBand, Product targetProduct) {
+    protected RasterDataNode addTiePointGrid(Band sourceBand, Product targetProduct) {
+        return null;
     }
 
-    protected void attachGeoCoding(Product targetProduct) throws IOException {
+    protected void setGeoCoding(Product targetProduct) throws IOException {
     }
 
-    protected void configureTargetProduct(Product targetProduct) {
+    protected void configureTargetNode(Band sourceBand, RasterDataNode targetNode) {
     }
 
-    protected void configureTargetBand(Band sourceBand, Band targetBand) {
+    protected void setAutoGrouping(Product[] sourceProducts, Product targetProduct) {
+        final StringBuilder patternBuilder = new StringBuilder();
+        for (final Product sourceProduct : sourceProducts) {
+            if (sourceProduct.getAutoGrouping() != null) {
+                if (patternBuilder.length() > 0) {
+                    patternBuilder.append(":");
+                }
+                patternBuilder.append(sourceProduct.getAutoGrouping());
+            }
+        }
+        targetProduct.setAutoGrouping(patternBuilder.toString());
+    }
+
+    protected void initialize(Product[] sourceProducts, Product targetProduct) {
     }
 
     private Product createProduct(Manifest manifest) throws IOException {
@@ -97,60 +112,53 @@ public abstract class SynProductReader extends AbstractProductReader {
             targetProduct.setEndTime(endTime);
         }
         targetProduct.setFileLocation(getInputFile());
-        configureTargetProduct(targetProduct);
 
         if (sourceProduct.getGeoCoding() instanceof CrsGeoCoding) {
             ProductUtils.copyGeoCoding(sourceProduct, targetProduct);
         }
 
-        attachData(targetProduct);
-        attachGeoCoding(targetProduct);
-
-        final MetadataElement globalAttributes = new MetadataElement("Global_Attributes");
-        final MetadataElement variableAttributes = new MetadataElement("Variable_Attributes");
-        ProductUtils.copyMetadata(sourceProduct.getMetadataRoot().getElement("Global_Attributes"), globalAttributes);
-        globalAttributes.setAttributeString("dataset_name", productName);
         for (final Product p : openProductList) {
+            final MetadataElement productAttributes = new MetadataElement(p.getName());
+            final MetadataElement globalAttributes = new MetadataElement("Global_Attributes");
+            final MetadataElement variableAttributes = new MetadataElement("Variable_Attributes");
+            ProductUtils.copyMetadata(p.getMetadataRoot().getElement("Global_Attributes"), globalAttributes);
             for (final MetadataElement element : p.getMetadataRoot().getElement("Variable_Attributes").getElements()) {
                 variableAttributes.addElement(element.createDeepClone());
             }
+            productAttributes.addElement(globalAttributes);
+            productAttributes.addElement(variableAttributes);
+            targetProduct.getMetadataRoot().addElement(productAttributes);
         }
-        targetProduct.getMetadataRoot().addElement(globalAttributes);
-        targetProduct.getMetadataRoot().addElement(variableAttributes);
+
+        final Product[] sourceProducts = openProductList.toArray(new Product[openProductList.size()]);
+        initialize(sourceProducts, targetProduct);
+        setAutoGrouping(sourceProducts, targetProduct);
+        addDataNodes(targetProduct);
+        setGeoCoding(targetProduct);
 
         return targetProduct;
     }
 
-    private void attachData(Product targetProduct) {
+    private void addDataNodes(Product targetProduct) {
         final int w = targetProduct.getSceneRasterWidth();
         final int h = targetProduct.getSceneRasterHeight();
 
-        final StringBuilder patternBuilder;
-        if (targetProduct.getAutoGrouping() == null) {
-            patternBuilder = new StringBuilder();
-        } else {
-            patternBuilder = new StringBuilder(targetProduct.getAutoGrouping().toString());
-        }
         for (final Product sourceProduct : openProductList) {
-            if (sourceProduct.getAutoGrouping() != null) {
-                if (patternBuilder.length() > 0) {
-                    patternBuilder.append(":");
-                }
-                patternBuilder.append(sourceProduct.getAutoGrouping());
-            }
             for (final Band sourceBand : sourceProduct.getBands()) {
+                final RasterDataNode targetNode;
                 if (sourceBand.getSceneRasterWidth() == w && sourceBand.getSceneRasterHeight() == h) {
-                    final Band targetBand = attachBandData(sourceBand, targetProduct);
-                    configureTargetBand(sourceBand, targetBand);
+                    targetNode = addBand(sourceBand, targetProduct);
                 } else {
-                    attachTiePointData(sourceBand, targetProduct);
+                    targetNode = addTiePointGrid(sourceBand, targetProduct);
+                }
+                if (targetNode != null) {
+                    configureTargetNode(sourceBand, targetNode);
                 }
             }
         }
-        targetProduct.setAutoGrouping(patternBuilder.toString());
     }
 
-    private Band attachBandData(Band sourceBand, Product targetProduct) {
+    private Band addBand(Band sourceBand, Product targetProduct) {
         return ProductUtils.copyBand(sourceBand.getName(), sourceBand.getProduct(), targetProduct, true);
     }
 
