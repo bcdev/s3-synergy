@@ -55,9 +55,8 @@ public class VgtProductReader extends ManifestProductReader {
     }
 
     @Override
-    protected Band addTiePointGrid(Band sourceBand, Product targetProduct) {
-        final Band targetBand = targetProduct.addBand(sourceBand.getName(), sourceBand.getDataType());
-        ProductUtils.copyRasterDataNodeProperties(sourceBand, targetBand);
+    protected Band addSpecialNode(Band sourceBand, Product targetProduct) {
+        final Band targetBand = copyBand(sourceBand, targetProduct, false);
         final RenderingHints renderingHints = new RenderingHints(JAI.KEY_BORDER_EXTENDER,
                                                                  BorderExtender.createInstance(
                                                                          BorderExtender.BORDER_COPY));

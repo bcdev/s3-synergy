@@ -30,7 +30,7 @@ import java.util.List;
  * @author Ralf Quast
  * @since 1.0
  */
-public class SlstrLstProductReader extends SlstrL2ProductReader {
+public class SlstrLstProductReader extends SlstrLevel2ProductReader {
 
     public SlstrLstProductReader(ProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);

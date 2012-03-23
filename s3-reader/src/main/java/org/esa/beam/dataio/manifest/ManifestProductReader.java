@@ -10,6 +10,7 @@ import org.esa.beam.framework.datamodel.MetadataElement;
 import org.esa.beam.framework.datamodel.Product;
 import org.esa.beam.framework.datamodel.ProductData;
 import org.esa.beam.framework.datamodel.RasterDataNode;
+import org.esa.beam.framework.datamodel.TiePointGrid;
 import org.esa.beam.util.ProductUtils;
 import org.esa.beam.util.io.FileUtils;
 import org.w3c.dom.Document;
@@ -17,6 +18,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -36,6 +38,34 @@ public abstract class ManifestProductReader extends AbstractProductReader {
     protected ManifestProductReader(ProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
         logger = Logger.getLogger(getClass().getSimpleName());
+    }
+
+    protected static Band copyBand(Band sourceBand, Product targetProduct, boolean copySourceImage) {
+        return ProductUtils.copyBand(sourceBand.getName(), sourceBand.getProduct(), targetProduct, copySourceImage);
+    }
+
+    protected static TiePointGrid copyBand(Band sourceBand, Product targetProduct, int subSamplingX, int subSamplingY,
+                                           float offsetX, float offsetY) {
+        final RenderedImage sourceImage = sourceBand.getGeophysicalImage();
+        final int w = sourceImage.getWidth();
+        final int h = sourceImage.getHeight();
+        final float[] tiePoints = sourceImage.getData().getSamples(0, 0, w, h, 0, new float[w * h]);
+
+        final String unit = sourceBand.getUnit();
+        final TiePointGrid tiePointGrid = new TiePointGrid(sourceBand.getName(), w, h,
+                                                           offsetX,
+                                                           offsetY,
+                                                           subSamplingX,
+                                                           subSamplingY,
+                                                           tiePoints,
+                                                           unit != null && unit.toLowerCase().contains("degree"));
+        final String description = sourceBand.getDescription();
+        tiePointGrid.setDescription(description);
+        tiePointGrid.setGeophysicalNoDataValue(sourceBand.getGeophysicalNoDataValue());
+        tiePointGrid.setUnit(unit);
+        targetProduct.addTiePointGrid(tiePointGrid);
+
+        return tiePointGrid;
     }
 
     @Override
@@ -65,7 +95,11 @@ public abstract class ManifestProductReader extends AbstractProductReader {
 
     protected abstract List<String> getFileNames(Manifest manifest);
 
-    protected RasterDataNode addTiePointGrid(Band sourceBand, Product targetProduct) {
+    protected Band addBand(Band sourceBand, Product targetProduct) {
+        return copyBand(sourceBand, targetProduct, true);
+    }
+
+    protected RasterDataNode addSpecialNode(Band sourceBand, Product targetProduct) {
         return null;
     }
 
@@ -132,9 +166,9 @@ public abstract class ManifestProductReader extends AbstractProductReader {
 
         final Product[] sourceProducts = openProductList.toArray(new Product[openProductList.size()]);
         initialize(sourceProducts, targetProduct);
-        setAutoGrouping(sourceProducts, targetProduct);
         addDataNodes(targetProduct);
         setGeoCoding(targetProduct);
+        setAutoGrouping(sourceProducts, targetProduct);
 
         return targetProduct;
     }
@@ -149,17 +183,13 @@ public abstract class ManifestProductReader extends AbstractProductReader {
                 if (sourceBand.getSceneRasterWidth() == w && sourceBand.getSceneRasterHeight() == h) {
                     targetNode = addBand(sourceBand, targetProduct);
                 } else {
-                    targetNode = addTiePointGrid(sourceBand, targetProduct);
+                    targetNode = addSpecialNode(sourceBand, targetProduct);
                 }
                 if (targetNode != null) {
                     configureTargetNode(sourceBand, targetNode);
                 }
             }
         }
-    }
-
-    private Band addBand(Band sourceBand, Product targetProduct) {
-        return ProductUtils.copyBand(sourceBand.getName(), sourceBand.getProduct(), targetProduct, true);
     }
 
     private void readProducts(List<String> fileNames) throws IOException {

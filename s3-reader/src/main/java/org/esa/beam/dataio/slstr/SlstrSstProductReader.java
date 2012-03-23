@@ -15,18 +15,12 @@
 
 package org.esa.beam.dataio.slstr;
 
-import com.bc.ceres.glevel.MultiLevelImage;
 import org.esa.beam.dataio.manifest.Manifest;
-import org.esa.beam.dataio.manifest.ManifestProductReader;
 import org.esa.beam.framework.dataio.ProductReaderPlugIn;
 import org.esa.beam.framework.datamodel.Band;
-import org.esa.beam.framework.datamodel.MetadataElement;
 import org.esa.beam.framework.datamodel.Product;
-import org.esa.beam.framework.datamodel.RasterDataNode;
-import org.esa.beam.framework.datamodel.TiePointGeoCoding;
 import org.esa.beam.framework.datamodel.TiePointGrid;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +31,7 @@ import java.util.List;
  * @author Ralf Quast
  * @since 1.0
  */
-public class SlstrSstProductReader extends SlstrL2ProductReader {
+public class SlstrSstProductReader extends SlstrLevel2ProductReader {
 
     public SlstrSstProductReader(ProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
@@ -57,6 +51,13 @@ public class SlstrSstProductReader extends SlstrL2ProductReader {
 
         fileNames.addAll(manifest.getFileNames("nadirFlagsSchema"));
         fileNames.addAll(manifest.getFileNames("nadirIndicesSchema"));
+
+        fileNames.addAll(manifest.getFileNames("D2_SST_schema"));
+        fileNames.addAll(manifest.getFileNames("D3R_SST_schema"));
+        fileNames.addAll(manifest.getFileNames("D3_SST_schema"));
+
+        fileNames.addAll(manifest.getFileNames("obliqueFlagsSchema"));
+        fileNames.addAll(manifest.getFileNames("obliqueIndicesSchema"));
 
         // TODO - time data are provided in a 64-bit variable, so we currently don't use them
 
