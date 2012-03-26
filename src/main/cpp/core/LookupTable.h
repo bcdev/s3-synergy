@@ -277,8 +277,7 @@ matrix<W>& LookupTableImpl<T, W>::getMatrix(const W coordinates[], matrix<W>& ma
 			}
 		}
 	}
-	for (size_t i = 0; i < rowCount; ++i) {
-		const size_t l = i * colCount;
+	for (size_t i = 0, l = 0; i < rowCount; ++i, l += colCount) {
 		for (size_t k = 0; k < colCount; ++k) {
 			matrix(i, k) = w[l + k] * scaleFactor + addOffset;
 		}
