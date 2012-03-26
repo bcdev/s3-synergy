@@ -22,7 +22,7 @@ import java.awt.RenderingHints;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 
-public abstract class SlstrLevel2ProductReader extends ManifestProductReader {
+abstract class SlstrLevel2ProductReader extends ManifestProductReader {
 
     private double nadStartOffset;
     private double nadTrackOffset;

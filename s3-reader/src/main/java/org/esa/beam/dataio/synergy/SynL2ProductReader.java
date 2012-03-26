@@ -33,9 +33,9 @@ import java.util.List;
  * @author Ralf Quast
  * @since 1.0
  */
-public class SynL2ProductReader extends ManifestProductReader {
+class SynL2ProductReader extends ManifestProductReader {
 
-    public SynL2ProductReader(SynL2ProductReaderPlugIn readerPlugIn) {
+    SynL2ProductReader(SynL2ProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
     }
 

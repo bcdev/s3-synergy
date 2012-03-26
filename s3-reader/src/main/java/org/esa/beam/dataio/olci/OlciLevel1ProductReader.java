@@ -77,7 +77,7 @@ class OlciLevel1ProductReader extends AbstractProductReader {
     private List<Product> bandProducts;
     private List<Product> annotationProducts;
 
-    protected OlciLevel1ProductReader(OlciLevel1ProductReaderPlugIn readerPlugIn) {
+    OlciLevel1ProductReader(OlciLevel1ProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
         logger = Logger.getLogger(getClass().getSimpleName());
     }

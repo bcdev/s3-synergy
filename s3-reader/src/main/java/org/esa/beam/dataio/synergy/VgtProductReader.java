@@ -36,9 +36,9 @@ import java.util.List;
  * @author Ralf Quast
  * @since 1.0
  */
-public class VgtProductReader extends ManifestProductReader {
+class VgtProductReader extends ManifestProductReader {
 
-    public VgtProductReader(VgtProductReaderPlugIn readerPlugIn) {
+    VgtProductReader(VgtProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
     }
 

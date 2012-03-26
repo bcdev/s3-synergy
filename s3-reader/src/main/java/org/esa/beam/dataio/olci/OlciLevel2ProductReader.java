@@ -36,7 +36,7 @@ import java.util.Properties;
  * @author Ralf Quast
  * @since 1.0
  */
-public class OlciLevel2ProductReader extends ManifestProductReader {
+class OlciLevel2ProductReader extends ManifestProductReader {
 
     private static final float[] spectralWavelengths = new float[21];
     private static final float[] spectralBandwidths = new float[21];
@@ -64,7 +64,7 @@ public class OlciLevel2ProductReader extends ManifestProductReader {
         }
     }
 
-    public OlciLevel2ProductReader(OlciLevel2ProductReaderPlugIn readerPlugIn) {
+    OlciLevel2ProductReader(OlciLevel2ProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
     }
 
