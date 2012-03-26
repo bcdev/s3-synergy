@@ -27,10 +27,10 @@ import org.esa.beam.framework.dataio.ProductReader;
  */
 public class SlstrSstProductReaderPlugIn extends ManifestProductReaderPlugIn {
 
-    static final String FORMAT_NAME_SLSTR_SST = "SLSTR-L2-SST";
+    static final String FORMAT_NAME = "SLSTR-L2-SST";
 
     public SlstrSstProductReaderPlugIn() {
-        super(FORMAT_NAME_SLSTR_SST, "S3.?_SL_2_W..._.*.SAFE", "Sentinel-3 SLSTR SST product");
+        super(FORMAT_NAME, "Sentinel-3 SLSTR SST product", "S3.?_SL_2_W..._.*.SAFE", "manifest", ".safe", ".xml");
     }
 
     @Override

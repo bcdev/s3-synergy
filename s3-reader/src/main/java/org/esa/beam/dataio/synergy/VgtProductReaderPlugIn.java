@@ -30,7 +30,7 @@ public class VgtProductReaderPlugIn extends ManifestProductReaderPlugIn {
     static final String FORMAT_NAME = "S3-VGT";
 
     public VgtProductReaderPlugIn() {
-        super(FORMAT_NAME, "S3.?_SY_[23]_VG[PS]_.*.SAFE", "Sentinel-3 VGT products");
+        super(FORMAT_NAME, "Sentinel-3 VGT products", "S3.?_SY_[23]_VG[PS]_.*.SAFE", "manifest", ".safe", ".xml");
     }
 
     @Override

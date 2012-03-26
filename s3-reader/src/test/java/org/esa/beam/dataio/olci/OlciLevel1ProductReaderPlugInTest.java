@@ -15,8 +15,6 @@
 
 package org.esa.beam.dataio.olci;
 
-import org.esa.beam.dataio.olci.OlciL1bModes;
-import org.esa.beam.dataio.olci.OlciLevel1ProductReaderPlugIn;
 import org.esa.beam.framework.dataio.DecodeQualification;
 import org.esa.beam.framework.dataio.ProductIOPlugInManager;
 import org.esa.beam.framework.dataio.ProductReader;
@@ -42,7 +40,7 @@ public class OlciLevel1ProductReaderPlugInTest {
     public void testIfPlugInIsLoaded() {
         ProductIOPlugInManager ioPlugInManager = ProductIOPlugInManager.getInstance();
         Iterator<ProductReaderPlugIn> readerPlugIns = ioPlugInManager.getReaderPlugIns(
-                OlciLevel1ProductReaderPlugIn.FORMAT_NAME_OLCI_L1B);
+                OlciLevel1ProductReaderPlugIn.FORMAT_NAME);
         assertTrue(readerPlugIns.hasNext());
         assertTrue(readerPlugIns.next() instanceof OlciLevel1ProductReaderPlugIn);
 

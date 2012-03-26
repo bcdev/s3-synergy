@@ -20,11 +20,13 @@ import org.esa.beam.util.BitSetter;
 
 /**
  * Class providing the flag codings in an SLSTR L2 LND_LST or SST_WCT data product.
+ * TODO - delete this class, it shall not be used because flags shall be read from input data.
  *
  * @author Olaf Danne
  * @since 1.0
  */
-public class SlstrFlagCodings {
+class SlstrFlagCodings {
+
     protected static final String CLOUD_FLAG_BAND_NAME = "cloud";
     protected static final String BAYES_FLAG_BAND_NAME = "bayes";
     protected static final String POINTING_FLAG_BAND_NAME = "pointing";
@@ -104,12 +106,18 @@ public class SlstrFlagCodings {
 
     protected static FlagCoding createPointingFlagCoding() {
         FlagCoding flagCoding = new FlagCoding(POINTING_FLAG_BAND_NAME);
-        flagCoding.addFlag("POINTING_FLIP_MIRROR_ABSOLUTE_ERROR", BitSetter.setFlag(0, POINTING_FLIP_MIRROR_ABSOLUTE_ERROR), null);
-        flagCoding.addFlag("POINTING_FLIP_MIRROR_INTEGRATED_ERROR", BitSetter.setFlag(0, POINTING_FLIP_MIRROR_INTEGRATED_ERROR), null);
-        flagCoding.addFlag("POINTING_FLIP_MIRROR_RMS_ERROR", BitSetter.setFlag(0, POINTING_FLIP_MIRROR_RMS_ERROR), null);
-        flagCoding.addFlag("POINTING_SCAN_MIRROR_ABSOLUTE_ERROR", BitSetter.setFlag(0, POINTING_SCAN_MIRROR_ABSOLUTE_ERROR), null);
-        flagCoding.addFlag("POINTING_SCAN_MIRROR_INTEGRATED_ERROR", BitSetter.setFlag(0, POINTING_SCAN_MIRROR_INTEGRATED_ERROR), null);
-        flagCoding.addFlag("POINTING_SCAN_MIRROR_RMS_ERROR", BitSetter.setFlag(0, POINTING_SCAN_MIRROR_RMS_ERROR), null);
+        flagCoding.addFlag("POINTING_FLIP_MIRROR_ABSOLUTE_ERROR",
+                           BitSetter.setFlag(0, POINTING_FLIP_MIRROR_ABSOLUTE_ERROR), null);
+        flagCoding.addFlag("POINTING_FLIP_MIRROR_INTEGRATED_ERROR",
+                           BitSetter.setFlag(0, POINTING_FLIP_MIRROR_INTEGRATED_ERROR), null);
+        flagCoding.addFlag("POINTING_FLIP_MIRROR_RMS_ERROR", BitSetter.setFlag(0, POINTING_FLIP_MIRROR_RMS_ERROR),
+                           null);
+        flagCoding.addFlag("POINTING_SCAN_MIRROR_ABSOLUTE_ERROR",
+                           BitSetter.setFlag(0, POINTING_SCAN_MIRROR_ABSOLUTE_ERROR), null);
+        flagCoding.addFlag("POINTING_SCAN_MIRROR_INTEGRATED_ERROR",
+                           BitSetter.setFlag(0, POINTING_SCAN_MIRROR_INTEGRATED_ERROR), null);
+        flagCoding.addFlag("POINTING_SCAN_MIRROR_RMS_ERROR", BitSetter.setFlag(0, POINTING_SCAN_MIRROR_RMS_ERROR),
+                           null);
         flagCoding.addFlag("POINTING_SCAN_TIME_ERROR", BitSetter.setFlag(0, POINTING_SCAN_TIME_ERROR), null);
         flagCoding.addFlag("POINTING_PLATFORM_MODE", BitSetter.setFlag(0, POINTING_PLATFORM_MODE), null);
 

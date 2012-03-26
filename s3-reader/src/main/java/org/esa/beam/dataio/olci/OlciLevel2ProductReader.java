@@ -104,7 +104,7 @@ public class OlciLevel2ProductReader extends AbstractProductReader {
         measurementProducts = loadMeasurementProducts(manifest.getMeasurementFileNames());
         int width = measurementProducts.get(0).getSceneRasterWidth();
         int height = measurementProducts.get(0).getSceneRasterHeight();
-        Product product = new Product(getProductName(), OlciLevel2ProductReaderPlugIn.FORMAT_NAME_OLCI_L2, width,
+        Product product = new Product(getProductName(), OlciLevel2ProductReaderPlugIn.FORMAT_NAME, width,
                                       height, this);
         product.setStartTime(manifest.getStartTime());
         product.setEndTime(manifest.getStopTime());

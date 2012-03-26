@@ -30,7 +30,7 @@ public class SynL2ProductReaderPlugIn extends ManifestProductReaderPlugIn {
     static final String FORMAT_NAME = "S3-SY2";
 
     public SynL2ProductReaderPlugIn() {
-        super(FORMAT_NAME, "S3.?_SY_2_SYN_.*.SAFE", "Sentinel-3 Synergy Level-2 products");
+        super(FORMAT_NAME, "Sentinel-3 Synergy Level-2 products", "S3.?_SY_2_SYN_.*.SAFE", "manifest", ".safe", ".xml");
     }
 
     @Override

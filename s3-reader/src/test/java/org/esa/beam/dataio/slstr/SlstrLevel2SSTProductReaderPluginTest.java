@@ -42,7 +42,7 @@ public class SlstrLevel2SSTProductReaderPluginTest {
     public void testIfPlugInIsLoaded() {
         ProductIOPlugInManager ioPlugInManager = ProductIOPlugInManager.getInstance();
         Iterator<ProductReaderPlugIn> readerPlugIns = ioPlugInManager.getReaderPlugIns(
-                SlstrSstProductReaderPlugIn.FORMAT_NAME_SLSTR_SST);
+                SlstrSstProductReaderPlugIn.FORMAT_NAME);
         assertTrue(readerPlugIns.hasNext());
         assertTrue(readerPlugIns.next() instanceof SlstrSstProductReaderPlugIn);
 

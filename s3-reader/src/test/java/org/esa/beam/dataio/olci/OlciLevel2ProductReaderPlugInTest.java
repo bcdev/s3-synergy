@@ -15,7 +15,6 @@
 
 package org.esa.beam.dataio.olci;
 
-import org.esa.beam.dataio.olci.OlciLevel2ProductReaderPlugIn;
 import org.esa.beam.framework.dataio.DecodeQualification;
 import org.esa.beam.framework.dataio.ProductIOPlugInManager;
 import org.esa.beam.framework.dataio.ProductReader;
@@ -43,7 +42,7 @@ public class OlciLevel2ProductReaderPlugInTest {
     public void testIfPlugInIsLoaded() {
         ProductIOPlugInManager ioPlugInManager = ProductIOPlugInManager.getInstance();
         Iterator<ProductReaderPlugIn> readerPlugIns = ioPlugInManager.getReaderPlugIns(
-                OlciLevel2ProductReaderPlugIn.FORMAT_NAME_OLCI_L2);
+                OlciLevel2ProductReaderPlugIn.FORMAT_NAME);
         assertTrue(readerPlugIns.hasNext());
         assertTrue(readerPlugIns.next() instanceof OlciLevel2ProductReaderPlugIn);
 
