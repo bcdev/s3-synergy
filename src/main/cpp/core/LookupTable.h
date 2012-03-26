@@ -213,8 +213,9 @@ valarray<W>& LookupTableImpl<T, W>::getVector(const W coordinates[], valarray<W>
 	}
 	for (size_t i = 0; i < vertexCount; ++i) {
 		const size_t l = i * length;
+		const size_t m = origin + offsets[i];
 		for (size_t j = 0; j < length; ++j) {
-			w[l + j] = (W) y[origin + offsets[i] + j];
+			w[l + j] = (W) y[m + j];
 		}
 	}
 	for (size_t i = r; i-- > 0;) {
@@ -261,8 +262,9 @@ matrix<W>& LookupTableImpl<T, W>::getMatrix(const W coordinates[], matrix<W>& ma
 	}
 	for (size_t i = 0; i < vertexCount; ++i) {
 		const size_t l = i * elementCount;
+		const size_t m = origin + offsets[i];
 		for (size_t j = 0; j < elementCount; ++j) {
-			w[l + j] = (W) y[origin + offsets[i] + j];
+			w[l + j] = (W) y[m + j];
 		}
 	}
 	for (size_t i = r; i-- > 0;) {

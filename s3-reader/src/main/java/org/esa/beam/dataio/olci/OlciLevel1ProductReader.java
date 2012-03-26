@@ -137,14 +137,14 @@ class OlciLevel1ProductReader extends AbstractProductReader {
         }
         if (product.getTiePointGrid("TP_latitude") != null && product.getTiePointGrid("TP_longitude") != null) {
             product.setGeoCoding(new TiePointGeoCoding(product.getTiePointGrid("TP_latitude"),
-                    product.getTiePointGrid("TP_longitude")));
+                                                       product.getTiePointGrid("TP_longitude")));
         }
     }
 
     private void attachFlagCodingToProduct(List<Product> annotationProducts, Product product) {
         for (Product annotationProduct : annotationProducts) {
             if (annotationProduct.getFlagCodingGroup().getNodeCount() > 0) {
-                ProductUtils.copyFlagBands(annotationProduct, product);
+                ProductUtils.copyFlagBands(annotationProduct, product, false);
             }
         }
     }
@@ -190,8 +190,7 @@ class OlciLevel1ProductReader extends AbstractProductReader {
             for (final Band sourceBand : bandProduct.getBands()) {
                 if (hasSameRasterDimension(product, bandProduct)) {
                     String bandName = sourceBand.getName();
-                    Band targetBand = ProductUtils.copyBand(bandName, bandProduct, product);
-                    targetBand.setSourceImage(sourceBand.getSourceImage());
+                    Band targetBand = ProductUtils.copyBand(bandName, bandProduct, product, true);
                     if (bandName.matches("TOA_radiances_Oa[0-2][0-9]")) {
                         final int channel = Integer.parseInt(bandName.substring(16, 18));
                         targetBand.setSpectralBandIndex(channel - 1);
