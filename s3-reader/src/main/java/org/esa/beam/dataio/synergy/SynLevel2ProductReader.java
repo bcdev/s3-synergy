@@ -19,7 +19,6 @@ import org.esa.beam.dataio.manifest.Manifest;
 import org.esa.beam.dataio.manifest.ManifestProductReader;
 import org.esa.beam.framework.datamodel.Band;
 import org.esa.beam.framework.datamodel.GeoCoding;
-import org.esa.beam.framework.datamodel.MetadataElement;
 import org.esa.beam.framework.datamodel.PixelGeoCoding;
 import org.esa.beam.framework.datamodel.Product;
 import org.esa.beam.framework.datamodel.RasterDataNode;
@@ -35,9 +34,9 @@ import java.util.List;
  * @author Ralf Quast
  * @since 1.0
  */
-class SynL2ProductReader extends ManifestProductReader {
+class SynLevel2ProductReader extends ManifestProductReader {
 
-    SynL2ProductReader(SynL2ProductReaderPlugIn readerPlugIn) {
+    SynLevel2ProductReader(SynLevel2ProductReaderPlugIn readerPlugIn) {
         super(readerPlugIn);
     }
 

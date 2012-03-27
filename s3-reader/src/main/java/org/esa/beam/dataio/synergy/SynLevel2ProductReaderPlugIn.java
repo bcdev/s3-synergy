@@ -25,16 +25,16 @@ import org.esa.beam.framework.dataio.ProductReader;
  * @author Ralf Quast
  * @since 1.0
  */
-public class SynL2ProductReaderPlugIn extends ManifestProductReaderPlugIn {
+public class SynLevel2ProductReaderPlugIn extends ManifestProductReaderPlugIn {
 
     static final String FORMAT_NAME = "S3-SY2";
 
-    public SynL2ProductReaderPlugIn() {
+    public SynLevel2ProductReaderPlugIn() {
         super(FORMAT_NAME, "Sentinel-3 Synergy Level-2 products", "S3.?_SY_2_SYN_.*.SAFE", "manifest", ".safe", ".xml");
     }
 
     @Override
     public ProductReader createReaderInstance() {
-        return new SynL2ProductReader(this);
+        return new SynLevel2ProductReader(this);
     }
 }

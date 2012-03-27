@@ -222,12 +222,12 @@ public abstract class ManifestProductReader extends AbstractProductReader {
         return FileUtils.getFilenameWithoutExtension(getInputFileParentDirectory());
     }
 
-    private Manifest createManifestFile(File inputFile) throws IOException {
-        final InputStream manifestInputStream = new FileInputStream(inputFile);
+    private Manifest createManifestFile(File file) throws IOException {
+        final InputStream inputStream = new FileInputStream(file);
         try {
-            return Manifest.createManifest(createXmlDocument(manifestInputStream));
+            return Manifest.createManifest(createXmlDocument(inputStream));
         } finally {
-            manifestInputStream.close();
+            inputStream.close();
         }
     }
 
