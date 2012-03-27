@@ -31,7 +31,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class SynL2ManifestTest {
+public class SynLevel2ManifestTest {
 
     private Manifest manifestTest;
 
