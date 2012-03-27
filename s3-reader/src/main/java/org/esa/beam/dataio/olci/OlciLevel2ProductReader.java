@@ -41,7 +41,7 @@ class OlciLevel2ProductReader extends ManifestProductReader {
     private static final float[] spectralWavelengths = new float[21];
     private static final float[] spectralBandwidths = new float[21];
 
-    private int spectralBandIndex = 0;
+    private int spectralBandIndex;
 
     static {
         getSpectralBandsProperties(spectralWavelengths, spectralBandwidths);

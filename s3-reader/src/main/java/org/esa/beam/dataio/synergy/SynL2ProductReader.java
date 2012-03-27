@@ -19,8 +19,10 @@ import org.esa.beam.dataio.manifest.Manifest;
 import org.esa.beam.dataio.manifest.ManifestProductReader;
 import org.esa.beam.framework.datamodel.Band;
 import org.esa.beam.framework.datamodel.GeoCoding;
+import org.esa.beam.framework.datamodel.MetadataElement;
 import org.esa.beam.framework.datamodel.PixelGeoCoding;
 import org.esa.beam.framework.datamodel.Product;
+import org.esa.beam.framework.datamodel.RasterDataNode;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,6 +52,11 @@ class SynL2ProductReader extends ManifestProductReader {
         // TODO - meteo data are provided on a different grid, so we currently don't use them
 
         return fileNames;
+    }
+
+    @Override
+    protected void configureTargetNode(Band sourceBand, RasterDataNode targetNode) {
+        // TODO - set spectral band properties
     }
 
     @Override
