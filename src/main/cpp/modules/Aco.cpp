@@ -162,16 +162,16 @@ void Aco::process(Context& context) {
 #pragma omp parallel for
 #endif
 	for (long l = firstL; l <= lastL; l++) {
-		valarray<double> coordinates(10);
+		valarray<double> coordinates(12);
 		valarray<double> tpiWeights(1);
 		valarray<size_t> tpiIndexes(1);
 
-		matrix<double> matRatmOlc(40, 18);
-		matrix<double> matRatmSln(40, 6);
-		matrix<double> matRatmSlo(40, 6);
-		matrix<double> matTs(40, 30);
-		matrix<double> matTv(40, 30);
-		matrix<double> matRho(40, 30);
+		valarray<double> matRatmOlc(18);
+		valarray<double> matRatmSln(6);
+		valarray<double> matRatmSlo(6);
+		valarray<double> matTs(30);
+		valarray<double> matTv(30);
+		valarray<double> matRho(30);
 
 		valarray<double> f(lutOlcRatm.getDimensionCount());
 		valarray<double> w;
@@ -223,16 +223,18 @@ void Aco::process(Context& context) {
 				coordinates[3] = p; // air pressure
 				coordinates[4] = wv; // water vapour
 				coordinates[5] = tau550; // aerosol
+				coordinates[6] = amin; // aerosol model
 
-				coordinates[6] = coordinates[1]; // SZA
-				coordinates[7] = coordinates[3]; // air pressure
-				coordinates[8] = coordinates[4]; // water vapour
-				coordinates[9] = coordinates[5]; // aerosol
+				coordinates[7] = coordinates[1]; // SZA
+				coordinates[8] = coordinates[3]; // air pressure
+				coordinates[9] = coordinates[4]; // water vapour
+				coordinates[10] = coordinates[5]; // aerosol
+				coordinates[11] = coordinates[6]; // aerosol model
 
-				lutOlcRatm.getMatrix(&coordinates[0], matRatmOlc, f, w);
-				lutT.getMatrix(&coordinates[6], matTs, f, w);
-				lutT.getMatrix(&coordinates[2], matTv, f, w);
-				lutRhoAtm.getMatrix(&coordinates[3], matRho, f, w);
+				lutOlcRatm.getVector(&coordinates[0], matRatmOlc, f, w);
+				lutT.getVector(&coordinates[7], matTs, f, w);
+				lutT.getVector(&coordinates[2], matTv, f, w);
+				lutRhoAtm.getVector(&coordinates[3], matRho, f, w);
 
 				for (size_t b = 0; b < 18; b++) {
 					if (!ltoaAccessors[b]->isFillValue(i)) {
@@ -245,10 +247,10 @@ void Aco::process(Context& context) {
 						tO3[b] = ozoneTransmission(cO3[b], szaOlc, vzaOlc, nO3);
 
 						// Eq. 2-3
-						const double ratm = matRatmOlc(amin - 1, b);
-						ts[b] = matTs(amin - 1, b);
-						tv[b] = matTv(amin - 1, b);
-						const double rho = matRho(amin - 1, b);
+						const double ratm = matRatmOlc[b];
+						ts[b] = matTs[b];
+						tv[b] = matTv[b];
+						const double rho = matRho[b];
 						rboa[b] = surfaceReflectance(rtoa[b], ratm, ts[b], tv[b], rho, tO3[b]);
 
 						if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
@@ -268,12 +270,9 @@ void Aco::process(Context& context) {
 				coordinates[0] = abs(saaOlc - vaaSln); // ADA
 				coordinates[1] = szaOlc; // SZA
 				coordinates[2] = vzaSln; // VZA
-				coordinates[3] = p; // air pressure
-				coordinates[4] = wv; // water vapour
-				coordinates[5] = tau550; // aerosol
 
-				lutSlnRatm.getMatrix(&coordinates[0], matRatmSln, f, w);
-				lutT.getMatrix(&coordinates[2], matTv, f, w);
+				lutSlnRatm.getVector(&coordinates[0], matRatmSln, f, w);
+				lutT.getVector(&coordinates[2], matTv, f, w);
 
 				for (size_t b = 18; b < 24; b++) {
 					if (!ltoaAccessors[b]->isFillValue(i)) {
@@ -286,10 +285,10 @@ void Aco::process(Context& context) {
 						tO3[b] = ozoneTransmission(cO3[b], szaOlc, vzaSln, nO3);
 
 						// Eq. 2-3
-						const double ratm = matRatmSln(amin - 1, b - 18);
-						ts[b] = matTs(amin - 1, b);
-						tv[b] = matTv(amin - 1, b);
-						const double rho = matRho(amin - 1, b);
+						const double ratm = matRatmSln[b - 18];
+						ts[b] = matTs[b];
+						tv[b] = matTv[b];
+						const double rho = matRho[b];
 						rboa[b] = surfaceReflectance(rtoa[b], ratm, ts[b], tv[b], rho, tO3[b]);
 
 						if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
@@ -309,12 +308,9 @@ void Aco::process(Context& context) {
 				coordinates[0] = abs(saaOlc - vaaSlo); // ADA
 				coordinates[1] = szaOlc; // SZA
 				coordinates[2] = vzaSlo; // VZA
-				coordinates[3] = p; // air pressure
-				coordinates[4] = wv; // water vapour
-				coordinates[5] = tau550; // aerosol
 
-				lutSloRatm.getMatrix(&coordinates[0], matRatmSlo, f, w);
-				lutT.getMatrix(&coordinates[2], matTv, f, w);
+				lutSloRatm.getVector(&coordinates[0], matRatmSlo, f, w);
+				lutT.getVector(&coordinates[2], matTv, f, w);
 
 				for (size_t b = 24; b < 30; b++) {
 					if (!ltoaAccessors[b]->isFillValue(i)) {
@@ -327,10 +323,10 @@ void Aco::process(Context& context) {
 						tO3[b] = ozoneTransmission(cO3[b], szaOlc, vzaSlo, nO3);
 
 						// Eq. 2-3
-						const double ratm = matRatmSlo(amin - 1, b - 24);
-						ts[b] = matTs(amin - 1, b);
-						tv[b] = matTv(amin - 1, b);
-						const double rho = matRho(amin - 1, b);
+						const double ratm = matRatmSlo[b - 24];
+						ts[b] = matTs[b];
+						tv[b] = matTv[b];
+						const double rho = matRho[b];
 						rboa[b] = surfaceReflectance(rtoa[b], ratm, ts[b], tv[b], rho, tO3[b]);
 
 						if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
@@ -349,22 +345,22 @@ void Aco::process(Context& context) {
 				coordinates[4] = wv; // water vapour
 				coordinates[5] = 0.8 * tau550; // aerosol
 
-				coordinates[6] = coordinates[1]; // SZA
-				coordinates[7] = coordinates[3]; // air pressure
-				coordinates[8] = coordinates[4]; // water vapour
-				coordinates[9] = coordinates[5]; // aerosol
+				coordinates[7] = coordinates[1]; // SZA
+				coordinates[8] = coordinates[3]; // air pressure
+				coordinates[9] = coordinates[4]; // water vapour
+				coordinates[10] = coordinates[5]; // aerosol
 
-				lutOlcRatm.getMatrix(&coordinates[0], matRatmOlc, f, w);
-				lutT.getMatrix(&coordinates[6], matTs, f, w);
-				lutT.getMatrix(&coordinates[2], matTv, f, w);
-				lutRhoAtm.getMatrix(&coordinates[3], matRho, f, w);
+				lutOlcRatm.getVector(&coordinates[0], matRatmOlc, f, w);
+				lutT.getVector(&coordinates[7], matTs, f, w);
+				lutT.getVector(&coordinates[2], matTv, f, w);
+				lutRhoAtm.getVector(&coordinates[3], matRho, f, w);
 
 				for (size_t b = 0; b < 18; b++) {
 					if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
-						const double ratm = matRatmOlc(amin - 1, b);
-						const double ts1 = matTs(amin - 1, b);
-						const double tv1 = matTv(amin - 1, b);
-						const double rho = matRho(amin - 1, b);
+						const double ratm = matRatmOlc[b];
+						const double ts1 = matTs[b];
+						const double tv1 = matTv[b];
+						const double rho = matRho[b];
 						const double deltaR = rboa[b] - surfaceReflectance(rtoa[b], ratm, ts1, tv1, rho, tO3[b]);
 						const double deltaTau = 0.2 * tau550;
 						const double delta1 = (deltaR / deltaTau) * tau550Err;
@@ -386,15 +382,15 @@ void Aco::process(Context& context) {
 				coordinates[4] = wv; // water vapour
 				coordinates[5] = 0.8 * tau550; // aerosol
 
-				lutSlnRatm.getMatrix(&coordinates[0], matRatmSln, f, w);
-				lutT.getMatrix(&coordinates[2], matTv, f, w);
+				lutSlnRatm.getVector(&coordinates[0], matRatmSln, f, w);
+				lutT.getVector(&coordinates[2], matTv, f, w);
 
 				for (size_t b = 18; b < 24; b++) {
 					if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
-						const double ratm = matRatmSln(amin - 1, b - 18);
-						const double ts1 = matTs(amin - 1, b);
-						const double tv1 = matTv(amin - 1, b);
-						const double rho = matRho(amin - 1, b);
+						const double ratm = matRatmSln[b - 18];
+						const double ts1 = matTs[b];
+						const double tv1 = matTv[b];
+						const double rho = matRho[b];
 						const double deltaR = rboa[b] - surfaceReflectance(rtoa[b], ratm, ts1, tv1, rho, tO3[b]);
 						const double deltaTau = 0.2 * tau550;
 						const double delta1 = (deltaR / deltaTau) * tau550Err;
@@ -413,16 +409,16 @@ void Aco::process(Context& context) {
 				coordinates[4] = wv; // water vapour
 				coordinates[5] = 0.8 * tau550; // aerosol
 
-				lutSloRatm.getMatrix(&coordinates[0], matRatmSlo, f, w);
-				lutT.getMatrix(&coordinates[2], matTv, f, w);
+				lutSloRatm.getVector(&coordinates[0], matRatmSlo, f, w);
+				lutT.getVector(&coordinates[2], matTv, f, w);
 
 				for (size_t b = 24; b < 30; b++) {
 					if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
 						if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
-							const double ratm = matRatmSlo(amin - 1, b - 24);
-							const double ts1 = matTs(amin - 1, b);
-							const double tv1 = matTv(amin - 1, b);
-							const double rho = matRho(amin - 1, b);
+							const double ratm = matRatmSlo[b - 24];
+							const double ts1 = matTs[b];
+							const double tv1 = matTv[b];
+							const double rho = matRho[b];
 							const double deltaR = rboa[b] - surfaceReflectance(rtoa[b], ratm, ts1, tv1, rho, tO3[b]);
 							const double deltaTau = 0.2 * tau550;
 							const double delta1 = (deltaR / deltaTau) * tau550Err;
