@@ -82,12 +82,12 @@ private:
     
     // for atmospheric correction
 	valarray<double> coordinates;
-	matrix<double> matRatmOlc;
-	matrix<double> matRatmSln;
-	matrix<double> matRatmSlo;
-	matrix<double> matTs;
-	matrix<double> matTv;
-	matrix<double> matRho;
+	valarray<double> matRatmOlc;
+	valarray<double> matRatmSln;
+	valarray<double> matRatmSlo;
+	valarray<double> matTs;
+	valarray<double> matTv;
+	valarray<double> matRho;
     valarray<double> diffuseFractions;
 	valarray<double> lutWeights;
 	valarray<double> lutWorkspace;
