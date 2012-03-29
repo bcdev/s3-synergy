@@ -70,9 +70,9 @@ private:
     void addTargetVariables(Context& context);
 
 	void initPixel(Pixel& p, size_t index, size_t geoIndex, valarray<double>& tpiWeights, valarray<size_t>& tpiIndexes);
-	void performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflectances, valarray<double>& coordinates, valarray<double>& f, valarray<double>& w);
+	void performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflectances, valarray<double>& coordinates, valarray<double>& rho, valarray<double>& ratm, valarray<double>& ts, valarray<double>& tv, valarray<double>& f, valarray<double>& w);
 	void performHyperspectralInterpolation(const valarray<double>& synWavelengths, const valarray<double>& synSurfaceReflectances, valarray<double>& hypSurfaceReflectances);
-	void performHyperspectralUpscaling(const valarray<double>& hypSurfaceReflectances, const Pixel& p, valarray<double>& hypToaReflectances, valarray<double>& coordinates, valarray<double>& f, valarray<double>& w);
+	void performHyperspectralUpscaling(const valarray<double>& hypSurfaceReflectances, const Pixel& p, valarray<double>& hypToaReflectances, valarray<double>& coordinates, valarray<double>& rho, valarray<double>& ratm, valarray<double>& ts, valarray<double>& tv, valarray<double>& f, valarray<double>& w);
 	void performHyperspectralFiltering(const valarray<double>& hypToaReflectances, valarray<double>& vgtToaReflectances) const;
 
 	uint8_t performQualityFlagging(Pixel& p, const valarray<double>& vgtToaReflectances) const;
@@ -141,11 +141,6 @@ private:
     valarray<double> airPressureTiePoints;
     valarray<double> ozoneTiePoints;
     valarray<double> waterVapourTiePoints;
-
-    valarray<double> rho;
-    valarray<double> ratm;
-    valarray<double> ts;
-    valarray<double> tv;
 
 	static const double D2R = 3.14159265358979323846 / 180.0;
 

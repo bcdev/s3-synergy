@@ -30,11 +30,11 @@ Vbm::Vbm() :
         hypSpectralResponses(VGT_CHANNEL_COUNT),
         synRadianceAccessors(SYN_CHANNEL_COUNT),
         synSolarIrradianceAccessors(SYN_CHANNEL_COUNT),
-        vgtReflectanceAccessors(VGT_CHANNEL_COUNT),
+        vgtReflectanceAccessors(VGT_CHANNEL_COUNT) /*,
         rho(HYP_CHANNEL_COUNT),
         ratm(HYP_CHANNEL_COUNT),
         ts(HYP_CHANNEL_COUNT),
-        tv(HYP_CHANNEL_COUNT) {
+        tv(HYP_CHANNEL_COUNT) */ {
 }
 
 Vbm::~Vbm() {
@@ -156,52 +156,60 @@ void Vbm::process(Context& context) {
     const long firstL = context.getFirstComputableL(collocatedSegment, *this);
     const long lastL = context.getLastComputableL(collocatedSegment, *this);
 
-    valarray<double> synSurfaceReflectances(21);
-    valarray<double> hypSurfaceReflectances(914);
-    valarray<double> hypToaReflectances(914);
-    valarray<double> vgtToaReflectances(4);
-    valarray<double> synWavelengths(21);
-
-    synWavelengths[0] = 400.0;
-    synWavelengths[1] = 412.5;
-    synWavelengths[2] = 442.5;
-    synWavelengths[3] = 490.5;
-    synWavelengths[4] = 510.0;
-    synWavelengths[5] = 560.0;
-    synWavelengths[6] = 620.0;
-    synWavelengths[7] = 665.0;
-    synWavelengths[8] = 673.75;
-    synWavelengths[9] = 681.25;
-    synWavelengths[10] = 708.75;
-    synWavelengths[11] = 753.75;
-    synWavelengths[12] = 761.25;
-    synWavelengths[13] = 778.75;
-    synWavelengths[14] = 865.0;
-    synWavelengths[15] = 885.0;
-    synWavelengths[16] = 900.0;
-    synWavelengths[17] = 1020.0;
-    synWavelengths[18] = 1375.0;
-    synWavelengths[19] = 1610.0;
-    synWavelengths[20] = 2250.0;
-
-    Pixel p;
-
-    valarray<double> f(hypLutRatm->getDimensionCount());
-    valarray<double> workspace;
-    valarray<double> coordinates(hypLutRatm->getDimensionCount());
-    valarray<double> tpiWeights(1);
-    valarray<size_t> tpiIndexes(1);
-
+#if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100) > 40100
+#pragma omp parallel for
+#endif
     for (long l = firstL; l <= lastL; l++) {
+        valarray<double> synSurfaceReflectances(21);
+        valarray<double> hypSurfaceReflectances(914);
+        valarray<double> hypToaReflectances(914);
+        valarray<double> vgtToaReflectances(4);
+        valarray<double> synWavelengths(21);
+
+        synWavelengths[0] = 400.0;
+        synWavelengths[1] = 412.5;
+        synWavelengths[2] = 442.5;
+        synWavelengths[3] = 490.5;
+        synWavelengths[4] = 510.0;
+        synWavelengths[5] = 560.0;
+        synWavelengths[6] = 620.0;
+        synWavelengths[7] = 665.0;
+        synWavelengths[8] = 673.75;
+        synWavelengths[9] = 681.25;
+        synWavelengths[10] = 708.75;
+        synWavelengths[11] = 753.75;
+        synWavelengths[12] = 761.25;
+        synWavelengths[13] = 778.75;
+        synWavelengths[14] = 865.0;
+        synWavelengths[15] = 885.0;
+        synWavelengths[16] = 900.0;
+        synWavelengths[17] = 1020.0;
+        synWavelengths[18] = 1375.0;
+        synWavelengths[19] = 1610.0;
+        synWavelengths[20] = 2250.0;
+
+        Pixel p;
+
+        valarray<double> f(hypLutRatm->getDimensionCount());
+        valarray<double> workspace;
+        valarray<double> coordinates(hypLutRatm->getDimensionCount());
+        valarray<double> tpiWeights(1);
+        valarray<size_t> tpiIndexes(1);
+
+        valarray<double> rho(HYP_CHANNEL_COUNT);
+        valarray<double> ratm(HYP_CHANNEL_COUNT);
+        valarray<double> ts(HYP_CHANNEL_COUNT);
+        valarray<double> tv(HYP_CHANNEL_COUNT);
+
         context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
         for (long k = collocatedGrid.getMinK(); k <= collocatedGrid.getMaxK(); k++) {
             for (long m = collocatedGrid.getMinM(); m <= collocatedGrid.getMaxM(); m++) {
                 const size_t index = collocatedGrid.getIndex(k, l, m);
                 const size_t geoIndex = geoGrid.getIndex(k, l, m);
                 initPixel(p, index, geoIndex, tpiWeights, tpiIndexes);
-                performDownscaling(p, synSurfaceReflectances, coordinates, f, workspace);
+                performDownscaling(p, synSurfaceReflectances, coordinates, rho, ratm, ts, tv, f, workspace);
                 performHyperspectralInterpolation(synWavelengths, synSurfaceReflectances, hypSurfaceReflectances);
-                performHyperspectralUpscaling(hypSurfaceReflectances, p, hypToaReflectances, coordinates, f, workspace);
+                performHyperspectralUpscaling(hypSurfaceReflectances, p, hypToaReflectances, coordinates, rho, ratm, ts, tv, f, workspace);
                 performHyperspectralFiltering(hypToaReflectances, vgtToaReflectances);
                 const uint8_t flags = performQualityFlagging(p, vgtToaReflectances);
                 setValues(index, p, flags, vgtToaReflectances);
@@ -245,7 +253,7 @@ void Vbm::initPixel(Pixel& p, size_t index, size_t geoIndex, valarray<double>& t
     p.vgtFlags = 0;
 }
 
-void Vbm::performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflectances, valarray<double>& coordinates, valarray<double>& f, valarray<double>& w) {
+void Vbm::performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflectances, valarray<double>& coordinates, valarray<double>& rho, valarray<double>& ratm, valarray<double>& ts, valarray<double>& tv, valarray<double>& f, valarray<double>& w) {
     fill(&synSurfaceReflectances[0], &synSurfaceReflectances[synSurfaceReflectances.size()], Constants::FILL_VALUE_DOUBLE);
 
     if (isSet(p.synFlags, Constants::SY2_LAND_FLAG)) {
@@ -328,7 +336,7 @@ void Vbm::performHyperspectralInterpolation(const valarray<double>& synWavelengt
 	}
 }
 
-void Vbm::performHyperspectralUpscaling(const valarray<double>& hypSurfaceReflectances, const Pixel& p, valarray<double>& hypToaReflectances, valarray<double>& coordinates, valarray<double>& f, valarray<double>& w) {
+void Vbm::performHyperspectralUpscaling(const valarray<double>& hypSurfaceReflectances, const Pixel& p, valarray<double>& hypToaReflectances, valarray<double>& coordinates, valarray<double>& rho, valarray<double>& ratm, valarray<double>& ts, valarray<double>& tv, valarray<double>& f, valarray<double>& w) {
 	fill(&hypToaReflectances[0], &hypToaReflectances[hypToaReflectances.size()], Constants::FILL_VALUE_DOUBLE);
 
 	if (isSet(p.synFlags, Constants::SY2_LAND_FLAG)) {
