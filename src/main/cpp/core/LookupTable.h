@@ -54,10 +54,6 @@ public:
 	virtual W getScalar(const W coordinates[], valarray<W>& f, valarray<W>& w) const = 0;
 	virtual size_t getScalarWorkspaceSize() const = 0;
 
-	virtual matrix<W>& getMatrix(const W coordinates[], matrix<W>& matrix, valarray<W>& f, valarray<W>& w) const = 0;
-	virtual size_t getMatrixColCount() const = 0;
-	virtual size_t getMatrixRowCount() const = 0;
-
 	virtual valarray<W>& getVector(const W coordinates[], valarray<W>& vector, valarray<W>& f, valarray<W>& w) const = 0;
 	virtual size_t getVectorDimensionCount() const = 0;
 
@@ -95,11 +91,6 @@ public:
 
 	W getScalar(const W coordinates[], valarray<W>& f, valarray<W>& w) const;
 	size_t getScalarWorkspaceSize() const;
-
-	matrix<W>& getMatrix(const W coordinates[], matrix<W>& matrix, valarray<W>& f, valarray<W>& w) const;
-	size_t getMatrixColCount() const;
-	size_t getMatrixRowCount() const;
-	size_t getMatrixWorkspaceSize() const;
 
 	valarray<W>& getVector(const W coordinates[], valarray<W>& vector, valarray<W>& f, valarray<W>& w) const;
 	size_t getVectorDimensionCount() const;
@@ -211,20 +202,18 @@ valarray<W>& LookupTableImpl<T, W>::getVector(const W coordinates[], valarray<W>
 	for (size_t i = 0; i < r; ++i) {
 		origin += getIndex(i, coordinates[i], f[i]) * strides[i];
 	}
-	for (size_t i = 0; i < vertexCount; ++i) {
-		const size_t l = i * length;
+	for (size_t i = 0, j = 0; i < vertexCount; ++i, j += length) {
 		const size_t m = origin + offsets[i];
-		for (size_t j = 0; j < length; ++j) {
-			w[l + j] = boost::numeric_cast<W>(y[m + j]);
+		for (size_t k = 0; k < length; ++k) {
+			w[j + k] = boost::numeric_cast<W>(y[m + k]);
 		}
 	}
 	for (size_t i = r; i-- > 0;) {
 		const size_t m = 1 << i;
-		const size_t n = m * length;
-		for (size_t j = 0; j < m; ++j) {
-			const size_t l = j * length;
-			for (size_t k = 0; k < length; ++k) {
-				w[l + k] += f[i] * (w[n + l + k] - w[l + k]);
+		const size_t n = length << i;
+		for (size_t j = 0, k = 0; j < m; k += length, ++j) {
+			for (size_t l = 0; l < length; ++l) {
+				w[k + l] += f[i] * (w[n + k + l] - w[k + l]);
 			}
 		}
 	}
@@ -233,58 +222,6 @@ valarray<W>& LookupTableImpl<T, W>::getVector(const W coordinates[], valarray<W>
 	}
 
 	return vector;
-}
-
-template<class T, class W>
-matrix<W>& LookupTableImpl<T, W>::getMatrix(const W coordinates[], matrix<W>& matrix, valarray<W>& f, valarray<W>& w) const {
-	assert(n > 2);
-
-	const size_t r = n - 2;
-	const size_t rowCount = getMatrixRowCount();
-	const size_t colCount = getMatrixColCount();
-
-	const size_t elementCount = rowCount * colCount;
-	const size_t vertexCount = 1 << r;
-
-	assert(matrix.size1() >= rowCount);
-	assert(matrix.size2() >= colCount);
-
-	if (f.size() < r) {
-		f.resize(r);
-	}
-	if (w.size() < vertexCount * elementCount) {
-		w.resize(vertexCount * elementCount);
-	}
-
-	size_t origin = 0;
-	for (size_t i = 0; i < r; ++i) {
-		origin += getIndex(i, coordinates[i], f[i]) * strides[i];
-	}
-	for (size_t i = 0; i < vertexCount; ++i) {
-		const size_t l = i * elementCount;
-		const size_t m = origin + offsets[i];
-		for (size_t j = 0; j < elementCount; ++j) {
-			w[l + j] = (W) y[m + j];
-		}
-	}
-	for (size_t i = r; i-- > 0;) {
-		const size_t m = 1 << i;
-		const size_t n = m * elementCount;
-		for (size_t j = 0; j < m; ++j) {
-			const size_t l = j * elementCount;
-			for (size_t k = 0; k < elementCount; ++k) {
-				w[l + k] += f[i] * (w[n + l + k] - w[l + k]);
-			}
-		}
-	}
-	for (size_t i = 0; i < rowCount; ++i) {
-		const size_t l = i * colCount;
-		for (size_t k = 0; k < colCount; ++k) {
-			matrix(i, k) = w[l + k] * scaleFactor + addOffset;
-		}
-	}
-
-	return matrix;
 }
 
 template<class T, class W>
@@ -335,24 +272,6 @@ template<class T, class W>
 inline W LookupTableImpl<T, W>::getMinCoordinate(size_t dimIndex) const {
 	assert(dimIndex < n and sizes[dimIndex] > 0);
 	return x[dimIndex][0];
-}
-
-template<class T, class W>
-inline size_t LookupTableImpl<T, W>::getMatrixColCount() const {
-	assert(n > 2);
-	return sizes[n - 1];
-}
-
-template<class T, class W>
-inline size_t LookupTableImpl<T, W>::getMatrixRowCount() const {
-	assert(n > 2);
-	return sizes[n - 2];
-}
-
-template<class T, class W>
-inline size_t LookupTableImpl<T, W>::getMatrixWorkspaceSize() const {
-	assert(n > 2);
-	return (1 << (n - 2)) * sizes[n - 2] * sizes[n - 1];
 }
 
 template<class T, class W>

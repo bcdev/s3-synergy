@@ -50,8 +50,8 @@ void LookupTableTest::testInterpolation1D() {
 	CPPUNIT_ASSERT(lut->getMaxCoordinate(0) == 1.0);
 
 	double coordinate;
-	valarray<double> f(lut->getDimensionCount());
-	valarray<double> workspace(lut->getScalarWorkspaceSize());
+	valarray<double> f;
+	valarray<double> workspace;
 
 	coordinate = 0.0;
 	CPPUNIT_ASSERT(lut->getScalar(&coordinate, f, workspace) == 0.0);
@@ -83,36 +83,51 @@ void LookupTableTest::testInterpolation2D() {
 	CPPUNIT_ASSERT(lut->getMaxCoordinate(1) == 1.0);
 
 	double coordinates[2];
-	valarray<double> f(lut->getDimensionCount());
-	valarray<double> workspace(lut->getScalarWorkspaceSize());
+	valarray<double> f;
+	valarray<double> workspace;
+	valarray<double> v(2);
 
 	coordinates[0] = 0.0;
 	coordinates[1] = 0.0;
 	CPPUNIT_ASSERT(lut->getScalar(coordinates, f, workspace) == 0.0);
+	CPPUNIT_ASSERT(lut->getVector(coordinates, v, f, workspace)[0] == 0.0);
+	CPPUNIT_ASSERT(lut->getVector(coordinates, v, f, workspace)[1] == 1.0);
 
 	coordinates[0] = 0.0;
 	coordinates[1] = 1.0;
 	CPPUNIT_ASSERT(lut->getScalar(coordinates, f, workspace) == 1.0);
+	CPPUNIT_ASSERT(lut->getVector(coordinates, v, f, workspace)[0] == 0.0);
+	CPPUNIT_ASSERT(lut->getVector(coordinates, v, f, workspace)[1] == 1.0);
 
 	coordinates[0] = 1.0;
 	coordinates[1] = 0.0;
 	CPPUNIT_ASSERT(lut->getScalar(coordinates, f, workspace) == 2.0);
+	CPPUNIT_ASSERT(lut->getVector(coordinates, v, f, workspace)[0] == 2.0);
+	CPPUNIT_ASSERT(lut->getVector(coordinates, v, f, workspace)[1] == 3.0);
 
 	coordinates[0] = 1.0;
 	coordinates[1] = 1.0;
 	CPPUNIT_ASSERT(lut->getScalar(coordinates, f, workspace) == 3.0);
+	CPPUNIT_ASSERT(lut->getVector(coordinates, v, f, workspace)[0] == 2.0);
+	CPPUNIT_ASSERT(lut->getVector(coordinates, v, f, workspace)[1] == 3.0);
 
 	coordinates[0] = 0.0;
 	coordinates[1] = 0.5;
 	CPPUNIT_ASSERT(lut->getScalar(coordinates, f, workspace) == 0.5);
+	CPPUNIT_ASSERT(lut->getVector(coordinates, v, f, workspace)[0] == 0.0);
+	CPPUNIT_ASSERT(lut->getVector(coordinates, v, f, workspace)[1] == 1.0);
 
 	coordinates[0] = 0.5;
 	coordinates[1] = 0.5;
 	CPPUNIT_ASSERT(lut->getScalar(coordinates, f, workspace) == 1.5);
+	CPPUNIT_ASSERT(lut->getVector(coordinates, v, f, workspace)[0] == 1.0);
+	CPPUNIT_ASSERT(lut->getVector(coordinates, v, f, workspace)[1] == 2.0);
 
 	coordinates[0] = 1.0;
 	coordinates[1] = 0.5;
 	CPPUNIT_ASSERT(lut->getScalar(coordinates, f, workspace) == 2.5);
+	CPPUNIT_ASSERT(lut->getVector(coordinates, v, f, workspace)[0] == 2.0);
+	CPPUNIT_ASSERT(lut->getVector(coordinates, v, f, workspace)[1] == 3.0);
 }
 
 void LookupTableTest::testInterpolation3D() {
@@ -147,8 +162,8 @@ void LookupTableTest::testInterpolation3D() {
 
 	double r[3];
 	double x[3];
-	valarray<double> f(lut->getDimensionCount());
-	valarray<double> workspace(lut->getScalarWorkspaceSize());
+	valarray<double> f;
+	valarray<double> workspace;
 
 	srand(5483);
 
@@ -205,8 +220,8 @@ void LookupTableTest::testInterpolation4D() {
 
 	double r[4];
 	double x[4];
-	valarray<double> f(lut->getDimensionCount());
-	valarray<double> workspace(lut->getScalarWorkspaceSize());
+	valarray<double> f;
+	valarray<double> workspace;
 
 	srand(5483);
 
