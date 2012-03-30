@@ -172,7 +172,7 @@ void Vco::process(Context& context) {
 		firstRequiredSourceL = sourceGrid.getMaxInMemoryL() + 1;
 
 		for (long k = targetGrid.getMinK(); k <= targetGrid.getMaxK(); k++) {
-			for (long m = targetGrid.getMinM(); m < targetGrid.getMaxM(); m++) {
+			for (long m = targetGrid.getMinM(); m <= targetGrid.getMaxM(); m++) {
 				const double targetLat = getTargetLat(l);
 				const double targetLon = getTargetLon(m);
 				const bool sourcePixelFound = pixelFinder.findSourcePixel(targetLat, targetLon, sourceK, sourceL, sourceM);

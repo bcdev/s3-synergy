@@ -121,8 +121,13 @@ void Ave::averageVariables(Logging& logging, long firstL, long lastL) {
 					long pixelCount = 0;
 					long validCount = 0;
 
-					for (long sourceL = targetL * averagingFactor + sourceGrid.getMinL(); sourceL < (targetL + 1) * averagingFactor + sourceGrid.getMinL(); sourceL++) {
-						for (long sourceM = targetM * averagingFactor; sourceM < (targetM + 1) * averagingFactor; sourceM++) {
+					const long minSourceL = targetL * averagingFactor + sourceGrid.getMinL();
+					const long maxSourceL = minSourceL + averagingFactor - 1;
+					const long minSourceM = targetM * averagingFactor;
+					const long maxSourceM = minSourceM + averagingFactor - 1;
+
+					for (long sourceL = minSourceL; sourceL <= maxSourceL; sourceL++) {
+						for (long sourceM = minSourceM; sourceM <= maxSourceM; sourceM++) {
 							if (!sourceGrid.isValidPosition(k, sourceL, sourceM)) {
 								continue;
 							}
@@ -130,8 +135,8 @@ void Ave::averageVariables(Logging& logging, long firstL, long lastL) {
 
 							pixelCount++;
 							const uint16_t synFlags = sourceFlagsAccessor.getUShort(sourceIndex);
-							const bool land = (synFlags & Constants::SY2_LAND_FLAG) == Constants::SY2_LAND_FLAG;
-							const bool cloud = (synFlags & Constants::SY2_CLOUD_FLAG) == Constants::SY2_CLOUD_FLAG;
+							const bool land = isSet(synFlags, Constants::SY2_LAND_FLAG);
+							const bool cloud = isSet(synFlags, Constants::SY2_CLOUD_FLAG);
 							if (land && !cloud && !sourceAccessor.isFillValue(sourceIndex)) {
 								sum += sourceAccessor.getDouble(sourceIndex);
 								validCount++;
@@ -159,32 +164,42 @@ void Ave::averageFlags(long targetL) {
 	Accessor& targetAccessor = targetSegment->getAccessor("SYN_flags");
 
 	for (long k = targetGrid.getMinK(); k <= targetGrid.getMaxK(); k++) {
-		for (long targetM = targetGrid.getMinM(); targetM < targetGrid.getMaxM(); targetM++) {
+		for (long targetM = targetGrid.getMinM(); targetM <= targetGrid.getMaxM(); targetM++) {
 			uint16_t averagedFlags = 0;
 			bool partlyCloudy = false;
 			bool partlyWater = false;
 			bool border = false;
 
-			for (long sourceL = targetL * averagingFactor + sourceGrid.getMinL(); sourceL < (targetL + 1) * averagingFactor + sourceGrid.getMinL(); sourceL++) {
-				for (long sourceM = targetM * averagingFactor; sourceM < (targetM + 1) * averagingFactor; sourceM++) {
+			const long minSourceL = targetL * averagingFactor + sourceGrid.getMinL();
+			const long maxSourceL = minSourceL + averagingFactor - 1;
+			const long minSourceM = targetM * averagingFactor;
+			const long maxSourceM = minSourceM + averagingFactor - 1;
+
+			for (long sourceL = minSourceL; sourceL <= maxSourceL; sourceL++) {
+				for (long sourceM = minSourceM; sourceM <= maxSourceM; sourceM++) {
 					if (sourceGrid.isValidPosition(k, sourceL, sourceM)) {
 						const long sourceIndex = sourceSegment->getGrid().getIndex(k, sourceL, sourceM);
 						const uint16_t synFlags = sourceAccessor.getUShort(sourceIndex);
-						const bool land = (synFlags & Constants::SY2_LAND_FLAG) == Constants::SY2_LAND_FLAG;
-						const bool cloud = (synFlags & Constants::SY2_CLOUD_FLAG) == Constants::SY2_CLOUD_FLAG;
-						const bool cloudFilled = (synFlags & Constants::SY2_CLOUD_FILLED_FLAG) == Constants::SY2_CLOUD_FILLED_FLAG;
+						const bool land = isSet(synFlags, Constants::SY2_LAND_FLAG);
+						const bool cloud = isSet(synFlags, Constants::SY2_CLOUD_FLAG);
+						const bool cloudFilled = isSet(synFlags, Constants::SY2_CLOUD_FILLED_FLAG);
 						partlyCloudy = partlyCloudy || cloud || cloudFilled;
 						partlyWater = partlyWater || !land;
 					} else {
 						border = true;
 					}
 				}
-
 			}
 
-			averagedFlags |= partlyCloudy ? Constants::SY2_PARTLY_CLOUDY_FLAG : 0;
-			averagedFlags |= partlyWater ? Constants::SY2_PARTLY_WATER_FLAG : 0;
-			averagedFlags |= border ? Constants::SY2_BORDER_FLAG : 0;
+			if (partlyCloudy) {
+				averagedFlags |= Constants::SY2_PARTLY_CLOUDY_FLAG;
+			}
+			if (partlyWater) {
+				averagedFlags |= Constants::SY2_PARTLY_WATER_FLAG;
+			}
+			if (border) {
+				averagedFlags |= Constants::SY2_BORDER_FLAG;
+			}
 			const size_t targetIndex = targetGrid.getIndex(k, targetL, targetM);
 			targetAccessor.setUShort(targetIndex, averagedFlags);
 		}
