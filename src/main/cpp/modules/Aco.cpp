@@ -110,7 +110,6 @@ void Aco::process(Context& context) {
     const Accessor& tau550Accessor = collocatedSegment.getAccessor("T550");
     const Accessor& tau550ErrAccessor = collocatedSegment.getAccessor("T550_er");
     const Accessor& aminAccessor = collocatedSegment.getAccessor("AMIN");
-    // TODO - consider flags
     const Accessor& flagsAccessor = collocatedSegment.getAccessor("SYN_flags");
 	const Accessor& latAccessor = geoSegment.getAccessor("latitude");
 	const Accessor& lonAccessor = geoSegment.getAccessor("longitude");
@@ -190,9 +189,14 @@ void Aco::process(Context& context) {
 				const size_t geoIndex = geoGrid.getIndex(k, l, m);
 				const size_t i = collocatedGrid.getIndex(k, l, m);
 
-			    for(size_t b = 0; b < sdrAccessors.size(); b++) {
+			    for (size_t b = 0; b < sdrAccessors.size(); b++) {
 			        sdrAccessors[b]->setFillValue(i);
 			        errAccessors[b]->setFillValue(i);
+			    }
+
+			    const uint16_t synFlags = flagsAccessor.getUShort(i);
+			    if (isSet(synFlags, Constants::SY2_LAND_FLAG) || isSet(synFlags, Constants::SY2_CLOUD_FLAG)) {
+			    	continue;
 			    }
 
 				const double tau550 = tau550Accessor.getDouble(i);
