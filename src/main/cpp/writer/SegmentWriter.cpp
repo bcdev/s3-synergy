@@ -30,52 +30,55 @@ SegmentWriter::SegmentWriter() :
 
 SegmentWriter::~SegmentWriter() {
 	pair<string, int> fileIdPair;
-	reverse_foreach (fileIdPair, ncFileIdMap) {
-	    try {
-	        NetCDF::closeFile(fileIdPair.second);
-	    } catch (exception& ignored) {
-	    }
-	}
+	reverse_foreach (fileIdPair, ncFileIdMap)
+			{
+				try {
+					NetCDF::closeFile(fileIdPair.second);
+				} catch (exception& ignored) {
+				}
+			}
 }
 
 void SegmentWriter::process(Context& context) {
 	const vector<string> segmentIds = context.getSegmentIds();
 	valarray<size_t> origin;
 	valarray<size_t> shape;
-	foreach (const string& segmentName, segmentIds) {
-	    const Segment& segment = context.getSegment(segmentName);
-	    const Grid& grid = segment.getGrid();
-	    const long firstL = segment.getGrid().getMinInMemoryL();
-	    context.getLogging().debug("Segment [" + segment.toString() + "]: firstL = " + lexical_cast<string>(firstL), getId());
-	    const long lastL = segment.getGrid().getMaxInMemoryL();
-	    context.getLogging().debug("Segment [" + segment.toString() + "]: lastL = " + lexical_cast<string>(lastL), getId());
+	foreach (const string& segmentName, segmentIds)
+			{
+				const Segment& segment = context.getSegment(segmentName);
+				const Grid& grid = segment.getGrid();
+				const long firstL = segment.getGrid().getMinInMemoryL();
+				context.getLogging().debug("Segment [" + segment.toString() + "]: firstL = " + lexical_cast<string>(firstL), getId());
+				const long lastL = segment.getGrid().getMaxInMemoryL();
+				context.getLogging().debug("Segment [" + segment.toString() + "]: lastL = " + lexical_cast<string>(lastL), getId());
 
-	    if (firstL <= lastL) {
-	        const vector<string> variableNames = segment.getVariableNames();
-	        foreach (const string varName, variableNames) {
-	            const string ncFileBasename = segment.getId();
-	            const string variableKey = segmentName + varName;
-	            if (!contains(ncVarIdMap, variableKey)) {
-	                continue;
-	            }
-	            if (!contains(ncFileIdMap, ncFileBasename)) {
-	                continue;
-	            }
-	            if (!contains(ncDimIdMap, ncFileBasename)) {
-	                continue;
-	            }
-	            const int varId = ncVarIdMap[segmentName + varName];
-	            const int ncId = ncFileIdMap[ncFileBasename];
-	            const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
-	            Utils::createStartVector(dimIds.size(), firstL, origin);
-	            Utils::createCountVector(dimIds.size(), grid.getSizeK(), lastL - firstL + 1, grid.getSizeM(), shape);
-	            context.getLogging().progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
-	            const Accessor& accessor = segment.getAccessor(varName);
-	            NetCDF::putData(ncId, varId, origin, shape, accessor.getUntypedData());
-	        }
-	        context.setLastComputedL(segment, *this, lastL);
-	    }
-	}
+				if (firstL <= lastL) {
+					const vector<string> variableNames = segment.getVariableNames();
+					foreach (const string varName, variableNames)
+							{
+								const string ncFileBasename = segment.getId();
+								const string variableKey = segmentName + varName;
+								if (!contains(ncVarIdMap, variableKey)) {
+									continue;
+								}
+								if (!contains(ncFileIdMap, ncFileBasename)) {
+									continue;
+								}
+								if (!contains(ncDimIdMap, ncFileBasename)) {
+									continue;
+								}
+								const int varId = ncVarIdMap[segmentName + varName];
+								const int ncId = ncFileIdMap[ncFileBasename];
+								const valarray<int>& dimIds = ncDimIdMap[ncFileBasename];
+								Utils::createStartVector(dimIds.size(), firstL, origin);
+								Utils::createCountVector(dimIds.size(), grid.getSizeK(), lastL - firstL + 1, grid.getSizeM(), shape);
+								context.getLogging().progress("Writing variable " + varName + " of segment [" + segment.toString() + "]", getId());
+								const Accessor& accessor = segment.getAccessor(varName);
+								NetCDF::putData(ncId, varId, origin, shape, accessor.getUntypedData());
+							}
+					context.setLastComputedL(segment, *this, lastL);
+				}
+			}
 }
 
 void SegmentWriter::start(Context& context) {
@@ -88,35 +91,39 @@ void SegmentWriter::start(Context& context) {
 
 	const vector<string> segmentIds = context.getSegmentIds();
 
-	foreach (string segmentId, segmentIds) {
-	    const Segment& segment = context.getSegment(segmentId);
-	    const vector<string> variableNames = segment.getVariableNames();
+	foreach (string segmentId, segmentIds)
+			{
+				const Segment& segment = context.getSegment(segmentId);
+				const vector<string> variableNames = segment.getVariableNames();
 
-	    foreach (string variableName, variableNames) {
-	        context.getLogging().info("Defining variable for " + variableName, getId());
-	        createNcVar(segment, variableName);
-	    }
-	}
+				foreach (string variableName, variableNames)
+						{
+							context.getLogging().info("Defining variable for " + variableName, getId());
+							createNcVar(context, segment, variableName);
+						}
+			}
 
 	pair<string, int> fileIdPair;
 
-	foreach (fileIdPair, ncFileIdMap) {
-	    NetCDF::terminateFile(fileIdPair.second);
-	}
+	foreach (fileIdPair, ncFileIdMap)
+			{
+				NetCDF::terminateFile(fileIdPair.second);
+			}
 }
 
 void SegmentWriter::stop(Context& context) {
 	pair<string, int> fileIdPair;
 
-	reverse_foreach (fileIdPair, ncFileIdMap) {
-	    NetCDF::closeFile(fileIdPair.second);
-	}
+	reverse_foreach (fileIdPair, ncFileIdMap)
+			{
+				NetCDF::closeFile(fileIdPair.second);
+			}
 	ncVarIdMap.clear();
 	ncDimIdMap.clear();
 	ncFileIdMap.clear();
 }
 
-void SegmentWriter::createNcVar(const Segment& segment, const string& varName) {
+void SegmentWriter::createNcVar(const Context& context, const Segment& segment, const string& varName) {
 	const string& ncFileBasename = segment.getId();
 
 	if (!contains(ncFileIdMap, ncFileBasename)) {
@@ -157,4 +164,24 @@ void SegmentWriter::createNcVar(const Segment& segment, const string& varName) {
 
 	const Attribute addOffset(Constants::TYPE_DOUBLE, "add_offset", lexical_cast<string>(accessor.getAddOffset()));
 	NetCDF::putAttribute(fileId, varId, addOffset);
+
+	foreach (const ProductDescriptor* pd, context.getDictionary().getProductDescriptors())
+			{
+				if (pd->hasSegmentDescriptor(segment.getId())) {
+					const SegmentDescriptor& sd = pd->getSegmentDescriptor(segment.getId());
+					if (sd.hasVariableDescriptor(varName)) {
+						const VariableDescriptor& vd = sd.getVariableDescriptor(varName);
+						if (vd.hasAttribute("flag_masks")) {
+							NetCDF::putAttribute(fileId, varId, vd.getAttribute("flag_masks"));
+						}
+						if (vd.hasAttribute("flag_values")) {
+							NetCDF::putAttribute(fileId, varId, vd.getAttribute("flag_values"));
+						}
+						if (vd.hasAttribute("flag_meanings")) {
+							NetCDF::putAttribute(fileId, varId, vd.getAttribute("flag_meanings"));
+						}
+						break;
+					}
+				}
+			}
 }

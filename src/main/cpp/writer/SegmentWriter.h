@@ -40,7 +40,7 @@ public:
 
 private:
 
-	void createNcVar(const Segment& segment, const string& varName);
+	void createNcVar(const Context& context, const Segment& segment, const string& varName);
 
 	path targetDirPath;
 

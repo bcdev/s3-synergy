@@ -29,7 +29,7 @@ MapSegmentProvider::~MapSegmentProvider() {
 }
 
 void MapSegmentProvider::start(Context& context) {
-	context.addMapSegment("TEST", 6000, 6000).addVariable("shorts", Constants::TYPE_SHORT);
+	context.addMapSegment("VGT", 6000, 6000).addVariable("SM", Constants::TYPE_BYTE);
 }
 
 void MapSegmentProvider::stop(Context& context) {
@@ -39,16 +39,16 @@ void MapSegmentProvider::stop(Context& context) {
 }
 
 void MapSegmentProvider::process(Context& context) {
-	const Segment& s = context.getSegment("TEST");
+	const Segment& s = context.getSegment("VGT");
     const Grid& g = s.getGrid();
 
-    Accessor& a = s.getAccessor("shorts");
+    Accessor& a = s.getAccessor("SM");
 
     for (long k = g.getMinK(); k <= g.getMaxK(); k++) {
         for (long l = g.getMinL(); l <= g.getMaxL(); l++) {
             for (long m = g.getMinM(); m <= g.getMaxM(); m++) {
                 const size_t index = g.getIndex(k, l, m);
-                a.setInt(index, index % 10000);
+                a.setByte(index, index % 100);
             }
         }
     }
