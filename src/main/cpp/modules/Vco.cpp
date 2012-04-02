@@ -208,9 +208,6 @@ void Vco::process(Context& context) {
 								setValue(sourceAccessor, targetAccessor, sourceIndex, targetIndex);
 							} catch (std::exception& e) {
 								sourceAccessor->setFillValue(sourceIndex);
-								context.getLogging().debug("Value is out of target range.", getId());
-								context.getLogging().debug("  sourceAccessorIndex = " + boost::lexical_cast<string>(i), getId());
-								context.getLogging().debug("  sourceAccessorValue = " + boost::lexical_cast<string>(sourceAccessor->getDouble(sourceIndex)), getId());
 							}
 						}
 					}
