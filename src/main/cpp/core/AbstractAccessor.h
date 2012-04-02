@@ -53,11 +53,7 @@ public:
 		if (value > numeric_limits<T>::max()) {
 			data[at(i)] = numeric_limits<T>::max();
 		} else {
-			if (fillValue == numeric_limits<T>::min() && numeric_limits<T>::min() < T(0) && value < numeric_limits<T>::min() + T(1)) {
-				data[at(i)] = numeric_limits<T>::min() + T(1);
-			} else {
-				data[at(i)] = boost::numeric_cast<T>(value);
-			}
+			data[at(i)] = boost::numeric_cast<T>(value);
 		}
 	}
 
@@ -70,11 +66,7 @@ public:
 		if (value > numeric_limits<T>::max()) {
 			data[at(i)] = numeric_limits<T>::max();
 		} else {
-			if (fillValue == numeric_limits<T>::min() && numeric_limits<T>::min() < T(0) && value < numeric_limits<T>::min() + T(1)) {
-				data[at(i)] = numeric_limits<T>::min() + T(1);
-			} else {
-				data[at(i)] = boost::numeric_cast<T>(value);
-			}
+			data[at(i)] = boost::numeric_cast<T>(value);
 		}
 	}
 
