@@ -26,51 +26,43 @@ using std::fill;
 using boost::lexical_cast;
 
 Vbm::Vbm() :
-        BasicModule("VBM"),
-        hypSpectralResponses(VGT_CHANNEL_COUNT),
-        synRadianceAccessors(SYN_CHANNEL_COUNT),
-        synSolarIrradianceAccessors(SYN_CHANNEL_COUNT),
-        vgtReflectanceAccessors(VGT_CHANNEL_COUNT) /*,
-        rho(HYP_CHANNEL_COUNT),
-        ratm(HYP_CHANNEL_COUNT),
-        ts(HYP_CHANNEL_COUNT),
-        tv(HYP_CHANNEL_COUNT) */ {
+		BasicModule("VBM"), hypSpectralResponses(VGT_CHANNEL_COUNT), synRadianceAccessors(SYN_CHANNEL_COUNT), synSolarIrradianceAccessors(SYN_CHANNEL_COUNT), vgtReflectanceAccessors(VGT_CHANNEL_COUNT) {
 }
 
 Vbm::~Vbm() {
 }
 
 void Vbm::start(Context& context) {
-    addTargetVariables(context);
+	addTargetVariables(context);
 
-    prepareAccessors(context);
-    prepareAuxdata(context);
+	prepareAccessors(context);
+	prepareAuxdata(context);
 }
 
 void Vbm::stop(Context& context) {
-    tiePointInterpolatorOlc.reset();
-    tiePointInterpolatorSln.reset();
+	tiePointInterpolatorOlc.reset();
+	tiePointInterpolatorSln.reset();
 }
 
 void Vbm::addTargetVariables(Context& context) {
-    context.getLogging().info("Adding variables to segment", getId());
+	context.getLogging().info("Adding variables to segment", getId());
 
-    Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+	Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 
 	vgtReflectanceAccessors[0] = &collocatedSegment.addVariable("B0", Constants::TYPE_DOUBLE);
 	vgtReflectanceAccessors[1] = &collocatedSegment.addVariable("B2", Constants::TYPE_DOUBLE);
 	vgtReflectanceAccessors[2] = &collocatedSegment.addVariable("B3", Constants::TYPE_DOUBLE);
 	vgtReflectanceAccessors[3] = &collocatedSegment.addVariable("MIR", Constants::TYPE_DOUBLE);
-    vgtFlagsAccessor = &collocatedSegment.addVariable("SM", Constants::TYPE_UBYTE);
+	vgtFlagsAccessor = &collocatedSegment.addVariable("SM", Constants::TYPE_UBYTE);
 
-    vgtAgAccessor = &collocatedSegment.addVariable("AG", Constants::TYPE_DOUBLE);
-    vgtOgAccessor = &collocatedSegment.addVariable("OG", Constants::TYPE_DOUBLE);
-    vgtPgAccessor = &collocatedSegment.addVariable("PG", Constants::TYPE_DOUBLE);
-    vgtWvgAccessor = &collocatedSegment.addVariable("WVG", Constants::TYPE_DOUBLE);
-    vgtSaaAccessor = &collocatedSegment.addVariable("SAA", Constants::TYPE_DOUBLE);
-    vgtSzaAccessor = &collocatedSegment.addVariable("SZA", Constants::TYPE_DOUBLE);
-    vgtVaaAccessor = &collocatedSegment.addVariable("VAA", Constants::TYPE_DOUBLE);
-    vgtVzaAccessor = &collocatedSegment.addVariable("VZA", Constants::TYPE_DOUBLE);
+	vgtAgAccessor = &collocatedSegment.addVariable("AG", Constants::TYPE_DOUBLE);
+	vgtOgAccessor = &collocatedSegment.addVariable("OG", Constants::TYPE_DOUBLE);
+	vgtPgAccessor = &collocatedSegment.addVariable("PG", Constants::TYPE_DOUBLE);
+	vgtWvgAccessor = &collocatedSegment.addVariable("WVG", Constants::TYPE_DOUBLE);
+	vgtSaaAccessor = &collocatedSegment.addVariable("SAA", Constants::TYPE_DOUBLE);
+	vgtSzaAccessor = &collocatedSegment.addVariable("SZA", Constants::TYPE_DOUBLE);
+	vgtVaaAccessor = &collocatedSegment.addVariable("VAA", Constants::TYPE_DOUBLE);
+	vgtVzaAccessor = &collocatedSegment.addVariable("VZA", Constants::TYPE_DOUBLE);
 }
 
 void Vbm::prepareAccessors(Context& context) {
@@ -93,27 +85,27 @@ void Vbm::prepareAccessors(Context& context) {
 }
 
 void Vbm::prepareAuxdata(Context& context) {
-    const AuxdataProvider& vgtRadiativeTransferAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VPRTAX);
-    vgtRadiativeTransferAuxdata.getUShort("AMIN", aerosolModel);
+	const AuxdataProvider& vgtRadiativeTransferAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VPRTAX);
+	vgtRadiativeTransferAuxdata.getUShort("AMIN", aerosolModel);
 
-    synLutRho = &getLookupTable(context, Constants::AUX_ID_SYRTAX, "rho_atm");
-    olcLutRatm = &getLookupTable(context, Constants::AUX_ID_SYRTAX, "OLC_R_atm");
-    slnLutRatm = &getLookupTable(context, Constants::AUX_ID_SYRTAX, "SLN_R_atm");
-    synLutT = &getLookupTable(context, Constants::AUX_ID_SYRTAX, "t");
-    getAuxdataProvider(context, Constants::AUX_ID_SYRTAX).getVectorDouble("C_O3", synCO3);
+	synLutRho = &getLookupTable(context, Constants::AUX_ID_SYRTAX, "rho_atm");
+	olcLutRatm = &getLookupTable(context, Constants::AUX_ID_SYRTAX, "OLC_R_atm");
+	slnLutRatm = &getLookupTable(context, Constants::AUX_ID_SYRTAX, "SLN_R_atm");
+	synLutT = &getLookupTable(context, Constants::AUX_ID_SYRTAX, "t");
+	getAuxdataProvider(context, Constants::AUX_ID_SYRTAX).getVectorDouble("C_O3", synCO3);
 
-    hypLutRho = &getLookupTable(context, Constants::AUX_ID_VPRTAX, "rho_atm");
-    hypLutRatm = &getLookupTable(context, Constants::AUX_ID_VPRTAX, "R_atm");
-    hypLutT = &getLookupTable(context, Constants::AUX_ID_VPRTAX, "t");
-    getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("C_O3", hypCO3);
+	hypLutRho = &getLookupTable(context, Constants::AUX_ID_VPRTAX, "rho_atm");
+	hypLutRatm = &getLookupTable(context, Constants::AUX_ID_VPRTAX, "R_atm");
+	hypLutT = &getLookupTable(context, Constants::AUX_ID_VPRTAX, "t");
+	getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("C_O3", hypCO3);
 
-    const AuxdataProvider& vgtSpectralResponseAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VPSRAX);
-    vgtSpectralResponseAuxdata.getVectorDouble("B0_SRF", hypSpectralResponses[0]);
-    vgtSpectralResponseAuxdata.getVectorDouble("B2_SRF", hypSpectralResponses[1]);
-    vgtSpectralResponseAuxdata.getVectorDouble("B3_SRF", hypSpectralResponses[2]);
-    vgtSpectralResponseAuxdata.getVectorDouble("MIR_SRF", hypSpectralResponses[3]);
-    vgtSpectralResponseAuxdata.getVectorDouble("solar_irradiance", hypSolarIrradiances);
-    vgtSpectralResponseAuxdata.getVectorDouble("wavelength", hypWavelengths);
+	const AuxdataProvider& vgtSpectralResponseAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VPSRAX);
+	vgtSpectralResponseAuxdata.getVectorDouble("B0_SRF", hypSpectralResponses[0]);
+	vgtSpectralResponseAuxdata.getVectorDouble("B2_SRF", hypSpectralResponses[1]);
+	vgtSpectralResponseAuxdata.getVectorDouble("B3_SRF", hypSpectralResponses[2]);
+	vgtSpectralResponseAuxdata.getVectorDouble("MIR_SRF", hypSpectralResponses[3]);
+	vgtSpectralResponseAuxdata.getVectorDouble("solar_irradiance", hypSolarIrradiances);
+	vgtSpectralResponseAuxdata.getVectorDouble("wavelength", hypWavelengths);
 }
 
 void Vbm::prepareTiePointData(Context& context) {
@@ -147,116 +139,117 @@ void Vbm::prepareTiePointData(Context& context) {
 void Vbm::process(Context& context) {
 	prepareTiePointData(context);
 
-    Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
-    const Grid& collocatedGrid = collocatedSegment.getGrid();
+	Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
+	const Grid& collocatedGrid = collocatedSegment.getGrid();
 
-    const Segment& geoSegment = context.getSegment(Constants::SEGMENT_GEO);
-    const Grid& geoGrid = geoSegment.getGrid();
+	const Segment& geoSegment = context.getSegment(Constants::SEGMENT_GEO);
+	const Grid& geoGrid = geoSegment.getGrid();
 
-    const long firstL = context.getFirstComputableL(collocatedSegment, *this);
-    const long lastL = context.getLastComputableL(collocatedSegment, *this);
+	const long firstL = context.getFirstComputableL(collocatedSegment, *this);
+	const long lastL = context.getLastComputableL(collocatedSegment, *this);
 
 #if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100) > 40100
 #pragma omp parallel for
 #endif
-    for (long l = firstL; l <= lastL; l++) {
-        valarray<double> synSurfaceReflectances(21);
-        valarray<double> hypSurfaceReflectances(914);
-        valarray<double> hypToaReflectances(914);
-        valarray<double> vgtToaReflectances(4);
-        valarray<double> synWavelengths(21);
+	for (long l = firstL; l <= lastL; l++) {
+		valarray<double> synSurfaceReflectances(21);
+		valarray<double> hypSurfaceReflectances(914);
+		valarray<double> hypToaReflectances(914);
+		valarray<double> vgtToaReflectances(4);
+		valarray<double> synWavelengths(21);
 
-        synWavelengths[0] = 400.0;
-        synWavelengths[1] = 412.5;
-        synWavelengths[2] = 442.5;
-        synWavelengths[3] = 490.5;
-        synWavelengths[4] = 510.0;
-        synWavelengths[5] = 560.0;
-        synWavelengths[6] = 620.0;
-        synWavelengths[7] = 665.0;
-        synWavelengths[8] = 673.75;
-        synWavelengths[9] = 681.25;
-        synWavelengths[10] = 708.75;
-        synWavelengths[11] = 753.75;
-        synWavelengths[12] = 761.25;
-        synWavelengths[13] = 778.75;
-        synWavelengths[14] = 865.0;
-        synWavelengths[15] = 885.0;
-        synWavelengths[16] = 900.0;
-        synWavelengths[17] = 1020.0;
-        synWavelengths[18] = 1375.0;
-        synWavelengths[19] = 1610.0;
-        synWavelengths[20] = 2250.0;
+		synWavelengths[0] = 400.0;
+		synWavelengths[1] = 412.5;
+		synWavelengths[2] = 442.5;
+		synWavelengths[3] = 490.5;
+		synWavelengths[4] = 510.0;
+		synWavelengths[5] = 560.0;
+		synWavelengths[6] = 620.0;
+		synWavelengths[7] = 665.0;
+		synWavelengths[8] = 673.75;
+		synWavelengths[9] = 681.25;
+		synWavelengths[10] = 708.75;
+		synWavelengths[11] = 753.75;
+		synWavelengths[12] = 761.25;
+		synWavelengths[13] = 778.75;
+		synWavelengths[14] = 865.0;
+		synWavelengths[15] = 885.0;
+		synWavelengths[16] = 900.0;
+		synWavelengths[17] = 1020.0;
+		synWavelengths[18] = 1375.0;
+		synWavelengths[19] = 1610.0;
+		synWavelengths[20] = 2250.0;
 
-        Pixel p;
+		Pixel p;
 
-        valarray<double> f(hypLutRatm->getDimensionCount());
-        valarray<double> workspace;
-        valarray<double> coordinates(hypLutRatm->getDimensionCount());
-        valarray<double> tpiWeights(1);
-        valarray<size_t> tpiIndexes(1);
+		valarray<double> f(hypLutRatm->getDimensionCount());
+		valarray<double> workspace;
+		valarray<double> coordinates(hypLutRatm->getDimensionCount());
+		valarray<double> tpiWeights(1);
+		valarray<size_t> tpiIndexes(1);
 
-        valarray<double> rho(HYP_CHANNEL_COUNT);
-        valarray<double> ratm(HYP_CHANNEL_COUNT);
-        valarray<double> ts(HYP_CHANNEL_COUNT);
-        valarray<double> tv(HYP_CHANNEL_COUNT);
+		valarray<double> rho(HYP_CHANNEL_COUNT);
+		valarray<double> ratm(HYP_CHANNEL_COUNT);
+		valarray<double> ts(HYP_CHANNEL_COUNT);
+		valarray<double> tv(HYP_CHANNEL_COUNT);
 
-        context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
-        for (long k = collocatedGrid.getMinK(); k <= collocatedGrid.getMaxK(); k++) {
-            for (long m = collocatedGrid.getMinM(); m <= collocatedGrid.getMaxM(); m++) {
-                const size_t index = collocatedGrid.getIndex(k, l, m);
-                const size_t geoIndex = geoGrid.getIndex(k, l, m);
-                initPixel(p, index, geoIndex, tpiWeights, tpiIndexes);
-                performDownscaling(p, synSurfaceReflectances, coordinates, rho, ratm, ts, tv, f, workspace);
-                performHyperspectralInterpolation(synWavelengths, synSurfaceReflectances, hypSurfaceReflectances);
-                performHyperspectralUpscaling(hypSurfaceReflectances, p, hypToaReflectances, coordinates, rho, ratm, ts, tv, f, workspace);
-                performHyperspectralFiltering(hypToaReflectances, vgtToaReflectances);
-                const uint8_t flags = performQualityFlagging(p, vgtToaReflectances);
-                setValues(index, p, flags, vgtToaReflectances);
-            }
-        }
-    }
-    context.setLastComputedL(collocatedSegment, *this, lastL);
+		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
+		for (long k = collocatedGrid.getMinK(); k <= collocatedGrid.getMaxK(); k++) {
+			for (long m = collocatedGrid.getMinM(); m <= collocatedGrid.getMaxM(); m++) {
+				const size_t index = collocatedGrid.getIndex(k, l, m);
+				const size_t geoIndex = geoGrid.getIndex(k, l, m);
+				initPixel(p, index, geoIndex, tpiWeights, tpiIndexes);
+				performDownscaling(p, synSurfaceReflectances, coordinates, rho, ratm, ts, tv, f, workspace);
+				performHyperspectralInterpolation(synWavelengths, synSurfaceReflectances, hypSurfaceReflectances);
+				performHyperspectralUpscaling(hypSurfaceReflectances, p, hypToaReflectances, coordinates, rho, ratm, ts, tv, f, workspace);
+				performHyperspectralFiltering(hypToaReflectances, vgtToaReflectances);
+				const uint8_t flags = performQualityFlagging(p, vgtToaReflectances);
+				setValues(index, p, flags, vgtToaReflectances);
+			}
+		}
+	}
+	context.setLastComputedL(collocatedSegment, *this, lastL);
 }
 
 void Vbm::initPixel(Pixel& p, size_t index, size_t geoIndex, valarray<double>& tpiWeights, valarray<size_t>& tpiIndexes) {
-    for(size_t i = 0; i < 21; i++) {
-        p.radiances[i] = synRadianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synRadianceAccessors[i]->getDouble(index);
-        p.solarIrradiances[i] = synSolarIrradianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synSolarIrradianceAccessors[i]->getDouble(index);
-    }
-    p.synFlags = synFlagsAccessor->getUShort(index);
+	for (size_t i = 0; i < 21; i++) {
+		p.radiances[i] = synRadianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synRadianceAccessors[i]->getDouble(index);
+		p.solarIrradiances[i] = synSolarIrradianceAccessors[i]->isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : synSolarIrradianceAccessors[i]->getDouble(index);
+	}
+	p.synFlags = synFlagsAccessor->getUShort(index);
 
-    p.lat = latAccessor->getDouble(geoIndex);
-    p.lon = lonAccessor->getDouble(geoIndex);
+	p.lat = latAccessor->getDouble(geoIndex);
+	p.lon = lonAccessor->getDouble(geoIndex);
 
-    tiePointInterpolatorOlc->prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
+	tiePointInterpolatorOlc->prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
 
-    p.sza = tiePointInterpolatorOlc->interpolate(szaOlcTiePoints, tpiWeights, tpiIndexes);
-    p.saa = tiePointInterpolatorOlc->interpolate(saaOlcTiePoints, tpiWeights, tpiIndexes);
-    p.vzaOlc = tiePointInterpolatorOlc->interpolate(vzaOlcTiePoints, tpiWeights, tpiIndexes);
-    p.vaaOlc = tiePointInterpolatorOlc->interpolate(vaaOlcTiePoints, tpiWeights, tpiIndexes);
+	p.sza = tiePointInterpolatorOlc->interpolate(szaOlcTiePoints, tpiWeights, tpiIndexes);
+	p.saa = tiePointInterpolatorOlc->interpolate(saaOlcTiePoints, tpiWeights, tpiIndexes);
+	p.vzaOlc = tiePointInterpolatorOlc->interpolate(vzaOlcTiePoints, tpiWeights, tpiIndexes);
+	p.vaaOlc = tiePointInterpolatorOlc->interpolate(vaaOlcTiePoints, tpiWeights, tpiIndexes);
 
-    p.airPressure = tiePointInterpolatorOlc->interpolate(airPressureTiePoints, tpiWeights, tpiIndexes);
-    p.ozone = tiePointInterpolatorOlc->interpolate(ozoneTiePoints, tpiWeights, tpiIndexes);
-    if (waterVapourTiePoints.size() != 0) {
-        p.waterVapour = tiePointInterpolatorOlc->interpolate(waterVapourTiePoints, tpiWeights, tpiIndexes);
-    } else {
-        p.waterVapour = 0.2;
-    }
+	p.airPressure = tiePointInterpolatorOlc->interpolate(airPressureTiePoints, tpiWeights, tpiIndexes);
+	p.ozone = tiePointInterpolatorOlc->interpolate(ozoneTiePoints, tpiWeights, tpiIndexes);
+	if (waterVapourTiePoints.size() != 0) {
+		p.waterVapour = tiePointInterpolatorOlc->interpolate(waterVapourTiePoints, tpiWeights, tpiIndexes);
+	} else {
+		p.waterVapour = 0.2;
+	}
 
-    tiePointInterpolatorSln->prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
-    p.vzaSln = tiePointInterpolatorSln->interpolate(vzaSlnTiePoints, tpiWeights, tpiIndexes);
-    p.vaaSln = tiePointInterpolatorSln->interpolate(vaaSlnTiePoints, tpiWeights, tpiIndexes);
+	tiePointInterpolatorSln->prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
+	p.vzaSln = tiePointInterpolatorSln->interpolate(vzaSlnTiePoints, tpiWeights, tpiIndexes);
+	p.vaaSln = tiePointInterpolatorSln->interpolate(vaaSlnTiePoints, tpiWeights, tpiIndexes);
 
-    p.aot = aerosolOpticalThickness(p.lat);
-    p.aerosolModel = aerosolModel;
-    p.vgtFlags = 0;
+	p.aot = aerosolOpticalThickness(p.lat);
+	p.aerosolModel = aerosolModel;
+	p.vgtFlags = 0;
 }
 
-void Vbm::performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflectances, valarray<double>& coordinates, valarray<double>& rho, valarray<double>& ratm, valarray<double>& ts, valarray<double>& tv, valarray<double>& f, valarray<double>& w) {
-    fill(&synSurfaceReflectances[0], &synSurfaceReflectances[synSurfaceReflectances.size()], Constants::FILL_VALUE_DOUBLE);
+void Vbm::performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflectances, valarray<double>& coordinates, valarray<double>& rho, valarray<double>& ratm, valarray<double>& ts,
+		valarray<double>& tv, valarray<double>& f, valarray<double>& w) {
+	fill(&synSurfaceReflectances[0], &synSurfaceReflectances[synSurfaceReflectances.size()], Constants::FILL_VALUE_DOUBLE);
 
-    if (isSet(p.synFlags, Constants::SY2_LAND_FLAG)) {
+	if (isSet(p.synFlags, Constants::SY2_LAND_FLAG)) {
 		coordinates[0] = p.airPressure;
 		coordinates[1] = p.waterVapour;
 		coordinates[2] = p.aot;
@@ -315,7 +308,7 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflect
 void Vbm::performHyperspectralInterpolation(const valarray<double>& synWavelengths, const valarray<double>& synSurfaceReflectances, valarray<double>& hypSurfaceReflectances) {
 	fill(&hypSurfaceReflectances[0], &hypSurfaceReflectances[hypSurfaceReflectances.size()], Constants::FILL_VALUE_DOUBLE);
 
-		for (size_t i = 0; i < synWavelengths.size() - 1; i++) {
+	for (size_t i = 0; i < synWavelengths.size() - 1; i++) {
 		const double y0 = synSurfaceReflectances[i];
 		const double y1 = synSurfaceReflectances[i + 1];
 		if (y0 != Constants::FILL_VALUE_DOUBLE && y1 != Constants::FILL_VALUE_DOUBLE) {
@@ -336,7 +329,8 @@ void Vbm::performHyperspectralInterpolation(const valarray<double>& synWavelengt
 	}
 }
 
-void Vbm::performHyperspectralUpscaling(const valarray<double>& hypSurfaceReflectances, const Pixel& p, valarray<double>& hypToaReflectances, valarray<double>& coordinates, valarray<double>& rho, valarray<double>& ratm, valarray<double>& ts, valarray<double>& tv, valarray<double>& f, valarray<double>& w) {
+void Vbm::performHyperspectralUpscaling(const valarray<double>& hypSurfaceReflectances, const Pixel& p, valarray<double>& hypToaReflectances, valarray<double>& coordinates, valarray<double>& rho,
+		valarray<double>& ratm, valarray<double>& ts, valarray<double>& tv, valarray<double>& f, valarray<double>& w) {
 	fill(&hypToaReflectances[0], &hypToaReflectances[hypToaReflectances.size()], Constants::FILL_VALUE_DOUBLE);
 
 	if (isSet(p.synFlags, Constants::SY2_LAND_FLAG)) {
@@ -395,71 +389,61 @@ void Vbm::performHyperspectralFiltering(const valarray<double>& hypToaReflectanc
 				}
 			}
 		}
-		if (ws != 0.0) {
-			vgtToaReflectances[b] = rs / ws;
+		if (ws > 0.0) {
+			if (rs > 0.0) {
+				vgtToaReflectances[b] = rs / ws;
+			}
 		}
 	}
 }
 
 uint8_t Vbm::performQualityFlagging(Pixel& p, const valarray<double>& vgtToaReflectances) const {
-    uint8_t flags = 0;
-    if (vgtToaReflectances[0] != Constants::FILL_VALUE_DOUBLE &&
-    		p.radiances[1] != Constants::FILL_VALUE_DOUBLE &&
-    		p.radiances[2] != Constants::FILL_VALUE_DOUBLE) {
-        flags |= Constants::VGT_B0_GOOD_FLAG;
-    }
-    if (vgtToaReflectances[1] != Constants::FILL_VALUE_DOUBLE &&
-    		p.radiances[5] != Constants::FILL_VALUE_DOUBLE &&
-    		p.radiances[6] != Constants::FILL_VALUE_DOUBLE &&
-    		p.radiances[7] != Constants::FILL_VALUE_DOUBLE &&
-    		p.radiances[8] != Constants::FILL_VALUE_DOUBLE &&
-    		p.radiances[9] != Constants::FILL_VALUE_DOUBLE) {
-        flags |= Constants::VGT_B2_GOOD_FLAG;
-    }
-    if (vgtToaReflectances[2] != Constants::FILL_VALUE_DOUBLE &&
-    		p.radiances[13] != Constants::FILL_VALUE_DOUBLE &&
-    		p.radiances[14] != Constants::FILL_VALUE_DOUBLE &&
-    		p.radiances[15] != Constants::FILL_VALUE_DOUBLE &&
-    		p.radiances[16] != Constants::FILL_VALUE_DOUBLE &&
-    		p.radiances[17] != Constants::FILL_VALUE_DOUBLE) {
-        flags |= Constants::VGT_B3_GOOD_FLAG;
-    }
-    if (vgtToaReflectances[3] != Constants::FILL_VALUE_DOUBLE &&
-    		p.radiances[19] != Constants::FILL_VALUE_DOUBLE &&
-    		p.radiances[20] != Constants::FILL_VALUE_DOUBLE) {
-        flags |= Constants::VGT_MIR_GOOD_FLAG;
-    }
-    if (isSet(p.synFlags, Constants::SY2_LAND_FLAG)) {
-    	flags |= Constants::VGT_LAND_FLAG;
-    }
-    return flags;
+	uint8_t flags = 0;
+	if (vgtToaReflectances[0] != Constants::FILL_VALUE_DOUBLE && p.radiances[1] != Constants::FILL_VALUE_DOUBLE && p.radiances[2] != Constants::FILL_VALUE_DOUBLE) {
+		flags |= Constants::VGT_B0_GOOD_FLAG;
+	}
+	if (vgtToaReflectances[1] != Constants::FILL_VALUE_DOUBLE && p.radiances[5] != Constants::FILL_VALUE_DOUBLE && p.radiances[6] != Constants::FILL_VALUE_DOUBLE
+			&& p.radiances[7] != Constants::FILL_VALUE_DOUBLE && p.radiances[8] != Constants::FILL_VALUE_DOUBLE && p.radiances[9] != Constants::FILL_VALUE_DOUBLE) {
+		flags |= Constants::VGT_B2_GOOD_FLAG;
+	}
+	if (vgtToaReflectances[2] != Constants::FILL_VALUE_DOUBLE && p.radiances[13] != Constants::FILL_VALUE_DOUBLE && p.radiances[14] != Constants::FILL_VALUE_DOUBLE
+			&& p.radiances[15] != Constants::FILL_VALUE_DOUBLE && p.radiances[16] != Constants::FILL_VALUE_DOUBLE && p.radiances[17] != Constants::FILL_VALUE_DOUBLE) {
+		flags |= Constants::VGT_B3_GOOD_FLAG;
+	}
+	if (vgtToaReflectances[3] != Constants::FILL_VALUE_DOUBLE && p.radiances[19] != Constants::FILL_VALUE_DOUBLE && p.radiances[20] != Constants::FILL_VALUE_DOUBLE) {
+		flags |= Constants::VGT_MIR_GOOD_FLAG;
+	}
+	if (isSet(p.synFlags, Constants::SY2_LAND_FLAG)) {
+		flags |= Constants::VGT_LAND_FLAG;
+	}
+	return flags;
 }
 
 void Vbm::setValues(size_t index, Pixel& p, uint8_t flags, const valarray<double>& vgtToaReflectances) {
-    for (size_t i = 0; i < vgtReflectanceAccessors.size(); i++) {
-        if (vgtToaReflectances[i] != Constants::FILL_VALUE_DOUBLE) {
-            vgtReflectanceAccessors[i]->setDouble(index, vgtToaReflectances[i]);
-        } else {
-            vgtReflectanceAccessors[i]->setFillValue(index);
-        }
-    }
-    vgtFlagsAccessor->setUByte(index, flags);
+	for (size_t i = 0; i < vgtReflectanceAccessors.size(); i++) {
+		if (vgtToaReflectances[i] != Constants::FILL_VALUE_DOUBLE) {
+			vgtReflectanceAccessors[i]->setDouble(index, vgtToaReflectances[i]);
+		} else {
+			vgtReflectanceAccessors[i]->setFillValue(index);
+		}
+	}
+	vgtFlagsAccessor->setUByte(index, flags);
 
-    vgtAgAccessor->setDouble(index, p.aot);
-    vgtPgAccessor->setDouble(index, p.airPressure);
-    vgtOgAccessor->setDouble(index, duToAtmCm(p.ozone));
-    vgtWvgAccessor->setDouble(index, p.waterVapour);
+	vgtAgAccessor->setDouble(index, p.aot);
+	vgtPgAccessor->setDouble(index, p.airPressure);
+	vgtOgAccessor->setDouble(index, duToAtmCm(p.ozone));
+	vgtWvgAccessor->setDouble(index, p.waterVapour);
 
-    vgtSaaAccessor->setDouble(index, p.saa);
-    vgtSzaAccessor->setDouble(index, p.sza);
-    vgtVaaAccessor->setDouble(index, p.vaaOlc);
-    vgtVzaAccessor->setDouble(index, p.vzaOlc);
+	vgtSaaAccessor->setDouble(index, p.saa);
+	vgtSzaAccessor->setDouble(index, p.sza);
+	vgtVaaAccessor->setDouble(index, p.vaaOlc);
+	vgtVzaAccessor->setDouble(index, p.vzaOlc);
 }
 
 double Vbm::aerosolOpticalThickness(double lat) {
 	const double c = cos(lat * D2R);
 
-    return 0.2 * (c - 0.25) * (c * c * c) + 0.05;
+	return 0.2 * (c - 0.25) * (c * c * c) + 0.05;
 }
 
 double Vbm::surfaceReflectance(double nO3, double vza, double sza, double f0, double ltoa, double cO3, double rho, double ratm, double ts, double tv) {
@@ -472,8 +456,8 @@ double Vbm::surfaceReflectance(double nO3, double vza, double sza, double f0, do
 }
 
 double Vbm::toaReflectance(double nO3, double airMass, double surfaceReflectance, double cO3, double rho, double ratm, double ts, double tv) {
-    const double tO3 = exp(-airMass * nO3 * cO3);
-    const double g = ts * tv;
+	const double tO3 = exp(-airMass * nO3 * cO3);
+	const double g = ts * tv;
 
-    return tO3 * (ratm + (g * surfaceReflectance) / (1.0 - rho * surfaceReflectance));
+	return tO3 * (ratm + (g * surfaceReflectance) / (1.0 - rho * surfaceReflectance));
 }
