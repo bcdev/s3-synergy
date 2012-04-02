@@ -204,7 +204,7 @@ void Vco::process(Context& context) {
 						Accessor* targetAccessor = targetAccessors[i];
 
 						if (!sourceAccessor->isFillValue(sourceIndex)) {
-							setValue(sourceAccessor, targetAccessor, sourceIndex, targetIndex);
+							//setValue(sourceAccessor, targetAccessor, sourceIndex, targetIndex);
 						}
 					}
 					const int64_t sourceTime = sourceAccessors[10]->getLong(sourceL);
