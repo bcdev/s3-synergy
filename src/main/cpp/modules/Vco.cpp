@@ -208,7 +208,7 @@ void Vco::process(Context& context) {
 								setValue(sourceAccessor, targetAccessor, sourceIndex, targetIndex);
 							} catch (std::exception& e) {
 								context.getLogging().error("sourceAccessorIndex = " + boost::lexical_cast<string>(i), getId());
-								context.getLogging().error("sourceAccessorValue = " + boost::lexical_cast<string>(sourceAccessor->getDouble(i)), getId());
+								context.getLogging().error("sourceAccessorValue = " + boost::lexical_cast<string>(sourceAccessor->getDouble(sourceIndex)), getId());
 								throw e;
 							}
 						}
