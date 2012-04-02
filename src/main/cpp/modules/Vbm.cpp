@@ -210,9 +210,7 @@ void Vbm::process(Context& context) {
                 performDownscaling(p, synSurfaceReflectances, coordinates, rho, ratm, ts, tv, f, workspace);
                 performHyperspectralInterpolation(synWavelengths, synSurfaceReflectances, hypSurfaceReflectances);
                 performHyperspectralUpscaling(hypSurfaceReflectances, p, hypToaReflectances, coordinates, rho, ratm, ts, tv, f, workspace);
-                performHyperspectralFiltering(hypSurfaceReflectances, vgtToaReflectances);
-                // TODO - uncomment!
-                //performHyperspectralFiltering(hypToaReflectances, vgtToaReflectances);
+                performHyperspectralFiltering(hypToaReflectances, vgtToaReflectances);
                 const uint8_t flags = performQualityFlagging(p, vgtToaReflectances);
                 setValues(index, p, flags, vgtToaReflectances);
             }
@@ -477,5 +475,5 @@ double Vbm::toaReflectance(double nO3, double airMass, double surfaceReflectance
     const double tO3 = exp(-airMass * nO3 * cO3);
     const double g = ts * tv;
 
-    return tO3 * (ratm + (g * surfaceReflectance) / ((1.0 - rho) * surfaceReflectance));
+    return tO3 * (ratm + (g * surfaceReflectance) / (1.0 - rho * surfaceReflectance));
 }
