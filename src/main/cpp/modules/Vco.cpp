@@ -204,7 +204,12 @@ void Vco::process(Context& context) {
 						Accessor* targetAccessor = targetAccessors[i];
 
 						if (!sourceAccessor->isFillValue(sourceIndex)) {
-							setValue(sourceAccessor, targetAccessor, sourceIndex, targetIndex);
+							try {
+								setValue(sourceAccessor, targetAccessor, sourceIndex, targetIndex);
+							} catch (std::exception& e) {
+								context.getLogging().error("accessorIndex = " + boost::lexical_cast<string>(i), getId());
+								throw e;
+							}
 						}
 					}
 					const int64_t sourceTime = sourceAccessors[10]->getLong(sourceL);
