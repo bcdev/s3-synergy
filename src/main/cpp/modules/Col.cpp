@@ -306,9 +306,6 @@ void Col::addOlciVariables(Context& context) {
 	}
 
 	addVariableAlias(context, targetSegment, "OLC_confidence", sourceSegment, "OLC_confidence");
-
-//	addVariableAlias(context, targetSegment, "longitude", sourceSegment, "longitude");
-//	addVariableAlias(context, targetSegment, "latitude", sourceSegment, "latitude");
 	addVariableAlias(context, targetSegment, "altitude", sourceSegment, "altitude");
 
 	const Segment& olcInfoSegment = context.getSegment(Constants::SEGMENT_OLC_INFO);
