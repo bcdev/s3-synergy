@@ -123,10 +123,6 @@ void Col::process(Context& context) {
 						sourceK = k;
 						sourceL = l + (long) floor(collocationYAccessor.getDouble(targetIndex));
 						sourceM = m + (long) floor(collocationXAccessor.getDouble(targetIndex));
-					} else if(sourceSegment.getId().compare(Constants::SEGMENT_OLC_TIME) == 0) {
-					    sourceK = 0;
-					    sourceL = (long) floor(collocationYAccessor.getDouble(targetIndex));
-					    sourceM = 0;
 					} else {
 						sourceK = 0;
 						sourceL = (long) floor(collocationYAccessor.getDouble(targetIndex));
