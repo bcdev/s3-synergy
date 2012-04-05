@@ -316,10 +316,10 @@ void Aer::process(Context& context) {
 				if (!(isSet(p.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)
 				        || isSet(p.flags, Constants::SY2_AEROSOL_HIGH_ERROR_FLAG)
 				        || isSet(p.flags, Constants::SY2_AEROSOL_TOO_LOW_FLAG))) {
-					double w = 0.00000625;
-					double tau550 = w * aerosolOpticalThickness(p.lat);
-					double tau550err = 0.0 * w;
-					double alpha550 = 1.25 * w;
+					double ws = 0.00000625;
+					double aot = aerosolOpticalThickness(p.lat);
+					double aotError = 0.0;
+					double angstromExponent = 1.25;
 					double minPixelDistance = numeric_limits<double>::max();
 
 					for (long sourceL = targetL - n; sourceL <= targetL + n; sourceL++) {
@@ -333,18 +333,23 @@ void Aer::process(Context& context) {
 										minPixelDistance = d;
 										p.aerosolModel = q.aerosolModel;
 									}
-
-									tau550 += q.aot / (d * d);
-									tau550err += q.aotError / (d * d);
-									alpha550 += q.angstromExponent / (d * d);
-									w += 1.0 / (d * d);
+									const double w = d * d;
+									const double t = w + ws;
+									aot += (q.aot - aot) * w / t;
+									aotError += (q.aotError - aotError) * w / t;
+									angstromExponent += (q.angstromExponent - angstromExponent) * w / t;
+									ws = t;
+									//tau550 += q.aot / (d * d);
+									//tau550err += q.aotError / (d * d);
+									//alpha550 += q.angstromExponent / (d * d);
+									//w += 1.0 / (d * d);
 								}
 							}
 						}
 					}
-					p.aot = tau550 / w;
-					p.aotError = tau550err / w;
-					p.angstromExponent = alpha550 / w;
+					p.aot = aot;
+					p.aotError = aotError;
+					p.angstromExponent = angstromExponent;
 					p.flags |= Constants::SY2_AEROSOL_FILLED_FLAG;
 				}
 			}

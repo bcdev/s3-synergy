@@ -121,7 +121,7 @@ void Aei::process(Context& context) {
 					sourceIndex = sourceGrid->getIndex(k, sourceL1, sourceM1);
 				}
 				aerosolModelTargetAccessor.setUByte(targetIndex, aerosolModelSourceAccessor.getUByte(sourceIndex));
-				flagsTargetAccessor.setUShort(targetIndex, flagsTargetAccessor.getUShort(targetIndex) | (flagsSourceAccessor.getUShort(sourceIndex) & Constants::SY2_AVERAGE_FLAG_MASK));
+				flagsTargetAccessor.setUShort(targetIndex, flagsTargetAccessor.getUShort(targetIndex) | (flagsSourceAccessor.getUShort(sourceIndex) & Constants::SY2_AVERAGE_FLAGS_MASK));
 			}
 		}
 	}
