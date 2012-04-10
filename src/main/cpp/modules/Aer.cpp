@@ -339,10 +339,6 @@ void Aer::process(Context& context) {
 									aotError += (q.aotError - aotError) * w / t;
 									angstromExponent += (q.angstromExponent - angstromExponent) * w / t;
 									ws = t;
-									//tau550 += q.aot / (d * d);
-									//tau550err += q.aotError / (d * d);
-									//alpha550 += q.angstromExponent / (d * d);
-									//w += 1.0 / (d * d);
 								}
 							}
 						}
