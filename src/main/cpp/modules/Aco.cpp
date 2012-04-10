@@ -195,7 +195,7 @@ void Aco::process(Context& context) {
 			    }
 
 			    const uint16_t synFlags = flagsAccessor.getUShort(i);
-			    if (isSet(synFlags, Constants::SY2_LAND_FLAG) || isSet(synFlags, Constants::SY2_CLOUD_FLAG)) {
+			    if (!isSet(synFlags, Constants::SY2_LAND_FLAG) || isSet(synFlags, Constants::SY2_CLOUD_FLAG)) {
 			    	continue;
 			    }
 
