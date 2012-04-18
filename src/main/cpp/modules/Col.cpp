@@ -41,17 +41,17 @@ void Col::start(Context& context) {
 }
 
 void Col::stop(Context& context) {
-    yCollocationAccessorMap.clear();
-    xCollocationAccessorMap.clear();
-    sourceAccessorMap.clear();
-    solarIrradianceAccessors.clear();
-    sourceSegmentMap.clear();
-    sourceNameMap.clear();
-    collocationNameMapY.clear();
-    collocationNameMapX.clear();
-    targetNames.clear();
+	yCollocationAccessorMap.clear();
+	xCollocationAccessorMap.clear();
+	sourceAccessorMap.clear();
+	solarIrradianceAccessors.clear();
+	sourceSegmentMap.clear();
+	sourceNameMap.clear();
+	collocationNameMapY.clear();
+	collocationNameMapX.clear();
+	targetNames.clear();
 
-    context.removeSegment(Constants::SEGMENT_SYN_COLLOCATED);
+	context.removeSegment(Constants::SEGMENT_SYN_COLLOCATED);
 }
 
 void Col::process(Context& context) {
@@ -76,14 +76,23 @@ void Col::process(Context& context) {
 	vector<Accessor*> yAccessors;
 	map<const Segment*, long> firstRequiredLMap;
 
-	foreach(const string& targetName, targetNames) {
-	    const Segment& s = *sourceSegmentMap[targetName];
-	    sourceAccessors.push_back(&s.getAccessor(sourceNameMap[targetName]));
-	    targetAccessors.push_back(&t.getAccessor(targetName));
+	foreach(const string& targetName, targetNames)
+			{
+				const Segment& s = *sourceSegmentMap[targetName];
+				sourceAccessors.push_back(&s.getAccessor(sourceNameMap[targetName]));
+				targetAccessors.push_back(&t.getAccessor(targetName));
 
-	    xAccessors.push_back(&olc.getAccessor(collocationNameMapX[targetName]));
-	    yAccessors.push_back(&olc.getAccessor(collocationNameMapY[targetName]));
-	}
+				if (contains(collocationNameMapX, targetName)) {
+					xAccessors.push_back(&olc.getAccessor(collocationNameMapX[targetName]));
+				} else {
+					xAccessors.push_back(0);
+				}
+				if (contains(collocationNameMapY, targetName)) {
+					yAccessors.push_back(&olc.getAccessor(collocationNameMapY[targetName]));
+				} else {
+					yAccessors.push_back(0);
+				}
+			}
 
 	for (long l = firstL; l <= lastL; l++) {
 		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
@@ -100,8 +109,8 @@ void Col::process(Context& context) {
 			const Accessor& sourceAccessor = *sourceAccessors[i];
 			Accessor& targetAccessor = *targetAccessors[i];
 
-			const Accessor& collocationXAccessor = *xAccessors[i];
-			const Accessor& collocationYAccessor = *yAccessors[i];
+			const Accessor* collocationXAccessor = xAccessors[i];
+			const Accessor* collocationYAccessor = yAccessors[i];
 
 			const long lastComputableL = context.getLastComputableL(sourceSegment, *this);
 			long& firstRequiredL = firstRequiredLMap[&sourceSegment];
@@ -110,7 +119,7 @@ void Col::process(Context& context) {
 				for (long m = targetGrid.getMinM(); m <= targetGrid.getMaxM(); m++) {
 					const size_t targetIndex = targetGrid.getIndex(k, l, m);
 
-					if (collocationXAccessor.isFillValue(targetIndex) || collocationYAccessor.isFillValue(targetIndex)) {
+					if ((collocationXAccessor != 0 && collocationXAccessor->isFillValue(targetIndex)) || (collocationYAccessor != 0 && collocationYAccessor->isFillValue(targetIndex))) {
 						targetAccessor.setFillValue(targetIndex);
 						continue;
 					}
@@ -121,12 +130,20 @@ void Col::process(Context& context) {
 
 					if (sourceSegment == olc) {
 						sourceK = k;
-						sourceL = l + (long) floor(collocationYAccessor.getDouble(targetIndex));
-						sourceM = m + (long) floor(collocationXAccessor.getDouble(targetIndex));
+						if (collocationYAccessor != 0) {
+							sourceL = l + (long) floor(collocationYAccessor->getDouble(targetIndex));
+						} else {
+							sourceL = l;
+						}
+						if (collocationXAccessor != 0) {
+							sourceM = m + (long) floor(collocationXAccessor->getDouble(targetIndex));
+						} else {
+							sourceM = m;
+						}
 					} else {
 						sourceK = 0;
-						sourceL = (long) floor(collocationYAccessor.getDouble(targetIndex));
-						sourceM = (long) floor(collocationXAccessor.getDouble(targetIndex));
+						sourceL = (long) floor(collocationYAccessor->getDouble(targetIndex));
+						sourceM = (long) floor(collocationXAccessor->getDouble(targetIndex));
 					}
 
 					if (sourceL < sourceGrid.getMinL() || sourceL > sourceGrid.getMaxL()) {
@@ -285,7 +302,7 @@ void Col::addOlciVariables(Context& context) {
 		const string sourceName = "L_" + lexical_cast<string>(OLC_TO_SYN_CHANNEL_MAPPING[i]);
 		const string targetName = "L_" + lexical_cast<string>(i + 1);
 		if (OLC_TO_SYN_CHANNEL_MAPPING[i] == OLC_REFERENCE_CHANNEL) {
-			addVariableAlias(context, targetSegment, targetName, sourceSegment, sourceName);
+			addVariable(context, targetSegment, targetName, sourceSegment, sourceName, sourceProductDescriptor);
 		} else {
 			addVariable(context, targetSegment, targetName, sourceSegment, sourceName, sourceProductDescriptor);
 			collocationNameMapX[targetName] = "delta_x_" + lexical_cast<string>(OLC_TO_SYN_CHANNEL_MAPPING[i]);
@@ -297,7 +314,7 @@ void Col::addOlciVariables(Context& context) {
 		const string sourceName = "L_" + lexical_cast<string>(OLC_TO_SYN_CHANNEL_MAPPING[i]) + "_er";
 		const string targetName = "L_" + lexical_cast<string>(i + 1) + "_er";
 		if (OLC_TO_SYN_CHANNEL_MAPPING[i] == OLC_REFERENCE_CHANNEL) {
-			addVariableAlias(context, targetSegment, targetName, sourceSegment, sourceName);
+			addVariable(context, targetSegment, targetName, sourceSegment, sourceName, sourceProductDescriptor);
 		} else {
 			addVariable(context, targetSegment, targetName, sourceSegment, sourceName, sourceProductDescriptor);
 			collocationNameMapX[targetName] = "delta_x_" + lexical_cast<string>(OLC_TO_SYN_CHANNEL_MAPPING[i]);
@@ -305,8 +322,8 @@ void Col::addOlciVariables(Context& context) {
 		}
 	}
 
-	addVariableAlias(context, targetSegment, "OLC_confidence", sourceSegment, "OLC_confidence");
-	addVariableAlias(context, targetSegment, "altitude", sourceSegment, "altitude");
+	addVariable(context, targetSegment, "OLC_confidence", sourceSegment, "OLC_confidence", sourceProductDescriptor);
+	addVariable(context, targetSegment, "altitude", sourceSegment, "altitude", sourceProductDescriptor);
 
 	const Segment& olcInfoSegment = context.getSegment(Constants::SEGMENT_OLC_INFO);
 	for (size_t i = 0; i < 18; i++) {
