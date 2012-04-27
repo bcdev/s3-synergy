@@ -333,7 +333,7 @@ void Aer::process(Context& context) {
 										minPixelDistance = d;
 										p.aerosolModel = q.aerosolModel;
 									}
-									const double w = d * d;
+									const double w = 1.0 / (d * d);
 									const double t = w + ws;
 									aot += (q.aot - aot) * w / t;
 									aotError += (q.aotError - aotError) * w / t;
