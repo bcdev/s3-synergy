@@ -298,7 +298,7 @@ void Aer::process(Context& context) {
 		}
 	}
 
-	const long n = 30;
+	const long n = 60;
 	long lastFillableL;
 	if (lastL < averagedGrid->getMaxL()) {
 		lastFillableL = lastL - n;
