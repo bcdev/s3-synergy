@@ -310,6 +310,7 @@ void Aer::process(Context& context) {
 		lastFillableL = lastL;
 	}
 
+	/*
 	for (long targetL = firstL; targetL <= lastFillableL; targetL++) {
 		context.getLogging().info("Filling line l = " + lexical_cast<string>(targetL), getId());
 		for (long k = averagedGrid->getMinK(); k <= averagedGrid->getMaxK(); k++) {
@@ -355,12 +356,13 @@ void Aer::process(Context& context) {
 			}
 		}
 	}
-
+	*/
 	context.getLogging().info("Putting lines ...", getId());
 	putPixels(pixels, firstL, lastL);
 
-	context.setLastComputedL(*averagedSegment, *this, lastFillableL);
-	context.setFirstRequiredL(*averagedSegment, *this, lastFillableL + 1 - n);
+	context.setLastComputedL(*averagedSegment, *this, lastL);
+	//context.setLastComputedL(*averagedSegment, *this, lastFillableL);
+	//context.setFirstRequiredL(*averagedSegment, *this, lastFillableL + 1 - n);
 }
 
 void Aer::getPixels(Context& context, valarray<Pixel>& pixels) const {
