@@ -22,6 +22,7 @@
 #include <sys/types.h>
 
 #include <algorithm>
+#include <cstdio>
 #include <cstring>
 #include <limits>
 #include <typeinfo>
@@ -83,6 +84,8 @@ public:
 	}
 
 	virtual ~MapAccessor() {
+		using std::remove;
+
 		munmap(addr, length);
 		close(fd);
 		remove(&filename[0]);
