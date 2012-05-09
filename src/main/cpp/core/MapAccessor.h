@@ -310,7 +310,7 @@ public:
 	}
 
 	/**
-	 * Intentionally does nothing..
+	 * Intentionally does nothing.
 	 */
 	void shift(long n, long strideK, long strideL) {
 		// intentionally doing nothing

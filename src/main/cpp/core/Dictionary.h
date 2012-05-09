@@ -655,7 +655,7 @@ public:
 
     /**
      * Adds a variable descriptor.
-     * @param The name of the variable descriptor to be added.
+     * @param name The name of the variable descriptor to be added.
      * @return a reference to the variable descriptor added.
      */
     VariableDescriptor& addVariableDescriptor(const string& name) {
@@ -664,7 +664,7 @@ public:
 
     /**
      * Returns a variable descriptor that has been added .
-     * @param The name of the variable descriptor.
+     * @param name The name of the variable descriptor.
      * @return a reference to the variable descriptor.
      */
     VariableDescriptor& getVariableDescriptor(const string& name) const {

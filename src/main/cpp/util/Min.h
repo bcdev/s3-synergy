@@ -33,7 +33,7 @@ public:
 
 	/**
 	 * Finds the minimum of an univariate function using Brent's algorithm.
-	 * <p/>
+	 *
 	 * Based on code provided by the GNU Scientific Library (GSL).
 	 *
 	 * @param f                    the univariate function.

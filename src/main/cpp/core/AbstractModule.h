@@ -36,8 +36,8 @@ public:
 
 	/**
 	 * Constructs a new instance of this class.
-	 * @param moduleId The module ID.
-	 * @param moduleVersion The module version.
+	 * @param id The module ID.
+	 * @param version The module version.
 	 */
 	AbstractModule(const string& id, const string& version = Constants::PROCESSOR_VERSION) :
 			id(id), version(version) {

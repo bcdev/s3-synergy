@@ -68,7 +68,7 @@ public:
 
 	/**
 	 * Finds the minimum of a multivariate function using Powell's method.
-	 * <p/>
+	 *
 	 * Based on online material provided by John H. Mathews (Department of Mathematics,
 	 * California State Univ. Fullerton).
 	 *
@@ -88,7 +88,7 @@ public:
 
 	/**
 	 * Finds the minimum of an object's multivariate member function using Powell's method.
-	 * <p/>
+	 *
 	 * Based on online material provided by John H. Mathews (Department of Mathematics,
 	 * California State Univ. Fullerton).
 	 * 
