@@ -301,7 +301,7 @@ void Aer::process(Context& context) {
 		}
 	}
 
-	const long n = max<long>(120.0 * 8.0 / averagingFactor, averagedGrid->getSizeL() / 2 - 10);
+	const long n = 100; //max<long>(120.0 * 8.0 / averagingFactor, averagedGrid->getSizeL() / 2 - 10);
 		// shall be at least 120 km, but cannot be larger than half the height of the segment
 	long lastFillableL;
 	if (lastL < averagedGrid->getMaxL()) {
@@ -360,9 +360,8 @@ void Aer::process(Context& context) {
 	context.getLogging().info("Putting lines ...", getId());
 	putPixels(pixels, firstL, lastL);
 
-	context.setLastComputedL(*averagedSegment, *this, lastL);
-	//context.setLastComputedL(*averagedSegment, *this, lastFillableL);
-	//context.setFirstRequiredL(*averagedSegment, *this, lastFillableL + 1 - n);
+	context.setLastComputedL(*averagedSegment, *this, lastFillableL);
+	context.setFirstRequiredL(*averagedSegment, *this, lastFillableL + 1 - n);
 }
 
 void Aer::getPixels(Context& context, valarray<Pixel>& pixels) const {
