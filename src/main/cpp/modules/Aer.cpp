@@ -36,7 +36,7 @@ class PixelProvider {
 public:
 	PixelProvider(const Context& context);
 	~PixelProvider();
-	Pixel& getPixel(size_t index, Pixel& p) const;
+	Pixel& getPixel(size_t index, Pixel& p, bool aerosolOnly = false) const;
 	void putPixel(size_t index, const Pixel& p);
 
 private:
@@ -157,45 +157,83 @@ PixelProvider::PixelProvider(const Context& context) :
 PixelProvider::~PixelProvider() {
 }
 
-Pixel& PixelProvider::getPixel(size_t index, Pixel& p) const {
-	/*
-	 * Radiances
-	 */
-	for (size_t b = 0; b < 30; b++) {
-		const Accessor& radiance = *radianceAccessors[b];
-		if (!radiance.isFillValue(index)) {
-			p.radiances[b] = radiance.getDouble(index);
-		} else {
-			p.radiances[b] = Constants::FILL_VALUE_DOUBLE;
+Pixel& PixelProvider::getPixel(size_t index, Pixel& p, bool aerosolOnly) const {
+	if (!aerosolOnly) {
+		/*
+		 * Radiances
+		 */
+		for (size_t b = 0; b < 30; b++) {
+			const Accessor& radiance = *radianceAccessors[b];
+			if (!radiance.isFillValue(index)) {
+				p.radiances[b] = radiance.getDouble(index);
+			} else {
+				p.radiances[b] = Constants::FILL_VALUE_DOUBLE;
+			}
 		}
-	}
-	/*
-	 * Solar irradiances
-	 */
-	for (size_t i = 0; i < 18; i++) {
-		const Accessor& accessor = *solarIrradianceOlcAccessors[i];
-		if (!accessor.isFillValue(index)) {
-			p.solarIrradiances[i] = accessor.getDouble(index);
-		} else {
-			p.solarIrradiances[i] = Constants::FILL_VALUE_DOUBLE;
+		/*
+		 * Solar irradiances
+		 */
+		for (size_t i = 0; i < 18; i++) {
+			const Accessor& accessor = *solarIrradianceOlcAccessors[i];
+			if (!accessor.isFillValue(index)) {
+				p.solarIrradiances[i] = accessor.getDouble(index);
+			} else {
+				p.solarIrradiances[i] = Constants::FILL_VALUE_DOUBLE;
+			}
 		}
-	}
-	for (size_t i = 0; i < 6; i++) {
-		const Accessor& accessor = *solarIrradianceSlnAccessors[i];
-		if (!accessor.isFillValue(index)) {
-			p.solarIrradiances[i + 18] = accessor.getDouble(index);
-		} else {
-			p.solarIrradiances[i + 18] = Constants::FILL_VALUE_DOUBLE;
+		for (size_t i = 0; i < 6; i++) {
+			const Accessor& accessor = *solarIrradianceSlnAccessors[i];
+			if (!accessor.isFillValue(index)) {
+				p.solarIrradiances[i + 18] = accessor.getDouble(index);
+			} else {
+				p.solarIrradiances[i + 18] = Constants::FILL_VALUE_DOUBLE;
+			}
 		}
-	}
-	for (size_t i = 0; i < 6; i++) {
-		const Accessor& accessor = *solarIrradianceSloAccessors[i];
-		if (!accessor.isFillValue(index)) {
-			p.solarIrradiances[i + 24] = accessor.getDouble(index);
-		} else {
-			p.solarIrradiances[i + 24] = Constants::FILL_VALUE_DOUBLE;
+		for (size_t i = 0; i < 6; i++) {
+			const Accessor& accessor = *solarIrradianceSloAccessors[i];
+			if (!accessor.isFillValue(index)) {
+				p.solarIrradiances[i + 24] = accessor.getDouble(index);
+			} else {
+				p.solarIrradiances[i + 24] = Constants::FILL_VALUE_DOUBLE;
+			}
 		}
+		/*
+		 * Geo-location
+		 */
+		p.lat = lat.getDouble(index);
+		p.lon = lon.getDouble(index);
+
+		/*
+		 * Tie Point data
+		 */
+		valarray<double> tpiWeights(1);
+		valarray<size_t> tpiIndexes(1);
+		tiePointInterpolatorOlc.prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
+
+		p.sza = tiePointInterpolatorOlc.interpolate(szaTiePointsOlc, tpiWeights, tpiIndexes);
+		p.saa = tiePointInterpolatorOlc.interpolate(saaTiePointsOlc, tpiWeights, tpiIndexes);
+		p.vzaOlc = tiePointInterpolatorOlc.interpolate(vzaTiePointsOlc, tpiWeights, tpiIndexes);
+		p.vaaOlc = tiePointInterpolatorOlc.interpolate(vaaTiePointsOlc, tpiWeights, tpiIndexes);
+
+		p.airPressure = tiePointInterpolatorOlc.interpolate(airPressureTiePoints, tpiWeights, tpiIndexes);
+		p.ozone = tiePointInterpolatorOlc.interpolate(ozoneTiePoints, tpiWeights, tpiIndexes);
+		if (waterVapourTiePoints.size() != 0) {
+			p.waterVapour = tiePointInterpolatorOlc.interpolate(waterVapourTiePoints, tpiWeights, tpiIndexes);
+		} else {
+			p.waterVapour = 0.2;
+		}
+
+		tiePointInterpolatorSln.prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
+		p.vaaSln = tiePointInterpolatorSln.interpolate(vaaTiePointsSln, tpiWeights, tpiIndexes);
+		p.vzaSln = tiePointInterpolatorSln.interpolate(vzaTiePointsSln, tpiWeights, tpiIndexes);
+
+		tiePointInterpolatorSlo.prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
+		p.vaaSlo = tiePointInterpolatorSlo.interpolate(vaaTiePointsSlo, tpiWeights, tpiIndexes);
+		p.vzaSlo = tiePointInterpolatorSlo.interpolate(vzaTiePointsSlo, tpiWeights, tpiIndexes);
+
+		p.errorMetric = numeric_limits<double>::max();
 	}
+
 	/*
 	 * Aerosol properties
 	 */
@@ -204,45 +242,6 @@ Pixel& PixelProvider::getPixel(size_t index, Pixel& p) const {
 	p.angstromExponent = alpha550.isFillValue(index) ? Constants::FILL_VALUE_DOUBLE : alpha550.getDouble(index);
 	p.flags = synFlags.getUShort(index);
 	p.aerosolModel = amin.getUByte(index);
-
-	/*
-	 * Geo-location
-	 */
-	p.lat = lat.getDouble(index);
-	p.lon = lon.getDouble(index);
-
-	/*
-	 * Tie Point data
-	 */
-	valarray<double> tpiWeights(1);
-	valarray<size_t> tpiIndexes(1);
-	tiePointInterpolatorOlc.prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
-
-	p.sza = tiePointInterpolatorOlc.interpolate(szaTiePointsOlc, tpiWeights, tpiIndexes);
-	p.saa = tiePointInterpolatorOlc.interpolate(saaTiePointsOlc, tpiWeights, tpiIndexes);
-	p.vzaOlc = tiePointInterpolatorOlc.interpolate(vzaTiePointsOlc, tpiWeights, tpiIndexes);
-	p.vaaOlc = tiePointInterpolatorOlc.interpolate(vaaTiePointsOlc, tpiWeights, tpiIndexes);
-
-	p.airPressure = tiePointInterpolatorOlc.interpolate(airPressureTiePoints, tpiWeights, tpiIndexes);
-	p.ozone = tiePointInterpolatorOlc.interpolate(ozoneTiePoints, tpiWeights, tpiIndexes);
-	if (waterVapourTiePoints.size() != 0) {
-		p.waterVapour = tiePointInterpolatorOlc.interpolate(waterVapourTiePoints, tpiWeights, tpiIndexes);
-	} else {
-		p.waterVapour = 0.2;
-	}
-
-	tiePointInterpolatorSln.prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
-	p.vaaSln = tiePointInterpolatorSln.interpolate(vaaTiePointsSln, tpiWeights, tpiIndexes);
-	p.vzaSln = tiePointInterpolatorSln.interpolate(vzaTiePointsSln, tpiWeights, tpiIndexes);
-
-	tiePointInterpolatorSlo.prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
-	p.vaaSlo = tiePointInterpolatorSlo.interpolate(vaaTiePointsSlo, tpiWeights, tpiIndexes);
-	p.vzaSlo = tiePointInterpolatorSlo.interpolate(vzaTiePointsSlo, tpiWeights, tpiIndexes);
-
-	/*
-	 * Anything else
-	 */
-	p.errorMetric = numeric_limits<double>::max();
 
 	return p;
 }
@@ -335,7 +334,7 @@ void Aer::process(Context& context) {
 		for (long k = averagedGrid->getMinK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long targetM = averagedGrid->getMinM(); targetM <= averagedGrid->getMaxM(); targetM++) {
 				const size_t targetPixelIndex = averagedGrid->getIndex(k, targetL, targetM);
-				pixelProvider.getPixel(targetPixelIndex, p);
+				pixelProvider.getPixel(targetPixelIndex, p, true);
 
 				if (!(isSet(p.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)
 				        || isSet(p.flags, Constants::SY2_AEROSOL_HIGH_ERROR_FLAG)
@@ -350,7 +349,7 @@ void Aer::process(Context& context) {
 						for (long sourceM = targetM - n; sourceM <= targetM + n; sourceM++) {
 							if (averagedGrid->isValidPosition(k, sourceL, sourceM)) {
 								const size_t sourcePixelIndex = averagedGrid->getIndex(k, sourceL, sourceM);
-								pixelProvider.getPixel(sourcePixelIndex, q);
+								pixelProvider.getPixel(sourcePixelIndex, q, true);
 								if (isSet(q.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)) {
 									const double d = (sourceL - targetL) * (sourceL - targetL) + (sourceM - targetM) * (sourceM - targetM);
 									if (d < minPixelDistance) {
