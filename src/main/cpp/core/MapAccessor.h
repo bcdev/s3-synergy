@@ -83,8 +83,6 @@ public:
 	}
 
 	virtual ~MapAccessor() {
-		using std::remove;
-
 		munmap(addr, length);
 		close(fd);
 		remove(&filename[0]);
