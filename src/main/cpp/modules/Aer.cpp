@@ -294,15 +294,11 @@ void Aer::process(Context& context) {
 	context.getLogging().debug("Segment [" + averagedSegment->toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
 
 	ErrorMetric em(context);
+	PixelProvider pixelProvider(context);
 
-#if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100) > 40100
-#pragma omp parallel for
-#endif
 	for (long l = firstL; l <= lastL; l++) {
 		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
 
-		ErrorMetric em(context);
-		PixelProvider pixelProvider(context);
 		Pixel p;
 		Pixel q;
 
@@ -341,7 +337,6 @@ void Aer::process(Context& context) {
 	for (long targetL = firstL; targetL <= lastFillableL; targetL++) {
 		context.getLogging().info("Filling line l = " + lexical_cast<string>(targetL), getId());
 
-		PixelProvider pixelProvider(context);
 		Pixel p;
 		Pixel q;
 
