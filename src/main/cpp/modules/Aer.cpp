@@ -25,6 +25,7 @@
 #include "Aer.h"
 
 using std::cos;
+using std::max;
 using std::min;
 using std::numeric_limits;
 
@@ -261,6 +262,8 @@ void Aer::start(Context& context) {
 	averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("AMIN"));
 
 	averagedGrid = &averagedSegment->getGrid();
+
+	getAuxdataProvider(context, Constants::AUX_ID_SYCPAX).getDouble("ave_square", averagingFactor);
 }
 
 void Aer::process(Context& context) {
@@ -298,7 +301,8 @@ void Aer::process(Context& context) {
 		}
 	}
 
-	const long n = 120;
+	const long n = max<long>(120.0 * 8.0 / averagingFactor, averagedGrid->getSizeL() / 2 - 10);
+		// shall be at least 120 km, but cannot be larger than half the height of the segment
 	long lastFillableL;
 	if (lastL < averagedGrid->getMaxL()) {
 		lastFillableL = lastL - n;

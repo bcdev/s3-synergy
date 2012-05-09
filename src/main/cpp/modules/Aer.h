@@ -52,6 +52,7 @@ private:
 	double kappa;
 	valarray<int16_t> amins;
 	valarray<double> aerosolAngstromExponents;
+    double averagingFactor;
 
 	static const double D2R = 3.14159265358979323846 / 180.0;
 };
