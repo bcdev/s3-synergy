@@ -46,11 +46,11 @@ void Context::addObject(shared_ptr<Identifiable> object) throw (logic_error) {
 	objectMap[object->getId()] = object;
 }
 
-Segment& Context::addMapSegment(const string& id, long sizeL, long sizeM) throw (logic_error) {
+Segment& Context::addMapSegment(const string& id, long sizeL, long sizeM, long sizeK) throw (logic_error) {
 	if (hasSegment(id)) {
 		BOOST_THROW_EXCEPTION( invalid_argument("A segment with ID '" + id + "' already exists in the context."));
 	}
-	shared_ptr<Segment> segment = shared_ptr<Segment>(new MapSegment(id, sizeL, sizeM));
+	shared_ptr<Segment> segment = shared_ptr<Segment>(new MapSegment(id, sizeL, sizeM, sizeK));
 	segmentMap[id] = segment;
 	segmentList.push_back(segment);
 

@@ -23,8 +23,8 @@ using std::invalid_argument;
 using std::logic_error;
 using std::ostringstream;
 
-MapSegment::MapSegment(const string& s, long l, long m) :
-		id(s), grid(1, l, m, 0, l - 1), accessorMap() {
+MapSegment::MapSegment(const string& s, long l, long m, long k) :
+		id(s), grid(k, l, m, 0, l - 1), accessorMap() {
 }
 
 MapSegment::~MapSegment() {

@@ -95,7 +95,7 @@ public:
 	 * @param sizeM The size of the segment's column index dimension.
 	 * @return a reference to the segment added.
 	 */
-	Segment& addMapSegment(const string& id, long sizeL, long sizeM) throw (logic_error);
+	Segment& addMapSegment(const string& id, long sizeL, long sizeM, long sizeK = 1) throw (logic_error);
 
 
 	/**
