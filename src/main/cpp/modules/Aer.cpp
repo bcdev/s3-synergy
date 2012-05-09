@@ -294,12 +294,17 @@ void Aer::process(Context& context) {
 	context.getLogging().debug("Segment [" + averagedSegment->toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
 
 	PixelProvider pixelProvider(context);
-	ErrorMetric em(context);
-	Pixel p;
-	Pixel q;
 
+#if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100) > 40100
+#pragma omp parallel for
+#endif
 	for (long l = firstL; l <= lastL; l++) {
 		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
+
+		ErrorMetric em(context);
+		Pixel p;
+		Pixel q;
+
 		for (long k = averagedGrid->getMinK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long m = averagedGrid->getMinM(); m <= averagedGrid->getMaxM(); m++) {
 				const size_t pixelIndex = averagedGrid->getIndex(k, l, m);
@@ -321,7 +326,7 @@ void Aer::process(Context& context) {
 	}
 
 	const long n = 120;
-		// shall be at least 120 km, but cannot be larger than half the height of the segment
+		// shall be at least 240 km, but cannot be larger than half the height of the segment
 	long lastFillableL;
 	if (lastL < averagedGrid->getMaxL()) {
 		lastFillableL = lastL - n;
@@ -329,8 +334,15 @@ void Aer::process(Context& context) {
 		lastFillableL = lastL;
 	}
 
+#if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100) > 40100
+#pragma omp parallel for
+#endif
 	for (long targetL = firstL; targetL <= lastFillableL; targetL++) {
 		context.getLogging().info("Filling line l = " + lexical_cast<string>(targetL), getId());
+
+		Pixel p;
+		Pixel q;
+
 		for (long k = averagedGrid->getMinK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long targetM = averagedGrid->getMinM(); targetM <= averagedGrid->getMaxM(); targetM++) {
 				const size_t targetPixelIndex = averagedGrid->getIndex(k, targetL, targetM);
