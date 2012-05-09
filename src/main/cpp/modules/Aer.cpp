@@ -293,6 +293,8 @@ void Aer::process(Context& context) {
 	long lastL = context.getLastComputableL(*averagedSegment, *this);
 	context.getLogging().debug("Segment [" + averagedSegment->toString() + "]: lastComputableL = " + lexical_cast<string>(lastL), getId());
 
+	ErrorMetric em(context);
+
 #if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100) > 40100
 #pragma omp parallel for
 #endif
