@@ -6,7 +6,7 @@
     <version>1.0-SNAPSHOT-20120301165000</version>
     -->
     <!-- after deploying a snapshot revert the version number to -->
-    <version>1.0-SNAPSHOT-20120510105000</version>
+    <version>1.0</version>
 
     <name>Sentinel-3 Reader</name>
 
