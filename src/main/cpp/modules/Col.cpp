@@ -287,7 +287,7 @@ void Col::process(Context& context) {
 		}
 	}
 
-	context.setFirstRequiredL(olc, *this, min(firstRequiredLMap[&olc], lastL));
+	context.setFirstRequiredL(olc, *this, firstRequiredLMap[&olc]);
 	context.setFirstRequiredL(sln, *this, firstRequiredLMap[&sln]);
 	context.setFirstRequiredL(slo, *this, firstRequiredLMap[&slo]);
 	context.setFirstRequiredL(t, *this, firstRequiredLMap[&olc]);
