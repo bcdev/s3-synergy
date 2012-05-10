@@ -127,6 +127,7 @@ void Aei::process(Context& context) {
 	}
 
 	context.setFirstRequiredL(context.getSegment(Constants::SEGMENT_OLC), *this, lastTargetL + 1);
+	  // TODO - needed for synchronizing OLC and SYN_COLLOCATED segments, better unite both segments into one
 	context.setLastComputedL(*targetSegment, *this, lastTargetL);
 }
 

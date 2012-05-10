@@ -66,9 +66,10 @@ void Ave::process(Context& context) {
 
 	averageVariables(context.getLogging(), firstTargetL, lastTargetL);
 
-	context.setLastComputedL(*targetSegment, *this, lastTargetL);
 	context.setFirstRequiredL(*sourceSegment, *this, (lastTargetL + 1) * averagingFactor);
 	context.setFirstRequiredL(context.getSegment(Constants::SEGMENT_OLC), *this, (lastTargetL + 1) * averagingFactor);
+	  // TODO - needed for synchronizing OLC and SYN_COLLOCATED segments, better unite both segments into one
+	context.setLastComputedL(*targetSegment, *this, lastTargetL);
 }
 
 void Ave::toLatLon(double x, double y, double z, double& lat, double& lon) {
