@@ -379,7 +379,6 @@ void Aer::process(Context& context) {
 	}
 
 	context.setLastComputedL(*averagedSegment, *this, lastFillableL);
-	context.setFirstRequiredL(*averagedSegment, *this, lastFillableL + 1 - n);
 }
 
 void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
