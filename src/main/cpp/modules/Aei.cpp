@@ -126,7 +126,8 @@ void Aei::process(Context& context) {
 		}
 	}
 
-    context.setLastComputedL(*targetSegment, *this, lastTargetL);
+	context.setFirstRequiredL(context.getSegment(Constants::SEGMENT_OLC), *this, lastTargetL + 1);
+	context.setLastComputedL(*targetSegment, *this, lastTargetL);
 }
 
 double Aei::interpolation(const Accessor& accessor, long k, long l0, long l1, long m0, long m1, double wl, double wm) const {
