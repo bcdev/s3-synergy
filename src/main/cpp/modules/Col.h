@@ -44,7 +44,6 @@ private:
 	void addOlciVariables(Context& context);
 	void addSlstrVariables(Context& context);
 	void addVariable(Context& context, Segment& targetSegment, const string& targetName, const Segment& sourceSegment, const string& sourceName, const ProductDescriptor& sourceProductDescriptor);
-	void addVariableAlias(Context& context, Segment& targetSegment, const string& targetName, const Segment& sourceSegment, const string& sourceName) const;
 
 	vector<string> targetNames;
 	// TODO - improvement: use accessor instead of name mappings

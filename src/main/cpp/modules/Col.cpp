@@ -421,8 +421,3 @@ void Col::addVariable(Context& context, Segment& t, const string& targetName, co
 	sourceSegmentMap[targetName] = &s;
 	targetNames.push_back(targetName);
 }
-
-void Col::addVariableAlias(Context& context, Segment& t, const string& targetName, const Segment& s, const string& sourceName) const {
-	context.getLogging().info("Adding alias '" + targetName + "' to segment '" + t.getId() + "'", getId());
-	t.addVariableAlias(targetName, s, sourceName);
-}
