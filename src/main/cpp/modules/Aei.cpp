@@ -127,11 +127,6 @@ void Aei::process(Context& context) {
 	}
 
     context.setLastComputedL(*targetSegment, *this, lastTargetL);
-    if (lastTargetL < targetGrid->getMaxL()) {
-    	context.setFirstRequiredL(*sourceSegment, *this, lastSourceL);
-    } else {
-    	context.setFirstRequiredL(*sourceSegment, *this, -1);
-    }
 }
 
 double Aei::interpolation(const Accessor& accessor, long k, long l0, long l1, long m0, long m1, double wl, double wm) const {
