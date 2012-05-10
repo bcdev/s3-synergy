@@ -68,6 +68,7 @@ void Ave::process(Context& context) {
 
 	context.setLastComputedL(*targetSegment, *this, lastTargetL);
 	context.setFirstRequiredL(*sourceSegment, *this, (lastTargetL + 1) * averagingFactor);
+	context.setFirstRequiredL(context.getSegment(Constants::SEGMENT_OLC), *this, (lastTargetL + 1) * averagingFactor);
 }
 
 void Ave::toLatLon(double x, double y, double z, double& lat, double& lon) {
