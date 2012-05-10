@@ -77,8 +77,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <ceresVersion>0.13-SNAPSHOT</ceresVersion>
-        <beamVersion>4.10-SNAPSHOT</beamVersion>
+        <ceresVersion>0.13</ceresVersion>
+        <beamVersion>4.10</beamVersion>
     </properties>
     
     <dependencyManagement>
