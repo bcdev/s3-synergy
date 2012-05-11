@@ -598,7 +598,7 @@ set_property(TARGET vgts PROPERTY RUNTIME_OUTPUT_DIRECTORY target)
 
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
-add_custom_target(doc ALL
+add_custom_target(doc
     ${DOXYGEN_EXECUTABLE} src/main/doxygen/doxygen.properties WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating API documentation" VERBATIM
 )
