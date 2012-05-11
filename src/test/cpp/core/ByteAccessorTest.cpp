@@ -54,7 +54,7 @@ void ByteAccessorTest::testSetDoubleGetByte() {
     CPPUNIT_ASSERT(accessor->getByte(0) == 127);
 
     accessor->setDouble(0, -128.0);
-    CPPUNIT_ASSERT(accessor->getByte(0) == -128);
+    CPPUNIT_ASSERT(accessor->getByte(0) == -127);
 
     accessor->setDouble(0, 1.5);
     CPPUNIT_ASSERT(accessor->getByte(0) == 1);
@@ -68,7 +68,7 @@ void ByteAccessorTest::testSetFloatGetByte() {
     CPPUNIT_ASSERT(accessor->getByte(0) == 127);
 
     accessor->setFloat(0, -128.0f);
-    CPPUNIT_ASSERT(accessor->getByte(0) == -128);
+    CPPUNIT_ASSERT(accessor->getByte(0) == -127);
 
     accessor->setFloat(0, 1.5f);
     CPPUNIT_ASSERT(accessor->getByte(0) == 1);
