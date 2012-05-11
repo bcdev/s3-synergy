@@ -295,11 +295,12 @@ void Aer::process(Context& context) {
 
 	ErrorMetric em(context);
 	PixelProvider pixelProvider(context);
-	Pixel p;
-	Pixel q;
 
 	for (long l = firstL; l <= lastL; l++) {
 		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
+
+		Pixel p;
+		Pixel q;
 
 		for (long k = averagedGrid->getMinK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long m = averagedGrid->getMinM(); m <= averagedGrid->getMaxM(); m++) {
@@ -330,8 +331,14 @@ void Aer::process(Context& context) {
 		lastFillableL = lastL;
 	}
 
+#if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100) > 40100
+#pragma omp parallel for
+#endif
 	for (long targetL = firstL; targetL <= lastFillableL; targetL++) {
 		context.getLogging().info("Filling line l = " + lexical_cast<string>(targetL), getId());
+
+		Pixel p;
+		Pixel q;
 
 		for (long k = averagedGrid->getMinK(); k <= averagedGrid->getMaxK(); k++) {
 			for (long targetM = averagedGrid->getMinM(); targetM <= averagedGrid->getMaxM(); targetM++) {
