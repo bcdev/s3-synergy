@@ -46,7 +46,7 @@
                     <File_Type>SY1</File_Type>
                     <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
                     <List_of_File_Names count="1">
-                        <File_Name>testdata/SY1/S3A_SY_1_SYN________2013621T10920_2013621T101413_2_00293_2_DMS_TD04_00</File_Name>
+                        <File_Name>testdata/SY1/S3A_SY_1_SYN________2013621T10920_2013621T101413_2_00293_2_DMS_TD04_02</File_Name>
                     </List_of_File_Names>
                 </Input>
             </List_of_Inputs>
