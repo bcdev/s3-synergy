@@ -246,7 +246,7 @@ void Vpr::process(Context& context) {
 						Accessor* targetAccessor = targetAccessors[i];
 
 						if (!sourceAccessor->isFillValue(sourceIndex)) {
-							setValue(sourceAccessor, targetAccessor, sourceIndex, targetIndex);
+							targetAccessor->setDouble(targetIndex, sourceAccessor->getDouble(sourceIndex));
 						} else {
 							targetAccessor->setFillValue(targetIndex);
 						}

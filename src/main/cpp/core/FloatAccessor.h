@@ -35,6 +35,22 @@ public:
     virtual ~FloatAccessor() {
     }
 
+	double getDouble(size_t i) const throw (bad_cast, out_of_range) {
+		return boost::numeric_cast<float>(getTypedData()[at(i)]);
+	}
+
+	void setDouble(size_t i, double value) throw (bad_cast, out_of_range) {
+		getFloatData()[at(i)] = boost::numeric_cast<float>(value);
+	}
+
+	float getFloat(size_t i) const throw (bad_cast, out_of_range) {
+		return getFloatData()[at(i)];
+	}
+
+	void setFloat(size_t i, float value) throw (bad_cast, out_of_range) {
+		getFloatData()[at(i)] = value;
+	}
+
     valarray<float>& getFloatData() const throw (bad_cast) {
         return getTypedData();
     }

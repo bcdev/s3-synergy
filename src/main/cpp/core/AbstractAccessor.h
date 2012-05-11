@@ -51,9 +51,11 @@ public:
 	void setDouble(size_t i, double value) throw (bad_cast, out_of_range) {
 		value = (value - addOffset) / scaleFactor;
 		if (value > numeric_limits<T>::max()) {
-			data[at(i)] = numeric_limits<T>::max();
+			data[i] = numeric_limits<T>::max();
+		} else if (value < numeric_limits<T>::min() + T(1)) {
+			data[i] = numeric_limits<T>::min() + T(1);
 		} else {
-			data[at(i)] = boost::numeric_cast<T>(value);
+			data[i] = boost::numeric_cast<T>(value);
 		}
 	}
 
@@ -64,9 +66,11 @@ public:
 	void setFloat(size_t i, float value) throw (bad_cast, out_of_range) {
 		value = (value - float(addOffset)) / float(scaleFactor);
 		if (value > numeric_limits<T>::max()) {
-			data[at(i)] = numeric_limits<T>::max();
+			data[i] = numeric_limits<T>::max();
+		} else if (value < numeric_limits<T>::min() + T(1)) {
+			data[i] = numeric_limits<T>::min() + T(1);
 		} else {
-			data[at(i)] = boost::numeric_cast<T>(value);
+			data[i] = boost::numeric_cast<T>(value);
 		}
 	}
 
@@ -256,14 +260,14 @@ protected:
 		return const_cast<valarray<T>&>(data);
 	}
 
-private:
-
 	size_t at(size_t i) const {
 		if (i < data.size()) {
 			return i;
 		}
 		BOOST_THROW_EXCEPTION(out_of_range("Index i = " + boost::lexical_cast<string>(i) + " is out of range."));
 	}
+
+private:
 
 	const T fillValue;
 	const double scaleFactor;

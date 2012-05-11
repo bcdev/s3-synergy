@@ -204,11 +204,7 @@ void Vco::process(Context& context) {
 						Accessor* targetAccessor = targetAccessors[i];
 
 						if (!sourceAccessor->isFillValue(sourceIndex)) {
-							try {
-								setValue(sourceAccessor, targetAccessor, sourceIndex, targetIndex);
-							} catch (std::exception& e) {
-								targetAccessor->setFillValue(targetIndex);
-							}
+							targetAccessor->setDouble(targetIndex, sourceAccessor->getDouble(sourceIndex));
 						}
 					}
 					const int64_t sourceTime = sourceAccessors[10]->getLong(sourceL);
