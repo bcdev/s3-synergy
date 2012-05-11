@@ -207,7 +207,7 @@ void Vco::process(Context& context) {
 							try {
 								setValue(sourceAccessor, targetAccessor, sourceIndex, targetIndex);
 							} catch (std::exception& e) {
-								sourceAccessor->setFillValue(sourceIndex);
+								targetAccessor->setFillValue(targetIndex);
 							}
 						}
 					}
@@ -220,6 +220,8 @@ void Vco::process(Context& context) {
 	}
 
 	context.setFirstRequiredL(syn, *this, firstRequiredSourceL);
+	context.setFirstRequiredL(context.getSegment(Constants::SEGMENT_OLC), *this, firstRequiredSourceL);
+	  // TODO - needed for synchronizing OLC and SYN_COLLOCATED segments, better unite both segments into one
 	context.setLastComputedL(vgt, *this, lastTargetL);
 }
 
