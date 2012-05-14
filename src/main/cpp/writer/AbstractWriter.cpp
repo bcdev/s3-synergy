@@ -128,6 +128,7 @@ void AbstractWriter::stop(Context& context) {
 	reverse_foreach(entry, ncFileIdMap)
 			{
 				try {
+				    context.getLogging().info("Closing netCDF file '" + entry.first + ".nc'", getId());
 					NetCDF::closeFile(entry.second);
 				} catch (exception& ignored) {
 				}

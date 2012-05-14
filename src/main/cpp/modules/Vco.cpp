@@ -204,9 +204,12 @@ void Vco::process(Context& context) {
 						Accessor* targetAccessor = targetAccessors[i];
 
 						if (!sourceAccessor->isFillValue(sourceIndex)) {
-							targetAccessor->setDouble(targetIndex, sourceAccessor->getDouble(sourceIndex));
-							if (i == 5) {
+							const bool log = (i == 5) && targetAccessor[i].isFillValue(targetIndex);
+							if (log) {
 								context.getLogging().debug("source NDVI = " + lexical_cast<string>(sourceAccessor->getDouble(sourceIndex)), getId());
+							}
+							targetAccessor->setDouble(targetIndex, sourceAccessor->getDouble(sourceIndex));
+							if (log) {
 								context.getLogging().debug("target NDVI = " + lexical_cast<string>(targetAccessor->getDouble(targetIndex)), getId());
 							}
 						}

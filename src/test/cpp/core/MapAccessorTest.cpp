@@ -55,7 +55,7 @@ void MapAccessorTest::testSetDoubleGetByte() {
     CPPUNIT_ASSERT(accessor->getByte(0) == 127);
 
     accessor->setDouble(0, -128.0);
-    CPPUNIT_ASSERT(accessor->getByte(0) == -127);
+    CPPUNIT_ASSERT(accessor->getByte(0) == -128);
 
     accessor->setDouble(0, 1.5);
     CPPUNIT_ASSERT(accessor->getByte(0) == 1);
@@ -69,7 +69,7 @@ void MapAccessorTest::testSetFloatGetByte() {
     CPPUNIT_ASSERT(accessor->getByte(0) == 127);
 
     accessor->setFloat(0, -128.0f);
-    CPPUNIT_ASSERT(accessor->getByte(0) == -127);
+    CPPUNIT_ASSERT(accessor->getByte(0) == -128);
 
     accessor->setFloat(0, 1.5f);
     CPPUNIT_ASSERT(accessor->getByte(0) == 1);
