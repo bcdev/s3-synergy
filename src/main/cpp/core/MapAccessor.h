@@ -107,8 +107,8 @@ public:
 		value = (value - addOffset) / scaleFactor;
 		if (value > numeric_limits<T>::max()) {
 			data[i] = numeric_limits<T>::max();
-		} else if (value < numeric_limits<T>::min() + T(1)) {
-			data[i] = numeric_limits<T>::min() + T(1);
+		} else if (value < numeric_limits<T>::min()) {
+			data[i] = numeric_limits<T>::min();
 		} else {
 			data[i] = boost::numeric_cast<T>(value);
 		}
@@ -122,8 +122,8 @@ public:
 		value = (value - float(addOffset)) / float(scaleFactor);
 		if (value > numeric_limits<T>::max()) {
 			data[i] = numeric_limits<T>::max();
-		} else if (value < numeric_limits<T>::min() + T(1)) {
-			data[i] = numeric_limits<T>::min() + T(1);
+		} else if (value < numeric_limits<T>::min()) {
+			data[i] = numeric_limits<T>::min();
 		} else {
 			data[i] = boost::numeric_cast<T>(value);
 		}

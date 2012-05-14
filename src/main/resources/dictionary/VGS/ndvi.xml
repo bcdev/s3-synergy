@@ -18,7 +18,7 @@
     <variables>
         <variable>
             <name>NDVI</name>
-            <type>byte</type>
+            <type>ubyte</type>
             <segment_name>VGT</segment_name>
             <dimensions>
                 <id>VGT</id>
@@ -46,13 +46,13 @@
                 </attribute>                
                 <attribute>
                     <name>valid_min</name>
-                    <type>byte</type>
-                    <value>-128</value>
+                    <type>ubyte</type>
+                    <value>0</value>
                 </attribute>
                 <attribute>
                     <name>valid_max</name>
-                    <type>byte</type>
-                    <value>127</value>
+                    <type>ubyte</type>
+                    <value>255</value>
                 </attribute>
                 <attribute>
                     <name>grid_mapping</name>
