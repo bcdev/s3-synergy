@@ -31,9 +31,9 @@ void Vpr::start(Context& context) {
     lonAccessor = &geoSegment->getAccessor("longitude");
 
 	// TODO - predefined coordinates for Europe; read from job order file
-	maxTargetLat = 75;
-	minTargetLat = 25;
-	maxTargetLon = 62;
+	maxTargetLat = 65;
+	minTargetLat = 40;
+	maxTargetLon = 25;
 	minTargetLon = -11;
 
 	addTargetSegments(context);
