@@ -250,7 +250,7 @@ public:
 protected:
 
 	AbstractAccessor(size_t n, T fillValue = numeric_limits<T>::min(), double scaleFactor = 1.0, double addOffset = 0.0) :
-			Accessor(), fillValue(fillValue), scaleFactor(scaleFactor), addOffset(addOffset), data(n) {
+			Accessor(), fillValue(fillValue), scaleFactor(scaleFactor), addOffset(addOffset), data(fillValue, n) {
 	}
 
 	virtual ~AbstractAccessor() {
