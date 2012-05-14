@@ -44,8 +44,8 @@ private:
 		return ozone * 1000.0;
 	}
 
-	static double ndvi(double b1, double b2) {
-		return (b1 - b2) / (b1 + b2);
+	static double ndvi(double red, double nir) {
+		return (nir - red) / (red + nir);
 	}
 
 	static const double D2R = 3.14159265358979323846 / 180.0;
