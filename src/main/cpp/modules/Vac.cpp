@@ -101,21 +101,6 @@ void Vac::process(Context& context) {
 				const double aot = aotAccessor.getDouble(index);
 				const double am = airMass(sza, vza);
 
-				if (isSet(vgtFlags, Constants::VGT_LAND_FLAG)) {
-					// Land
-					const double b2 = reflectanceAccessors[1]->getDouble(index);
-					const double b3 = reflectanceAccessors[2]->getDouble(index);
-
-					if (b2 != Constants::FILL_VALUE_DOUBLE && b3 != Constants::FILL_VALUE_DOUBLE) {
-						ndviAccessor.setDouble(index, ndvi(b2, b3));
-					} else {
-						ndviAccessor.setFillValue(index);
-					}
-				} else {
-					// Water
-					ndviAccessor.setFillValue(index);
-				}
-
 				for (size_t b = 0; b < reflectanceAccessors.size(); b++) {
 					if (isSet(vgtFlags, Constants::VGT_LAND_FLAG) && !isSet(vgtFlags, Constants::VGT_CLOUD_VALUE)) {
 						// Land and no cloud
@@ -162,6 +147,20 @@ void Vac::process(Context& context) {
 						// Water or cloud
 						reflectanceAccessors[b]->setFillValue(index);
 					}
+				}
+				if (isSet(vgtFlags, Constants::VGT_LAND_FLAG)) {
+					// Land
+					const double b2 = reflectanceAccessors[1]->getDouble(index);
+					const double b3 = reflectanceAccessors[2]->getDouble(index);
+
+					if (b2 != Constants::FILL_VALUE_DOUBLE && b3 != Constants::FILL_VALUE_DOUBLE) {
+						ndviAccessor.setDouble(index, ndvi(b2, b3));
+					} else {
+						ndviAccessor.setFillValue(index);
+					}
+				} else {
+					// Water
+					ndviAccessor.setFillValue(index);
 				}
 			}
 		}
