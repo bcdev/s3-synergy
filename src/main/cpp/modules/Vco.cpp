@@ -205,6 +205,10 @@ void Vco::process(Context& context) {
 
 						if (!sourceAccessor->isFillValue(sourceIndex)) {
 							targetAccessor->setDouble(targetIndex, sourceAccessor->getDouble(sourceIndex));
+							if (i == 5) {
+								context.getLogging().debug("source NDVI = " + lexical_cast<string>(sourceAccessor->getDouble(sourceIndex)), getId());
+								context.getLogging().debug("target NDVI = " + lexical_cast<string>(targetAccessor->getDouble(targetIndex)), getId());
+							}
 						}
 					}
 					const int64_t sourceTime = sourceAccessors[10]->getLong(sourceL);
