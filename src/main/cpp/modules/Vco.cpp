@@ -62,7 +62,7 @@ void Vco::addTargetSegments(Context& context) {
     context.addSingleLineSegment(Constants::SEGMENT_VGT_LON_BNDS, colCount * 2);
 
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGT + "' to context.", getId());
-    context.addMapSegment(Constants::SEGMENT_VGT, rowCount, colCount);
+    context.addSwathSegment(Constants::SEGMENT_VGT, rowCount, colCount, 1, 0, rowCount - 1);
 }
 
 void Vco::addTargetVariables(Context& context) {
