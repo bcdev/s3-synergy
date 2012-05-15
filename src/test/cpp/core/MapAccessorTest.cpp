@@ -64,6 +64,33 @@ void MapAccessorTest::testSetDoubleGetByte() {
     CPPUNIT_ASSERT(accessor->getByte(0) == -1);
 }
 
+void MapAccessorTest::testSetDoubleGetDoubleForUByteAccessor() {
+    MapAccessor<uint8_t, Constants::TYPE_UBYTE> accessor(2, 0, 0.004, -0.1);
+
+    CPPUNIT_ASSERT(numeric_limits<uint8_t>::min() == 0);
+    CPPUNIT_ASSERT(numeric_limits<uint8_t>::max() == 255);
+    
+    accessor.setDouble(0, 0.8);
+    CPPUNIT_ASSERT(accessor.getUByte(0) == 225);
+    CPPUNIT_ASSERT(accessor.getDouble(0) == 0.8);
+    
+    accessor.setDouble(0, -0.1);
+    CPPUNIT_ASSERT(accessor.getUByte(0) == 0);
+    CPPUNIT_ASSERT(accessor.getDouble(0) == -0.1);
+    
+    accessor.setDouble(0, -0.104);
+    CPPUNIT_ASSERT(accessor.getUByte(0) == 0);
+    CPPUNIT_ASSERT(accessor.getDouble(0) == -0.1);
+
+    accessor.setDouble(0, 0.92);
+    CPPUNIT_ASSERT(accessor.getUByte(0) == 255);
+    CPPUNIT_ASSERT(accessor.getDouble(0) == 0.92);
+    
+    accessor.setDouble(0, 0.96);
+    CPPUNIT_ASSERT(accessor.getUByte(0) == 255);
+    CPPUNIT_ASSERT(accessor.getDouble(0) == 0.92);
+}
+
 void MapAccessorTest::testSetFloatGetByte() {
     accessor->setFloat(0, 127.0f);
     CPPUNIT_ASSERT(accessor->getByte(0) == 127);

@@ -16,12 +16,11 @@
 #ifndef MAPACCESSOR_H_
 #define MAPACCESSOR_H_
 
-#include <fcntl.h>
-#include <stdlib.h>
+#include <sys/fcntl.h>
 #include <sys/mman.h>
-#include <sys/types.h>
 
 #include <algorithm>
+#include <cstdlib>
 #include <cstdio>
 #include <cstring>
 #include <limits>
@@ -77,7 +76,7 @@ public:
 		}
 		length = n * sizeof(T);
 		addr = mmap(0, length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-		if (addr == (caddr_t) -1) {
+		if (addr == MAP_FAILED) {
 			BOOST_THROW_EXCEPTION(runtime_error("Unable to map file '" + string(&filename[0]) + "' to memory."));
 		}
 		data = (T*) addr;
