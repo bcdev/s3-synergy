@@ -197,21 +197,14 @@ void Vco::process(Context& context) {
 				const double sourceNdvi = sourceAccessors[5]->getDouble(sourceIndex);
 				const double targetNdvi = targetAccessors[5]->getDouble(targetIndex);
 
-				if (!sourceAccessors[5]->isFillValue(sourceIndex) && (sourceNdvi > targetNdvi || targetAccessors[5]->isFillValue(targetIndex))) {
+				if (sourceNdvi > targetNdvi) {
 					// 4. Set the samples of the target pixel
 					for (size_t i = 0; i < targetAccessors.size() - 1; i++) {
 						Accessor* sourceAccessor = sourceAccessors[i];
 						Accessor* targetAccessor = targetAccessors[i];
 
 						if (!sourceAccessor->isFillValue(sourceIndex)) {
-							const bool log = (i == 5) && targetAccessor->isFillValue(targetIndex);
-							if (log) {
-								context.getLogging().debug("source NDVI = " + lexical_cast<string>(sourceAccessor->getDouble(sourceIndex)), getId());
-							}
 							targetAccessor->setDouble(targetIndex, sourceAccessor->getDouble(sourceIndex));
-							if (log) {
-								context.getLogging().debug("target NDVI = " + lexical_cast<string>(targetAccessor->getDouble(targetIndex)), getId());
-							}
 						}
 					}
 					const int64_t sourceTime = sourceAccessors[10]->getLong(sourceL);
