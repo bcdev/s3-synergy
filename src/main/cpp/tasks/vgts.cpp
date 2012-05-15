@@ -20,6 +20,7 @@
 #include "../modules/Vac.h"
 #include "../modules/Vco.h"
 #include "../reader/SynL1Reader.h"
+#include "../writer/SegmentWriter.h"
 #include "../writer/VgtWriter.h"
 #include "../writer/ManifestWriter.h"
 
