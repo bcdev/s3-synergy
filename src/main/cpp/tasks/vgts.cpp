@@ -39,9 +39,9 @@ int main(int argc, char* argv[]) {
 	shared_ptr<Module> vfl = shared_ptr<Module>(new Vfl());
 	shared_ptr<Module> vac = shared_ptr<Module>(new Vac());
 	shared_ptr<Module> vco = shared_ptr<Module>(new Vco());
-	shared_ptr<Module> segmentWriter = shared_ptr<Module>(new SegmentWriter());
 	shared_ptr<Module> writer = shared_ptr<Module>(new VgtWriter(Constants::PRODUCT_VGS));
 	shared_ptr<Module> manifestWriter = shared_ptr<Module>(new ManifestWriter(Constants::PRODUCT_VGS));
+	shared_ptr<Module> segmentWriter = shared_ptr<Module>(new SegmentWriter());
 
 	task.getContext().addModule(reader);
 	task.getContext().addModule(col);
@@ -50,9 +50,9 @@ int main(int argc, char* argv[]) {
 	task.getContext().addModule(vfl);
 	task.getContext().addModule(vac);
 	task.getContext().addModule(vco);
-	task.getContext().addModule(segmentWriter);
 	task.getContext().addModule(writer);
 	task.getContext().addModule(manifestWriter);
+	task.getContext().addModule(segmentWriter);
 
 	return task.execute(argc, argv);
 }

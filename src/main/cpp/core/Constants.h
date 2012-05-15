@@ -226,12 +226,12 @@ const int TYPE_FLOAT = 5;
 const int TYPE_DOUBLE = 6;
 
 /**
- * The code for the unsigend 'byte' data type.
+ * The code for the unsigned 'byte' data type.
  */
 const int TYPE_UBYTE = 7;
 
 /**
- * The code for the unsigend 'short' data type.
+ * The code for the unsigned 'short' data type.
  */
 const int TYPE_USHORT = 8;
 
