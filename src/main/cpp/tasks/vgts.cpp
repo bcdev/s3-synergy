@@ -20,7 +20,6 @@
 #include "../modules/Vac.h"
 #include "../modules/Vco.h"
 #include "../reader/SynL1Reader.h"
-#include "../writer/SegmentWriter.h"
 #include "../writer/VgtWriter.h"
 #include "../writer/ManifestWriter.h"
 
@@ -41,7 +40,6 @@ int main(int argc, char* argv[]) {
 	shared_ptr<Module> vco = shared_ptr<Module>(new Vco());
 	shared_ptr<Module> writer = shared_ptr<Module>(new VgtWriter(Constants::PRODUCT_VGS));
 	shared_ptr<Module> manifestWriter = shared_ptr<Module>(new ManifestWriter(Constants::PRODUCT_VGS));
-	shared_ptr<Module> segmentWriter = shared_ptr<Module>(new SegmentWriter());
 
 	task.getContext().addModule(reader);
 	task.getContext().addModule(col);
@@ -52,7 +50,6 @@ int main(int argc, char* argv[]) {
 	task.getContext().addModule(vco);
 	task.getContext().addModule(writer);
 	task.getContext().addModule(manifestWriter);
-	task.getContext().addModule(segmentWriter);
 
 	return task.execute(argc, argv);
 }
