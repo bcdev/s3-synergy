@@ -25,6 +25,14 @@
             <ncname>longitude</ncname>
             <name>longitude</name>
             <segment_name>GEO</segment_name>
+            <attributes>
+                <!-- the add-offset is used for the L1c input data shifted by ±5 degrees --> 
+                <attribute>
+                    <name>add_offset</name>
+                    <type>float</type>
+                    <value>0.0</value>
+                </attribute>
+            <attributes>
         </variable>
         <variable>
             <ncname>altitude</ncname>
