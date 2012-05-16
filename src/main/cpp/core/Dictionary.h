@@ -60,7 +60,7 @@ public:
         if (!hasAttribute(name)) {
             BOOST_THROW_EXCEPTION( out_of_range("Descriptor '" + this->name + "' contains no attribute '" + name + "'."));
         }
-        return *attributeMap[name];
+        return *attributeMap.at(name);
     }
 
     vector<A*> getAttributes() const {
