@@ -45,11 +45,14 @@ public:
     }
 
     A& addAttribute(int type, const string& name, const string& value) {
+    	A* a;
         if (hasAttribute(name)) {
-            BOOST_THROW_EXCEPTION( logic_error("Attribute '" + name + "' already exists."));
+        	A* a = attributeMap[name];
+        	a->setValue(value);
+        } else {
+        	A* a = new A(type, name, value);
+        	attributeMap[name] = a;
         }
-        A* a = new A(type, name, value);
-        attributeMap[name] = a;
         return *a;
     }
 
@@ -57,7 +60,7 @@ public:
         if (!hasAttribute(name)) {
             BOOST_THROW_EXCEPTION( out_of_range("Descriptor '" + this->name + "' contains no attribute '" + name + "'."));
         }
-        return *attributeMap.at(name);
+        return *attributeMap[name];
     }
 
     vector<A*> getAttributes() const {

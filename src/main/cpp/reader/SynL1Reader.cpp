@@ -127,11 +127,9 @@ void SynL1Reader::start(Context& context) {
 	        const size_t attrCount = NetCDF::getAttributeCount(fileId, varId);
 	        for (size_t i = 0; i < attrCount; i++) {
 	            const string attrName = NetCDF::getAttributeName(fileId, varId, i);
-	            if(!variableDescriptor->hasAttribute(attrName)) {
-	                const Attribute attr = NetCDF::getAttribute(fileId, varId, attrName);
-	                context.getLogging().info("Adding attribute '" + attr.toString() + "' to variable '" + varName + "'", getId());
-	                variableDescriptor->addAttribute(attr);
-	            }
+	            const Attribute attr = NetCDF::getAttribute(fileId, varId, attrName);
+	            context.getLogging().info("Adding attribute '" + attr.toString() + "' to variable '" + varName + "'", getId());
+	            variableDescriptor->addAttribute(attr);
 	        }
 	        // Add variable to segment
 	        Segment& segment = context.getSegment(segmentName);
