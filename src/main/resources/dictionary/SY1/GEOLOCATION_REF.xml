@@ -32,7 +32,7 @@
                     <type>float</type>
                     <value>0.0</value>
                 </attribute>
-            <attributes>
+            </attributes>
         </variable>
         <variable>
             <ncname>altitude</ncname>

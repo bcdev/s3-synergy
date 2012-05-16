@@ -47,10 +47,10 @@ public:
     A& addAttribute(int type, const string& name, const string& value) {
     	A* a;
         if (hasAttribute(name)) {
-        	A* a = attributeMap[name];
+        	a = attributeMap[name];
         	a->setValue(value);
         } else {
-        	A* a = new A(type, name, value);
+        	a = new A(type, name, value);
         	attributeMap[name] = a;
         }
         return *a;
