@@ -45,19 +45,21 @@ abstract class SlstrLevel2ProductReader extends ManifestProductReader {
             final ImageLayout imageLayout = ImageManager.createSingleBandedImageLayout(targetBand);
             final RenderingHints renderingHints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, imageLayout);
 
-            final MultiLevelImage sourceImage = sourceBand.getGeophysicalImage();
+            final MultiLevelImage sourceImage = sourceBand.getSourceImage();
             final int targetW = targetBand.getRasterWidth();
             final int targetH = targetBand.getRasterHeight();
-            final BorderExtender borderExtender = new BorderExtenderConstant(new double[]{targetBand.getNoDataValue()});
-            final RenderedImage extendedImage = BorderDescriptor.create(sourceImage,
-                                                                        targetW,
-                                                                        targetW,
-                                                                        targetH,
-                                                                        targetH,
-                                                                        borderExtender, renderingHints);
-
             final float offsetX = (float) (sourceTrackOffset - nadTrackOffset);
             final float offsetY = (float) (sourceStartOffset - nadStartOffset);
+            final int padX = Math.round(Math.abs(offsetX));
+            final int padY = Math.round(Math.abs(offsetY));
+            final BorderExtender borderExtender = new BorderExtenderConstant(new double[]{targetBand.getNoDataValue()});
+            final RenderedImage extendedImage = BorderDescriptor.create(sourceImage,
+                                                                        padX,
+                                                                        targetW - padX - sourceImage.getWidth(),
+                                                                        padY,
+                                                                        padY,
+                                                                        borderExtender, renderingHints);
+
             final RenderedImage translatedImage = TranslateDescriptor.create(extendedImage,
                                                                              offsetX,
                                                                              offsetY,
