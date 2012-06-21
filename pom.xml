@@ -78,7 +78,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ceresVersion>0.13</ceresVersion>
-        <beamVersion>4.10</beamVersion>
+        <beamVersion>RELEASE</beamVersion>
     </properties>
     
     <dependencyManagement>
@@ -158,7 +158,7 @@
             <dependency>
                 <groupId>org.esa.beam</groupId>
                 <artifactId>beam-netcdf</artifactId>
-                <version>1.1</version>
+                <version>RELEASE</version>
             </dependency>
 
             <!-- S3L2PP Libraries ############################################# -->
