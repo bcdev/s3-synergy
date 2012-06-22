@@ -131,12 +131,14 @@ void Col::process(Context& context) {
 					if (sourceSegment == olc) {
 						sourceK = k;
 						if (collocationYAccessor != 0) {
-							sourceL = l + (long) floor(collocationYAccessor->getDouble(targetIndex));
+							sourceL = l + (long) floor(collocationYAccessor->getDouble(targetIndex) + 0.5);
+								// l + 0.5 + [deltaY]
 						} else {
 							sourceL = l;
 						}
 						if (collocationXAccessor != 0) {
-							sourceM = m + (long) floor(collocationXAccessor->getDouble(targetIndex));
+							sourceM = m + (long) floor(collocationXAccessor->getDouble(targetIndex) + 0.5);
+								// m + 0.5 + [deltaX]
 						} else {
 							sourceM = m;
 						}
