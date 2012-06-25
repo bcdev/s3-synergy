@@ -239,7 +239,8 @@ void Col::process(Context& context) {
 						deltaX = xCollocationAccessor->getDouble(targetIndex);
 					}
 
-					const long sourceM = m + (long) floor(deltaX);
+					const long sourceM = m + (long) floor(deltaX + 0.5);
+						// m + 0.5 + [deltaX]
 					if (sourceM < olcInfoGrid.getMinM() || sourceM > olcInfoGrid.getMaxM()) {
 						targetAccessor->setFillValue(targetIndex);
 					} else {
