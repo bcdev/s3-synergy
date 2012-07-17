@@ -13,7 +13,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-package org.esa.s3.synergy.util;
+package org.esa.s3.synergy.util.cdl;
+
+import org.esa.s3.synergy.util.TemplateResolver;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -126,7 +128,7 @@ public class TestDataGenerator {
         BufferedWriter writer = null;
         try {
             final String templateName = resolver.resolveProperty("Template_File_Basename");
-            final InputStream is = TestDataGenerator.class.getResourceAsStream("cdl/" + templateName + ".cdl");
+            final InputStream is = TestDataGenerator.class.getResourceAsStream(templateName + ".cdl");
             reader = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
             writer = new BufferedWriter(new FileWriter(cdlFile));
             String line = reader.readLine();

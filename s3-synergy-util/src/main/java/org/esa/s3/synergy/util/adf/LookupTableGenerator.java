@@ -576,7 +576,7 @@ class LookupTableGenerator {
     }
 
     private void generateNcFile(File cdlFile) throws Exception {
-        final String command = ncgenPath + " -k 3 -b " + cdlFile.getPath();
+        final String command = ncgenPath + " -b -k 3 " + cdlFile.getPath();
         final Process process = Runtime.getRuntime().exec(command);
         if (process.waitFor() != 0) {
             throw new Exception(
