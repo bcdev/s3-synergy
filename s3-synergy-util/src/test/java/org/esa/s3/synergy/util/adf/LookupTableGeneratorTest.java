@@ -13,7 +13,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-package org.esa.s3.synergy.util;
+package org.esa.s3.synergy.util.adf;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -21,7 +21,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-@Ignore
 public class LookupTableGeneratorTest {
 
     private LookupTableGenerator generator;

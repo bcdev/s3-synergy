@@ -13,8 +13,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-package org.esa.s3.synergy.util;
+package org.esa.s3.synergy.util.dictionary;
 
+import org.esa.s3.synergy.util.dictionary.DictionaryGenerator;
 import org.junit.Test;
 
 import java.io.IOException;

@@ -13,9 +13,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-package org.esa.s3.synergy.util;
+package org.esa.s3.synergy.util.adf;
 
 import org.esa.beam.util.math.LookupTable;
+import org.esa.s3.synergy.util.TemplateResolver;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -29,6 +30,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -450,10 +452,10 @@ class LookupTableGenerator {
         final double[][] irradianceSpectrum = readSpectrum("dat/vgp_irradiance.dat");
         final LookupTable irradianceLut = new LookupTable(irradianceSpectrum[1], irradianceSpectrum[0]);
 
-        final double[] b0 = calculateResponse(VGP_WAV, 450.0, 40.0);
-        final double[] b2 = calculateResponse(VGP_WAV, 645, 70.0);
-        final double[] b3 = calculateResponse(VGP_WAV, 850.0, 110.0);
-        final double[] b4 = calculateResponse(VGP_WAV, 1660, 195.0);
+        final double[] b0 = createResponse(0, 91, "dat/RSR_VEGETATION_BAND_0.txt");
+        final double[] b2 = createResponse(91, 221, "dat/RSR_VEGETATION_BAND_1.txt");
+        final double[] b3 = createResponse(312, 301, "dat/RSR_VEGETATION_BAND_2.txt");
+        final double[] b4 = createResponse(613, 301, "dat/RSR_VEGETATION_BAND_3.txt");
 
         final String wavelengthPath = createTempFile("wavelength", true);
         final String b0Path = createTempFile("b0_", true);
@@ -549,7 +551,7 @@ class LookupTableGenerator {
         BufferedWriter writer = null;
         try {
             final String templateName = resolver.resolveProperty("Template_File_Basename");
-            final InputStream is = getClass().getResourceAsStream("cdl/" + templateName + ".cdl");
+            final InputStream is = getClass().getResourceAsStream(templateName + ".cdl");
             reader = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
             writer = new BufferedWriter(new FileWriter(cdlFile));
             String line = reader.readLine();
@@ -583,6 +585,7 @@ class LookupTableGenerator {
         }
     }
 
+    /*
     private static double[] calculateResponse(double[] wavelengths, double center, double bandwidth) {
         final double[] response = new double[VGP_WAV.length];
         double sum = 0.0;
@@ -597,6 +600,19 @@ class LookupTableGenerator {
         }
         for (int i = 0; i < response.length; i++) {
             response[i] /= sum;
+        }
+        return response;
+    }
+    */
+
+    private static double[] createResponse(int first, int length, String name) {
+        final double[] response = new double[VGP_WAV.length];
+        final double[][] spectrum = readSpectrum(name);
+        for (int i = first; i < first + length; i++) {
+            final int k = Arrays.binarySearch(spectrum[0], VGP_WAV[i]);
+            if (k >= 0) {
+                response[i] = spectrum[1][k];
+            }
         }
         return response;
     }
