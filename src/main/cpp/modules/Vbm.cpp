@@ -390,7 +390,7 @@ void Vbm::performHyperspectralFiltering(const valarray<double>& hypToaReflectanc
 			}
 		}
 		if (ws > 0.0) {
-			if (rs > 0.0) {
+			if (rs >= 0.0) {
 				vgtToaReflectances[b] = rs / ws;
 			}
 		}
