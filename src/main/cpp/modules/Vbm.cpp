@@ -26,7 +26,7 @@ using std::fill;
 using boost::lexical_cast;
 
 Vbm::Vbm() :
-		BasicModule("VBM"), hypSpectralResponses(VGT_CHANNEL_COUNT), synRadianceAccessors(SYN_CHANNEL_COUNT), synSolarIrradianceAccessors(SYN_CHANNEL_COUNT), vgtReflectanceAccessors(VGT_CHANNEL_COUNT) {
+		BasicModule("VBM"), hypSpectralResponses(VGT_CHANNEL_COUNT), synRadianceAccessors(SYN_CHANNEL_COUNT), synSurfaceReflectanceAccessors(SYN_CHANNEL_COUNT), synSolarIrradianceAccessors(SYN_CHANNEL_COUNT), vgtReflectanceAccessors(VGT_CHANNEL_COUNT) {
 }
 
 Vbm::~Vbm() {
@@ -63,6 +63,15 @@ void Vbm::addTargetVariables(Context& context) {
 	vgtSzaAccessor = &collocatedSegment.addVariable("SZA", Constants::TYPE_DOUBLE);
 	vgtVaaAccessor = &collocatedSegment.addVariable("VAA", Constants::TYPE_DOUBLE);
 	vgtVzaAccessor = &collocatedSegment.addVariable("VZA", Constants::TYPE_DOUBLE);
+
+	for (size_t i = 0; i < 18; i++) {
+		const string index = lexical_cast<string>(i + 1);
+		synSurfaceReflectanceAccessors[i] = &collocatedSegment.addVariable("R_" + index, Constants::TYPE_DOUBLE);
+	}
+	for (size_t i = 21; i < 24; i++) {
+		const string index = lexical_cast<string>(i + 1);
+		synSurfaceReflectanceAccessors[i - 3] = &collocatedSegment.addVariable("R_" + index, Constants::TYPE_DOUBLE);
+	}
 }
 
 void Vbm::prepareAccessors(Context& context) {
@@ -200,16 +209,11 @@ void Vbm::process(Context& context) {
 				const size_t geoIndex = geoGrid.getIndex(k, l, m);
 				initPixel(p, index, geoIndex, tpiWeights, tpiIndexes);
 				performDownscaling(p, synSurfaceReflectances, coordinates, rho, ratm, ts, tv, f, workspace);
-				//performHyperspectralInterpolation(synWavelengths, synSurfaceReflectances, hypSurfaceReflectances);
-				//performHyperspectralUpscaling(hypSurfaceReflectances, p, hypToaReflectances, coordinates, rho, ratm, ts, tv, f, workspace);
-				//performHyperspectralFiltering(hypToaReflectances, vgtToaReflectances);
-				//const uint8_t flags = performQualityFlagging(p, vgtToaReflectances);
-				//setValues(index, p, flags, vgtToaReflectances);
-				synSurfaceReflectances[0] = synSurfaceReflectances[18];
-				synSurfaceReflectances[1] = synSurfaceReflectances[19];
-				synSurfaceReflectances[2] = synSurfaceReflectances[20];
-				const uint8_t flags = performQualityFlagging(p, synSurfaceReflectances);
-				setValues(index, p, flags, synSurfaceReflectances);
+				performHyperspectralInterpolation(synWavelengths, synSurfaceReflectances, hypSurfaceReflectances);
+				performHyperspectralUpscaling(hypSurfaceReflectances, p, hypToaReflectances, coordinates, rho, ratm, ts, tv, f, workspace);
+				performHyperspectralFiltering(hypToaReflectances, vgtToaReflectances);
+				const uint8_t flags = performQualityFlagging(p, vgtToaReflectances);
+				setValues(index, p, flags, vgtToaReflectances, synSurfaceReflectances);
 			}
 		}
 	}
@@ -424,7 +428,7 @@ uint8_t Vbm::performQualityFlagging(Pixel& p, const valarray<double>& vgtToaRefl
 	return flags;
 }
 
-void Vbm::setValues(size_t index, Pixel& p, uint8_t flags, const valarray<double>& vgtToaReflectances) {
+void Vbm::setValues(size_t index, Pixel& p, uint8_t flags, const valarray<double>& vgtToaReflectances, const valarray<double>& synSurfaceReflectances) {
 	for (size_t i = 0; i < vgtReflectanceAccessors.size(); i++) {
 		if (vgtToaReflectances[i] != Constants::FILL_VALUE_DOUBLE) {
 			vgtReflectanceAccessors[i]->setDouble(index, vgtToaReflectances[i]);
@@ -443,6 +447,14 @@ void Vbm::setValues(size_t index, Pixel& p, uint8_t flags, const valarray<double
 	vgtSzaAccessor->setDouble(index, p.sza);
 	vgtVaaAccessor->setDouble(index, p.vaaOlc);
 	vgtVzaAccessor->setDouble(index, p.vzaOlc);
+
+	for (size_t i = 0; i < synSurfaceReflectanceAccessors.size(); i++) {
+		if (synSurfaceReflectances[i] != Constants::FILL_VALUE_DOUBLE) {
+			synSurfaceReflectanceAccessors[i]->setDouble(index, synSurfaceReflectances[i]);
+		} else {
+			synSurfaceReflectanceAccessors[i]->setFillValue(index);
+		}
+	}
 }
 
 double Vbm::aerosolOpticalThickness(double lat) {

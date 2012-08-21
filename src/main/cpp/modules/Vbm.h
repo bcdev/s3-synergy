@@ -76,7 +76,7 @@ private:
 	void performHyperspectralFiltering(const valarray<double>& hypToaReflectances, valarray<double>& vgtToaReflectances) const;
 
 	uint8_t performQualityFlagging(Pixel& p, const valarray<double>& vgtToaReflectances) const;
-	void setValues(size_t index, Pixel& p, uint8_t flags, const valarray<double>& vgtToaReflectances);
+	void setValues(size_t index, Pixel& p, uint8_t flags, const valarray<double>& vgtToaReflectances, const valarray<double>& synSurfaceReflectances);
 
     template<class T>
     static void copy(const valarray<T>& s, valarray<T>& t);
@@ -115,6 +115,7 @@ private:
     Accessor* lonAccessor;
 
     valarray<Accessor*> synRadianceAccessors;
+    valarray<Accessor*> synSurfaceReflectanceAccessors;
     valarray<Accessor*> synSolarIrradianceAccessors;
     Accessor* synFlagsAccessor;
     valarray<Accessor*> vgtReflectanceAccessors;
