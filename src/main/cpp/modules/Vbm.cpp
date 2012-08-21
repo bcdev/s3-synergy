@@ -205,6 +205,9 @@ void Vbm::process(Context& context) {
 				//performHyperspectralFiltering(hypToaReflectances, vgtToaReflectances);
 				//const uint8_t flags = performQualityFlagging(p, vgtToaReflectances);
 				//setValues(index, p, flags, vgtToaReflectances);
+				synSurfaceReflectances[0] = synSurfaceReflectances[18];
+				synSurfaceReflectances[1] = synSurfaceReflectances[19];
+				synSurfaceReflectances[2] = synSurfaceReflectances[20];
 				const uint8_t flags = performQualityFlagging(p, synSurfaceReflectances);
 				setValues(index, p, flags, synSurfaceReflectances);
 			}
