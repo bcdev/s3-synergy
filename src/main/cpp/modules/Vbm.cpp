@@ -391,7 +391,7 @@ void Vbm::performHyperspectralFiltering(const valarray<double>& hypToaReflectanc
 			if (r > 0.0) {
 				const double hypSolarIrradiance = hypSolarIrradiances[h];
 				const double hypToaReflectance = hypToaReflectances[h];
-				if (hypToaReflectance != Constants::FILL_VALUE_DOUBLE) {
+				if (hypToaReflectance >= 0.0) {
 					const double w = r * hypSolarIrradiance;
 					rs += w * hypToaReflectance;
 					ws += w;
