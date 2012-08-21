@@ -200,11 +200,13 @@ void Vbm::process(Context& context) {
 				const size_t geoIndex = geoGrid.getIndex(k, l, m);
 				initPixel(p, index, geoIndex, tpiWeights, tpiIndexes);
 				performDownscaling(p, synSurfaceReflectances, coordinates, rho, ratm, ts, tv, f, workspace);
-				performHyperspectralInterpolation(synWavelengths, synSurfaceReflectances, hypSurfaceReflectances);
-				performHyperspectralUpscaling(hypSurfaceReflectances, p, hypToaReflectances, coordinates, rho, ratm, ts, tv, f, workspace);
-				performHyperspectralFiltering(hypToaReflectances, vgtToaReflectances);
-				const uint8_t flags = performQualityFlagging(p, vgtToaReflectances);
-				setValues(index, p, flags, vgtToaReflectances);
+				//performHyperspectralInterpolation(synWavelengths, synSurfaceReflectances, hypSurfaceReflectances);
+				//performHyperspectralUpscaling(hypSurfaceReflectances, p, hypToaReflectances, coordinates, rho, ratm, ts, tv, f, workspace);
+				//performHyperspectralFiltering(hypToaReflectances, vgtToaReflectances);
+				//const uint8_t flags = performQualityFlagging(p, vgtToaReflectances);
+				//setValues(index, p, flags, vgtToaReflectances);
+				const uint8_t flags = performQualityFlagging(p, synSurfaceReflectances);
+				setValues(index, p, flags, synSurfaceReflectances);
 			}
 		}
 	}
