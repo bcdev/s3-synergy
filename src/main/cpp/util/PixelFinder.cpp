@@ -116,7 +116,7 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, l
 		}
 	}
 
-    return acos(delta) * DEG < pixelSize;
+    return true; // acos(delta) * DEG < pixelSize;
 }
 
 void PixelFinder::updateNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& resultK, long& resultL, long& resultM, double& maxDelta) const {
