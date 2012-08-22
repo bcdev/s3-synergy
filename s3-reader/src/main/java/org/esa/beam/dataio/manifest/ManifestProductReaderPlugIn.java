@@ -75,11 +75,12 @@ public abstract class ManifestProductReaderPlugIn implements ProductReaderPlugIn
 
     private boolean isInputValid(Object input) {
         final File inputFile = new File(input.toString());
-        final String parentDirectoryName = inputFile.getParentFile().getName();
-        return isValidInputFileName(inputFile.getName()) && isValidDirectoryName(parentDirectoryName);
+        final File parentFile = inputFile.getParentFile();
+        return parentFile != null && isValidInputFileName(inputFile.getName()) && isValidDirectoryName(
+                parentFile.getName());
     }
 
-    private boolean isValidDirectoryName(String parentDirectoryName) {
-        return directoryNamePattern.matcher(parentDirectoryName).matches();
+    private boolean isValidDirectoryName(String name) {
+        return directoryNamePattern.matcher(name).matches();
     }
 }
