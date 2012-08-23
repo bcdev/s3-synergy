@@ -19,14 +19,17 @@
 
 #include "PixelFinder.h"
 
-PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) : geoLocation(geoLocation), pixelSize(pixelSize), tpi(0, geoLocation.getGrid().getSizeK()), tpIndices(valarray<double>(), geoLocation.getGrid().getSizeK()) {
+PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) : geoLocation(geoLocation), pixelSize(pixelSize) {
 	const Grid& grid = geoLocation.getGrid();
 
 	const long sizeK = grid.getSizeK();
 	const long sizeL = grid.getSizeL();
 	const long sizeM = grid.getSizeM();
 
-	size_t tpCount = computeTiePointCount(1, sizeL, sizeM);
+	const size_t tpCount = computeTiePointCount(1, sizeL, sizeM);
+
+	tpi.resize(sizeK, 0);
+	tpIndices.resize(sizeK, valarray<double>(tpCount));
 
 	for (long k = 0; k < sizeK; k++) {
 		tpIndices[k].resize(tpCount);
