@@ -39,7 +39,7 @@ PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) : geoLocati
 				const size_t index = grid.getIndex(k, l, m);
 				tpLats[i] = geoLocation.getLat(index);
 				tpLons[i] = geoLocation.getLon(index);
-				tpInds[i] = index;
+				tpInds[i] = grid.getIndex(0, l, m);
 			}
 		}
 		tpi.push_back(TiePointInterpolator<double>(tpLons, tpLats));
@@ -73,7 +73,7 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& resu
 	for (long k = 0; grid.getSizeK(); k++) {
 		tpi[k].prepare(targetLon, targetLat, w, i);
 
-		const size_t index = 0; //tpi[k].interpolate(tpIndices[k], w, i);
+		const size_t index = tpi[k].interpolate(tpIndices[k], w, i);
 		const long l = getL(index);
 		const long m = getM(index);
 
