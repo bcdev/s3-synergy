@@ -71,7 +71,7 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& resu
 	bool found = false;
 
 	for (long k = 0; grid.getSizeK(); k++) {
-		tpi[k].prepare(targetLon, targetLat, w, i);
+		//tpi[k].prepare(targetLon, targetLat, w, i);
 
 		const size_t index = 0; // tpi[k].interpolate(tpIndices[k], w, i);
 		const long l = getL(index);
