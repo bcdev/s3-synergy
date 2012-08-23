@@ -39,7 +39,7 @@ PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) : geoLocati
 				const size_t index = grid.getIndex(k, l, m);
 				tpLats[i] = geoLocation.getLat(index);
 				tpLons[i] = geoLocation.getLon(index);
-				(*tpInds)[i] = index;
+				tpInds[i] = index;
 			}
 		}
 		tpi.push_back(TiePointInterpolator<double>(tpLons, tpLats));
