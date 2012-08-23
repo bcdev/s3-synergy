@@ -80,7 +80,6 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& resu
 		updateNearestPixel(targetLat, targetLon, k, l, m, resultK, resultL, resultM, delta, found);
 
 		for (long b = 32; b > 0; b >>= 1) {
-			const long midK = k;
 			const long midL = l;
 			const long midM = m;
 

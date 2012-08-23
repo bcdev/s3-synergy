@@ -36,6 +36,7 @@ template<class W>
 class TiePointInterpolator {
 public:
 	TiePointInterpolator(const valarray<W>& tpLons, const valarray<W>& tpLats);
+	TiePointInterpolator(const TiePointInterpolator<W>& tpi);
 	~TiePointInterpolator();
 
 	void prepare(W lon, W lat, valarray<W>& weights, valarray<size_t>& indexes) const;
@@ -69,6 +70,19 @@ private:
 
 	static const W RAD = W(3.14159265358979323846) / W(180.0);
 };
+
+template<class W>
+TiePointInterpolator<W>::TiePointInterpolator(const TiePointInterpolator<W>& tpi) :
+		tpLons(tpi.tpLons), tpLats(tpi.tpLats), ordering(tpi.tpLats.size()) {
+	using std::sort;
+
+	for (size_t i = 0; i < ordering.size(); i++) {
+		ordering[i] = i;
+	}
+	sort(&ordering[0], &ordering[ordering.size()], TiePointIndexComparator(this->tpLons, this->tpLats));
+	reorder(this->tpLons, ordering);
+	reorder(this->tpLats, ordering);
+}
 
 template<class W>
 TiePointInterpolator<W>::TiePointInterpolator(const valarray<W>& tpLons, const valarray<W>& tpLats) :
