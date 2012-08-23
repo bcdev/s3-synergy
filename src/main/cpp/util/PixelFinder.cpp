@@ -42,12 +42,15 @@ PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) : geoLocati
 				tpInds[i] = index;
 			}
 		}
-		tpi.push_back(TiePointInterpolator<double>(tpLons, tpLats));
+		tpi.push_back(new TiePointInterpolator<double>(tpLons, tpLats));
 		tpIndices.push_back(tpInds);
 	}
 }
 
 PixelFinder::~PixelFinder() {
+	for (size_t i = tpi.size(); i-- > 0; ) {
+		delete tpi[i];
+	}
 }
 
 bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& resultK, long& resultL, long& resultM) const {
@@ -63,9 +66,9 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& resu
 	bool found = false;
 
 	for (long k = 0; grid.getSizeK(); k++) {
-		tpi[k].prepare(targetLon, targetLat, w, i);
+		tpi[k]->prepare(targetLon, targetLat, w, i);
 
-		const size_t index = tpi[k].interpolate(tpIndices[k], w, i);
+		const size_t index = tpi[k]->interpolate(tpIndices[k], w, i);
 		const long l = getL(index);
 		const long m = getM(index);
 
