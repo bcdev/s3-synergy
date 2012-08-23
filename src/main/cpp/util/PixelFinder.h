@@ -63,8 +63,8 @@ private:
 	const GeoLocation& geoLocation;
 	const double pixelSize;
 
-	std::vector<TiePointInterpolator<double>* > tpi;
-	std::vector<valarray<double> > tpIndices;
+	valarray<TiePointInterpolator<double>* > tpi;
+	valarray<valarray<double> > tpIndices;
 
 	static const double DEG = 180.0 / 3.14159265358979323846;
 };

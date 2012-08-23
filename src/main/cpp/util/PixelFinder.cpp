@@ -19,7 +19,7 @@
 
 #include "PixelFinder.h"
 
-PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) : geoLocation(geoLocation), pixelSize(pixelSize) {
+PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) : geoLocation(geoLocation), pixelSize(pixelSize), tpi(geoLocation.getGrid().getSizeK()), tpIndices(geoLocation.getGrid().getSizeK())  {
 	const Grid& grid = geoLocation.getGrid();
 
 	const long sizeK = grid.getSizeK();
@@ -29,9 +29,9 @@ PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) : geoLocati
 	const size_t tpCount = computeTiePointCount(1, sizeL, sizeM);
 
 	for (long k = 0; k < sizeK; k++) {
-		valarray<double> tpInds(tpCount);
 		valarray<double> tpLats(tpCount);
 		valarray<double> tpLons(tpCount);
+		valarray<double> tpInds(tpCount);
 		for (long i = 0, l = 0; l < sizeL; l += 32) {
 			for (long m = 0; m < sizeM; m += 32, i++) {
 				const size_t index = grid.getIndex(k, l, m);
@@ -40,8 +40,9 @@ PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) : geoLocati
 				tpInds[i] = index;
 			}
 		}
-		tpIndices.push_back(tpInds);
-		tpi.push_back(new TiePointInterpolator<double>(tpLons, tpLats));
+		tpi[k] = new TiePointInterpolator<double>(tpLons, tpLats);
+		tpIndices[k].resize(tpCount, 0.0);
+		tpIndices[k] = tpInds;
 	}
 }
 
