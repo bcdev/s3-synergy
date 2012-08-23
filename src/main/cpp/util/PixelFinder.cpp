@@ -19,35 +19,35 @@
 
 #include "PixelFinder.h"
 
-PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) : geoLocation(geoLocation), pixelSize(pixelSize), tpIndices() {
+PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) : geoLocation(geoLocation), pixelSize(pixelSize), tpi(geoLocation.getGrid().getSizeK()), tpIndices(geoLocation.getGrid().getSizeK()) {
 	const Grid& grid = geoLocation.getGrid();
 
 	const long sizeK = grid.getSizeK();
 	const long sizeL = grid.getSizeL();
 	const long sizeM = grid.getSizeM();
 
-	size_t tpCount = computeTiePointCount(sizeK, sizeL, sizeM);
+	size_t tpCount = computeTiePointCount(1, sizeL, sizeM);
 
-	tpIndices.resize(tpCount);
-	valarray<double> tpLats(tpCount);
-	valarray<double> tpLons(tpCount);
-
-	for (long i = 0, k = 0; k < sizeK; k++) {
-		for (long l = 0; l < sizeL; l += 32) {
+	for (long k = 0; k < sizeK; k++) {
+		tpIndices[k].resize(tpCount);
+		valarray<double> tpLats(tpCount);
+		valarray<double> tpLons(tpCount);
+		for (long i = 0, l = 0; l < sizeL; l += 32) {
 			for (long m = 0; m < sizeM; m += 32, i++) {
 				const size_t index = grid.getIndex(k, l, m);
 				tpLats[i] = geoLocation.getLat(index);
 				tpLons[i] = geoLocation.getLon(index);
-				tpIndices[i] = index;
+				tpIndices[k][i] = index;
 			}
 		}
+		tpi[k] = new TiePointInterpolator<double>(tpLons, tpLats);
 	}
-
-	tpi = new TiePointInterpolator<double>(tpLons, tpLats);
 }
 
 PixelFinder::~PixelFinder() {
-	delete tpi;
+	for (size_t i = tpi.size(); i-- > 0;) {
+		delete tpi[i];
+	}
 }
 
 bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, long& l, long& m) const {
@@ -59,60 +59,51 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, l
 
 	valarray<double> w(1);
 	valarray<size_t> i(1);
-	tpi->prepare(targetLon, targetLat, w, i);
-
-	const size_t index = tpi->interpolate(tpIndices, w, i);
-	k = getK(index);
-	l = getL(index);
-	m = getM(index);
-
 	double delta = -1.0;
 
-	updateNearestPixel(targetLat, targetLon, k, l, m, k, l, m, delta);
+	for (long j = 0; grid.getSizeK(); j++) {
+		tpi[j]->prepare(targetLon, targetLat, w, i);
 
-	for (long b = 32; b > 0; b >>= 1) {
-		const long midK = k;
-		const long midL = l;
-		const long midM = m;
-		const long midN = getN(k, m);
+		const size_t index = tpi[j]->interpolate(tpIndices[j], w, i);
+		k = getK(index);
+		l = getL(index);
+		m = getM(index);
 
-		const long outerMinL = max(grid.getMinL(), midL - b);
-		const long outerMaxL = min(grid.getMaxL(), midL + b);
-		const long outerMinN = max(getN(grid.getMinK(), grid.getMinM()), midN - b);
-		const long outerMaxN = min(getN(grid.getMaxK(), grid.getMaxM()), midN + b);
+		updateNearestPixel(targetLat, targetLon, k, l, m, k, l, m, delta);
 
-		const long outerMinK = getK(outerMinN);
-		const long outerMaxK = getK(outerMaxN);
-		const long outerMinM = getM(outerMinN);
-		const long outerMaxM = getM(outerMaxN);
+		for (long b = 32; b > 0; b >>= 1) {
+			const long midK = k;
+			const long midL = l;
+			const long midM = m;
 
-		if (true) { // consider outer points in the N, S, E, and W
-			updateNearestPixel(targetLat, targetLon, outerMinK, midL, outerMinM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, outerMaxK, midL, outerMaxM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, midK, outerMaxL, midM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, midK, outerMinL, midM, k, l, m, delta);
-		}
-		if (true) { // consider outer points in the NW, SW, SE, and NE
-			updateNearestPixel(targetLat, targetLon, outerMinK, outerMinL, outerMinM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, outerMinK, outerMaxL, outerMinM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, outerMaxK, outerMaxL, outerMaxM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, outerMaxK, outerMinL, outerMaxM, k, l, m, delta);
-		}
-		if (true) { // consider inner points in the NW, SW, SE, and NE
-			const long innerMinL = max(outerMinL, midL - b / 2);
-			const long innerMaxL = min(outerMaxL, midL + b / 2);
-			const long innerMinN = max(outerMinN, midN - b / 2);
-			const long innerMaxN = min(outerMaxN, midN + b / 2);
+			const long outerMinL = max(grid.getMinL(), midL - b);
+			const long outerMaxL = min(grid.getMaxL(), midL + b);
+			const long outerMinM = max(grid.getMinM(), midM - b);
+			const long outerMaxM = min(grid.getMaxM(), midM + b);
 
-			const long innerMinK = getK(innerMinN);
-			const long innerMaxK = getK(innerMaxN);
-			const long innerMinM = getM(innerMinN);
-			const long innerMaxM = getM(innerMaxN);
+			if (true) { // consider outer points in the N, S, E, and W
+				updateNearestPixel(targetLat, targetLon, k, midL, outerMinM, k, l, m, delta);
+				updateNearestPixel(targetLat, targetLon, k, midL, outerMaxM, k, l, m, delta);
+				updateNearestPixel(targetLat, targetLon, k, outerMaxL, midM, k, l, m, delta);
+				updateNearestPixel(targetLat, targetLon, k, outerMinL, midM, k, l, m, delta);
+			}
+			if (true) { // consider outer points in the NW, SW, SE, and NE
+				updateNearestPixel(targetLat, targetLon, k, outerMinL, outerMinM, k, l, m, delta);
+				updateNearestPixel(targetLat, targetLon, k, outerMaxL, outerMinM, k, l, m, delta);
+				updateNearestPixel(targetLat, targetLon, k, outerMaxL, outerMaxM, k, l, m, delta);
+				updateNearestPixel(targetLat, targetLon, k, outerMinL, outerMaxM, k, l, m, delta);
+			}
+			if (true) { // consider inner points in the NW, SW, SE, and NE
+				const long innerMinL = max(outerMinL, midL - b / 2);
+				const long innerMaxL = min(outerMaxL, midL + b / 2);
+				const long innerMinM = max(outerMinM, midM - b / 2);
+				const long innerMaxM = min(outerMaxM, midM + b / 2);
 
-			updateNearestPixel(targetLat, targetLon, innerMinK, innerMinL, innerMinM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, innerMinK, innerMaxL, innerMinM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, innerMaxK, innerMaxL, innerMaxM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, innerMaxK, innerMinL, innerMaxM, k, l, m, delta);
+				updateNearestPixel(targetLat, targetLon, k, innerMinL, innerMinM, k, l, m, delta);
+				updateNearestPixel(targetLat, targetLon, k, innerMaxL, innerMinM, k, l, m, delta);
+				updateNearestPixel(targetLat, targetLon, k, innerMaxL, innerMaxM, k, l, m, delta);
+				updateNearestPixel(targetLat, targetLon, k, innerMinL, innerMaxM, k, l, m, delta);
+			}
 		}
 	}
 
