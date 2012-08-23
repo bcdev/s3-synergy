@@ -16,6 +16,8 @@
 #ifndef PIXELFINDER_H_
 #define PIXELFINDER_H_
 
+#include <vector>
+
 #include "../core/Grid.h"
 #include "../core/TiePointInterpolator.h"
 
@@ -38,7 +40,7 @@ public:
 
 private:
 	size_t computeTiePointCount(long sizeK, long sizeL, long sizeM) const;
-	void updateNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& sourceK, long& sourceL, long& sourceM, double& minDelta) const;
+	void updateNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& sourceK, long& sourceL, long& sourceM, double& minDelta, bool& found) const;
 
     long getK(size_t index) const {
         return geoLocation.getGrid().getK(index);
@@ -62,11 +64,11 @@ private:
 
 	const GeoLocation& geoLocation;
 	const double pixelSize;
-	const TiePointInterpolator<double>* tpi;
 
+	std::vector<TiePointInterpolator<double>* > tpi;
 	valarray<double> tpIndices;
 
-	static const double DEG = 180.0 / 3.14159265358979323846;
+	static const double DEG;
 };
 
 #endif /* PIXELFINDER_H_ */
