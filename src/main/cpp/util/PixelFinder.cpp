@@ -59,13 +59,13 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& resu
 
 	const Grid& grid = geoLocation.getGrid();
 
-	valarray<double> w(1);
+	valarray<double> w(1, 1);
 	valarray<size_t> i(1);
 	double delta = -1.0;
 	bool found = false;
 
 	for (long k = 0; grid.getSizeK(); k++) {
-		tpi[k]->prepare(targetLon, targetLat, w, i);
+		//tpi[k]->prepare(targetLon, targetLat, w, i);
 
 		const size_t index = tpi[k]->interpolate(tpIndices, w, i);
 		const long l = getL(index);
