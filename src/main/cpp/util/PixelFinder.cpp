@@ -79,8 +79,8 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, l
 
 		const long outerMinL = max(grid.getMinL(), midL - b);
 		const long outerMaxL = min(grid.getMaxL(), midL + b);
-		const long outerMinN = max(getN(grid.getMinK(), grid.getMinM()), midN - b);
-		const long outerMaxN = min(getN(grid.getMaxK(), grid.getMaxM()), midN + b);
+		const long outerMinN = max(getN(0, grid.getMinM()), midN - b);
+		const long outerMaxN = min(getN(0, grid.getMaxM()), midN + b);
 
 		const long outerMinK = getK(outerMinN);
 		const long outerMaxK = getK(outerMaxN);
