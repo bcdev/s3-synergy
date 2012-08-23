@@ -38,7 +38,7 @@ public:
 
 private:
 	size_t computeTiePointCount(long sizeK, long sizeL, long sizeM) const;
-	void updateNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& sourceK, long& sourceL, long& sourceM, double& minDelta) const;
+	void updateNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& sourceK, long& sourceL, long& sourceM, double& minDelta, bool& found) const;
 
     long getK(size_t index) const {
         return geoLocation.getGrid().getK(index);

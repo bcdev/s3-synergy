@@ -68,10 +68,11 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, l
 	m = getM(index);
 
 	double delta = -1.0;
+	bool found = false;
 
-	updateNearestPixel(targetLat, targetLon, k, l, m, k, l, m, delta);
+	updateNearestPixel(targetLat, targetLon, k, l, m, k, l, m, delta, found);
 
-	for (long b = 64; b > 0; b >>= 1) {
+	for (long b = 128; b > 0; b >>= 1) {
 		const long midK = k;
 		const long midL = l;
 		const long midM = m;
@@ -88,16 +89,16 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, l
 		const long outerMaxM = getM(outerMaxN);
 
 		if (true) { // consider outer points in the N, S, E, and W
-			updateNearestPixel(targetLat, targetLon, outerMinK, midL, outerMinM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, outerMaxK, midL, outerMaxM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, midK, outerMaxL, midM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, midK, outerMinL, midM, k, l, m, delta);
+			updateNearestPixel(targetLat, targetLon, outerMinK, midL, outerMinM, k, l, m, delta, found);
+			updateNearestPixel(targetLat, targetLon, outerMaxK, midL, outerMaxM, k, l, m, delta, found);
+			updateNearestPixel(targetLat, targetLon, midK, outerMaxL, midM, k, l, m, delta, found);
+			updateNearestPixel(targetLat, targetLon, midK, outerMinL, midM, k, l, m, delta, found);
 		}
 		if (true) { // consider outer points in the NW, SW, SE, and NE
-			updateNearestPixel(targetLat, targetLon, outerMinK, outerMinL, outerMinM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, outerMinK, outerMaxL, outerMinM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, outerMaxK, outerMaxL, outerMaxM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, outerMaxK, outerMinL, outerMaxM, k, l, m, delta);
+			updateNearestPixel(targetLat, targetLon, outerMinK, outerMinL, outerMinM, k, l, m, delta, found);
+			updateNearestPixel(targetLat, targetLon, outerMinK, outerMaxL, outerMinM, k, l, m, delta, found);
+			updateNearestPixel(targetLat, targetLon, outerMaxK, outerMaxL, outerMaxM, k, l, m, delta, found);
+			updateNearestPixel(targetLat, targetLon, outerMaxK, outerMinL, outerMaxM, k, l, m, delta, found);
 		}
 		if (true) { // consider inner points in the NW, SW, SE, and NE
 			const long innerMinL = max(outerMinL, midL - b / 2);
@@ -110,27 +111,38 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, l
 			const long innerMinM = getM(innerMinN);
 			const long innerMaxM = getM(innerMaxN);
 
-			updateNearestPixel(targetLat, targetLon, innerMinK, innerMinL, innerMinM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, innerMinK, innerMaxL, innerMinM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, innerMaxK, innerMaxL, innerMaxM, k, l, m, delta);
-			updateNearestPixel(targetLat, targetLon, innerMaxK, innerMinL, innerMaxM, k, l, m, delta);
+			updateNearestPixel(targetLat, targetLon, innerMinK, innerMinL, innerMinM, k, l, m, delta, found);
+			updateNearestPixel(targetLat, targetLon, innerMinK, innerMaxL, innerMinM, k, l, m, delta, found);
+			updateNearestPixel(targetLat, targetLon, innerMaxK, innerMaxL, innerMaxM, k, l, m, delta, found);
+			updateNearestPixel(targetLat, targetLon, innerMaxK, innerMinL, innerMaxM, k, l, m, delta, found);
 		}
 	}
 
-	return acos(delta) * DEG < 0.7 * pixelSize;
+	return found;
 }
 
-void PixelFinder::updateNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& resultK, long& resultL, long& resultM, double& maxDelta) const {
-	const size_t sourceIndex = geoLocation.getGrid().getIndex(k, l, m);
-	const double sourceLat = geoLocation.getLat(sourceIndex);
-	const double sourceLon = geoLocation.getLon(sourceIndex);
-	const double delta = TiePointInterpolator<double>::cosineDistance(targetLon, targetLat, sourceLon, sourceLat);
+void PixelFinder::updateNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& resultK, long& resultL, long& resultM, double& maxDelta, bool& found) const {
+	if (!found || k < resultK) {
+		const size_t sourceIndex = geoLocation.getGrid().getIndex(k, l, m);
+		const double sourceLat = geoLocation.getLat(sourceIndex);
+		const double sourceLon = geoLocation.getLon(sourceIndex);
+		const double delta = TiePointInterpolator<double>::cosineDistance(targetLon, targetLat, sourceLon, sourceLat);
 
-	if (delta > maxDelta) {
-		resultK = k;
-		resultL = l;
-		resultM = m;
-		maxDelta = delta;
+		if (delta > maxDelta) {
+			resultK = k;
+			resultL = l;
+			resultM = m;
+			maxDelta = delta;
+			found = acos(delta) * DEG < 0.707 * pixelSize;
+		} else {
+			if (k < resultK && acos(delta) * DEG < 0.707 * pixelSize) {
+				resultK = k;
+				resultL = l;
+				resultM = m;
+				maxDelta = delta;
+				found = true;
+			}
+		}
 	}
 }
 
