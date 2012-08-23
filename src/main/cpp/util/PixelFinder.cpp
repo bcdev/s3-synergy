@@ -48,12 +48,14 @@ PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) : geoLocati
 }
 
 PixelFinder::~PixelFinder() {
+	/*
 	for (size_t i = tpIndices.size(); i-- > 0; ) {
 		delete tpIndices[i];
 	}
 	for (size_t i = tpi.size(); i-- > 0; ) {
 		delete tpi[i];
 	}
+	*/
 }
 
 bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& resultK, long& resultL, long& resultM) const {
