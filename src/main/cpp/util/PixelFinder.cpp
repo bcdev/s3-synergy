@@ -28,11 +28,8 @@ PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) : geoLocati
 
 	const size_t tpCount = computeTiePointCount(1, sizeL, sizeM);
 
-	tpi.resize(sizeK, 0);
-	tpIndices.resize(sizeK, valarray<double>(tpCount));
-
 	for (long k = 0; k < sizeK; k++) {
-		tpIndices[k].resize(tpCount);
+		valarray<double> tpInds(tpCount);
 		valarray<double> tpLats(tpCount);
 		valarray<double> tpLons(tpCount);
 		for (long i = 0, l = 0; l < sizeL; l += 32) {
@@ -40,10 +37,11 @@ PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) : geoLocati
 				const size_t index = grid.getIndex(k, l, m);
 				tpLats[i] = geoLocation.getLat(index);
 				tpLons[i] = geoLocation.getLon(index);
-				tpIndices[k][i] = index;
+				tpInds[i] = index;
 			}
 		}
-		tpi[k] = new TiePointInterpolator<double>(tpLons, tpLats);
+		tpIndices.push_back(tpInds);
+		tpi.push_back(new TiePointInterpolator<double>(tpLons, tpLats));
 	}
 }
 
