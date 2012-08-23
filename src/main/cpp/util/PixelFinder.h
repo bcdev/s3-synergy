@@ -66,7 +66,7 @@ private:
 	const double pixelSize;
 
 	std::vector<TiePointInterpolator<double>* > tpi;
-	std::vector<valarray<double> > tpIndices;
+	std::vector<valarray<double>* > tpIndices;
 
 	static const double DEG;
 };
