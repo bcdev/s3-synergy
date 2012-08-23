@@ -59,6 +59,9 @@ PixelFinder::~PixelFinder() {
 }
 
 bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& resultK, long& resultL, long& resultM) const {
+	return true;
+
+	/*
 	using std::acos;
 	using std::max;
 	using std::min;
@@ -116,6 +119,7 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& resu
 	}
 
     return found;
+    */
 }
 
 void PixelFinder::updateNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& resultK, long& resultL, long& resultM, double& maxDelta, bool& found) const {
