@@ -33,8 +33,8 @@ PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) : geoLocati
 	valarray<double> tpLons(tpCount);
 
 	for (long i = 0, k = 0; k < sizeK; k++) {
-		for (long l = 0; l < sizeL; l += 64) {
-			for (long m = 0; m < sizeM; i++, m += 64) {
+		for (long l = 0; l < sizeL; l += 32) {
+			for (long m = 0; m < sizeM; m += 32, i++) {
 				const size_t index = grid.getIndex(k, l, m);
 				tpLats[i] = geoLocation.getLat(index);
 				tpLons[i] = geoLocation.getLon(index);
@@ -70,7 +70,7 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, l
 
 	updateNearestPixel(targetLat, targetLon, k, l, m, k, l, m, delta);
 
-	for (long b = 64; b > 0; b >>= 1) {
+	for (long b = 32; b > 0; b >>= 1) {
 		const long midK = k;
 		const long midL = l;
 		const long midM = m;
@@ -116,7 +116,7 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, l
 		}
 	}
 
-    return acos(delta) * DEG < pixelSize;
+    return acos(delta) * DEG < 0.71 * pixelSize;
 }
 
 void PixelFinder::updateNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& resultK, long& resultL, long& resultM, double& maxDelta) const {
