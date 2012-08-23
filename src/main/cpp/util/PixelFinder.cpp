@@ -136,8 +136,8 @@ void PixelFinder::updateNearestPixel(double targetLat, double targetLon, long k,
 size_t PixelFinder::computeTiePointCount(long sizeK, long sizeL, long sizeM) const {
     size_t tpCount = 0;
     for (long k = 0; k < sizeK; k++) {
-        for (long l = 0; l < sizeL; l += 64) {
-            for (long m = 0; m < sizeM; m += 64) {
+        for (long l = 0; l < sizeL; l += 32) {
+            for (long m = 0; m < sizeM; m += 32) {
                 tpCount++;
             }
         }
