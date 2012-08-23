@@ -59,9 +59,6 @@ PixelFinder::~PixelFinder() {
 }
 
 bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& resultK, long& resultL, long& resultM) const {
-	return true;
-
-	/*
 	using std::acos;
 	using std::max;
 	using std::min;
@@ -76,7 +73,7 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& resu
 	for (long k = 0; grid.getSizeK(); k++) {
 		tpi[k].prepare(targetLon, targetLat, w, i);
 
-		const size_t index = tpi[k].interpolate(tpIndices[k], w, i);
+		const size_t index = 0; //tpi[k].interpolate(tpIndices[k], w, i);
 		const long l = getL(index);
 		const long m = getM(index);
 
@@ -119,7 +116,6 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& resu
 	}
 
     return found;
-    */
 }
 
 void PixelFinder::updateNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& resultK, long& resultL, long& resultM, double& maxDelta, bool& found) const {
