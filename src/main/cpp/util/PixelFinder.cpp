@@ -34,8 +34,8 @@ PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) :
 		valarray<double> tpLons(tpCount);
 		valarray<double> tpIdxs(tpCount);
 
+		size_t i = 0;
 		for (long l = 0; l < sizeL; l += 64) {
-			size_t i = 0;
 			for (long m = 0; m < sizeM; m += 64) {
 				const size_t index = grid.getIndex(k, l, m);
 				tpLats[i] = geoLocation.getLat(index);
