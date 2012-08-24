@@ -23,7 +23,7 @@ PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) :
 		geoLocation(geoLocation), pixelSize(pixelSize), tpIndices() {
 	const Grid& grid = geoLocation.getGrid();
 
-	const long sizeK = 1; //grid.getSizeK();
+	const long sizeK = grid.getSizeK();
 	const long sizeL = grid.getSizeL();
 	const long sizeM = grid.getSizeM();
 
