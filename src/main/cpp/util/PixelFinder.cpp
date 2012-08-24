@@ -27,24 +27,28 @@ PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) :
 	const long sizeL = grid.getSizeL();
 	const long sizeM = grid.getSizeM();
 
-	size_t tpCount = computeTiePointCount(sizeK, sizeL, sizeM);
+	size_t tpCount = computeTiePointCount(1, sizeL, sizeM);
 
-	tpIndices.resize(tpCount);
-	valarray<double> tpLats(tpCount);
-	valarray<double> tpLons(tpCount);
+	for (long k = 0; k < sizeK; k++) {
+		valarray<double> tpLats(tpCount);
+		valarray<double> tpLons(tpCount);
+		valarray<double> tpIdxs(tpCount);
 
-	for (long i = 0, k = 0; k < sizeK; k++) {
 		for (long l = 0; l < sizeL; l += 64) {
-			for (long m = 0; m < sizeM; i++, m += 64) {
+			size_t i = 0;
+			for (long m = 0; m < sizeM; m += 64) {
 				const size_t index = grid.getIndex(k, l, m);
 				tpLats[i] = geoLocation.getLat(index);
 				tpLons[i] = geoLocation.getLon(index);
-				tpIndices[i] = index;
+				tpIdxs[i] = index;
+				i++;
 			}
 		}
+
+		tpi.push_back(TiePointInterpolator<double>(tpLons, tpLats));
+		tpIndices.push_back(tpIdxs);
 	}
 
-	tpi = new TiePointInterpolator<double>(tpLons, tpLats);
 }
 
 PixelFinder::~PixelFinder() {
@@ -60,9 +64,9 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, l
 
 	valarray<double> w(1);
 	valarray<size_t> i(1);
-	tpi->prepare(targetLon, targetLat, w, i);
+	tpi[0].prepare(targetLon, targetLat, w, i);
 
-	const size_t index = tpi->interpolate(tpIndices, w, i);
+	const size_t index = tpi[0].interpolate(tpIndices[0], w, i);
 	k = getK(index);
 	l = getL(index);
 	m = getM(index);
@@ -72,7 +76,7 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, l
 
 	updateNearestPixel(targetLat, targetLon, k, l, m, k, l, m, delta, found);
 
-	for (long b = 128; b > 0; b >>= 1) {
+	for (long b = 64; b > 0; b >>= 1) {
 		const long midK = k;
 		const long midL = l;
 		const long midM = m;
@@ -80,8 +84,10 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, l
 
 		const long outerMinL = max(grid.getMinL(), midL - b);
 		const long outerMaxL = min(grid.getMaxL(), midL + b);
-		const long outerMinN = max(getN(grid.getMinK(), grid.getMinM()), midN - b);
-		const long outerMaxN = min(getN(grid.getMaxK(), grid.getMaxM()), midN + b);
+//		const long outerMinN = max(getN(grid.getMinK(), grid.getMinM()), midN - b);
+//		const long outerMaxN = min(getN(grid.getMaxK(), grid.getMaxM()), midN + b);
+		const long outerMinN = max(getN(0, grid.getMinM()), midN - b);
+		const long outerMaxN = min(getN(0, grid.getMaxM()), midN + b);
 
 		const long outerMinK = getK(outerMinN);
 		const long outerMaxK = getK(outerMaxN);

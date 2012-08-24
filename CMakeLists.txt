@@ -54,8 +54,10 @@ configure_file (
   "src/test/bin/profiler.sh"
 )
 
-set(CMAKE_CXX_FLAGS "-fopenmp -O3 -march=core2 -std=c++98")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O  -march=core2 -std=c++98 -Wall")
+find_package(OpenMP)
+
+set(CMAKE_CXX_FLAGS_RELEASE "${OPENMP_CXX_FLAGS} -O3 -march=core2 -std=c++98")
+set(CMAKE_CXX_FLAGS_DEBUG   "-g -O  -march=core2 -std=c++98 -Wall")
 
 ##
 # Project source files

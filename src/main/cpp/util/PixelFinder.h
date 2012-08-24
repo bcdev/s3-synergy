@@ -16,6 +16,8 @@
 #ifndef PIXELFINDER_H_
 #define PIXELFINDER_H_
 
+#include <vector>
+
 #include "../core/Grid.h"
 #include "../core/TiePointInterpolator.h"
 
@@ -62,9 +64,9 @@ private:
 
 	const GeoLocation& geoLocation;
 	const double pixelSize;
-	const TiePointInterpolator<double>* tpi;
 
-	valarray<double> tpIndices;
+	std::vector <TiePointInterpolator<double> > tpi;
+	std::vector<valarray<double> > tpIndices;
 
 	static const double DEG = 180.0 / 3.14159265358979323846;
 };
