@@ -52,7 +52,7 @@ PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) :
 }
 
 PixelFinder::~PixelFinder() {
-	delete tpi;
+	//delete tpi;
 }
 
 bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, long& l, long& m) const {
