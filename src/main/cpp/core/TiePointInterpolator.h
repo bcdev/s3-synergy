@@ -68,20 +68,15 @@ private:
 	valarray<W> tpLats;
 	valarray<size_t> ordering;
 
-	static const W RAD = W(3.14159265358979323846) / W(180.0);
+	static const W RAD;
 };
 
 template<class W>
-TiePointInterpolator<W>::TiePointInterpolator(const TiePointInterpolator<W>& tpi) :
-		tpLons(tpi.tpLons), tpLats(tpi.tpLats), ordering(tpi.tpLats.size()) {
-	using std::sort;
+const W TiePointInterpolator<W>::RAD = W(3.14159265358979323846) / W(180.0);
 
-	for (size_t i = 0; i < ordering.size(); i++) {
-		ordering[i] = i;
-	}
-	sort(&ordering[0], &ordering[ordering.size()], TiePointIndexComparator(this->tpLons, this->tpLats));
-	reorder(this->tpLons, ordering);
-	reorder(this->tpLats, ordering);
+template<class W>
+TiePointInterpolator<W>::TiePointInterpolator(const TiePointInterpolator<W>& tpi) :
+		tpLons(tpi.tpLons), tpLats(tpi.tpLats), ordering(tpi.ordering) {
 }
 
 template<class W>

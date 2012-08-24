@@ -39,7 +39,6 @@ public:
 	bool findSourcePixel(double targetLat, double targetLon, long& sourceK, long& sourceL, long& sourceM) const;
 
 private:
-	size_t computeTiePointCount(long sizeK, long sizeL, long sizeM) const;
 	void updateNearestPixel(double targetLat, double targetLon, long k, long l, long m, long& sourceK, long& sourceL, long& sourceM, double& minDelta, bool& found) const;
 
     long getK(size_t index) const {
@@ -65,10 +64,11 @@ private:
 	const GeoLocation& geoLocation;
 	const double pixelSize;
 
-	std::vector <TiePointInterpolator<double> > tpi;
-	std::vector<valarray<double> > tpIndices;
+	std::vector <TiePointInterpolator<double> > tpInterpolators;
+	std::vector<valarray<double> > tpIndexes;
 
-	static const double DEG = 180.0 / 3.14159265358979323846;
+	static size_t computeTiePointCount(long sizeK, long sizeL, long sizeM);
+	static const double DEG;
 };
 
 #endif /* PIXELFINDER_H_ */

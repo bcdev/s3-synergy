@@ -57,7 +57,7 @@ configure_file (
 find_package(OpenMP)
 
 set(CMAKE_CXX_FLAGS_RELEASE "${OpenMP_CXX_FLAGS} -O3 -march=core2 -std=c++98")
-set(CMAKE_CXX_FLAGS_DEBUG   "-g -O  -march=core2 -std=c++98 -Wall")
+set(CMAKE_CXX_FLAGS_DEBUG   "-g -O0 -march=core2 -std=c++98 -Wall")
 
 ##
 # Project source files
