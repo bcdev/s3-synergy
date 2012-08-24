@@ -141,19 +141,6 @@ find_program(MD5_SUM_EXECUTABLE NAMES md5sum gmd5sum)
 include_directories(before
     ~/usr/include
 )
-#include_directories(before
-#    ${JAVA_HOME}/${JAVA_INC_DIR}
-#    ${SAFE_HOME}/${SAFE_INC_DIR}
-#)
-
-##
-# Project link directories
-#
-#link_directories(
-#    ${JAVA_HOME}/${JAVA_LIB_DIR}
-#    ${JAVA_HOME}/${JAVA_JVM_DIR}
-#    ${SAFE_HOME}/${SAFE_LIB_DIR}
-#)
 
 ##
 # Project test targets
