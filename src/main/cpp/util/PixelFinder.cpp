@@ -75,7 +75,8 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, l
 		long ll = getL(index);
 		long mm = getM(index);
 
-		updateNearestPixel(targetLat, targetLon, kk, ll, mm, k, l, m, delta, found);
+		double delta2 = -1.0;
+		updateNearestPixel(targetLat, targetLon, kk, ll, mm, kk, ll, mm, delta2, found);
 
 		for (long b = 64; b > 0; b >>= 1) {
 			const long midL = ll;
@@ -87,16 +88,16 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, l
 			const long outerMaxM = min(grid.getMaxM(), midM + b);
 
 			if (true) { // consider outer points in the N, S, E, and W
-				updateNearestPixel(targetLat, targetLon, kk, midL, outerMinM, kk, ll, mm, delta, found);
-				updateNearestPixel(targetLat, targetLon, kk, midL, outerMaxM, kk, ll, mm, delta, found);
-				updateNearestPixel(targetLat, targetLon, kk, outerMaxL, midM, kk, ll, mm, delta, found);
-				updateNearestPixel(targetLat, targetLon, kk, outerMinL, midM, kk, ll, mm, delta, found);
+				updateNearestPixel(targetLat, targetLon, kk, midL, outerMinM, kk, ll, mm, delta2, found);
+				updateNearestPixel(targetLat, targetLon, kk, midL, outerMaxM, kk, ll, mm, delta2, found);
+				updateNearestPixel(targetLat, targetLon, kk, outerMaxL, midM, kk, ll, mm, delta2, found);
+				updateNearestPixel(targetLat, targetLon, kk, outerMinL, midM, kk, ll, mm, delta2, found);
 			}
 			if (true) { // consider outer points in the NW, SW, SE, and NE
-				updateNearestPixel(targetLat, targetLon, kk, outerMinL, outerMinM, kk, ll, mm, delta, found);
-				updateNearestPixel(targetLat, targetLon, kk, outerMaxL, outerMinM, kk, ll, mm, delta, found);
-				updateNearestPixel(targetLat, targetLon, kk, outerMaxL, outerMaxM, kk, ll, mm, delta, found);
-				updateNearestPixel(targetLat, targetLon, kk, outerMinL, outerMaxM, kk, ll, mm, delta, found);
+				updateNearestPixel(targetLat, targetLon, kk, outerMinL, outerMinM, kk, ll, mm, delta2, found);
+				updateNearestPixel(targetLat, targetLon, kk, outerMaxL, outerMinM, kk, ll, mm, delta2, found);
+				updateNearestPixel(targetLat, targetLon, kk, outerMaxL, outerMaxM, kk, ll, mm, delta2, found);
+				updateNearestPixel(targetLat, targetLon, kk, outerMinL, outerMaxM, kk, ll, mm, delta2, found);
 			}
 			if (true) { // consider inner points in the NW, SW, SE, and NE
 				const long innerMinL = max(outerMinL, midL - b / 2);
@@ -104,13 +105,16 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, l
 				const long innerMinM = max(outerMinM, midM - b / 2);
 				const long innerMaxM = min(outerMaxM, midM + b / 2);
 
-				updateNearestPixel(targetLat, targetLon, kk, innerMinL, innerMinM, kk, ll, mm, delta, found);
-				updateNearestPixel(targetLat, targetLon, kk, innerMaxL, innerMinM, kk, ll, mm, delta, found);
-				updateNearestPixel(targetLat, targetLon, kk, innerMaxL, innerMaxM, kk, ll, mm, delta, found);
-				updateNearestPixel(targetLat, targetLon, kk, innerMinL, innerMaxM, kk, ll, mm, delta, found);
+				updateNearestPixel(targetLat, targetLon, kk, innerMinL, innerMinM, kk, ll, mm, delta2, found);
+				updateNearestPixel(targetLat, targetLon, kk, innerMaxL, innerMinM, kk, ll, mm, delta2, found);
+				updateNearestPixel(targetLat, targetLon, kk, innerMaxL, innerMaxM, kk, ll, mm, delta2, found);
+				updateNearestPixel(targetLat, targetLon, kk, innerMinL, innerMaxM, kk, ll, mm, delta2, found);
 			}
+			updateNearestPixel(targetLat, targetLon, kk, ll, mm, k, l, m, delta, found);
 		}
-		updateNearestPixel(targetLat, targetLon, kk, ll, mm, k, l, m, delta, found);
+		if (found) {
+			break;
+		}
 	}
 
 	return found;
@@ -127,7 +131,7 @@ void PixelFinder::updateNearestPixel(double targetLat, double targetLon, long k,
 		resultL = l;
 		resultM = m;
 		maxDelta = delta;
-		found = acos(delta) * DEG < 0.7 * pixelSize;
+		found = found || acos(delta) * DEG < 0.354 * pixelSize;
 	}
 }
 
