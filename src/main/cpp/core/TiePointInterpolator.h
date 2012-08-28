@@ -42,6 +42,7 @@ public:
 	void prepare(W lon, W lat, valarray<W>& weights, valarray<size_t>& indexes) const;
 	W interpolate(const valarray<W>& field, const valarray<W>& weights, const valarray<size_t>& indexes) const;
 	static W cosineDistance(W targetLon, W targetLat, W sourceLon, W sourceLat);
+	static W haversineDistance(W targetLon, W targetLat, W sourceLon, W sourceLat);
 
 private:
 	class TiePointIndexComparator {
@@ -63,6 +64,7 @@ private:
 
 	void reorder(valarray<W>& array, const valarray<size_t>& reordering) const;
 	W cosineDistance(W lon, W lat, size_t i) const;
+	W haversineDistance(W lon, W lat, size_t i) const;
 
 	valarray<W> tpLons;
 	valarray<W> tpLats;
@@ -174,8 +176,30 @@ W TiePointInterpolator<W>::cosineDistance(W targetLon, W targetLat, W sourceLon,
 }
 
 template<class W>
+W TiePointInterpolator<W>::haversineDistance(W targetLon, W targetLat, W sourceLon, W sourceLat) {
+	using std::atan2;
+	using std::cos;
+	using std::sin;
+	using std::sqrt;
+	// http://www.movable-type.co.uk/scripts/latlong.html
+	const double dLat = (targetLat - sourceLat) * RAD;
+	const double dLon = (targetLon - sourceLon) * RAD;
+	const double s1 = sin(0.5 * dLat);
+	const double s2 = sin(0.5 * dLon);
+	const double a = s1 * s1 + s2 * s2 * cos(sourceLat * RAD) * cos(targetLat * RAD);
+	const double c = 2.0 * atan2(sqrt(a), sqrt(1.0 - a));
+
+	return c;
+}
+
+template<class W>
 inline W TiePointInterpolator<W>::cosineDistance(W lon, W lat, size_t i) const {
 	return cosineDistance(lon, lat, tpLons[i], tpLats[i]);
+}
+
+template<class W>
+inline W TiePointInterpolator<W>::haversineDistance(W lon, W lat, size_t i) const {
+	return haversineDistance(lon, lat, tpLons[i], tpLats[i]);
 }
 
 #endif /* TIEPOINTINTERPOLATOR_H_ */
