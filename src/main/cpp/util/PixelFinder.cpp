@@ -20,6 +20,7 @@
 #include "PixelFinder.h"
 
 const double PixelFinder::DEG = 180.0 / 3.14159265358979323846;
+const double PixelFinder::RAD = 3.14159265358979323846 / 180.0;
 
 PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) :
 		geoLocation(geoLocation), pixelSize(pixelSize) {
@@ -113,7 +114,7 @@ bool PixelFinder::findSourcePixel(double targetLat, double targetLon, long& k, l
 			updateNearestPixel(targetLat, targetLon, k2, l2, m2, k, l, m, delta1, found);
 		}
 		if (found) {
-			//break;
+			break;
 		}
 	}
 
@@ -131,7 +132,7 @@ void PixelFinder::updateNearestPixel(double targetLat, double targetLon, long k,
 		resultL = l;
 		resultM = m;
 		maxDelta = delta;
-		found = found || acos(delta) * DEG < 0.354 * pixelSize;
+		found = found || acos(delta) * DEG < 0.5 * pixelSize * cos(targetLat * RAD);
 	}
 }
 

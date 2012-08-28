@@ -69,6 +69,7 @@ private:
 
 	static size_t computeTiePointCount(long sizeK, long sizeL, long sizeM);
 	static const double DEG;
+	static const double RAD;
 };
 
 #endif /* PIXELFINDER_H_ */

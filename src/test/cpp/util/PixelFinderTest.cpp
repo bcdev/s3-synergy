@@ -60,7 +60,7 @@ PixelFinderTest::~PixelFinderTest() {
 
 void PixelFinderTest::setUp() {
 	geoLocation = new TestGeoLocation();
-	pixelFinder = new PixelFinder(*geoLocation, 0.12);
+	pixelFinder = new PixelFinder(*geoLocation, 0.03);
 }
 
 void PixelFinderTest::tearDown() {
