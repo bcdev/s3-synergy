@@ -33,7 +33,7 @@ public:
 
 class PixelFinder {
 public:
-	PixelFinder(GeoLocation& geoLocation, double pixelSize);
+	PixelFinder(GeoLocation& geoLocation, double tolerance);
 	~PixelFinder();
 
 	bool findSourcePixel(double targetLat, double targetLon, long& sourceK, long& sourceL, long& sourceM) const;
@@ -62,12 +62,13 @@ private:
 	}
 
 	const GeoLocation& geoLocation;
-	const double pixelSize;
+	const double tolerance;
 
 	std::vector <TiePointInterpolator<double> > tpInterpolators;
 	std::vector<valarray<double> > tpIndexes;
 
 	static size_t computeTiePointCount(long sizeK, long sizeL, long sizeM);
+	static double square(double x);
 	static const double DEG;
 	static const double RAD;
 };

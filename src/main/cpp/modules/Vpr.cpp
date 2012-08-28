@@ -197,7 +197,7 @@ void Vpr::process(Context& context) {
 	long sourceM = 0;
 	long firstRequiredSourceL = 0;
 
-	PixelFinder pixelFinder(*this, DEGREES_PER_TARGET_PIXEL);
+	PixelFinder pixelFinder(*this, 0.5 * DEGREES_PER_TARGET_PIXEL);
 
 	for (long l = firstTargetL; l <= lastTargetL; l++) {
 		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());

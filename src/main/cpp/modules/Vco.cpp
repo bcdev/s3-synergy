@@ -163,7 +163,7 @@ void Vco::process(Context& context) {
 	long sourceM = 0;
 	long firstRequiredSourceL = 0;
 
-	PixelFinder pixelFinder(*this, DEGREES_PER_TARGET_PIXEL);
+	PixelFinder pixelFinder(*this, 0.5 * DEGREES_PER_TARGET_PIXEL);
 	const TimeConverter tc(context.getJobOrder().getIpfConfiguration().getSensingTimeStart());
 
 	for (long l = firstTargetL; l <= lastTargetL; l++) {

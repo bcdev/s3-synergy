@@ -22,8 +22,8 @@
 const double PixelFinder::DEG = 180.0 / 3.14159265358979323846;
 const double PixelFinder::RAD = 3.14159265358979323846 / 180.0;
 
-PixelFinder::PixelFinder(GeoLocation& geoLocation, double pixelSize) :
-		geoLocation(geoLocation), pixelSize(pixelSize) {
+PixelFinder::PixelFinder(GeoLocation& geoLocation, double tolerance) :
+		geoLocation(geoLocation), tolerance(tolerance) {
 	const Grid& grid = geoLocation.getGrid();
 
 	const long sizeK = grid.getSizeK();
@@ -132,7 +132,7 @@ void PixelFinder::updateNearestPixel(double targetLat, double targetLon, long k,
 		resultL = l;
 		resultM = m;
 		maxDelta = delta;
-		found = found || acos(delta) * DEG < 0.5 * pixelSize * cos(targetLat * RAD);
+		found = found || acos(delta) * DEG < tolerance;
 	}
 }
 
