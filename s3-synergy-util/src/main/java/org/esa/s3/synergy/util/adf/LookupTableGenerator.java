@@ -312,7 +312,7 @@ class LookupTableGenerator {
         final LookupTableGenerator generator = new LookupTableGenerator();
 
         try {
-            generator.generateLookupTables();
+            generator.generateFinalLookupTables();
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -329,17 +329,41 @@ class LookupTableGenerator {
         ncgenPath = System.getProperty("ncgenPath", NCGEN_PATH_DEFAULT);
     }
 
-    void generateLookupTables() throws Exception {
-        writeSynL2ConfigurationParametersDataset();
-        writeSynL2RadiativeTransferSimulationDataset();
-        writeVgtPConfigurationParametersDataset();
-        writeVgtPRadiativeTransferSimulationDataset();
-        writeVgtPSpectralResponseDataset();
-        writeVgtSConfigurationParametersDataset();
-        writeVgtSRadiativeTransferSimulationDataset();
+    void generateFinalLookupTables() throws Exception {
+        //writeDummySynL2ConfigurationParametersDataset();
+        writeFinalSynL2RadiativeTransferSimulationDataset();
+        //writeDummyVgtPConfigurationParametersDataset();
+        //writeDummyVgtPRadiativeTransferSimulationDataset();
+        //writeDummyVgtPSpectralResponseDataset();
+        //writeDummyVgtSConfigurationParametersDataset();
+        //writeDummyVgtSRadiativeTransferSimulationDataset();
     }
 
-    void writeSynL2RadiativeTransferSimulationDataset() throws Exception {
+    void generateDummyLookupTables() throws Exception {
+        writeDummySynL2ConfigurationParametersDataset();
+        writeDummySynL2RadiativeTransferSimulationDataset();
+        writeDummyVgtPConfigurationParametersDataset();
+        writeDummyVgtPRadiativeTransferSimulationDataset();
+        writeDummyVgtPSpectralResponseDataset();
+        writeDummyVgtSConfigurationParametersDataset();
+        writeDummyVgtSRadiativeTransferSimulationDataset();
+    }
+
+    void writeFinalSynL2RadiativeTransferSimulationDataset() throws Exception {
+        final Properties properties = new Properties();
+        properties.setProperty("Template_File_Basename", "S3__SY_2_SYRTAX_template");
+        properties.setProperty("CDL_File_Basename", "S3__SY_2_SYRTAX");
+        properties.setProperty("OLC_R_ATM", "./OLC_R_atm.txt");
+        properties.setProperty("SLN_R_ATM", "./SLN_R_atm.txt");
+        properties.setProperty("SLO_R_ATM", "./SLO_R_atm.txt");
+        properties.setProperty("RHO_ATM", "./rho_atm.txt");
+        properties.setProperty("T", "./t.txt");
+        properties.setProperty("D", "./D.txt");
+
+        generateDataset(properties);
+    }
+
+    void writeDummySynL2RadiativeTransferSimulationDataset() throws Exception {
         final double[][] irradianceSpectrum = readSpectrum("dat/syn_irradiance.dat");
         final double[] wavelengths = irradianceSpectrum[0];
         final double[] irradiances = irradianceSpectrum[1];
@@ -384,7 +408,7 @@ class LookupTableGenerator {
         generateDataset(properties);
     }
 
-    void writeSynL2ConfigurationParametersDataset() throws Exception {
+    void writeDummySynL2ConfigurationParametersDataset() throws Exception {
         final double[][] vegSpectrum = readSpectrum("dat/veg.dat", 1000.0);
         final double[][] soilSpectrum = readSpectrum("dat/soil.dat", 1000.0);
 
@@ -406,7 +430,7 @@ class LookupTableGenerator {
         generateDataset(properties);
     }
 
-    void writeVgtPRadiativeTransferSimulationDataset() throws Exception {
+    void writeDummyVgtPRadiativeTransferSimulationDataset() throws Exception {
         final double[][] irradianceSpectrum = readSpectrum("dat/vgp_irradiance.dat");
         final double[] wavelengths = irradianceSpectrum[0];
         final double[] irradiances = irradianceSpectrum[1];
@@ -448,7 +472,7 @@ class LookupTableGenerator {
         generateDataset(properties);
     }
 
-    void writeVgtPSpectralResponseDataset() throws Exception {
+    void writeDummyVgtPSpectralResponseDataset() throws Exception {
         final double[][] irradianceSpectrum = readSpectrum("dat/vgp_irradiance.dat");
         final LookupTable irradianceLut = new LookupTable(irradianceSpectrum[1], irradianceSpectrum[0]);
 
@@ -484,7 +508,7 @@ class LookupTableGenerator {
         generateDataset(properties);
     }
 
-    void writeVgtPConfigurationParametersDataset() throws Exception {
+    void writeDummyVgtPConfigurationParametersDataset() throws Exception {
         final Properties properties = new Properties();
         properties.setProperty("Template_File_Basename", "S3__SY_2_VPCPAX_template");
         properties.setProperty("CDL_File_Basename", "S3__SY_2_VPCPAX");
@@ -492,7 +516,7 @@ class LookupTableGenerator {
         generateDataset(properties);
     }
 
-    void writeVgtSConfigurationParametersDataset() throws Exception {
+    void writeDummyVgtSConfigurationParametersDataset() throws Exception {
         final Properties properties = new Properties();
         properties.setProperty("Template_File_Basename", "S3__SY_2_VSCPAX_template");
         properties.setProperty("CDL_File_Basename", "S3__SY_2_VSCPAX");
@@ -500,7 +524,7 @@ class LookupTableGenerator {
         generateDataset(properties);
     }
 
-    void writeVgtSRadiativeTransferSimulationDataset() throws Exception {
+    void writeDummyVgtSRadiativeTransferSimulationDataset() throws Exception {
         final File propertiesFile = new File("auxdata.properties");
         if (propertiesFile.exists()) {
             System.getProperties().load(new FileReader(propertiesFile));

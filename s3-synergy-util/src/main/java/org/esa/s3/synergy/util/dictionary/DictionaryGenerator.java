@@ -95,7 +95,8 @@ public class DictionaryGenerator {
         }
     }
 
-    private static void generateDatasets(String level, String templateFileBasename, int minChannel, int maxChannel, int start, int[] excludes) throws Exception {
+    private static void generateDatasets(String level, String templateFileBasename, int minChannel, int maxChannel,
+                                         int start, int[] excludes) throws Exception {
         final String targetDir = targetBaseDir + File.separator + level;
         final Properties properties = new Properties();
         setSegmentName(templateFileBasename, properties);
@@ -123,7 +124,8 @@ public class DictionaryGenerator {
         return false;
     }
 
-    private static void generateDatasets(String level, String templateName, int minChannel, int maxChannel, int start) throws Exception {
+    private static void generateDatasets(String level, String templateName, int minChannel, int maxChannel,
+                                         int start) throws Exception {
         generateDatasets(level, templateName, minChannel, maxChannel, start, new int[0]);
     }
 
@@ -148,7 +150,8 @@ public class DictionaryGenerator {
         }
     }
 
-    private static void generateDatasets(String level, String templateName, int minChannel, int maxChannel) throws Exception {
+    private static void generateDatasets(String level, String templateName, int minChannel, int maxChannel) throws
+                                                                                                            Exception {
         generateDatasets(level, templateName, minChannel, maxChannel, minChannel);
     }
 
@@ -195,7 +198,8 @@ public class DictionaryGenerator {
         BufferedWriter writer = null;
         try {
             final String templateFileBasename = resolver.resolveProperty("Template_File_Basename");
-            final InputStream is = DictionaryGenerator.class.getResourceAsStream("dictionary/" + templateFileBasename + ".xml");
+            final InputStream is = DictionaryGenerator.class.getResourceAsStream(
+                    "dictionary/" + templateFileBasename + ".xml");
             reader = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
             writer = new BufferedWriter(new FileWriter(targetFile));
             String line = reader.readLine();

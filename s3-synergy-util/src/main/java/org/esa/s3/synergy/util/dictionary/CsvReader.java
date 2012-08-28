@@ -18,10 +18,10 @@ package org.esa.s3.synergy.util.dictionary;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  * CSV reader (copied from BEAM).

@@ -15,20 +15,20 @@
 
 <dataset>
     <set name="OLCI">
-    <dimensions>
-        <dimension>
-            <name>N_CAM</name>
-            <size>5</size>
-        </dimension>
-        <dimension>
-            <name>N_LINE_OLC</name>
-            <size>60000</size>
-        </dimension>
-        <dimension>
-            <name>N_DET_CAM</name>
-            <size>760</size>
-        </dimension>
-    </dimensions>
+        <dimensions>
+            <dimension>
+                <name>N_CAM</name>
+                <size>5</size>
+            </dimension>
+            <dimension>
+                <name>N_LINE_OLC</name>
+                <size>60000</size>
+            </dimension>
+            <dimension>
+                <name>N_DET_CAM</name>
+                <size>760</size>
+            </dimension>
+        </dimensions>
     </set>
     <set name="N_LINE_OLC">
         <dimensions>

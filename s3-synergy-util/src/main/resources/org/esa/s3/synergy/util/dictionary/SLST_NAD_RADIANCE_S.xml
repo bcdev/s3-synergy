@@ -15,22 +15,22 @@
   -->
 
 <dataset>
-<variables>
-	<variable>
-		<ncname>TOA_Radiance_Meas</ncname>
-		<name>L_${j}</name>
-        <segment_name>${segmentName}</segment_name>
-	</variable>
-	<variable>
-		<ncname>exception</ncname>
-		<name>SLN_exception_${i}</name>
-        <segment_name>${segmentName}</segment_name>
-	</variable>
-</variables>
-<global_attributes>
-	<attribute>
-		<name>dataset_name</name>
-		<value>${dataset_name}</value>
-	</attribute>
-</global_attributes>
+    <variables>
+        <variable>
+            <ncname>TOA_Radiance_Meas</ncname>
+            <name>L_${j}</name>
+            <segment_name>${segmentName}</segment_name>
+        </variable>
+        <variable>
+            <ncname>exception</ncname>
+            <name>SLN_exception_${i}</name>
+            <segment_name>${segmentName}</segment_name>
+        </variable>
+    </variables>
+    <global_attributes>
+        <attribute>
+            <name>dataset_name</name>
+            <value>${dataset_name}</value>
+        </attribute>
+    </global_attributes>
 </dataset>

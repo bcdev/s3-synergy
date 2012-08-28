@@ -15,32 +15,32 @@
   -->
 
 <dataset>
-<variables>
-	<variable>
-		<ncname>SLST_L1b_TP_Latitude</ncname>
-		<name>SLN_TP_lat</name>
-		<segment_name>${segmentName}</segment_name>
-	</variable>
-	<variable>
-		<ncname>SLST_L1b_TP_Longitude</ncname>
-		<name>SLN_TP_lon</name>
-		<segment_name>${segmentName}</segment_name>
-	</variable>
-	<variable>
-		<ncname>OZA</ncname>
-		<name>SLN_VZA</name>
-		<segment_name>${segmentName}</segment_name>
-	</variable>
-	<variable>
-		<ncname>OAA</ncname>
-		<name>SLN_VAA</name>
-		<segment_name>${segmentName}</segment_name>
-	</variable>
-</variables>
-<global_attributes>
-	<attribute>
-		<name>dataset_name</name>
-		<value>SUBS_ANNOT_SLST_NAD</value>
-	</attribute>
-</global_attributes>
+    <variables>
+        <variable>
+            <ncname>SLST_L1b_TP_Latitude</ncname>
+            <name>SLN_TP_lat</name>
+            <segment_name>${segmentName}</segment_name>
+        </variable>
+        <variable>
+            <ncname>SLST_L1b_TP_Longitude</ncname>
+            <name>SLN_TP_lon</name>
+            <segment_name>${segmentName}</segment_name>
+        </variable>
+        <variable>
+            <ncname>OZA</ncname>
+            <name>SLN_VZA</name>
+            <segment_name>${segmentName}</segment_name>
+        </variable>
+        <variable>
+            <ncname>OAA</ncname>
+            <name>SLN_VAA</name>
+            <segment_name>${segmentName}</segment_name>
+        </variable>
+    </variables>
+    <global_attributes>
+        <attribute>
+            <name>dataset_name</name>
+            <value>SUBS_ANNOT_SLST_NAD</value>
+        </attribute>
+    </global_attributes>
 </dataset>

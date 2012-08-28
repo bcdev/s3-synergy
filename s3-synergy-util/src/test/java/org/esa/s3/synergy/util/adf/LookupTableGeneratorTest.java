@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
+@Ignore
 public class LookupTableGeneratorTest {
 
     private LookupTableGenerator generator;
@@ -37,42 +38,42 @@ public class LookupTableGeneratorTest {
     @SuppressWarnings({"ForLoopReplaceableByForEach"})
     @Test
     public void writeSynL2RadiativeTransferSimulationDataset() throws Exception {
-        generator.writeSynL2RadiativeTransferSimulationDataset();
+        generator.writeFinalSynL2RadiativeTransferSimulationDataset();
     }
 
     @SuppressWarnings({"ForLoopReplaceableByForEach"})
     @Test
     public void writeSynL2ConfigurationParametersDataset() throws Exception {
-        generator.writeSynL2ConfigurationParametersDataset();
+        generator.writeDummySynL2ConfigurationParametersDataset();
     }
 
     @SuppressWarnings({"ForLoopReplaceableByForEach"})
     @Test
     public void writeVgtPRadiativeTransferSimulationDataset() throws Exception {
-        generator.writeVgtPRadiativeTransferSimulationDataset();
+        generator.writeDummyVgtPRadiativeTransferSimulationDataset();
     }
 
     @SuppressWarnings({"ForLoopReplaceableByForEach"})
     @Test
     public void writeVgtPSpectralResponseDataset() throws Exception {
-        generator.writeVgtPSpectralResponseDataset();
+        generator.writeDummyVgtPSpectralResponseDataset();
     }
 
     @SuppressWarnings({"ForLoopReplaceableByForEach"})
     @Test
     public void writeVgtPConfigurationParametersDataset() throws Exception {
-        generator.writeVgtPConfigurationParametersDataset();
+        generator.writeDummyVgtPConfigurationParametersDataset();
     }
 
     @SuppressWarnings({"ForLoopReplaceableByForEach"})
     @Test
     public void writeVgtSRadiativeTransferSimulationDataset() throws Exception {
-        generator.writeVgtSRadiativeTransferSimulationDataset();
+        generator.writeDummyVgtSRadiativeTransferSimulationDataset();
     }
 
     @SuppressWarnings({"ForLoopReplaceableByForEach"})
     @Test
     public void writeVgtSConfigurationParametersDataset() throws Exception {
-        generator.writeVgtSConfigurationParametersDataset();
+        generator.writeDummyVgtSConfigurationParametersDataset();
     }
 }
