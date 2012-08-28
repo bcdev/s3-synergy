@@ -17,7 +17,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(PixelFinderTest);
 class TestGeoLocation : public GeoLocation {
 public:
 
-	TestGeoLocation() : grid(4, 6000, 740, 0, 5999) {
+	TestGeoLocation() : grid(4, 5000, 740, 0, 4999) {
 	}
 
 	~TestGeoLocation() {
@@ -29,7 +29,7 @@ public:
 	}
 
 	double lat(long l) const {
-		return 80.0 - l * (160.0 / grid.getMaxL());
+		return 74.985 - l * (150.0 / grid.getSizeL());
 	}
 
 	double lon(long k, long m) const {
@@ -92,15 +92,15 @@ void PixelFinderTest::testFindSinglePixels() {
 	CPPUNIT_ASSERT_EQUAL(1313L, l);
 	CPPUNIT_ASSERT_EQUAL(456L, m);
 
-	lat = geoLocation->lat(5999L);
+	lat = geoLocation->lat(4999L);
 	lon = geoLocation->lon(3L, 739L);
 	CPPUNIT_ASSERT(pixelFinder->findSourcePixel(lat, lon, k, l, m));
 
 	CPPUNIT_ASSERT_EQUAL(3L, k);
-	CPPUNIT_ASSERT_EQUAL(5999L, l);
+	CPPUNIT_ASSERT_EQUAL(4999L, l);
 	CPPUNIT_ASSERT_EQUAL(739L, m);
 
-	lat = geoLocation->lat(5999L);
+	lat = geoLocation->lat(4999L);
 	lon = geoLocation->lon(4L, 739L);
 	CPPUNIT_ASSERT(!pixelFinder->findSourcePixel(lat, lon, k, l, m));
 }
