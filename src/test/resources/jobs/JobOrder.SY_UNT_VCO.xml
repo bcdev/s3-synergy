@@ -27,8 +27,8 @@
             <Conf_File_Name>not used</Conf_File_Name>
         </Config_Files>
         <Sensing_Time>
-            <Start>20130621_000000.0000</Start>
-            <Stop>20130621_235959.9999</Stop>
+            <Start>20130621_101000.0000</Start>
+            <Stop>20130622_101100.0000</Stop>
         </Sensing_Time>
         <Dynamic_Processing_Parameters>
             <Processing_Parameter>

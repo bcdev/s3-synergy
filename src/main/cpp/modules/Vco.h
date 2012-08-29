@@ -70,6 +70,9 @@ private:
 	int maxTargetLon;
 	int minTargetLon;
 
+	string sensingTimeStart;
+	string sensingTimeStop;
+
 	const Segment* synSegment;
 	const Segment* geoSegment;
 

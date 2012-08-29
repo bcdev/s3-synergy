@@ -25,9 +25,9 @@ using std::string;
 class TimeConverter {
 public:
     /**
-     * Creating a new instance with the given start time.
+     * Creating a new instance with the given reference time.
      *
-     * @param startTime the start time, expected in one of the following formats:
+     * @param referenceTime the start time, expected in one of the following formats:
      *  <ul>
      *      <li>yyyyMMdd_hhmmss.MMMM</li>
      *      <li>yyyyMMddThhmmss.MMMM<li>
@@ -40,13 +40,19 @@ public:
     ~TimeConverter();
 
     /**
-     * Returns the number of minutes the given date differs from the start time.
-     * The date is given as microseconds from 01.01.2000.
+     * Returns the number of minutes a given date differs from the reference
+     * time. The date has to be given in microseconds from 2000-01-01 00:00:00.
      */
-    int64_t getMinutesSinceStartTime(int64_t microSeconds) const;
+    int64_t getMinutesSinceReferenceTime(int64_t microSeconds) const;
+
+    /**
+     * Returns the number of microseconds a given date differs from the reference
+     * time. The date has to be given in microseconds from 2000-01-01 00:00:00.
+     */
+    int64_t getMicrosSinceReferenceTime(int64_t microSeconds) const;
 
 private:
-    int64_t startSeconds;
+    int64_t referenceSeconds;
 };
 
 #endif /* TIMECONVERTER_H_ */

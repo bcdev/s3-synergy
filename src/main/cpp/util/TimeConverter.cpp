@@ -21,23 +21,28 @@ using boost::posix_time::from_iso_string;
 using boost::posix_time::ptime;
 using boost::posix_time::time_duration;
 
-TimeConverter::TimeConverter(const string& startTimeString) {
-    string s(startTimeString);
+TimeConverter::TimeConverter(const string& referenceTime) {
+    string s(referenceTime);
     s.replace(8, 1, "T");
     s = s.substr(0, 15);
 
     ptime a(from_iso_string(s));
     ptime b(from_iso_string("20000101T000000"));
     time_duration td = a - b;
-    startSeconds = td.total_seconds();
+
+    referenceSeconds = td.total_seconds();
 }
 
 TimeConverter::~TimeConverter() {
 }
 
-int64_t TimeConverter::getMinutesSinceStartTime(int64_t microSeconds) const {
+int64_t TimeConverter::getMinutesSinceReferenceTime(int64_t microSeconds) const {
     const int64_t seconds = microSeconds / 1000L / 1000L;
-    const int64_t secondsSinceStartTime = seconds - startSeconds;
+    const int64_t secondsSinceStartTime = seconds - referenceSeconds;
 
     return secondsSinceStartTime / 60;
+}
+
+int64_t TimeConverter::getMicrosSinceReferenceTime(int64_t microSeconds) const {
+    return microSeconds - referenceSeconds * 1000;
 }

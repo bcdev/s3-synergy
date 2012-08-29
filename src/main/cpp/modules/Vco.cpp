@@ -36,7 +36,9 @@ void Vco::start(Context& context) {
 	minTargetLat = 40;
 	maxTargetLon = 25;
 	minTargetLon = -11;
-	// TODO - read start and stop time from job order file
+
+	sensingTimeStart = context.getJobOrder().getIpfConfiguration().getSensingTimeStart();
+	sensingTimeStop = context.getJobOrder().getIpfConfiguration().getSensingTimeStop();
 
 	if (!context.hasSegment(Constants::SEGMENT_VGT)) {
 		addTargetSegments(context);
@@ -165,7 +167,8 @@ void Vco::process(Context& context) {
 	long firstRequiredSourceL = 0;
 
 	PixelFinder pixelFinder(*this, 0.7 * DEGREES_PER_TARGET_PIXEL);
-	const TimeConverter tc(context.getJobOrder().getIpfConfiguration().getSensingTimeStart());
+	const TimeConverter tc1(sensingTimeStart);
+	const TimeConverter tc2(sensingTimeStop);
 
 	for (long l = firstTargetL; l <= lastTargetL; l++) {
 		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
@@ -180,6 +183,14 @@ void Vco::process(Context& context) {
 
 				// 1. Is there a source pixel for the target pixel?
 				if (!sourcePixelFound) {
+					continue;
+				}
+
+				const int64_t sourceTime = sourceAccessors[10]->getLong(sourceL);
+				if (tc1.getMicrosSinceReferenceTime(sourceTime) < 0) {
+					continue;
+				}
+				if (tc2.getMicrosSinceReferenceTime(sourceTime) > 0) {
 					continue;
 				}
 
@@ -208,8 +219,7 @@ void Vco::process(Context& context) {
 							targetAccessor->setDouble(targetIndex, sourceAccessor->getDouble(sourceIndex));
 						}
 					}
-					const int64_t sourceTime = sourceAccessors[10]->getLong(sourceL);
-					const int16_t targetTime = tc.getMinutesSinceStartTime(sourceTime);
+					const int16_t targetTime = tc1.getMinutesSinceReferenceTime(sourceTime);
 					targetAccessors[10]->setShort(targetIndex, targetTime);
 				}
 			}
