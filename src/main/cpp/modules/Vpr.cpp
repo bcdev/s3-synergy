@@ -36,9 +36,6 @@ void Vpr::start(Context& context) {
 	maxTargetLon = 25;
 	minTargetLon = -11;
 
-	sensingTimeStart = context.getJobOrder().getIpfConfiguration().getSensingTimeStart();
-	sensingTimeStop = context.getJobOrder().getIpfConfiguration().getSensingTimeStop();
-
 	addTargetSegments(context);
     addTargetVariables(context);
 }
@@ -153,7 +150,6 @@ void Vpr::process(Context& context) {
     sourceAccessors[9] = &syn.getAccessor("SZA");
     sourceAccessors[10] = &syn.getAccessor("VAA");
     sourceAccessors[11] = &syn.getAccessor("VZA");
-    const Accessor& timeAccessor = context.getSegment(Constants::SEGMENT_OLC_TIME).getAccessor("time");
 
 	targetAccessors[0] = &vgp.getAccessor("B0");
 	targetAccessors[1] = &vgp.getAccessor("B2");
@@ -202,8 +198,6 @@ void Vpr::process(Context& context) {
 	long firstRequiredSourceL = 0;
 
 	PixelFinder pixelFinder(*this, 0.7 * DEGREES_PER_TARGET_PIXEL);
-	const TimeConverter tc1(sensingTimeStart);
-	const TimeConverter tc2(sensingTimeStop);
 
 	for (long l = firstTargetL; l <= lastTargetL; l++) {
 		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
@@ -220,16 +214,11 @@ void Vpr::process(Context& context) {
 				if (!sourcePixelFound) {
 					continue;
 				}
-				// 2. Is the time stamp of the source pixel within the time range?
-				const int64_t sourceTime = timeAccessor.getLong(sourceL);
-				if (tc1.getMicrosSinceReferenceTime(sourceTime) < 0 || tc2.getMicrosSinceReferenceTime(sourceTime) > 0) {
-					continue;
-				}
 
-				// 3. Update first required sourceL
+				// 2. Update first required sourceL
 				firstRequiredSourceL = min(sourceL, firstRequiredSourceL);
 
-				// 4. Is the current source line beyond the last computed source line?
+				// 3. Is the current source line beyond the last computed source line?
 				if (sourceL > lastComputedSourceL) {
 					// Yes.
 					lastTargetL = min(l - 1, lastTargetL);
@@ -238,7 +227,7 @@ void Vpr::process(Context& context) {
 
 				const size_t sourceIndex = sourceGrid.getIndex(sourceK, sourceL, sourceM);
 
-				// 5. Set the samples of the target pixel
+				// 4. Set the samples of the target pixel
 				for (size_t i = 0; i < 5; i++) {
 					Accessor* sourceAccessor = sourceAccessors[i];
 					Accessor* targetAccessor = targetAccessors[i];
@@ -247,7 +236,7 @@ void Vpr::process(Context& context) {
 						setValue(sourceAccessor, targetAccessor, sourceIndex, targetGrid.getIndex(k, l, m));
 					}
 				}
-				// 6. Is the target pixel in the sub-sampled grid?
+				// 5. Is the target pixel in the sub-sampled grid?
 				if (l % 8 == 0 && m % 8 == 0) {
 					// Yes, set the samples of the sub-sampled target pixel
 					for (size_t i = 5; i < targetAccessors.size(); i++) {
