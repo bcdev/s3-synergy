@@ -36,6 +36,7 @@ void Vco::start(Context& context) {
 	minTargetLat = 40;
 	maxTargetLon = 25;
 	minTargetLon = -11;
+	// TODO - read start and stop time from job order file
 
 	if (!context.hasSegment(Constants::SEGMENT_VGT)) {
 		addTargetSegments(context);
