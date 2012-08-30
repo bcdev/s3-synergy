@@ -37,9 +37,6 @@ void Vco::start(Context& context) {
 	maxTargetLon = 25;
 	minTargetLon = -11;
 
-	sensingTimeStart = context.getJobOrder().getIpfConfiguration().getSensingTimeStart();
-	sensingTimeStop = context.getJobOrder().getIpfConfiguration().getSensingTimeStop();
-
 	if (!context.hasSegment(Constants::SEGMENT_VGT)) {
 		addTargetSegments(context);
 		addTargetVariables(context);
@@ -166,7 +163,9 @@ void Vco::process(Context& context) {
 	long sourceM = 0;
 	long firstRequiredSourceL = 0;
 
-	PixelFinder pixelFinder(*this, 0.7 * DEGREES_PER_TARGET_PIXEL);
+	const PixelFinder pixelFinder(*this, 0.7 * DEGREES_PER_TARGET_PIXEL);
+	const string sensingTimeStart = context.getJobOrder().getIpfConfiguration().getSensingTimeStart();
+	const string sensingTimeStop = context.getJobOrder().getIpfConfiguration().getSensingTimeStop();
 	const TimeConverter tc1(sensingTimeStart);
 	const TimeConverter tc2(sensingTimeStop);
 
