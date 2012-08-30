@@ -184,19 +184,17 @@ void Vco::process(Context& context) {
 				if (!sourcePixelFound) {
 					continue;
 				}
-				// 2. Is the time stamp of the source pixel within the time range?
-				const int64_t sourceTime = sourceAccessors[10]->getLong(sourceL);
-				if (tc1.getMicrosSinceReferenceTime(sourceTime) < 0 || tc2.getMicrosSinceReferenceTime(sourceTime) > 0) {
-					continue;
-				}
-
-				// 3. Update first required sourceL
+				// 2. Update first required sourceL
 				firstRequiredSourceL = min(sourceL, firstRequiredSourceL);
-
-				// 4. Is the current source line beyond the last computed source line?
+				// 3. Is the current source line beyond the last computed source line?
 				if (sourceL > lastComputedSourceL) {
 					// Yes.
 					lastTargetL = min(l - 1, lastTargetL);
+					continue;
+				}
+				// 4. Is the time stamp of the source pixel within the time range?
+				const int64_t sourceTime = sourceAccessors[10]->getLong(sourceL);
+				if (tc1.getMicrosSinceReferenceTime(sourceTime) < 0 || tc2.getMicrosSinceReferenceTime(sourceTime) > 0) {
 					continue;
 				}
 
