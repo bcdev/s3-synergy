@@ -15,6 +15,7 @@ CPPUNIT_TEST_SUITE(TimeConverterTest);
     CPPUNIT_TEST(testGetStartTime);
     CPPUNIT_TEST(testGetTime);
     CPPUNIT_TEST(testLeapYear);
+    CPPUNIT_TEST(testMicrosSinceReferenceTime);
 CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -25,6 +26,7 @@ private:
     void testGetStartTime();
     void testGetTime();
     void testLeapYear();
+    void testMicrosSinceReferenceTime();
 };
 
 #endif /* TIMECONVERTERTEST_H_ */

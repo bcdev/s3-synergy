@@ -166,8 +166,8 @@ void Vco::process(Context& context) {
 	const PixelFinder pixelFinder(*this, 0.7 * DEGREES_PER_TARGET_PIXEL);
 	const string sensingTimeStart = context.getJobOrder().getIpfConfiguration().getSensingTimeStart();
 	const string sensingTimeStop = context.getJobOrder().getIpfConfiguration().getSensingTimeStop();
-	const TimeConverter tc1(sensingTimeStart);
-	const TimeConverter tc2(sensingTimeStop);
+	const TimeConverter sensingStart(sensingTimeStart);
+	const TimeConverter sensingStop(sensingTimeStop);
 
 	for (long l = firstTargetL; l <= lastTargetL; l++) {
 		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
@@ -194,7 +194,7 @@ void Vco::process(Context& context) {
 				}
 				// 4. Is the time stamp of the source pixel within the time range?
 				const int64_t sourceTime = sourceAccessors[10]->getLong(sourceL);
-				if (tc1.getMicrosSinceReferenceTime(sourceTime) < 0 || tc2.getMicrosSinceReferenceTime(sourceTime) > 0) {
+				if (sensingStart.getMicrosSinceReferenceTime(sourceTime) < 0 || sensingStop.getMicrosSinceReferenceTime(sourceTime) > 0) {
 					continue;
 				}
 
@@ -213,7 +213,7 @@ void Vco::process(Context& context) {
 							targetAccessor->setDouble(targetIndex, sourceAccessor->getDouble(sourceIndex));
 						}
 					}
-					const int16_t targetTime = tc1.getMinutesSinceReferenceTime(sourceTime);
+					const int16_t targetTime = sensingStart.getMinutesSinceReferenceTime(sourceTime);
 					targetAccessors[10]->setShort(targetIndex, targetTime);
 				}
 			}

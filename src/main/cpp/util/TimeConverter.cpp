@@ -44,5 +44,5 @@ int64_t TimeConverter::getMinutesSinceReferenceTime(int64_t microSeconds) const 
 }
 
 int64_t TimeConverter::getMicrosSinceReferenceTime(int64_t microSeconds) const {
-    return microSeconds - referenceSeconds * 1000;
+    return microSeconds - referenceSeconds * 1000000;
 }
