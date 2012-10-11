@@ -11,7 +11,7 @@ variables:
     short AMIN(AMIN) ;
         AMIN:long_name = "Aerosol model index number" ;
         AMIN:valid_min = 1 ;
-        AMIN:valid_max = 40 ;
+        AMIN:valid_max = 3 ;
     short NDV_channel(NDV_channel) ;
         NDV_channel:valid_min = 1 ;
         NDV_channel:valid_max = 30 ;

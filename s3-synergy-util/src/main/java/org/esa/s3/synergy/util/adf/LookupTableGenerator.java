@@ -353,12 +353,13 @@ class LookupTableGenerator {
         final Properties properties = new Properties();
         properties.setProperty("Template_File_Basename", "S3__SY_2_SYRTAX_template");
         properties.setProperty("CDL_File_Basename", "S3__SY_2_SYRTAX");
-        properties.setProperty("OLC_R_ATM", "./OLC_R_atm.txt");
-        properties.setProperty("SLN_R_ATM", "./SLN_R_atm.txt");
-        properties.setProperty("SLO_R_ATM", "./SLO_R_atm.txt");
-        properties.setProperty("RHO_ATM", "./rho_atm.txt");
-        properties.setProperty("T", "./t.txt");
-        properties.setProperty("D", "./D.txt");
+        properties.setProperty("OLC_R_ATM", "./OLC_R_atm");
+        properties.setProperty("SLN_R_ATM", "./SLN_R_atm");
+        properties.setProperty("SLO_R_ATM", "./SLO_R_atm");
+        properties.setProperty("RHO_ATM", "./rho_atm");
+        properties.setProperty("T", "./t");
+        properties.setProperty("D", "./D");
+        properties.setProperty("C_O3", "./C_03");
 
         generateDataset(properties);
     }

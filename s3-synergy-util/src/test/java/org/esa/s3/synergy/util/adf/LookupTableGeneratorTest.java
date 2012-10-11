@@ -21,7 +21,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-@Ignore
 public class LookupTableGeneratorTest {
 
     private LookupTableGenerator generator;
