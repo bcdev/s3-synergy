@@ -33,7 +33,7 @@ Dependencies
 
 The software requires the following libraries, which might not be installed by default:
 
-1.  Boost 1.4.8
+1.  Boost 1.48.0
 2.  Apache Xerces-C 3.1.1
 3.  XQilla 2.2.4
 4.  NetCDF 4.1.3
