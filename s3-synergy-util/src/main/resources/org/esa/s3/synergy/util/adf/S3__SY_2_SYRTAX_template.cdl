@@ -1,4 +1,4 @@
-netcdf S3__SY_2_SYRTAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00 {
+netcdf S3__SY_2_SYRTAX {
 dimensions:
     AMIN = 3 ;
     ADA = 31 ;
@@ -134,10 +134,10 @@ variables:
         :references = "S3-L2-SD-08-S-BC-IODD" ;
         :contact = "info@brockmann-consult.de" ;
         :netCDF_version = "netCDF-4" ;
-        :dataset_name = "S3__SY_2_SYRTAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc" ;
-        :creation_time = "20120101T000000Z" ;
-        :validity_start = "20140101T000000Z" ;
-        :validity_stop = "20120101T000000Z" ;
+        :dataset_name = "S3__SY_2_SYRTAX_${VALIDITY_START}_${VALIDITY_STOP}_${CREATION_TIME}__BC__D_NT_AUX_${VERSION}.nc" ;
+        :creation_time = "${CREATION_TIME}Z" ;
+        :validity_start = "${VALIDITY_START}Z" ;
+        :validity_stop = "${VALIDITY_STOP}Z" ;
 data:
 
     ADA = 0.f, 6.f, 12.f, 18.f, 24.f, 30.f, 36.f, 42.f, 48.f, 54.f, 60.f, 66.f, 72.f, 78.f, 84.f, 90.f, 96.f, 102.f,

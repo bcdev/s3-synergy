@@ -52,11 +52,10 @@ void Vac::process(Context& context) {
 	const Accessor& waterVapourAccessor = segment.getAccessor("WVG");
 
 	valarray<double> cO3;
-	uint16_t aerosolModelIndex;
+	int16_t aerosolModelIndex;
 
-	const AuxdataProvider& auxiliaryData = getAuxdataProvider(context, Constants::AUX_ID_VSRTAX);
-	auxiliaryData.getVectorDouble("C_O3", cO3);
-	auxiliaryData.getUShort("AMIN", aerosolModelIndex);
+	getAuxdataProvider(context, Constants::AUX_ID_VSRTAX).getVectorDouble("C_O3", cO3);
+	getAuxdataProvider(context, Constants::AUX_ID_VSCPAX).getShort("AMIN", aerosolModelIndex);
 
 	const LookupTable<double>& lutRhoAtm = getLookupTable(context, Constants::AUX_ID_VSRTAX, "rho_atm");
 	const LookupTable<double>& lutRatm = getLookupTable(context, Constants::AUX_ID_VSRTAX, "VGT_R_atm");

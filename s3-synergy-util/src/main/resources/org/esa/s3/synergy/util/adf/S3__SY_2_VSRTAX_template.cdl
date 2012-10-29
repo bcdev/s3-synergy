@@ -1,4 +1,4 @@
-netcdf S3__SY_2_VSRTAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00 {
+netcdf S3__SY_2_VSRTAX {
 dimensions:
     AMIN = 3 ;
     ADA = 31 ;
@@ -23,7 +23,7 @@ variables:
     float VZA(VZA) ;
         VZA:long_name = "View zenith angle" ;
         VZA:valid_min = 0.f ;
-        VZA:valid_max = 55.f ;
+        VZA:valid_max = 59.5f ;
     float air_pressure(air_pressure) ;
         air_pressure:long_name = "Surface pressure" ;
         air_pressure:units = "hPa" ;
@@ -38,7 +38,7 @@ variables:
     short AMIN(AMIN) ;
         AMIN:long_name = "Aerosol model index number" ;
         AMIN:valid_min = 1 ;
-        AMIN:valid_max = 40 ;
+        AMIN:valid_max = 3 ;
     float T550(T550) ;
         T550:long_name = "Aerosol optical thickness" ;
         T550:valid_min = 0.f ;
@@ -79,10 +79,10 @@ variables:
         :references = "S3-L2-SD-08-S-BC-IODD" ;
         :contact = "info@brockmann-consult.de" ;
         :netCDF_version = "netCDF-4" ;
-        :dataset_name = "S3__SY_2_VSRTAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc" ;
-        :creation_time = "20120101T000000Z" ;
-        :validity_start = "20140101T000000Z" ;
-        :validity_stop = "20120101T000000Z" ;
+        :dataset_name = "S3__SY_2_VSRTAX_${VALIDITY_START}_${VALIDITY_STOP}_${CREATION_TIME}__BC__D_NT_AUX_${VERSION}.nc" ;
+        :creation_time = "${CREATION_TIME}Z" ;
+        :validity_start = "${VALIDITY_START}Z" ;
+        :validity_stop = "${VALIDITY_STOP}Z" ;
 data:
 
     ADA = 0.f, 6.f, 12.f, 18.f, 24.f, 30.f, 36.f, 42.f, 48.f, 54.f, 60.f, 66.f, 72.f, 78.f, 84.f, 90.f, 96.f, 102.f,
@@ -91,7 +91,7 @@ data:
     SZA = 0.f, 3.5f, 7.f, 11.5f, 14.f, 17.5f, 21.f, 24.5f, 28.f, 31.5f, 35.f, 38.5f, 42.f, 45.5f, 49.f, 52.5f, 56.f,
         59.5f, 63.f, 66.5f, 70.f ;
 
-    VZA = 0.f, 3.5f, 7.f, 10.5f, 14.f, 17.5f, 21.f, 24.5f, 28.f, 31.f, 34.f, 37.f, 40.f, 43.f, 46.f, 49.f, 52.f, 55.f ;
+    VZA = 0.f, 3.5f, 7.f, 10.5f, 14.f, 17.5f, 21.f, 24.5f, 28.f, 31.5f, 35.f, 38.5f, 42.f, 45.5f, 49.f, 52.5f, 56.f, 59.5f ;
 
     air_pressure = 800.f, 900.f, 1000.f, 1030.f ;
 

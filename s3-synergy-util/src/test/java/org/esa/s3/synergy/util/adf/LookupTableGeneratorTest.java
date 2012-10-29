@@ -15,15 +15,26 @@
 
 package org.esa.s3.synergy.util.adf;
 
+import org.esa.beam.framework.datamodel.ProductData;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
 
 public class LookupTableGeneratorTest {
 
     private LookupTableGenerator generator;
+
+    @BeforeClass
+    public static void setCreationTime() {
+        final DateFormat dateFormat = ProductData.UTC.createDateFormat("yyyyMMdd'T'HHmmss");
+        final String creationTime = dateFormat.format(new Date());
+        System.setProperty("CREATION_TIME", creationTime);
+    }
 
     @Before
     public void setUp() {
@@ -34,45 +45,41 @@ public class LookupTableGeneratorTest {
         }
     }
 
-    @SuppressWarnings({"ForLoopReplaceableByForEach"})
     @Test
     public void writeSynL2RadiativeTransferSimulationDataset() throws Exception {
-        generator.writeFinalSynL2RadiativeTransferSimulationDataset();
+        generator.writeSynL2RadiativeTransferSimulationDataset();
     }
 
-    @SuppressWarnings({"ForLoopReplaceableByForEach"})
     @Test
     public void writeSynL2ConfigurationParametersDataset() throws Exception {
-        generator.writeDummySynL2ConfigurationParametersDataset();
+        generator.writeSynL2ConfigurationParametersDataset();
     }
 
-    @SuppressWarnings({"ForLoopReplaceableByForEach"})
     @Test
+    @Ignore
     public void writeVgtPRadiativeTransferSimulationDataset() throws Exception {
-        generator.writeDummyVgtPRadiativeTransferSimulationDataset();
+        generator.writeVgtPRadiativeTransferSimulationDataset();
     }
 
-    @SuppressWarnings({"ForLoopReplaceableByForEach"})
     @Test
+    @Ignore
     public void writeVgtPSpectralResponseDataset() throws Exception {
-        generator.writeDummyVgtPSpectralResponseDataset();
+        generator.writeVgtPSpectralResponseDataset();
     }
 
-    @SuppressWarnings({"ForLoopReplaceableByForEach"})
     @Test
+    @Ignore
     public void writeVgtPConfigurationParametersDataset() throws Exception {
-        generator.writeDummyVgtPConfigurationParametersDataset();
+        generator.writeVgtPConfigurationParametersDataset();
     }
 
-    @SuppressWarnings({"ForLoopReplaceableByForEach"})
     @Test
     public void writeVgtSRadiativeTransferSimulationDataset() throws Exception {
-        generator.writeDummyVgtSRadiativeTransferSimulationDataset();
+        generator.writeVgtSRadiativeTransferSimulationDataset();
     }
 
-    @SuppressWarnings({"ForLoopReplaceableByForEach"})
     @Test
     public void writeVgtSConfigurationParametersDataset() throws Exception {
-        generator.writeDummyVgtSConfigurationParametersDataset();
+        generator.writeVgtSConfigurationParametersDataset();
     }
 }

@@ -1,4 +1,4 @@
-netcdf S3__SY_2_VPSRAX_20120101T000000_20140101T000000_20120717T160000__BC__D_NT_AUX_01 {
+netcdf S3__SY_2_VPSRAX {
 dimensions:
     wavelength = 914 ;
 
@@ -34,10 +34,10 @@ variables:
         :references = "S3-L2-SD-08-S-BC-IODD" ;
         :contact = "info@brockmann-consult.de" ;
         :netCDF_version = "netCDF-4" ;
-        :dataset_name = "S3__SY_2_VPSRAX_20120101T000000_20140101T000000_20120717T160000__BC__D_NT_AUX_01.nc" ;
-        :creation_time = "20120101T000000Z" ;
-        :validity_start = "20140101T000000Z" ;
-        :validity_stop = "20120101T000000Z" ;
+        :dataset_name = "S3__SY_2_VPSRAX_${VALIDITY_START}_${VALIDITY_STOP}_${CREATION_TIME}__BC__D_NT_AUX_${VERSION}.nc" ;
+        :creation_time = "${CREATION_TIME}Z" ;
+        :validity_start = "${VALIDITY_START}Z" ;
+        :validity_stop = "${VALIDITY_STOP}Z" ;
 data:
 
     wavelength = ${WAVELENGTH} ;

@@ -1,4 +1,4 @@
-netcdf S3__SY_2_VPRTAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00 {
+netcdf S3__SY_2_VPRTAX {
 dimensions:
     AMIN = 1 ;
     ADA = 11 ;
@@ -23,7 +23,7 @@ variables:
     float VZA(VZA) ;
         VZA:long_name = "View zenith angle" ;
         VZA:valid_min = 0.f ;
-        VZA:valid_max = 55.f ;
+        VZA:valid_max = 60.f ;
     float air_pressure(air_pressure) ;
         air_pressure:long_name = "Surface pressure" ;
         air_pressure:units = "hPa" ;
@@ -38,7 +38,7 @@ variables:
     short AMIN(AMIN) ;
         AMIN:long_name = "Aerosol model index number" ;
         AMIN:valid_min = 1 ;
-        AMIN:valid_max = 40 ;
+        AMIN:valid_max = 1 ;
     float T550(T550) ;
         T550:long_name = "Aerosol optical thickness" ;
         T550:valid_min = 0.f ;
@@ -80,23 +80,23 @@ variables:
         :references = "S3-L2-SD-08-S-BC-IODD" ;
         :contact = "info@brockmann-consult.de" ;
         :netCDF_version = "netCDF-4" ;
-        :dataset_name = "S3__SY_2_VPRTAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc" ;
-        :creation_time = "20120101T000000Z" ;
-        :validity_start = "20140101T000000Z" ;
-        :validity_stop = "20120101T000000Z" ;
+        :dataset_name = "S3__SY_2_VPRTAX_${VALIDITY_START}_${VALIDITY_STOP}_${CREATION_TIME}__BC__D_NT_AUX_${VERSION}.nc" ;
+        :creation_time = "${CREATION_TIME}Z" ;
+        :validity_start = "${VALIDITY_START}Z" ;
+        :validity_stop = "${VALIDITY_STOP}Z" ;
 data:
 
     ADA = 0.f, 18.f, 36.f, 54.f, 72.f, 90.f, 108.f, 126.f, 144.f, 162.f, 180.f ;
 
     SZA = 0.f, 10.f, 20.f, 30.f, 40.f, 50.f, 60.f, 70.f ;
 
-    VZA = 0.f, 9.5f, 19.f, 28.f, 37.f, 46.f, 55.f ;
+    VZA = 0.f, 10.f, 20.f, 30.f, 40.f, 50.f, 60.f ;
 
     air_pressure = 800.f, 900.f, 1000.f, 1030.f ;
 
     water_vapour = 0.f, 2.f, 5.f ;
  
-    AMIN = 22 ;
+    AMIN = 1 ;
 
     T550 = 0.f, 0.1f, 0.4f, 1.f, 2.f, 4.f ;
  

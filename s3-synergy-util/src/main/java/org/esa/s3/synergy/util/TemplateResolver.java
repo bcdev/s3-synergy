@@ -124,17 +124,22 @@ public class TemplateResolver {
 
                 if (replacement != null) {
                     writer.write(sb.toString().substring(0, start));
-                    final Scanner scanner = new Scanner(new File(replacement), "US-ASCII");
-                    scanner.useLocale(Locale.US);
-                    try {
-                        while (scanner.hasNextLine()) {
-                            writer.write(scanner.nextLine());
-                            if (scanner.hasNextLine()) {
-                                writer.write("\n");
+                    final File replacementFile = new File(replacement);
+                    if (replacementFile.exists()) {
+                        final Scanner scanner = new Scanner(replacementFile, "US-ASCII");
+                        scanner.useLocale(Locale.US);
+                        try {
+                            while (scanner.hasNextLine()) {
+                                writer.write(scanner.nextLine());
+                                if (scanner.hasNextLine()) {
+                                    writer.write("\n");
+                                }
                             }
+                        } finally {
+                            scanner.close();
                         }
-                    } finally {
-                        scanner.close();
+                    } else {
+                        writer.write(resolve(replacement));
                     }
                     sb.delete(0, end);
                     matcher = pattern.matcher(sb.toString());
