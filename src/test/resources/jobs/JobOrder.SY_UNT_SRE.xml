@@ -35,6 +35,15 @@
                 <Name>Segment_Line_Count</Name>
                 <Value>200</Value> <!-- Value range: [8, 2000], Default: 2000 -->
             </Processing_Parameter>
+
+            <Processing_Parameter>
+                <Name>SYCPAX</Name>
+                <Value>S3__SY_2_SYCPAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00</Value>
+            </Processing_Parameter>
+            <Processing_Parameter>
+                <Name>SYRTAX</Name>
+                <Value>S3__SY_2_SYRTAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00</Value>
+            </Processing_Parameter>
         </Dynamic_Processing_Parameters>
     </Ipf_Conf>
     <List_of_Ipf_Procs>
