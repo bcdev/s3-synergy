@@ -71,7 +71,7 @@ class LookupTableGenerator {
             2250.00
     };
 
-    private static final double[] VGP_WAV = new double[914];
+    private static final double[] VGP_WAV = new double[833];
 
     private static final String TARGET_DIR_DEFAULT = ".";
     private static final String NCGEN_PATH_DEFAULT = "/usr/local/bin/ncgen";
@@ -84,11 +84,8 @@ class LookupTableGenerator {
         for (int k = 0; k < 91; k++, i++) {
             VGP_WAV[i] = 410.0 + k;
         }
-        for (int k = 0; k < 221; k++, i++) {
+        for (int k = 0; k < 441; k++, i++) {
             VGP_WAV[i] = 560.0 + k;
-        }
-        for (int k = 0; k < 301; k++, i++) {
-            VGP_WAV[i] = 700.0 + k;
         }
         for (int k = 0; k < 301; k++, i++) {
             VGP_WAV[i] = 1500.0 + k;
@@ -184,9 +181,9 @@ class LookupTableGenerator {
         final LookupTable irradianceLut = new LookupTable(irradianceSpectrum[1], irradianceSpectrum[0]);
 
         final double[] b0 = createResponse(0, 91, "dat/RSR_VEGETATION_BAND_0.txt");
-        final double[] b2 = createResponse(91, 221, "dat/RSR_VEGETATION_BAND_1.txt");
-        final double[] b3 = createResponse(312, 301, "dat/RSR_VEGETATION_BAND_2.txt");
-        final double[] b4 = createResponse(613, 301, "dat/RSR_VEGETATION_BAND_3.txt");
+        final double[] b2 = createResponse(91, 441, "dat/RSR_VEGETATION_BAND_1.txt");
+        final double[] b3 = createResponse(91, 441, "dat/RSR_VEGETATION_BAND_2.txt");
+        final double[] b4 = createResponse(532, 301, "dat/RSR_VEGETATION_BAND_3.txt");
 
         final String wavelengthPath = createTempFile("wavelength", true);
         final String b0Path = createTempFile("b0_", true);

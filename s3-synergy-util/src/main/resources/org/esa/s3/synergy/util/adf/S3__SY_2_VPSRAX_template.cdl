@@ -1,6 +1,6 @@
 netcdf S3__SY_2_VPSRAX {
 dimensions:
-    wavelength = 914 ;
+    wavelength = 833 ;
 
 variables:
     float wavelength(wavelength) ;

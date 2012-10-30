@@ -7,7 +7,7 @@ dimensions:
     air_pressure = 4 ;
     water_vapour = 3 ;
     T550 = 6 ;
-    wavelength = 914;
+    wavelength = 833;
 variables:
     float ADA(ADA) ;
         ADA:long_name = "Azimuth difference angle" ;
