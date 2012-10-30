@@ -46,13 +46,11 @@ public class LookupTableGeneratorTest {
     }
 
     @Test
-    @Ignore
     public void writeSynL2RadiativeTransferSimulationDataset() throws Exception {
         generator.writeSynL2RadiativeTransferSimulationDataset();
     }
 
     @Test
-    @Ignore
     public void writeSynL2ConfigurationParametersDataset() throws Exception {
         generator.writeSynL2ConfigurationParametersDataset();
     }
@@ -73,13 +71,11 @@ public class LookupTableGeneratorTest {
     }
 
     @Test
-    @Ignore
     public void writeVgtSRadiativeTransferSimulationDataset() throws Exception {
         generator.writeVgtSRadiativeTransferSimulationDataset();
     }
 
     @Test
-    @Ignore
     public void writeVgtSConfigurationParametersDataset() throws Exception {
         generator.writeVgtSConfigurationParametersDataset();
     }

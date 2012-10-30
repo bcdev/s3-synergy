@@ -15,6 +15,7 @@
 
 package org.esa.s3.synergy.util.adf;
 
+import org.esa.beam.framework.datamodel.ProductData;
 import org.esa.beam.util.math.LookupTable;
 import org.esa.s3.synergy.util.TemplateResolver;
 
@@ -28,9 +29,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -93,6 +96,10 @@ class LookupTableGenerator {
     }
 
     static void main(String[] args) throws Exception {
+        final DateFormat dateFormat = ProductData.UTC.createDateFormat("yyyyMMdd'T'HHmmss");
+        final String creationTime = dateFormat.format(new Date());
+        System.setProperty("CREATION_TIME", creationTime);
+
         final LookupTableGenerator generator = new LookupTableGenerator();
 
         try {
