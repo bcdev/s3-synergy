@@ -49,8 +49,8 @@ public class TestDataGenerator {
     private static final String SUB_BAND_B = "B";
     private static final String SUB_BAND_TDI = "A+B";
 
-    private static final String NCGEN_PATH_DEFAULT = "/usr/bin/ncgen";
-    private static final String TARGET_DIR_DEFAULT = "testdata/input/dummy";
+    private static final String NCGEN_PATH_DEFAULT = "/usr/local/bin/ncgen";
+    private static final String TARGET_DIR_DEFAULT = "./tmp";
 
     private static File targetDir;
     private static String ncgenPath;
