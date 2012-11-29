@@ -47,8 +47,8 @@ void Vpr::stop(Context& context) {
 void Vpr::addTargetSegments(Context& context) {
     const int latCellCount = maxTargetLat - minTargetLat;
     const int lonCellCount = maxTargetLon - minTargetLon;
-    const int rowCount = latCellCount * TARGET_PIXELS_PER_DEGREE;
-    const int colCount = lonCellCount * TARGET_PIXELS_PER_DEGREE;
+    const int rowCount = latCellCount * TARGET_PIXELS_PER_DEGREE + 1;
+    const int colCount = lonCellCount * TARGET_PIXELS_PER_DEGREE + 1;
 
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGT_LAT + "' to context.", getId());
     context.addSingleLineSegment(Constants::SEGMENT_VGT_LAT, rowCount);
@@ -65,8 +65,8 @@ void Vpr::addTargetSegments(Context& context) {
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGT + "' to context.", getId());
     context.addMapSegment(Constants::SEGMENT_VGT, rowCount, colCount);
 
-    const int subsampledRowCount = latCellCount * SUBSAMPLED_TARGET_PIXELS_PER_DEGREE;
-    const int subsampledColCount = lonCellCount * SUBSAMPLED_TARGET_PIXELS_PER_DEGREE;
+    const int subsampledRowCount = latCellCount * SUBSAMPLED_TARGET_PIXELS_PER_DEGREE + 1;
+    const int subsampledColCount = lonCellCount * SUBSAMPLED_TARGET_PIXELS_PER_DEGREE + 1;
 
     context.getLogging().info("Adding segment '" + Constants::SEGMENT_VGT_LAT_TP + "' to context.", getId());
     context.addSingleLineSegment(Constants::SEGMENT_VGT_LAT_TP, subsampledRowCount);
@@ -178,14 +178,14 @@ void Vpr::process(Context& context) {
     getMinMaxTargetLat(minTargetLat, maxTargetLat, firstTargetL, lastTargetL);
 
     // Is the target region north of the source region, without overlap?
-    if (minTargetLat - DEGREES_PER_TARGET_PIXEL * 0.5 > maxSourceLat) {
+    if (minTargetLat - DEGREES_PER_TARGET_PIXEL * 1.5 > maxSourceLat) {
     	// Yes. Processing is completed.
 		context.setLastComputedL(vgp, *this, lastTargetL);
 		return;
 	}
 
     // Is the target region south of the source region, without overlap?
-    if (maxTargetLat + DEGREES_PER_TARGET_PIXEL * 0.5 < minSourceLat && context.getLastComputableL(syn, *this) < sourceGrid.getMaxL()) {
+    if (maxTargetLat + DEGREES_PER_TARGET_PIXEL * 1.5 < minSourceLat && context.getLastComputableL(syn, *this) < sourceGrid.getMaxL()) {
     	// Yes. Processing will be completed later.
     	return;
 	}
