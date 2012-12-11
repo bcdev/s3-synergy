@@ -18,7 +18,7 @@
     <variables>
         <variable>
             <name>SLN_TP_lat</name>
-            <type>double</type>
+            <type>int</type>
             <segment_name>SLN_TP</segment_name>
             <dimensions>
                 <id>N_SLN_TP</id>
@@ -36,19 +36,19 @@
                 </attribute>
                 <attribute>
                     <name>valid_min</name>
-                    <type>double</type>
-                    <value>-90.0</value>
+                    <type>int</type>
+                    <value>-90</value>
                 </attribute>
                 <attribute>
                     <name>valid_max</name>
-                    <type>double</type>
-                    <value>90.0</value>
+                    <type>int</type>
+                    <value>90</value>
                 </attribute>
             </attributes>
         </variable>
         <variable>
             <name>SLN_TP_lon</name>
-            <type>double</type>
+            <type>int</type>
             <segment_name>SLN_TP</segment_name>
             <dimensions>
                 <id>N_SLN_TP</id>
@@ -66,13 +66,13 @@
                 </attribute>
                 <attribute>
                     <name>valid_min</name>
-                    <type>double</type>
-                    <value>-180.0</value>
+                    <type>int</type>
+                    <value>-180</value>
                 </attribute>
                 <attribute>
                     <name>valid_max</name>
-                    <type>double</type>
-                    <value>180.0</value>
+                    <type>int</type>
+                    <value>180</value>
                 </attribute>
             </attributes>
         </variable>
