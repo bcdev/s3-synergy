@@ -140,6 +140,7 @@ find_program(MD5_SUM_EXECUTABLE NAMES md5sum gmd5sum)
 #
 include_directories(before
     ~/usr/include
+    /usr/local/include
 )
 
 ##

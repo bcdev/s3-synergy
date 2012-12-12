@@ -31,7 +31,7 @@
             <Processing_Parameter>
                 <Name>Segment_Line_Count</Name>
                 <Value>2000</Value> <!-- Value range: [8, 2000], Default: 2000 -->
-
+            </Processing_Parameter>
             <Processing_Parameter>
                 <Name>SYCPAX</Name>
                 <Value>S3__SY_2_SYCPAX_20121029T000000_20130201T000000_20121030T105403__BC__D_NT_AUX_01</Value>
