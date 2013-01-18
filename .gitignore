@@ -27,4 +27,5 @@ OUT.*
 Makefile
 Config.h
 *.sh
+*.nc
 install_manifest.txt

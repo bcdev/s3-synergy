@@ -55,7 +55,7 @@ variables:
         R_atm:valid_min = 0 ;
         R_atm:valid_max = 250 ;
         R_atm:_DeflateLevel = 9;
-    float t(SZA, air_pressure, water_vapour, T550, AMIN, wavelength) ;
+    float t(SZA, VZA, air_pressure, water_vapour, T550, AMIN, wavelength) ;
         t:long_name = "Atmospheric transmission" ;
         t:valid_min = 0.f ;
         t:valid_max = 1.f ;
@@ -95,11 +95,11 @@ data:
     air_pressure = 800.f, 900.f, 1000.f, 1030.f ;
 
     water_vapour = 0.f, 2.f, 5.f ;
- 
+
     AMIN = 1 ;
 
     T550 = 0.f, 0.1f, 0.4f, 1.f, 2.f, 4.f ;
- 
+
     wavelength = ${WAVELENGTH} ;
 
     R_atm = ${R_ATM} ;

@@ -54,7 +54,7 @@ variables:
         VGT_R_atm:valid_min = 0 ;
         VGT_R_atm:valid_max = 250 ;
         VGT_R_atm:_DeflateLevel = 9;
-    float t(SZA, air_pressure, water_vapour, T550, AMIN, VGT_channel) ;
+    float t(SZA, VZA, air_pressure, water_vapour, T550, AMIN, VGT_channel) ;
         t:long_name = "Atmospheric transmission" ;
         t:valid_min = 0.0 ;
         t:valid_max = 1.0 ;

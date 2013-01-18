@@ -134,13 +134,13 @@ class LookupTableGenerator {
         final Properties properties = new Properties();
         properties.setProperty("Template_File_Basename", "S3__SY_2_SYRTAX_template");
         properties.setProperty("CDL_File_Basename", "S3__SY_2_SYRTAX_${VALIDITY_START}_${VALIDITY_STOP}_${CREATION_TIME}__BC__D_NT_AUX_${VERSION}");
-        properties.setProperty("OLC_R_ATM", "ggluck.swan.ac.uk/ftp/Ralf/OLC_R_atm.txt");
-        properties.setProperty("SLN_R_ATM", "ggluck.swan.ac.uk/ftp/Ralf/SLN_R_atm.txt");
-        properties.setProperty("SLO_R_ATM", "ggluck.swan.ac.uk/ftp/Ralf/SLO_R_atm.txt");
-        properties.setProperty("RHO_ATM", "ggluck.swan.ac.uk/ftp/Ralf/rho_atm.txt");
-        properties.setProperty("T", "ggluck.swan.ac.uk/ftp/Ralf/t.txt");
-        properties.setProperty("D", "ggluck.swan.ac.uk/ftp/Ralf/D.txt");
-        properties.setProperty("C_O3", "ggluck.swan.ac.uk/ftp/Ralf/C_03.txt");
+        properties.setProperty("OLC_R_ATM", "ggluck.swan.ac.uk/ftp/Ralf/Jan2013/OLC_R_atm.txt");
+        properties.setProperty("SLN_R_ATM", "ggluck.swan.ac.uk/ftp/Ralf/Jan2013/SLN_R_atm.txt");
+        properties.setProperty("SLO_R_ATM", "ggluck.swan.ac.uk/ftp/Ralf/Jan2013/SLO_R_atm.txt");
+        properties.setProperty("RHO_ATM", "ggluck.swan.ac.uk/ftp/Ralf/Jan2013/rho_atm.txt");
+        properties.setProperty("T", "ggluck.swan.ac.uk/ftp/Ralf/Jan2013/t.txt");
+        properties.setProperty("D", "ggluck.swan.ac.uk/ftp/Ralf/Jan2013/D.txt");
+        properties.setProperty("C_O3", "ggluck.swan.ac.uk/ftp/Ralf/Jan2013/C_O3.txt");
 
         generateDataset(properties);
     }
@@ -171,10 +171,10 @@ class LookupTableGenerator {
         final Properties properties = new Properties();
         properties.setProperty("Template_File_Basename", "S3__SY_2_VPRTAX_template");
         properties.setProperty("CDL_File_Basename", "S3__SY_2_VPRTAX_${VALIDITY_START}_${VALIDITY_STOP}_${CREATION_TIME}__BC__D_NT_AUX_${VERSION}");
-        properties.setProperty("R_ATM", "ggluck.swan.ac.uk/ftp/Ralf/VP_R_atm.txt");
-        properties.setProperty("RHO_ATM", "ggluck.swan.ac.uk/ftp/Ralf/VP_rho_atm.txt");
-        properties.setProperty("T", "ggluck.swan.ac.uk/ftp/Ralf/VP_t.txt");
-        properties.setProperty("C_O3", "ggluck.swan.ac.uk/ftp/Ralf/VP_C_03.txt");
+        properties.setProperty("R_ATM", "ggluck.swan.ac.uk/ftp/Ralf/Jan2013/VP_R_atm.txt");
+        properties.setProperty("RHO_ATM", "ggluck.swan.ac.uk/ftp/Ralf/Jan2013/VP_rho_atm.txt");
+        properties.setProperty("T", "ggluck.swan.ac.uk/ftp/Ralf/Jan2013/VP_t.txt");
+        properties.setProperty("C_O3", "ggluck.swan.ac.uk/ftp/Ralf/Jan2013/VP_C_O3.txt");
 
         final String wavelengthPath = createTempFile("wavelength", true);
         writeWavelength(VGP_WAV, wavelengthPath);
@@ -239,10 +239,10 @@ class LookupTableGenerator {
         final Properties properties = new Properties();
         properties.setProperty("Template_File_Basename", "S3__SY_2_VSRTAX_template");
         properties.setProperty("CDL_File_Basename", "S3__SY_2_VSRTAX_${VALIDITY_START}_${VALIDITY_STOP}_${CREATION_TIME}__BC__D_NT_AUX_${VERSION}");
-        properties.setProperty("VGT_R_ATM", "ggluck.swan.ac.uk/ftp/Ralf/VS_R_atm.txt");
-        properties.setProperty("RHO_ATM", "ggluck.swan.ac.uk/ftp/Ralf/VS_rho_atm.txt");
-        properties.setProperty("T", "ggluck.swan.ac.uk/ftp/Ralf/VS_t.txt");
-        properties.setProperty("C_O3", "ggluck.swan.ac.uk/ftp/Ralf/VS_C_03.txt");
+        properties.setProperty("VGT_R_ATM", "ggluck.swan.ac.uk/ftp/Ralf/Jan2013/VS_R_atm.txt");
+        properties.setProperty("RHO_ATM", "ggluck.swan.ac.uk/ftp/Ralf/Jan2013/VS_rho_atm.txt");
+        properties.setProperty("T", "ggluck.swan.ac.uk/ftp/Ralf/Jan2013/VS_t.txt");
+        properties.setProperty("C_O3", "ggluck.swan.ac.uk/ftp/Ralf/Jan2013/VS_C_O3.txt");
 
         generateDataset(properties);
     }

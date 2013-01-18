@@ -97,7 +97,7 @@ variables:
         SLO_R_atm:valid_min = 0 ;
         SLO_R_atm:valid_max = 250 ;
         SLO_R_atm:_DeflateLevel = 9;
-    float t(SZA, air_pressure, water_vapour, T550, AMIN, SYN_channel) ;
+    float t(SZA, SLN_VZA, air_pressure, water_vapour, T550, AMIN, SYN_channel) ;
         t:long_name = "Atmospheric transmission" ;
         t:valid_min = 0.0 ;
         t:valid_max = 1.0 ;
@@ -156,7 +156,7 @@ data:
 
     water_vapour = 0.f, 2.f, 5.f ;
 
-    AMIN = 1, 2, 3 ;
+    AMIN = 1, 2, 3;
 
     T550 = 0.f, 0.05f, 0.1f, 0.2f, 0.4f, 0.6f, 1.f, 1.5f, 2.f, 3.f, 4.f ;
 
@@ -184,7 +184,7 @@ data:
     D =  ${D} ;
 
     C_O3 =  ${C_O3} ;
-        
+
     A550 = 1.08f, 0.28f, 0.47f ;
 
     delta_rt = 0.005f;
