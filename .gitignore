@@ -8,6 +8,7 @@
 *.cmake
 *.xcodeproj/
 *.build/
+ggluck.swan.ac.uk/
 target/
 /bin/
 /config/
@@ -18,7 +19,6 @@ target/
 /testdata/VGP/
 /testdata/VGS/
 /tmp/??????
-/modules/
 CMakeCache.txt
 CMakeFiles/
 CMakeScripts/
