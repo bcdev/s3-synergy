@@ -41,39 +41,6 @@ import java.util.Scanner;
 
 class LookupTableGenerator {
 
-    private static final double[] SYN_WAV = new double[]{
-            400.00,
-            412.50,
-            442.50,
-            490.00,
-            510.00,
-            560.00,
-            620.00,
-            665.00,
-            673.75,
-            681.25,
-            708.75,
-            753.75,
-            761.25,
-            778.75,
-            865.00,
-            885.00,
-            900.00,
-            1020.00,
-            550.00,
-            665.00,
-            865.00,
-            1375.00,
-            1610.00,
-            2250.00,
-            550.00,
-            665.00,
-            865.00,
-            1375.00,
-            1610.00,
-            2250.00
-    };
-
     private static final double[] VGP_WAV = new double[833];
 
     private static final String TARGET_DIR_DEFAULT = ".";
@@ -146,23 +113,9 @@ class LookupTableGenerator {
     }
 
     void writeSynL2ConfigurationParametersDataset() throws Exception {
-        final double[][] vegSpectrum = readSpectrum("dat/veg.dat", 1000.0);
-        final double[][] soilSpectrum = readSpectrum("dat/soil.dat", 1000.0);
-
-        final LookupTable vegLut = new LookupTable(vegSpectrum[1], vegSpectrum[0]);
-        final LookupTable soilLut = new LookupTable(soilSpectrum[1], soilSpectrum[0]);
-
-        final String vegPath = createTempFile("veg", true);
-        final String soilPath = createTempFile("soil", true);
-
-        writeSpectrum(vegLut, SYN_WAV, vegPath);
-        writeSpectrum(soilLut, SYN_WAV, soilPath);
-
         final Properties properties = new Properties();
         properties.setProperty("Template_File_Basename", "S3__SY_2_SYCPAX_template");
         properties.setProperty("CDL_File_Basename", "S3__SY_2_SYCPAX_${VALIDITY_START}_${VALIDITY_STOP}_${CREATION_TIME}__BC__D_NT_AUX_${VERSION}");
-        properties.setProperty("R_VEG", vegPath);
-        properties.setProperty("R_SOIL", soilPath);
 
         generateDataset(properties);
     }
@@ -327,8 +280,8 @@ class LookupTableGenerator {
         final PrintWriter writer = new PrintWriter(fileName);
         try {
             int r = 0;
-            for (int n = 0; n < wav.length; n++) {
-                final double value = lut.getValue(wav[n]);
+            for (final double w : wav) {
+                final double value = lut.getValue(w);
                 if (r > 0) {
                     writer.print(", ");
                 }
