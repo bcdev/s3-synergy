@@ -38,9 +38,9 @@ void LookupTableReaderTest::testRead_OLC_R_atm() {
 	CPPUNIT_ASSERT(lut->getDimensionLength(3) == 4);
 	CPPUNIT_ASSERT(lut->getDimensionLength(4) == 3);
 	CPPUNIT_ASSERT(lut->getDimensionLength(5) == 11);
-	CPPUNIT_ASSERT(lut->getDimensionLength(6) == 40);
+	CPPUNIT_ASSERT(lut->getDimensionLength(6) == 3);
 	CPPUNIT_ASSERT(lut->getDimensionLength(7) == 18);
-	CPPUNIT_ASSERT(lut->getStride(0) == 1 * 18 * 40 * 11 * 3 * 4 * 18 * 21);
+	CPPUNIT_ASSERT(lut->getStride(0) == 1 * 18 * 3 * 11 * 3 * 4 * 18 * 21);
 
 	CPPUNIT_ASSERT(lut->getScaleFactor() == 0.004f);
 	CPPUNIT_ASSERT(lut->getAddOffset() == 0.0f);
@@ -52,7 +52,7 @@ void LookupTableReaderTest::testRead_OLC_R_atm() {
 	CPPUNIT_ASSERT(lut->getMaxCoordinate(1) == 70.0f);
 
 	CPPUNIT_ASSERT(lut->getMinCoordinate(2) == 0.0f);
-	CPPUNIT_ASSERT(lut->getMaxCoordinate(2) == 55.0f);
+	CPPUNIT_ASSERT(lut->getMaxCoordinate(2) == 59.5f);
 
 	CPPUNIT_ASSERT(lut->getMinCoordinate(3) == 800.0f);
 	CPPUNIT_ASSERT(lut->getMaxCoordinate(3) == 1030.0f);
@@ -64,7 +64,7 @@ void LookupTableReaderTest::testRead_OLC_R_atm() {
 	CPPUNIT_ASSERT(lut->getMaxCoordinate(5) == 4.0f);
 
 	CPPUNIT_ASSERT(lut->getMinCoordinate(6) == 1.0f);
-	CPPUNIT_ASSERT(lut->getMaxCoordinate(6) == 40.0f);
+	CPPUNIT_ASSERT(lut->getMaxCoordinate(6) == 3.0f);
 
 	CPPUNIT_ASSERT(lut->getMinCoordinate(7) == 1.0f);
 	CPPUNIT_ASSERT(lut->getMaxCoordinate(7) == 18.0f);
@@ -109,8 +109,8 @@ void LookupTableReaderTest::testRead_SLN_R_atm() {
 	CPPUNIT_ASSERT(lut->getMinCoordinate(1) == 0.0f);
 	CPPUNIT_ASSERT(lut->getMaxCoordinate(1) == 70.0f);
 
-	CPPUNIT_ASSERT(lut->getMinCoordinate(2) == 6.0f);
-	CPPUNIT_ASSERT(lut->getMaxCoordinate(2) == 58.0f);
+	CPPUNIT_ASSERT(lut->getMinCoordinate(2) == 0.0f);
+	CPPUNIT_ASSERT(lut->getMaxCoordinate(2) == 59.5f);
 
 	CPPUNIT_ASSERT(lut->getMinCoordinate(3) == 800.0f);
 	CPPUNIT_ASSERT(lut->getMaxCoordinate(3) == 1030.0f);
@@ -122,7 +122,7 @@ void LookupTableReaderTest::testRead_SLN_R_atm() {
 	CPPUNIT_ASSERT(lut->getMaxCoordinate(5) == 4.0f);
 
 	CPPUNIT_ASSERT(lut->getMinCoordinate(6) == 1.0f);
-	CPPUNIT_ASSERT(lut->getMaxCoordinate(6) == 40.0f);
+	CPPUNIT_ASSERT(lut->getMaxCoordinate(6) == 3.0f);
 
 	CPPUNIT_ASSERT(lut->getMinCoordinate(7) == 19.0f);
 	CPPUNIT_ASSERT(lut->getMaxCoordinate(7) == 24.0f);
@@ -156,7 +156,7 @@ void LookupTableReaderTest::testRead_SLO_R_atm() {
 	CPPUNIT_ASSERT(lut->getMaxCoordinate(5) == 4.0f);
 
 	CPPUNIT_ASSERT(lut->getMinCoordinate(6) == 1.0f);
-	CPPUNIT_ASSERT(lut->getMaxCoordinate(6) == 40.0f);
+	CPPUNIT_ASSERT(lut->getMaxCoordinate(6) == 3.0f);
 
 	CPPUNIT_ASSERT(lut->getMinCoordinate(7) == 25.0f);
 	CPPUNIT_ASSERT(lut->getMaxCoordinate(7) == 30.0f);
