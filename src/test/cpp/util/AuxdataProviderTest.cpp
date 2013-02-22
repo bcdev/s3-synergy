@@ -23,7 +23,7 @@ AuxdataProviderTest::~AuxdataProviderTest() {
 }
 
 void AuxdataProviderTest::setUp() {
-	const string filePath = Constants::S3_SYNERGY_HOME + "/files/S3__SY_2_SYCPAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc";
+	const string filePath = Constants::S3_SYNERGY_HOME + "/files/S3__SY_2_SYCPAX_20130201T000000_20180201T000000_20130214T142722__BC__D_NT_AUX_02.nc";
 	auxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider("id", filePath));
 }
 
