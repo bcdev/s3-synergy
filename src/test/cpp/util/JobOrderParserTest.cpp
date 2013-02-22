@@ -66,7 +66,7 @@ void JobOrderParserTest::checkConfiguration(
 			configuration.getSensingTimeStart().compare("20101214_000000.0000") == 0);
 	CPPUNIT_ASSERT(
 			configuration.getSensingTimeStop().compare("20101214_235959.9999") == 0);
-	CPPUNIT_ASSERT(configuration.getDynamicProcessingParameters().size() == 6);
+	CPPUNIT_ASSERT(configuration.getDynamicProcessingParameters().size() == 13);
 	CPPUNIT_ASSERT(
 			configuration.getDynamicProcessingParameters().at(0).getName().compare("Segment_Line_Count") == 0);
 	CPPUNIT_ASSERT(
