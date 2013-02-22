@@ -19,7 +19,7 @@ LookupTableReaderTest::~LookupTableReaderTest() {
 }
 
 void LookupTableReaderTest::setUp() {
-	reader = new LookupTableReader(Constants::AUX_ID_SYRTAX, Constants::S3_SYNERGY_HOME + "/files/S3__SY_2_SYRTAX_20120101T000000_20140101T000000_20120101T000000__BC__D_NT_AUX_00.nc");
+	reader = new LookupTableReader(Constants::AUX_ID_SYRTAX, Constants::S3_SYNERGY_HOME + "/files/S3__SY_2_SYRTAX_20130201T000000_20180201T000000_20130214T142722__BC__D_NT_AUX_02.nc");
 }
 
 void LookupTableReaderTest::tearDown() {
