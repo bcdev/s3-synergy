@@ -23,6 +23,9 @@
         <Test>true</Test>
         <Breakpoint_Enable>true</Breakpoint_Enable>
         <Acquisition_Station>unknown</Acquisition_Station>
+        <Config_Files>
+            <Conf_File_Name>src/test/resources/config/config.xml</Conf_File_Name>
+        </Config_Files>
         <Processing_Station>unknown</Processing_Station>
         <Sensing_Time>
             <Start>20101214_000000.0000</Start>
