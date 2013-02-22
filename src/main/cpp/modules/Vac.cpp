@@ -124,21 +124,10 @@ void Vac::process(Context& context) {
 							coordinates[7] = b;
 
 							const double rAtm = lutRatm.getScalar(&coordinates[0], f, w);
-
-							coordinates[0] = sza;
-							coordinates[1] = airPressure;
-							coordinates[2] = waterVapour;
-							coordinates[3] = aot;
-							coordinates[4] = aerosolModelIndex;
-							coordinates[5] = b;
-
-							const double ts = lutT.getScalar(&coordinates[0], f, w);
-
-							coordinates[0] = vza;
-
-							const double tv = lutT.getScalar(&coordinates[0], f, w);
-							const double tO3 = exp(-am * ozone * cO3[b]);
-							const double surfaceReflectance = Aco::surfaceReflectance(reflectance, rAtm, ts, tv, rhoAtm, tO3);
+							const double tv = lutT.getScalar(&coordinates[1], f, w);
+                            
+							const double tO3 = exp(-am * (ozone - 350.0) * cO3[b]);
+							const double surfaceReflectance = Aco::surfaceReflectance(reflectance, rAtm, tv, rhoAtm, tO3);
 
 							reflectanceAccessors[b]->setDouble(index, surfaceReflectance);
 						}

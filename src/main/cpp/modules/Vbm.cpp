@@ -199,7 +199,6 @@ void Vbm::process(Context& context) {
 
 		valarray<double> rho(HYP_CHANNEL_COUNT);
 		valarray<double> ratm(HYP_CHANNEL_COUNT);
-		valarray<double> ts(HYP_CHANNEL_COUNT);
 		valarray<double> tv(HYP_CHANNEL_COUNT);
 
 		context.getLogging().progress("Processing line l = " + lexical_cast<string>(l), getId());
@@ -208,9 +207,9 @@ void Vbm::process(Context& context) {
 				const size_t index = collocatedGrid.getIndex(k, l, m);
 				const size_t geoIndex = geoGrid.getIndex(k, l, m);
 				initPixel(p, index, geoIndex, tpiWeights, tpiIndexes);
-				performDownscaling(p, synSurfaceReflectances, coordinates, rho, ratm, ts, tv, f, workspace);
+				performDownscaling(p, synSurfaceReflectances, coordinates, rho, ratm, tv, f, workspace);
 				performHyperspectralInterpolation(synWavelengths, synSurfaceReflectances, hypSurfaceReflectances);
-				performHyperspectralUpscaling(hypSurfaceReflectances, p, hypToaReflectances, coordinates, rho, ratm, ts, tv, f, workspace);
+				performHyperspectralUpscaling(hypSurfaceReflectances, p, hypToaReflectances, coordinates, rho, ratm, tv, f, workspace);
 				performHyperspectralFiltering(hypToaReflectances, vgtToaReflectances);
 				const uint8_t flags = performQualityFlagging(p, vgtToaReflectances);
 				setValues(index, p, flags, vgtToaReflectances, synSurfaceReflectances);
@@ -254,7 +253,7 @@ void Vbm::initPixel(Pixel& p, size_t index, size_t geoIndex, valarray<double>& t
 	p.vgtFlags = 0;
 }
 
-void Vbm::performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflectances, valarray<double>& coordinates, valarray<double>& rho, valarray<double>& ratm, valarray<double>& ts,
+void Vbm::performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflectances, valarray<double>& coordinates, valarray<double>& rho, valarray<double>& ratm, 
 		valarray<double>& tv, valarray<double>& f, valarray<double>& w) {
 	fill(&synSurfaceReflectances[0], &synSurfaceReflectances[synSurfaceReflectances.size()], Constants::FILL_VALUE_DOUBLE);
 
@@ -273,20 +272,11 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflect
 		coordinates[5] = p.aot;
 		coordinates[6] = p.aerosolModel;
 		olcLutRatm->getVector(&coordinates[0], ratm, f, w);
-
-		coordinates[0] = p.sza;
-		coordinates[1] = p.airPressure;
-		coordinates[2] = p.waterVapour;
-		coordinates[3] = p.aot;
-		coordinates[4] = p.aerosolModel;
-		synLutT->getVector(&coordinates[0], ts, f, w);
-
-		coordinates[0] = p.vzaOlc;
-		synLutT->getVector(&coordinates[0], tv, f, w);
+		synLutT->getVector(&coordinates[1], tv, f, w);
 
 		for (size_t i = 0; i < 18; i++) {
 			if (p.radiances[i] != Constants::FILL_VALUE_DOUBLE) {
-				synSurfaceReflectances[i] = surfaceReflectance(p.ozone, p.vzaOlc, p.sza, p.solarIrradiances[i], p.radiances[i], synCO3[i], rho[i], ratm[i], ts[i], tv[i]);
+				synSurfaceReflectances[i] = surfaceReflectance(p.ozone, p.vzaOlc, p.sza, p.solarIrradiances[i], p.radiances[i], synCO3[i], rho[i], ratm[i], tv[i]);
 			}
 		}
 
@@ -298,17 +288,11 @@ void Vbm::performDownscaling(const Pixel& p, valarray<double>& synSurfaceReflect
 		coordinates[5] = p.aot;
 		coordinates[6] = p.aerosolModel;
 		slnLutRatm->getVector(&coordinates[0], ratm, f, w);
-
-		coordinates[0] = p.vzaSln;
-		coordinates[1] = p.airPressure;
-		coordinates[2] = p.waterVapour;
-		coordinates[3] = p.aot;
-		coordinates[4] = p.aerosolModel;
-		synLutT->getVector(&coordinates[0], tv, f, w);
+		synLutT->getVector(&coordinates[1], tv, f, w);
 
 		for (size_t i = 21; i < 24; i++) {
 			if (p.radiances[i - 3] != Constants::FILL_VALUE_DOUBLE) {
-				synSurfaceReflectances[i - 3] = surfaceReflectance(p.ozone, p.vzaSln, p.sza, p.solarIrradiances[i - 3], p.radiances[i - 3], synCO3[i], rho[i], ratm[i - 18], ts[i], tv[i]);
+				synSurfaceReflectances[i - 3] = surfaceReflectance(p.ozone, p.vzaSln, p.sza, p.solarIrradiances[i - 3], p.radiances[i - 3], synCO3[i], rho[i], ratm[i - 18], tv[i]);
 			}
 		}
 	}
@@ -339,7 +323,7 @@ void Vbm::performHyperspectralInterpolation(const valarray<double>& synWavelengt
 }
 
 void Vbm::performHyperspectralUpscaling(const valarray<double>& hypSurfaceReflectances, const Pixel& p, valarray<double>& hypToaReflectances, valarray<double>& coordinates, valarray<double>& rho,
-		valarray<double>& ratm, valarray<double>& ts, valarray<double>& tv, valarray<double>& f, valarray<double>& w) {
+		valarray<double>& ratm, valarray<double>& tv, valarray<double>& f, valarray<double>& w) {
 	fill(&hypToaReflectances[0], &hypToaReflectances[hypToaReflectances.size()], Constants::FILL_VALUE_DOUBLE);
 
 	if (isSet(p.synFlags, Constants::SY2_LAND_FLAG)) {
@@ -357,22 +341,13 @@ void Vbm::performHyperspectralUpscaling(const valarray<double>& hypSurfaceReflec
 		coordinates[5] = p.aot;
 		coordinates[6] = p.aerosolModel;
 		hypLutRatm->getVector(&coordinates[0], ratm, f, w);
-
-		coordinates[0] = p.sza;
-		coordinates[1] = p.airPressure;
-		coordinates[2] = p.waterVapour;
-		coordinates[3] = p.aot;
-		coordinates[4] = p.aerosolModel;
-		hypLutT->getVector(&coordinates[0], ts, f, w);
-
-		coordinates[0] = p.vzaOlc;
-		hypLutT->getVector(&coordinates[0], tv, f, w);
+		hypLutT->getVector(&coordinates[1], tv, f, w);
 
 		const double airMass = 0.5 * (1.0 / cos(p.sza * D2R) + 1.0 / cos(p.vzaOlc * D2R));
 
 		for (size_t h = 0; h < hypSurfaceReflectances.size(); h++) {
 			if (hypSurfaceReflectances[h] != Constants::FILL_VALUE_DOUBLE) {
-				hypToaReflectances[h] = toaReflectance(p.ozone, airMass, hypSurfaceReflectances[h], hypCO3[h], rho[h], ratm[h], ts[h], tv[h]);
+				hypToaReflectances[h] = toaReflectance(p.ozone, airMass, hypSurfaceReflectances[h], hypCO3[h], rho[h], ratm[h], tv[h]);
 			}
 		}
 	}
@@ -463,18 +438,18 @@ double Vbm::aerosolOpticalThickness(double lat) {
 	return 0.2 * (c - 0.25) * (c * c * c) + 0.05;
 }
 
-double Vbm::surfaceReflectance(double nO3, double vza, double sza, double f0, double ltoa, double cO3, double rho, double ratm, double ts, double tv) {
+double Vbm::surfaceReflectance(double nO3, double vza, double sza, double f0, double ltoa, double cO3, double rho, double ratm, double tv) {
 	// Eq. 2-1
 	const double rtoa = Aco::toaReflectance(ltoa, f0, sza);
 	// Eq. 2-2
 	const double tO3 = Aco::ozoneTransmission(cO3, sza, vza, nO3);
 	// Eq. 2-3
-	return Aco::surfaceReflectance(rtoa, ratm, ts, tv, rho, tO3);
+	return Aco::surfaceReflectance(rtoa, ratm, tv, rho, tO3);
 }
 
-double Vbm::toaReflectance(double nO3, double airMass, double surfaceReflectance, double cO3, double rho, double ratm, double ts, double tv) {
-	const double tO3 = exp(-airMass * nO3 * cO3);
-	const double g = ts * tv;
+double Vbm::toaReflectance(double nO3, double airMass, double surfaceReflectance, double cO3, double rho, double ratm, double tv) {
+	const double tO3 = exp(-airMass * (nO3 - 350.0) * cO3);
+	const double g = tv;
 
 	return tO3 * (ratm + (g * surfaceReflectance) / (1.0 - rho * surfaceReflectance));
 }

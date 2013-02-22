@@ -85,7 +85,6 @@ private:
 	valarray<double> matRatmOlc;
 	valarray<double> matRatmSln;
 	valarray<double> matRatmSlo;
-	valarray<double> matTs;
 	valarray<double> matTv;
 	valarray<double> matRho;
     valarray<double> diffuseFractions;

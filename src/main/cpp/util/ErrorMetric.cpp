@@ -31,11 +31,10 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		lutD((LookupTable<double>&) context.getObject("SYRTAX::D")),
 		validMask(30),
 		sdrs(30),
-		coordinates(12),
+		coordinates(7),
 		matRatmOlc(18),
 		matRatmSln(6),
 		matRatmSlo(6),
-		matTs(30),
 		matTv(30),
 		matRho(30),
 		diffuseFractions(6),
@@ -231,7 +230,7 @@ static double ozoneTransmission(double cO3, double sza, double vza, double nO3) 
 
 	// Eq. 2-2
 	const double m = 0.5 * (1.0 / cos(sza * RADIAN) + 1.0 / cos(vza * RADIAN));
-	const double tO3 = exp(-m * nO3 * cO3);
+	const double tO3 = exp(-m * (nO3 - 350.0) * cO3);
 
 	return tO3;
 }
@@ -243,10 +242,10 @@ static double toaReflectance(double ltoa, double f0, double sza) {
 	return (PI * ltoa) / (f0 * cos(sza * RADIAN));
 }
 
-static double surfaceReflectance(double rtoa, double ratm, double ts, double tv,
+static double surfaceReflectance(double rtoa, double ratm, double tv,
 		double rho, double tO3) {
 	// Eq. 2-3
-	const double f = (rtoa - tO3 * ratm) / (tO3 * ts * tv);
+	const double f = (rtoa - tO3 * ratm) / (tO3 * tv);
 	const double rboa = f / (1.0 + rho * f);
 
 	return rboa;
@@ -267,17 +266,9 @@ void ErrorMetric::setAerosolOpticalThickness(double aot) {
 
 	lutRhoAtm.getVector(&coordinates[3], matRho, lutWeights, lutWorkspace);
 
-	coordinates[7] = coordinates[1]; // SZA
-	coordinates[8] = coordinates[3]; // air pressure
-	coordinates[9] = coordinates[4]; // water vapour
-	coordinates[10] = coordinates[5]; // aerosol
-	coordinates[11] = coordinates[6]; // aerosol model
-
-	lutT.getVector(&coordinates[7], matTs, lutWeights, lutWorkspace);
-
 	if (doOLC) {
 		lutOlcRatm.getVector(&coordinates[0], matRatmOlc, lutWeights, lutWorkspace);
-		lutT.getVector(&coordinates[2], matTv, lutWeights, lutWorkspace);
+		lutT.getVector(&coordinates[1], matTv, lutWeights, lutWorkspace);
 
 		for (size_t b = 0; b < 18; b++) {
 			if (validMask[b]) {
@@ -288,10 +279,9 @@ void ErrorMetric::setAerosolOpticalThickness(double aot) {
 				// Eq. 2-3
 				const double ratm = matRatmOlc[b];
 
-				const double ts = matTs[b];
 				const double tv = matTv[b];
 				const double rho = matRho[b];
-				const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho, tO3);
+				const double sdr = surfaceReflectance(rtoa, ratm, tv, rho, tO3);
 
 				sdrs[b] = sdr;
 			}
@@ -303,7 +293,7 @@ void ErrorMetric::setAerosolOpticalThickness(double aot) {
 		coordinates[2] = pixel->vzaSln;
 
 		lutSlnRatm.getVector(&coordinates[0], matRatmSln, lutWeights, lutWorkspace);
-		lutT.getVector(&coordinates[2], matTv, lutWeights, lutWorkspace);
+		lutT.getVector(&coordinates[1], matTv, lutWeights, lutWorkspace);
 
 		for (size_t b = 18; b < 24; b++) {
 			if (validMask[b]) {
@@ -314,10 +304,9 @@ void ErrorMetric::setAerosolOpticalThickness(double aot) {
 				// Eq. 2-3
 				const double ratm = matRatmSln[b - 18];
 
-				const double ts = matTs[b];
 				const double tv = matTv[b];
 				const double rho = matRho[b];
-				const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho, tO3);
+				const double sdr = surfaceReflectance(rtoa, ratm, tv, rho, tO3);
 
 				sdrs[b] = sdr;
 			}
@@ -329,7 +318,7 @@ void ErrorMetric::setAerosolOpticalThickness(double aot) {
 		coordinates[2] = pixel->vzaSlo;
 
 		lutSloRatm.getVector(&coordinates[0], matRatmSlo, lutWeights, lutWorkspace);
-		lutT.getVector(&coordinates[2], matTv, lutWeights, lutWorkspace);
+		lutT.getVector(&coordinates[1], matTv, lutWeights, lutWorkspace);
 
 		for (size_t b = 24; b < 30; b++) {
 			if (validMask[b]) {
@@ -340,10 +329,9 @@ void ErrorMetric::setAerosolOpticalThickness(double aot) {
 				// Eq. 2-3
 				const double ratm = matRatmSlo[b - 24];
 
-				const double ts = matTs[b];
 				const double tv = matTv[b];
 				const double rho = matRho[b];
-				const double sdr = surfaceReflectance(rtoa, ratm, ts, tv, rho, tO3);
+				const double sdr = surfaceReflectance(rtoa, ratm, tv, rho, tO3);
 
 				sdrs[b] = sdr;
 			}
