@@ -340,9 +340,10 @@ void Aer::process(Context& context) {
 		Pixel p;
 		Pixel q;
 
-		for (long k = averagedGrid->getMinK(); k <= averagedGrid->getMaxK(); k++) {
+		for (long targetK = averagedGrid->getMinK(); targetK <= averagedGrid->getMaxK(); targetK++) {
 			for (long targetM = averagedGrid->getMinM(); targetM <= averagedGrid->getMaxM(); targetM++) {
-				const size_t targetPixelIndex = averagedGrid->getIndex(k, targetL, targetM);
+                const long targetN = targetM + averagedGrid->getSizeM() * targetK;
+				const size_t targetPixelIndex = averagedGrid->getIndex(targetK, targetL, targetM);
 				pixelProvider.getPixel(targetPixelIndex, p, true);
 
 				if (!(isSet(p.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)
@@ -355,12 +356,14 @@ void Aer::process(Context& context) {
 					double minPixelDistance = numeric_limits<double>::max();
 
 					for (long sourceL = targetL - n; sourceL <= targetL + n; sourceL++) {
-						for (long sourceM = targetM - n; sourceM <= targetM + n; sourceM++) {
-							if (averagedGrid->isValidPosition(k, sourceL, sourceM)) {
-								const size_t sourcePixelIndex = averagedGrid->getIndex(k, sourceL, sourceM);
+						for (long sourceN = targetN - n; sourceN <= targetN + n; sourceN++) {
+                            const long sourceK = sourceN / averagedGrid->getSizeM();
+                            const long sourceM = sourceN - sourceK * averagedGrid->getSizeM();
+							if (averagedGrid->isValidPosition(sourceK, sourceL, sourceM)) {
+								const size_t sourcePixelIndex = averagedGrid->getIndex(sourceK, sourceL, sourceM);
 								pixelProvider.getPixel(sourcePixelIndex, q, true);
 								if (isSet(q.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)) {
-									const double d = (sourceL - targetL) * (sourceL - targetL) + (sourceM - targetM) * (sourceM - targetM);
+									const double d = (sourceL - targetL) * (sourceL - targetL) + (sourceN - targetN) * (sourceN - targetN);
 									if (d < minPixelDistance) {
 										minPixelDistance = d;
 										p.aerosolModel = q.aerosolModel;
