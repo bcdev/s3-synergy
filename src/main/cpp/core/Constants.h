@@ -283,37 +283,37 @@ const string LOG_LEVEL_ERROR = "ERROR";
 /**
  * The ID of the SYN L2 configuration auxiliary dataset.
  */
-const string AUX_ID_SYCPAX = "SYCPAX";
+const string AUX_ID_SYCP = "SYCP";
 
 /**
  * The ID of the SYN L2 radiative transfer auxiliary dataset.
  */
-const string AUX_ID_SYRTAX = "SYRTAX";
+const string AUX_ID_SYRT = "SYRT";
 
 /**
  * The ID of the VGT-P configuration auxiliary dataset.
  */
-const string AUX_ID_VPCPAX = "VPCPAX";
+const string AUX_ID_VPCP = "VPCP";
 
 /**
  * The ID of the VGT-P spectral response auxiliary dataset.
  */
-const string AUX_ID_VPSRAX = "VPSRAX";
+const string AUX_ID_VPSR = "VPSR";
 
 /**
  * The ID of the VGT-P radiative transfer auxiliary dataset.
  */
-const string AUX_ID_VPRTAX = "VPRTAX";
+const string AUX_ID_VPRT = "VPRT";
 
 /**
  * The ID of the VGT-S configuration auxiliary dataset.
  */
-const string AUX_ID_VSCPAX = "VSCPAX";
+const string AUX_ID_VSCP = "VSCP";
 
 /**
  * The ID of the VGT-S radiative transfer auxiliary dataset.
  */
-const string AUX_ID_VSRTAX = "VSRTAX";
+const string AUX_ID_VSRT = "VSRT";
 
 /**
  * The mask for the SY1 OLCI land flag.

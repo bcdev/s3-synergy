@@ -21,6 +21,7 @@
 
 #include "Logging.h"
 
+using std::map;
 using std::string;
 using std::vector;
 
@@ -49,6 +50,7 @@ private:
  * Represents the configuration element in an IPF Job Order.
  */
 class IpfConfiguration {
+
 private:
 	string orderId;
 	string processorName;
@@ -63,11 +65,14 @@ private:
 	string sensingTimeStop;
 	vector<string> configFileNames;
 	vector<ProcessingParameter> processingParameters;
+	map<string, string> auxiliaryFileMap;
 
 	string boolToString(bool input) const;
+
 public:
 
 	IpfConfiguration();
+	IpfConfiguration(const IpfConfiguration& configuration);
 	~IpfConfiguration();
 
 	string getProcessorName() const;
@@ -96,9 +101,14 @@ public:
 	string getErrorLogLevel() const;
 	void setStandardLogLevel(const string& standardLogLevel);
 	string getStandardLogLevel() const;
-	void setDynamicProcessingParameters(const vector<ProcessingParameter>& processingParameters);
+	void setDynamicProcessingParameters(
+			const vector<ProcessingParameter>& processingParameters);
 	vector<ProcessingParameter> getDynamicProcessingParameters() const;
 	string getDynamicProcessingParameter(const string& name) const;
+	string getAuxFileName(const string& id) const;
+	bool hasAuxFileName(const string& id) const;
+
+	void addAuxFileName(const string& id, const string& path);
 };
 
 #endif /* IPFCONFIGURATION_H_ */

@@ -35,9 +35,9 @@ JobOrderParser::~JobOrderParser() {
 }
 
 shared_ptr<JobOrder> JobOrderParser::parse(const string& path) {
-	IpfConfiguration config = parseIpfConfiguration(path);
+	IpfConfiguration ipfConfiguration = parseIpfConfiguration(path);
 	vector<IpfProcessor> ipfProcessors = parseIpfProcessors(path);
-	return shared_ptr<JobOrder>(new JobOrder(config, ipfProcessors));
+	return shared_ptr<JobOrder>(new JobOrder(ipfConfiguration, ipfProcessors));
 }
 
 IpfConfiguration JobOrderParser::parseIpfConfiguration(const string& path) {
@@ -106,7 +106,30 @@ IpfConfiguration JobOrderParser::parseIpfConfiguration(const string& path) {
 	vector<string> configFileNames = parser.evaluateToStringList(path, "/Ipf_Job_Order/Ipf_Conf/Config_Files/Conf_File_Name/child::text()");
 	configuration.setConfigFileNames(configFileNames);
 
+	if (configFileNames.size() > 0) {
+		parseConfigurationFile(configFileNames.at(0), configuration);
+	}
+
 	return configuration;
+}
+
+void JobOrderParser::parseConfigurationFile(string& configFileName, IpfConfiguration& configuration) const {
+	using boost::filesystem::path;
+
+	path configFilePath = configFileName;
+	if (configFilePath.is_relative()) {
+		configFilePath = Constants::S3_SYNERGY_HOME / configFilePath;
+	}
+
+	vector<string> ids = parser.evaluateToStringList(configFilePath.string(), "//Aux_File_Name/attribute::id");
+	vector<string> names = parser.evaluateToStringList(configFilePath.string(), "//Aux_File_Name/child::text()");
+	for (size_t i = 0; i < ids.size(); i++) {
+		path auxFilePath = names.at(i);
+		if (auxFilePath.is_relative()) {
+			auxFilePath = Constants::S3_SYNERGY_HOME / auxFilePath;
+		}
+		configuration.addAuxFileName(ids.at(i), auxFilePath.string());
+	}
 }
 
 vector<IpfProcessor> JobOrderParser::parseIpfProcessors(const string& path) const {

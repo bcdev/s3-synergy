@@ -23,6 +23,9 @@
         <Breakpoint_Enable>false</Breakpoint_Enable>
         <Acquisition_Station>unknown</Acquisition_Station>
         <Processing_Station>unknown</Processing_Station>
+        <Config_Files>
+            <Conf_File_Name>src/test/resources/config/config.xml</Conf_File_Name>
+        </Config_Files>
         <Sensing_Time>
             <Start>20130621_000000.0000</Start>
             <Stop>20130621_235959.9999</Stop>
@@ -31,35 +34,6 @@
             <Processing_Parameter>
                 <Name>Segment_Line_Count</Name>
                 <Value>2000</Value> <!-- Value range: [8, 2000], Default: 2000 -->
-            </Processing_Parameter>
-
-            <Processing_Parameter>
-                <Name>SYCPAX</Name>
-                <Value>S3__SY_2_SYCPAX_20130201T000000_20180201T000000_20130214T142722__BC__D_NT_AUX_02</Value>
-            </Processing_Parameter>
-            <Processing_Parameter>
-                <Name>SYRTAX</Name>
-                <Value>S3__SY_2_SYRTAX_20130201T000000_20180201T000000_20130214T142722__BC__D_NT_AUX_02</Value>
-            </Processing_Parameter>
-            <Processing_Parameter>
-                <Name>VPCPAX</Name>
-                <Value>S3__SY_2_VPCPAX_20130201T000000_20180201T000000_20130214T142722__BC__D_NT_AUX_02</Value>
-            </Processing_Parameter>
-            <Processing_Parameter>
-                <Name>VPRTAX</Name>
-                <Value>S3__SY_2_VPRTAX_20130201T000000_20180201T000000_20130214T142722__BC__D_NT_AUX_02</Value>
-            </Processing_Parameter>
-            <Processing_Parameter>
-                <Name>VPSRAX</Name>
-                <Value>S3__SY_2_VPSRAX_20130201T000000_20180201T000000_20130214T142722__BC__D_NT_AUX_02</Value>
-            </Processing_Parameter>
-            <Processing_Parameter>
-                <Name>VSCPAX</Name>
-                <Value>S3__SY_2_VSCPAX_20130201T000000_20180201T000000_20130214T142722__BC__D_NT_AUX_02</Value>
-            </Processing_Parameter>
-            <Processing_Parameter>
-                <Name>VSRTAX</Name>
-                <Value>S3__SY_2_VSRTAX_20130201T000000_20180201T000000_20130214T142722__BC__D_NT_AUX_02</Value>
             </Processing_Parameter>
         </Dynamic_Processing_Parameters>
     </Ipf_Conf>

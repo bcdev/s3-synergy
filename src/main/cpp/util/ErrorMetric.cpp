@@ -22,13 +22,13 @@ static const double PI = 3.14159265358979323846;
 static const double RADIAN = PI / 180.0;
 
 ErrorMetric::ErrorMetric(const Context& context) :
-		lutOlcRatm((LookupTable<double>&) context.getObject("SYRTAX::OLC_R_atm")),
-		lutSlnRatm((LookupTable<double>&) context.getObject("SYRTAX::SLN_R_atm")),
-		lutSloRatm((LookupTable<double>&) context.getObject("SYRTAX::SLO_R_atm")),
-		lutT((LookupTable<double>&) context.getObject("SYRTAX::t")),
-		lutRhoAtm((LookupTable<double>&) context.getObject("SYRTAX::rho_atm")),
-		lutTotalAngularWeights((LookupTable<double>&) context.getObject("SYCPAX::weight_ang_tot")),
-		lutD((LookupTable<double>&) context.getObject("SYRTAX::D")),
+		lutOlcRatm((LookupTable<double>&) context.getObject(Constants::AUX_ID_SYRT + "::OLC_R_atm")),
+		lutSlnRatm((LookupTable<double>&) context.getObject(Constants::AUX_ID_SYRT + "::SLN_R_atm")),
+		lutSloRatm((LookupTable<double>&) context.getObject(Constants::AUX_ID_SYRT + "::SLO_R_atm")),
+		lutT((LookupTable<double>&) context.getObject(Constants::AUX_ID_SYRT + "::t")),
+		lutRhoAtm((LookupTable<double>&) context.getObject(Constants::AUX_ID_SYRT + "::rho_atm")),
+		lutTotalAngularWeights((LookupTable<double>&) context.getObject(Constants::AUX_ID_SYRT + "::weight_ang_tot")),
+		lutD((LookupTable<double>&) context.getObject(Constants::AUX_ID_SYRT + "::D")),
 		validMask(30),
 		sdrs(30),
 		coordinates(7),
@@ -43,8 +43,8 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		pe(10),
 		u(valarray<double>(10), 10),
 		lineMinimizer(this, &ErrorMetric::computeRss8, pn, u) {
-	const AuxdataProvider& cpAuxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUX_ID_SYCPAX);
-	const AuxdataProvider& rtAuxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUX_ID_SYRTAX);
+	const AuxdataProvider& cpAuxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUX_ID_SYCP);
+	const AuxdataProvider& rtAuxdataProvider = (AuxdataProvider&) context.getObject(Constants::AUX_ID_SYRT);
 
 	rtAuxdataProvider.getVectorDouble("C_O3", cO3);
 	cpAuxdataProvider.getDouble("T550_ini", initialAot);

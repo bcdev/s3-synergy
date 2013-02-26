@@ -32,7 +32,7 @@ void Aei::start(Context& context) {
     targetSegment = &context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
     targetGrid = &targetSegment->getGrid();
 
-    AuxdataProvider& configurationAuxdataProvider = (AuxdataProvider&)context.getObject(Constants::AUX_ID_SYCPAX);
+    AuxdataProvider& configurationAuxdataProvider = (AuxdataProvider&)context.getObject(Constants::AUX_ID_SYCP);
     configurationAuxdataProvider.getUByte("ave_square", averagingFactor);
 	context.getLogging().debug("Averaging factor averagingFactor = " + lexical_cast<string>((uint16_t) averagingFactor), getId());
 

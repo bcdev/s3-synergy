@@ -33,7 +33,7 @@ void Ave::start(Context& context) {
 	geoSegment = &context.getSegment(Constants::SEGMENT_GEO);
 	sourceSegment = &context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 
-	getAuxdataProvider(context, Constants::AUX_ID_SYCPAX).getUByte("ave_square", averagingFactor);
+	getAuxdataProvider(context, Constants::AUX_ID_SYCP).getUByte("ave_square", averagingFactor);
 
 	const Grid& sourceGrid = sourceSegment->getGrid();
 	//const size_t sizeL = sourceGrid.getSizeL() / averagingFactor;

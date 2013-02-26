@@ -26,9 +26,9 @@ Vac::~Vac() {
 }
 
 void Vac::start(Context& context) {
-	getLookupTable(context, Constants::AUX_ID_VSRTAX, "rho_atm");
-	getLookupTable(context, Constants::AUX_ID_VSRTAX, "VGT_R_atm");
-	getLookupTable(context, Constants::AUX_ID_VSRTAX, "t");
+	getLookupTable(context, Constants::AUX_ID_VSRT, "rho_atm");
+	getLookupTable(context, Constants::AUX_ID_VSRT, "VGT_R_atm");
+	getLookupTable(context, Constants::AUX_ID_VSRT, "t");
 
 	context.getSegment(Constants::SEGMENT_SYN_COLLOCATED).addVariable("NDVI", Constants::TYPE_DOUBLE);
 }
@@ -54,12 +54,12 @@ void Vac::process(Context& context) {
 	valarray<double> cO3;
 	int16_t aerosolModelIndex;
 
-	getAuxdataProvider(context, Constants::AUX_ID_VSRTAX).getVectorDouble("C_O3", cO3);
-	getAuxdataProvider(context, Constants::AUX_ID_VSCPAX).getShort("AMIN", aerosolModelIndex);
+	getAuxdataProvider(context, Constants::AUX_ID_VSRT).getVectorDouble("C_O3", cO3);
+	getAuxdataProvider(context, Constants::AUX_ID_VSCP).getShort("AMIN", aerosolModelIndex);
 
-	const LookupTable<double>& lutRhoAtm = getLookupTable(context, Constants::AUX_ID_VSRTAX, "rho_atm");
-	const LookupTable<double>& lutRatm = getLookupTable(context, Constants::AUX_ID_VSRTAX, "VGT_R_atm");
-	const LookupTable<double>& lutT = getLookupTable(context, Constants::AUX_ID_VSRTAX, "t");
+	const LookupTable<double>& lutRhoAtm = getLookupTable(context, Constants::AUX_ID_VSRT, "rho_atm");
+	const LookupTable<double>& lutRatm = getLookupTable(context, Constants::AUX_ID_VSRT, "VGT_R_atm");
+	const LookupTable<double>& lutT = getLookupTable(context, Constants::AUX_ID_VSRT, "t");
 
 	const long minK = grid.getMinK();
 	const long maxK = grid.getMaxK();

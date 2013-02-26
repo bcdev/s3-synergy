@@ -22,8 +22,7 @@ void BasicModule::addAccessor(Context& context, Segment& s, const VariableDescri
 
 AuxdataProvider& BasicModule::getAuxdataProvider(Context& context, const string& auxId) const {
     if (!context.hasObject(auxId)) {
-		const string auxFileBasename = context.getJobOrder().getIpfConfiguration().getDynamicProcessingParameter(auxId);
-		const string auxFileName = Constants::S3_SYNERGY_HOME + "/files/" + auxFileBasename + ".nc";
+		const string auxFileName = context.getJobOrder().getIpfConfiguration().getAuxFileName(auxId);
         shared_ptr<AuxdataProvider> auxdataProvider = shared_ptr<AuxdataProvider>(new AuxdataProvider(auxId, auxFileName));
         context.getLogging().info("Getting auxiliary data '" + auxId + ": " + auxFileName + "'", getId());
         context.addObject(auxdataProvider);
@@ -35,8 +34,7 @@ AuxdataProvider& BasicModule::getAuxdataProvider(Context& context, const string&
 LookupTable<double>& BasicModule::getLookupTable(Context& context, const string& auxId, const string& varName) const {
 	const string contextId = auxId + "::" + varName;
 	if (!context.hasObject(contextId)) {
-		const string auxFileBasename = context.getJobOrder().getIpfConfiguration().getDynamicProcessingParameter(auxId);
-		const string auxFileName = Constants::S3_SYNERGY_HOME + "/files/" + auxFileBasename + ".nc";
+		const string auxFileName = context.getJobOrder().getIpfConfiguration().getAuxFileName(auxId);
         const LookupTableReader reader(auxId, auxFileName);
         context.getLogging().info("Reading LUT '" + contextId + ": " + auxFileName + "'", getId());
         context.addObject(reader.readLookupTable<double>(varName));

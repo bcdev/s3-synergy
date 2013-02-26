@@ -27,7 +27,7 @@ Vfl::~Vfl() {
 }
 
 void Vfl::start(Context& context) {
-    const AuxdataProvider& thresholdsAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VPCPAX);
+    const AuxdataProvider& thresholdsAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VPCP);
     thresholdsAuxdata.getVectorDouble("tcl", thresholdsCloud);
     thresholdsAuxdata.getVectorDouble("tsn", thresholdsSnowIce);
 }

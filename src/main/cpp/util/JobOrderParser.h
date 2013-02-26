@@ -40,6 +40,7 @@ private:
 	Input parseInput(const string& path, const string& baseQuery) const;
 	vector<Output> parseOutputs(const string& path, const string& baseQuery) const;
 	Output parseOutput(const string& path, const string& baseQuery) const;
+    void parseConfigurationFile(string& configFileName, IpfConfiguration& configuration) const;
 
     string standardLogLevel;
 	XmlParser parser;

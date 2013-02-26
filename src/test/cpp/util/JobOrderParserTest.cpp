@@ -62,6 +62,15 @@ void JobOrderParserTest::checkConfiguration(
 	CPPUNIT_ASSERT(configuration.getConfigFiles().size() == 1);
 	CPPUNIT_ASSERT(
 			configuration.getConfigFiles().at(0).compare("src/test/resources/config/config.xml") == 0);
+
+	CPPUNIT_ASSERT(configuration.getAuxFileName("SYCP").compare(Constants::S3_SYNERGY_HOME + "/files/S3__SY_2_SYCPAX_20130201T000000_20180201T000000_20130214T142722__BC__D_NT_AUX_02.nc") == 0);
+	CPPUNIT_ASSERT(configuration.getAuxFileName("SYRT").compare(Constants::S3_SYNERGY_HOME + "/files/S3__SY_2_SYRTAX_20130201T000000_20180201T000000_20130214T142722__BC__D_NT_AUX_02.nc") == 0);
+	CPPUNIT_ASSERT(configuration.getAuxFileName("VPCP").compare(Constants::S3_SYNERGY_HOME + "/files/S3__SY_2_VPCPAX_20130201T000000_20180201T000000_20130214T142722__BC__D_NT_AUX_02.nc") == 0);
+	CPPUNIT_ASSERT(configuration.getAuxFileName("VPRT").compare(Constants::S3_SYNERGY_HOME + "/files/S3__SY_2_VPRTAX_20130201T000000_20180201T000000_20130214T142722__BC__D_NT_AUX_02.nc") == 0);
+	CPPUNIT_ASSERT(configuration.getAuxFileName("VPSR").compare(Constants::S3_SYNERGY_HOME + "/files/S3__SY_2_VPSRAX_20130201T000000_20180201T000000_20130214T142722__BC__D_NT_AUX_02.nc") == 0);
+	CPPUNIT_ASSERT(configuration.getAuxFileName("VSCP").compare(Constants::S3_SYNERGY_HOME + "/files/S3__SY_2_VSCPAX_20130201T000000_20180201T000000_20130214T142722__BC__D_NT_AUX_02.nc") == 0);
+	CPPUNIT_ASSERT(configuration.getAuxFileName("VSRT").compare(Constants::S3_SYNERGY_HOME + "/files/S3__SY_2_VSRTAX_20130201T000000_20180201T000000_20130214T142722__BC__D_NT_AUX_02.nc") == 0);
+
 	CPPUNIT_ASSERT(
 			configuration.getSensingTimeStart().compare("20101214_000000.0000") == 0);
 	CPPUNIT_ASSERT(

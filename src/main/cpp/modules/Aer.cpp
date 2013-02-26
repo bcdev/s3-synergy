@@ -284,7 +284,7 @@ void Aer::start(Context& context) {
 
 	averagedGrid = &averagedSegment->getGrid();
 
-	getAuxdataProvider(context, Constants::AUX_ID_SYCPAX).getDouble("ave_square", averagingFactor);
+	getAuxdataProvider(context, Constants::AUX_ID_SYCP).getDouble("ave_square", averagingFactor);
 }
 
 void Aer::process(Context& context) {
@@ -431,16 +431,16 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 }
 
 void Aer::readAuxiliaryData(Context& context) {
-	getLookupTable(context, "SYRTAX", "OLC_R_atm");
-	getLookupTable(context, "SYRTAX", "SLN_R_atm");
-	getLookupTable(context, "SYRTAX", "SLO_R_atm");
-	getLookupTable(context, "SYRTAX", "t");
-	getLookupTable(context, "SYRTAX", "rho_atm");
-	getLookupTable(context, "SYRTAX", "D");
-	getLookupTable(context, "SYCPAX", "weight_ang_tot");
+	getLookupTable(context, Constants::AUX_ID_SYRT, "OLC_R_atm");
+	getLookupTable(context, Constants::AUX_ID_SYRT, "SLN_R_atm");
+	getLookupTable(context, Constants::AUX_ID_SYRT, "SLO_R_atm");
+	getLookupTable(context, Constants::AUX_ID_SYRT, "t");
+	getLookupTable(context, Constants::AUX_ID_SYRT, "rho_atm");
+	getLookupTable(context, Constants::AUX_ID_SYRT, "D");
+	getLookupTable(context, Constants::AUX_ID_SYCP, "weight_ang_tot");
 
-	AuxdataProvider& cpAuxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYCPAX);
-	AuxdataProvider& rtAuxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYRTAX);
+	AuxdataProvider& cpAuxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYCP);
+	AuxdataProvider& rtAuxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYRT);
 
 	cpAuxdataProvider.getVectorShort("AMIN", amins);
 	cpAuxdataProvider.getDouble("kappa", kappa);

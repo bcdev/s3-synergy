@@ -94,21 +94,21 @@ void Vbm::prepareAccessors(Context& context) {
 }
 
 void Vbm::prepareAuxdata(Context& context) {
-	const AuxdataProvider& vgtRadiativeTransferAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VPRTAX);
+	const AuxdataProvider& vgtRadiativeTransferAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VPRT);
 	vgtRadiativeTransferAuxdata.getUShort("AMIN", aerosolModel);
 
-	synLutRho = &getLookupTable(context, Constants::AUX_ID_SYRTAX, "rho_atm");
-	olcLutRatm = &getLookupTable(context, Constants::AUX_ID_SYRTAX, "OLC_R_atm");
-	slnLutRatm = &getLookupTable(context, Constants::AUX_ID_SYRTAX, "SLN_R_atm");
-	synLutT = &getLookupTable(context, Constants::AUX_ID_SYRTAX, "t");
-	getAuxdataProvider(context, Constants::AUX_ID_SYRTAX).getVectorDouble("C_O3", synCO3);
+	synLutRho = &getLookupTable(context, Constants::AUX_ID_SYRT, "rho_atm");
+	olcLutRatm = &getLookupTable(context, Constants::AUX_ID_SYRT, "OLC_R_atm");
+	slnLutRatm = &getLookupTable(context, Constants::AUX_ID_SYRT, "SLN_R_atm");
+	synLutT = &getLookupTable(context, Constants::AUX_ID_SYRT, "t");
+	getAuxdataProvider(context, Constants::AUX_ID_SYRT).getVectorDouble("C_O3", synCO3);
 
-	hypLutRho = &getLookupTable(context, Constants::AUX_ID_VPRTAX, "rho_atm");
-	hypLutRatm = &getLookupTable(context, Constants::AUX_ID_VPRTAX, "R_atm");
-	hypLutT = &getLookupTable(context, Constants::AUX_ID_VPRTAX, "t");
-	getAuxdataProvider(context, Constants::AUX_ID_VPRTAX).getVectorDouble("C_O3", hypCO3);
+	hypLutRho = &getLookupTable(context, Constants::AUX_ID_VPRT, "rho_atm");
+	hypLutRatm = &getLookupTable(context, Constants::AUX_ID_VPRT, "R_atm");
+	hypLutT = &getLookupTable(context, Constants::AUX_ID_VPRT, "t");
+	getAuxdataProvider(context, Constants::AUX_ID_VPRT).getVectorDouble("C_O3", hypCO3);
 
-	const AuxdataProvider& vgtSpectralResponseAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VPSRAX);
+	const AuxdataProvider& vgtSpectralResponseAuxdata = getAuxdataProvider(context, Constants::AUX_ID_VPSR);
 	vgtSpectralResponseAuxdata.getVectorDouble("B0_SRF", hypSpectralResponses[0]);
 	vgtSpectralResponseAuxdata.getVectorDouble("B2_SRF", hypSpectralResponses[1]);
 	vgtSpectralResponseAuxdata.getVectorDouble("B3_SRF", hypSpectralResponses[2]);

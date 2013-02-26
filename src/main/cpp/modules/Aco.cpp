@@ -35,12 +35,12 @@ Aco::~Aco() {
 }
 
 void Aco::start(Context& context) {
-	getLookupTable(context, "SYRTAX", "OLC_R_atm");
-	getLookupTable(context, "SYRTAX", "SLN_R_atm");
-	getLookupTable(context, "SYRTAX", "SLO_R_atm");
-	getLookupTable(context, "SYRTAX", "t");
-	getLookupTable(context, "SYRTAX", "rho_atm");
-	getAuxdataProvider(context, Constants::AUX_ID_SYRTAX);
+	getLookupTable(context, Constants::AUX_ID_SYRT, "OLC_R_atm");
+	getLookupTable(context, Constants::AUX_ID_SYRT, "SLN_R_atm");
+	getLookupTable(context, Constants::AUX_ID_SYRT, "SLO_R_atm");
+	getLookupTable(context, Constants::AUX_ID_SYRT, "t");
+	getLookupTable(context, Constants::AUX_ID_SYRT, "rho_atm");
+	getAuxdataProvider(context, Constants::AUX_ID_SYRT);
 
 	Segment& collocatedSegment = context.getSegment(Constants::SEGMENT_SYN_COLLOCATED);
 	const SegmentDescriptor& targetSegmentDescriptor = context.getDictionary().getProductDescriptor(Constants::PRODUCT_SY2).getSegmentDescriptor(Constants::SEGMENT_SYN_COLLOCATED);
@@ -139,12 +139,12 @@ void Aco::process(Context& context) {
 		errAccessors.push_back(&collocatedSegment.getAccessor("SDR_" + lexical_cast<string>(i) + "_er"));
 	}
 
-	const LookupTable<double>& lutOlcRatm = getLookupTable(context, "SYRTAX", "OLC_R_atm");
-	const LookupTable<double>& lutSlnRatm = getLookupTable(context, "SYRTAX", "SLN_R_atm");
-	const LookupTable<double>& lutSloRatm = getLookupTable(context, "SYRTAX", "SLO_R_atm");
-	const LookupTable<double>& lutT = getLookupTable(context, "SYRTAX", "t");
-	const LookupTable<double>& lutRhoAtm = getLookupTable(context, "SYRTAX", "rho_atm");
-	const AuxdataProvider& auxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYRTAX);
+	const LookupTable<double>& lutOlcRatm = getLookupTable(context, Constants::AUX_ID_SYRT, "OLC_R_atm");
+	const LookupTable<double>& lutSlnRatm = getLookupTable(context, Constants::AUX_ID_SYRT, "SLN_R_atm");
+	const LookupTable<double>& lutSloRatm = getLookupTable(context, Constants::AUX_ID_SYRT, "SLO_R_atm");
+	const LookupTable<double>& lutT = getLookupTable(context, Constants::AUX_ID_SYRT, "t");
+	const LookupTable<double>& lutRhoAtm = getLookupTable(context, Constants::AUX_ID_SYRT, "rho_atm");
+	const AuxdataProvider& auxdataProvider = getAuxdataProvider(context, Constants::AUX_ID_SYRT);
 
 	valarray<double> cO3;
 	auxdataProvider.getVectorDouble("C_O3", cO3);
