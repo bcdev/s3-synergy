@@ -300,7 +300,7 @@ void ErrorMetric::setAerosolOpticalThickness(double aot) {
 				// Eq. 2-1
 				const double rtoa = toaReflectance(pixel->radiances[b], pixel->solarIrradiances[b], pixel->sza);
 				// Eq. 2-2
-				const double tO3 = ozoneTransmission(cO3[b], pixel->sza, pixel->vzaOlc, pixel->ozone);
+				const double tO3 = ozoneTransmission(cO3[b], pixel->sza, pixel->vzaSln, pixel->ozone);
 				// Eq. 2-3
 				const double ratm = matRatmSln[b - 18];
 
@@ -325,7 +325,7 @@ void ErrorMetric::setAerosolOpticalThickness(double aot) {
 				// Eq. 2-1
 				const double rtoa = toaReflectance(pixel->radiances[b], pixel->solarIrradiances[b], pixel->sza);
 				// Eq. 2-2
-				const double tO3 = ozoneTransmission(cO3[b], pixel->sza, pixel->vzaOlc, pixel->ozone);
+				const double tO3 = ozoneTransmission(cO3[b], pixel->sza, pixel->vzaSlo, pixel->ozone);
 				// Eq. 2-3
 				const double ratm = matRatmSlo[b - 24];
 

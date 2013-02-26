@@ -394,7 +394,7 @@ void Aco::process(Context& context) {
 				coordinates[5] = 0.8 * tau550; // aerosol
 
 				lutSloRatm.getVector(&coordinates[0], matRatmSlo, f, w);
-				lutT.getVector(&coordinates[2], matTv, f, w);
+				lutT.getVector(&coordinates[1], matTv, f, w);
 
 				for (size_t b = 24; b < 30; b++) {
 					if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
