@@ -27,7 +27,7 @@ ErrorMetric::ErrorMetric(const Context& context) :
 		lutSloRatm((LookupTable<double>&) context.getObject(Constants::AUX_ID_SYRT + "::SLO_R_atm")),
 		lutT((LookupTable<double>&) context.getObject(Constants::AUX_ID_SYRT + "::t")),
 		lutRhoAtm((LookupTable<double>&) context.getObject(Constants::AUX_ID_SYRT + "::rho_atm")),
-		lutTotalAngularWeights((LookupTable<double>&) context.getObject(Constants::AUX_ID_SYRT + "::weight_ang_tot")),
+		lutTotalAngularWeights((LookupTable<double>&) context.getObject(Constants::AUX_ID_SYCP + "::weight_ang_tot")),
 		lutD((LookupTable<double>&) context.getObject(Constants::AUX_ID_SYRT + "::D")),
 		validMask(30),
 		sdrs(30),
