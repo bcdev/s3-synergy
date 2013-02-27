@@ -216,7 +216,7 @@ Pixel& PixelProvider::getPixel(size_t index, Pixel& p, bool aerosolOnly) const {
 		p.vaaOlc = tiePointInterpolatorOlc.interpolate(vaaTiePointsOlc, tpiWeights, tpiIndexes);
 
 		p.airPressure = tiePointInterpolatorOlc.interpolate(airPressureTiePoints, tpiWeights, tpiIndexes);
-		p.ozone = tiePointInterpolatorOlc.interpolate(ozoneTiePoints, tpiWeights, tpiIndexes);
+		p.ozone = Aco::siToDu(tiePointInterpolatorOlc.interpolate(ozoneTiePoints, tpiWeights, tpiIndexes));
 		if (waterVapourTiePoints.size() != 0) {
 			p.waterVapour = tiePointInterpolatorOlc.interpolate(waterVapourTiePoints, tpiWeights, tpiIndexes);
 		} else {

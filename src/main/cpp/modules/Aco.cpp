@@ -208,7 +208,7 @@ void Aco::process(Context& context) {
 				const double wv = 2.0;
 
 				tpiOlc.prepare(lonAccessor.getDouble(geoIndex), latAccessor.getDouble(geoIndex), tpiWeights, tpiIndexes);
-				const double nO3 = tpiOlc.interpolate(tpOzones, tpiWeights, tpiIndexes);
+				const double nO3 = siToDu(tpiOlc.interpolate(tpOzones, tpiWeights, tpiIndexes));
 				const double p = tpiOlc.interpolate(tpAirPressures, tpiWeights, tpiIndexes);
 
 				/*
@@ -414,6 +414,10 @@ void Aco::process(Context& context) {
 		}
 	}
 	context.setLastComputedL(collocatedSegment, *this, lastL);
+}
+
+double Aco::siToDu(double nO3) {
+	return nO3 * 46698.0;
 }
 
 double Aco::ozoneTransmission(double cO3, double sza, double vza, double nO3) {

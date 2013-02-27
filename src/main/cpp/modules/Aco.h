@@ -29,6 +29,7 @@ public:
 	void start(Context& context);
 	void process(Context& context);
 
+	static double siToDu(double nO3);
 	static double ozoneTransmission(double cO3, double sza, double vza, double nO3);
 	static double surfaceReflectance(double rtoa, double ratm, double tvs, double rho, double tO3);
 	static double toaReflectance(double ltoa, double f0, double sza);

@@ -145,7 +145,7 @@ private:
 
 	static const double D2R = 3.14159265358979323846 / 180.0;
 
-	static const size_t HYP_CHANNEL_COUNT = 914;
+	static const size_t HYP_CHANNEL_COUNT = 833;
 	static const size_t SYN_CHANNEL_COUNT = 21;
 	static const size_t VGT_CHANNEL_COUNT = 4;
 };

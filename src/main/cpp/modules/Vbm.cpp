@@ -162,8 +162,8 @@ void Vbm::process(Context& context) {
 #endif
 	for (long l = firstL; l <= lastL; l++) {
 		valarray<double> synSurfaceReflectances(21);
-		valarray<double> hypSurfaceReflectances(914);
-		valarray<double> hypToaReflectances(914);
+		valarray<double> hypSurfaceReflectances(HYP_CHANNEL_COUNT);
+		valarray<double> hypToaReflectances(HYP_CHANNEL_COUNT);
 		valarray<double> vgtToaReflectances(4);
 		valarray<double> synWavelengths(21);
 
@@ -237,7 +237,7 @@ void Vbm::initPixel(Pixel& p, size_t index, size_t geoIndex, valarray<double>& t
 	p.vaaOlc = tiePointInterpolatorOlc->interpolate(vaaOlcTiePoints, tpiWeights, tpiIndexes);
 
 	p.airPressure = tiePointInterpolatorOlc->interpolate(airPressureTiePoints, tpiWeights, tpiIndexes);
-	p.ozone = tiePointInterpolatorOlc->interpolate(ozoneTiePoints, tpiWeights, tpiIndexes);
+	p.ozone = Aco::siToDu(tiePointInterpolatorOlc->interpolate(ozoneTiePoints, tpiWeights, tpiIndexes));
 	if (waterVapourTiePoints.size() != 0) {
 		p.waterVapour = tiePointInterpolatorOlc->interpolate(waterVapourTiePoints, tpiWeights, tpiIndexes);
 	} else {
@@ -361,7 +361,7 @@ void Vbm::performHyperspectralFiltering(const valarray<double>& hypToaReflectanc
 		double rs = 0.0;
 		double ws = 0.0;
 
-		for (size_t h = 0; h < 914; h++) {
+		for (size_t h = 0; h < hypSpectralResponse.size(); h++) {
 			const double r = hypSpectralResponse[h];
 			if (r > 0.0) {
 				const double hypSolarIrradiance = hypSolarIrradiances[h];
