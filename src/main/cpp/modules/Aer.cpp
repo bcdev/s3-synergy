@@ -22,6 +22,7 @@
 #include "../util/LookupTableReader.h"
 #include "../util/AuxdataProvider.h"
 
+#include "Aco.h"
 #include "Aer.h"
 
 using std::cos;
