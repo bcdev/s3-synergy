@@ -48,7 +48,7 @@
         </variable>
         <variable>
             <name>SLO_TP_lon</name>
-            <type>double</type>
+            <type>int</type>
             <segment_name>SLO_TP</segment_name>
             <dimensions>
                 <id>N_SLO_TP</id>
