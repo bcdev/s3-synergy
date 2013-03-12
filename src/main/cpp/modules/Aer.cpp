@@ -275,7 +275,7 @@ void PixelProvider::putPixel(size_t index, const Pixel& p) {
 	averagedSegment.getAccessor("SLO_VZA").setDouble(index, p.vzaSlo);
 	averagedSegment.getAccessor("O3").setDouble(index, p.ozone);
 	averagedSegment.getAccessor("WV").setDouble(index, p.waterVapour);
-	averagedSegment.getAccessor("P").setDouble(index, p.airPressure);
+	averagedSegment.getAccessor("AIRP").setDouble(index, p.airPressure);
 }
 
 Aer::Aer() :
@@ -304,7 +304,7 @@ void Aer::start(Context& context) {
 	averagedSegment->addVariable("SLO_VZA", Constants::TYPE_DOUBLE, 1.0, 0.0);
 	averagedSegment->addVariable("O3", Constants::TYPE_DOUBLE, 1.0, 0.0);
 	averagedSegment->addVariable("WV", Constants::TYPE_DOUBLE, 1.0, 0.0);
-	averagedSegment->addVariable("P", Constants::TYPE_DOUBLE, 1.0, 0.0);
+	averagedSegment->addVariable("AIRP", Constants::TYPE_DOUBLE, 1.0, 0.0);
 
 	averagedGrid = &averagedSegment->getGrid();
 
