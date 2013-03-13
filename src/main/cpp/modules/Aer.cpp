@@ -370,9 +370,7 @@ void Aer::process(Context& context) {
 				const size_t targetPixelIndex = averagedGrid->getIndex(targetK, targetL, targetM);
 				pixelProvider.getPixel(targetPixelIndex, p, true);
 
-				if (!(isSet(p.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)
-				        || isSet(p.flags, Constants::SY2_AEROSOL_HIGH_ERROR_FLAG)
-				        || isSet(p.flags, Constants::SY2_AEROSOL_TOO_LOW_FLAG))) {
+				if (!isSet(p.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)) {
 					double ws = 0.00000625;
 					double aot = aerosolOpticalThickness(p.lat);
 					double aotError = 0.0;
