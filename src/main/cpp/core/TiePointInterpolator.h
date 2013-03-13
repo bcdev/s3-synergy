@@ -127,7 +127,7 @@ void TiePointInterpolator<W>::prepare(W lon, W lat, valarray<W>& weights, valarr
 	fill(&weights[0], &weights[n], numeric_limits<W>::max());
 
 	for (size_t i = minIndex; i < maxIndex; i++) {
-		const W d = equirectangualarDistance(lon, lat, i);
+		const W d = haversineDistance(lon, lat, i);
 		for (size_t k = 0; k < n; k++) {
 			if (d < weights[k]) {
 				for (size_t l = n - 1; l > k; l--) {
