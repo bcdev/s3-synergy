@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <limits>
 #include <valarray>
 
 using std::valarray;
@@ -43,6 +44,7 @@ public:
 	W interpolate(const valarray<W>& field, const valarray<W>& weights, const valarray<size_t>& indexes) const;
 	static W cosineDistance(W targetLon, W targetLat, W sourceLon, W sourceLat);
 	static W haversineDistance(W targetLon, W targetLat, W sourceLon, W sourceLat);
+	static W equirectangularDistance(W targetLon, W targetLat, W sourceLon, W sourceLat);
 
 private:
 	class TiePointIndexComparator {
@@ -65,6 +67,7 @@ private:
 	void reorder(valarray<W>& array, const valarray<size_t>& reordering) const;
 	W cosineDistance(W lon, W lat, size_t i) const;
 	W haversineDistance(W lon, W lat, size_t i) const;
+	W equirectangualarDistance(W lon, W lat, size_t i) const;
 
 	valarray<W> tpLons;
 	valarray<W> tpLats;
@@ -112,6 +115,7 @@ void TiePointInterpolator<W>::prepare(W lon, W lat, valarray<W>& weights, valarr
 	using std::acos;
 	using std::fill;
 	using std::lower_bound;
+	using std::numeric_limits;
 
 	assert(weights.size() == indexes.size());
 
@@ -120,10 +124,10 @@ void TiePointInterpolator<W>::prepare(W lon, W lat, valarray<W>& weights, valarr
 	const size_t midIndex = lower_bound(&tpLats[0], &tpLats[tpLats.size()], lat) - &tpLats[0];
 	const size_t minIndex = midIndex >= range ? midIndex - range : 0;
 	const size_t maxIndex = midIndex <= tpLats.size() - range ? midIndex + range : tpLats.size();
-	fill(&weights[0], &weights[n], W(10.0));
+	fill(&weights[0], &weights[n], numeric_limits<W>::max());
 
 	for (size_t i = minIndex; i < maxIndex; i++) {
-		const W d = haversineDistance(lon, lat, i);
+		const W d = equirectangualarDistance(lon, lat, i);
 		for (size_t k = 0; k < n; k++) {
 			if (d < weights[k]) {
 				for (size_t l = n - 1; l > k; l--) {
@@ -139,7 +143,7 @@ void TiePointInterpolator<W>::prepare(W lon, W lat, valarray<W>& weights, valarr
 
 	W sum = W(0.0);
 	for (size_t i = 0; i < n; i++) {
-		const W d = abs(acos(weights[i])); // arc distance
+		const W d = weights[i]; // actually the distance
 		if (d == W(0.0)) {
 			for (size_t k = 0; k < n; k++) {
 				weights[k] = k != i ? W(0.0) : W(1.0);
@@ -169,18 +173,41 @@ W TiePointInterpolator<W>::interpolate(const valarray<W>& field, const valarray<
 
 template<class W>
 W TiePointInterpolator<W>::cosineDistance(W targetLon, W targetLat, W sourceLon, W sourceLat) {
+	using std::acos;
 	using std::cos;
 	using std::sin;
 	// http://www.movable-type.co.uk/scripts/latlong.html
-	return sin(targetLat * RAD) * sin(sourceLat * RAD) + cos(targetLat * RAD) * cos(sourceLat * RAD) * cos((targetLon - sourceLon) * RAD);
+	return acos(sin(targetLat * RAD) * sin(sourceLat * RAD) + cos(targetLat * RAD) * cos(sourceLat * RAD) * cos((targetLon - sourceLon) * RAD));
+}
+
+template<class W>
+W TiePointInterpolator<W>::equirectangularDistance(W targetLon, W targetLat, W sourceLon, W sourceLat) {
+	using std::cos;
+	using std::sin;
+	using std::sqrt;
+
+	double dLon = sourceLon - targetLon;
+	if (dLon < -180.0) {
+		dLon += 360.0;
+	} else if (dLon > 180.0) {
+		dLon -= 360.0;
+	}
+	// http://www.movable-type.co.uk/scripts/latlong.html
+	const double x = dLon * cos(0.5 * (sourceLat + targetLat) * RAD);
+	const double y = (sourceLat - targetLat);
+	const double d = x * x + y * y;
+
+	return sqrt(d);
 }
 
 template<class W>
 W TiePointInterpolator<W>::haversineDistance(W targetLon, W targetLat, W sourceLon, W sourceLat) {
+	using std::abs;
 	using std::atan2;
 	using std::cos;
 	using std::sin;
 	using std::sqrt;
+
 	// http://www.movable-type.co.uk/scripts/latlong.html
 	const double dLat = (targetLat - sourceLat) * RAD;
 	const double dLon = (targetLon - sourceLon) * RAD;
@@ -189,7 +216,7 @@ W TiePointInterpolator<W>::haversineDistance(W targetLon, W targetLat, W sourceL
 	const double a = s1 * s1 + s2 * s2 * cos(sourceLat * RAD) * cos(targetLat * RAD);
 	const double c = 2.0 * atan2(sqrt(a), sqrt(1.0 - a));
 
-	return c;
+	return abs(c);
 }
 
 template<class W>
@@ -200,6 +227,11 @@ inline W TiePointInterpolator<W>::cosineDistance(W lon, W lat, size_t i) const {
 template<class W>
 inline W TiePointInterpolator<W>::haversineDistance(W lon, W lat, size_t i) const {
 	return haversineDistance(lon, lat, tpLons[i], tpLats[i]);
+}
+
+template<class W>
+inline W TiePointInterpolator<W>::equirectangualarDistance(W lon, W lat, size_t i) const {
+	return equirectangularDistance(lon, lat, tpLons[i], tpLats[i]);
 }
 
 #endif /* TIEPOINTINTERPOLATOR_H_ */
