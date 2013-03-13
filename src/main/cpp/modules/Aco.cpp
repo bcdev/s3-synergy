@@ -48,6 +48,18 @@ void Aco::start(Context& context) {
 		addAccessor(context, collocatedSegment, targetSegmentDescriptor.getVariableDescriptor("SDR_" + lexical_cast<string>(i)));
 		addAccessor(context, collocatedSegment, targetSegmentDescriptor.getVariableDescriptor("SDR_" + lexical_cast<string>(i) + "_er"));
 	}
+
+	collocatedSegment.addVariable("SAA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+	collocatedSegment.addVariable("SZA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+	collocatedSegment.addVariable("VAA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+	collocatedSegment.addVariable("VZA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+	collocatedSegment.addVariable("SLN_VAA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+	collocatedSegment.addVariable("SLN_VZA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+	collocatedSegment.addVariable("SLO_VAA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+	collocatedSegment.addVariable("SLO_VZA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+	collocatedSegment.addVariable("O3", Constants::TYPE_DOUBLE, 1.0, 0.0);
+	collocatedSegment.addVariable("WV", Constants::TYPE_DOUBLE, 1.0, 0.0);
+	collocatedSegment.addVariable("AIRP", Constants::TYPE_DOUBLE, 1.0, 0.0);
 }
 
 void Aco::process(Context& context) {
@@ -139,6 +151,8 @@ void Aco::process(Context& context) {
 		errAccessors.push_back(&collocatedSegment.getAccessor("SDR_" + lexical_cast<string>(i) + "_er"));
 	}
 
+	Accessor& airPressureAccessor = collocatedSegment.getAccessor("AIRP");
+
 	const LookupTable<double>& lutOlcRatm = getLookupTable(context, Constants::AUX_ID_SYRT, "OLC_R_atm");
 	const LookupTable<double>& lutSlnRatm = getLookupTable(context, Constants::AUX_ID_SYRT, "SLN_R_atm");
 	const LookupTable<double>& lutSloRatm = getLookupTable(context, Constants::AUX_ID_SYRT, "SLO_R_atm");
@@ -210,6 +224,7 @@ void Aco::process(Context& context) {
 				tpiOlc.prepare(lonAccessor.getDouble(geoIndex), latAccessor.getDouble(geoIndex), tpiWeights, tpiIndexes);
 				const double nO3 = siToDu(tpiOlc.interpolate(tpOzones, tpiWeights, tpiIndexes));
 				const double p = tpiOlc.interpolate(tpAirPressures, tpiWeights, tpiIndexes);
+				airPressureAccessor.setDouble(i, p);
 
 				/*
 				 * Surface reflectance for OLC channels

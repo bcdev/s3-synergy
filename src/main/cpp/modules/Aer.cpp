@@ -221,7 +221,7 @@ Pixel& PixelProvider::getPixel(size_t index, Pixel& p, bool aerosolOnly) const {
 		if (waterVapourTiePoints.size() != 0) {
 			p.waterVapour = tiePointInterpolatorOlc.interpolate(waterVapourTiePoints, tpiWeights, tpiIndexes);
 		} else {
-			p.waterVapour = 0.2;
+			p.waterVapour = 2.0;
 		}
 
 		tiePointInterpolatorSln.prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
