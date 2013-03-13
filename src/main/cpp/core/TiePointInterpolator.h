@@ -120,12 +120,12 @@ void TiePointInterpolator<W>::prepare(W lon, W lat, valarray<W>& weights, valarr
 	const size_t midIndex = lower_bound(&tpLats[0], &tpLats[tpLats.size()], lat) - &tpLats[0];
 	const size_t minIndex = midIndex >= range ? midIndex - range : 0;
 	const size_t maxIndex = midIndex <= tpLats.size() - range ? midIndex + range : tpLats.size();
-	fill(&weights[0], &weights[n], W(-1.0));
+	fill(&weights[0], &weights[n], W(10.0));
 
 	for (size_t i = minIndex; i < maxIndex; i++) {
-		const W d = cosineDistance(lon, lat, i);
+		const W d = haversineDistance(lon, lat, i);
 		for (size_t k = 0; k < n; k++) {
-			if (d > weights[k]) {
+			if (d < weights[k]) {
 				for (size_t l = n - 1; l > k; l--) {
 					weights[l] = weights[l - 1];
 					indexes[l] = indexes[l - 1];
