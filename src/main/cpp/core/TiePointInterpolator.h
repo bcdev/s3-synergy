@@ -116,7 +116,7 @@ void TiePointInterpolator<W>::prepare(W lon, W lat, valarray<W>& weights, valarr
 	assert(weights.size() == indexes.size());
 
 	const size_t n = weights.size();
-	const size_t range = 150;
+	const size_t range = 200;
 	const size_t midIndex = lower_bound(&tpLats[0], &tpLats[tpLats.size()], lat) - &tpLats[0];
 	const size_t minIndex = midIndex >= range ? midIndex - range : 0;
 	const size_t maxIndex = midIndex <= tpLats.size() - range ? midIndex + range : tpLats.size();
