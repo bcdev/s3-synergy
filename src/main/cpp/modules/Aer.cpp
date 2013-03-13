@@ -368,7 +368,7 @@ void Aer::process(Context& context) {
 			for (long targetM = averagedGrid->getMinM(); targetM <= averagedGrid->getMaxM(); targetM++) {
                 const long targetN = targetM + averagedGrid->getSizeM() * targetK;
 				const size_t targetPixelIndex = averagedGrid->getIndex(targetK, targetL, targetM);
-				pixelProvider.getPixel(targetPixelIndex, p, true);
+				pixelProvider.getPixel(targetPixelIndex, p);
 
 				if (!isSet(p.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)) {
 					double ws = 0.00000625;
