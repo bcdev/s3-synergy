@@ -141,9 +141,7 @@ double ErrorMetric::computeNdvi(const Pixel& p) const {
 	double f1 = p.solarIrradiances[ndviIndices[0] - 1];
 	double f2 = p.solarIrradiances[ndviIndices[1] - 1];
 
-	if (l1 == Constants::FILL_VALUE_DOUBLE || l2 == Constants::FILL_VALUE_DOUBLE
-			|| f1 == Constants::FILL_VALUE_DOUBLE
-			|| f2 == Constants::FILL_VALUE_DOUBLE) {
+	if (l1 <= 0.0 || l2 <= 0.0 || f1 <= 0.0 || f2 <= 0.0) {
 		return 0.5;
 	}
 
@@ -158,7 +156,7 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	unsigned slsCount = 0;
 
 	for (size_t i = 0; i < 18; i++) {
-		validMask[i] = p.radiances[i] != Constants::FILL_VALUE_DOUBLE;
+		validMask[i] = p.radiances[i] > 0.0;
 		if (validMask[i]) {
 			sum2 += spectralWeights[i];
 			if (i < 18) {
@@ -171,7 +169,7 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	for (size_t o = 0; o < 2; o++) {
 		for (size_t j = 0; j < 6; j++) {
 			const int i = 18 + 6 * o + j;
-			validMask[i] = p.radiances[i] != Constants::FILL_VALUE_DOUBLE;
+			validMask[i] = p.radiances[i] > 0.0;
 			if (validMask[i]) {
 				sum8 += angularWeights(o, j);
 				slsCount++;
@@ -288,7 +286,7 @@ void ErrorMetric::setAerosolOpticalThickness(double aot) {
 		}
 	}
 
-	if (doSLN || doSLS) {
+	if (doSLS) {
 		coordinates[0] = abs(pixel->saa - pixel->vaaSln);
 		coordinates[2] = pixel->vzaSln;
 
