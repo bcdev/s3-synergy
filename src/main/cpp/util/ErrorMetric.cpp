@@ -157,7 +157,7 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	unsigned slsCount = 0;
 
 	for (size_t i = 0; i < 24; i++) { // end value should be 30, but SLO data is not aligned properly in L1C test product
-		validMask[i] = p.radiances[i] > 0.0;
+		validMask[i] = p.radiances[i] > 0.0 && spectralWeights[i] > 0.0;
 		if (validMask[i]) {
 			sum2 += spectralWeights[i];
 			if (i < 18) {
@@ -172,7 +172,7 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	for (size_t o = 0; o < 2; o++) {
 		for (size_t j = 0; j < 6; j++) {
 			const int i = 18 + 6 * o + j;
-			validMask[i] = p.radiances[i] > 0.0;
+			validMask[i] = p.radiances[i] > 0.0 && angularWeights(o, j) > 0.0;
 			if (validMask[i]) {
 				sum8 += angularWeights(o, j);
 				slsCount++;
