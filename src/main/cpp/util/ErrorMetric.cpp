@@ -198,6 +198,14 @@ double ErrorMetric::computeRss2(valarray<double>& x) {
 			}
 		}
 	}
+	if (doSLN) {
+		for (size_t i = 18; i < 24; i++) {
+			if (validMask[i]) {
+				const double rSpec = x[0] * vegetationModel[i] + x[1] * soilModel[i];
+				sum += spectralWeights[i] * square(sdrs[i] - rSpec);
+			}
+		}
+	}
 	return sum;
 }
 
@@ -286,7 +294,7 @@ void ErrorMetric::setAerosolOpticalThickness(double aot) {
 		}
 	}
 
-	if (doSLS) {
+	if (doSLN || doSLS) {
 		coordinates[0] = abs(pixel->saa - pixel->vaaSln);
 		coordinates[2] = pixel->vzaSln;
 
