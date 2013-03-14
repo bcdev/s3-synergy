@@ -155,7 +155,7 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	unsigned slnCount = 0;
 	unsigned slsCount = 0;
 
-	for (size_t i = 0; i < 18; i++) {
+	for (size_t i = 0; i < 24; i++) {
 		validMask[i] = p.radiances[i] > 0.0;
 		if (validMask[i]) {
 			sum2 += spectralWeights[i];
