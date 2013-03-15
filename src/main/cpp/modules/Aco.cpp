@@ -319,9 +319,9 @@ void Aco::process(Context& context) {
 						const double rho = matRho[b];
 						rboa[b] = surfaceReflectance(rtoa[b], ratm, tv[b], rho, tO3[b]);
 
-						//if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
+						if (rboa[b] >= 0.0 && rboa[b] <= 1.0) {
 							sdrAccessors[b]->setDouble(i, rboa[b]);
-						//}
+						}
 					}
 				}
 

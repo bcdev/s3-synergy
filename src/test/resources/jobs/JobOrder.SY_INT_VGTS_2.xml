@@ -17,8 +17,8 @@
     <Ipf_Conf>
         <Processor_Name>S3L2PP-SYN</Processor_Name>
         <Version>01.00</Version>
-        <Stdout_Log_Level>INFO</Stdout_Log_Level> <!-- Default: INFO -->
-        <Stderr_Log_Level>INFO</Stderr_Log_Level> <!-- Default: INFO -->
+        <Stdout_Log_Level>DEBUG</Stdout_Log_Level> <!-- Default: INFO -->
+        <Stderr_Log_Level>DEBUG</Stderr_Log_Level> <!-- Default: INFO -->
         <Test>true</Test>
         <Breakpoint_Enable>false</Breakpoint_Enable>
         <Acquisition_Station>unknown</Acquisition_Station>
