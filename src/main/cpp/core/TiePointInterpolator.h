@@ -115,21 +115,20 @@ void TiePointInterpolator<W>::prepare(W lon, W lat, valarray<W>& weights, valarr
 	using std::acos;
 	using std::fill;
 	using std::lower_bound;
-	using std::numeric_limits;
 
 	assert(weights.size() == indexes.size());
 
 	const size_t n = weights.size();
-	const size_t range = 200;
+	const size_t range = 150;
 	const size_t midIndex = lower_bound(&tpLats[0], &tpLats[tpLats.size()], lat) - &tpLats[0];
 	const size_t minIndex = midIndex >= range ? midIndex - range : 0;
 	const size_t maxIndex = midIndex <= tpLats.size() - range ? midIndex + range : tpLats.size();
-	fill(&weights[0], &weights[n], numeric_limits<W>::max());
+	fill(&weights[0], &weights[n], W(-1.0));
 
 	for (size_t i = minIndex; i < maxIndex; i++) {
-		const W d = haversineDistance(lon, lat, i);
+		const W d = cosineDistance(lon, lat, i);
 		for (size_t k = 0; k < n; k++) {
-			if (d < weights[k]) {
+			if (d > weights[k]) {
 				for (size_t l = n - 1; l > k; l--) {
 					weights[l] = weights[l - 1];
 					indexes[l] = indexes[l - 1];
@@ -143,7 +142,7 @@ void TiePointInterpolator<W>::prepare(W lon, W lat, valarray<W>& weights, valarr
 
 	W sum = W(0.0);
 	for (size_t i = 0; i < n; i++) {
-		const W d = weights[i]; // actually the distance
+		const W d = abs(acos(weights[i])); // arc distance
 		if (d == W(0.0)) {
 			for (size_t k = 0; k < n; k++) {
 				weights[k] = k != i ? W(0.0) : W(1.0);
@@ -173,12 +172,22 @@ W TiePointInterpolator<W>::interpolate(const valarray<W>& field, const valarray<
 
 template<class W>
 W TiePointInterpolator<W>::cosineDistance(W targetLon, W targetLat, W sourceLon, W sourceLat) {
+	using std::cos;
+	using std::sin;
+	// http://www.movable-type.co.uk/scripts/latlong.html
+	return sin(targetLat * RAD) * sin(sourceLat * RAD) + cos(targetLat * RAD) * cos(sourceLat * RAD) * cos((targetLon - sourceLon) * RAD);
+}
+
+/*
+template<class W>
+W TiePointInterpolator<W>::cosineDistance(W targetLon, W targetLat, W sourceLon, W sourceLat) {
 	using std::acos;
 	using std::cos;
 	using std::sin;
 	// http://www.movable-type.co.uk/scripts/latlong.html
 	return acos(sin(targetLat * RAD) * sin(sourceLat * RAD) + cos(targetLat * RAD) * cos(sourceLat * RAD) * cos((targetLon - sourceLon) * RAD));
 }
+*/
 
 template<class W>
 W TiePointInterpolator<W>::equirectangularDistance(W targetLon, W targetLat, W sourceLon, W sourceLat) {

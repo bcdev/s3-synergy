@@ -265,6 +265,8 @@ void PixelProvider::putPixel(size_t index, const Pixel& p) {
 	} else {
 		alpha550.setDouble(index, p.angstromExponent);
 	}
+
+	/*
 	averagedSegment.getAccessor("SAA").setDouble(index, p.saa);
 	averagedSegment.getAccessor("SZA").setDouble(index, p.sza);
 	averagedSegment.getAccessor("VAA").setDouble(index, p.vaaOlc);
@@ -276,6 +278,7 @@ void PixelProvider::putPixel(size_t index, const Pixel& p) {
 	averagedSegment.getAccessor("O3").setDouble(index, p.ozone);
 	averagedSegment.getAccessor("WV").setDouble(index, p.waterVapour);
 	averagedSegment.getAccessor("AIRP").setDouble(index, p.airPressure);
+	*/
 }
 
 Aer::Aer() :
@@ -294,6 +297,7 @@ void Aer::start(Context& context) {
 	averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("A550"));
 	averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("AMIN"));
 
+	/*
 	averagedSegment->addVariable("SAA", Constants::TYPE_DOUBLE, 1.0, 0.0);
 	averagedSegment->addVariable("SZA", Constants::TYPE_DOUBLE, 1.0, 0.0);
 	averagedSegment->addVariable("VAA", Constants::TYPE_DOUBLE, 1.0, 0.0);
@@ -305,6 +309,7 @@ void Aer::start(Context& context) {
 	averagedSegment->addVariable("O3", Constants::TYPE_DOUBLE, 1.0, 0.0);
 	averagedSegment->addVariable("WV", Constants::TYPE_DOUBLE, 1.0, 0.0);
 	averagedSegment->addVariable("AIRP", Constants::TYPE_DOUBLE, 1.0, 0.0);
+	*/
 
 	averagedGrid = &averagedSegment->getGrid();
 

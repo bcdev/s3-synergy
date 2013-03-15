@@ -49,6 +49,7 @@ void Aco::start(Context& context) {
 		addAccessor(context, collocatedSegment, targetSegmentDescriptor.getVariableDescriptor("SDR_" + lexical_cast<string>(i) + "_er"));
 	}
 
+	/*
 	collocatedSegment.addVariable("SAA", Constants::TYPE_DOUBLE, 1.0, 0.0);
 	collocatedSegment.addVariable("SZA", Constants::TYPE_DOUBLE, 1.0, 0.0);
 	collocatedSegment.addVariable("VAA", Constants::TYPE_DOUBLE, 1.0, 0.0);
@@ -60,6 +61,7 @@ void Aco::start(Context& context) {
 	collocatedSegment.addVariable("O3", Constants::TYPE_DOUBLE, 1.0, 0.0);
 	collocatedSegment.addVariable("WV", Constants::TYPE_DOUBLE, 1.0, 0.0);
 	collocatedSegment.addVariable("AIRP", Constants::TYPE_DOUBLE, 1.0, 0.0);
+	*/
 }
 
 void Aco::process(Context& context) {
@@ -151,6 +153,7 @@ void Aco::process(Context& context) {
 		errAccessors.push_back(&collocatedSegment.getAccessor("SDR_" + lexical_cast<string>(i) + "_er"));
 	}
 
+	/*
 	Accessor& saaAccessor = collocatedSegment.getAccessor("SAA");
 	Accessor& szaAccessor = collocatedSegment.getAccessor("SZA");
 	Accessor& vaaOlcAccessor = collocatedSegment.getAccessor("VAA");
@@ -162,6 +165,7 @@ void Aco::process(Context& context) {
 	Accessor& ozoneAccessor = collocatedSegment.getAccessor("O3");
 	Accessor& wvAccessor = collocatedSegment.getAccessor("WV");
 	Accessor& airPressureAccessor = collocatedSegment.getAccessor("AIRP");
+	*/
 
 	const LookupTable<double>& lutOlcRatm = getLookupTable(context, Constants::AUX_ID_SYRT, "OLC_R_atm");
 	const LookupTable<double>& lutSlnRatm = getLookupTable(context, Constants::AUX_ID_SYRT, "SLN_R_atm");
@@ -242,6 +246,7 @@ void Aco::process(Context& context) {
 				const double vaaOlc = tpiOlc.interpolate(tpVaasOlc, tpiWeights, tpiIndexes);
 				const double vzaOlc = tpiOlc.interpolate(tpVzasOlc, tpiWeights, tpiIndexes);
 
+				/*
 				saaAccessor.setDouble(i, saaOlc);
 				szaAccessor.setDouble(i, szaOlc);
 				vaaOlcAccessor.setDouble(i, vaaOlc);
@@ -250,6 +255,7 @@ void Aco::process(Context& context) {
 				ozoneAccessor.setDouble(i, nO3);
 				wvAccessor.setDouble(i, wv);
 				airPressureAccessor.setDouble(i, p);
+				*/
 
 				coordinates[0] = abs(saaOlc - vaaOlc); // ADA
 				coordinates[1] = szaOlc; // SZA
@@ -293,8 +299,10 @@ void Aco::process(Context& context) {
 				const double vaaSln = tpiSln.interpolate(tpVaasSln, tpiWeights, tpiIndexes);
 				const double vzaSln = tpiSln.interpolate(tpVzasSln, tpiWeights, tpiIndexes);
 
+				/*
 				vaaSlnAccessor.setDouble(i, vaaSln);
 				vzaSlnAccessor.setDouble(i, vzaSln);
+				*/
 
 				coordinates[0] = abs(saaOlc - vaaSln); // ADA
 				coordinates[1] = szaOlc; // SZA
@@ -333,8 +341,10 @@ void Aco::process(Context& context) {
 				const double vaaSlo = tpiSlo.interpolate(tpVaasSlo, tpiWeights, tpiIndexes);
 				const double vzaSlo = tpiSlo.interpolate(tpVzasSlo, tpiWeights, tpiIndexes);
 
+				/*
 				vaaSloAccessor.setDouble(i, vaaSlo);
 				vzaSloAccessor.setDouble(i, vzaSlo);
+				*/
 
 				coordinates[0] = abs(saaOlc - vaaSlo); // ADA
 				coordinates[1] = szaOlc; // SZA
