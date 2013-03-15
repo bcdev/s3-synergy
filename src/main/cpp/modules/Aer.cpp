@@ -221,7 +221,7 @@ Pixel& PixelProvider::getPixel(size_t index, Pixel& p, bool aerosolOnly) const {
 		if (waterVapourTiePoints.size() != 0) {
 			p.waterVapour = tiePointInterpolatorOlc.interpolate(waterVapourTiePoints, tpiWeights, tpiIndexes);
 		} else {
-			p.waterVapour = 2.0;
+			p.waterVapour = 0.2;
 		}
 
 		tiePointInterpolatorSln.prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
@@ -265,20 +265,6 @@ void PixelProvider::putPixel(size_t index, const Pixel& p) {
 	} else {
 		alpha550.setDouble(index, p.angstromExponent);
 	}
-
-	/*
-	averagedSegment.getAccessor("SAA").setDouble(index, p.saa);
-	averagedSegment.getAccessor("SZA").setDouble(index, p.sza);
-	averagedSegment.getAccessor("VAA").setDouble(index, p.vaaOlc);
-	averagedSegment.getAccessor("VZA").setDouble(index, p.vzaOlc);
-	averagedSegment.getAccessor("SLN_VAA").setDouble(index, p.vaaSln);
-	averagedSegment.getAccessor("SLN_VZA").setDouble(index, p.vzaSln);
-	averagedSegment.getAccessor("SLO_VAA").setDouble(index, p.vaaSlo);
-	averagedSegment.getAccessor("SLO_VZA").setDouble(index, p.vzaSlo);
-	averagedSegment.getAccessor("O3").setDouble(index, p.ozone);
-	averagedSegment.getAccessor("WV").setDouble(index, p.waterVapour);
-	averagedSegment.getAccessor("AIRP").setDouble(index, p.airPressure);
-	*/
 }
 
 Aer::Aer() :
@@ -296,20 +282,6 @@ void Aer::start(Context& context) {
 	averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550_er"));
 	averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("A550"));
 	averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("AMIN"));
-
-	/*
-	averagedSegment->addVariable("SAA", Constants::TYPE_DOUBLE, 1.0, 0.0);
-	averagedSegment->addVariable("SZA", Constants::TYPE_DOUBLE, 1.0, 0.0);
-	averagedSegment->addVariable("VAA", Constants::TYPE_DOUBLE, 1.0, 0.0);
-	averagedSegment->addVariable("VZA", Constants::TYPE_DOUBLE, 1.0, 0.0);
-	averagedSegment->addVariable("SLN_VAA", Constants::TYPE_DOUBLE, 1.0, 0.0);
-	averagedSegment->addVariable("SLN_VZA", Constants::TYPE_DOUBLE, 1.0, 0.0);
-	averagedSegment->addVariable("SLO_VAA", Constants::TYPE_DOUBLE, 1.0, 0.0);
-	averagedSegment->addVariable("SLO_VZA", Constants::TYPE_DOUBLE, 1.0, 0.0);
-	averagedSegment->addVariable("O3", Constants::TYPE_DOUBLE, 1.0, 0.0);
-	averagedSegment->addVariable("WV", Constants::TYPE_DOUBLE, 1.0, 0.0);
-	averagedSegment->addVariable("AIRP", Constants::TYPE_DOUBLE, 1.0, 0.0);
-	*/
 
 	averagedGrid = &averagedSegment->getGrid();
 
@@ -373,9 +345,11 @@ void Aer::process(Context& context) {
 			for (long targetM = averagedGrid->getMinM(); targetM <= averagedGrid->getMaxM(); targetM++) {
                 const long targetN = targetM + averagedGrid->getSizeM() * targetK;
 				const size_t targetPixelIndex = averagedGrid->getIndex(targetK, targetL, targetM);
-				pixelProvider.getPixel(targetPixelIndex, p);
+				pixelProvider.getPixel(targetPixelIndex, p, true);
 
-				if (!isSet(p.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)) {
+				if (!(isSet(p.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)
+				        || isSet(p.flags, Constants::SY2_AEROSOL_HIGH_ERROR_FLAG)
+				        || isSet(p.flags, Constants::SY2_AEROSOL_TOO_LOW_FLAG))) {
 					double ws = 0.00000625;
 					double aot = aerosolOpticalThickness(p.lat);
 					double aotError = 0.0;

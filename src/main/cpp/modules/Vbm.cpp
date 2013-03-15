@@ -241,7 +241,7 @@ void Vbm::initPixel(Pixel& p, size_t index, size_t geoIndex, valarray<double>& t
 	if (waterVapourTiePoints.size() != 0) {
 		p.waterVapour = tiePointInterpolatorOlc->interpolate(waterVapourTiePoints, tpiWeights, tpiIndexes);
 	} else {
-		p.waterVapour = 2.0;
+		p.waterVapour = 0.2;
 	}
 
 	tiePointInterpolatorSln->prepare(p.lon, p.lat, tpiWeights, tpiIndexes);
