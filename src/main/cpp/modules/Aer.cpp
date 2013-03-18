@@ -265,6 +265,19 @@ void PixelProvider::putPixel(size_t index, const Pixel& p) {
 	} else {
 		alpha550.setDouble(index, p.angstromExponent);
 	}
+	if (true) { // TODO - use breakpoint setting from job order file
+		averagedSegment.getAccessor("SAA").setDouble(index, p.saa);
+		averagedSegment.getAccessor("SZA").setDouble(index, p.sza);
+		averagedSegment.getAccessor("VAA").setDouble(index, p.vaaOlc);
+		averagedSegment.getAccessor("VZA").setDouble(index, p.vzaOlc);
+		averagedSegment.getAccessor("SLN_VAA").setDouble(index, p.vaaSln);
+		averagedSegment.getAccessor("SLN_VZA").setDouble(index, p.vzaSln);
+		averagedSegment.getAccessor("SLO_VAA").setDouble(index, p.vaaSlo);
+		averagedSegment.getAccessor("SLO_VZA").setDouble(index, p.vzaSlo);
+		averagedSegment.getAccessor("O3").setDouble(index, p.ozone);
+		averagedSegment.getAccessor("WV").setDouble(index, p.waterVapour);
+		averagedSegment.getAccessor("AP").setDouble(index, p.airPressure);
+	}
 }
 
 Aer::Aer() :
@@ -282,6 +295,20 @@ void Aer::start(Context& context) {
 	averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("T550_er"));
 	averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("A550"));
 	averagedSegment->addVariable(collocatedSegmentDescriptor.getVariableDescriptor("AMIN"));
+
+	if (true) { // TODO - use breakpoint setting from job order file
+		averagedSegment->addVariable("SAA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+		averagedSegment->addVariable("SZA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+		averagedSegment->addVariable("VAA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+		averagedSegment->addVariable("VZA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+		averagedSegment->addVariable("SLN_VAA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+		averagedSegment->addVariable("SLN_VZA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+		averagedSegment->addVariable("SLO_VAA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+		averagedSegment->addVariable("SLO_VZA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+		averagedSegment->addVariable("O3", Constants::TYPE_DOUBLE, 1.0, 0.0);
+		averagedSegment->addVariable("WV", Constants::TYPE_DOUBLE, 1.0, 0.0);
+		averagedSegment->addVariable("AP", Constants::TYPE_DOUBLE, 1.0, 0.0);
+	}
 
 	averagedGrid = &averagedSegment->getGrid();
 
