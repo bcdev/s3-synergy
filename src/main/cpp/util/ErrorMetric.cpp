@@ -119,8 +119,8 @@ double ErrorMetric::getValue(double x) {
 		pn[i + 4] = initialOmegas[i];
 	}
 
-	if (doOLC) {
-		MultiMin::chol2D(pn, p0, u, sdrs, 0, 18, validMask, spectralWeights, vegetationModel, soilModel);
+	if (doOLC || doSLN || doSLO) {
+		MultiMin::chol2D(pn, p0, u, sdrs, 0, 30, validMask, spectralWeights, vegetationModel, soilModel);
 	}
 	if (doSLS) {
 		for (size_t i = 2; i < 10; i++) {
@@ -141,9 +141,7 @@ double ErrorMetric::computeNdvi(const Pixel& p) const {
 	double f1 = p.solarIrradiances[ndviIndices[0] - 1];
 	double f2 = p.solarIrradiances[ndviIndices[1] - 1];
 
-	if (l1 == Constants::FILL_VALUE_DOUBLE || l2 == Constants::FILL_VALUE_DOUBLE
-			|| f1 == Constants::FILL_VALUE_DOUBLE
-			|| f2 == Constants::FILL_VALUE_DOUBLE) {
+	if (l1 <= 0.0 || l2 <= 0.0 || f1 <= 0.0 || f2 <= 0.0) {
 		return 0.5;
 	}
 
@@ -155,23 +153,26 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	double sum8 = 0.0;
 	unsigned olcCount = 0;
 	unsigned slnCount = 0;
+	unsigned sloCount = 0;
 	unsigned slsCount = 0;
 
-	for (size_t i = 0; i < 18; i++) {
-		validMask[i] = p.radiances[i] != Constants::FILL_VALUE_DOUBLE;
+	for (size_t i = 0; i < 30; i++) {
+		validMask[i] = p.radiances[i] > 0.0 && spectralWeights[i] > 0.0;
 		if (validMask[i]) {
 			sum2 += spectralWeights[i];
 			if (i < 18) {
 				olcCount++;
-			} else {
+			} else if (i < 24) {
 				slnCount++;
+			} else {
+				sloCount++;
 			}
 		}
 	}
 	for (size_t o = 0; o < 2; o++) {
 		for (size_t j = 0; j < 6; j++) {
 			const int i = 18 + 6 * o + j;
-			validMask[i] = p.radiances[i] != Constants::FILL_VALUE_DOUBLE;
+			validMask[i] = p.radiances[i] > 0.0 && angularWeights(o, j) > 0.0;
 			if (validMask[i]) {
 				sum8 += angularWeights(o, j);
 				slsCount++;
@@ -181,8 +182,9 @@ void ErrorMetric::setPixel(const Pixel& p) {
 	this->sum2 = sum2;
 	this->sum8 = sum8;
 	this->doOLC = olcCount >= 12;
-	this->doSLN = slnCount >= 1;
-	this->doSLS = slsCount >= 11;
+	this->doSLN = slnCount >= 2;
+	this->doSLO = sloCount >= 2;
+	this->doSLS = slsCount >= 8;
 
 	const double ndvi = computeNdvi(p);
 	totalAngularWeight = lutTotalAngularWeights.getScalar(&ndvi, lutWeights, lutWorkspace);
@@ -192,8 +194,8 @@ void ErrorMetric::setPixel(const Pixel& p) {
 
 double ErrorMetric::computeRss2(valarray<double>& x) {
 	double sum = 0.0;
-	if (doOLC) {
-		for (size_t i = 0; i < 18; i++) {
+	if (doOLC || doSLN || doSLO) {
+		for (size_t i = 0; i < 30; i++) {
 			if (validMask[i]) {
 				const double rSpec = x[0] * vegetationModel[i] + x[1] * soilModel[i];
 				sum += spectralWeights[i] * square(sdrs[i] - rSpec);
@@ -313,7 +315,7 @@ void ErrorMetric::setAerosolOpticalThickness(double aot) {
 		}
 	}
 
-	if (doSLS) {
+	if (doSLO || doSLS) {
 		coordinates[0] = abs(pixel->saa - pixel->vaaSlo);
 		coordinates[2] = pixel->vzaSlo;
 

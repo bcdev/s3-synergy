@@ -72,6 +72,7 @@ private:
 
     bool doOLC;
     bool doSLN;
+    bool doSLO;
     bool doSLS;
 	double sum2;
     double sum8;
