@@ -44,7 +44,10 @@ public:
 	}
 
 protected:
-	static string getAuxdataPath() {
+    template<class T>
+    static void copy(const valarray<T>& s, valarray<T>& t);
+
+    static string getAuxdataPath() {
 		return Constants::S3_SYNERGY_HOME + "/files/";
 	}
 
@@ -74,6 +77,16 @@ protected:
 
     LookupTable<double>& getLookupTable(Context& context, const string& auxId, const string& varName) const;
 };
+
+template<class T>
+void BasicModule::copy(const std::valarray<T>& s, std::valarray<T>& t) {
+	using std::copy;
+
+	if (t.size() != s.size()) {
+		t.resize(s.size());
+	}
+    copy(&s[0], &s[s.size()], &t[0]);
+}
 
 #endif	/* BASICMODULE_H */
 

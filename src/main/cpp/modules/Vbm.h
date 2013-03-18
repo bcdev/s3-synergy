@@ -78,9 +78,6 @@ private:
 	uint8_t performQualityFlagging(Pixel& p, const valarray<double>& vgtToaReflectances) const;
 	void setValues(size_t index, Pixel& p, uint8_t flags, const valarray<double>& vgtToaReflectances, const valarray<double>& synSurfaceReflectances);
 
-    template<class T>
-    static void copy(const valarray<T>& s, valarray<T>& t);
-
     static double aerosolOpticalThickness(double lat);
 
 	static double surfaceReflectance(double nO3, double vza, double sza, double f0, double ltoa,
@@ -149,15 +146,5 @@ private:
 	static const size_t SYN_CHANNEL_COUNT = 21;
 	static const size_t VGT_CHANNEL_COUNT = 4;
 };
-
-template<class T>
-void Vbm::copy(const std::valarray<T>& s, std::valarray<T>& t) {
-	using std::copy;
-
-	if (t.size() != s.size()) {
-		t.resize(s.size());
-	}
-    copy(&s[0], &s[s.size()], &t[0]);
-}
 
 #endif /* VBM_H_ */

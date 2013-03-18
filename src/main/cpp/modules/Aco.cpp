@@ -48,6 +48,19 @@ void Aco::start(Context& context) {
 		addAccessor(context, collocatedSegment, targetSegmentDescriptor.getVariableDescriptor("SDR_" + lexical_cast<string>(i)));
 		addAccessor(context, collocatedSegment, targetSegmentDescriptor.getVariableDescriptor("SDR_" + lexical_cast<string>(i) + "_er"));
 	}
+	if (true) { // TODO - use breakpoint settings from job order file
+		collocatedSegment.addVariable("SAA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+		collocatedSegment.addVariable("SZA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+		collocatedSegment.addVariable("VAA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+		collocatedSegment.addVariable("VZA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+		collocatedSegment.addVariable("SLN_VAA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+		collocatedSegment.addVariable("SLN_VZA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+		collocatedSegment.addVariable("SLO_VAA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+		collocatedSegment.addVariable("SLO_VZA", Constants::TYPE_DOUBLE, 1.0, 0.0);
+		collocatedSegment.addVariable("O3", Constants::TYPE_DOUBLE, 1.0, 0.0);
+		collocatedSegment.addVariable("WV", Constants::TYPE_DOUBLE, 1.0, 0.0);
+		collocatedSegment.addVariable("AP", Constants::TYPE_DOUBLE, 1.0, 0.0);
+	}
 }
 
 void Aco::process(Context& context) {
@@ -88,6 +101,10 @@ void Aco::process(Context& context) {
 	const valarray<double> tpVaasSlo = tpVaaSlo.getDoubles();
 	const valarray<double> tpOzones = tpOzone.getDoubles();
 	const valarray<double> tpAirPressures = tpAirPressure.getDoubles();
+	valarray<double> tpWaterVapours;
+	if (tpSegmentOlc.hasVariable("water_vapour")) {
+		copy(tpSegmentOlc.getAccessor("water_vapour").getDoubles(), tpWaterVapours);
+	}
 
 	const TiePointInterpolator<double> tpiOlc = TiePointInterpolator<double>(tpLonsOlc, tpLatsOlc);
 	const TiePointInterpolator<double> tpiSln = TiePointInterpolator<double>(tpLonsSln, tpLatsSln);
@@ -204,12 +221,10 @@ void Aco::process(Context& context) {
 					continue;
 				}
 
-				// TODO - get from auxdata when available
-				const double wv = 2.0;
-
 				tpiOlc.prepare(lonAccessor.getDouble(geoIndex), latAccessor.getDouble(geoIndex), tpiWeights, tpiIndexes);
 				const double nO3 = siToDu(tpiOlc.interpolate(tpOzones, tpiWeights, tpiIndexes));
 				const double p = tpiOlc.interpolate(tpAirPressures, tpiWeights, tpiIndexes);
+				const double wv = tpWaterVapours.size() != 0 ? tpiOlc.interpolate(tpWaterVapours, tpiWeights, tpiIndexes) : 2.0;
 
 				/*
 				 * Surface reflectance for OLC channels
@@ -218,6 +233,16 @@ void Aco::process(Context& context) {
 				const double saaOlc = tpiOlc.interpolate(tpSaasOlc, tpiWeights, tpiIndexes);
 				const double vzaOlc = tpiOlc.interpolate(tpVzasOlc, tpiWeights, tpiIndexes);
 				const double vaaOlc = tpiOlc.interpolate(tpVaasOlc, tpiWeights, tpiIndexes);
+
+				if (true) { // TODO - use breakpoint settings from job order file
+					collocatedSegment.getAccessor("SAA").setDouble(i, saaOlc);
+					collocatedSegment.getAccessor("SZA").setDouble(i, szaOlc);
+					collocatedSegment.getAccessor("VAA").setDouble(i, vaaOlc);
+					collocatedSegment.getAccessor("VZA").setDouble(i, vzaOlc);
+					collocatedSegment.getAccessor("O3").setDouble(i, nO3);
+					collocatedSegment.getAccessor("WV").setDouble(i, wv);
+					collocatedSegment.getAccessor("AP").setDouble(i, p);
+				}
 
 				coordinates[0] = abs(saaOlc - vaaOlc); // ADA
 				coordinates[1] = szaOlc; // SZA
@@ -261,6 +286,11 @@ void Aco::process(Context& context) {
 				const double vzaSln = tpiSln.interpolate(tpVzasSln, tpiWeights, tpiIndexes);
 				const double vaaSln = tpiSln.interpolate(tpVaasSln, tpiWeights, tpiIndexes);
 
+				if (true) { // TODO - use breakpoint settings from job order file
+					collocatedSegment.getAccessor("SLN_VAA").setDouble(i, vaaSln);
+					collocatedSegment.getAccessor("SLN_VZA").setDouble(i, vzaSln);
+				}
+
 				coordinates[0] = abs(saaOlc - vaaSln); // ADA
 				coordinates[1] = szaOlc; // SZA
 				coordinates[2] = vzaSln; // VZA
@@ -297,6 +327,11 @@ void Aco::process(Context& context) {
 
 				const double vzaSlo = tpiSlo.interpolate(tpVzasSlo, tpiWeights, tpiIndexes);
 				const double vaaSlo = tpiSlo.interpolate(tpVaasSlo, tpiWeights, tpiIndexes);
+
+				if (true) { // TODO - use breakpoint settings from job order file
+					collocatedSegment.getAccessor("SLO_VAA").setDouble(i, vaaSlo);
+					collocatedSegment.getAccessor("SLO_VZA").setDouble(i, vzaSlo);
+				}
 
 				coordinates[0] = abs(saaOlc - vaaSlo); // ADA
 				coordinates[1] = szaOlc; // SZA
