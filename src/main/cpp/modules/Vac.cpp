@@ -129,7 +129,11 @@ void Vac::process(Context& context) {
 							const double tO3 = exp(-am * (ozone - 350.0) * cO3[b]);
 							const double surfaceReflectance = Aco::surfaceReflectance(reflectance, rAtm, tv, rhoAtm, tO3);
 
-							reflectanceAccessors[b]->setDouble(index, surfaceReflectance);
+							if (surfaceReflectance >= 0.0 && surfaceReflectance <= 1.0) {
+								reflectanceAccessors[b]->setDouble(index, surfaceReflectance);
+							} else {
+								reflectanceAccessors[b]->setFillValue(index);
+							}
 						}
 					} else {
 						// Water or cloud
