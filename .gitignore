@@ -8,7 +8,6 @@
 *.cmake
 *.xcodeproj/
 *.build/
-ggluck.swan.ac.uk/
 target/
 /bin/
 /config/
