@@ -1,1 +1,6 @@
-Put Sentinel-3 L1c data into this directory. 
+Put Sentinel-3 L1c data into this directory. Do not replace this directory with a symbolic link.
+The data currently needed are:
+
+S3A_SY_1_SYN________2013621T10920_2013621T101413_2_00293_2_DMS_TD04_00
+S3A_SY_1_SYN________2013621T10920_2013621T101413_2_00293_2_DMS_TD04_01
+S3A_SY_1_SYN________2013621T10920_2013621T101413_2_00293_2_DMS_TD04_02
