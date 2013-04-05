@@ -1,1 +1,1 @@
-This directory is used for temporary files.
+This directory is used for temporary files. Do not touch it.
