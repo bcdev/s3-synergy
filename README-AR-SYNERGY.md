@@ -47,12 +47,7 @@
 
   Type cd /path/to/the/installation/directory
  
-8. Installation of test data
-============================
-
-  Copy or move the '/data/sentinel3/syn/testdata/SY1' directory to the 'testdata' directory of the installation directory
-
-9. Run the tests
+8. Run the tests
 ================
 
  Type ./bin/runalltests.sh
