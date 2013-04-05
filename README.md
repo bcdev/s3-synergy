@@ -50,9 +50,9 @@ where you want to host a copy of the source tree. Then type
 
   git clone git://github.com/bcdev/s3-synergy.git
 
-The source tree, including auxiliary data, will be copied from the repository. Then move
-the Sentinel-3 L1c test data into the testdata directory of the source tree. Now you are
-ready for building the software.
+The complete source tree will be copied from the repository. Then move the ADF into the
+'files' directory and the Sentinel-3 L1c test data into the 'testdata/SY1' directory of
+the source tree. Now you are ready for building the software.
 
 Linux
 -----
