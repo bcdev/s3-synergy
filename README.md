@@ -33,12 +33,12 @@ Dependencies
 
 The software requires the following libraries, which might not be installed by default:
 
-1.  Boost 1.48.0
-2.  Apache Xerces-C 3.1.1
-3.  XQilla 2.2.4
-4.  NetCDF 4.1.3
-5.  CppUnit 1.12
-6.  CMake 2.8.2
+1.  Boost 1.48.0 or higher
+2.  Apache Xerces-C 3.1.1 or higher
+3.  XQilla 2.2.4 or higher
+4.  NetCDF 4.1.3 or higher
+5.  CppUnit 1.12 or higher
+6.  CMake 2.8.2 or higher
 
 It is required that the libraries are installed to '/usr', '/usr/local' or '${HOME}/usr'. 
 
