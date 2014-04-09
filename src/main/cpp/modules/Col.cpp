@@ -59,6 +59,7 @@ void Col::process(Context& context) {
 	using std::min;
 
 	const Segment& olc = context.getSegment(Constants::SEGMENT_OLC);
+    const Segment& mis = context.getSegment(Constants::SEGMENT_OLC_MIS);
 	const Segment& sln = context.getSegment(Constants::SEGMENT_SLN);
 	const Segment& slo = context.getSegment(Constants::SEGMENT_SLO);
 
@@ -83,12 +84,20 @@ void Col::process(Context& context) {
 				targetAccessors.push_back(&t.getAccessor(targetName));
 
 				if (contains(collocationNameMapX, targetName)) {
-					xAccessors.push_back(&olc.getAccessor(collocationNameMapX[targetName]));
+                    if (olc.hasVariable(collocationNameMapX[targetName])) {
+					    xAccessors.push_back(&olc.getAccessor(collocationNameMapX[targetName]));
+                    } else {
+                        xAccessors.push_back(&mis.getAccessor(collocationNameMapX[targetName]));
+                    }
 				} else {
 					xAccessors.push_back(0);
 				}
 				if (contains(collocationNameMapY, targetName)) {
-					yAccessors.push_back(&olc.getAccessor(collocationNameMapY[targetName]));
+                    if (olc.hasVariable(collocationNameMapY[targetName])) {
+					    yAccessors.push_back(&olc.getAccessor(collocationNameMapY[targetName]));
+                    } else {
+                        yAccessors.push_back(&mis.getAccessor(collocationNameMapY[targetName]));
+                    }
 				} else {
 					yAccessors.push_back(0);
 				}
@@ -130,14 +139,16 @@ void Col::process(Context& context) {
 
 					if (sourceSegment == olc) {
 						sourceK = k;
+
+                        const size_t misIndex = mis.getGrid().getIndex(k, mis.getGrid().getSizeL() == 1 ? 0 : l, m);
 						if (collocationYAccessor != 0) {
-							sourceL = l + (long) floor(collocationYAccessor->getDouble(targetIndex) + 0.5);
+							sourceL = l + (long) floor(collocationYAccessor->getDouble(misIndex) + 0.5);
 								// l + 0.5 + [deltaY]
 						} else {
 							sourceL = l;
 						}
 						if (collocationXAccessor != 0) {
-							sourceM = m + (long) floor(collocationXAccessor->getDouble(targetIndex) + 0.5);
+							sourceM = m + (long) floor(collocationXAccessor->getDouble(misIndex) + 0.5);
 								// m + 0.5 + [deltaX]
 						} else {
 							sourceM = m;
@@ -229,14 +240,15 @@ void Col::process(Context& context) {
 			for (long k = targetGrid.getMinK(); k <= targetGrid.getMaxK(); k++) {
 				for (long m = targetGrid.getMinM(); m <= targetGrid.getMaxM(); m++) {
 					const size_t targetIndex = targetGrid.getIndex(k, l, m);
+                    const size_t misIndex = mis.getGrid().getIndex(k, mis.getGrid().getSizeL() == 1 ? 0 : l, m);
 
 					double deltaX = 0.0;
 					if (xCollocationAccessor != 0) {
-						if (xCollocationAccessor->isFillValue(targetIndex)) {
+						if (xCollocationAccessor->isFillValue(misIndex)) {
 							targetAccessor->setFillValue(targetIndex);
 							continue;
 						}
-						deltaX = xCollocationAccessor->getDouble(targetIndex);
+						deltaX = xCollocationAccessor->getDouble(misIndex);
 					}
 
 					const long sourceM = m + (long) floor(deltaX + 0.5);
@@ -291,6 +303,9 @@ void Col::process(Context& context) {
 	}
 
 	context.setFirstRequiredL(olc, *this, min(firstRequiredLMap[&olc], lastL));
+    if (mis.getGrid().getSizeL() > 1) {
+	    context.setFirstRequiredL(mis, *this, min(firstRequiredLMap[&olc], lastL));
+    }
 	context.setFirstRequiredL(sln, *this, firstRequiredLMap[&sln]);
 	context.setFirstRequiredL(slo, *this, firstRequiredLMap[&slo]);
 	context.setFirstRequiredL(t, *this, min(firstRequiredLMap[&olc], lastL));
@@ -329,6 +344,7 @@ void Col::addOlciVariables(Context& context) {
 	addVariable(context, targetSegment, "altitude", sourceSegment, "altitude", sourceProductDescriptor);
 
 	const Segment& olcInfoSegment = context.getSegment(Constants::SEGMENT_OLC_INFO);
+    const Segment& olcMisregistrationSegment = context.getSegment(Constants::SEGMENT_OLC_MIS);
 	for (size_t i = 0; i < 18; i++) {
 		const string targetName = "solar_irradiance_" + lexical_cast<string>(i + 1);
 
@@ -341,8 +357,8 @@ void Col::addOlciVariables(Context& context) {
 			xCollocationAccessorMap[targetAccessor] = 0;
 			yCollocationAccessorMap[targetAccessor] = 0;
 		} else {
-			xCollocationAccessorMap[targetAccessor] = &sourceSegment.getAccessor("delta_x_" + lexical_cast<string>(OLC_TO_SYN_CHANNEL_MAPPING[i]));
-			yCollocationAccessorMap[targetAccessor] = &sourceSegment.getAccessor("delta_y_" + lexical_cast<string>(OLC_TO_SYN_CHANNEL_MAPPING[i]));
+			xCollocationAccessorMap[targetAccessor] = &olcMisregistrationSegment.getAccessor("delta_x_" + lexical_cast<string>(OLC_TO_SYN_CHANNEL_MAPPING[i]));
+			yCollocationAccessorMap[targetAccessor] = &olcMisregistrationSegment.getAccessor("delta_y_" + lexical_cast<string>(OLC_TO_SYN_CHANNEL_MAPPING[i]));
 		}
 	}
 }

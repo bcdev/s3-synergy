@@ -66,6 +66,11 @@ const string SEGMENT_GEO = "GEO";
 const string SEGMENT_OLC = "OLC";
 
 /**
+ * The name of the OLCI data segment.
+ */
+const string SEGMENT_OLC_MIS = "OLC_MIS";
+
+/**
  * The name of the OLCI tie-point data segment.
  */
 const string SEGMENT_OLC_TP = "OLC_TP";

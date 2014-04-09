@@ -54,3 +54,18 @@ void ColTest::testCol() {
     const int exitCode = task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_COL.xml");
     CPPUNIT_ASSERT(exitCode == ExitCode::OK);
 }
+
+void ColTest::testCol2() {
+    BasicTask task("SY_UNT_COL_02");
+
+    shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
+    shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
+    shared_ptr<Module> col = shared_ptr<Col>(new Col());
+
+    task.getContext().addModule(reader);
+    task.getContext().addModule(col);
+    task.getContext().addModule(writer);
+
+    const int exitCode = task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_COL_02.xml");
+    CPPUNIT_ASSERT(exitCode == ExitCode::OK);
+}
