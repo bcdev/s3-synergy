@@ -21,6 +21,7 @@
 class SynL1ReaderTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(SynL1ReaderTest);
     CPPUNIT_TEST(testReader);
+    CPPUNIT_TEST(testReader2);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -31,6 +32,7 @@ public:
 
 private:
     void testReader();
+    void testReader2();
 };
 
 #endif	/* SYNL1READERTEST_H */

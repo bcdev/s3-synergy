@@ -46,3 +46,14 @@ void SynL1ReaderTest::testReader() {
     const int exitCode = task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_SRE.xml");
     CPPUNIT_ASSERT(exitCode == ExitCode::OK);
 }
+
+void SynL1ReaderTest::testReader2() {
+    BasicTask task("SY_UNT_SRE_02");
+    shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
+    shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
+    task.getContext().addModule(reader);
+    task.getContext().addModule(writer);
+
+    const int exitCode = task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_SRE_02.xml");
+    CPPUNIT_ASSERT(exitCode == ExitCode::OK);
+}
