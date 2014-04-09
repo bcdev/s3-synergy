@@ -22,6 +22,7 @@ class AveTest : public CPPUNIT_NS::TestFixture {
 CPPUNIT_TEST_SUITE(AveTest);
     CPPUNIT_TEST(testIsRadianceName);
     CPPUNIT_TEST(testAve);
+    CPPUNIT_TEST(testAve2);
 CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -32,6 +33,7 @@ public:
 
 private:
     void testAve();
+    void testAve2();
     void testIsRadianceName();
 };
 

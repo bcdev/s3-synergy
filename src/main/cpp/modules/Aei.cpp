@@ -126,8 +126,12 @@ void Aei::process(Context& context) {
 		}
 	}
 
+    // TODO - needed for synchronizing OLC and SYN_COLLOCATED segments, better unite both segments into one
 	context.setFirstRequiredL(context.getSegment(Constants::SEGMENT_OLC), *this, lastTargetL + 1);
-	  // TODO - needed for synchronizing OLC and SYN_COLLOCATED segments, better unite both segments into one
+    if (context.getSegment(Constants::SEGMENT_OLC_MIS).getGrid().getSizeL() > 1) {
+        context.setFirstRequiredL(context.getSegment(Constants::SEGMENT_OLC_MIS), *this,  lastTargetL + 1);
+    }
+
 	context.setLastComputedL(*targetSegment, *this, lastTargetL);
 }
 

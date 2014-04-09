@@ -21,6 +21,7 @@
 class AeiTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(AeiTest);
     CPPUNIT_TEST(testAei);
+    CPPUNIT_TEST(testAei2);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -31,6 +32,7 @@ public:
 
 private:
     void testAei();
+    void testAei2();
 };
 
 #endif	/* AEITEST_H */
