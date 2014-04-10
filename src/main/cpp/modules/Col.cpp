@@ -76,7 +76,8 @@ void Col::process(Context& context) {
 	vector<Accessor*> xAccessors;
 	vector<Accessor*> yAccessors;
 	map<const Segment*, long> firstRequiredLMap;
-
+	map<const Accessor*, const Segment*> accessorSegmentMap;
+                   
 	foreach(const string& targetName, targetNames)
 			{
 				const Segment& s = *sourceSegmentMap[targetName];
@@ -85,18 +86,26 @@ void Col::process(Context& context) {
 
 				if (contains(collocationNameMapX, targetName)) {
                     if (olc.hasVariable(collocationNameMapX[targetName])) {
-					    xAccessors.push_back(&olc.getAccessor(collocationNameMapX[targetName]));
+                        Accessor* accessor = &olc.getAccessor(collocationNameMapX[targetName]);
+                        xAccessors.push_back(accessor);
+                        accessorSegmentMap[accessor] = &olc;
                     } else {
-                        xAccessors.push_back(&mis.getAccessor(collocationNameMapX[targetName]));
+                        Accessor* accessor = &mis.getAccessor(collocationNameMapX[targetName]);
+                        xAccessors.push_back(accessor);
+                        accessorSegmentMap[accessor] = &mis;
                     }
 				} else {
 					xAccessors.push_back(0);
 				}
 				if (contains(collocationNameMapY, targetName)) {
                     if (olc.hasVariable(collocationNameMapY[targetName])) {
-					    yAccessors.push_back(&olc.getAccessor(collocationNameMapY[targetName]));
+                        Accessor* accessor = &olc.getAccessor(collocationNameMapY[targetName]);
+                        yAccessors.push_back(accessor);
+                        accessorSegmentMap[accessor] = &olc;
                     } else {
-                        yAccessors.push_back(&mis.getAccessor(collocationNameMapY[targetName]));
+                        Accessor* accessor = &mis.getAccessor(collocationNameMapY[targetName]);
+                        yAccessors.push_back(accessor);
+                        accessorSegmentMap[accessor] = &mis;
                     }
 				} else {
 					yAccessors.push_back(0);
@@ -127,8 +136,10 @@ void Col::process(Context& context) {
 			for (long k = targetGrid.getMinK(); k <= targetGrid.getMaxK(); k++) {
 				for (long m = targetGrid.getMinM(); m <= targetGrid.getMaxM(); m++) {
 					const size_t targetIndex = targetGrid.getIndex(k, l, m);
+                    const size_t collocationIndexX = collocationXAccessor == 0 ? 0 : accessorSegmentMap[collocationXAccessor]->getGrid().getIndex(k, accessorSegmentMap[collocationXAccessor]->getGrid().getSizeL() == 1 ? 0 : l, m);
+                    const size_t collocationIndexY = collocationYAccessor == 0 ? 0 : accessorSegmentMap[collocationYAccessor]->getGrid().getIndex(k, accessorSegmentMap[collocationYAccessor]->getGrid().getSizeL() == 1 ? 0 : l, m);
 
-					if ((collocationXAccessor != 0 && collocationXAccessor->isFillValue(targetIndex)) || (collocationYAccessor != 0 && collocationYAccessor->isFillValue(targetIndex))) {
+					if ((collocationXAccessor != 0 && collocationXAccessor->isFillValue(collocationIndexX)) || (collocationYAccessor != 0 && collocationYAccessor->isFillValue(collocationIndexY))) {
 						targetAccessor.setFillValue(targetIndex);
 						continue;
 					}
@@ -140,23 +151,22 @@ void Col::process(Context& context) {
 					if (sourceSegment == olc) {
 						sourceK = k;
 
-                        const size_t misIndex = mis.getGrid().getIndex(k, mis.getGrid().getSizeL() == 1 ? 0 : l, m);
 						if (collocationYAccessor != 0) {
-							sourceL = l + (long) floor(collocationYAccessor->getDouble(misIndex) + 0.5);
+							sourceL = l + (long) floor(collocationYAccessor->getDouble(collocationIndexY) + 0.5);
 								// l + 0.5 + [deltaY]
 						} else {
 							sourceL = l;
 						}
 						if (collocationXAccessor != 0) {
-							sourceM = m + (long) floor(collocationXAccessor->getDouble(misIndex) + 0.5);
+							sourceM = m + (long) floor(collocationXAccessor->getDouble(collocationIndexX) + 0.5);
 								// m + 0.5 + [deltaX]
 						} else {
 							sourceM = m;
 						}
 					} else {
 						sourceK = 0;
-						sourceL = (long) floor(collocationYAccessor->getDouble(targetIndex));
-						sourceM = (long) floor(collocationXAccessor->getDouble(targetIndex));
+						sourceL = (long) floor(collocationYAccessor->getDouble(collocationIndexY));
+						sourceM = (long) floor(collocationXAccessor->getDouble(collocationIndexX));
 					}
 
 					if (sourceL < sourceGrid.getMinL() || sourceL > sourceGrid.getMaxL()) {
@@ -240,15 +250,15 @@ void Col::process(Context& context) {
 			for (long k = targetGrid.getMinK(); k <= targetGrid.getMaxK(); k++) {
 				for (long m = targetGrid.getMinM(); m <= targetGrid.getMaxM(); m++) {
 					const size_t targetIndex = targetGrid.getIndex(k, l, m);
-                    const size_t misIndex = mis.getGrid().getIndex(k, mis.getGrid().getSizeL() == 1 ? 0 : l, m);
 
 					double deltaX = 0.0;
 					if (xCollocationAccessor != 0) {
-						if (xCollocationAccessor->isFillValue(misIndex)) {
+                        const size_t collocationIndexX = accessorSegmentMap[xCollocationAccessor]->getGrid().getIndex(k, accessorSegmentMap[xCollocationAccessor]->getGrid().getSizeL() == 1 ? 0 : l, m);
+						if (xCollocationAccessor->isFillValue(collocationIndexX)) {
 							targetAccessor->setFillValue(targetIndex);
 							continue;
 						}
-						deltaX = xCollocationAccessor->getDouble(misIndex);
+						deltaX = xCollocationAccessor->getDouble(collocationIndexX);
 					}
 
 					const long sourceM = m + (long) floor(deltaX + 0.5);
@@ -278,11 +288,12 @@ void Col::process(Context& context) {
 
 					double y = 0.0;
 					if (yCollocationAccessor != 0) {
-						if (yCollocationAccessor->isFillValue(targetIndex)) {
+                        const size_t collocationIndexY = accessorSegmentMap[yCollocationAccessor]->getGrid().getIndex(k, accessorSegmentMap[yCollocationAccessor]->getGrid().getSizeL() == 1 ? 0 : l, m);
+						if (yCollocationAccessor->isFillValue(collocationIndexY)) {
 							targetAccessor->setFillValue(targetIndex);
 							continue;
 						}
-						y = yCollocationAccessor->getDouble(targetIndex);
+						y = yCollocationAccessor->getDouble(collocationIndexY);
 					}
 
 					const long sourceL = (long) floor(y);
