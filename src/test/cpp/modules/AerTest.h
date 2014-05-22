@@ -40,6 +40,7 @@ private:
     void testReadAuxdata();
     void testAer_s();
     void testAer();
+    void testAer2();
     void testNdv();
     void testAotStandardError();
     void testErrorMetric();

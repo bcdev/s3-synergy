@@ -168,6 +168,26 @@ void AerTest::testAer() {
     CPPUNIT_ASSERT(exitCode == ExitCode::OK);
 }
 
+void AerTest::testAer2() {
+    BasicTask task("SY_UNT_AER_02");
+    
+    shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
+    shared_ptr<Module> col = shared_ptr<Module>(new Col());
+    shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
+    shared_ptr<Module> ave = shared_ptr<Module>(new Ave());
+    shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
+    
+    task.getContext().addModule(reader);
+    task.getContext().addModule(col);
+    task.getContext().addModule(pcl);
+    task.getContext().addModule(ave);
+    task.getContext().addModule(aer);
+    task.getContext().addModule(writer);
+    
+    const int exitCode = task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_AER_02.xml");
+    CPPUNIT_ASSERT(exitCode == ExitCode::OK);
+}
+
 void AerTest::testReadAuxdata() {
     aer->readAuxiliaryData(*context);
     const valarray<int16_t>& amins = aer->amins;

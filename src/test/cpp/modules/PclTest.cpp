@@ -56,3 +56,21 @@ void PclTest::testPcl() {
     const int exitCode = task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_PCL.xml");
     CPPUNIT_ASSERT(exitCode == ExitCode::OK);
 }
+
+void PclTest::testPcl2() {
+    BasicTask task("SY_UNT_PCL_02");
+    
+    shared_ptr<Module> reader = shared_ptr<Module>(new SynL1Reader());
+    shared_ptr<Module> pcl = shared_ptr<Module>(new Pcl());
+    shared_ptr<Module> col = shared_ptr<Module>(new Col());
+    shared_ptr<Module> writer = shared_ptr<Module>(new SegmentWriter());
+    
+    task.getContext().addModule(reader);
+    task.getContext().addModule(col);
+    task.getContext().addModule(pcl);
+    task.getContext().addModule(writer);
+    
+    const int exitCode = task.execute(Constants::S3_SYNERGY_HOME + "/src/test/resources/jobs/JobOrder.SY_UNT_PCL_02.xml");
+    CPPUNIT_ASSERT(exitCode == ExitCode::OK);
+}
+

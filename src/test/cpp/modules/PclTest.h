@@ -21,6 +21,7 @@
 class PclTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(PclTest);
     CPPUNIT_TEST(testPcl);
+    CPPUNIT_TEST(testPcl2);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -31,6 +32,7 @@ public:
 
 private:
     void testPcl();
+    void testPcl2();
 };
 
 #endif	/* PCLTEST_H */

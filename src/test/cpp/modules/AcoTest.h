@@ -24,6 +24,7 @@
 class AcoTest : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(AcoTest);
     CPPUNIT_TEST(testAco);
+    CPPUNIT_TEST(testAco2);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -34,6 +35,7 @@ public:
 
 private:
     void testAco();
+    void testAco2();
 };
 
 #endif	/* ACOTEST_H */
