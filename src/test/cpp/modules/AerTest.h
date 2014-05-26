@@ -26,6 +26,7 @@ class AerTest : public CPPUNIT_NS::TestFixture {
     //CPPUNIT_TEST(testAer_s);
     //CPPUNIT_TEST(testReadAuxdata);
     CPPUNIT_TEST(testAer);
+    CPPUNIT_TEST(testAer2);
     CPPUNIT_TEST_SUITE_END();
 
 public:
