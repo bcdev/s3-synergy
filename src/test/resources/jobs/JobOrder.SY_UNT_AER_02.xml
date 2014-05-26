@@ -1,0 +1,62 @@
+<!--
+  ~ Copyright (c) 2012. Brockmann Consult (info@brockmann-consult.de)
+  ~
+  ~ This program is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU General Public License as published by the
+  ~ Free Software Foundation. This program is distributed in the hope it will
+  ~ be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+  ~ of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
+  -->
+
+<Ipf_Job_Order>
+    <Ipf_Conf>
+        <Processor_Name>S3L2PP-SYN</Processor_Name>
+        <Version>01.00</Version>
+        <Stdout_Log_Level>DEBUG</Stdout_Log_Level> <!-- Default: INFO -->
+        <Stderr_Log_Level>DEBUG</Stderr_Log_Level> <!-- Default: INFO -->
+        <Test>true</Test>
+        <Breakpoint_Enable>false</Breakpoint_Enable>
+        <Acquisition_Station>unknown</Acquisition_Station>
+        <Processing_Station>unknown</Processing_Station>
+        <Config_Files>
+            <Conf_File_Name>src/test/resources/config/config.xml</Conf_File_Name>
+        </Config_Files>
+        <Sensing_Time>
+            <Start>20130621_000000.0000</Start>
+            <Stop>20130621_235959.9999</Stop>
+        </Sensing_Time>
+        <Dynamic_Processing_Parameters>
+            <Processing_Parameter>
+                <Name>Segment_Line_Count</Name>
+                <Value>2000</Value> <!-- Value range: [8, 2000], Default: 2000 -->
+            </Processing_Parameter>
+       </Dynamic_Processing_Parameters>
+    </Ipf_Conf>
+    <List_of_Ipf_Procs>
+        <Ipf_Proc>
+            <Task_Name>SYL2</Task_Name>
+            <Task_Version>01.00</Task_Version>
+            <List_of_Inputs count="1">
+                <Input>
+                    <File_Type>SY1</File_Type>
+                    <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
+                    <List_of_File_Names count="1">
+                        <File_Name>testdata/SY1/L1c_product_V2</File_Name>
+                    </List_of_File_Names>
+                </Input>
+            </List_of_Inputs>
+            <List_of_Outputs count="0">
+                <Output>
+                    <File_Type>SY2</File_Type>
+                    <File_Name_Type>Physical</File_Name_Type> <!-- Default: Physical -->
+                    <File_Name>testdata/SY2/SY_UNT_AER/SY_UNT_AER_02.BREAKPOINT</File_Name>
+                </Output>
+            </List_of_Outputs>
+        </Ipf_Proc>
+    </List_of_Ipf_Procs>
+</Ipf_Job_Order>
