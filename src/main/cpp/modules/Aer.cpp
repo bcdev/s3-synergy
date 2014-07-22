@@ -427,7 +427,7 @@ void Aer::retrieveAerosolProperties(Pixel& p, Pixel& q, ErrorMetric& em) {
 		bool success = em.findMinimum(q);
 		if (success && q.errorMetric < p.errorMetric) {
 			p.assign(q);
-			p.angstromExponent = aerosolAngstromExponents[amin];
+			p.angstromExponent = aerosolAngstromExponents[i];
 			p.aerosolModel = amin;
 		}
 	}
