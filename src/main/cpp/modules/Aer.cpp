@@ -375,12 +375,19 @@ void Aer::process(Context& context) {
 				pixelProvider.getPixel(targetPixelIndex, p);
 
 				if (!isSet(p.flags, Constants::SY2_AEROSOL_SUCCESS_FLAG)) {
+                    // background values
 					double ws = 0.00000625;
 					double aot = aerosolOpticalThickness(p.lat);
 					double aotError = 0.0;
 					double angstromExponent = 1.25;
 					double minPixelDistance = numeric_limits<double>::max();
 
+                    /*
+                       For alculating the mean a weighted incremental algorithm, initialised with background values, is used, see
+                     
+                       http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
+                     
+                     */
 					for (long sourceL = targetL - n; sourceL <= targetL + n; sourceL++) {
 						for (long sourceN = targetN - n; sourceN <= targetN + n; sourceN++) {
                             const long sourceK = sourceN / averagedGrid->getSizeM();
